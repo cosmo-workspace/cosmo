@@ -1,6 +1,6 @@
 # COSMO
 
-<img src="../logo/logo-with-name-small.png">
+<img src="https://raw.githubusercontent.com/cosmo-workspace/cosmo/main/logo/logo-with-name-small.png">
 
 [![kubernetes](https://img.shields.io/badge/kubernetes-grey.svg?logo=Kubernetes)](https://kubernetes.io/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cosmo-workspace/cosmo/blob/main/LICENSE)
