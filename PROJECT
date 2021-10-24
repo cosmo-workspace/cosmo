@@ -1,0 +1,40 @@
+domain: cosmo-workspace.github.io
+layout:
+- go.kubebuilder.io/v3
+projectName: cosmo
+repo: github.com/cosmo-workspace/cosmo
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: cosmo-workspace.github.io
+  group: cosmo
+  kind: Instance
+  path: github.com/cosmo-workspace/cosmo/api/core/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+  domain: cosmo-workspace.github.io
+  group: cosmo
+  kind: Template
+  path: github.com/cosmo-workspace/cosmo/api/core/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: cosmo-workspace.github.io
+  group: workspace
+  kind: Workspace
+  path: github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+version: "3"

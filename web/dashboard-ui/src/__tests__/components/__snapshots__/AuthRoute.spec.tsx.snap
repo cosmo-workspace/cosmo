@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthRoute normal login =>/workspace 1`] = `
+<DocumentFragment>
+  <div>
+    workspace
+  </div>
+</DocumentFragment>
+`;
+
+exports[`AuthRoute normal login admin => /user 1`] = `
+<DocumentFragment>
+  <div>
+    user
+  </div>
+</DocumentFragment>
+`;
+
+exports[`AuthRoute normal login admin page not admin user page => 404 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root css-0"
+  >
+    404
+  </div>
+</DocumentFragment>
+`;
+
+exports[`AuthRoute normal login another page => 404 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root css-0"
+  >
+    404
+  </div>
+</DocumentFragment>
+`;
+
+exports[`AuthRoute normal not login =>/signin 1`] = `
+<DocumentFragment>
+  <div>
+    signin
+  </div>
+</DocumentFragment>
+`;
+
+exports[`AuthRoute normal not login admin =>/signin 1`] = `
+<DocumentFragment>
+  <div>
+    signin
+  </div>
+</DocumentFragment>
+`;

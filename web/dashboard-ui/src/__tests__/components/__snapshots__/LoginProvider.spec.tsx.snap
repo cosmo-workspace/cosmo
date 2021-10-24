@@ -1,0 +1,223 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoginProvider login getUser error 1`] = `
+Object {
+  "response": Object {
+    "data": Object {
+      "message": "getUser error",
+    },
+    "status": 401,
+  },
+}
+`;
+
+exports[`LoginProvider login getUser error 2`] = `undefined`;
+
+exports[`LoginProvider login getUser error: enqueueSnackbar calls 1`] = `
+Array [
+  Array [
+    "getUser error",
+    Object {
+      "variant": "error",
+    },
+  ],
+  Array [
+    "getUser error",
+    Object {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`LoginProvider login ng 1`] = `
+Object {
+  "response": Object {
+    "data": Object {
+      "message": "login error",
+    },
+    "status": 401,
+  },
+}
+`;
+
+exports[`LoginProvider login ng 2`] = `undefined`;
+
+exports[`LoginProvider login ng: enqueueSnackbar calls 1`] = `
+Array [
+  Array [
+    "login error",
+    Object {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`LoginProvider login ok 1`] = `
+Object {
+  "expireAt": "xxxx",
+  "id": "user1",
+  "requirePasswordUpdate": true,
+}
+`;
+
+exports[`LoginProvider login ok 2`] = `
+Object {
+  "displayName": "user1 name",
+  "id": "user1",
+  "role": "cosmo-admin",
+}
+`;
+
+exports[`LoginProvider login ok 3`] = `
+Object {
+  "expireAt": "xxxx",
+  "id": "user1",
+  "requirePasswordUpdate": true,
+}
+`;
+
+exports[`LoginProvider login ok 4`] = `
+Object {
+  "displayName": "user1 name",
+  "id": "user1",
+  "role": "cosmo-admin",
+}
+`;
+
+exports[`LoginProvider login ok: enqueueSnackbar calls 1`] = `Array []`;
+
+exports[`LoginProvider logout error 1`] = `
+Object {
+  "response": Object {
+    "data": Object {
+      "message": "logout error",
+    },
+    "status": 500,
+  },
+}
+`;
+
+exports[`LoginProvider logout error 2`] = `undefined`;
+
+exports[`LoginProvider logout error: enqueueSnackbar calls 1`] = `
+Array [
+  Array [
+    "logout error",
+    Object {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`LoginProvider logout error: logout calls 1`] = `
+Array [
+  Array [],
+]
+`;
+
+exports[`LoginProvider logout ok 1`] = `undefined`;
+
+exports[`LoginProvider logout ok 2`] = `undefined`;
+
+exports[`LoginProvider logout ok: enqueueSnackbar calls 1`] = `Array []`;
+
+exports[`LoginProvider logout ok: logout calls 1`] = `
+Array [
+  Array [],
+]
+`;
+
+exports[`LoginProvider updataPassword error 1`] = `
+Object {
+  "message": "updataPassword error",
+}
+`;
+
+exports[`LoginProvider updataPassword error: enqueueSnackbar calls 1`] = `
+Array [
+  Array [
+    "updataPassword error",
+    Object {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`LoginProvider updataPassword error: putUserPassword calls 1`] = `
+Array [
+  Array [
+    "user1",
+    Object {
+      "currentPassword": "oldpw",
+      "newPassword": "newpw",
+    },
+  ],
+]
+`;
+
+exports[`LoginProvider updataPassword ok 1`] = `
+Object {
+  "config": Object {},
+  "data": Object {
+    "message": "ok",
+    "user": Object {
+      "displayName": "user1 name",
+      "id": "user1",
+      "role": "cosmo-admin",
+    },
+  },
+  "headers": Object {},
+  "request": Object {},
+  "status": 200,
+  "statusText": "ok",
+}
+`;
+
+exports[`LoginProvider updataPassword ok: enqueueSnackbar calls 1`] = `Array []`;
+
+exports[`LoginProvider updataPassword ok: putUserPassword calls 1`] = `
+Array [
+  Array [
+    "user1",
+    Object {
+      "currentPassword": "oldpw",
+      "newPassword": "newpw",
+    },
+  ],
+]
+`;
+
+exports[`LoginProvider verify getUser error 1`] = `undefined`;
+
+exports[`LoginProvider verify getUser error: enqueueSnackbar calls 1`] = `
+Array [
+  Array [
+    "getUser error",
+    Object {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`LoginProvider verify ng / id is undefined 1`] = `undefined`;
+
+exports[`LoginProvider verify ng / id is undefined: enqueueSnackbar calls 1`] = `Array []`;
+
+exports[`LoginProvider verify ng 1`] = `undefined`;
+
+exports[`LoginProvider verify ng: enqueueSnackbar calls 1`] = `Array []`;
+
+exports[`LoginProvider verify ok 1`] = `
+Object {
+  "displayName": "user1 name",
+  "id": "user1",
+  "role": "cosmo-admin",
+}
+`;
+
+exports[`LoginProvider verify ok: enqueueSnackbar calls 1`] = `Array []`;

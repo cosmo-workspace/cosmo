@@ -1,0 +1,37 @@
+{
+  "name": "api-gen",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "watch": {
+    "go:gen": "../../api/openapi/openapi_v1alpha1.yaml",
+    "ts:gen": "../../api/openapi/openapi_v1alpha1.yaml"
+  },
+  "scripts": {
+    "go:gen": "run-s go:_gen go:_remove* go:modify",
+    "go:gen_nofix": "run-s go:_gen go:_remove*",
+    "go:clean": "rimraf ../../api/openapi/dashboard/v1alpha1",
+    "go:_gen": "openapi-generator-cli generate -g go-server -i ../../api/openapi/dashboard/openapi-v1alpha1.yaml  -o ../../api/openapi/dashboard/ --additional-properties=packageName=v1alpha1,sourceFolder=v1alpha1",
+    "go:_remove1": "rimraf ../../api/openapi/dashboard/.openapi*",
+    "go:_remove2": "rimraf ../../api/openapi/dashboard/api",
+    "go:_remove3": "rimraf ../../api/openapi/dashboard/Dockerfile",
+    "go:_remove4": "rimraf ../../api/openapi/dashboard/go.mod",
+    "go:_remove5": "rimraf ../../api/openapi/dashboard/main.go",
+    "go:_remove6": "rimraf ../../api/openapi/dashboard/README.md",
+    "go:_remove7": "rimraf ../../api/openapi/dashboard/v1alpha1/api_*_service.go",
+    "go:modify": "goimports -w ../../api/openapi/dashboard/v1alpha1/*.go",
+    "ts:clean": "rimraf ../../web/dashboard-ui/src/api/dashboard/v1alpha1",
+    "ts:gen": "run-s ts:_gen ts:_remove*",
+    "ts:_gen": "openapi-generator-cli generate -g typescript-axios -i ../../api/openapi/dashboard/openapi-v1alpha1.yaml  -o ../../web/dashboard-ui/src/api/dashboard/v1alpha1/ --additional-properties=supportsES6=true",
+    "ts:_remove1": "rimraf ../../web/dashboard-ui/src/api/dashboard/v1alpha1/.openapi*",
+    "ts:_remove2": "rimraf ../../web/dashboard-ui/src/api/dashboard/v1alpha1/.*ignore",
+    "ts:_remove3": "rimraf ../../web/dashboard-ui/src/api/dashboard/v1alpha1/git_push.sh",
+    "watch": "npm-watch"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.4.12",
+    "npm-run-all": "^4.1.5",
+    "npm-watch": "^0.11.0",
+    "rimraf": "^3.0.2"
+  }
+}

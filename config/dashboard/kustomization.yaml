@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+images:
+- name: dashboard
+  newName: cosmo-dashboard
+  newTag: v0.1.0
+
+resources:
+- dashboard.yaml
+- service_account.yaml
+- role.yaml
+- role_binding.yaml
+- certificate.yaml
+- ../auth-proxy
+
+namespace: cosmo-system
+
+namePrefix: cosmo-
+
+vars:
+- fieldref:
+    fieldPath: metadata.namespace
+  name: SERVICE_NAMESPACE
+  objref:
+    kind: Service
+    name: dashboard
+    version: v1
+
+configurations:
+- kustomizeconfig.yaml
+
+commonLabels:
+  app.kubernetes.io/instance: cosmo
+  app.kubernetes.io/name: cosmo-dashboard

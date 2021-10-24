@@ -1,0 +1,89 @@
+apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+kind: Template
+metadata:
+  name: code-server
+spec:
+  requiredVars:
+  - SERVICE_TYPE
+  rawYaml: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        cosmo/instance: '{{INSTANCE}}'
+        cosmo/template: '{{TEMPLATE}}'
+      name: '{{INSTANCE}}-workspace'
+      namespace: '{{NAMESPACE}}'
+    spec:
+      ports:
+      - name: main
+        port: 8080
+        protocol: TCP
+      selector:
+        cosmo/instance: '{{INSTANCE}}'
+        cosmo/template: '{{TEMPLATE}}'
+      type: '{{SERVICE_TYPE}}'
+    ---
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        cosmo/instance: '{{INSTANCE}}'
+        cosmo/template: '{{TEMPLATE}}'
+      name: '{{INSTANCE}}-workspace'
+      namespace: '{{NAMESPACE}}'
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          cosmo/instance: '{{INSTANCE}}'
+          cosmo/template: '{{TEMPLATE}}'
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            cosmo/instance: '{{INSTANCE}}'
+            cosmo/template: '{{TEMPLATE}}'
+        spec:
+          containers:
+          - image: codercom/code-server:3.8.0
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              httpGet:
+                path: /
+                port: 8080
+            name: code-server
+            ports:
+            - containerPort: 8080
+              name: main
+              protocol: TCP
+            readinessProbe:
+              httpGet:
+                path: /
+                port: 8080
+            securityContext:
+              runAsUser: 1000
+            volumeMounts:
+            - mountPath: /home/coder
+              name: data
+          initContainers:
+          - command:
+            - sh
+            - -c
+            - |
+              chown -R 1000:1000 /home/coder
+            image: busybox:latest
+            imagePullPolicy: IfNotPresent
+            name: init-chmod-data
+            securityContext:
+              runAsUser: 0
+            volumeMounts:
+            - mountPath: /home/coder
+              name: data
+          securityContext:
+            fsGroup: 1000
+          serviceAccountName: default
+          volumes:
+          - emptyDir: {}
+            name: data

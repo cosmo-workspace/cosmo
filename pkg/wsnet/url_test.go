@@ -1,0 +1,257 @@
+package wsnet
+
+import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"k8s.io/apimachinery/pkg/api/equality"
+	"k8s.io/utils/pointer"
+)
+
+func TestNewURLVars(t *testing.T) {
+	type args struct {
+		netRule v1alpha1.NetworkRule
+	}
+	tests := []struct {
+		name string
+		args args
+		want URLVars
+	}{
+		{
+			name: "defaulting",
+			args: args{
+				netRule: v1alpha1.NetworkRule{
+					PortName:   "name",
+					PortNumber: 8080,
+					Group:      pointer.String("app"),
+					HTTPPath:   "/app",
+				},
+			},
+			want: URLVars{
+				PortName:     "name",
+				PortNumber:   "8080",
+				NetRuleGroup: "app",
+				IngressPath:  "/app",
+			},
+		},
+		{
+			name: "not defaulting",
+			args: args{
+				netRule: v1alpha1.NetworkRule{
+					PortName:   "name",
+					PortNumber: 8080,
+					HTTPPath:   "/app",
+					Group:      pointer.String("app"),
+				},
+			},
+			want: URLVars{
+				PortName:     "name",
+				PortNumber:   "8080",
+				IngressPath:  "/app",
+				NetRuleGroup: "app",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewURLVars(tt.args.netRule); !equality.Semantic.DeepEqual(got, tt.want) {
+				t.Errorf("NewURLVars() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestURLBase_GenURL(t *testing.T) {
+	type fields struct {
+		Base string
+		Vars URLVars
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name: "OK1",
+			fields: fields{
+				Base: "http://localhost:{{PORT_NUMBER}}",
+				Vars: URLVars{
+					PortNumber:  "8080",
+					IngressPath: "/app",
+				},
+			},
+			want: "http://localhost:8080/app",
+		},
+		{
+			name: "OK3",
+			fields: fields{
+				Base: "https://{{PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+				Vars: URLVars{
+					PortName:     "main",
+					IngressPath:  "/",
+					InstanceName: "inst",
+					Namespace:    "ns",
+				},
+			},
+			want: "https://main-inst-ns.domain/",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := URLBase(tt.fields.Base)
+			if got := u.GenURL(tt.fields.Vars); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("URLBoilerPlate.GenURL() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGenerateIngressHost(t *testing.T) {
+	type args struct {
+		r         wsv1alpha1.NetworkRule
+		name      string
+		namespace string
+		urlBase   URLBase
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "PORT_NAME",
+			args: args{
+				r: wsv1alpha1.NetworkRule{
+					PortName:         "http",
+					PortNumber:       3000,
+					HTTPPath:         "/",
+					TargetPortNumber: pointer.Int32(3001),
+					Group:            pointer.String("nodejs"),
+					Public:           false,
+				},
+				name:      "cs1",
+				namespace: wsv1alpha1.UserNamespace("tom"),
+				urlBase:   URLBase("https://{{PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}"),
+			},
+			want: "http-cs1-cosmo-user-tom",
+		},
+		{
+			name: "NETRULE_GROUP",
+			args: args{
+				r: wsv1alpha1.NetworkRule{
+					PortName:         "nodejs",
+					PortNumber:       3000,
+					HTTPPath:         "/",
+					TargetPortNumber: pointer.Int32(3002),
+					Group:            pointer.String("myapp"),
+					Public:           false,
+				},
+				name:      "cs1",
+				namespace: wsv1alpha1.UserNamespace("tom"),
+				urlBase:   URLBase("https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USERID}}"),
+			},
+			want: "myapp-cs1-tom",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GenerateIngressHost(tt.args.r, tt.args.name, tt.args.namespace, tt.args.urlBase); got != tt.want {
+				t.Errorf("GenerateIngressHost() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_extractHost(t *testing.T) {
+	type args struct {
+		url string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "with proto, port and path",
+			args: args{
+				url: "http://localhost:8080/hello",
+			},
+			want: "localhost",
+		},
+		{
+			name: "with proto and path",
+			args: args{
+				url: "https://cosmo.cosmo-workspace.github.io/hello",
+			},
+			want: "cosmo.cosmo-workspace.github.io",
+		},
+		{
+			name: "with proto and port",
+			args: args{
+				url: "https://cosmo.cosmo-workspace.github.io:8080",
+			},
+			want: "cosmo.cosmo-workspace.github.io",
+		},
+		{
+			name: "with nothing",
+			args: args{
+				url: "cosmo.cosmo-workspace.github.io",
+			},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := extractHost(tt.args.url); got != tt.want {
+				t.Errorf("extractHost() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestURLVars_setDefault(t *testing.T) {
+	type fields struct {
+		URLVars
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   URLVars
+	}{
+		{
+			name:   "All",
+			fields: fields{},
+			want: URLVars{
+				PortName:       "undefined",
+				PortNumber:     "0",
+				NetRuleGroup:   wsv1alpha1.DefaultWorkspaceServiceMainPortName,
+				IngressPath:    "/",
+				InstanceName:   "undefined",
+				Namespace:      "undefined",
+				NodePortNumber: "0",
+				LoadBalancer:   "undefined",
+				WorkspaceName:  "undefined",
+				UserID:         "undefined",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := &URLVars{
+				PortName:     tt.fields.PortName,
+				PortNumber:   tt.fields.PortNumber,
+				NetRuleGroup: tt.fields.NetRuleGroup,
+				IngressPath:  tt.fields.IngressPath,
+				InstanceName: tt.fields.InstanceName,
+				Namespace:    tt.fields.Namespace,
+			}
+			v.setDefault()
+
+			if !reflect.DeepEqual(*v, tt.want) {
+				t.Errorf("setDefault() = %v, want %v", *v, tt.want)
+			}
+		})
+	}
+}

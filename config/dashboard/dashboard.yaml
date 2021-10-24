@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard
+spec:
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - image: dashboard:latest
+        imagePullPolicy: IfNotPresent
+        name: dashboard
+        command:
+        - /app/dashboard
+        args:
+        - --port=8443
+        - --maxage-minutes=180
+        - --zap-log-level=info
+        - --tls-key=/app/cert/tls.key
+        - --tls-cert=/app/cert/tls.crt
+        ports:
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        volumeMounts:
+        - mountPath: /app/cert
+          name: cert
+          readOnly: true
+      serviceAccountName: dashboard
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: dashboard-server-cert

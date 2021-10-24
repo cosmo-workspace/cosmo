@@ -1,0 +1,47 @@
+package template
+
+import (
+	"sigs.k8s.io/kustomize/api/types"
+	"sigs.k8s.io/yaml"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/template"
+)
+
+const (
+	DefaultPackagedFile = "packaged.yaml"
+	NamePrefix          = template.DefaultVarsInstance + "-"
+)
+
+var (
+	SecretFileDefaultMode = int32(420)
+)
+
+func NewKustomize() *types.Kustomization {
+	label := make(map[string]string)
+	label[cosmov1alpha1.LabelKeyInstance] = template.DefaultVarsInstance
+	label[cosmov1alpha1.LabelKeyTemplate] = template.DefaultVarsTemplate
+
+	kust := &types.Kustomization{
+		CommonLabels: label,
+		NamePrefix:   NamePrefix,
+		Namespace:    template.DefaultVarsNamespace,
+		Resources: []string{
+			DefaultPackagedFile,
+		},
+	}
+	return kust
+}
+
+func addPatchesStrategicMerges(kust *types.Kustomization, files ...types.PatchStrategicMerge) {
+	if kust.PatchesStrategicMerge == nil {
+		kust.PatchesStrategicMerge = files
+	} else {
+		kust.PatchesStrategicMerge = append(kust.PatchesStrategicMerge, files...)
+	}
+}
+
+func StructToYaml(obj interface{}) []byte {
+	out, _ := yaml.Marshal(obj)
+	return out
+}

@@ -1,0 +1,7 @@
+apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+kind: Workspace
+metadata:
+  name: my-workspace
+spec:
+  template:
+    name: example-cs
