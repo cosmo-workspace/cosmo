@@ -141,7 +141,7 @@ COSMO consists of System-side Components, Workspace-side Components and Utilitie
 
 ## Open Source WebIDE projects
 
-These are not comparable to COSMO; COSMO supports hosting of these WebIDEs as Container Images.
+These are NOT comparable to COSMO; **COSMO supports hosting these WebIDE containers**.
 
 | Projects | Description | Use in COSMO | Official Docker Hub |
 |:---|:---|:---|:---|
@@ -151,9 +151,9 @@ These are not comparable to COSMO; COSMO supports hosting of these WebIDEs as Co
 We recommend that you build your own Development Container Image based on these official Docker images.
 (with your programming language, language server, and necessary packages, development tools, and extensions)
 
-## Similler SaaS or Self-hosted WebIDE platform products
+## Similar SaaS or Self-hosted WebIDE platform products
 
-COSMO is not WebIDE but Self-hosted WebIDE management platform.
+COSMO is not WebIDE but **Self-hosted WebIDE management platform**.
 It is targeting a team development for multiple workspaces for each team members.
 
 | Name | SaaS | Self-hosted | Subscription (including free plan) | Team management | Description | 
