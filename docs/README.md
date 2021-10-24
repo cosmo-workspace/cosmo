@@ -166,9 +166,9 @@ It is targeting a team development for multiple workspaces for each team members
 | [`Google Cloud Shell Editor`](https://cloud.google.com/shell) | ✅ (Google Cloud) | - | Yes | ⚠️ For each developer (Coraborate with other feature) | Manage your infrastructure and develop your applications from any browser. | 
 | [`GitHub Codespaces`](https://github.com/features/codespaces) | ✅ (GitHub) | - | Yes | ⚠️ For each developer (Coraborate with other feature) | Blazing fast cloud developer environments. Visual Studio Code backed by high performance VMs that start in seconds. |
 
-## Detailed comparison of Self-hosted WebIDE products
+## Comparison with Self-hosted products
 
-Existing products are great and have a lot of features, but they are little bit too rich and require too much knowledge for developers to build and maintain a product itself environment.
+Existing products are great, but they are little bit too rich and require too much knowledge for developers to build and maintain a product itself environment.
 
 | Name | Subscription (including free plan) | Database required | Dynamic dev server network | Workspace Authentication | Dynamic Port Authentication | Running System Components | Running Workspace Components |
 |:---|:---|:---|:---|:---|:---|:---|:---|
@@ -177,4 +177,4 @@ Existing products are great and have a lot of features, but they are little bit 
 | [`Coder self-hosted`](https://coder.com/) | [Yes](https://coder.com/pricing) | Yes (Postgres)| [✅](https://coder.com/docs/coder/v1.22/workspaces/devurls) | [✅](https://coder.com/docs/coder/v1.22/admin/access-control/user-roles) | [✅](https://coder.com/docs/coder/v1.22/workspaces/devurls) | [coderd and postgres](https://coder.com/docs/coder/v1.22/setup/architecture) | [coder image](https://coder.com/docs/coder/v1.22/workspaces)
 | [`Gitpod Self-Hosted`](https://coder.com/) | [Yes](https://www.gitpod.io/self-hosted) | Yes (MySQL) | [✅](https://www.gitpod.io/docs/getting-started#configure-your-app%E2%80%99s-ports) | [✅](https://www.gitpod.io/docs/self-hosted/latest/configuration/authentication) | [✅](https://www.gitpod.io/docs/config-ports) | agent-smith, registry-facade, ws-daemon, registry, minio, blobserve, content-service, dashboard, image-builder, proxy, server, ws-manager-bridge, ws-manager, ws-proxy, ws-scheduler, mysql, messagebus | [workspace image](https://github.com/gitpod-io/workspace-images) |
 
-By making COSMO itself lightweight, COSMO aims to allow developers to focus on their Workspaces image and maintain it with their usual Kubernetes management.
+By making COSMO itself lightweight and easy to maintain, COSMO aims to allow developers to focus on their developments!
