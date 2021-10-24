@@ -4,7 +4,6 @@
 
 [![kubernetes](https://img.shields.io/badge/kubernetes-grey.svg?logo=Kubernetes)](https://kubernetes.io/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cosmo-workspace/cosmo/blob/main/LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/cosmo-workspace/cosmo)](https://goreportcard.com/report/github.com/cosmo-workspace/cosmo)
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/cosmo)](https://artifacthub.io/packages/search?repo=cosmo)
 
 Bring Cloud-native power to Team Development.
