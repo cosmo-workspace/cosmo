@@ -19,13 +19,13 @@ require (
 	go.uber.org/zap v1.17.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	golang.org/x/tools v0.1.1-0.20210427153610-6397a11608ad // indirect
-	k8s.io/api v0.21.3
+	k8s.io/api v0.22.2
 	k8s.io/apiextensions-apiserver v0.21.3 // indirect
-	k8s.io/apimachinery v0.21.3
-	k8s.io/cli-runtime v0.21.3
-	k8s.io/client-go v0.21.3
-	k8s.io/utils v0.0.0-20210527160623-6fdb442a123b
+	k8s.io/apimachinery v0.22.2
+	k8s.io/cli-runtime v0.22.2
+	k8s.io/client-go v0.22.2
+	k8s.io/utils v0.0.0-20210819203725-bdf08cb9a70a
 	sigs.k8s.io/controller-runtime v0.9.2
-	sigs.k8s.io/kustomize/api v0.8.8
+	sigs.k8s.io/kustomize/api v0.8.11
 	sigs.k8s.io/yaml v1.2.0
 )
