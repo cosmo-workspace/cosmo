@@ -16,9 +16,8 @@ require (
 	github.com/onsi/gomega v1.13.0
 	github.com/sethvargo/go-password v0.2.0
 	github.com/spf13/cobra v1.1.3
-	go.uber.org/zap v1.17.0
+	go.uber.org/zap v1.19.1
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
-	golang.org/x/tools v0.1.1-0.20210427153610-6397a11608ad // indirect
 	k8s.io/api v0.21.3
 	k8s.io/apiextensions-apiserver v0.21.3 // indirect
 	k8s.io/apimachinery v0.21.3
