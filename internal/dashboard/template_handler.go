@@ -28,7 +28,7 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 		return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
 	}
 
-	wstmpls := make([]dashv1alpha1.Template, 0)
+	wstmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
 	for _, v := range tmpls {
 		cfg, err := wsv1alpha1.ConfigFromTemplateAnnotations(&v)
 		if err != nil {
@@ -36,7 +36,7 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 			continue
 		}
 
-		requiredVars := make([]string, 0)
+		requiredVars := make([]string, 0, len(v.Spec.RequiredVars))
 		for _, v := range v.Spec.RequiredVars {
 			requiredVars = append(requiredVars, v.Var)
 		}

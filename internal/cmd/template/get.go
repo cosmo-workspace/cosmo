@@ -123,7 +123,7 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 				continue
 			}
 
-			vars := make([]string, 0)
+			vars := make([]string, 0, len(v.Spec.RequiredVars))
 			for _, t := range v.Spec.RequiredVars {
 				vars = append(vars, t.Var)
 			}
@@ -139,7 +139,7 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, v := range tmpls {
-			vars := make([]string, 0)
+			vars := make([]string, 0, len(v.Spec.RequiredVars))
 			for _, t := range v.Spec.RequiredVars {
 				vars = append(vars, t.Var)
 			}

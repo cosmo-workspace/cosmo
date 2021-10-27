@@ -120,7 +120,7 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 }
 
 func convertNetRulesTodashv1alpha1NetRules(netRules []wsv1alpha1.NetworkRule, urlMap map[string]string, serviceMainPortName string) []dashv1alpha1.NetworkRule {
-	apirules := make([]dashv1alpha1.NetworkRule, 0)
+	apirules := make([]dashv1alpha1.NetworkRule, 0, len(netRules))
 	for _, v := range netRules {
 		if v.PortName == serviceMainPortName {
 			continue

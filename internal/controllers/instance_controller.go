@@ -160,7 +160,7 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 			return errs
 		}
 
-		refs = make([]cosmov1alpha1.ObjectRef, 0)
+		refs = make([]cosmov1alpha1.ObjectRef, 0, len(builts))
 	}
 
 	for _, built := range builts {

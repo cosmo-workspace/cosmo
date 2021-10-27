@@ -133,7 +133,7 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 	}
 
 	if o.outputFormat == "yaml" {
-		raw := make([]byte, 0)
+		raw := make([]byte, 0, len(wss))
 		for _, ws := range wss {
 			v := ws.DeepCopy()
 			kosmo.FillTypeMeta(v, wsv1alpha1.GroupVersion)

@@ -134,8 +134,10 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	if o.RequiredVars != "" {
-		vars := make([]cosmov1alpha1.RequiredVarSpec, 0)
-		for _, v := range strings.Split(o.RequiredVars, ",") {
+		varsList := strings.Split(o.RequiredVars, ",")
+
+		vars := make([]cosmov1alpha1.RequiredVarSpec, 0, len(varsList))
+		for _, v := range varsList {
 			vars = append(vars, cosmov1alpha1.RequiredVarSpec{Var: v})
 		}
 		o.tmpl.Spec.RequiredVars = vars
