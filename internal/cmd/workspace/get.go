@@ -10,12 +10,12 @@ import (
 
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/printers"
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/yaml"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 type getOption struct {
@@ -136,7 +136,11 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 		raw := make([]byte, 0, len(wss))
 		for _, ws := range wss {
 			v := ws.DeepCopy()
-			kosmo.FillTypeMeta(v, wsv1alpha1.GroupVersion)
+			gvk, err := apiutil.GVKForObject(v, o.Scheme)
+			if err != nil {
+				return err
+			}
+			v.SetGroupVersionKind(gvk)
 			rawObj, err := yaml.Marshal(v)
 			if err != nil {
 				o.Logr.Error(err, "failed to marshal yaml", "workspace", v.Name)

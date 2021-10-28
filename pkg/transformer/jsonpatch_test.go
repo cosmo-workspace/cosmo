@@ -3,6 +3,7 @@ package transformer
 import (
 	"testing"
 
+	v1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/yaml"
@@ -32,12 +33,14 @@ func TestJSONPatchTransformer_Transform(t *testing.T) {
 				patch: []cosmov1alpha1.Json6902{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   netv1.GroupName,
-								Version: "v1",
-							}.String(),
-							Kind: "Ingress",
-							Name: "test",
+							ObjectReference: v1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   netv1.GroupName,
+									Version: "v1",
+								}.String(),
+								Kind: "Ingress",
+								Name: "test",
+							},
 						},
 						Patch: `[
   {
@@ -91,12 +94,14 @@ spec:
 				patch: []cosmov1alpha1.Json6902{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "",
-								Version: "v1",
-							}.String(),
-							Kind: "Service",
-							Name: "test",
+							ObjectReference: v1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "",
+									Version: "v1",
+								}.String(),
+								Kind: "Service",
+								Name: "test",
+							},
 						},
 						Patch: `[
   {
@@ -150,13 +155,15 @@ spec:
 				patch: []cosmov1alpha1.Json6902{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "",
-								Version: "v1",
-							}.String(),
-							Kind:      "Service",
-							Name:      "test",
-							Namespace: "default",
+							ObjectReference: v1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "",
+									Version: "v1",
+								}.String(),
+								Kind:      "Service",
+								Name:      "test",
+								Namespace: "default",
+							},
 						},
 						Patch: `[
   {
@@ -218,13 +225,15 @@ spec:
 				patch: []cosmov1alpha1.Json6902{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "",
-								Version: "v1",
-							}.String(),
-							Kind:      "Service",
-							Name:      "test",
-							Namespace: "default",
+							ObjectReference: v1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "",
+									Version: "v1",
+								}.String(),
+								Kind:      "Service",
+								Name:      "test",
+								Namespace: "default",
+							},
 						},
 						Patch: `[
   {
@@ -265,7 +274,9 @@ spec:
 				patch: []cosmov1alpha1.Json6902{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							Name: "test",
+							ObjectReference: v1.ObjectReference{
+								Name: "test",
+							},
 						},
 						Patch: `[
   {
@@ -319,12 +330,14 @@ spec:
 				patch: []cosmov1alpha1.Json6902{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "",
-								Version: "v1",
-							}.String(),
-							Kind: "Service",
-							Name: "test",
+							ObjectReference: v1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "",
+									Version: "v1",
+								}.String(),
+								Kind: "Service",
+								Name: "test",
+							},
 						},
 						Patch: `[
   {
@@ -364,12 +377,14 @@ spec:
 				patch: []cosmov1alpha1.Json6902{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "",
-								Version: "v1",
-							}.String(),
-							Kind: "Service",
-							Name: "test",
+							ObjectReference: v1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "",
+									Version: "v1",
+								}.String(),
+								Kind: "Service",
+								Name: "test",
+							},
 						},
 						Patch: `[
   {

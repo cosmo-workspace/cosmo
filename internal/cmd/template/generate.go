@@ -15,12 +15,12 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/yaml"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	cmdutil "github.com/cosmo-workspace/cosmo/pkg/cmdutil"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
@@ -144,7 +144,12 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	o.tmpl.Name = o.Name
-	kosmo.FillTypeMeta(&o.tmpl, cosmov1alpha1.GroupVersion)
+
+	gvk, err := apiutil.GVKForObject(&o.tmpl, o.Scheme)
+	if err != nil {
+		return err
+	}
+	o.tmpl.SetGroupVersionKind(gvk)
 
 	if o.TypeWorkspace {
 		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeWorkspace)

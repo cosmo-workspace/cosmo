@@ -130,7 +130,11 @@ spec:
 			},
 		},
 	}
-	FillTypeMeta(inst1, cosmov1alpha1.GroupVersion)
+	inst1.SetGroupVersionKind(schema.GroupVersionKind{
+		Group:   cosmov1alpha1.GroupVersion.Group,
+		Version: cosmov1alpha1.GroupVersion.Version,
+		Kind:    "Instance",
+	})
 
 	tmpl2 = &cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
@@ -537,7 +541,11 @@ func TestClient_GetTemplate(t *testing.T) {
 				return
 			}
 			if tt.want != nil {
-				FillTypeMeta(tt.want, cosmov1alpha1.GroupVersion)
+				tt.want.SetGroupVersionKind(schema.GroupVersionKind{
+					Group:   cosmov1alpha1.GroupVersion.Group,
+					Version: cosmov1alpha1.GroupVersion.Version,
+					Kind:    "Template",
+				})
 			}
 			if !tt.wantErr && !equality.Semantic.DeepEqual(got, tt.want) {
 				t.Errorf("Client.GetTemplate() = %v, want %v", got, tt.want)
