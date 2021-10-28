@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -76,10 +77,12 @@ func TestUnstructuredToResourceRef(t *testing.T) {
 				updateTimestamp: now,
 			},
 			want: ObjectRef{
-				APIVersion:        "networking.k8s.io/v1",
-				Kind:              "Ingress",
-				Name:              "test",
-				Namespace:         "default",
+				ObjectReference: corev1.ObjectReference{
+					APIVersion: "networking.k8s.io/v1",
+					Kind:       "Ingress",
+					Name:       "test",
+					Namespace:  "default",
+				},
 				CreationTimestamp: &metaCreationTime,
 				UpdateTimestamp:   &now,
 			},

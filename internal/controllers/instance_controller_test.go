@@ -414,12 +414,14 @@ spec:
 				Scale: []cosmov1alpha1.ScalingOverrideSpec{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "apps",
-								Version: "v1",
-							}.String(),
-							Kind: "Deployment",
-							Name: "nginx",
+							ObjectReference: corev1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "apps",
+									Version: "v1",
+								}.String(),
+								Kind: "Deployment",
+								Name: "nginx",
+							},
 						},
 						Replicas: 3,
 					},
@@ -469,12 +471,14 @@ spec:
 				PatchesJson6902: []cosmov1alpha1.Json6902{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "",
-								Version: "v1",
-							}.String(),
-							Kind: "Service",
-							Name: "nginx",
+							ObjectReference: corev1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "",
+									Version: "v1",
+								}.String(),
+								Kind: "Service",
+								Name: "nginx",
+							},
 						},
 						Patch: `
 [

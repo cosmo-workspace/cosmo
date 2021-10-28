@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"reflect"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	appsv1 "k8s.io/api/apps/v1"
@@ -32,26 +31,6 @@ var (
 		Kind:    "Ingress",
 	}
 )
-
-type GVKSetter interface {
-	SetGroupVersionKind(gvk schema.GroupVersionKind)
-}
-
-// FillTypeMeta fills typemeta to marshall yaml
-func FillTypeMeta(obj GVKSetter, gv schema.GroupVersion) {
-	gvk := schema.GroupVersionKind{
-		Group:   gv.Group,
-		Version: gv.Version,
-	}
-
-	if t := reflect.ValueOf(obj).Type(); t.Kind() == reflect.Ptr {
-		gvk.Kind = t.Elem().Name()
-	} else {
-		gvk.Kind = t.Name()
-	}
-
-	obj.SetGroupVersionKind(gvk)
-}
 
 type Comparable interface {
 	GetManagedFields() []metav1.ManagedFieldsEntry
