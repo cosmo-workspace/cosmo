@@ -10,7 +10,6 @@ import (
 
 	"k8s.io/cli-runtime/pkg/printers"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
@@ -77,7 +76,7 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 	columnNames := []string{"ID", "NAME", "ROLE", "NAMESPACE", "STATUS"}
 	fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 	for _, v := range users {
-		rowdata := []string{v.ID, v.DisplayName, v.Role.String(), wsv1alpha1.UserNamespace(v.ID), string(v.Status)}
+		rowdata := []string{v.Name, v.Spec.DisplayName, v.Spec.Role.String(), v.Status.Namespace.Name, string(v.Status.Phase)}
 		fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 	}
 

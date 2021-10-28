@@ -1,10 +1,23 @@
 package v1alpha1
 
 import (
-	"errors"
+	"fmt"
 	"strings"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/pointer"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+)
+
+func init() {
+	SchemeBuilder.Register(&User{}, &UserList{})
+}
+
+const (
+	UserNamespacePrefix     = "cosmo-user-"
+	NamespaceLabelKeyUserID = "cosmo/user-id"
 )
 
 func UserNamespace(userid string) string {
@@ -18,14 +31,72 @@ func UserIDByNamespace(namespace string) string {
 	return strings.TrimPrefix(namespace, UserNamespacePrefix)
 }
 
-// +kubebuilder:object:generate=true
-// User is namespace for Workspace. This is not custom resource but converted to Namespace object.
+// +kubebuilder:object:root=true
+// +kubebuilder:resource:shortName=user
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
+// User is the Schema for the workspaces API
 type User struct {
-	ID          string                `json:"id"`
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   UserSpec   `json:"spec,omitempty"`
+	Status UserStatus `json:"status,omitempty"`
+}
+
+// +kubebuilder:object:root=true
+// UserList contains a list of User
+type UserList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []User `json:"items"`
+}
+
+type UserSpec struct {
 	DisplayName string                `json:"displayName,omitempty"`
 	Role        UserRole              `json:"role,omitempty"`
 	AuthType    UserAuthType          `json:"authType,omitempty"`
+	Addons      []UserAddon           `json:"addons,omitempty"`
 	Status      corev1.NamespacePhase `json:"status,omitempty"`
+}
+
+type UserStatus struct {
+	Phase     corev1.NamespacePhase   `json:"phase,omitempty"`
+	Namespace cosmov1alpha1.ObjectRef `json:"namespace,omitempty"`
+}
+
+type UserAddon struct {
+	Template cosmov1alpha1.TemplateRef `json:"template,omitempty"`
+	Vars     map[string]string         `json:"vars,omitempty"`
+}
+
+func (u User) UserAddonInstances() []cosmov1alpha1.Instance {
+	if len(u.Spec.Addons) == 0 {
+		return nil
+	}
+	insts := make([]cosmov1alpha1.Instance, len(u.Spec.Addons))
+	for i, addon := range u.Spec.Addons {
+		inst := cosmov1alpha1.Instance{}
+		inst.Name = fmt.Sprintf("user-addon-%s", addon.Template.Name)
+		inst.Namespace = u.Status.Namespace.Name
+		inst.Spec = cosmov1alpha1.InstanceSpec{
+			Template: addon.Template,
+			Vars:     addon.Vars,
+		}
+
+		inst.OwnerReferences = []metav1.OwnerReference{
+			{
+				APIVersion:         u.Status.Namespace.APIVersion,
+				Kind:               u.Status.Namespace.Kind,
+				Name:               u.Status.Namespace.Name,
+				UID:                u.Status.Namespace.UID,
+				BlockOwnerDeletion: pointer.Bool(true),
+			},
+		}
+		insts[i] = inst
+	}
+
+	return insts
 }
 
 // UserRole enums
@@ -76,53 +147,4 @@ func (t UserAuthType) IsValid() bool {
 
 func (t UserAuthType) String() string {
 	return string(t)
-}
-
-func ConvertUserNamespaceToUser(ns corev1.Namespace) (*User, error) {
-	user := User{}
-
-	idOnName := UserIDByNamespace(ns.Name)
-	if idOnName == "" {
-		return nil, errors.New("not user namespace")
-	}
-
-	label := ns.GetLabels()
-	if label == nil {
-		return nil, errors.New("label not found")
-	}
-	idOnLabel, ok := label[NamespaceLabelKeyUserID]
-	if !ok {
-		return nil, errors.New("user id not found in label")
-	}
-
-	if idOnName != idOnLabel {
-		return nil, errors.New("user id in namespace name does not match user id in the label")
-	}
-	user.ID = idOnName
-
-	user.Status = ns.Status.Phase
-
-	ann := ns.GetAnnotations()
-	if ann == nil {
-		return nil, errors.New("annotation not found")
-	}
-
-	user.DisplayName, ok = ann[NamespaceAnnKeyUserName]
-	if !ok {
-		return nil, errors.New("user name not found in annotation")
-	}
-	role, ok := ann[NamespaceAnnKeyUserRole]
-	if !ok {
-		return nil, errors.New("user role not found in annotation")
-	}
-	user.Role = UserRole(role)
-
-	authtype := ann[NamespaceAnnKeyUserAuthType]
-	user.AuthType = UserAuthType(authtype)
-
-	if !UserAuthType(user.AuthType).IsValid() {
-		user.AuthType = UserAuthTypeKosmoSecert
-	}
-
-	return &user, nil
 }

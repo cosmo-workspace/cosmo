@@ -533,6 +533,12 @@ export interface User {
     authType?: UserAuthTypeEnum;
     /**
      * 
+     * @type {Array<UserAddons>}
+     * @memberof User
+     */
+    addons?: Array<UserAddons>;
+    /**
+     * 
      * @type {string}
      * @memberof User
      */
@@ -560,6 +566,25 @@ export enum UserAuthTypeEnum {
     KosmoSecret = 'kosmo-secret'
 }
 
+/**
+ * 
+ * @export
+ * @interface UserAddons
+ */
+export interface UserAddons {
+    /**
+     * 
+     * @type {string}
+     * @memberof UserAddons
+     */
+    template: string;
+    /**
+     * 
+     * @type {{ [key: string]: string; }}
+     * @memberof UserAddons
+     */
+    vars?: { [key: string]: string; };
+}
 /**
  * 
  * @export

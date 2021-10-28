@@ -65,7 +65,12 @@ func (o *deleteOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	if _, err := c.DeleteUser(ctx, o.UserID); err != nil {
+	user, err := c.GetUser(ctx, o.UserID)
+	if err != nil {
+		return err
+	}
+
+	if err := c.Delete(ctx, user); err != nil {
 		return err
 	}
 

@@ -45,14 +45,14 @@ func (s *Server) preFetchWorkspaceMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ws, err := s.Klient.GetWorkspaceByUserID(ctx, wsName, user.ID)
+		ws, err := s.Klient.GetWorkspaceByUserID(ctx, wsName, user.Name)
 		if err != nil {
 			if apierrs.IsNotFound(err) {
 				w.WriteHeader(http.StatusNotFound)
 				return
 
 			} else {
-				log.Error(err, "failed to get workspace", "userid", user.ID, "workspace", wsName)
+				log.Error(err, "failed to get workspace", "userid", user.Name, "workspace", wsName)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}

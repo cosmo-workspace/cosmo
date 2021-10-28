@@ -6,29 +6,22 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.0
   creationTimestamp: null
-  name: workspaces.workspace.cosmo-workspace.github.io
+  name: users.workspace.cosmo-workspace.github.io
 spec:
   group: workspace.cosmo-workspace.github.io
   names:
-    kind: Workspace
-    listKind: WorkspaceList
-    plural: workspaces
+    kind: User
+    listKind: UserList
+    plural: users
     shortNames:
-    - ws
-    singular: workspace
+    - user
+    singular: user
   scope: Namespaced
   versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.template.name
-      name: Template
-      type: string
-    - jsonPath: .status.phase
-      name: Phase
-      type: string
-    name: v1alpha1
+  - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Workspace is the Schema for the workspaces API
+        description: User is the Schema for the workspaces API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -43,72 +36,39 @@ spec:
           metadata:
             type: object
           spec:
-            description: WorkspaceSpec defines the desired state of Workspace
             properties:
-              network:
+              addons:
                 items:
-                  description: NetworkRule is an abstract network configuration rule
-                    for workspace
                   properties:
-                    group:
-                      type: string
-                    host:
-                      type: string
-                    httpPath:
-                      type: string
-                    portName:
-                      type: string
-                    portNumber:
-                      type: integer
-                    public:
-                      type: boolean
-                    targetPortNumber:
-                      format: int32
-                      type: integer
-                  required:
-                  - httpPath
-                  - portName
-                  - portNumber
-                  - public
+                    template:
+                      description: TemplateRef defines template to use in Instance
+                        creation
+                      properties:
+                        name:
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    vars:
+                      additionalProperties:
+                        type: string
+                      type: object
                   type: object
                 type: array
-              replicas:
-                format: int64
-                type: integer
-              template:
-                description: TemplateRef defines template to use in Instance creation
-                properties:
-                  name:
-                    type: string
-                required:
-                - name
-                type: object
-              vars:
-                additionalProperties:
-                  type: string
-                type: object
-            required:
-            - template
+              authType:
+                description: UserAuthType enums
+                type: string
+              displayName:
+                type: string
+              role:
+                description: UserRole enums
+                type: string
+              status:
+                type: string
             type: object
           status:
-            description: WorkspaceStatus has status of Workspace
             properties:
-              config:
-                description: Config defines template-dependent or workspace-dependent
-                  configuration metadata for workspace
-                properties:
-                  deploymentName:
-                    type: string
-                  ingressName:
-                    type: string
-                  mainServicePortName:
-                    type: string
-                  serviceName:
-                    type: string
-                  urlbase:
-                    type: string
-                type: object
-              instance:
+              namespace:
                 description: ObjectRef is a reference of resource which is created
                   by the Instance
                 properties:
@@ -153,10 +113,6 @@ spec:
                 type: object
               phase:
                 type: string
-              urls:
-                additionalProperties:
-                  type: string
-                type: object
             type: object
         type: object
     served: true

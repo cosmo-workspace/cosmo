@@ -28,15 +28,6 @@ const (
 	TemplateVarServiceMainPortName = "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}"
 )
 
-// UserNamespace name and keys
-const (
-	UserNamespacePrefix         = "cosmo-user-"
-	NamespaceLabelKeyUserID     = "cosmo/user-id"
-	NamespaceAnnKeyUserName     = "cosmo/user-name"
-	NamespaceAnnKeyUserRole     = "cosmo/user-role"
-	NamespaceAnnKeyUserAuthType = "cosmo/auth-type"
-)
-
 // UserPasswordSecret name and keys
 const (
 	UserPasswordSecretName                        = "password"
@@ -48,6 +39,7 @@ const (
 // TemplateType enum for Workspace
 const (
 	TemplateTypeWorkspace = "workspace"
+	TemplateTypeUserAddon = "user-addon"
 )
 
 // AuthProxy RBAC names

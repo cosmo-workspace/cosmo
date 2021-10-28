@@ -827,6 +827,19 @@ components:
           type: string
           enum:
             - kosmo-secret
+        addons:
+          type: array
+          items:
+            type: object
+            required:
+              - template
+            properties:
+              template:
+                type: string
+              vars:
+                type: object
+                additionalProperties:
+                  type: string
         defaultPassword:
           type: string
         status:

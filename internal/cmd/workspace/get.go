@@ -103,7 +103,7 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 		o.Logr.DebugAll().Info("ListUsers", "users", users)
 
 		for _, user := range users {
-			ws, err := c.ListWorkspacesByUserID(ctx, user.ID)
+			ws, err := c.ListWorkspacesByUserID(ctx, user.Name)
 			if err != nil {
 				return fmt.Errorf("failed to list workspaces: %v", err)
 			}
