@@ -3,6 +3,7 @@ package transformer
 import (
 	"testing"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/yaml"
 
@@ -31,12 +32,14 @@ func TestScalingTransformer_Transform(t *testing.T) {
 				ScalingOverrideSpec: []cosmov1alpha1.ScalingOverrideSpec{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "apps",
-								Version: "v1",
-							}.String(),
-							Kind: "Deployment",
-							Name: "test-deployment",
+							ObjectReference: corev1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "apps",
+									Version: "v1",
+								}.String(),
+								Kind: "Deployment",
+								Name: "test-deployment",
+							},
 						},
 						Replicas: 0,
 					},
@@ -102,12 +105,14 @@ spec:
 				ScalingOverrideSpec: []cosmov1alpha1.ScalingOverrideSpec{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "apps",
-								Version: "v1",
-							}.String(),
-							Kind: "StatefulSet",
-							Name: "test-deployment",
+							ObjectReference: corev1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "apps",
+									Version: "v1",
+								}.String(),
+								Kind: "StatefulSet",
+								Name: "test-deployment",
+							},
 						},
 						Replicas: 0,
 					},
@@ -172,12 +177,14 @@ spec:
 				ScalingOverrideSpec: []cosmov1alpha1.ScalingOverrideSpec{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							APIVersion: metav1.GroupVersion{
-								Group:   "apps",
-								Version: "v1",
-							}.String(),
-							Kind: "Deployment",
-							Name: "notfound",
+							ObjectReference: corev1.ObjectReference{
+								APIVersion: metav1.GroupVersion{
+									Group:   "apps",
+									Version: "v1",
+								}.String(),
+								Kind: "Deployment",
+								Name: "notfound",
+							},
 						},
 						Replicas: 0,
 					},
