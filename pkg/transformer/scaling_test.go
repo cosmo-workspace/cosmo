@@ -3,7 +3,7 @@ package transformer
 import (
 	"testing"
 
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/yaml"
 
@@ -32,7 +32,7 @@ func TestScalingTransformer_Transform(t *testing.T) {
 				ScalingOverrideSpec: []cosmov1alpha1.ScalingOverrideSpec{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							ObjectReference: v1.ObjectReference{
+							ObjectReference: corev1.ObjectReference{
 								APIVersion: metav1.GroupVersion{
 									Group:   "apps",
 									Version: "v1",
@@ -105,7 +105,7 @@ spec:
 				ScalingOverrideSpec: []cosmov1alpha1.ScalingOverrideSpec{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							ObjectReference: v1.ObjectReference{
+							ObjectReference: corev1.ObjectReference{
 								APIVersion: metav1.GroupVersion{
 									Group:   "apps",
 									Version: "v1",
@@ -177,7 +177,7 @@ spec:
 				ScalingOverrideSpec: []cosmov1alpha1.ScalingOverrideSpec{
 					{
 						Target: cosmov1alpha1.ObjectRef{
-							ObjectReference: v1.ObjectReference{
+							ObjectReference: corev1.ObjectReference{
 								APIVersion: metav1.GroupVersion{
 									Group:   "apps",
 									Version: "v1",
