@@ -101,10 +101,10 @@ auth-proxy: update-version generate fmt vet
 
 # Update version in version.go
 update-version:
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+[-alpha]*[-beta]*/${MANAGER_VERSION}/" ./cmd/controller-manager/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+[-alpha]*[-beta]*/${DASHBOARD_VERSION}/" ./cmd/dashboard/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+[-alpha]*[-beta]*/${COSMOCTL_VERSION}/" ./cmd/cosmoctl/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+[-alpha]*[-beta]*/${AUTHPROXY_VERSION}/" ./cmd/auth-proxy/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* /${MANAGER_VERSION} /" ./cmd/controller-manager/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* /${DASHBOARD_VERSION} /" ./cmd/dashboard/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* /${COSMOCTL_VERSION} /" ./cmd/cosmoctl/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* /${AUTHPROXY_VERSION} /" ./cmd/auth-proxy/main.go
 	cd config/manager && kustomize edit set image controller=${IMG_MANAGER}
 	cd config/dashboard && kustomize edit set image dashboard=${IMG_DASHBOARD}
 
