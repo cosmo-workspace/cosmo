@@ -12,7 +12,6 @@ resources:
 - role.yaml
 - role_binding.yaml
 - certificate.yaml
-- ../auth-proxy
 
 namespace: cosmo-system
 
