@@ -48,6 +48,8 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		h.Log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
+	before := ws.DeepCopy()
+	h.Log.DebugAll().DumpObject(h.Client.Scheme(), before, "request workspace")
 
 	tmpl, err := h.Client.GetTemplate(ctx, ws.Spec.Template.Name)
 	if err != nil {
@@ -79,6 +81,8 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 
 	// sort network rules
 	ws.Spec.Network = sortNetworkRule(ws.Spec.Network)
+
+	h.Log.Debug().PrintObjectDiff(before, ws)
 
 	marshaled, err := json.Marshal(ws)
 	if err != nil {
@@ -116,6 +120,7 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 		h.Log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
+	h.Log.DebugAll().DumpObject(h.Client.Scheme(), ws, "request workspace")
 
 	// check namespace for Workspace
 	userid := wsv1alpha1.UserIDByNamespace(ws.GetNamespace())
