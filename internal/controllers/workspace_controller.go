@@ -100,10 +100,12 @@ func instanceRef(inst *cosmov1alpha1.Instance) cosmov1alpha1.ObjectRef {
 	now := metav1.Now()
 	kosmo.FillTypeMeta(inst, cosmov1alpha1.GroupVersion)
 	return cosmov1alpha1.ObjectRef{
-		APIVersion:        inst.APIVersion,
-		Kind:              inst.Kind,
-		Name:              inst.Name,
-		Namespace:         inst.Namespace,
+		ObjectReference: corev1.ObjectReference{
+			APIVersion: inst.APIVersion,
+			Kind:       inst.Kind,
+			Name:       inst.Name,
+			Namespace:  inst.Namespace,
+		},
 		CreationTimestamp: &now,
 		UpdateTimestamp:   &now,
 	}

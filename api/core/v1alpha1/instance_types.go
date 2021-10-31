@@ -101,12 +101,9 @@ type InstanceStatus struct {
 
 // ObjectRef is a reference of resource which is created by the Instance
 type ObjectRef struct {
-	APIVersion        string       `json:"apiVersion"`
-	Kind              string       `json:"kind"`
-	Name              string       `json:"name,omitempty"`
-	Namespace         string       `json:"namespace,omitempty"`
-	CreationTimestamp *metav1.Time `json:"creationTimestamp,omitempty"`
-	UpdateTimestamp   *metav1.Time `json:"updateTimestamp,omitempty"`
+	corev1.ObjectReference `json:",inline"`
+	CreationTimestamp      *metav1.Time `json:"creationTimestamp,omitempty"`
+	UpdateTimestamp        *metav1.Time `json:"updateTimestamp,omitempty"`
 }
 
 type gvkObject interface {
