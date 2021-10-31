@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
@@ -48,11 +48,11 @@ func TestUnstructuredToResourceRef(t *testing.T) {
 	creationTime = creationTime.Local()
 	metaCreationTime := metav1.NewTime(creationTime)
 
-	now := v1.Now()
+	now := metav1.Now()
 
 	type args struct {
 		obj             unstructured.Unstructured
-		updateTimestamp v1.Time
+		updateTimestamp metav1.Time
 	}
 	tests := []struct {
 		name string
@@ -76,10 +76,12 @@ func TestUnstructuredToResourceRef(t *testing.T) {
 				updateTimestamp: now,
 			},
 			want: ObjectRef{
-				APIVersion:        "networking.k8s.io/v1",
-				Kind:              "Ingress",
-				Name:              "test",
-				Namespace:         "default",
+				ObjectReference: corev1.ObjectReference{
+					APIVersion: "networking.k8s.io/v1",
+					Kind:       "Ingress",
+					Name:       "test",
+					Namespace:  "default",
+				},
 				CreationTimestamp: &metaCreationTime,
 				UpdateTimestamp:   &now,
 			},
