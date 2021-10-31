@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-VERSION ?= v0.2.0-user-addon-2
+VERSION ?= v0.1.0
 
 MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
@@ -101,10 +101,10 @@ auth-proxy: update-version generate fmt vet
 
 # Update version in version.go
 update-version:
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* /${MANAGER_VERSION} /" ./cmd/controller-manager/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* /${DASHBOARD_VERSION} /" ./cmd/dashboard/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* /${COSMOCTL_VERSION} /" ./cmd/cosmoctl/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* /${AUTHPROXY_VERSION} /" ./cmd/auth-proxy/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${MANAGER_VERSION} cosmo-workspace/" ./cmd/controller-manager/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${DASHBOARD_VERSION} cosmo-workspace/" ./cmd/dashboard/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${COSMOCTL_VERSION} cosmo-workspace/" ./cmd/cosmoctl/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${AUTHPROXY_VERSION} cosmo-workspace/" ./cmd/auth-proxy/main.go
 	cd config/manager && kustomize edit set image controller=${IMG_MANAGER}
 	cd config/dashboard && kustomize edit set image dashboard=${IMG_DASHBOARD}
 
