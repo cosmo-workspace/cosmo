@@ -32,9 +32,15 @@ func UserIDByNamespace(namespace string) string {
 }
 
 // +kubebuilder:object:root=true
-// +kubebuilder:resource:shortName=user
+// +kubebuilder:resource:scope="Cluster"
 // +kubebuilder:subresource:status
 // +kubebuilder:storageversion
+// +kubebuilder:printcolumn:name="Display-Name",type=string,JSONPath=`.spec.displayName`
+// +kubebuilder:printcolumn:name="Role",type=string,JSONPath=`.spec.role`
+// +kubebuilder:printcolumn:name="Auth-Type",type=string,JSONPath=`.spec.authType`
+// +kubebuilder:printcolumn:name="Addons",type=string,JSONPath=`.spec.addons`
+// +kubebuilder:printcolumn:name="Namespace",type=string,JSONPath=`.status.namespace.name`
+// +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
 // User is the Schema for the workspaces API
 type User struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -99,6 +105,7 @@ func (u User) UserAddonInstances() []cosmov1alpha1.Instance {
 	return insts
 }
 
+// +kubebuilder:validation:enum=cosmo-admin
 // UserRole enums
 type UserRole string
 
@@ -125,6 +132,7 @@ func (r UserRole) String() string {
 	return string(r)
 }
 
+// +kubebuilder:validation:enum=kosmo-secret
 // UserAuthType enums
 type UserAuthType string
 

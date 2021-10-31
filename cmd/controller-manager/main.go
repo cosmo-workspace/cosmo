@@ -108,6 +108,14 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", controllers.WsStatControllerFieldManager)
 		os.Exit(1)
 	}
+	if err = (&controllers.UserReconciler{
+		Client:   kosmo.NewClient(mgr.GetClient()),
+		Recorder: mgr.GetEventRecorderFor(controllers.UserControllerFieldManager),
+		Scheme:   mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", controllers.UserControllerFieldManager)
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	// Webhook
@@ -115,6 +123,8 @@ func main() {
 	(&webhooks.InstanceValidationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler"))}).SetupWebhookWithManager(mgr)
 	(&webhooks.WorkspaceMutationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler"))}).SetupWebhookWithManager(mgr)
 	(&webhooks.WorkspaceValidationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler"))}).SetupWebhookWithManager(mgr)
+	(&webhooks.UserMutationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler"))}).SetupWebhookWithManager(mgr)
+	(&webhooks.UserValidationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler"))}).SetupWebhookWithManager(mgr)
 
 	ctx := ctrl.SetupSignalHandler()
 

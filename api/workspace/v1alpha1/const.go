@@ -1,7 +1,5 @@
 package v1alpha1
 
-import "fmt"
-
 // Instance annotation keys for WorkspaceConfig
 const (
 	InstanceAnnKeyURLBase                  = "cosmo/ws-urlbase"
@@ -11,14 +9,9 @@ const (
 	InstanceAnnKeyWorkspaceServiceMainPort = "cosmo/ws-service-main-port"
 )
 
-// Key of NetworkRule Group
 const (
-	InstanceIngressAnnKeyNetRuleGroupPrefix = "cosmo/ws-netrule-group"
+	TemplateAnnKeyDefaultUserAddon = "cosmo/default-user-addon"
 )
-
-func InstanceIngressAnnKeyNetRuleGroup(portName string) string {
-	return fmt.Sprintf("%s.%s", InstanceIngressAnnKeyNetRuleGroupPrefix, portName)
-}
 
 // Template variables key
 const (

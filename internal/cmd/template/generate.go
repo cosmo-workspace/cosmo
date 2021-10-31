@@ -28,14 +28,17 @@ type generateOption struct {
 	*cmdutil.CliOptions
 	wsConfig wsv1alpha1.Config
 
-	Name                         string
-	OutputFile                   string
-	RequiredVars                 string
+	Name         string
+	OutputFile   string
+	RequiredVars string
+
 	TypeWorkspace                bool
 	DisableInjectAuthProxy       bool
 	InjectAuthProxyImage         string
 	InjectAuthProxyTLSSecretName string
 	ServiceAccount               string
+
+	TypeUserAddon bool
 
 	tmpl cosmov1alpha1.Template
 }
@@ -71,7 +74,7 @@ Example:
 
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "template name (use directory name if not specified)")
 	cmd.Flags().StringVarP(&o.OutputFile, "output", "o", "", "write output into file (default: Stdout)")
-	cmd.Flags().StringVar(&o.RequiredVars, "required-vars", "", "template custom vars to be replaced by instance")
+	cmd.Flags().StringVar(&o.RequiredVars, "required-vars", "", "template custom vars to be replaced by instance. format --required-vars VAR1,VAR2:default-value")
 
 	cmd.Flags().BoolVar(&o.TypeWorkspace, "workspace", false, "template as type workspace")
 	cmd.Flags().BoolVar(&o.DisableInjectAuthProxy, "disable-inject-auth-proxy", false, "disable injection cosmo-auth-proxy sidecar")
@@ -84,6 +87,8 @@ Example:
 	cmd.Flags().StringVar(&o.wsConfig.IngressName, "workspace-ingress-name", "", "Ingress name for Workspace. use with --workspace")
 	cmd.Flags().StringVar(&o.wsConfig.ServiceMainPortName, "workspace-main-service-port-name", "", "ServicePort name for Workspace main container port. use with --workspace")
 	cmd.Flags().StringVar(&o.wsConfig.URLBase, "workspace-urlbase", "", "Workspace URLBase. use with --workspace")
+
+	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type user-addon")
 
 	return cmd
 }
@@ -107,6 +112,10 @@ func (o *generateOption) Validate(cmd *cobra.Command, args []string) error {
 		if o.wsConfig.URLBase == "" {
 			return errors.New("--workspace-urlbase is required")
 		}
+	}
+
+	if o.TypeWorkspace && o.TypeUserAddon {
+		return errors.New("--workspace and --user-addon is incompatible")
 	}
 
 	return nil
@@ -138,7 +147,12 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 
 		vars := make([]cosmov1alpha1.RequiredVarSpec, 0, len(varsList))
 		for _, v := range varsList {
-			vars = append(vars, cosmov1alpha1.RequiredVarSpec{Var: v})
+			vcol := strings.Split(v, ":")
+			varSpec := cosmov1alpha1.RequiredVarSpec{Var: vcol[0]}
+			if len(vcol) > 1 {
+				varSpec.Default = vcol[1]
+			}
+			vars = append(vars, varSpec)
 		}
 		o.tmpl.Spec.RequiredVars = vars
 	}
@@ -153,6 +167,8 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 
 	if o.TypeWorkspace {
 		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeWorkspace)
+	} else if o.TypeUserAddon {
+		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeUserAddon)
 	}
 
 	return nil

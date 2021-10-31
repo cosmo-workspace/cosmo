@@ -78,42 +78,25 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 		log.Info("initializing password secret")
 		if err := r.ResetPassword(ctx, user.Name); err != nil {
-			defer func() {
-				log.Debug().Info("deleting namespace", "ns", ns)
-				r.Delete(ctx, &ns)
-			}()
-
+			r.Recorder.Eventf(&user, corev1.EventTypeWarning, "Init Failed", "failed to reset password: %v", err)
 			log.Error(err, "failed to reset password")
 			return ctrl.Result{}, err
 		}
-
-		// log.Info("creating role and rolebinding for default serviceaccount")
-		// if err := r.addAuthProxyRoleOnDefaultServiceAccount(ctx, ns.Name); err != nil {
-		// 	defer func() {
-		// 		log.Debug().Info("deleting namespace", "ns", ns)
-		// 		r.Delete(ctx, &ns)
-		// 	}()
-
-		// 	log.Info("failed to create rbacs", "error", err)
-		// 	return ctrl.Result{}, err
-		// }
 
 		addons := user.UserAddonInstances()
 		if len(addons) > 0 {
 			errs := make([]error, 0)
 			for _, addon := range addons {
+				log.Info("creating user addon", "addon", addon.Spec.Template.Name)
+
 				if err := r.Create(ctx, &addon); err != nil {
 					errs = append(errs, fmt.Errorf("failed to create addon %s :%w", addon.Spec.Template.Name, err))
 				}
 			}
 
 			if len(errs) > 0 {
-				defer func() {
-					log.Debug().Info("deleting namespace", "ns", ns)
-					r.Delete(ctx, &ns)
-				}()
-
 				for _, e := range errs {
+					r.Recorder.Eventf(&user, corev1.EventTypeWarning, "Addon Failed", "failed to create user addon: %v", e)
 					log.Error(e, "failed to create user addon")
 				}
 				return ctrl.Result{}, errs[0]
@@ -123,6 +106,8 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	case controllerutil.OperationResultUpdated:
 		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Updated", "namespace is not desired state, updated")
 	}
+
+	user.Status.Phase = ns.Status.Phase
 
 	// update workspace status
 	if !equality.Semantic.DeepEqual(currentUser, user) {
@@ -138,6 +123,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 func (r *UserReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&wsv1alpha1.User{}).
+		Owns(&corev1.Namespace{}).
 		Complete(r)
 }
 
@@ -160,24 +146,3 @@ func (r *UserReconciler) patchNamespaceToUserDesired(ns *corev1.Namespace, user 
 
 	return nil
 }
-
-// const (
-// 	DefaultServiceAccount = "default"
-// )
-
-// func (c *Client) addAuthProxyRoleOnDefaultServiceAccount(ctx context.Context, namespace string) error {
-// 	log := clog.FromContext(ctx).WithCaller()
-
-// 	role := wsv1alpha1.AuthProxyRole(namespace)
-// 	log.DebugAll().Info("creating role", "role", role)
-// 	if err := c.Create(ctx, &role); err != nil {
-// 		return err
-// 	}
-
-// 	roleb := wsv1alpha1.AuthProxyRoleBindings(DefaultServiceAccount, namespace)
-// 	log.DebugAll().Info("creating rolebinding", "rolebinding", roleb)
-// 	if err := c.Create(ctx, &roleb); err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }

@@ -40,7 +40,7 @@ func createCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
 	cmd.Flags().StringVar(&o.Role, "role", "", "user role")
 	cmd.Flags().BoolVar(&o.Admin, "admin", false, "user admin role")
 	cmd.Flags().StringVar(&o.Addons, "addons", "", "user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' ")
-	cmd.Flags().StringVar(&o.Addons, "addon-vars", "", "user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' ")
+	cmd.Flags().StringVar(&o.AddonVars, "addon-vars", "", "user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' ")
 	return cmd
 }
 
@@ -79,20 +79,20 @@ func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
 
 	o.UserID = args[0]
 
-	user := wsv1alpha1.User{}
-	user.SetName(o.UserID)
-	user.Spec = wsv1alpha1.UserSpec{}
+	o.user = &wsv1alpha1.User{}
+	o.user.SetName(o.UserID)
+	o.user.Spec = wsv1alpha1.UserSpec{}
 
 	if o.DisplayName != "" {
-		user.Spec.DisplayName = o.DisplayName
+		o.user.Spec.DisplayName = o.DisplayName
 	} else {
-		user.Spec.DisplayName = o.UserID
+		o.user.Spec.DisplayName = o.UserID
 	}
 
 	if o.Admin {
 		o.Role = wsv1alpha1.UserAdminRole.String()
 	}
-	user.Spec.Role = wsv1alpha1.UserRole(o.Role)
+	o.user.Spec.Role = wsv1alpha1.UserRole(o.Role)
 
 	if o.Addons != "" {
 		// format is "ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2", split by ,
@@ -143,7 +143,6 @@ func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	o.user = &user
 	return nil
 }
 
