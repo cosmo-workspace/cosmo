@@ -7,6 +7,7 @@ import (
 
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -63,6 +64,7 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 		DisplayName: req.DisplayName,
 		Role:        userrole,
 		AuthType:    authtype,
+		Addons:      convertDashv1alpha1UserToUserAddon(req.Addons),
 	}
 
 	log.Debug().Info("creating user object", "user", user)
@@ -182,9 +184,9 @@ func (s *Server) DeleteUser(ctx context.Context, userId string) (dashv1alpha1.Im
 }
 
 func convertUserToDashv1alpha1User(user wsv1alpha1.User) *dashv1alpha1.User {
-	addons := make([]dashv1alpha1.UserAddons, len(user.Spec.Addons))
+	addons := make([]dashv1alpha1.ApiV1alpha1UserAddons, len(user.Spec.Addons))
 	for i, v := range user.Spec.Addons {
-		addons[i] = dashv1alpha1.UserAddons{
+		addons[i] = dashv1alpha1.ApiV1alpha1UserAddons{
 			Template: v.Template.Name,
 			Vars:     v.Vars,
 		}
@@ -198,4 +200,18 @@ func convertUserToDashv1alpha1User(user wsv1alpha1.User) *dashv1alpha1.User {
 		Addons:      addons,
 		Status:      string(user.Status.Phase),
 	}
+}
+
+func convertDashv1alpha1UserToUserAddon(addons []dashv1alpha1.ApiV1alpha1UserAddons) []wsv1alpha1.UserAddon {
+	a := make([]wsv1alpha1.UserAddon, len(addons))
+	for i, v := range addons {
+		addon := wsv1alpha1.UserAddon{
+			Template: cosmov1alpha1.TemplateRef{
+				Name: v.Template,
+			},
+			Vars: v.Vars,
+		}
+		a[i] = addon
+	}
+	return a
 }

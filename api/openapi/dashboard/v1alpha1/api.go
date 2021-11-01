@@ -28,6 +28,7 @@ type AuthApiRouter interface {
 // The TemplateApiRouter implementation should parse necessary information from the http request,
 // pass the data to a TemplateApiServicer to perform the required actions, then write the service results to the http response.
 type TemplateApiRouter interface {
+	GetUserAddonTemplates(http.ResponseWriter, *http.Request)
 	GetWorkspaceTemplates(http.ResponseWriter, *http.Request)
 }
 
@@ -71,6 +72,7 @@ type AuthApiServicer interface {
 // while the service implementation can ignored with the .openapi-generator-ignore file
 // and updated with the logic required for the API.
 type TemplateApiServicer interface {
+	GetUserAddonTemplates(context.Context) (ImplResponse, error)
 	GetWorkspaceTemplates(context.Context) (ImplResponse, error)
 }
 

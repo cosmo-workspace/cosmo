@@ -28,7 +28,7 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 		return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
 	}
 
-	wstmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
+	addonTmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
 	for _, v := range tmpls {
 		cfg, err := wsv1alpha1.ConfigFromTemplateAnnotations(&v)
 		if err != nil {
@@ -46,10 +46,44 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 			RequiredVars: requiredVars,
 			UrlBase:      cfg.URLBase,
 		}
-		wstmpls = append(wstmpls, wstmpl)
+		addonTmpls = append(addonTmpls, wstmpl)
 	}
 
-	res.Items = wstmpls
+	res.Items = addonTmpls
+
+	if len(res.Items) == 0 {
+		res.Message = "No items found"
+	}
+	return dashv1alpha1.Response(http.StatusOK, res), nil
+}
+
+func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
+	log := clog.FromContext(ctx).WithCaller()
+
+	res := dashv1alpha1.ListTemplatesResponse{}
+
+	tmpls, err := s.Klient.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeUserAddon})
+	if err != nil {
+		res.Message = "Failed to list UserAddon Templates"
+		log.Error(err, res.Message)
+		return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
+	}
+
+	addonTmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
+	for _, v := range tmpls {
+		requiredVars := make([]string, 0, len(v.Spec.RequiredVars))
+		for _, v := range v.Spec.RequiredVars {
+			requiredVars = append(requiredVars, v.Var)
+		}
+
+		addonTmpl := dashv1alpha1.Template{
+			Name:         v.Name,
+			RequiredVars: requiredVars,
+		}
+		addonTmpls = append(addonTmpls, addonTmpl)
+	}
+
+	res.Items = addonTmpls
 
 	if len(res.Items) == 0 {
 		res.Message = "No items found"

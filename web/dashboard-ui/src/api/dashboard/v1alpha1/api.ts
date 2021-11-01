@@ -24,6 +24,25 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 /**
  * 
  * @export
+ * @interface ApiV1alpha1UserAddons
+ */
+export interface ApiV1alpha1UserAddons {
+    /**
+     * 
+     * @type {string}
+     * @memberof ApiV1alpha1UserAddons
+     */
+    template: string;
+    /**
+     * 
+     * @type {{ [key: string]: string; }}
+     * @memberof ApiV1alpha1UserAddons
+     */
+    vars?: { [key: string]: string; };
+}
+/**
+ * 
+ * @export
  * @interface CreateUserRequest
  */
 export interface CreateUserRequest {
@@ -51,6 +70,12 @@ export interface CreateUserRequest {
      * @memberof CreateUserRequest
      */
     authType?: string;
+    /**
+     * 
+     * @type {Array<ApiV1alpha1UserAddons>}
+     * @memberof CreateUserRequest
+     */
+    addons?: Array<ApiV1alpha1UserAddons>;
 }
 /**
  * 
@@ -533,10 +558,10 @@ export interface User {
     authType?: UserAuthTypeEnum;
     /**
      * 
-     * @type {Array<UserAddons>}
+     * @type {Array<ApiV1alpha1UserAddons>}
      * @memberof User
      */
-    addons?: Array<UserAddons>;
+    addons?: Array<ApiV1alpha1UserAddons>;
     /**
      * 
      * @type {string}
@@ -566,25 +591,6 @@ export enum UserAuthTypeEnum {
     KosmoSecret = 'kosmo-secret'
 }
 
-/**
- * 
- * @export
- * @interface UserAddons
- */
-export interface UserAddons {
-    /**
-     * 
-     * @type {string}
-     * @memberof UserAddons
-     */
-    template: string;
-    /**
-     * 
-     * @type {{ [key: string]: string; }}
-     * @memberof UserAddons
-     */
-    vars?: { [key: string]: string; };
-}
 /**
  * 
  * @export
@@ -936,6 +942,38 @@ export class AuthApi extends BaseAPI {
 export const TemplateApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
+         * List templates typed useraddon
+         * @summary List useraddon templates
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserAddonTemplates: async (options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/v1alpha1/template/useraddon`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * List templates typed workspace
          * @summary List workspace templates
          * @param {*} [options] Override http request option.
@@ -978,6 +1016,16 @@ export const TemplateApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = TemplateApiAxiosParamCreator(configuration)
     return {
         /**
+         * List templates typed useraddon
+         * @summary List useraddon templates
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getUserAddonTemplates(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListTemplatesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUserAddonTemplates(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * List templates typed workspace
          * @summary List workspace templates
          * @param {*} [options] Override http request option.
@@ -998,6 +1046,15 @@ export const TemplateApiFactory = function (configuration?: Configuration, baseP
     const localVarFp = TemplateApiFp(configuration)
     return {
         /**
+         * List templates typed useraddon
+         * @summary List useraddon templates
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserAddonTemplates(options?: any): AxiosPromise<ListTemplatesResponse> {
+            return localVarFp.getUserAddonTemplates(options).then((request) => request(axios, basePath));
+        },
+        /**
          * List templates typed workspace
          * @summary List workspace templates
          * @param {*} [options] Override http request option.
@@ -1016,6 +1073,17 @@ export const TemplateApiFactory = function (configuration?: Configuration, baseP
  * @extends {BaseAPI}
  */
 export class TemplateApi extends BaseAPI {
+    /**
+     * List templates typed useraddon
+     * @summary List useraddon templates
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TemplateApi
+     */
+    public getUserAddonTemplates(options?: any) {
+        return TemplateApiFp(this.configuration).getUserAddonTemplates(options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * List templates typed workspace
      * @summary List workspace templates

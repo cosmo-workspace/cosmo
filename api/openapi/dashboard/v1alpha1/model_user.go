@@ -19,7 +19,7 @@ type User struct {
 
 	AuthType string `json:"authType,omitempty"`
 
-	Addons []UserAddons `json:"addons,omitempty"`
+	Addons []ApiV1alpha1UserAddons `json:"addons,omitempty"`
 
 	DefaultPassword string `json:"defaultPassword,omitempty"`
 
@@ -38,7 +38,7 @@ func AssertUserRequired(obj User) error {
 	}
 
 	for _, el := range obj.Addons {
-		if err := AssertUserAddonsRequired(el); err != nil {
+		if err := AssertApiV1alpha1UserAddonsRequired(el); err != nil {
 			return err
 		}
 	}

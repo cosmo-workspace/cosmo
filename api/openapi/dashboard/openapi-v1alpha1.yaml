@@ -146,6 +146,39 @@ paths:
           description: Not authorized
         "500":
           description: Internal server error
+  
+  /api/v1alpha1/template/useraddon:
+    get:
+      tags:
+        - template
+      operationId: getUserAddonTemplates
+      summary: List useraddon templates
+      description: List templates typed useraddon
+      security:
+        - cookieAuth: []
+      parameters: []
+      responses:
+        "200":
+          description: A JSON array of Template model
+          content:
+            application/json:
+              schema:
+                title: ListTemplatesResponse
+                type: object
+                required:
+                  - items
+                properties:
+                  message:
+                    type: string
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Template"
+
+        "401":
+          description: Not authorized
+        "500":
+          description: Internal server error
 
   /api/v1alpha1/user:
     get:
@@ -208,6 +241,20 @@ paths:
                   type: string
                 authType:
                   type: string
+                addons:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - template
+                    properties:
+                      template:
+                        type: string
+                      vars:
+                        type: object
+                        additionalProperties:
+                          type: string
+
       responses:
         "201":
           description: Successfully user created
