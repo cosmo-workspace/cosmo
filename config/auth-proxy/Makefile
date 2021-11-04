@@ -1,5 +1,7 @@
 all: user-addon
 
 user-addon:
-	kustomize build config/auth-proxy/ | cosmoctl  template generate --name cosmo-auth-proxy-role \
-		--user-addon --required-vars SERVICE_ACCOUNT:default > user-addon-cosmo-auth-proxy-role.yaml
+	kustomize build . | cosmoctl  template generate --name cosmo-auth-proxy-role \
+		--user-addon --required-vars SERVICE_ACCOUNT:default \
+		--desc 'Role and Rolebinding for COSMO Auth Proxy. By default, it is bound to the service account named `default` in the user namespace.' \
+		--set-default-user-addon --set-sysns-user-addon cosmo-system > user-addon-cosmo-auth-proxy-role.yaml
