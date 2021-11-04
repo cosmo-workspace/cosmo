@@ -21,6 +21,9 @@ const (
 	TemplateVarServiceName         = "{{WORKSPACE_SERVICE_NAME}}"
 	TemplateVarIngressName         = "{{WORKSPACE_INGRESS_NAME}}"
 	TemplateVarServiceMainPortName = "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}"
+
+	// TemplateVarUserNamespace is variable for user addon in system namespace.
+	TemplateVarUserNamespace = "{{USER_NAMESPACE}}"
 )
 
 // UserPasswordSecret name and keys

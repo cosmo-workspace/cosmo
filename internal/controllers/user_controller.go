@@ -173,6 +173,11 @@ func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.Us
 		inst := cosmov1alpha1.Instance{}
 		inst.Name = fmt.Sprintf("user-addon-%s", addon.Template.Name)
 
+		if addon.Vars == nil {
+			addon.Vars = make(map[string]string)
+		}
+		addon.Vars[wsv1alpha1.TemplateVarUserNamespace] = u.Status.Namespace.Name
+
 		inst.Spec = cosmov1alpha1.InstanceSpec{
 			Template: addon.Template,
 			Vars:     addon.Vars,

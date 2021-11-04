@@ -4,7 +4,6 @@ kind: Template
 metadata:
   annotations:
     cosmo/default-user-addon: "true"
-    cosmo/sysns-user-addon: cosmo-system
   creationTimestamp: null
   labels:
     cosmo/type: user-addon
