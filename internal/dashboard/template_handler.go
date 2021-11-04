@@ -3,11 +3,14 @@ package dashboard
 import (
 	"context"
 	"net/http"
+	"strconv"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/gorilla/mux"
+	"k8s.io/utils/pointer"
 )
 
 func (s *Server) useTemplateMiddleWare(router *mux.Router, routes dashv1alpha1.Routes) {
@@ -30,23 +33,7 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 
 	addonTmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
 	for _, v := range tmpls {
-		cfg, err := wsv1alpha1.ConfigFromTemplateAnnotations(&v)
-		if err != nil {
-			log.Info("workspace template is invalid", "error", err, "template", v.Name, "logLevel", "warn")
-			continue
-		}
-
-		requiredVars := make([]string, 0, len(v.Spec.RequiredVars))
-		for _, v := range v.Spec.RequiredVars {
-			requiredVars = append(requiredVars, v.Var)
-		}
-
-		wstmpl := dashv1alpha1.Template{
-			Name:         v.Name,
-			RequiredVars: requiredVars,
-			UrlBase:      cfg.URLBase,
-		}
-		addonTmpls = append(addonTmpls, wstmpl)
+		addonTmpls = append(addonTmpls, convertTemplateToDashv1alpha1Template(v))
 	}
 
 	res.Items = addonTmpls
@@ -69,18 +56,19 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 		return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
 	}
 
-	addonTmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
-	for _, v := range tmpls {
-		requiredVars := make([]string, 0, len(v.Spec.RequiredVars))
-		for _, v := range v.Spec.RequiredVars {
-			requiredVars = append(requiredVars, v.Var)
+	addonTmpls := make([]dashv1alpha1.Template, len(tmpls))
+	for i, v := range tmpls {
+		tmpl := convertTemplateToDashv1alpha1Template(v)
+
+		if ann := v.GetAnnotations(); ann != nil {
+			if b, ok := ann[wsv1alpha1.TemplateAnnKeyDefaultUserAddon]; ok {
+				if defaultAddon, err := strconv.ParseBool(b); err == nil && defaultAddon {
+					tmpl.IsDefaultUserAddon = pointer.Bool(true)
+				}
+			}
 		}
 
-		addonTmpl := dashv1alpha1.Template{
-			Name:         v.Name,
-			RequiredVars: requiredVars,
-		}
-		addonTmpls = append(addonTmpls, addonTmpl)
+		addonTmpls[i] = tmpl
 	}
 
 	res.Items = addonTmpls
@@ -89,4 +77,20 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 		res.Message = "No items found"
 	}
 	return dashv1alpha1.Response(http.StatusOK, res), nil
+}
+
+func convertTemplateToDashv1alpha1Template(tmpl cosmov1alpha1.Template) dashv1alpha1.Template {
+	requiredVars := make([]dashv1alpha1.TemplateRequiredVars, len(tmpl.Spec.RequiredVars))
+	for i, v := range tmpl.Spec.RequiredVars {
+		requiredVars[i] = dashv1alpha1.TemplateRequiredVars{
+			VarName:      v.Var,
+			DefaultValue: v.Default,
+		}
+	}
+
+	return dashv1alpha1.Template{
+		Name:         tmpl.Name,
+		RequiredVars: requiredVars,
+		Description:  tmpl.Spec.Description,
+	}
 }

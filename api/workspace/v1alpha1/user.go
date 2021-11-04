@@ -1,12 +1,10 @@
 package v1alpha1
 
 import (
-	"fmt"
 	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
@@ -74,35 +72,6 @@ type UserStatus struct {
 type UserAddon struct {
 	Template cosmov1alpha1.TemplateRef `json:"template,omitempty"`
 	Vars     map[string]string         `json:"vars,omitempty"`
-}
-
-func (u User) UserAddonInstances() []cosmov1alpha1.Instance {
-	if len(u.Spec.Addons) == 0 {
-		return nil
-	}
-	insts := make([]cosmov1alpha1.Instance, len(u.Spec.Addons))
-	for i, addon := range u.Spec.Addons {
-		inst := cosmov1alpha1.Instance{}
-		inst.Name = fmt.Sprintf("user-addon-%s", addon.Template.Name)
-		inst.Namespace = u.Status.Namespace.Name
-		inst.Spec = cosmov1alpha1.InstanceSpec{
-			Template: addon.Template,
-			Vars:     addon.Vars,
-		}
-
-		inst.OwnerReferences = []metav1.OwnerReference{
-			{
-				APIVersion:         u.Status.Namespace.APIVersion,
-				Kind:               u.Status.Namespace.Kind,
-				Name:               u.Status.Namespace.Name,
-				UID:                u.Status.Namespace.UID,
-				BlockOwnerDeletion: pointer.Bool(true),
-			},
-		}
-		insts[i] = inst
-	}
-
-	return insts
 }
 
 // +kubebuilder:validation:enum=cosmo-admin

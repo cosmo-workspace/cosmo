@@ -147,24 +147,23 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 	}
 
 	// check addon template is labeled as user-addon
-	addons := user.UserAddonInstances()
-	if len(addons) > 0 {
-		for _, addon := range addons {
-			tmpl, err := h.Client.GetTemplate(ctx, addon.Spec.Template.Name)
+	if len(user.Spec.Addons) > 0 {
+		for _, addon := range user.Spec.Addons {
+			tmpl, err := h.Client.GetTemplate(ctx, addon.Template.Name)
 			if err != nil {
-				h.Log.Error(err, "failed to create addon", "user", user.Name, "addon", addon.Spec.Template.Name)
-				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s :%v", addon.Spec.Template.Name, err))
+				h.Log.Error(err, "failed to create addon", "user", user.Name, "addon", addon.Template.Name)
+				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s :%v", addon.Template.Name, err))
 			}
 
 			label := tmpl.GetLabels()
 			if label == nil {
-				h.Log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Spec.Template.Name)
-				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Spec.Template.Name))
+				h.Log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
+				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Template.Name))
 			}
 
 			if t, ok := label[cosmov1alpha1.LabelKeyTemplateType]; !ok || t != wsv1alpha1.TemplateTypeUserAddon {
-				h.Log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Spec.Template.Name)
-				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Spec.Template.Name))
+				h.Log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
+				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Template.Name))
 			}
 		}
 	}

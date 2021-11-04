@@ -407,16 +407,41 @@ export interface Template {
     name: string;
     /**
      * 
-     * @type {Array<string>}
-     * @memberof Template
-     */
-    requiredVars?: Array<string>;
-    /**
-     * 
      * @type {string}
      * @memberof Template
      */
-    urlBase?: string;
+    description?: string;
+    /**
+     * 
+     * @type {Array<TemplateRequiredVars>}
+     * @memberof Template
+     */
+    requiredVars?: Array<TemplateRequiredVars>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Template
+     */
+    isDefaultUserAddon?: boolean | null;
+}
+/**
+ * 
+ * @export
+ * @interface TemplateRequiredVars
+ */
+export interface TemplateRequiredVars {
+    /**
+     * 
+     * @type {string}
+     * @memberof TemplateRequiredVars
+     */
+    varName: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TemplateRequiredVars
+     */
+    defaultValue?: string;
 }
 /**
  * 

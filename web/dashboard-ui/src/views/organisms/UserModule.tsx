@@ -1,9 +1,29 @@
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { UserApiFactory, User } from "../../api/dashboard/v1alpha1";
+import { UserApiFactory, User, Template, TemplateApiFactory, ApiV1alpha1UserAddons } from "../../api/dashboard/v1alpha1";
 import { ModuleContext } from "../../components/ContextProvider";
 import { useProgress } from "../../components/ProgressProvider";
+
+/**
+   * error handler
+   */
+const useHandleError = () => {
+  const { enqueueSnackbar } = useSnackbar();
+  const history = useHistory();
+
+  const handleError = (error: any) => {
+    console.log('handleError', error);
+    console.log('handleError', error.response);
+    if (error?.response?.status === 401) {
+      history.push('/signin');
+    }
+    const msg = error?.response?.data?.message || error?.message;
+    msg && enqueueSnackbar(msg, { variant: 'error' });
+    throw error;
+  }
+  return { handleError }
+}
 
 /**
  * hooks
@@ -13,7 +33,7 @@ const useUser = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const { setMask, releaseMask } = useProgress();
-  const history = useHistory();
+  const { handleError } = useHandleError();
   const [users, setUsers] = useState<User[]>([]);
   const restUser = UserApiFactory(undefined, "");
 
@@ -30,13 +50,12 @@ const useUser = () => {
   /**
    * CreateDialog: Add user 
    */
-  const createUser = async (id: string, displayName: string, role?: string) => {
+  const createUser = async (id: string, displayName: string, role?: string, addons?: ApiV1alpha1UserAddons[]) => {
     console.log('addUser');
     try {
       setMask();
-      const result = await restUser.postUser({ id, displayName, role });
+      const result = await restUser.postUser({ id, displayName, role, addons });
       enqueueSnackbar(result.data.message, { variant: 'success' });
-      getUsers();
       return result.data.user;
     }
     catch (error) {
@@ -77,19 +96,6 @@ const useUser = () => {
       .finally(() => { releaseMask(); });
   }
 
-  /**
-   * error handler
-   */
-  const handleError = (error: any) => {
-    console.log(error);
-    if (error?.response?.status === 401) {
-      history.push('/signin');
-    }
-    const msg = error?.response?.data?.message || error?.message;
-    msg && enqueueSnackbar(msg, { variant: 'error' });
-    throw error;
-  }
-
   return (
     {
       users,
@@ -101,6 +107,28 @@ const useUser = () => {
   );
 }
 
+/**
+ * TemplateModule
+ */
+ export const useTemplates = () => {
+  console.log('useTemplates');
+
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const restTmpl = TemplateApiFactory(undefined, "");
+  const { handleError } = useHandleError();
+
+  const getUserAddonTemplates = () => {
+    console.log('getUserAddonTemplates');
+    return restTmpl.getUserAddonTemplates()
+      .then(result => { setTemplates(result.data.items.sort((a, b) => (a.name < b.name) ? -1 : 1)); })
+      .catch(error => { handleError(error) });
+  }
+
+  return ({
+    templates,
+    getUserAddonTemplates,
+  });
+}
 
 /**
  * UserProvider

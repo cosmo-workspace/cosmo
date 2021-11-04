@@ -123,7 +123,7 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
       <form onSubmit={handleSubmit(async (inp: Inputs) => {
         const vars: { [key: string]: string } = {};
         console.log('inp', inp);
-        template.requiredVars?.forEach((varName, i) => { vars[varName] = inp.vars[i] });
+        template.requiredVars?.forEach((rqvar, i) => { vars[rqvar.varName] = inp.vars[i] });
         hooks.createWorkspace(user.id, inp.wsName, inp.templateName, vars).then(() => onClose());
       })}>
         <DialogContent>
@@ -155,9 +155,9 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
                 <MenuItem key={template.name} value={template.name}>{template.name}</MenuItem>)
               }
             </TextField>
-            {template.requiredVars?.map((field, index) =>
+            {template.requiredVars?.map((rqvar, index) =>
 
-              <TextField label={field} fullWidth defaultValue="" key={index}
+              <TextField label={rqvar.varName} fullWidth defaultValue={rqvar.defaultValue} key={index}
                 {...registerMui(register(`vars.${index}` as const, {
                   required: { value: true, message: "Required" },
                 }))}

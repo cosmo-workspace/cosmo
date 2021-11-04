@@ -9,8 +9,10 @@ const (
 	InstanceAnnKeyWorkspaceServiceMainPort = "cosmo/ws-service-main-port"
 )
 
+// Template annotation keys for user addon
 const (
 	TemplateAnnKeyDefaultUserAddon = "cosmo/default-user-addon"
+	TemplateAnnKeySystemNamespace  = "cosmo/run-in-system-namespace"
 )
 
 // Template variables key

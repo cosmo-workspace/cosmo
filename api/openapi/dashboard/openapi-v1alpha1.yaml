@@ -849,12 +849,22 @@ components:
       properties:
         name:
           type: string
+        description:
+          type: string
         requiredVars:
           type: array
           items:
-            type: string
-        urlBase:
-          type: string
+            type: object
+            required:
+              - varName
+            properties:
+              varName:
+                type: string
+              defaultValue:
+                type: string
+        isDefaultUserAddon:
+          nullable: true
+          type: boolean
 
     User:
       type: object

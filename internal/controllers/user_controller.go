@@ -83,9 +83,9 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 			return ctrl.Result{}, err
 		}
 
-		addons := user.UserAddonInstances()
-		if len(addons) > 0 {
+		if addons := r.userAddonInstances(ctx, user); len(addons) > 0 {
 			errs := make([]error, 0)
+
 			for _, addon := range addons {
 				log.Info("creating user addon", "addon", addon.Spec.Template.Name)
 
@@ -145,4 +145,53 @@ func (r *UserReconciler) patchNamespaceToUserDesired(ns *corev1.Namespace, user 
 	}
 
 	return nil
+}
+
+func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.User) []cosmov1alpha1.Instance {
+	if len(u.Spec.Addons) == 0 {
+		return nil
+	}
+	log := clog.FromContext(ctx)
+
+	tmpls, err := r.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeUserAddon})
+	if err != nil {
+		log.Error(err, "failed to list templates")
+		return nil
+	}
+
+	tmplNamesInSysNs := make(map[string]string)
+	for _, v := range tmpls {
+		if ann := v.GetAnnotations(); ann != nil {
+			if sysNs, ok := ann[wsv1alpha1.TemplateAnnKeySystemNamespace]; ok {
+				tmplNamesInSysNs[v.Name] = sysNs
+			}
+		}
+	}
+
+	insts := make([]cosmov1alpha1.Instance, len(u.Spec.Addons))
+	for i, addon := range u.Spec.Addons {
+		inst := cosmov1alpha1.Instance{}
+		inst.Name = fmt.Sprintf("user-addon-%s", addon.Template.Name)
+
+		inst.Spec = cosmov1alpha1.InstanceSpec{
+			Template: addon.Template,
+			Vars:     addon.Vars,
+		}
+
+		if sysNs, ok := tmplNamesInSysNs[addon.Template.Name]; ok {
+			inst.SetNamespace(sysNs)
+
+		} else {
+			inst.SetNamespace(u.Status.Namespace.Name)
+
+			err := ctrl.SetControllerReference(&u, &inst, r.Scheme)
+			if err != nil {
+				log.Error(err, "failed to set controller reference")
+			}
+		}
+
+		insts[i] = inst
+	}
+
+	return insts
 }
