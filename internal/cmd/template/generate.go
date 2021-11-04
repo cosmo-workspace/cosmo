@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -31,6 +32,7 @@ type generateOption struct {
 	Name         string
 	OutputFile   string
 	RequiredVars string
+	Desc         string
 
 	TypeWorkspace                bool
 	DisableInjectAuthProxy       bool
@@ -38,7 +40,9 @@ type generateOption struct {
 	InjectAuthProxyTLSSecretName string
 	ServiceAccount               string
 
-	TypeUserAddon bool
+	TypeUserAddon       bool
+	SetDefaultUserAddon bool
+	SetSysnsUserAddon   string
 
 	tmpl cosmov1alpha1.Template
 }
@@ -75,6 +79,7 @@ Example:
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "template name (use directory name if not specified)")
 	cmd.Flags().StringVarP(&o.OutputFile, "output", "o", "", "write output into file (default: Stdout)")
 	cmd.Flags().StringVar(&o.RequiredVars, "required-vars", "", "template custom vars to be replaced by instance. format --required-vars VAR1,VAR2:default-value")
+	cmd.Flags().StringVar(&o.Desc, "desc", "", "template description")
 
 	cmd.Flags().BoolVar(&o.TypeWorkspace, "workspace", false, "template as type workspace")
 	cmd.Flags().BoolVar(&o.DisableInjectAuthProxy, "disable-inject-auth-proxy", false, "disable injection cosmo-auth-proxy sidecar")
@@ -89,6 +94,8 @@ Example:
 	cmd.Flags().StringVar(&o.wsConfig.URLBase, "workspace-urlbase", "", "Workspace URLBase. use with --workspace")
 
 	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type user-addon")
+	cmd.Flags().BoolVar(&o.SetDefaultUserAddon, "set-default-user-addon", false, "set default user addon")
+	cmd.Flags().StringVar(&o.SetSysnsUserAddon, "set-sysns-user-addon", "", "user addon in system namespace")
 
 	return cmd
 }
@@ -158,6 +165,7 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	o.tmpl.Name = o.Name
+	o.tmpl.Spec.Description = o.Desc
 
 	gvk, err := apiutil.GVKForObject(&o.tmpl, o.Scheme)
 	if err != nil {
@@ -169,6 +177,18 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeWorkspace)
 	} else if o.TypeUserAddon {
 		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeUserAddon)
+
+		ann := o.tmpl.GetAnnotations()
+		if ann == nil {
+			ann = make(map[string]string)
+		}
+		if o.SetDefaultUserAddon {
+			ann[wsv1alpha1.TemplateAnnKeyDefaultUserAddon] = strconv.FormatBool(true)
+		}
+		if o.SetSysnsUserAddon != "" {
+			ann[wsv1alpha1.TemplateAnnKeySysNsUserAddon] = o.SetSysnsUserAddon
+		}
+		o.tmpl.SetAnnotations(ann)
 	}
 
 	return nil

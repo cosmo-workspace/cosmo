@@ -162,7 +162,7 @@ func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.Us
 	tmplNamesInSysNs := make(map[string]string)
 	for _, v := range tmpls {
 		if ann := v.GetAnnotations(); ann != nil {
-			if sysNs, ok := ann[wsv1alpha1.TemplateAnnKeySystemNamespace]; ok {
+			if sysNs, ok := ann[wsv1alpha1.TemplateAnnKeySysNsUserAddon]; ok {
 				tmplNamesInSysNs[v.Name] = sysNs
 			}
 		}

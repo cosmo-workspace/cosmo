@@ -12,7 +12,7 @@ const (
 // Template annotation keys for user addon
 const (
 	TemplateAnnKeyDefaultUserAddon = "cosmo/default-user-addon"
-	TemplateAnnKeySystemNamespace  = "cosmo/run-in-system-namespace"
+	TemplateAnnKeySysNsUserAddon   = "cosmo/sysns-user-addon"
 )
 
 // Template variables key
