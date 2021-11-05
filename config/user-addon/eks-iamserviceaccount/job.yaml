@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: eks-iamserviceaccount
+  name: job
 spec:
   template:
     spec:
@@ -11,11 +11,13 @@ spec:
         args:
         - create
         - iamserviceaccount
+        - --region={{AWS_REGION}}
         - --cluster={{CLUSTER_NAME}}
         - --name={{SERVICE_ACCOUNT}}
         - --namespace={{USER_NAMESPACE}}
-        - --attach-policy-arns=arn:aws:iam::aws:policy/AWSCodeCommitPowerUser,arn:aws:iam::aws:policy/AWSCodeArtifactReadOnlyAccess
+        - --attach-policy-arn=arn:aws:iam::aws:policy/AWSCodeCommitPowerUser,arn:aws:iam::aws:policy/AWSCodeArtifactReadOnlyAccess
         - --override-existing-serviceaccounts
         - --approve
+        - --verbose=5
       serviceAccountName: eksctl
       restartPolicy: Never
