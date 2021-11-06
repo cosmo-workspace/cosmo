@@ -1,12 +1,12 @@
 package v1alpha1
 
-// Instance annotation keys for WorkspaceConfig
+// Template annotation keys for WorkspaceConfig
 const (
-	InstanceAnnKeyURLBase                  = "cosmo/ws-urlbase"
-	InstanceAnnKeyWorkspaceDeployment      = "cosmo/ws-deployment"
-	InstanceAnnKeyWorkspaceService         = "cosmo/ws-service"
-	InstanceAnnKeyWorkspaceIngress         = "cosmo/ws-ingress"
-	InstanceAnnKeyWorkspaceServiceMainPort = "cosmo/ws-service-main-port"
+	TemplateAnnKeyURLBase                  = "cosmo/ws-urlbase"
+	TemplateAnnKeyWorkspaceDeployment      = "cosmo/ws-deployment"
+	TemplateAnnKeyWorkspaceService         = "cosmo/ws-service"
+	TemplateAnnKeyWorkspaceIngress         = "cosmo/ws-ingress"
+	TemplateAnnKeyWorkspaceServiceMainPort = "cosmo/ws-service-main-port"
 )
 
 // Template annotation keys for user addon
