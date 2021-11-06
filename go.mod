@@ -3,7 +3,7 @@ module github.com/cosmo-workspace/cosmo
 go 1.16
 
 require (
-	github.com/evanphx/json-patch/v5 v5.3.0
+	github.com/evanphx/json-patch/v5 v5.6.0
 	github.com/go-logr/logr v0.4.0
 	github.com/google/go-cmp v0.5.6
 	github.com/google/gofuzz v1.2.0 // indirect
