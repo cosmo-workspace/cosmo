@@ -80,8 +80,6 @@ spec:
               role:
                 description: UserRole enums
                 type: string
-              status:
-                type: string
             type: object
           status:
             properties:

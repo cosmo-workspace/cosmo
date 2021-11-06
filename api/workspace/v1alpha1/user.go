@@ -57,11 +57,10 @@ type UserList struct {
 }
 
 type UserSpec struct {
-	DisplayName string                `json:"displayName,omitempty"`
-	Role        UserRole              `json:"role,omitempty"`
-	AuthType    UserAuthType          `json:"authType,omitempty"`
-	Addons      []UserAddon           `json:"addons,omitempty"`
-	Status      corev1.NamespacePhase `json:"status,omitempty"`
+	DisplayName string       `json:"displayName,omitempty"`
+	Role        UserRole     `json:"role,omitempty"`
+	AuthType    UserAuthType `json:"authType,omitempty"`
+	Addons      []UserAddon  `json:"addons,omitempty"`
 }
 
 type UserStatus struct {
