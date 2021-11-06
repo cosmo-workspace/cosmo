@@ -12,7 +12,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.1
 	github.com/mattn/go-isatty v0.0.12
-	github.com/onsi/ginkgo v1.16.4
+	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.16.0
 	github.com/sethvargo/go-password v0.2.0
 	github.com/spf13/cobra v1.1.3
@@ -20,7 +20,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	k8s.io/api v0.21.3
 	k8s.io/apiextensions-apiserver v0.21.3 // indirect
-	k8s.io/apimachinery v0.21.3
+	k8s.io/apimachinery v0.22.3
 	k8s.io/cli-runtime v0.21.3
 	k8s.io/client-go v0.21.3
 	k8s.io/utils v0.0.0-20210527160623-6fdb442a123b
