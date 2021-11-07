@@ -1,15 +1,17 @@
-import { Close, PersonOutlineTwoTone, SecurityTwoTone, SupervisorAccountTwoTone } from "@mui/icons-material";
+import { Close, ExtensionRounded, PersonOutlineTwoTone, SecurityOutlined, SupervisorAccountTwoTone } from "@mui/icons-material";
 import {
-  Alert, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle,
-  IconButton, InputAdornment, MenuItem, Stack, TextField
+  Alert, Button, Checkbox, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
+  Divider,
+  FormControlLabel,
+  IconButton, InputAdornment, MenuItem, Stack, TextField, Tooltip, Typography
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, UseFormRegisterReturn } from "react-hook-form";
 import { User } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { PasswordDialogContext } from "./PasswordDialog";
-import { useUserModule } from "./UserModule";
+import { useTemplates, useUserModule } from "./UserModule";
 
 const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
   inputRef: ref, ...rest
@@ -26,7 +28,7 @@ interface UserActionDialogProps {
 }
 
 const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, user, onClose }) => {
-
+  console.log(user)
   return (
     <Dialog open={true} onClose={() => onClose()} fullWidth maxWidth={'xs'}>
       <DialogTitle>{title}
@@ -41,7 +43,10 @@ const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, us
           <TextFieldLabel label="User ID" fullWidth value={user.id} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="User Name" fullWidth value={user.displayName} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="Role" fullWidth value={user.role} startAdornmentIcon={<SupervisorAccountTwoTone />} />
-          <TextFieldLabel label="AuthType" fullWidth value={user.authType} startAdornmentIcon={<SecurityTwoTone />} />
+          <TextFieldLabel label="AuthType" fullWidth value={user.authType} startAdornmentIcon={<SecurityOutlined />} />
+          {user.addons?.map((v, i) => {
+            return <TextFieldLabel label="Addons" key={i} fullWidth value={v.template} startAdornmentIcon={<ExtensionRounded />} />
+          })}
         </Stack>
       </DialogContent>
       <DialogActions>{actions}</DialogActions>
@@ -96,22 +101,56 @@ interface Inputs {
   id: string;
   name: string;
   role?: string;
+  enableAddons: boolean[];
+  addonVars: string[][];
 }
 export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }) => {
   console.log('UserCreateDialog');
   const hooks = useUserModule();
-  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
   const passwordDialogDispatch = PasswordDialogContext.useDispatch();
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
+  const [isRequiredVarErrors, setIsRequiredVarErrors] = useState<Map<string, boolean>>(new Map());
+
+  const templ = useTemplates();
+  useEffect(() => { templ.getUserAddonTemplates() }, []);  // eslint-disable-line
 
   return (
     <Dialog open={true}
       fullWidth maxWidth={'xs'}>
       <DialogTitle>Create New User 🎉</DialogTitle>
       <form onSubmit={handleSubmit((inp: Inputs) => {
-        hooks.createUser(inp.id, inp.name, inp.role)
+
+        const addons = templ.templates.map((useAddon, i) => {
+          if (!inp.enableAddons![i]) {
+            setIsRequiredVarErrors(isRequiredVarErrors.set(String(i), false));
+            return { template: "" }
+          }
+          if (!useAddon.requiredVars) { return { template: useAddon.name } }
+
+          var vars: { [key: string]: string; } = {};
+          var isErr = false;
+          for (let j = 0; j < useAddon.requiredVars!.length; j++) {
+            const isEmpty = !Boolean(inp.addonVars[i][j]);
+
+            setIsRequiredVarErrors(isRequiredVarErrors.set(String(i) + String(j), isEmpty));
+            if (isEmpty) { isErr = true; continue };
+
+            vars[useAddon.requiredVars[j].varName!] = inp.addonVars![i]![j]!
+          }
+          setIsRequiredVarErrors(isRequiredVarErrors.set(String(i), isErr));
+          return { template: useAddon.name, vars: vars }
+        });
+        for (let i = 0; i < inp.enableAddons.length; i++) { if (isRequiredVarErrors.get(String(i))) return }
+
+        const useAddons = addons.filter((v) => { return v.template !== "" });
+
+        console.log("inp.id", inp.id, "inp.name", inp.name, "inp.role", inp.role, "useAddons", useAddons)
+        hooks.createUser(inp.id, inp.name, inp.role, useAddons)
           .then(newUser => {
             onClose();
             passwordDialogDispatch(true, { user: newUser! });
+            hooks.getUsers();
           });
       })}
         autoComplete="new-password">
@@ -150,6 +189,39 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
                 (<MenuItem key="cosmo-admin" value="cosmo-admin"><em>cosmo-admin</em></MenuItem>),
               ]}
             </TextField>
+            <Divider />
+            <Stack spacing={1}>
+              {Boolean(templ.templates.length) && <Typography
+                color="text.secondary"
+                display="block"
+                variant="caption"
+              >
+                Enable User Addons
+              </Typography>}
+              {templ.templates.map((tmpl, i) =>
+                <Stack key={tmpl.name}>
+                  <Tooltip title={tmpl.description || "No description"} placement="bottom" arrow enterDelay={1000}>
+                    <FormControlLabel control={
+                    <Checkbox defaultChecked={Boolean(tmpl.isDefaultUserAddon)}
+                      {...registerMui(register(`enableAddons.${i}`))}
+                    />} label={tmpl.name} />
+                  </Tooltip>
+
+                  <Collapse in={tmpl.requiredVars && watch('enableAddons')[i]} timeout="auto" unmountOnExit>
+                    <Stack spacing={2} sx={{ m: 2 }}>
+                      {tmpl.requiredVars?.map((required, j) =>
+                        <TextField label={required.varName} fullWidth defaultValue={required.defaultValue} key={String(i) + String(j)}
+                          {...registerMui(register(`addonVars.${i}.${j}` as const))}
+                          error={Boolean(isRequiredVarErrors.get(String(i) + String(j)))}
+                          helperText={isRequiredVarErrors.get(String(i) + String(j)) && "Required"}
+                        >
+                        </TextField>
+                      )}
+                    </Stack>
+                  </Collapse>
+                </Stack>
+              )}
+            </Stack>
           </Stack>
         </DialogContent>
         <DialogActions>

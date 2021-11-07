@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job
+spec:
+  template:
+    spec:
+      containers:
+      - name: eksctl
+        image: weaveworks/eksctl:0.71.0
+        args:
+        - create
+        - iamserviceaccount
+        - --region={{AWS_REGION}}
+        - --cluster={{CLUSTER_NAME}}
+        - --name={{SERVICE_ACCOUNT}}
+        - --namespace={{USER_NAMESPACE}}
+        - --attach-policy-arn=arn:aws:iam::aws:policy/AWSCodeCommitPowerUser,arn:aws:iam::aws:policy/AWSCodeArtifactReadOnlyAccess
+        - --override-existing-serviceaccounts
+        - --approve
+        - --verbose=5
+      serviceAccountName: eksctl
+      restartPolicy: Never

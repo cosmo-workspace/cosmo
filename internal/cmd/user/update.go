@@ -86,12 +86,12 @@ func (o *updateOption) RunE(cmd *cobra.Command, args []string) error {
 	before := user.DeepCopy()
 
 	if o.Name != "" {
-		user.DisplayName = o.Name
+		user.Spec.DisplayName = o.Name
 		o.Logr.Debug().Info("name changed", "name", o.Name)
 	}
 
 	if o.Role != "-" {
-		user.Role = o.role
+		user.Spec.Role = o.role
 	}
 	o.Logr.Debug().Info("role changed", "role", o.role)
 
@@ -99,7 +99,7 @@ func (o *updateOption) RunE(cmd *cobra.Command, args []string) error {
 		return errors.New("no change")
 	}
 
-	if _, err := c.UpdateUser(ctx, user); err != nil {
+	if err := c.Update(ctx, user); err != nil {
 		return err
 	}
 

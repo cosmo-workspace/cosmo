@@ -1,24 +1,19 @@
 package v1alpha1
 
-import "fmt"
-
-// Instance annotation keys for WorkspaceConfig
+// Template annotation keys for WorkspaceConfig
 const (
-	InstanceAnnKeyURLBase                  = "cosmo/ws-urlbase"
-	InstanceAnnKeyWorkspaceDeployment      = "cosmo/ws-deployment"
-	InstanceAnnKeyWorkspaceService         = "cosmo/ws-service"
-	InstanceAnnKeyWorkspaceIngress         = "cosmo/ws-ingress"
-	InstanceAnnKeyWorkspaceServiceMainPort = "cosmo/ws-service-main-port"
+	TemplateAnnKeyURLBase                  = "cosmo/ws-urlbase"
+	TemplateAnnKeyWorkspaceDeployment      = "cosmo/ws-deployment"
+	TemplateAnnKeyWorkspaceService         = "cosmo/ws-service"
+	TemplateAnnKeyWorkspaceIngress         = "cosmo/ws-ingress"
+	TemplateAnnKeyWorkspaceServiceMainPort = "cosmo/ws-service-main-port"
 )
 
-// Key of NetworkRule Group
+// Template annotation keys for user addon
 const (
-	InstanceIngressAnnKeyNetRuleGroupPrefix = "cosmo/ws-netrule-group"
+	TemplateAnnKeyDefaultUserAddon = "cosmo/default-user-addon"
+	TemplateAnnKeySysNsUserAddon   = "cosmo/sysns-user-addon"
 )
-
-func InstanceIngressAnnKeyNetRuleGroup(portName string) string {
-	return fmt.Sprintf("%s.%s", InstanceIngressAnnKeyNetRuleGroupPrefix, portName)
-}
 
 // Template variables key
 const (
@@ -26,15 +21,9 @@ const (
 	TemplateVarServiceName         = "{{WORKSPACE_SERVICE_NAME}}"
 	TemplateVarIngressName         = "{{WORKSPACE_INGRESS_NAME}}"
 	TemplateVarServiceMainPortName = "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}"
-)
 
-// UserNamespace name and keys
-const (
-	UserNamespacePrefix         = "cosmo-user-"
-	NamespaceLabelKeyUserID     = "cosmo/user-id"
-	NamespaceAnnKeyUserName     = "cosmo/user-name"
-	NamespaceAnnKeyUserRole     = "cosmo/user-role"
-	NamespaceAnnKeyUserAuthType = "cosmo/auth-type"
+	// TemplateVarUserNamespace is variable for user addon in system namespace.
+	TemplateVarUserNamespace = "{{USER_NAMESPACE}}"
 )
 
 // UserPasswordSecret name and keys
@@ -48,6 +37,7 @@ const (
 // TemplateType enum for Workspace
 const (
 	TemplateTypeWorkspace = "workspace"
+	TemplateTypeUserAddon = "user-addon"
 )
 
 // AuthProxy RBAC names

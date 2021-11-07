@@ -7,6 +7,7 @@ import (
 
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -57,15 +58,18 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 
 	res := &dashv1alpha1.CreateUserResponse{}
 
-	user := &wsv1alpha1.User{
-		ID:          req.Id,
+	user := &wsv1alpha1.User{}
+	user.SetName(req.Id)
+	user.Spec = wsv1alpha1.UserSpec{
 		DisplayName: req.DisplayName,
 		Role:        userrole,
 		AuthType:    authtype,
+		Addons:      convertDashv1alpha1UserToUserAddon(req.Addons),
 	}
+
 	log.Debug().Info("creating user object", "user", user)
 	var err error
-	user, err = s.Klient.CreateUser(ctx, user)
+	err = s.Klient.Create(ctx, user)
 	if err != nil {
 		if apierrs.IsAlreadyExists(err) {
 			res.Message = "User already exists"
@@ -97,7 +101,7 @@ UserCreationWaitLoop:
 		case <-ctx.Done():
 			tk.Stop()
 			res.Message = "Reached to timeout in user creation"
-			log.Error(err, res.Message, "userid", user.ID)
+			log.Error(err, res.Message, "userid", user.Name)
 			return dashv1alpha1.Response(http.StatusInternalServerError, res), nil
 		default:
 			<-tk.C
@@ -108,7 +112,7 @@ UserCreationWaitLoop:
 	res.User.DefaultPassword = *defaultPassword
 
 	res.Message = "Successfully created"
-	log.Info(res.Message, "userid", user.ID)
+	log.Info(res.Message, "userid", user.Name)
 	return dashv1alpha1.Response(http.StatusCreated, res), nil
 }
 
@@ -162,29 +166,52 @@ func (s *Server) DeleteUser(ctx context.Context, userId string) (dashv1alpha1.Im
 
 	res := &dashv1alpha1.DeleteUserResponse{}
 
-	deleted, err := s.Klient.DeleteUser(ctx, user.ID)
+	err := s.Klient.Delete(ctx, user)
 	if err != nil {
 		if apierrs.IsNotFound(err) {
 			return dashv1alpha1.Response(http.StatusNotFound, res), nil
 		} else {
 			res.Message = "failed to delete user"
-			log.Error(err, res.Message, "userid", user.ID)
+			log.Error(err, res.Message, "userid", user.Name)
 			return dashv1alpha1.Response(http.StatusInternalServerError, res), nil
 		}
 	}
 
-	res.User = convertUserToDashv1alpha1User(*deleted)
+	res.User = convertUserToDashv1alpha1User(*user)
 	res.Message = "Successfully deleted"
-	log.Info(res.Message, "userid", user.ID)
+	log.Info(res.Message, "userid", user.Name)
 	return dashv1alpha1.Response(http.StatusOK, res), nil
 }
 
 func convertUserToDashv1alpha1User(user wsv1alpha1.User) *dashv1alpha1.User {
-	return &dashv1alpha1.User{
-		Id:          user.ID,
-		DisplayName: user.DisplayName,
-		Role:        user.Role.String(),
-		AuthType:    user.AuthType.String(),
-		Status:      string(user.Status),
+	addons := make([]dashv1alpha1.ApiV1alpha1UserAddons, len(user.Spec.Addons))
+	for i, v := range user.Spec.Addons {
+		addons[i] = dashv1alpha1.ApiV1alpha1UserAddons{
+			Template: v.Template.Name,
+			Vars:     v.Vars,
+		}
 	}
+
+	return &dashv1alpha1.User{
+		Id:          user.Name,
+		DisplayName: user.Spec.DisplayName,
+		Role:        user.Spec.Role.String(),
+		AuthType:    user.Spec.AuthType.String(),
+		Addons:      addons,
+		Status:      string(user.Status.Phase),
+	}
+}
+
+func convertDashv1alpha1UserToUserAddon(addons []dashv1alpha1.ApiV1alpha1UserAddons) []wsv1alpha1.UserAddon {
+	a := make([]wsv1alpha1.UserAddon, len(addons))
+	for i, v := range addons {
+		addon := wsv1alpha1.UserAddon{
+			Template: cosmov1alpha1.TemplateRef{
+				Name: v.Template,
+			},
+			Vars: v.Vars,
+		}
+		a[i] = addon
+	}
+	return a
 }

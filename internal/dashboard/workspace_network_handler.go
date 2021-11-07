@@ -44,7 +44,7 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	ws.Spec.Network, err = wsnet.UpsertNetRule(ws.Spec.Network, netRule)
 	if err != nil {
 		res.Message = err.Error()
-		log.Error(err, res.Message, "userid", user.ID, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, res.Message, "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return dashv1alpha1.Response(http.StatusBadRequest, res), nil
 	}
 
@@ -52,13 +52,13 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	log.DebugAll().PrintObjectDiff(before, ws)
 
 	if equality.Semantic.DeepEqual(before, ws) {
-		log.Info("no change", "userid", user.ID, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Info("no change", "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return dashv1alpha1.Response(http.StatusBadRequest, nil), nil
 	}
 
 	if err := s.Klient.Update(ctx, ws); err != nil {
 		res.Message = "Failed to upsert network rule"
-		log.Error(err, res.Message, "userid", user.ID, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, res.Message, "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return dashv1alpha1.Response(http.StatusInternalServerError, res), nil
 	}
 
@@ -95,22 +95,22 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 	}
 	if delRule == nil {
 		res.Message = fmt.Sprintf("port name %s is not found", networkRuleName)
-		log.Info(res.Message, "userid", user.ID, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Info(res.Message, "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return dashv1alpha1.Response(http.StatusBadRequest, nil), nil
 	}
 
 	ws.Spec.Network = wsnet.RemoveNetworkOverrideByName(ws.Spec.Network, *delRule)
-	log.DebugAll().Info("NetworkRule removed", "ws", ws, "userid", user.ID, "netRuleName", networkRuleName)
+	log.DebugAll().Info("NetworkRule removed", "ws", ws, "userid", user.Name, "netRuleName", networkRuleName)
 
 	log.DebugAll().PrintObjectDiff(before, ws)
 	if equality.Semantic.DeepEqual(before, ws) {
-		log.Info("no change", "userid", user.ID, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Info("no change", "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return dashv1alpha1.Response(http.StatusBadRequest, nil), nil
 	}
 
 	if err := s.Klient.Update(ctx, ws); err != nil {
 		res.Message = "Failed to remove network rule"
-		log.Error(err, res.Message, "userid", user.ID, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, res.Message, "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return dashv1alpha1.Response(http.StatusInternalServerError, res), nil
 	}
 
@@ -120,7 +120,7 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 }
 
 func convertNetRulesTodashv1alpha1NetRules(netRules []wsv1alpha1.NetworkRule, urlMap map[string]string, serviceMainPortName string) []dashv1alpha1.NetworkRule {
-	apirules := make([]dashv1alpha1.NetworkRule, 0)
+	apirules := make([]dashv1alpha1.NetworkRule, 0, len(netRules))
 	for _, v := range netRules {
 		if v.PortName == serviceMainPortName {
 			continue

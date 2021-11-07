@@ -13,9 +13,11 @@ package v1alpha1
 type Template struct {
 	Name string `json:"name"`
 
-	RequiredVars []string `json:"requiredVars,omitempty"`
+	Description string `json:"description,omitempty"`
 
-	UrlBase string `json:"urlBase,omitempty"`
+	RequiredVars []TemplateRequiredVars `json:"requiredVars,omitempty"`
+
+	IsDefaultUserAddon *bool `json:"isDefaultUserAddon,omitempty"`
 }
 
 // AssertTemplateRequired checks if the required fields are not zero-ed
@@ -29,6 +31,11 @@ func AssertTemplateRequired(obj Template) error {
 		}
 	}
 
+	for _, el := range obj.RequiredVars {
+		if err := AssertTemplateRequiredVarsRequired(el); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

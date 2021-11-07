@@ -41,6 +41,8 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		h.Log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
+	before := inst.DeepCopy()
+	h.Log.DebugAll().DumpObject(h.Client.Scheme(), before, "request instance")
 
 	// mutate the fields in instance
 
@@ -103,6 +105,8 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		}
 	}
 
+	h.Log.Debug().PrintObjectDiff(before, inst)
+
 	marshaled, err := json.Marshal(inst)
 	if err != nil {
 		h.Log.Error(err, "failed to marshal response")
@@ -150,6 +154,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 	if err != nil {
 		return admission.Errored(http.StatusBadRequest, err)
 	}
+	h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
 
 	// validate the fields in instance
 

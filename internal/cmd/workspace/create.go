@@ -9,13 +9,13 @@ import (
 
 	"github.com/spf13/cobra"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/yaml"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 type createOption struct {
@@ -118,7 +118,11 @@ func (o *createOption) RunE(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		kosmo.FillTypeMeta(&ws, wsv1alpha1.GroupVersion)
+		gvk, err := apiutil.GVKForObject(&ws, o.Scheme)
+		if err != nil {
+			return err
+		}
+		ws.SetGroupVersionKind(gvk)
 		if out, err := yaml.Marshal(ws); err == nil {
 			fmt.Fprintln(o.Out, string(out))
 		}

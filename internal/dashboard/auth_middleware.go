@@ -153,15 +153,15 @@ func (s *Server) userAuthenticationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		if caller.ID != user.ID {
-			if wsv1alpha1.UserRole(caller.Role).IsAdmin() {
+		if caller.Name != user.Name {
+			if wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
 				// Admin user have access to all resources
-				log.WithName("audit").Info(fmt.Sprintf("admin request %s %s %s", caller.ID, r.Method, r.URL),
-					"userid", caller.ID, "method", r.Method, "path", r.URL, "host", r.Host, "X-Forwarded-For", r.Header.Get("X-Forwarded-For"), "user-agent", r.UserAgent())
+				log.WithName("audit").Info(fmt.Sprintf("admin request %s %s %s", caller.Name, r.Method, r.URL),
+					"userid", caller.Name, "method", r.Method, "path", r.URL, "host", r.Host, "X-Forwarded-For", r.Header.Get("X-Forwarded-For"), "user-agent", r.UserAgent())
 
 			} else {
 				// General User have access only to the own resources
-				log.Info("invalid user authentication: general user trying to access other's resource", "userid", caller.ID, "target", user.ID)
+				log.Info("invalid user authentication: general user trying to access other's resource", "userid", caller.Name, "target", user.Name)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
@@ -184,14 +184,14 @@ func (s *Server) adminAuthenticationMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Check if the user role is Admin
-		if !wsv1alpha1.UserRole(caller.Role).IsAdmin() {
-			log.Info("invalid admin authentication: NOT cosmo-admin", "userid", caller.ID)
+		if !wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
+			log.Info("invalid admin authentication: NOT cosmo-admin", "userid", caller.Name)
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
 
-		log.WithName("audit").Info(fmt.Sprintf("admin request %s %s %s", caller.ID, r.Method, r.URL),
-			"userid", caller.ID, "method", r.Method, "path", r.URL, "host", r.Host, "X-Forwarded-For", r.Header.Get("X-Forwarded-For"), "user-agent", r.UserAgent())
+		log.WithName("audit").Info(fmt.Sprintf("admin request %s %s %s", caller.Name, r.Method, r.URL),
+			"userid", caller.Name, "method", r.Method, "path", r.URL, "host", r.Host, "X-Forwarded-For", r.Header.Get("X-Forwarded-For"), "user-agent", r.UserAgent())
 		next.ServeHTTP(w, r)
 	})
 }

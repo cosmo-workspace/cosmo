@@ -28,6 +28,8 @@ func UnstructuredToResourceRef(obj unstructured.Unstructured, updateTimestamp me
 	ref.SetGroupVersionKind(obj.GetObjectKind().GroupVersionKind())
 	ref.Name = obj.GetName()
 	ref.Namespace = obj.GetNamespace()
+	ref.UID = obj.GetUID()
+	ref.ResourceVersion = obj.GetResourceVersion()
 
 	create := obj.GetCreationTimestamp()
 	ref.CreationTimestamp = &create

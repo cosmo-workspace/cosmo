@@ -116,7 +116,7 @@ func (r *NetworkRule) IngressRule(backendSvcName string) netv1.IngressRule {
 }
 
 func NetworkRulesByServiceAndIngress(svc corev1.Service, ing netv1.Ingress) []NetworkRule {
-	netRules := make([]NetworkRule, 0)
+	netRules := make([]NetworkRule, 0, len(svc.Spec.Ports))
 	for _, p := range svc.Spec.Ports {
 		var netRule NetworkRule
 		netRule.PortName = p.Name

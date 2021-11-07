@@ -40,6 +40,7 @@ type CliOptions struct {
 
 	Logr   *clog.Logger
 	Client *kosmo.Client
+	Scheme *runtime.Scheme
 }
 
 type NamespacedCliOptions struct {
@@ -102,6 +103,7 @@ func (o *CliOptions) Complete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	o.Client = &baseclient
+	o.Scheme = scheme
 
 	return nil
 }

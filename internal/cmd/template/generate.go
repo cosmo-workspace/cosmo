@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -15,12 +16,12 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/yaml"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	cmdutil "github.com/cosmo-workspace/cosmo/pkg/cmdutil"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
@@ -28,14 +29,20 @@ type generateOption struct {
 	*cmdutil.CliOptions
 	wsConfig wsv1alpha1.Config
 
-	Name                         string
-	OutputFile                   string
-	RequiredVars                 string
+	Name         string
+	OutputFile   string
+	RequiredVars string
+	Desc         string
+
 	TypeWorkspace                bool
 	DisableInjectAuthProxy       bool
 	InjectAuthProxyImage         string
 	InjectAuthProxyTLSSecretName string
 	ServiceAccount               string
+
+	TypeUserAddon       bool
+	SetDefaultUserAddon bool
+	SetSysnsUserAddon   string
 
 	tmpl cosmov1alpha1.Template
 }
@@ -71,7 +78,8 @@ Example:
 
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "template name (use directory name if not specified)")
 	cmd.Flags().StringVarP(&o.OutputFile, "output", "o", "", "write output into file (default: Stdout)")
-	cmd.Flags().StringVar(&o.RequiredVars, "required-vars", "", "template custom vars to be replaced by instance")
+	cmd.Flags().StringVar(&o.RequiredVars, "required-vars", "", "template custom vars to be replaced by instance. format --required-vars VAR1,VAR2:default-value")
+	cmd.Flags().StringVar(&o.Desc, "desc", "", "template description")
 
 	cmd.Flags().BoolVar(&o.TypeWorkspace, "workspace", false, "template as type workspace")
 	cmd.Flags().BoolVar(&o.DisableInjectAuthProxy, "disable-inject-auth-proxy", false, "disable injection cosmo-auth-proxy sidecar")
@@ -84,6 +92,10 @@ Example:
 	cmd.Flags().StringVar(&o.wsConfig.IngressName, "workspace-ingress-name", "", "Ingress name for Workspace. use with --workspace")
 	cmd.Flags().StringVar(&o.wsConfig.ServiceMainPortName, "workspace-main-service-port-name", "", "ServicePort name for Workspace main container port. use with --workspace")
 	cmd.Flags().StringVar(&o.wsConfig.URLBase, "workspace-urlbase", "", "Workspace URLBase. use with --workspace")
+
+	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type user-addon")
+	cmd.Flags().BoolVar(&o.SetDefaultUserAddon, "set-default-user-addon", false, "set default user addon")
+	cmd.Flags().StringVar(&o.SetSysnsUserAddon, "set-sysns-user-addon", "", "user addon in system namespace")
 
 	return cmd
 }
@@ -107,6 +119,10 @@ func (o *generateOption) Validate(cmd *cobra.Command, args []string) error {
 		if o.wsConfig.URLBase == "" {
 			return errors.New("--workspace-urlbase is required")
 		}
+	}
+
+	if o.TypeWorkspace && o.TypeUserAddon {
+		return errors.New("--workspace and --user-addon is incompatible")
 	}
 
 	return nil
@@ -134,18 +150,45 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	if o.RequiredVars != "" {
-		vars := make([]cosmov1alpha1.RequiredVarSpec, 0)
-		for _, v := range strings.Split(o.RequiredVars, ",") {
-			vars = append(vars, cosmov1alpha1.RequiredVarSpec{Var: v})
+		varsList := strings.Split(o.RequiredVars, ",")
+
+		vars := make([]cosmov1alpha1.RequiredVarSpec, 0, len(varsList))
+		for _, v := range varsList {
+			vcol := strings.Split(v, ":")
+			varSpec := cosmov1alpha1.RequiredVarSpec{Var: vcol[0]}
+			if len(vcol) > 1 {
+				varSpec.Default = vcol[1]
+			}
+			vars = append(vars, varSpec)
 		}
 		o.tmpl.Spec.RequiredVars = vars
 	}
 
 	o.tmpl.Name = o.Name
-	kosmo.FillTypeMeta(&o.tmpl, cosmov1alpha1.GroupVersion)
+	o.tmpl.Spec.Description = o.Desc
+
+	gvk, err := apiutil.GVKForObject(&o.tmpl, o.Scheme)
+	if err != nil {
+		return err
+	}
+	o.tmpl.SetGroupVersionKind(gvk)
 
 	if o.TypeWorkspace {
 		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeWorkspace)
+	} else if o.TypeUserAddon {
+		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeUserAddon)
+
+		ann := o.tmpl.GetAnnotations()
+		if ann == nil {
+			ann = make(map[string]string)
+		}
+		if o.SetDefaultUserAddon {
+			ann[wsv1alpha1.TemplateAnnKeyDefaultUserAddon] = strconv.FormatBool(true)
+		}
+		if o.SetSysnsUserAddon != "" {
+			ann[wsv1alpha1.TemplateAnnKeySysNsUserAddon] = o.SetSysnsUserAddon
+		}
+		o.tmpl.SetAnnotations(ann)
 	}
 
 	return nil

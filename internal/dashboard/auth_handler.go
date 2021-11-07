@@ -32,7 +32,7 @@ func (s *Server) Verify(ctx context.Context) (dashv1alpha1.ImplResponse, error) 
 	}
 
 	res := &dashv1alpha1.VerifyResponse{
-		Id:       caller.ID,
+		Id:       caller.Name,
 		ExpireAt: deadline,
 	}
 	return dashv1alpha1.Response(http.StatusOK, res), nil
@@ -73,9 +73,9 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 		return dashv1alpha1.Response(http.StatusForbidden, nil), nil
 	}
 	// Check password
-	authrizer, ok := s.Authorizers[user.AuthType]
+	authrizer, ok := s.Authorizers[user.Spec.AuthType]
 	if !ok {
-		log.Info("authrizer not found", "userid", req.Id, "authType", user.AuthType)
+		log.Info("authrizer not found", "userid", req.Id, "authType", user.Spec.AuthType)
 		return dashv1alpha1.Response(http.StatusServiceUnavailable, nil), nil
 	}
 	verified, err := authrizer.Authorize(ctx, req)
@@ -88,7 +88,7 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 		return dashv1alpha1.Response(http.StatusForbidden, nil), nil
 	}
 	var isDefault bool
-	if wsv1alpha1.UserAuthType(user.AuthType) == wsv1alpha1.UserAuthTypeKosmoSecert {
+	if wsv1alpha1.UserAuthType(user.Spec.AuthType) == wsv1alpha1.UserAuthTypeKosmoSecert {
 		isDefault, err = s.Klient.IsDefaultPassword(ctx, req.Id)
 		if err != nil {
 			log.Error(err, "failed to check is default password", "userid", req.Id)

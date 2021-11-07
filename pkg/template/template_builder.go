@@ -23,8 +23,8 @@ func NewTemplateBuilder(data string, inst *cosmov1alpha1.Instance) *TemplateBuil
 }
 
 func (t *TemplateBuilder) Build() ([]unstructured.Unstructured, error) {
-	resources := make([]unstructured.Unstructured, 0)
 	splitString := strings.Split(t.data, "---")
+	resources := make([]unstructured.Unstructured, 0, len(splitString))
 	for _, v := range splitString {
 		if v == "" {
 			continue

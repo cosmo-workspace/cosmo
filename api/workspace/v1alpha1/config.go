@@ -57,11 +57,11 @@ func SetConfigOnTemplateAnnotations(tmpl *cosmov1alpha1.Template, cfg Config) {
 	if ann == nil {
 		ann = make(map[string]string)
 	}
-	ann[InstanceAnnKeyWorkspaceDeployment] = cfg.DeploymentName
-	ann[InstanceAnnKeyWorkspaceService] = cfg.ServiceName
-	ann[InstanceAnnKeyWorkspaceIngress] = cfg.IngressName
-	ann[InstanceAnnKeyWorkspaceServiceMainPort] = cfg.ServiceMainPortName
-	ann[InstanceAnnKeyURLBase] = cfg.URLBase
+	ann[TemplateAnnKeyWorkspaceDeployment] = cfg.DeploymentName
+	ann[TemplateAnnKeyWorkspaceService] = cfg.ServiceName
+	ann[TemplateAnnKeyWorkspaceIngress] = cfg.IngressName
+	ann[TemplateAnnKeyWorkspaceServiceMainPort] = cfg.ServiceMainPortName
+	ann[TemplateAnnKeyURLBase] = cfg.URLBase
 	tmpl.SetAnnotations(ann)
 }
 
@@ -80,11 +80,11 @@ func ConfigFromTemplateAnnotations(tmpl *cosmov1alpha1.Template) (cfg Config, er
 	}
 
 	cfg = Config{
-		DeploymentName:      ann[InstanceAnnKeyWorkspaceDeployment],
-		ServiceName:         ann[InstanceAnnKeyWorkspaceService],
-		IngressName:         ann[InstanceAnnKeyWorkspaceIngress],
-		ServiceMainPortName: ann[InstanceAnnKeyWorkspaceServiceMainPort],
-		URLBase:             ann[InstanceAnnKeyURLBase],
+		DeploymentName:      ann[TemplateAnnKeyWorkspaceDeployment],
+		ServiceName:         ann[TemplateAnnKeyWorkspaceService],
+		IngressName:         ann[TemplateAnnKeyWorkspaceIngress],
+		ServiceMainPortName: ann[TemplateAnnKeyWorkspaceServiceMainPort],
+		URLBase:             ann[TemplateAnnKeyURLBase],
 	}
 	cfg.Default()
 

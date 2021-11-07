@@ -48,7 +48,7 @@ func (s *Server) PostWorkspace(ctx context.Context, userId string, req dashv1alp
 
 	ws := &wsv1alpha1.Workspace{}
 	ws.SetName(req.Name)
-	ws.SetNamespace(wsv1alpha1.UserNamespace(user.ID))
+	ws.SetNamespace(wsv1alpha1.UserNamespace(user.Name))
 	ws.Spec = wsv1alpha1.WorkspaceSpec{
 		Template: cosmov1alpha1.TemplateRef{
 			Name: req.Template,
@@ -63,7 +63,7 @@ func (s *Server) PostWorkspace(ctx context.Context, userId string, req dashv1alp
 
 		} else {
 			res.Message = "failed to create workspace"
-			log.Error(err, res.Message, "userid", user.ID, "workspace", req.Name, "template", req.Template)
+			log.Error(err, res.Message, "userid", user.Name, "workspace", req.Name, "template", req.Template)
 			return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
 		}
 	}
@@ -73,7 +73,7 @@ func (s *Server) PostWorkspace(ctx context.Context, userId string, req dashv1alp
 	res.Workspace = convertWorkspaceTodashv1alpha1Workspace(*ws)
 
 	res.Message = "Successfully created"
-	log.Info(res.Message, "userid", user.ID, "workspace", req.Name, "template", req.Template)
+	log.Info(res.Message, "userid", user.Name, "workspace", req.Name, "template", req.Template)
 	return dashv1alpha1.Response(http.StatusCreated, res), nil
 }
 
@@ -89,10 +89,10 @@ func (s *Server) GetWorkspaces(ctx context.Context, userId string) (dashv1alpha1
 
 	res := &dashv1alpha1.ListWorkspaceResponse{}
 
-	wss, err := s.Klient.ListWorkspacesByUserID(ctx, user.ID)
+	wss, err := s.Klient.ListWorkspacesByUserID(ctx, user.Name)
 	if err != nil {
 		res.Message = "failed to list workspaces"
-		log.Error(err, res.Message, "userid", user.ID)
+		log.Error(err, res.Message, "userid", user.Name)
 		return dashv1alpha1.Response(http.StatusInternalServerError, res), nil
 	}
 
@@ -182,11 +182,11 @@ func (s *Server) PatchWorkspace(ctx context.Context, userId string, workspaceNam
 		if err != nil {
 			if apierrs.IsNotFound(err) {
 				res.Message = err.Error()
-				log.Error(err, res.Message, "userid", user.ID, "workspace", ws.Name)
+				log.Error(err, res.Message, "userid", user.Name, "workspace", ws.Name)
 				return dashv1alpha1.Response(http.StatusInternalServerError, res), nil
 			} else {
 				res.Message = "failed to update workspace"
-				log.Error(err, res.Message, "userid", user.ID, "workspace", ws.Name)
+				log.Error(err, res.Message, "userid", user.Name, "workspace", ws.Name)
 				return dashv1alpha1.Response(http.StatusInternalServerError, res), nil
 			}
 		}
@@ -197,7 +197,7 @@ func (s *Server) PatchWorkspace(ctx context.Context, userId string, workspaceNam
 
 	res.Workspace = convertWorkspaceTodashv1alpha1Workspace(*ws)
 
-	log.Info(res.Message, "userid", user.ID, "workspace", ws.Name)
+	log.Info(res.Message, "userid", user.Name, "workspace", ws.Name)
 	return dashv1alpha1.Response(http.StatusOK, res), nil
 }
 

@@ -66,7 +66,7 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, nil
 	}
 
-	usingProxyList := make([]string, 0)
+	usingProxyList := make([]string, 0, len(ws.Spec.Network))
 
 	for i, netRule := range ws.Spec.Network {
 		if netRule.Public {

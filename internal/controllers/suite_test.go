@@ -27,7 +27,7 @@ import (
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
 var cfg *rest.Config
-var k8sClient client.Client
+var k8sClient kosmo.Client
 var testEnv *envtest.Environment
 
 func TestAPIs(t *testing.T) {
@@ -60,8 +60,10 @@ var _ = BeforeSuite(func() {
 
 	//+kubebuilder:scaffold:scheme
 
-	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
+	c, err := client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).NotTo(HaveOccurred())
+
+	k8sClient = kosmo.NewClient(c)
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:             scheme.Scheme,
@@ -79,6 +81,27 @@ var _ = BeforeSuite(func() {
 	err = (&TemplateReconciler{
 		Client: kosmo.NewClient(mgr.GetClient()),
 		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr)
+	Expect(err).NotTo(HaveOccurred())
+
+	err = (&WorkspaceReconciler{
+		Client:   kosmo.NewClient(mgr.GetClient()),
+		Scheme:   mgr.GetScheme(),
+		Recorder: mgr.GetEventRecorderFor(WsControllerFieldManager),
+	}).SetupWithManager(mgr)
+	Expect(err).NotTo(HaveOccurred())
+
+	err = (&WorkspaceStatusReconciler{
+		Client:   kosmo.NewClient(mgr.GetClient()),
+		Scheme:   mgr.GetScheme(),
+		Recorder: mgr.GetEventRecorderFor(WsStatControllerFieldManager),
+	}).SetupWithManager(mgr)
+	Expect(err).NotTo(HaveOccurred())
+
+	err = (&UserReconciler{
+		Client:   kosmo.NewClient(mgr.GetClient()),
+		Scheme:   mgr.GetScheme(),
+		Recorder: mgr.GetEventRecorderFor(UserControllerFieldManager),
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 

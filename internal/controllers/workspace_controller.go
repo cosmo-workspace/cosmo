@@ -9,6 +9,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
 	corev1 "k8s.io/api/core/v1"
@@ -65,17 +66,32 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	op, err := ctrl.CreateOrUpdate(ctx, r.Client, inst, func() error {
 		return r.patchInstanceToWorkspaceDesired(inst, ws)
 	})
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 
 	now := metav1.Now()
+	gvk, _ := apiutil.GVKForObject(inst, r.Scheme)
+	ws.Status.Instance = cosmov1alpha1.ObjectRef{
+		ObjectReference: corev1.ObjectReference{
+			APIVersion:      gvk.GroupVersion().String(),
+			Kind:            gvk.Kind,
+			Name:            inst.GetName(),
+			Namespace:       inst.GetNamespace(),
+			ResourceVersion: inst.GetResourceVersion(),
+			UID:             inst.GetUID(),
+		},
+		CreationTimestamp: &inst.CreationTimestamp,
+		UpdateTimestamp:   &now,
+	}
+
 	switch op {
 	case controllerutil.OperationResultCreated:
 		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Created", "successfully instance created")
-		ws.Status.Instance = instanceRef(inst)
-		ws.Status.Instance.UpdateTimestamp = &now
+		ws.Status.Instance.CreationTimestamp = &now
 
 	case controllerutil.OperationResultUpdated:
 		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Updated", "instance is not desired state, updated")
-		ws.Status.Instance.UpdateTimestamp = &now
 	}
 
 	// update workspace status
@@ -94,21 +110,6 @@ func (r *WorkspaceReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&wsv1alpha1.Workspace{}).
 		Owns(&cosmov1alpha1.Instance{}).
 		Complete(r)
-}
-
-func instanceRef(inst *cosmov1alpha1.Instance) cosmov1alpha1.ObjectRef {
-	now := metav1.Now()
-	kosmo.FillTypeMeta(inst, cosmov1alpha1.GroupVersion)
-	return cosmov1alpha1.ObjectRef{
-		ObjectReference: corev1.ObjectReference{
-			APIVersion: inst.APIVersion,
-			Kind:       inst.Kind,
-			Name:       inst.Name,
-			Namespace:  inst.Namespace,
-		},
-		CreationTimestamp: &now,
-		UpdateTimestamp:   &now,
-	}
 }
 
 func (r *WorkspaceReconciler) patchInstanceToWorkspaceDesired(inst *cosmov1alpha1.Instance, ws wsv1alpha1.Workspace) error {

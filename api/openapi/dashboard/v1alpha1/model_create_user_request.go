@@ -18,6 +18,8 @@ type CreateUserRequest struct {
 	Role string `json:"role,omitempty"`
 
 	AuthType string `json:"authType,omitempty"`
+
+	Addons []ApiV1alpha1UserAddons `json:"addons,omitempty"`
 }
 
 // AssertCreateUserRequestRequired checks if the required fields are not zero-ed
@@ -31,6 +33,11 @@ func AssertCreateUserRequestRequired(obj CreateUserRequest) error {
 		}
 	}
 
+	for _, el := range obj.Addons {
+		if err := AssertApiV1alpha1UserAddonsRequired(el); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

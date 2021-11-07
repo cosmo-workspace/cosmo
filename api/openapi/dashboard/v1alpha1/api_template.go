@@ -49,12 +49,31 @@ func NewTemplateApiController(s TemplateApiServicer, opts ...TemplateApiOption) 
 func (c *TemplateApiController) Routes() Routes {
 	return Routes{
 		{
+			"GetUserAddonTemplates",
+			strings.ToUpper("Get"),
+			"/api/v1alpha1/template/useraddon",
+			c.GetUserAddonTemplates,
+		},
+		{
 			"GetWorkspaceTemplates",
 			strings.ToUpper("Get"),
 			"/api/v1alpha1/template/workspace",
 			c.GetWorkspaceTemplates,
 		},
 	}
+}
+
+// GetUserAddonTemplates - List useraddon templates
+func (c *TemplateApiController) GetUserAddonTemplates(w http.ResponseWriter, r *http.Request) {
+	result, err := c.service.GetUserAddonTemplates(r.Context())
+	// If an error occurred, encode the error with the status code
+	if err != nil {
+		c.errorHandler(w, r, err, &result)
+		return
+	}
+	// If no error, encode the body and the result code
+	EncodeJSONResponse(result.Body, &result.Code, w)
+
 }
 
 // GetWorkspaceTemplates - List workspace templates

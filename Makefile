@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-VERSION ?= v0.1.0
+VERSION ?= v0.2.0-rc1
 
 MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
@@ -12,6 +12,8 @@ IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
 IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true,generateEmbeddedObjectMeta=true,preserveUnknownFields=false"
+
+COVER_PROFILE ?= cover.out
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -72,7 +74,7 @@ ENVTEST_ASSETS_DIR=$(shell pwd)/testbin
 test: manifests generate fmt vet ## Run tests.
 	mkdir -p ${ENVTEST_ASSETS_DIR}
 	test -f ${ENVTEST_ASSETS_DIR}/setup-envtest.sh || curl -sSLo ${ENVTEST_ASSETS_DIR}/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/v0.8.3/hack/setup-envtest.sh
-	source ${ENVTEST_ASSETS_DIR}/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR); go test ./... -coverprofile cover.out
+	source ${ENVTEST_ASSETS_DIR}/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR); go test ./... -coverprofile $(COVER_PROFILE)
 
 ui-test:
 	cd web/dashboard-ui && yarn install && yarn test  --coverage  --ci --watchAll=false
@@ -101,10 +103,10 @@ auth-proxy: update-version generate fmt vet
 
 # Update version in version.go
 update-version:
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+[-alpha]*[-beta]*/${MANAGER_VERSION}/" ./cmd/controller-manager/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+[-alpha]*[-beta]*/${DASHBOARD_VERSION}/" ./cmd/dashboard/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+[-alpha]*[-beta]*/${COSMOCTL_VERSION}/" ./cmd/cosmoctl/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+[-alpha]*[-beta]*/${AUTHPROXY_VERSION}/" ./cmd/auth-proxy/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${MANAGER_VERSION} cosmo-workspace/" ./cmd/controller-manager/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${DASHBOARD_VERSION} cosmo-workspace/" ./cmd/dashboard/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${COSMOCTL_VERSION} cosmo-workspace/" ./cmd/cosmoctl/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${AUTHPROXY_VERSION} cosmo-workspace/" ./cmd/auth-proxy/main.go
 	cd config/manager && kustomize edit set image controller=${IMG_MANAGER}
 	cd config/dashboard && kustomize edit set image dashboard=${IMG_DASHBOARD}
 
