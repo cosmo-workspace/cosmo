@@ -96,8 +96,8 @@ See [GETTING-STARTED.md](https://github.com/cosmo-workspace/cosmo/blob/main/docs
 COSMO has 3 main resources.
 
 - `User`: Workspace running environment for each developers. In Kubernetes terms, it is a [`Namespace`](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) actually.
-- `Workspace`: Workspace is containers and networks for WebIDE Containers. You can create several Workspaces and use properly for each your developing apps or projects. Workspace is defined as a custom resource definition in Kubernetes.
-- `Template`: Template of Workspace. Workspace is a instance of WebIDE Containers created by Template. Template is defined as a custom resource definition in Kubernetes.
+- `Workspace`: Workspace is containers and networks for WebIDE Containers. You can create several Workspaces and use properly for each your developing apps or projects.
+- `Template`: Template of Workspace. Workspace is a instance of WebIDE Containers created by Template.
 
 ![overview](assets/overview.dio.svg)
 
@@ -118,6 +118,16 @@ COSMO Template engine is picking the best of both overlay-based [`Kustomize`](ht
 
 Also supports overriding fixed configuration values in `Instance`. 
 For example, it is used for dev server ports that are opened dynamically during development.
+
+### Differences with Helm
+
+Helm is a similar tool for distributing a set of k8s manifests. It is specific to run in various environment. 
+
+COSMO specializes in distributing dev-environments to developers with configurations that depends on your environment. 
+
+You can download useful Helm charts from public repositories, configure your environment settings with networking and storage for example, and distribute them for each developer as COSMO Templates in your cluster.
+
+![template-flow](assets/template-flow.drawio.svg)
 
 ## System Components
 
