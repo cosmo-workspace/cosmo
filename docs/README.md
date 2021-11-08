@@ -119,15 +119,7 @@ COSMO Template engine is picking the best of both overlay-based [`Kustomize`](ht
 Also supports overriding fixed configuration values in `Instance`. 
 For example, it is used for dev server ports that are opened dynamically during development.
 
-### Differences with Helm
-
-Helm is a similar tool for distributing a set of k8s manifests. It is specific to run in various environment. 
-
-COSMO specializes in distributing dev-environments to developers with configurations that depends on your environment. 
-
-You can download useful Helm charts from public repositories, configure your environment settings with networking and storage for example, and distribute them for each developer as COSMO Templates in your cluster.
-
-![template-flow](assets/template-flow.drawio.svg)
+See the details in [CRD-DESIGN.md](CRD-DESIGN.md)
 
 ## System Components
 

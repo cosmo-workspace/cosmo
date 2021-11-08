@@ -9,9 +9,19 @@ COSMO has 4 CRD resources.
 
 COSMO is a manager of WebIDE, but `Templates` and `Instances` are designed to be generic and can be used not only for the WebIDE containers but others.
 
-It is called COSMO Template engine, designed for a replication of s the set of Kubernetes manifests in a cluster.
+It is called `COSMO Template Engine`, designed for a replication of s the set of Kubernetes manifests in a cluster.
 
 COSMO Template engine is picking the best of both overlay-based [`Kustomize`](https://github.com/kubernetes-sigs/kustomize) and variable-based [`Helm`](https://helm.sh).
+
+### Differences with Helm
+
+Helm is a similar tool for distributing a set of k8s manifests. It is specific to run in various environment. 
+
+COSMO specializes in distributing dev-environments to developers with configurations that depends on your environment. 
+
+You can download useful Helm charts from public repositories, configure your environment settings with networking and storage for example, and distribute them for each developer as COSMO Templates in your cluster.
+
+![template-flow](assets/template-flow.drawio.svg)
 
 ## Template
 
@@ -145,8 +155,8 @@ spec:
   template:
     name: nginx
   vars:
-    "{{IMAGE_TAG}}": alpine
-    "{{DOMAIN}}": example.cosmo-workspace.github.io
+    IMAGE_TAG: alpine
+    DOMAIN: example.cosmo-workspace.github.io
   override:
     scale:
       target:
@@ -359,4 +369,4 @@ spec:
   - var: AWS_REGION
 ```
 
-In order to create a default user addon, annotate `cosmo/default-user-addon: "true"` on the Template.
+In order to create a default user addon, which is applied to all Users automatically, annotate `cosmo/default-user-addon: "true"` on the Template.
