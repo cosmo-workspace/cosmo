@@ -10,20 +10,20 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 )
 
-type TemplateBuilder struct {
-	data string
-	inst *cosmov1alpha1.Instance
+type UnstructuredBuilder struct {
+	rawYaml string
+	inst    *cosmov1alpha1.Instance
 }
 
-func NewTemplateBuilder(data string, inst *cosmov1alpha1.Instance) *TemplateBuilder {
-	return &TemplateBuilder{
-		data: data,
-		inst: inst,
+func NewUnstructuredBuilder(rawYaml string, inst *cosmov1alpha1.Instance) *UnstructuredBuilder {
+	return &UnstructuredBuilder{
+		rawYaml: rawYaml,
+		inst:    inst,
 	}
 }
 
-func (t *TemplateBuilder) Build() ([]unstructured.Unstructured, error) {
-	splitString := strings.Split(t.data, "---")
+func (t *UnstructuredBuilder) Build() ([]unstructured.Unstructured, error) {
+	splitString := strings.Split(t.rawYaml, "---")
 	resources := make([]unstructured.Unstructured, 0, len(splitString))
 	for _, v := range splitString {
 		if v == "" {

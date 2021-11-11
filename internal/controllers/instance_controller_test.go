@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
+	"testing"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -12,7 +14,6 @@ import (
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
-	"sigs.k8s.io/yaml"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -21,6 +22,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -688,8 +690,59 @@ func ownerRef(obj runtime.Object, scheme *runtime.Scheme) metav1.OwnerReference 
 	}
 }
 
-func dumpObject(obj interface{}) string {
-	out, err := yaml.Marshal(obj)
-	Expect(err).ShouldNot(HaveOccurred())
-	return string(out)
+func Test_unstToObjectRef(t *testing.T) {
+	creationTimestamp := "2021-07-13T01:50:08Z"
+	creationTime, err := time.Parse("2006-01-02T03:04:05Z", creationTimestamp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	creationTime = creationTime.Local()
+	metaCreationTime := metav1.NewTime(creationTime)
+
+	now := metav1.Now()
+
+	type args struct {
+		obj             unstructured.Unstructured
+		updateTimestamp metav1.Time
+	}
+	tests := []struct {
+		name string
+		args args
+		want cosmov1alpha1.ObjectRef
+	}{
+		{
+			name: "OK",
+			args: args{
+				obj: unstructured.Unstructured{
+					Object: map[string]interface{}{
+						"apiVersion": "networking.k8s.io/v1",
+						"kind":       "Ingress",
+						"metadata": map[string]interface{}{
+							"name":              "test",
+							"namespace":         "default",
+							"creationTimestamp": "2021-07-13T01:50:08Z",
+						},
+					},
+				},
+				updateTimestamp: now,
+			},
+			want: cosmov1alpha1.ObjectRef{
+				ObjectReference: corev1.ObjectReference{
+					APIVersion: "networking.k8s.io/v1",
+					Kind:       "Ingress",
+					Name:       "test",
+					Namespace:  "default",
+				},
+				CreationTimestamp: &metaCreationTime,
+				UpdateTimestamp:   &now,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := unstToObjectRef(tt.args.obj, tt.args.updateTimestamp); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("unstToObjectRef() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

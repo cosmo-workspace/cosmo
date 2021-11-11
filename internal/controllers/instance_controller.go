@@ -12,6 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 
@@ -64,16 +65,37 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	// Build child resource config by template
-	builts, err := r.buildTemplateObjects(ctx, tmpl, &inst)
+	builts, err := template.NewUnstructuredBuilder(tmpl.Spec.RawYaml, &inst).
+		ReplaceDefaultVars().
+		ReplaceCustomVars().
+		Build()
+
 	if err != nil {
-		r.Recorder.Event(&inst, corev1.EventTypeWarning, "Build failed", err.Error())
+		r.Recorder.Event(&inst, corev1.EventTypeWarning, "BuildFailed", err.Error())
+		return ctrl.Result{}, err
+	}
+
+	// Transform
+	ts := []transformer.Transformer{
+		// MetadataTransformer perform update each object's metadata
+		transformer.NewMetadataTransformer(&inst, tmpl, r.Scheme),
+		// NetworkTransformer perform update ingresses and services by network override
+		transformer.NewNetworkTransformer(inst.Spec.Override.Network, inst.Name),
+		// JSONPatchTransformer perform JSONPatch
+		transformer.NewJSONPatchTransformer(inst.Spec.Override.PatchesJson6902, inst.Name),
+		// ScalingTransformer perform override replicas
+		transformer.NewScalingTransformer(inst.Spec.Override.Scale, inst.Name),
+	}
+	builts, err = transformer.ApplyTransformers(ctx, ts, builts)
+	if err != nil {
+		r.Recorder.Event(&inst, corev1.EventTypeWarning, "BuildFailed", err.Error())
 		return ctrl.Result{}, err
 	}
 
 	// Reconcile child resources
 	if errs := r.applyChildObjects(ctx, &inst, builts); len(errs) != 0 {
 		for _, err := range errs {
-			r.Recorder.Event(&inst, corev1.EventTypeWarning, "Sync failed", err.Error())
+			r.Recorder.Event(&inst, corev1.EventTypeWarning, "SyncFailed", err.Error())
 		}
 		return ctrl.Result{}, errors.New("apply child objects failed")
 	}
@@ -91,66 +113,18 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	return ctrl.Result{}, nil
 }
 
-func (r *InstanceReconciler) buildTemplateObjects(ctx context.Context, tmpl *cosmov1alpha1.Template, inst *cosmov1alpha1.Instance) ([]unstructured.Unstructured, error) {
-	log := clog.FromContext(ctx).WithCaller()
-
-	inst.Status.TemplateName = tmpl.GetName()
-
-	builts, err := template.NewTemplateBuilder(tmpl.Spec.RawYaml, inst).
-		ReplaceDefaultVars().
-		ReplaceCustomVars().
-		Build()
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to build template: %w", err)
-	}
-
-	transformers := []transformer.Transformer{
-		// MetadataTransformer perform update each object's metadata
-		transformer.NewMetadataTransformer(inst, tmpl, r.Scheme),
-		// NetworkTransformer perform update ingresses and services by netSpec
-		transformer.NewNetworkTransformer(inst.Spec.Override.Network, inst.Name),
-		// JSONPatchTransformer perform JSONPatch
-		transformer.NewJSONPatchTransformer(inst.Spec.Override.PatchesJson6902, inst.Name),
-		// ScalingTransformer perform override replicas
-		transformer.NewScalingTransformer(inst.Spec.Override.Scale, inst.Name),
-	}
-
-	for i := 0; i < len(builts); i++ {
-		// Perform each transformers
-		for _, trans := range transformers {
-			transName := transformer.Name(trans)
-			log.DebugAll().Info(fmt.Sprintf("transforming %s", transName), "transformer", transName, "kind", builts[i].GetKind(), "name", builts[i].GetName())
-			before := builts[i].DeepCopy()
-
-			transformed, err := trans.Transform(&builts[i])
-			if err != nil {
-				return nil, fmt.Errorf("failed to transform: %w", err)
-			}
-			builts[i] = *transformed
-
-			if !equality.Semantic.DeepEqual(before, transformed) {
-				log.DebugAll().PrintObjectDiff(before, transformed)
-				log.DebugAll().Info("transformed", "transformer", transName, "kind", builts[i].GetKind(), "name", builts[i].GetName())
-			} else {
-				log.DebugAll().Info("not transformed", "transformer", transName, "kind", builts[i].GetKind(), "name", builts[i].GetName())
-			}
-		}
-	}
-	return builts, nil
-}
-
 func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov1alpha1.Instance, builts []unstructured.Unstructured) []error {
 	log := clog.FromContext(ctx).WithCaller()
 	errs := make([]error, 0)
 
-	refs := inst.Status.LastApplied
+	lastApplied := inst.Status.LastApplied
 
-	if len(refs) == 0 {
-		// First reconcile
+	currApplied := make(map[types.UID]cosmov1alpha1.ObjectRef)
+	if len(lastApplied) == 0 {
+		// first reconcile
 		for _, built := range builts {
 			if _, err := r.dryrunApply(ctx, &built); err != nil {
-				// Ignore NotFound in case the template contains a dependency resource that was not found.
+				// ignore NotFound in case the template contains a dependency resource that was not found.
 				if !apierrs.IsNotFound(err) {
 					errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
 				}
@@ -159,8 +133,6 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 		if len(errs) != 0 {
 			return errs
 		}
-
-		refs = make([]cosmov1alpha1.ObjectRef, 0, len(builts))
 	}
 
 	for _, built := range builts {
@@ -176,7 +148,7 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 
 		current, err := r.GetUnstructured(ctx, built.GroupVersionKind(), built.GetName(), built.GetNamespace())
 		if err != nil {
-			// If not found, create resource
+			// if not found, create resource
 			if apierrs.IsNotFound(err) {
 				log.Info("creating new built resource", "kind", built.GetKind(), "name", built.GetName())
 				log.DebugAll().DumpObject(r.Scheme, &built, "built object")
@@ -189,7 +161,7 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 
 				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s created", built.GetKind(), built.GetName())
 
-				refs = upsertLastAppliedResourceRef(refs, cosmov1alpha1.UnstructuredToResourceRef(*created, metav1.Now()), inst.Name)
+				currApplied[created.GetUID()] = unstToObjectRef(*created, metav1.Now())
 			} else {
 				errs = append(errs, fmt.Errorf("failed to get resource: kind = %s name = %s: %w", built.GetKind(), built.GetName(), err))
 				continue
@@ -217,13 +189,33 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 
 				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s is not desired state, synced", built.GetKind(), built.GetName())
 
-				refs = upsertLastAppliedResourceRef(refs, cosmov1alpha1.UnstructuredToResourceRef(*desired, metav1.Now()), inst.Name)
+				currApplied[desired.GetUID()] = unstToObjectRef(*desired, metav1.Now())
 			}
 		}
 	}
-	inst.Status.LastApplied = refs
-	return errs
+	inst.Status.LastApplied = objectRefMapToSlice(currApplied)
 
+	// garbage collection
+	shouldDeletes := objectRefNotExistsInMap(lastApplied, currApplied)
+	for _, d := range shouldDeletes {
+		log.Debug().Info("start garbage collection", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
+
+		var obj unstructured.Unstructured
+		err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: inst.GetNamespace()}, &obj)
+		if err != nil {
+			if !apierrs.IsNotFound(err) {
+				log.Error(err, "failed to get object to be deleted", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
+			}
+			continue
+		}
+
+		if err := r.Delete(ctx, &obj); err != nil {
+			r.Recorder.Eventf(inst, corev1.EventTypeWarning, "GCFailed", "failed to delete unused obj: %s %s", obj.GetKind(), obj.GetName())
+		}
+		r.Recorder.Eventf(inst, corev1.EventTypeNormal, "GC", "do garbage collection: %s %s", obj.GetKind(), obj.GetName())
+	}
+
+	return errs
 }
 
 func (r *InstanceReconciler) dryrunApply(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
@@ -240,15 +232,38 @@ func (r *InstanceReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func upsertLastAppliedResourceRef(refs []cosmov1alpha1.ObjectRef, update cosmov1alpha1.ObjectRef, instName string) []cosmov1alpha1.ObjectRef {
-	for i, v := range refs {
-		if v.IsTarget(instName, update) {
-			refs[i] = update
-			return refs
+// unstToObjectRef generate ObjectRef by Unstructured object
+func unstToObjectRef(obj unstructured.Unstructured, updateTimestamp metav1.Time) cosmov1alpha1.ObjectRef {
+	ref := cosmov1alpha1.ObjectRef{}
+	ref.SetGroupVersionKind(obj.GetObjectKind().GroupVersionKind())
+	ref.Name = obj.GetName()
+	ref.Namespace = obj.GetNamespace()
+	ref.UID = obj.GetUID()
+	ref.ResourceVersion = obj.GetResourceVersion()
+
+	create := obj.GetCreationTimestamp()
+	ref.CreationTimestamp = &create
+	ref.UpdateTimestamp = &updateTimestamp
+	return ref
+}
+
+func objectRefMapToSlice(m map[types.UID]cosmov1alpha1.ObjectRef) []cosmov1alpha1.ObjectRef {
+	s := make([]cosmov1alpha1.ObjectRef, len(m))
+	var i int
+	for _, v := range m {
+		s[i] = v
+		i++
+	}
+	return s
+}
+
+func objectRefNotExistsInMap(s []cosmov1alpha1.ObjectRef, m map[types.UID]cosmov1alpha1.ObjectRef) []cosmov1alpha1.ObjectRef {
+	notExists := make([]cosmov1alpha1.ObjectRef, 0)
+	for _, ss := range s {
+		_, exist := m[ss.UID]
+		if !exist {
+			notExists = append(notExists, ss)
 		}
 	}
-
-	// not found
-	refs = append(refs, update)
-	return refs
+	return notExists
 }

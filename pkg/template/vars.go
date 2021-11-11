@@ -11,18 +11,18 @@ const (
 	DefaultVarsTemplate  = "{{TEMPLATE}}"
 )
 
-func (t *TemplateBuilder) ReplaceDefaultVars() *TemplateBuilder {
-	t.data = strings.ReplaceAll(t.data, DefaultVarsInstance, t.inst.Name)
-	t.data = strings.ReplaceAll(t.data, DefaultVarsNamespace, t.inst.Namespace)
-	t.data = strings.ReplaceAll(t.data, DefaultVarsTemplate, t.inst.Spec.Template.Name)
+func (t *UnstructuredBuilder) ReplaceDefaultVars() *UnstructuredBuilder {
+	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsInstance, t.inst.Name)
+	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsNamespace, t.inst.Namespace)
+	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsTemplate, t.inst.Spec.Template.Name)
 	return t
 }
 
-func (t *TemplateBuilder) ReplaceCustomVars() *TemplateBuilder {
+func (t *UnstructuredBuilder) ReplaceCustomVars() *UnstructuredBuilder {
 	if t.inst.Spec.Vars != nil {
 		for key, val := range t.inst.Spec.Vars {
 			key = FixupTemplateVarKey(key)
-			t.data = strings.ReplaceAll(t.data, key, val)
+			t.rawYaml = strings.ReplaceAll(t.rawYaml, key, val)
 		}
 	}
 	return t
