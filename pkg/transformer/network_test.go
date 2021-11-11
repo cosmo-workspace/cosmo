@@ -11,9 +11,11 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestNetworkTransformer_Transform(t *testing.T) {
+	prefix := netv1.PathTypePrefix
 	type fields struct {
 		netSpec  *cosmov1alpha1.NetworkOverrideSpec
 		instName string
@@ -53,7 +55,8 @@ func TestNetworkTransformer_Transform(t *testing.T) {
 															},
 														},
 													},
-													Path: "/test",
+													Path:     "/test",
+													PathType: &prefix,
 												},
 											},
 										},
@@ -135,7 +138,8 @@ spec:
 															},
 														},
 													},
-													Path: "/test",
+													Path:     "/test",
+													PathType: &prefix,
 												},
 											},
 										},
@@ -208,6 +212,7 @@ spec:
             port:
               number: 8081
         path: /test
+        pathType: Prefix
 `,
 			wantErr: false,
 		},
@@ -272,7 +277,7 @@ spec:
 				}
 				if string(got) != tt.want {
 					t.Errorf("NetworkTransformer.Transform() = %v, want %v", string(got), tt.want)
-					t.Errorf("NetworkTransformer.Transform() = %v, want %v", got, []byte(tt.want))
+					t.Errorf("NetworkTransformer.Transform() diff = %v", cmp.Diff(string(got), tt.want))
 				}
 
 			} else {
@@ -481,7 +486,8 @@ spec:
 												},
 											},
 										},
-										Path: "/test",
+										Path:     "/test",
+										PathType: &prefix,
 									},
 								},
 							},
@@ -515,6 +521,7 @@ spec:
             port:
               number: 8081
         path: /test
+        pathType: Prefix
 `,
 		},
 		{
@@ -896,8 +903,8 @@ spec:
 					t.Errorf("yaml.Marshal err = %v", err)
 				}
 				if string(got) != tt.want {
-					t.Errorf("overrideIngressRules() = %v, want %v", string(got), tt.want)
-					t.Errorf("overrideIngressRules() = %v, want %v", got, []byte(tt.want))
+					t.Errorf("overrideIngressRules() diff = %s", cmp.Diff(string(got), tt.want))
+					t.Errorf("overrideIngressRules() diff bytes = %s", cmp.Diff(got, []byte(tt.want)))
 				}
 			} else {
 				if obj != nil {
