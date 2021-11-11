@@ -9,10 +9,12 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
+// Transformer is interface to modify unstructured object
 type Transformer interface {
 	Transform(*unstructured.Unstructured) (*unstructured.Unstructured, error)
 }
 
+// ApplyTransformers applies all transformer to each unstructured objects
 func ApplyTransformers(ctx context.Context, transformers []Transformer, objects []unstructured.Unstructured) ([]unstructured.Unstructured, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
