@@ -29,6 +29,8 @@ type WorkspaceMutationWebhookHandler struct {
 	Client  kosmo.Client
 	Log     *clog.Logger
 	decoder *admission.Decoder
+
+	DefaultURLBase string
 }
 
 //+kubebuilder:webhook:path=/mutate-workspace-cosmo-workspace-github-io-v1alpha1-workspace,mutating=true,failurePolicy=fail,sideEffects=None,groups=workspace.cosmo-workspace.github.io,resources=workspaces,verbs=create;update,versions=v1alpha1,name=mworkspace.kb.io,admissionReviewVersions={v1,v1alpha1}
@@ -63,6 +65,11 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 	h.Log.Debug().Info("workspace config in template", "cfg", cfg)
+
+	// default urlbase
+	if cfg.URLBase == "" {
+		cfg.URLBase = h.DefaultURLBase
+	}
 
 	// default replica 1
 	if ws.Spec.Replicas == nil {
