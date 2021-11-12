@@ -65,7 +65,7 @@ func (o *deleteOption) Complete(cmd *cobra.Command, args []string) error {
 }
 
 func (o *deleteOption) RunE(cmd *cobra.Command, args []string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 
 	inst, err := o.Client.GetInstance(ctx, o.WorkspaceName, o.Namespace)

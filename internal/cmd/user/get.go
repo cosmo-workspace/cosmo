@@ -58,7 +58,7 @@ func (o *getOption) Complete(cmd *cobra.Command, args []string) error {
 }
 
 func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)
 

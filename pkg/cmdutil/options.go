@@ -1,6 +1,7 @@
 package cmdutil
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -38,6 +39,7 @@ type CliOptions struct {
 	Out            io.Writer
 	ErrOut         io.Writer
 
+	Ctx    context.Context
 	Logr   *clog.Logger
 	Client *kosmo.Client
 	Scheme *runtime.Scheme
@@ -55,7 +57,8 @@ type UserNamespacedCliOptions struct {
 }
 
 func NewCliOptions() *CliOptions {
-	return &CliOptions{}
+	ctx := context.TODO()
+	return &CliOptions{Ctx: ctx}
 }
 
 func NewNamespacedCliOptions(o *CliOptions) *NamespacedCliOptions {
@@ -77,6 +80,7 @@ func (o *CliOptions) Complete(cmd *cobra.Command, args []string) error {
 			Level:       zapcore.Level(-o.LogLevel),
 		}
 		o.Logr = clog.NewLogger(zap.New(zap.UseFlagOptions(&opt)))
+		o.Ctx = clog.IntoContext(o.Ctx, o.Logr)
 	} else {
 		o.Logr = clog.NewLogger(logr.Discard())
 	}

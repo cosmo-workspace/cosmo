@@ -195,7 +195,7 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 }
 
 func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 
 	if isatty.IsTerminal(os.Stdin.Fd()) {
