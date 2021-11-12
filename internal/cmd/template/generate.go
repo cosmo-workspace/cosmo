@@ -115,14 +115,8 @@ func (o *generateOption) Validate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if o.TypeWorkspace {
-		if o.wsConfig.URLBase == "" {
-			return errors.New("--workspace-urlbase is required")
-		}
-	}
-
 	if o.TypeWorkspace && o.TypeUserAddon {
-		return errors.New("--workspace and --user-addon is incompatible")
+		return errors.New("--workspace and --user-addon cannot be specified concurrently")
 	}
 
 	return nil
