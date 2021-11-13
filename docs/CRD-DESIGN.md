@@ -264,7 +264,7 @@ These will be propagated to the `Instance` specification.
 
 However, only `Workspace Template` can be specified in Template spec. It is just a Template but labeled with `cosmo/type: workspace` and some annotations.
 
-See [Workspace.md](Workspace.md)　for the detail of `Workspace Template`.
+See [Workspace.md](WORKSPACE-DESIGN.md)　for the detail of `Workspace Template`.
 
 ### Replicas
 Just a number of replica of Pod. 1 mean Workspace is running and 0 is stopped.
@@ -274,7 +274,7 @@ It will be propagated to the `Instance scaling override`.
 Network is a abstract definition of networking features.
 It will be propagated to the `Instance network override` as Service and Ingress override.
 
-See [Workspace.md](Workspace.md)　for the detail.
+See [Workspace.md](WORKSPACE-DESIGN.md)　for the detail.
 
 ## User
 `User` is an abstract resource which represents WebIDE owners. 
