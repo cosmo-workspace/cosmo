@@ -166,6 +166,8 @@ spec:
 				"{{WORKSPACE_INGRESS_NAME}}":           wsConfig.IngressName,
 				"{{WORKSPACE_SERVICE_NAME}}":           wsConfig.ServiceName,
 				"{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}": wsConfig.ServiceMainPortName,
+				"{{WORKSPACE}}":                        wsName,
+				"{{USERID}}":                           userName,
 			},
 			Override: cosmov1alpha1.OverrideSpec{
 				Scale: []cosmov1alpha1.ScalingOverrideSpec{
