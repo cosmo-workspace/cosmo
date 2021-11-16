@@ -171,7 +171,6 @@ func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.Us
 	insts := make([]cosmov1alpha1.Instance, len(u.Spec.Addons))
 	for i, addon := range u.Spec.Addons {
 		inst := cosmov1alpha1.Instance{}
-		inst.Name = fmt.Sprintf("user-addon-%s", addon.Template.Name)
 
 		if addon.Vars == nil {
 			addon.Vars = make(map[string]string)
@@ -184,9 +183,13 @@ func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.Us
 		}
 
 		if sysNs, ok := tmplNamesInSysNs[addon.Template.Name]; ok {
+			// system namespace
+			inst.Name = fmt.Sprintf("user-addon-%s-%s", addon.Template.Name, u.GetName())
 			inst.SetNamespace(sysNs)
 
 		} else {
+			// user namespace
+			inst.Name = fmt.Sprintf("user-addon-%s", addon.Template.Name)
 			inst.SetNamespace(u.Status.Namespace.Name)
 
 			err := ctrl.SetControllerReference(&u, &inst, r.Scheme)
