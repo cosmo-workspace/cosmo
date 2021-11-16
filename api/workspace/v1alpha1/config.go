@@ -41,17 +41,6 @@ func (c *Config) Default() {
 	}
 }
 
-func AddWorkspaceTemplateVars(vars map[string]string, cfg Config) map[string]string {
-	if vars == nil {
-		vars = make(map[string]string)
-	}
-	vars[TemplateVarDeploymentName] = cfg.DeploymentName
-	vars[TemplateVarServiceName] = cfg.ServiceName
-	vars[TemplateVarIngressName] = cfg.IngressName
-	vars[TemplateVarServiceMainPortName] = cfg.ServiceMainPortName
-	return vars
-}
-
 func SetConfigOnTemplateAnnotations(tmpl *cosmov1alpha1.Template, cfg Config) {
 	ann := tmpl.GetAnnotations()
 	if ann == nil {
