@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -134,6 +135,11 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 	}
 	h.Log.DebugAll().DumpObject(h.Client.Scheme(), user, "request user")
 
+	// check user name is valid for namespace
+	if !validName(user.Name) {
+		return admission.Errored(http.StatusBadRequest, fmt.Errorf("metadata.name: Invalid value: '%s': a DNS-1123 label must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?')", user.Name))
+	}
+
 	// check role is valid
 	if !user.Spec.Role.IsValid() {
 		h.Log.Info("invalid user role", "user", user.Name, "role", user.Spec.Role)
@@ -174,4 +180,9 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 func (h *UserValidationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
 	h.decoder = d
 	return nil
+}
+
+func validName(v string) bool {
+	r, _ := regexp.Compile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`)
+	return r.MatchString(v)
 }

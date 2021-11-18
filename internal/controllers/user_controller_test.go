@@ -204,7 +204,7 @@ spec:
 			Eventually(func() error {
 				var sysAddonInst cosmov1alpha1.Instance
 				key := client.ObjectKey{
-					Name:      fmt.Sprintf("user-addon-%s", sysUserAddon.Name),
+					Name:      fmt.Sprintf("user-addon-%s-%s", sysUserAddon.Name, user.GetName()),
 					Namespace: "kube-system",
 				}
 				err := k8sClient.Get(ctx, key, &sysAddonInst)

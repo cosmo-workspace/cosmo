@@ -20,6 +20,7 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
 
 const (
@@ -135,7 +136,7 @@ func (r *WorkspaceReconciler) patchInstanceToWorkspaceDesired(inst *cosmov1alpha
 
 	inst.Spec = cosmov1alpha1.InstanceSpec{
 		Template: ws.Spec.Template,
-		Vars:     wsv1alpha1.AddWorkspaceTemplateVars(ws.Spec.Vars, ws.Status.Config),
+		Vars:     addWorkspaceVars(ws.Spec.Vars, ws),
 		Override: cosmov1alpha1.OverrideSpec{
 			Scale: []cosmov1alpha1.ScalingOverrideSpec{
 				{
@@ -166,4 +167,23 @@ func (r *WorkspaceReconciler) patchInstanceToWorkspaceDesired(inst *cosmov1alpha
 	}
 
 	return nil
+}
+
+func addWorkspaceVars(vars map[string]string, ws wsv1alpha1.Workspace) map[string]string {
+	user := wsv1alpha1.UserIDByNamespace(ws.GetNamespace())
+
+	if vars == nil {
+		vars = make(map[string]string)
+	}
+	// urlvar
+	vars[wsnet.URLVarWorkspaceName] = ws.GetName()
+	vars[wsnet.URLVarUserID] = user
+
+	// workspace config
+	vars[wsv1alpha1.TemplateVarDeploymentName] = ws.Status.Config.DeploymentName
+	vars[wsv1alpha1.TemplateVarServiceName] = ws.Status.Config.ServiceName
+	vars[wsv1alpha1.TemplateVarIngressName] = ws.Status.Config.IngressName
+	vars[wsv1alpha1.TemplateVarServiceMainPortName] = ws.Status.Config.ServiceMainPortName
+
+	return vars
 }

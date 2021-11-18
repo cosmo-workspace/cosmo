@@ -96,8 +96,8 @@ See [GETTING-STARTED.md](https://github.com/cosmo-workspace/cosmo/blob/main/docs
 COSMO has 3 main resources.
 
 - `User`: Workspace running environment for each developers. In Kubernetes terms, it is a [`Namespace`](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) actually.
-- `Workspace`: Workspace is containers and networks for WebIDE Containers. You can create several Workspaces and use properly for each your developing apps or projects. Workspace is defined as a custom resource definition in Kubernetes.
-- `Template`: Template of Workspace. Workspace is a instance of WebIDE Containers created by Template. Template is defined as a custom resource definition in Kubernetes.
+- `Workspace`: Workspace is containers and networks for WebIDE Containers. You can create several Workspaces and use properly for each your developing apps or projects.
+- `Template`: Template of Workspace. Workspace is a instance of WebIDE Containers created by Template.
 
 ![overview](assets/overview.dio.svg)
 
@@ -118,6 +118,8 @@ COSMO Template engine is picking the best of both overlay-based [`Kustomize`](ht
 
 Also supports overriding fixed configuration values in `Instance`. 
 For example, it is used for dev server ports that are opened dynamically during development.
+
+See the details in [CRD-DESIGN.md](CRD-DESIGN.md)
 
 ## System Components
 
@@ -158,13 +160,13 @@ It is targeting a team development for multiple workspaces for each team members
 
 | Name | SaaS | Self-hosted | Subscription (including free plan) | Team management | Description | 
 |:---|:---|:---|:---|:---|:---|
-| [`COSMO`](https://github.com/cosmo-workspace/cosmo) | - | ✅ | - | ✅ For team | It's Me | 
+| **COSMO** | - | ✅ | - | ✅ For team | Lightweight WebIDE and DevContainer Manager on Kubernetes | 
 | [`Eclipse Che`](https://www.eclipse.org/che/) | ✅ (RedHat) | ✅ | - | ✅ For team | The Kubernetes-Native IDE for Developer Teams | 
 | [`Coder`](https://coder.com/) | ✅ (Coder) | ✅ | Yes | ✅ For team | The developer workspace platform. Move development to your cloud | 
 | [`Gitpod`](https://www.gitpod.io/) | ✅ (Gitpod) | ✅ | Yes | ✅ For team | Spin up fresh, automated dev environments for each task, in the cloud, in seconds. | 
-| [`AWS Cloud9`](https://aws.amazon.com/cloud9/) | ✅ (AWS) | - | Yes | ⚠️ For each developer (Coraborate with other feature) | A cloud IDE for writing, running, and debugging code | 
-| [`Google Cloud Shell Editor`](https://cloud.google.com/shell) | ✅ (Google Cloud) | - | Yes | ⚠️ For each developer (Coraborate with other feature) | Manage your infrastructure and develop your applications from any browser. | 
-| [`GitHub Codespaces`](https://github.com/features/codespaces) | ✅ (GitHub) | - | Yes | ⚠️ For each developer (Coraborate with other feature) | Blazing fast cloud developer environments. Visual Studio Code backed by high performance VMs that start in seconds. |
+| [`AWS Cloud9`](https://aws.amazon.com/cloud9/) | ✅ (AWS) | - | Yes | ⚠️ Single developer (Coraborate with other feature) | A cloud IDE for writing, running, and debugging code | 
+| [`Google Cloud Shell Editor`](https://cloud.google.com/shell) | ✅ (Google Cloud) | - | Yes | ⚠️ Single developer (Coraborate with other feature) | Manage your infrastructure and develop your applications from any browser. | 
+| [`GitHub Codespaces`](https://github.com/features/codespaces) | ✅ (GitHub) | - | Yes | ⚠️ Single developer (Coraborate with other feature) | Blazing fast cloud developer environments. Visual Studio Code backed by high performance VMs that start in seconds. |
 
 ## Comparison with Self-hosted products
 
@@ -172,7 +174,7 @@ Existing products are great, but they are little bit too rich and require too mu
 
 | Name | Subscription (including free plan) | Database required | Dynamic dev server network | Workspace Authentication | Dynamic Port Authentication | Running System Components | Running Workspace Components |
 |:---|:---|:---|:---|:---|:---|:---|:---|
-| [`COSMO`](https://github.com/cosmo-workspace/cosmo) | - | No database required | ✅ | ✅ | ✅ | [Controller Manager](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-controller-manager) and [Dashboard](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-dashboard) | Your WebIDE and [Auth Proxy](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-auth-proxy) |  
+| **COSMO** | - | **No database required** | ✅ | ✅ | ✅ | **Only** [Controller Manager](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-controller-manager) and [Dashboard](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-dashboard) | **Only** Your WebIDE and [Auth Proxy](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-auth-proxy) |  
 | [`Eclipse Che local install`](https://www.eclipse.org/che/) | - | Yes (Postgres) | - | [✅](https://www.eclipse.org/che/docs/che-7/administration-guide/authenticating-users/) | - | [Che server](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspace-controller/#che-server_che), [Che user dashboard](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspace-controller/#che-user-dashboard_che), [Che Devfile registry](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspace-controller/#che-devfile-registry_che), [Che plug-in registry](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspace-controller/#che-plug-in-registry_che), [Che and PostgreSQL](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspace-controller/#che-postgresql_che) and [Che and Keycloak](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspace-controller/#che-keycloak_che) | [Che Plugin](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspaces-architecture/#che-plug-ins_che), [Che Editor](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspaces-architecture/#che-editor-plug-in_che), [Che user runtimes](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspaces-architecture/#che-user-runtimes_che), [Che workspace JWT proxy](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspaces-architecture/#che-workspace-jwt-proxy_che) and [Che plug-ins broker](https://www.eclipse.org/che/docs/che-7/administration-guide/che-workspaces-architecture/#che-plug-in-broker_che) | 
 | [`Coder self-hosted`](https://coder.com/) | [Yes](https://coder.com/pricing) | Yes (Postgres)| [✅](https://coder.com/docs/coder/v1.22/workspaces/devurls) | [✅](https://coder.com/docs/coder/v1.22/admin/access-control/user-roles) | [✅](https://coder.com/docs/coder/v1.22/workspaces/devurls) | [coderd and postgres](https://coder.com/docs/coder/v1.22/setup/architecture) | [coder image](https://coder.com/docs/coder/v1.22/workspaces)
 | [`Gitpod Self-Hosted`](https://coder.com/) | [Yes](https://www.gitpod.io/self-hosted) | Yes (MySQL) | [✅](https://www.gitpod.io/docs/getting-started#configure-your-app%E2%80%99s-ports) | [✅](https://www.gitpod.io/docs/self-hosted/latest/configuration/authentication) | [✅](https://www.gitpod.io/docs/config-ports) | agent-smith, registry-facade, ws-daemon, registry, minio, blobserve, content-service, dashboard, image-builder, proxy, server, ws-manager-bridge, ws-manager, ws-proxy, ws-scheduler, mysql, messagebus | [workspace image](https://github.com/gitpod-io/workspace-images) |
