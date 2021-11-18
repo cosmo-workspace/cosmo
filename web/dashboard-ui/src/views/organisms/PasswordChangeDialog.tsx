@@ -35,7 +35,6 @@ export const PasswordChangeDialog: React.VFC<{ onClose: () => void }> = ({ onClo
   });
 
   const onChangePass = async (data: Inputs) => {
-    console.log('onChangePass', isNewPasswordError);
     if (isNewPasswordError) return;
     await login.updataPassword(data.currentPassword, data.newPassword1);
     onClose();
