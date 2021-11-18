@@ -69,7 +69,10 @@ const SignInContent: React.VFC = () => {
         <TextField label="User ID" margin="normal" fullWidth autoComplete="userid" autoFocus
           {...registerMui(register("userid", {
             required: { value: true, message: "Required" },
-            pattern: { value: /^[a-z0-9]*$/, message: "Only lowercase alphanumeric characters are allowed" },
+            pattern: {
+              value: /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/,
+              message: 'Only lowercase alphanumeric characters or in "-" are allowed'
+            },
             maxLength: { value: 128, message: "Max 128 characters" },
           }))}
           error={Boolean(errors.userid)}

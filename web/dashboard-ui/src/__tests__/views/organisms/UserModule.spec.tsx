@@ -1,9 +1,9 @@
 import { act, renderHook, RenderResult } from '@testing-library/react-hooks';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useSnackbar } from "notistack";
-import { User, UserApiFactory, UserResponse } from "../../../api/dashboard/v1alpha1";
+import { ListTemplatesResponse, Template, TemplateApiFactory, User, UserApiFactory, UserResponse } from "../../../api/dashboard/v1alpha1";
 import { useProgress } from '../../../components/ProgressProvider';
-import { UserContext, useUserModule } from '../../../views/organisms/UserModule';
+import { UserContext, useTemplates, useUserModule } from '../../../views/organisms/UserModule';
 
 //--------------------------------------------------
 // mock definition
@@ -31,6 +31,13 @@ const userMock: MockedMemberFunction<typeof UserApiFactory> = {
   getUsers: jest.fn(),
   deleteUser: jest.fn(),
 }
+
+const RestTemplateMock = TemplateApiFactory as jest.MockedFunction<typeof TemplateApiFactory>;
+const templateMock: MockedMemberFunction<typeof TemplateApiFactory> = {
+  getUserAddonTemplates: jest.fn(),
+  getWorkspaceTemplates: jest.fn(),
+}
+
 const useProgressMock = useProgress as jest.MockedFunction<typeof useProgress>;
 const progressMock: MockedMemberFunction<typeof useProgress> = {
   setMask: jest.fn(),
@@ -170,6 +177,65 @@ describe('useUserModule', () => {
       await expect(result.current.deleteUser('user2')).rejects.toStrictEqual(err);
       expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('data.message');
     });
+  });
+
+});
+
+describe('useTemplates', () => {
+
+  let result: RenderResult<ReturnType<typeof useTemplates>>;
+
+  beforeEach(async () => {
+    useSnackbarMock.mockReturnValue(snackbarMock);
+    useProgressMock.mockReturnValue(progressMock);
+    RestTemplateMock.mockReturnValue(templateMock);
+    result = renderHook(() => useTemplates(), {
+      wrapper: ({ children }) => (<UserContext.Provider>{children}</UserContext.Provider>),
+    }).result;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe('useTemplates getUserAddonTemplates', () => {
+
+    const tmpl1: Template = { name: 'tmpl1' };
+    const tmpl2: Template = {
+      name: 'tmpl2',
+      description: "hoge",
+      requiredVars: [{ varName: 'var1', defaultValue: 'var1Value' }, { varName: 'var2' }],
+      isDefaultUserAddon: true,
+    };
+    const tmpl3: Template = { name: 'tmpl3' };
+
+    it('normal', async () => {
+      templateMock.getUserAddonTemplates.mockResolvedValue(axiosNormalResponse({
+        message: "ok", items: [tmpl1, tmpl3, tmpl2]
+      }));
+      await act(async () => { result.current.getUserAddonTemplates() });
+      expect(result.current.templates).toStrictEqual([tmpl1, tmpl2, tmpl3]);
+      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+    });
+
+
+    it('normal', async () => {
+      templateMock.getUserAddonTemplates.mockResolvedValue(axiosNormalResponse({ items: [] }));
+      await act(async () => { result.current.getUserAddonTemplates() });
+      expect(result.current.templates).toStrictEqual([]);
+      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+    });
+
+    it('error', async () => {
+      const err: AxiosError<ListTemplatesResponse> = {
+        response: { data: { message: undefined }, status: 401 } as any,
+      } as any
+      templateMock.getUserAddonTemplates.mockRejectedValue(err);
+      await expect(result.current.getUserAddonTemplates()).rejects.toStrictEqual(err);
+      expect(result.current.templates).toStrictEqual([]);
+      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+    });
+
   });
 
 });
