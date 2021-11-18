@@ -159,11 +159,14 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
             <TextField label="User ID" fullWidth autoFocus
               {...registerMui(register('id', {
                 required: { value: true, message: "Required" },
-                pattern: { value: /^[a-z0-9]*$/, message: "Only lowercase alphanumeric characters are allowed" },
+                pattern: {
+                  value: /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/,
+                  message: 'Only lowercase alphanumeric characters or "-" are allowed'
+                },
                 maxLength: { value: 128, message: "Max 128 characters" },
               }))}
               error={Boolean(errors.id)}
-              helperText={(errors.id && errors.id.message) || "Lowercase Alphanumeric"}
+              helperText={(errors.id && errors.id.message) || 'Lowercase Alphanumeric or "-"'}
               InputProps={{
                 autoComplete: "off",
                 startAdornment: (<InputAdornment position="start"><PersonOutlineTwoTone /></InputAdornment>),
@@ -202,9 +205,9 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
                 <Stack key={tmpl.name}>
                   <Tooltip title={tmpl.description || "No description"} placement="bottom" arrow enterDelay={1000}>
                     <FormControlLabel control={
-                    <Checkbox defaultChecked={Boolean(tmpl.isDefaultUserAddon)}
-                      {...registerMui(register(`enableAddons.${i}`))}
-                    />} label={tmpl.name} />
+                      <Checkbox defaultChecked={Boolean(tmpl.isDefaultUserAddon)}
+                        {...registerMui(register(`enableAddons.${i}`))}
+                      />} label={tmpl.name} />
                   </Tooltip>
 
                   <Collapse in={tmpl.requiredVars && watch('enableAddons')[i]} timeout="auto" unmountOnExit>
