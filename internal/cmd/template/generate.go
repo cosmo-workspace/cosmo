@@ -23,6 +23,7 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	cmdutil "github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
+	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
 type generateOption struct {
@@ -231,7 +232,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 		if err := completeWorkspaceConfig(&o.wsConfig, unsts); err != nil {
 			return fmt.Errorf("type workspace validation failed: %w", err)
 		}
-		wsv1alpha1.SetConfigOnTemplateAnnotations(&o.tmpl, o.wsConfig)
+		wscfg.SetConfigOnTemplateAnnotations(&o.tmpl, o.wsConfig)
 	}
 
 	kust := NewKustomize()

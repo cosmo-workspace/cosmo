@@ -30,7 +30,7 @@ var cfg *rest.Config
 var k8sClient kosmo.Client
 var testEnv *envtest.Environment
 
-const defaultURLBase = "https://default.example.com"
+const DefaultURLBase = "https://default.example.com"
 
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -86,9 +86,8 @@ var _ = BeforeSuite(func() {
 	}).SetupWebhookWithManager(mgr)
 
 	(&WorkspaceMutationWebhookHandler{
-		Client:         k8sClient,
-		Log:            clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
-		DefaultURLBase: defaultURLBase,
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 
 	(&WorkspaceValidationWebhookHandler{
@@ -104,6 +103,12 @@ var _ = BeforeSuite(func() {
 	(&UserValidationWebhookHandler{
 		Client: k8sClient,
 		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&TemplateMutationWebhookHandler{
+		Client:         k8sClient,
+		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
+		DefaultURLBase: DefaultURLBase,
 	}).SetupWebhookWithManager(mgr)
 
 	go func() {

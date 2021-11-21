@@ -129,7 +129,7 @@ func (v *URLVars) setDefault() {
 	}
 
 	if v.NetRuleGroup == "" {
-		v.NetRuleGroup = wsv1alpha1.DefaultWorkspaceServiceMainPortName
+		v.NetRuleGroup = v.PortName
 	}
 
 	val := reflect.Indirect(reflect.ValueOf(v))

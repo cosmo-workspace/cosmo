@@ -94,8 +94,7 @@ spec:
             description: WorkspaceStatus has status of Workspace
             properties:
               config:
-                description: Config defines template-dependent or workspace-dependent
-                  configuration metadata for workspace
+                description: Config defines workspace-dependent configuration
                 properties:
                   deploymentName:
                     type: string

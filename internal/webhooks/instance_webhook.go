@@ -17,6 +17,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
+	"github.com/cosmo-workspace/cosmo/pkg/transformer"
 )
 
 type InstanceMutationWebhookHandler struct {
@@ -162,7 +163,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 	tmpl, err := h.Client.GetTemplate(ctx, inst.Spec.Template.Name)
 	if err != nil {
 		if apierrs.IsNotFound(err) {
-			return admission.Denied("Template not found")
+			return admission.Denied(fmt.Sprintf("Template %s not found", inst.Spec.Template.Name))
 		} else {
 			h.Log.Error(err, "failed to get template")
 			return admission.Errored(http.StatusInternalServerError, err)
@@ -183,6 +184,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		}
 	}
 
+	// whether valid apiVersion
 	scaleSpecs := inst.Spec.Override.Scale
 	for _, scaleSpec := range scaleSpecs {
 		if _, err := schema.ParseGroupVersion(scaleSpec.Target.APIVersion); err != nil {
@@ -190,6 +192,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		}
 	}
 
+	// whether valid apiVersion
 	patchSpecs := inst.Spec.Override.PatchesJson6902
 	for _, patchSpec := range patchSpecs {
 		if _, err := schema.ParseGroupVersion(patchSpec.Target.APIVersion); err != nil {
@@ -197,10 +200,52 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		}
 	}
 
+	// dryrun apply
+	if err := h.dryrunApply(ctx, *tmpl, *inst); err != nil {
+		return admission.Denied(err.Error())
+	}
+
 	return admission.Allowed("OK")
 }
 
 func (h *InstanceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
 	h.decoder = d
+	return nil
+}
+
+func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl cosmov1alpha1.Template, inst cosmov1alpha1.Instance) error {
+	builts, err := template.NewUnstructuredBuilder(tmpl.Spec.RawYaml, &inst).
+		ReplaceDefaultVars().
+		ReplaceCustomVars().
+		Build()
+
+	if err != nil {
+		return fmt.Errorf("failed to build template: %w", err)
+	}
+
+	// Transform
+	ts := []transformer.Transformer{
+		// MetadataTransformer perform update each object's metadata
+		transformer.NewMetadataTransformer(&inst, &tmpl, h.Client.Scheme()),
+		// NetworkTransformer perform update ingresses and services by network override
+		transformer.NewNetworkTransformer(inst.Spec.Override.Network, inst.Name),
+		// JSONPatchTransformer perform JSONPatch
+		transformer.NewJSONPatchTransformer(inst.Spec.Override.PatchesJson6902, inst.Name),
+		// ScalingTransformer perform override replicas
+		transformer.NewScalingTransformer(inst.Spec.Override.Scale, inst.Name),
+	}
+	builts, err = transformer.ApplyTransformers(ctx, ts, builts)
+	if err != nil {
+		return fmt.Errorf("failed to transform objects: %w", err)
+	}
+
+	for _, built := range builts {
+		if _, err := h.Client.Apply(ctx, &built, "instance-webhook", true, true); err != nil {
+			// ignore NotFound in case the template contains a dependency resource that was not found.
+			if !apierrs.IsNotFound(err) {
+				return fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err)
+			}
+		}
+	}
 	return nil
 }

@@ -130,9 +130,8 @@ func main() {
 		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.WorkspaceMutationWebhookHandler{
-		Client:         kosmo.NewClient(mgr.GetClient()),
-		Log:            clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
-		DefaultURLBase: o.WorkspaceDefaultURLBase,
+		Client: kosmo.NewClient(mgr.GetClient()),
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.WorkspaceValidationWebhookHandler{
 		Client: kosmo.NewClient(mgr.GetClient()),
@@ -145,6 +144,11 @@ func main() {
 	(&webhooks.UserValidationWebhookHandler{
 		Client: kosmo.NewClient(mgr.GetClient()),
 		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+	(&webhooks.TemplateMutationWebhookHandler{
+		Client:         kosmo.NewClient(mgr.GetClient()),
+		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
+		DefaultURLBase: o.WorkspaceDefaultURLBase,
 	}).SetupWebhookWithManager(mgr)
 
 	ctx := ctrl.SetupSignalHandler()

@@ -37,7 +37,7 @@ var _ = Describe("Workspace controller", func() {
 		ServiceName:         "ws-svc",
 		IngressName:         "ws-ing",
 		ServiceMainPortName: "mainPort",
-		URLBase:             "https://{{NETRULE_PORT_GROUP}}-{{WOKRSPACE}}-{{USER}}.domain",
+		URLBase:             "https://{{NETRULE_GROUP}}-{{WOKRSPACE}}-{{USER}}.domain",
 	}
 
 	tmpl := cosmov1alpha1.Template{

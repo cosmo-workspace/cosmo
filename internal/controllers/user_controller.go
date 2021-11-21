@@ -184,18 +184,18 @@ func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.Us
 
 		if sysNs, ok := tmplNamesInSysNs[addon.Template.Name]; ok {
 			// system namespace
-			inst.Name = fmt.Sprintf("user-addon-%s-%s", addon.Template.Name, u.GetName())
+			inst.Name = fmt.Sprintf("useraddon-%s-%s", addon.Template.Name, u.GetName())
 			inst.SetNamespace(sysNs)
 
 		} else {
 			// user namespace
-			inst.Name = fmt.Sprintf("user-addon-%s", addon.Template.Name)
+			inst.Name = fmt.Sprintf("useraddon-%s", addon.Template.Name)
 			inst.SetNamespace(u.Status.Namespace.Name)
+		}
 
-			err := ctrl.SetControllerReference(&u, &inst, r.Scheme)
-			if err != nil {
-				log.Error(err, "failed to set controller reference")
-			}
+		err := ctrl.SetControllerReference(&u, &inst, r.Scheme)
+		if err != nil {
+			log.Error(err, "failed to set controller reference")
 		}
 
 		insts[i] = inst
