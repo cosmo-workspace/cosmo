@@ -197,9 +197,9 @@ spec:
                                                 it can contain characters disallowed
                                                 from the conventional "path" part
                                                 of a URL as defined by RFC 3986. Paths
-                                                must begin with a '/'. When unspecified,
-                                                all paths from incoming requests are
-                                                matched.
+                                                must begin with a '/' and must be
+                                                present when using PathType with value
+                                                "Exact" or "Prefix".
                                               type: string
                                             pathType:
                                               description: 'PathType determines the
@@ -229,6 +229,7 @@ spec:
                                               type: string
                                           required:
                                           - backend
+                                          - pathType
                                           type: object
                                         type: array
                                         x-kubernetes-list-type: atomic
@@ -258,9 +259,7 @@ spec:
                                       for IANA standard service names (as per RFC-6335
                                       and http://www.iana.org/assignments/service-names).
                                       Non-standard protocols should use prefixed names
-                                      such as mycompany.com/my-custom-protocol. This
-                                      is a beta field that is guarded by the ServiceAppProtocol
-                                      feature gate and enabled by default.
+                                      such as mycompany.com/my-custom-protocol.
                                     type: string
                                   name:
                                     description: The name of this port within the

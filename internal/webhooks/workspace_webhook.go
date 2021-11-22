@@ -22,6 +22,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
+	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
 
@@ -57,7 +58,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	cfg, err := wsv1alpha1.ConfigFromTemplateAnnotations(tmpl)
+	cfg, err := wscfg.ConfigFromTemplateAnnotations(tmpl)
 	if err != nil {
 		h.Log.Error(err, "failed to get config")
 		return admission.Errored(http.StatusBadRequest, err)
@@ -254,6 +255,6 @@ func preTemplateBuild(ws wsv1alpha1.Workspace, rawTmpl string) ([]unstructured.U
 	inst.SetName(ws.GetName())
 	inst.SetNamespace(ws.GetNamespace())
 
-	builder := template.NewTemplateBuilder(rawTmpl, &inst)
+	builder := template.NewUnstructuredBuilder(rawTmpl, &inst)
 	return builder.Build()
 }

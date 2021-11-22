@@ -441,3 +441,18 @@ func TestNestedMapDelete(t *testing.T) {
 		})
 	}
 }
+
+func TestName(t *testing.T) {
+	t.Run("ScalingTransformer", func(t *testing.T) {
+		tf := NewScalingTransformer(nil, "")
+		if got := Name(tf); got != "ScalingTransformer" {
+			t.Errorf("Name() = %v, want ScalingTransformer", got)
+		}
+	})
+	t.Run("ok", func(t *testing.T) {
+		tf := NewMetadataTransformer(nil, nil, nil)
+		if got := Name(tf); got != "MetadataTransformer" {
+			t.Errorf("Name() = %v, want MetadataTransformer", got)
+		}
+	})
+}

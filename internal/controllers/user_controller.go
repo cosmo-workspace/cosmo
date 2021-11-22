@@ -78,7 +78,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 		log.Info("initializing password secret")
 		if err := r.ResetPassword(ctx, user.Name); err != nil {
-			r.Recorder.Eventf(&user, corev1.EventTypeWarning, "Init Failed", "failed to reset password: %v", err)
+			r.Recorder.Eventf(&user, corev1.EventTypeWarning, "InitFailed", "failed to reset password: %v", err)
 			log.Error(err, "failed to reset password")
 			return ctrl.Result{}, err
 		}
@@ -96,7 +96,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 			if len(errs) > 0 {
 				for _, e := range errs {
-					r.Recorder.Eventf(&user, corev1.EventTypeWarning, "Addon Failed", "failed to create user addon: %v", e)
+					r.Recorder.Eventf(&user, corev1.EventTypeWarning, "AddonFailed", "failed to create user addon: %v", e)
 					log.Error(e, "failed to create user addon")
 				}
 				return ctrl.Result{}, errs[0]
@@ -184,18 +184,18 @@ func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.Us
 
 		if sysNs, ok := tmplNamesInSysNs[addon.Template.Name]; ok {
 			// system namespace
-			inst.Name = fmt.Sprintf("user-addon-%s-%s", addon.Template.Name, u.GetName())
+			inst.Name = fmt.Sprintf("useraddon-%s-%s", addon.Template.Name, u.GetName())
 			inst.SetNamespace(sysNs)
 
 		} else {
 			// user namespace
-			inst.Name = fmt.Sprintf("user-addon-%s", addon.Template.Name)
+			inst.Name = fmt.Sprintf("useraddon-%s", addon.Template.Name)
 			inst.SetNamespace(u.Status.Namespace.Name)
+		}
 
-			err := ctrl.SetControllerReference(&u, &inst, r.Scheme)
-			if err != nil {
-				log.Error(err, "failed to set controller reference")
-			}
+		err := ctrl.SetControllerReference(&u, &inst, r.Scheme)
+		if err != nil {
+			log.Error(err, "failed to set controller reference")
 		}
 
 		insts[i] = inst

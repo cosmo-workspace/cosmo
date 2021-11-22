@@ -23,6 +23,7 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	cmdutil "github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
+	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
 type generateOption struct {
@@ -115,14 +116,8 @@ func (o *generateOption) Validate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if o.TypeWorkspace {
-		if o.wsConfig.URLBase == "" {
-			return errors.New("--workspace-urlbase is required")
-		}
-	}
-
 	if o.TypeWorkspace && o.TypeUserAddon {
-		return errors.New("--workspace and --user-addon is incompatible")
+		return errors.New("--workspace and --user-addon cannot be specified concurrently")
 	}
 
 	return nil
@@ -195,7 +190,7 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 }
 
 func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 
 	if isatty.IsTerminal(os.Stdin.Fd()) {
@@ -237,7 +232,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 		if err := completeWorkspaceConfig(&o.wsConfig, unsts); err != nil {
 			return fmt.Errorf("type workspace validation failed: %w", err)
 		}
-		wsv1alpha1.SetConfigOnTemplateAnnotations(&o.tmpl, o.wsConfig)
+		wscfg.SetConfigOnTemplateAnnotations(&o.tmpl, o.wsConfig)
 	}
 
 	kust := NewKustomize()
@@ -299,6 +294,6 @@ func preTemplateBuild(rawTmpl string) ([]unstructured.Unstructured, error) {
 	inst.SetName("dummy")
 	inst.SetNamespace("dummy")
 
-	builder := template.NewTemplateBuilder(rawTmpl, &inst)
+	builder := template.NewUnstructuredBuilder(rawTmpl, &inst)
 	return builder.Build()
 }

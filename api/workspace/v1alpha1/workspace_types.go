@@ -54,6 +54,15 @@ type WorkspaceStatus struct {
 	Config   Config                  `json:"config,omitempty"`
 }
 
+// Config defines workspace-dependent configuration
+type Config struct {
+	DeploymentName      string `json:"deploymentName,omitempty"`
+	ServiceName         string `json:"serviceName,omitempty"`
+	IngressName         string `json:"ingressName,omitempty"`
+	ServiceMainPortName string `json:"mainServicePortName,omitempty"`
+	URLBase             string `json:"urlbase,omitempty"`
+}
+
 // NetworkRule is an abstract network configuration rule for workspace
 type NetworkRule struct {
 	PortName         string  `json:"portName"`

@@ -50,7 +50,7 @@ func resetResourceVersion(obj Comparable) {
 	obj.SetResourceVersion("")
 }
 
-type deepEqualOption interface {
+type DeepEqualOption interface {
 	Apply(x, y Comparable)
 }
 
@@ -62,13 +62,13 @@ func (o printDiff) Apply(x, y Comparable) {
 	clog.PrintObjectDiff(o.out, x, y)
 }
 
-func WithPrintDiff() deepEqualOption {
+func WithPrintDiff() DeepEqualOption {
 	return printDiff{out: os.Stderr}
 }
 
 // LooseDeepEqual deep equal objects without dynamic values
 // This function removes some fields, so you should give deep-copied objects.
-func LooseDeepEqual(x, y Comparable, opts ...deepEqualOption) bool {
+func LooseDeepEqual(x, y Comparable, opts ...DeepEqualOption) bool {
 	resetManagedFieldTime(x)
 	resetManagedFieldTime(y)
 

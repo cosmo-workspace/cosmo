@@ -11,7 +11,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
 
-func TestNewTemplateBuilder(t *testing.T) {
+func TestNewUnstructuredBuilder(t *testing.T) {
 	type args struct {
 		data string
 		inst *cosmov1alpha1.Instance
@@ -19,7 +19,7 @@ func TestNewTemplateBuilder(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *TemplateBuilder
+		want *UnstructuredBuilder
 	}{
 		{
 			name: "OK",
@@ -58,8 +58,8 @@ spec:
 					},
 				},
 			},
-			want: &TemplateBuilder{
-				data: `apiVersion: networking.k8s.io/v1
+			want: &UnstructuredBuilder{
+				rawYaml: `apiVersion: networking.k8s.io/v1
 kind: XXXX
 metadata:
   annotations:
@@ -97,14 +97,14 @@ spec:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewTemplateBuilder(tt.args.data, tt.args.inst); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewTemplateBuilder() = %v, want %v", got, tt.want)
+			if got := NewUnstructuredBuilder(tt.args.data, tt.args.inst); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewUnstructuredBuilder() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestTemplateBuilder_Build(t *testing.T) {
+func TestUnstructuredBuilder_Build(t *testing.T) {
 	type fields struct {
 		data string
 		inst *cosmov1alpha1.Instance
@@ -213,17 +213,17 @@ spec:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tr := &TemplateBuilder{
-				data: tt.fields.data,
-				inst: tt.fields.inst,
+			tr := &UnstructuredBuilder{
+				rawYaml: tt.fields.data,
+				inst:    tt.fields.inst,
 			}
 			got, err := tr.Build()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("TemplateBuilder.Build() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UnstructuredBuilder.Build() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("TemplateBuilder.Build() = %v, want %v", got, tt.want)
+				t.Errorf("UnstructuredBuilder.Build() = %v, want %v", got, tt.want)
 			}
 		})
 	}

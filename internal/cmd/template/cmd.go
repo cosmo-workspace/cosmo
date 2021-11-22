@@ -19,6 +19,7 @@ For create generated template, just do "kubectl create -f cosmo-template.yaml"
 
 	tmplCmd.AddCommand(generateCmd(o))
 	tmplCmd.AddCommand(getCmd(o))
+	tmplCmd.AddCommand(validateCmd(o))
 
 	cmd.AddCommand(tmplCmd)
 }

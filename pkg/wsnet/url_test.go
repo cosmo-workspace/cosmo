@@ -226,7 +226,7 @@ func TestURLVars_setDefault(t *testing.T) {
 			want: URLVars{
 				PortName:       "undefined",
 				PortNumber:     "0",
-				NetRuleGroup:   wsv1alpha1.DefaultWorkspaceServiceMainPortName,
+				NetRuleGroup:   "undefined",
 				IngressPath:    "/",
 				InstanceName:   "undefined",
 				Namespace:      "undefined",

@@ -30,11 +30,12 @@ var (
 )
 
 type option struct {
-	MetricsAddr          string
-	ProbeAddr            string
-	EnableLeaderElection bool
-	StatusCheckIntervals int64
-	CertDir              string
+	MetricsAddr             string
+	ProbeAddr               string
+	EnableLeaderElection    bool
+	StatusCheckIntervals    int64
+	CertDir                 string
+	WorkspaceDefaultURLBase string
 }
 
 func init() {
@@ -50,6 +51,7 @@ func main() {
 	flag.StringVar(&o.MetricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&o.ProbeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.StringVar(&o.CertDir, "cert-dir", "/tmp/k8s-webhook-server/serving-certs", "Certificate dir. The server key and certificate must be named tls.key and tls.crt")
+	flag.StringVar(&o.WorkspaceDefaultURLBase, "workspace-default-urlbase", "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com", "workspace default urlbase. used if not set on template")
 	flag.BoolVar(&o.EnableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
@@ -119,12 +121,35 @@ func main() {
 	// +kubebuilder:scaffold:builder
 
 	// Webhook
-	(&webhooks.InstanceMutationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler"))}).SetupWebhookWithManager(mgr)
-	(&webhooks.InstanceValidationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler"))}).SetupWebhookWithManager(mgr)
-	(&webhooks.WorkspaceMutationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler"))}).SetupWebhookWithManager(mgr)
-	(&webhooks.WorkspaceValidationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler"))}).SetupWebhookWithManager(mgr)
-	(&webhooks.UserMutationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler"))}).SetupWebhookWithManager(mgr)
-	(&webhooks.UserValidationWebhookHandler{Client: kosmo.NewClient(mgr.GetClient()), Log: clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler"))}).SetupWebhookWithManager(mgr)
+	(&webhooks.InstanceMutationWebhookHandler{
+		Client: kosmo.NewClient(mgr.GetClient()),
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+	(&webhooks.InstanceValidationWebhookHandler{
+		Client: kosmo.NewClient(mgr.GetClient()),
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+	(&webhooks.WorkspaceMutationWebhookHandler{
+		Client: kosmo.NewClient(mgr.GetClient()),
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+	(&webhooks.WorkspaceValidationWebhookHandler{
+		Client: kosmo.NewClient(mgr.GetClient()),
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+	(&webhooks.UserMutationWebhookHandler{
+		Client: kosmo.NewClient(mgr.GetClient()),
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+	(&webhooks.UserValidationWebhookHandler{
+		Client: kosmo.NewClient(mgr.GetClient()),
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+	(&webhooks.TemplateMutationWebhookHandler{
+		Client:         kosmo.NewClient(mgr.GetClient()),
+		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
+		DefaultURLBase: o.WorkspaceDefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
 
 	ctx := ctrl.SetupSignalHandler()
 
