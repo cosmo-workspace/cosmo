@@ -99,13 +99,13 @@ func (c *WorkspaceApiController) Routes() Routes {
 // DeleteNetworkRule - Remove workspace network rule
 func (c *WorkspaceApiController) DeleteNetworkRule(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	wsName := params["wsName"]
+	wsNameParam := params["wsName"]
 
-	networkRuleName := params["networkRuleName"]
+	networkRuleNameParam := params["networkRuleName"]
 
-	result, err := c.service.DeleteNetworkRule(r.Context(), userid, wsName, networkRuleName)
+	result, err := c.service.DeleteNetworkRule(r.Context(), useridParam, wsNameParam, networkRuleNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -119,11 +119,11 @@ func (c *WorkspaceApiController) DeleteNetworkRule(w http.ResponseWriter, r *htt
 // DeleteWorkspace - Delete workspace.
 func (c *WorkspaceApiController) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	wsName := params["wsName"]
+	wsNameParam := params["wsName"]
 
-	result, err := c.service.DeleteWorkspace(r.Context(), userid, wsName)
+	result, err := c.service.DeleteWorkspace(r.Context(), useridParam, wsNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -137,11 +137,11 @@ func (c *WorkspaceApiController) DeleteWorkspace(w http.ResponseWriter, r *http.
 // GetWorkspace - Get workspace by name.
 func (c *WorkspaceApiController) GetWorkspace(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	wsName := params["wsName"]
+	wsNameParam := params["wsName"]
 
-	result, err := c.service.GetWorkspace(r.Context(), userid, wsName)
+	result, err := c.service.GetWorkspace(r.Context(), useridParam, wsNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -155,9 +155,9 @@ func (c *WorkspaceApiController) GetWorkspace(w http.ResponseWriter, r *http.Req
 // GetWorkspaces - Get all workspace of user.
 func (c *WorkspaceApiController) GetWorkspaces(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	result, err := c.service.GetWorkspaces(r.Context(), userid)
+	result, err := c.service.GetWorkspaces(r.Context(), useridParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -171,22 +171,22 @@ func (c *WorkspaceApiController) GetWorkspaces(w http.ResponseWriter, r *http.Re
 // PatchWorkspace - Update workspace.
 func (c *WorkspaceApiController) PatchWorkspace(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	wsName := params["wsName"]
+	wsNameParam := params["wsName"]
 
-	patchWorkspaceRequest := PatchWorkspaceRequest{}
+	patchWorkspaceRequestParam := PatchWorkspaceRequest{}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
-	if err := d.Decode(&patchWorkspaceRequest); err != nil {
+	if err := d.Decode(&patchWorkspaceRequestParam); err != nil {
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}
-	if err := AssertPatchWorkspaceRequestRequired(patchWorkspaceRequest); err != nil {
+	if err := AssertPatchWorkspaceRequestRequired(patchWorkspaceRequestParam); err != nil {
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.PatchWorkspace(r.Context(), userid, wsName, patchWorkspaceRequest)
+	result, err := c.service.PatchWorkspace(r.Context(), useridParam, wsNameParam, patchWorkspaceRequestParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -200,20 +200,20 @@ func (c *WorkspaceApiController) PatchWorkspace(w http.ResponseWriter, r *http.R
 // PostWorkspace - Create a new Workspace
 func (c *WorkspaceApiController) PostWorkspace(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	createWorkspaceRequest := CreateWorkspaceRequest{}
+	createWorkspaceRequestParam := CreateWorkspaceRequest{}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
-	if err := d.Decode(&createWorkspaceRequest); err != nil {
+	if err := d.Decode(&createWorkspaceRequestParam); err != nil {
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}
-	if err := AssertCreateWorkspaceRequestRequired(createWorkspaceRequest); err != nil {
+	if err := AssertCreateWorkspaceRequestRequired(createWorkspaceRequestParam); err != nil {
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.PostWorkspace(r.Context(), userid, createWorkspaceRequest)
+	result, err := c.service.PostWorkspace(r.Context(), useridParam, createWorkspaceRequestParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -227,24 +227,24 @@ func (c *WorkspaceApiController) PostWorkspace(w http.ResponseWriter, r *http.Re
 // PutNetworkRule - Upsert workspace network rule
 func (c *WorkspaceApiController) PutNetworkRule(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	wsName := params["wsName"]
+	wsNameParam := params["wsName"]
 
-	networkRuleName := params["networkRuleName"]
+	networkRuleNameParam := params["networkRuleName"]
 
-	upsertNetworkRuleRequest := UpsertNetworkRuleRequest{}
+	upsertNetworkRuleRequestParam := UpsertNetworkRuleRequest{}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
-	if err := d.Decode(&upsertNetworkRuleRequest); err != nil {
+	if err := d.Decode(&upsertNetworkRuleRequestParam); err != nil {
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}
-	if err := AssertUpsertNetworkRuleRequestRequired(upsertNetworkRuleRequest); err != nil {
+	if err := AssertUpsertNetworkRuleRequestRequired(upsertNetworkRuleRequestParam); err != nil {
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.PutNetworkRule(r.Context(), userid, wsName, networkRuleName, upsertNetworkRuleRequest)
+	result, err := c.service.PutNetworkRule(r.Context(), useridParam, wsNameParam, networkRuleNameParam, upsertNetworkRuleRequestParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)

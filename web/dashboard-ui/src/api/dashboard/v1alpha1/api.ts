@@ -14,7 +14,7 @@
 
 
 import { Configuration } from './configuration';
-import globalAxios, { AxiosPromise, AxiosInstance } from 'axios';
+import globalAxios, { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
@@ -32,13 +32,13 @@ export interface ApiV1alpha1UserAddons {
      * @type {string}
      * @memberof ApiV1alpha1UserAddons
      */
-    template: string;
+    'template': string;
     /**
      * 
      * @type {{ [key: string]: string; }}
      * @memberof ApiV1alpha1UserAddons
      */
-    vars?: { [key: string]: string; };
+    'vars'?: { [key: string]: string; };
 }
 /**
  * 
@@ -51,31 +51,31 @@ export interface CreateUserRequest {
      * @type {string}
      * @memberof CreateUserRequest
      */
-    id: string;
+    'id': string;
     /**
      * 
      * @type {string}
      * @memberof CreateUserRequest
      */
-    displayName?: string;
+    'displayName'?: string;
     /**
      * 
      * @type {string}
      * @memberof CreateUserRequest
      */
-    role?: string;
+    'role'?: string;
     /**
      * 
      * @type {string}
      * @memberof CreateUserRequest
      */
-    authType?: string;
+    'authType'?: string;
     /**
      * 
      * @type {Array<ApiV1alpha1UserAddons>}
      * @memberof CreateUserRequest
      */
-    addons?: Array<ApiV1alpha1UserAddons>;
+    'addons'?: Array<ApiV1alpha1UserAddons>;
 }
 /**
  * 
@@ -88,13 +88,13 @@ export interface CreateUserResponse {
      * @type {string}
      * @memberof CreateUserResponse
      */
-    message: string;
+    'message': string;
     /**
      * 
      * @type {User}
      * @memberof CreateUserResponse
      */
-    user: User | null;
+    'user': User | null;
 }
 /**
  * 
@@ -107,19 +107,19 @@ export interface CreateWorkspaceRequest {
      * @type {string}
      * @memberof CreateWorkspaceRequest
      */
-    name: string;
+    'name': string;
     /**
      * 
      * @type {string}
      * @memberof CreateWorkspaceRequest
      */
-    template: string;
+    'template': string;
     /**
      * 
      * @type {{ [key: string]: string; }}
      * @memberof CreateWorkspaceRequest
      */
-    vars?: { [key: string]: string; };
+    'vars'?: { [key: string]: string; };
 }
 /**
  * 
@@ -132,13 +132,13 @@ export interface CreateWorkspaceResponse {
      * @type {string}
      * @memberof CreateWorkspaceResponse
      */
-    message: string;
+    'message': string;
     /**
      * 
      * @type {Workspace}
      * @memberof CreateWorkspaceResponse
      */
-    workspace: Workspace | null;
+    'workspace': Workspace | null;
 }
 /**
  * 
@@ -151,13 +151,13 @@ export interface DeleteUserResponse {
      * @type {string}
      * @memberof DeleteUserResponse
      */
-    message: string;
+    'message': string;
     /**
      * 
      * @type {User}
      * @memberof DeleteUserResponse
      */
-    user: User | null;
+    'user': User | null;
 }
 /**
  * 
@@ -170,13 +170,13 @@ export interface DeleteWorkspaceResponse {
      * @type {string}
      * @memberof DeleteWorkspaceResponse
      */
-    message: string;
+    'message': string;
     /**
      * 
      * @type {Workspace}
      * @memberof DeleteWorkspaceResponse
      */
-    workspace: Workspace | null;
+    'workspace': Workspace | null;
 }
 /**
  * 
@@ -189,7 +189,7 @@ export interface GetUserResponse {
      * @type {User}
      * @memberof GetUserResponse
      */
-    user: User | null;
+    'user': User | null;
 }
 /**
  * 
@@ -202,7 +202,7 @@ export interface GetWorkspaceResponse {
      * @type {Workspace}
      * @memberof GetWorkspaceResponse
      */
-    workspace: Workspace | null;
+    'workspace': Workspace | null;
 }
 /**
  * 
@@ -215,13 +215,13 @@ export interface ListTemplatesResponse {
      * @type {string}
      * @memberof ListTemplatesResponse
      */
-    message?: string;
+    'message'?: string;
     /**
      * 
      * @type {Array<Template>}
      * @memberof ListTemplatesResponse
      */
-    items: Array<Template>;
+    'items': Array<Template>;
 }
 /**
  * 
@@ -234,13 +234,13 @@ export interface ListUsersResponse {
      * @type {string}
      * @memberof ListUsersResponse
      */
-    message?: string;
+    'message'?: string;
     /**
      * 
      * @type {Array<User>}
      * @memberof ListUsersResponse
      */
-    items: Array<User>;
+    'items': Array<User>;
 }
 /**
  * 
@@ -253,13 +253,13 @@ export interface ListWorkspaceResponse {
      * @type {string}
      * @memberof ListWorkspaceResponse
      */
-    message?: string;
+    'message'?: string;
     /**
      * 
      * @type {Array<Workspace>}
      * @memberof ListWorkspaceResponse
      */
-    items: Array<Workspace>;
+    'items': Array<Workspace>;
 }
 /**
  * 
@@ -272,13 +272,13 @@ export interface LoginRequest {
      * @type {string}
      * @memberof LoginRequest
      */
-    id: string;
+    'id': string;
     /**
      * 
      * @type {string}
      * @memberof LoginRequest
      */
-    password: string;
+    'password': string;
 }
 /**
  * 
@@ -291,19 +291,19 @@ export interface LoginResponse {
      * @type {string}
      * @memberof LoginResponse
      */
-    id: string;
+    'id': string;
     /**
      * 
      * @type {string}
      * @memberof LoginResponse
      */
-    expireAt: string;
+    'expireAt': string;
     /**
      * 
      * @type {boolean}
      * @memberof LoginResponse
      */
-    requirePasswordUpdate?: boolean;
+    'requirePasswordUpdate'?: boolean;
 }
 /**
  * 
@@ -316,31 +316,31 @@ export interface NetworkRule {
      * @type {string}
      * @memberof NetworkRule
      */
-    portName: string;
+    'portName': string;
     /**
      * 
      * @type {number}
      * @memberof NetworkRule
      */
-    portNumber: number;
+    'portNumber': number;
     /**
      * 
      * @type {string}
      * @memberof NetworkRule
      */
-    group?: string;
+    'group'?: string;
     /**
      * 
      * @type {string}
      * @memberof NetworkRule
      */
-    httpPath?: string;
+    'httpPath'?: string;
     /**
      * 
      * @type {string}
      * @memberof NetworkRule
      */
-    url?: string;
+    'url'?: string;
 }
 /**
  * 
@@ -353,7 +353,7 @@ export interface PatchWorkspaceRequest {
      * @type {number}
      * @memberof PatchWorkspaceRequest
      */
-    replicas?: number | null;
+    'replicas'?: number | null;
 }
 /**
  * 
@@ -366,13 +366,13 @@ export interface PatchWorkspaceResponse {
      * @type {string}
      * @memberof PatchWorkspaceResponse
      */
-    message: string;
+    'message': string;
     /**
      * 
      * @type {Workspace}
      * @memberof PatchWorkspaceResponse
      */
-    workspace: Workspace | null;
+    'workspace': Workspace | null;
 }
 /**
  * 
@@ -385,13 +385,13 @@ export interface RemoveNetworkRuleResponse {
      * @type {string}
      * @memberof RemoveNetworkRuleResponse
      */
-    message: string;
+    'message': string;
     /**
      * 
      * @type {NetworkRule}
      * @memberof RemoveNetworkRuleResponse
      */
-    networkRule: NetworkRule;
+    'networkRule': NetworkRule;
 }
 /**
  * 
@@ -404,25 +404,25 @@ export interface Template {
      * @type {string}
      * @memberof Template
      */
-    name: string;
+    'name': string;
     /**
      * 
      * @type {string}
      * @memberof Template
      */
-    description?: string;
+    'description'?: string;
     /**
      * 
      * @type {Array<TemplateRequiredVars>}
      * @memberof Template
      */
-    requiredVars?: Array<TemplateRequiredVars>;
+    'requiredVars'?: Array<TemplateRequiredVars>;
     /**
      * 
      * @type {boolean}
      * @memberof Template
      */
-    isDefaultUserAddon?: boolean | null;
+    'isDefaultUserAddon'?: boolean | null;
 }
 /**
  * 
@@ -435,13 +435,13 @@ export interface TemplateRequiredVars {
      * @type {string}
      * @memberof TemplateRequiredVars
      */
-    varName: string;
+    'varName': string;
     /**
      * 
      * @type {string}
      * @memberof TemplateRequiredVars
      */
-    defaultValue?: string;
+    'defaultValue'?: string;
 }
 /**
  * 
@@ -454,13 +454,13 @@ export interface UpdateUserPasswordRequest {
      * @type {string}
      * @memberof UpdateUserPasswordRequest
      */
-    currentPassword: string;
+    'currentPassword': string;
     /**
      * 
      * @type {string}
      * @memberof UpdateUserPasswordRequest
      */
-    newPassword: string;
+    'newPassword': string;
 }
 /**
  * 
@@ -473,7 +473,7 @@ export interface UpdateUserPasswordResponse {
      * @type {string}
      * @memberof UpdateUserPasswordResponse
      */
-    message: string;
+    'message': string;
 }
 /**
  * 
@@ -486,7 +486,7 @@ export interface UpdateUserRoleRequest {
      * @type {string}
      * @memberof UpdateUserRoleRequest
      */
-    role: string;
+    'role': string;
 }
 /**
  * 
@@ -499,13 +499,13 @@ export interface UpdateUserRoleResponse {
      * @type {string}
      * @memberof UpdateUserRoleResponse
      */
-    message: string;
+    'message': string;
     /**
      * 
      * @type {User}
      * @memberof UpdateUserRoleResponse
      */
-    user: User | null;
+    'user': User | null;
 }
 /**
  * 
@@ -518,19 +518,19 @@ export interface UpsertNetworkRuleRequest {
      * @type {number}
      * @memberof UpsertNetworkRuleRequest
      */
-    portNumber: number;
+    'portNumber': number;
     /**
      * 
      * @type {string}
      * @memberof UpsertNetworkRuleRequest
      */
-    group?: string;
+    'group'?: string;
     /**
      * 
      * @type {string}
      * @memberof UpsertNetworkRuleRequest
      */
-    httpPath?: string;
+    'httpPath'?: string;
 }
 /**
  * 
@@ -543,13 +543,13 @@ export interface UpsertNetworkRuleResponse {
      * @type {string}
      * @memberof UpsertNetworkRuleResponse
      */
-    message: string;
+    'message': string;
     /**
      * 
      * @type {NetworkRule}
      * @memberof UpsertNetworkRuleResponse
      */
-    networkRule: NetworkRule;
+    'networkRule': NetworkRule;
 }
 /**
  * 
@@ -562,43 +562,43 @@ export interface User {
      * @type {string}
      * @memberof User
      */
-    id: string;
+    'id': string;
     /**
      * 
      * @type {string}
      * @memberof User
      */
-    displayName?: string;
+    'displayName'?: string;
     /**
      * 
      * @type {string}
      * @memberof User
      */
-    role?: UserRoleEnum;
+    'role'?: UserRoleEnum;
     /**
      * 
      * @type {string}
      * @memberof User
      */
-    authType?: UserAuthTypeEnum;
+    'authType'?: UserAuthTypeEnum;
     /**
      * 
      * @type {Array<ApiV1alpha1UserAddons>}
      * @memberof User
      */
-    addons?: Array<ApiV1alpha1UserAddons>;
+    'addons'?: Array<ApiV1alpha1UserAddons>;
     /**
      * 
      * @type {string}
      * @memberof User
      */
-    defaultPassword?: string;
+    'defaultPassword'?: string;
     /**
      * 
      * @type {string}
      * @memberof User
      */
-    status?: string;
+    'status'?: string;
 }
 
 /**
@@ -627,19 +627,19 @@ export interface VerifyResponse {
      * @type {string}
      * @memberof VerifyResponse
      */
-    id: string;
+    'id': string;
     /**
      * 
      * @type {string}
      * @memberof VerifyResponse
      */
-    expireAt: string;
+    'expireAt': string;
     /**
      * 
      * @type {boolean}
      * @memberof VerifyResponse
      */
-    requirePasswordUpdate?: boolean;
+    'requirePasswordUpdate'?: boolean;
 }
 /**
  * 
@@ -652,25 +652,25 @@ export interface Workspace {
      * @type {string}
      * @memberof Workspace
      */
-    name: string;
+    'name': string;
     /**
      * 
      * @type {string}
      * @memberof Workspace
      */
-    ownerID?: string;
+    'ownerID'?: string;
     /**
      * 
      * @type {WorkspaceSpec}
      * @memberof Workspace
      */
-    spec?: WorkspaceSpec;
+    'spec'?: WorkspaceSpec;
     /**
      * 
      * @type {WorkspaceStatus}
      * @memberof Workspace
      */
-    status?: WorkspaceStatus;
+    'status'?: WorkspaceStatus;
 }
 /**
  * 
@@ -683,25 +683,25 @@ export interface WorkspaceSpec {
      * @type {string}
      * @memberof WorkspaceSpec
      */
-    template: string;
+    'template': string;
     /**
      * 
      * @type {number}
      * @memberof WorkspaceSpec
      */
-    replicas: number;
+    'replicas': number;
     /**
      * 
      * @type {{ [key: string]: string; }}
      * @memberof WorkspaceSpec
      */
-    vars?: { [key: string]: string; };
+    'vars'?: { [key: string]: string; };
     /**
      * 
      * @type {Array<NetworkRule>}
      * @memberof WorkspaceSpec
      */
-    additionalNetwork?: Array<NetworkRule>;
+    'additionalNetwork'?: Array<NetworkRule>;
 }
 /**
  * 
@@ -714,19 +714,19 @@ export interface WorkspaceStatus {
      * @type {string}
      * @memberof WorkspaceStatus
      */
-    phase: string;
+    'phase': string;
     /**
      * 
      * @type {string}
      * @memberof WorkspaceStatus
      */
-    mainUrl?: string;
+    'mainUrl'?: string;
     /**
      * 
      * @type {string}
      * @memberof WorkspaceStatus
      */
-    urlBase?: string;
+    'urlBase'?: string;
 }
 
 /**
@@ -742,7 +742,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        login: async (loginRequest: LoginRequest, options: any = {}): Promise<RequestArgs> => {
+        login: async (loginRequest: LoginRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'loginRequest' is not null or undefined
             assertParamExists('login', 'loginRequest', loginRequest)
             const localVarPath = `/api/v1alpha1/auth/login`;
@@ -761,7 +761,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(loginRequest, localVarRequestOptions, configuration)
@@ -777,7 +777,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        logout: async (options: any = {}): Promise<RequestArgs> => {
+        logout: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1alpha1/auth/logout`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -794,7 +794,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -809,7 +809,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        verify: async (options: any = {}): Promise<RequestArgs> => {
+        verify: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1alpha1/auth/verify`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -826,7 +826,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -852,7 +852,7 @@ export const AuthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async login(loginRequest: LoginRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<LoginResponse>> {
+        async login(loginRequest: LoginRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<LoginResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.login(loginRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -862,7 +862,7 @@ export const AuthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async logout(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async logout(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.logout(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -872,7 +872,7 @@ export const AuthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async verify(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VerifyResponse>> {
+        async verify(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VerifyResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.verify(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -932,7 +932,7 @@ export class AuthApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public login(loginRequest: LoginRequest, options?: any) {
+    public login(loginRequest: LoginRequest, options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).login(loginRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -943,7 +943,7 @@ export class AuthApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public logout(options?: any) {
+    public logout(options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).logout(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -954,7 +954,7 @@ export class AuthApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public verify(options?: any) {
+    public verify(options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).verify(options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -972,7 +972,7 @@ export const TemplateApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getUserAddonTemplates: async (options: any = {}): Promise<RequestArgs> => {
+        getUserAddonTemplates: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1alpha1/template/useraddon`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -989,7 +989,7 @@ export const TemplateApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1004,7 +1004,7 @@ export const TemplateApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getWorkspaceTemplates: async (options: any = {}): Promise<RequestArgs> => {
+        getWorkspaceTemplates: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1alpha1/template/workspace`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1021,7 +1021,7 @@ export const TemplateApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1046,7 +1046,7 @@ export const TemplateApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getUserAddonTemplates(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListTemplatesResponse>> {
+        async getUserAddonTemplates(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListTemplatesResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUserAddonTemplates(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1056,7 +1056,7 @@ export const TemplateApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getWorkspaceTemplates(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListTemplatesResponse>> {
+        async getWorkspaceTemplates(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListTemplatesResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getWorkspaceTemplates(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1105,7 +1105,7 @@ export class TemplateApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TemplateApi
      */
-    public getUserAddonTemplates(options?: any) {
+    public getUserAddonTemplates(options?: AxiosRequestConfig) {
         return TemplateApiFp(this.configuration).getUserAddonTemplates(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -1116,7 +1116,7 @@ export class TemplateApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TemplateApi
      */
-    public getWorkspaceTemplates(options?: any) {
+    public getWorkspaceTemplates(options?: AxiosRequestConfig) {
         return TemplateApiFp(this.configuration).getWorkspaceTemplates(options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -1135,7 +1135,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteUser: async (userid: string, options: any = {}): Promise<RequestArgs> => {
+        deleteUser: async (userid: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('deleteUser', 'userid', userid)
             const localVarPath = `/api/v1alpha1/user/{userid}`
@@ -1155,7 +1155,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1171,7 +1171,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getUser: async (userid: string, options: any = {}): Promise<RequestArgs> => {
+        getUser: async (userid: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('getUser', 'userid', userid)
             const localVarPath = `/api/v1alpha1/user/{userid}`
@@ -1191,7 +1191,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1206,7 +1206,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getUsers: async (options: any = {}): Promise<RequestArgs> => {
+        getUsers: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1alpha1/user`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1223,7 +1223,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1239,7 +1239,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postUser: async (createUserRequest: CreateUserRequest, options: any = {}): Promise<RequestArgs> => {
+        postUser: async (createUserRequest: CreateUserRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'createUserRequest' is not null or undefined
             assertParamExists('postUser', 'createUserRequest', createUserRequest)
             const localVarPath = `/api/v1alpha1/user`;
@@ -1260,7 +1260,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(createUserRequest, localVarRequestOptions, configuration)
@@ -1278,7 +1278,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putUserPassword: async (userid: string, updateUserPasswordRequest: UpdateUserPasswordRequest, options: any = {}): Promise<RequestArgs> => {
+        putUserPassword: async (userid: string, updateUserPasswordRequest: UpdateUserPasswordRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('putUserPassword', 'userid', userid)
             // verify required parameter 'updateUserPasswordRequest' is not null or undefined
@@ -1302,7 +1302,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(updateUserPasswordRequest, localVarRequestOptions, configuration)
@@ -1320,7 +1320,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putUserRole: async (userid: string, updateUserRoleRequest: UpdateUserRoleRequest, options: any = {}): Promise<RequestArgs> => {
+        putUserRole: async (userid: string, updateUserRoleRequest: UpdateUserRoleRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('putUserRole', 'userid', userid)
             // verify required parameter 'updateUserRoleRequest' is not null or undefined
@@ -1344,7 +1344,7 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(updateUserRoleRequest, localVarRequestOptions, configuration)
@@ -1371,7 +1371,7 @@ export const UserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteUser(userid: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteUserResponse>> {
+        async deleteUser(userid: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteUserResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUser(userid, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1382,7 +1382,7 @@ export const UserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getUser(userid: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUserResponse>> {
+        async getUser(userid: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUserResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUser(userid, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1392,7 +1392,7 @@ export const UserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getUsers(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListUsersResponse>> {
+        async getUsers(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListUsersResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUsers(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1403,7 +1403,7 @@ export const UserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postUser(createUserRequest: CreateUserRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateUserResponse>> {
+        async postUser(createUserRequest: CreateUserRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateUserResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postUser(createUserRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1415,7 +1415,7 @@ export const UserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putUserPassword(userid: string, updateUserPasswordRequest: UpdateUserPasswordRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpdateUserPasswordResponse>> {
+        async putUserPassword(userid: string, updateUserPasswordRequest: UpdateUserPasswordRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpdateUserPasswordResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putUserPassword(userid, updateUserPasswordRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1427,7 +1427,7 @@ export const UserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putUserRole(userid: string, updateUserRoleRequest: UpdateUserRoleRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpdateUserRoleResponse>> {
+        async putUserRole(userid: string, updateUserRoleRequest: UpdateUserRoleRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpdateUserRoleResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putUserRole(userid, updateUserRoleRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1520,7 +1520,7 @@ export class UserApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UserApi
      */
-    public deleteUser(userid: string, options?: any) {
+    public deleteUser(userid: string, options?: AxiosRequestConfig) {
         return UserApiFp(this.configuration).deleteUser(userid, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -1532,7 +1532,7 @@ export class UserApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UserApi
      */
-    public getUser(userid: string, options?: any) {
+    public getUser(userid: string, options?: AxiosRequestConfig) {
         return UserApiFp(this.configuration).getUser(userid, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -1543,7 +1543,7 @@ export class UserApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UserApi
      */
-    public getUsers(options?: any) {
+    public getUsers(options?: AxiosRequestConfig) {
         return UserApiFp(this.configuration).getUsers(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -1555,7 +1555,7 @@ export class UserApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UserApi
      */
-    public postUser(createUserRequest: CreateUserRequest, options?: any) {
+    public postUser(createUserRequest: CreateUserRequest, options?: AxiosRequestConfig) {
         return UserApiFp(this.configuration).postUser(createUserRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -1568,7 +1568,7 @@ export class UserApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UserApi
      */
-    public putUserPassword(userid: string, updateUserPasswordRequest: UpdateUserPasswordRequest, options?: any) {
+    public putUserPassword(userid: string, updateUserPasswordRequest: UpdateUserPasswordRequest, options?: AxiosRequestConfig) {
         return UserApiFp(this.configuration).putUserPassword(userid, updateUserPasswordRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -1581,7 +1581,7 @@ export class UserApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UserApi
      */
-    public putUserRole(userid: string, updateUserRoleRequest: UpdateUserRoleRequest, options?: any) {
+    public putUserRole(userid: string, updateUserRoleRequest: UpdateUserRoleRequest, options?: AxiosRequestConfig) {
         return UserApiFp(this.configuration).putUserRole(userid, updateUserRoleRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -1602,7 +1602,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteNetworkRule: async (userid: string, wsName: string, networkRuleName: string, options: any = {}): Promise<RequestArgs> => {
+        deleteNetworkRule: async (userid: string, wsName: string, networkRuleName: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('deleteNetworkRule', 'userid', userid)
             // verify required parameter 'wsName' is not null or undefined
@@ -1628,7 +1628,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1645,7 +1645,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteWorkspace: async (userid: string, wsName: string, options: any = {}): Promise<RequestArgs> => {
+        deleteWorkspace: async (userid: string, wsName: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('deleteWorkspace', 'userid', userid)
             // verify required parameter 'wsName' is not null or undefined
@@ -1668,7 +1668,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1685,7 +1685,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getWorkspace: async (userid: string, wsName: string, options: any = {}): Promise<RequestArgs> => {
+        getWorkspace: async (userid: string, wsName: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('getWorkspace', 'userid', userid)
             // verify required parameter 'wsName' is not null or undefined
@@ -1708,7 +1708,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1724,7 +1724,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getWorkspaces: async (userid: string, options: any = {}): Promise<RequestArgs> => {
+        getWorkspaces: async (userid: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('getWorkspaces', 'userid', userid)
             const localVarPath = `/api/v1alpha1/user/{userid}/workspace`
@@ -1744,7 +1744,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
 
 
     
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
@@ -1762,7 +1762,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchWorkspace: async (userid: string, wsName: string, patchWorkspaceRequest: PatchWorkspaceRequest, options: any = {}): Promise<RequestArgs> => {
+        patchWorkspace: async (userid: string, wsName: string, patchWorkspaceRequest: PatchWorkspaceRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('patchWorkspace', 'userid', userid)
             // verify required parameter 'wsName' is not null or undefined
@@ -1789,7 +1789,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(patchWorkspaceRequest, localVarRequestOptions, configuration)
@@ -1807,7 +1807,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postWorkspace: async (userid: string, createWorkspaceRequest: CreateWorkspaceRequest, options: any = {}): Promise<RequestArgs> => {
+        postWorkspace: async (userid: string, createWorkspaceRequest: CreateWorkspaceRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('postWorkspace', 'userid', userid)
             // verify required parameter 'createWorkspaceRequest' is not null or undefined
@@ -1831,7 +1831,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(createWorkspaceRequest, localVarRequestOptions, configuration)
@@ -1851,7 +1851,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putNetworkRule: async (userid: string, wsName: string, networkRuleName: string, upsertNetworkRuleRequest: UpsertNetworkRuleRequest, options: any = {}): Promise<RequestArgs> => {
+        putNetworkRule: async (userid: string, wsName: string, networkRuleName: string, upsertNetworkRuleRequest: UpsertNetworkRuleRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userid' is not null or undefined
             assertParamExists('putNetworkRule', 'userid', userid)
             // verify required parameter 'wsName' is not null or undefined
@@ -1881,7 +1881,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(upsertNetworkRuleRequest, localVarRequestOptions, configuration)
@@ -1910,7 +1910,7 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteNetworkRule(userid: string, wsName: string, networkRuleName: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RemoveNetworkRuleResponse>> {
+        async deleteNetworkRule(userid: string, wsName: string, networkRuleName: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RemoveNetworkRuleResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteNetworkRule(userid, wsName, networkRuleName, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1922,7 +1922,7 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteWorkspace(userid: string, wsName: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteWorkspaceResponse>> {
+        async deleteWorkspace(userid: string, wsName: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteWorkspaceResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteWorkspace(userid, wsName, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1934,7 +1934,7 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getWorkspace(userid: string, wsName: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetWorkspaceResponse>> {
+        async getWorkspace(userid: string, wsName: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetWorkspaceResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getWorkspace(userid, wsName, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1945,7 +1945,7 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getWorkspaces(userid: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListWorkspaceResponse>> {
+        async getWorkspaces(userid: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListWorkspaceResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getWorkspaces(userid, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1958,7 +1958,7 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async patchWorkspace(userid: string, wsName: string, patchWorkspaceRequest: PatchWorkspaceRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PatchWorkspaceResponse>> {
+        async patchWorkspace(userid: string, wsName: string, patchWorkspaceRequest: PatchWorkspaceRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PatchWorkspaceResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.patchWorkspace(userid, wsName, patchWorkspaceRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1970,7 +1970,7 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postWorkspace(userid: string, createWorkspaceRequest: CreateWorkspaceRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateWorkspaceResponse>> {
+        async postWorkspace(userid: string, createWorkspaceRequest: CreateWorkspaceRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateWorkspaceResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postWorkspace(userid, createWorkspaceRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1984,7 +1984,7 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putNetworkRule(userid: string, wsName: string, networkRuleName: string, upsertNetworkRuleRequest: UpsertNetworkRuleRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpsertNetworkRuleResponse>> {
+        async putNetworkRule(userid: string, wsName: string, networkRuleName: string, upsertNetworkRuleRequest: UpsertNetworkRuleRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpsertNetworkRuleResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putNetworkRule(userid, wsName, networkRuleName, upsertNetworkRuleRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -2098,7 +2098,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public deleteNetworkRule(userid: string, wsName: string, networkRuleName: string, options?: any) {
+    public deleteNetworkRule(userid: string, wsName: string, networkRuleName: string, options?: AxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).deleteNetworkRule(userid, wsName, networkRuleName, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -2111,7 +2111,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public deleteWorkspace(userid: string, wsName: string, options?: any) {
+    public deleteWorkspace(userid: string, wsName: string, options?: AxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).deleteWorkspace(userid, wsName, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -2124,7 +2124,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public getWorkspace(userid: string, wsName: string, options?: any) {
+    public getWorkspace(userid: string, wsName: string, options?: AxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).getWorkspace(userid, wsName, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -2136,7 +2136,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public getWorkspaces(userid: string, options?: any) {
+    public getWorkspaces(userid: string, options?: AxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).getWorkspaces(userid, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -2150,7 +2150,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public patchWorkspace(userid: string, wsName: string, patchWorkspaceRequest: PatchWorkspaceRequest, options?: any) {
+    public patchWorkspace(userid: string, wsName: string, patchWorkspaceRequest: PatchWorkspaceRequest, options?: AxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).patchWorkspace(userid, wsName, patchWorkspaceRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -2163,7 +2163,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public postWorkspace(userid: string, createWorkspaceRequest: CreateWorkspaceRequest, options?: any) {
+    public postWorkspace(userid: string, createWorkspaceRequest: CreateWorkspaceRequest, options?: AxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).postWorkspace(userid, createWorkspaceRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -2178,7 +2178,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public putNetworkRule(userid: string, wsName: string, networkRuleName: string, upsertNetworkRuleRequest: UpsertNetworkRuleRequest, options?: any) {
+    public putNetworkRule(userid: string, wsName: string, networkRuleName: string, upsertNetworkRuleRequest: UpsertNetworkRuleRequest, options?: AxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).putNetworkRule(userid, wsName, networkRuleName, upsertNetworkRuleRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }

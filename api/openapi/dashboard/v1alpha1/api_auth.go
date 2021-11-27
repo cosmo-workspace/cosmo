@@ -72,18 +72,18 @@ func (c *AuthApiController) Routes() Routes {
 
 // Login - Login
 func (c *AuthApiController) Login(w http.ResponseWriter, r *http.Request) {
-	loginRequest := LoginRequest{}
+	loginRequestParam := LoginRequest{}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
-	if err := d.Decode(&loginRequest); err != nil {
+	if err := d.Decode(&loginRequestParam); err != nil {
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}
-	if err := AssertLoginRequestRequired(loginRequest); err != nil {
+	if err := AssertLoginRequestRequired(loginRequestParam); err != nil {
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.Login(r.Context(), loginRequest)
+	result, err := c.service.Login(r.Context(), loginRequestParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
