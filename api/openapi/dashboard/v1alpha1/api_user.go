@@ -93,9 +93,9 @@ func (c *UserApiController) Routes() Routes {
 // DeleteUser - Delete user by ID.
 func (c *UserApiController) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	result, err := c.service.DeleteUser(r.Context(), userid)
+	result, err := c.service.DeleteUser(r.Context(), useridParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -109,9 +109,9 @@ func (c *UserApiController) DeleteUser(w http.ResponseWriter, r *http.Request) {
 // GetUser - Get user by ID.
 func (c *UserApiController) GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	result, err := c.service.GetUser(r.Context(), userid)
+	result, err := c.service.GetUser(r.Context(), useridParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -137,18 +137,18 @@ func (c *UserApiController) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 // PostUser - Create a new User
 func (c *UserApiController) PostUser(w http.ResponseWriter, r *http.Request) {
-	createUserRequest := CreateUserRequest{}
+	createUserRequestParam := CreateUserRequest{}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
-	if err := d.Decode(&createUserRequest); err != nil {
+	if err := d.Decode(&createUserRequestParam); err != nil {
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}
-	if err := AssertCreateUserRequestRequired(createUserRequest); err != nil {
+	if err := AssertCreateUserRequestRequired(createUserRequestParam); err != nil {
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.PostUser(r.Context(), createUserRequest)
+	result, err := c.service.PostUser(r.Context(), createUserRequestParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -162,20 +162,20 @@ func (c *UserApiController) PostUser(w http.ResponseWriter, r *http.Request) {
 // PutUserPassword - Update user password
 func (c *UserApiController) PutUserPassword(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	updateUserPasswordRequest := UpdateUserPasswordRequest{}
+	updateUserPasswordRequestParam := UpdateUserPasswordRequest{}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
-	if err := d.Decode(&updateUserPasswordRequest); err != nil {
+	if err := d.Decode(&updateUserPasswordRequestParam); err != nil {
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}
-	if err := AssertUpdateUserPasswordRequestRequired(updateUserPasswordRequest); err != nil {
+	if err := AssertUpdateUserPasswordRequestRequired(updateUserPasswordRequestParam); err != nil {
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.PutUserPassword(r.Context(), userid, updateUserPasswordRequest)
+	result, err := c.service.PutUserPassword(r.Context(), useridParam, updateUserPasswordRequestParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -189,20 +189,20 @@ func (c *UserApiController) PutUserPassword(w http.ResponseWriter, r *http.Reque
 // PutUserRole - Update user role
 func (c *UserApiController) PutUserRole(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userid := params["userid"]
+	useridParam := params["userid"]
 
-	updateUserRoleRequest := UpdateUserRoleRequest{}
+	updateUserRoleRequestParam := UpdateUserRoleRequest{}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
-	if err := d.Decode(&updateUserRoleRequest); err != nil {
+	if err := d.Decode(&updateUserRoleRequestParam); err != nil {
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}
-	if err := AssertUpdateUserRoleRequestRequired(updateUserRoleRequest); err != nil {
+	if err := AssertUpdateUserRoleRequestRequired(updateUserRoleRequestParam); err != nil {
 		c.errorHandler(w, r, err, nil)
 		return
 	}
-	result, err := c.service.PutUserRole(r.Context(), userid, updateUserRoleRequest)
+	result, err := c.service.PutUserRole(r.Context(), useridParam, updateUserRoleRequestParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
