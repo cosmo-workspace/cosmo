@@ -190,6 +190,83 @@ spec:
 			wantErr: false,
 		},
 		{
+			name: "separator line",
+			fields: fields{
+				data: `---
+apiVersion: networking.k8s.io/v1
+kind: XXXX
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: alb
+    cosmo/ingress-patch-enable: "true"
+  labels:
+    key: val
+  name: test
+  namespace: default
+spec:
+  host: example.com
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ---
+  namespace: default
+spec:
+  hello: world
+---
+`,
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"{{TEST}}": "OK"},
+					},
+				},
+			},
+			want: []unstructured.Unstructured{
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "networking.k8s.io/v1",
+						"kind":       "XXXX",
+						"metadata": map[string]interface{}{
+							"name":      "test",
+							"namespace": "default",
+							"labels": map[string]interface{}{
+								"key": "val",
+							},
+							"annotations": map[string]interface{}{
+								"kubernetes.io/ingress.class": "alb",
+								"cosmo/ingress-patch-enable":  "true",
+							},
+						},
+						"spec": map[string]interface{}{
+							"host": "example.com",
+						},
+					},
+				},
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "v1",
+						"kind":       "Pod",
+						"metadata": map[string]interface{}{
+							"name":      "---",
+							"namespace": "default",
+						},
+						"spec": map[string]interface{}{
+							"hello": "world",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "err",
 			fields: fields{
 				data: `no data`,

@@ -2,6 +2,7 @@ package template
 
 import (
 	"encoding/json"
+	"regexp"
 	"strings"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
@@ -23,10 +24,10 @@ func NewUnstructuredBuilder(rawYaml string, inst *cosmov1alpha1.Instance) *Unstr
 }
 
 func (t *UnstructuredBuilder) Build() ([]unstructured.Unstructured, error) {
-	splitString := strings.Split(t.rawYaml, "---")
+	splitString := regexp.MustCompile(`(?m)^---$`).Split(t.rawYaml, -1)
 	resources := make([]unstructured.Unstructured, 0, len(splitString))
 	for _, v := range splitString {
-		if v == "" {
+		if strings.TrimSpace(v) == "" {
 			continue
 		}
 		_, obj, err := StringToUnstructured(v)
