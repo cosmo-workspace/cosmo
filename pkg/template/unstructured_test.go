@@ -214,6 +214,18 @@ metadata:
 spec:
   hello: world
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: files
+data:
+  file1: "---\naaa\n---\nbbb\n"
+  file2: |
+    ---
+    ccc
+    ---
+    ddd
+---
 `,
 				inst: &cosmov1alpha1.Instance{
 					ObjectMeta: metav1.ObjectMeta{
@@ -260,6 +272,19 @@ spec:
 						},
 						"spec": map[string]interface{}{
 							"hello": "world",
+						},
+					},
+				},
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "v1",
+						"kind":       "ConfigMap",
+						"metadata": map[string]interface{}{
+							"name": "files",
+						},
+						"data": map[string]interface{}{
+							"file1": "---\naaa\n---\nbbb\n",
+							"file2": "---\nccc\n---\nddd\n",
 						},
 					},
 				},
