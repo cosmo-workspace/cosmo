@@ -245,7 +245,7 @@ export const useNetworkRule = () => {
 /**
  * useWorkspaceUser
  */
-export const useWorkspaceUsers = () => {
+const useWorkspaceUsers = () => {
   console.log('useWorkspaceUser');
 
   const { loginUser } = useLogin();

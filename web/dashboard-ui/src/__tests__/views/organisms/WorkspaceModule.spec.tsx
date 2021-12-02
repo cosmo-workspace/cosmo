@@ -5,7 +5,7 @@ import React from 'react';
 import { NetworkRule, Template, TemplateApiFactory, User, UserApiFactory, UserRoleEnum, Workspace, WorkspaceApiFactory, UpsertNetworkRuleResponse, RemoveNetworkRuleResponse, GetUserResponse, ListTemplatesResponse, DeleteWorkspaceResponse, PatchWorkspaceResponse, CreateWorkspaceResponse, GetWorkspaceResponse } from "../../../api/dashboard/v1alpha1";
 import { useLogin } from "../../../components/LoginProvider";
 import { useProgress } from '../../../components/ProgressProvider';
-import { computeStatus, useNetworkRule, useTemplates, useWorkspaceModule, useWorkspaceUsers, WorkspaceContext, WorkspaceUsersContext } from '../../../views/organisms/WorkspaceModule';
+import { computeStatus, useNetworkRule, useTemplates, useWorkspaceModule, useWorkspaceUsersModule, WorkspaceContext, WorkspaceUsersContext } from '../../../views/organisms/WorkspaceModule';
 //--------------------------------------------------
 // mock definition
 //--------------------------------------------------
@@ -533,7 +533,7 @@ describe('useWorkspaceUsers', () => {
     deleteUser: jest.fn(),
   }
 
-  let result: RenderResult<ReturnType<typeof useWorkspaceUsers>>;
+  let result: RenderResult<ReturnType<typeof useWorkspaceUsersModule>>;
 
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
@@ -552,7 +552,7 @@ describe('useWorkspaceUsers', () => {
         logout: jest.fn(),
         updataPassword: jest.fn(),
       });
-      result = renderHook(() => useWorkspaceUsers(), {
+      result = renderHook(() => useWorkspaceUsersModule(), {
         wrapper: ({ children }) => (<WorkspaceUsersContext.Provider>{children}</WorkspaceUsersContext.Provider>),
       }).result;
 
@@ -567,7 +567,7 @@ describe('useWorkspaceUsers', () => {
     beforeEach(async () => {
       useLoginMock.mockReturnValue(loginMock);
       RestUserMock.mockReturnValue(userMock);
-      result = renderHook(() => useWorkspaceUsers(), {
+      result = renderHook(() => useWorkspaceUsersModule(), {
         wrapper: ({ children }) => (<WorkspaceUsersContext.Provider>{children}</WorkspaceUsersContext.Provider>),
       }).result;
     });
