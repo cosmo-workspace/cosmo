@@ -8,7 +8,7 @@ import { useForm, UseFormRegisterReturn } from "react-hook-form";
 import { Template, Workspace } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
-import { useTemplates, useWorkspaceModule, useWorkspaceUsers } from "./WorkspaceModule";
+import { useTemplates, useWorkspaceModule, useWorkspaceUsersModule } from "./WorkspaceModule";
 
 
 const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
@@ -107,7 +107,7 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
 
   console.log('WorkspaceCreateDialog');
   const hooks = useWorkspaceModule();
-  const { user } = useWorkspaceUsers();
+  const { user } = useWorkspaceUsersModule();
   const [template, setTemplate] = useState<Template>({ name: "", requiredVars: [] });
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
   const templ = useTemplates();
