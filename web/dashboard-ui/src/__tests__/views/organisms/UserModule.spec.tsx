@@ -13,9 +13,7 @@ jest.mock('../../../components/LoginProvider');
 jest.mock('.../../../api/dashboard/v1alpha1/api');
 jest.mock('../../../components/ProgressProvider');
 jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: jest.fn(),
-  }),
+  useNavigate: () => jest.fn(),
 }));
 
 type MockedMemberFunction<T extends (...args: any) => any> = {

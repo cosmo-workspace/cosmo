@@ -1,6 +1,6 @@
 import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { NetworkRule, UpsertNetworkRuleRequest, Template, TemplateApiFactory, User, UserApiFactory, Workspace, WorkspaceApiFactory } from "../../api/dashboard/v1alpha1";
 import { ModuleContext } from "../../components/ContextProvider";
 import { useLogin } from "../../components/LoginProvider";
@@ -279,13 +279,13 @@ const useWorkspaceUsers = () => {
 */
 const useHandleError = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleError = (error: any) => {
     console.log('handleError', error);
     console.log('handleError', error.response);
     if (error?.response?.status === 401) {
-      history.push('/signin');
+      navigate('/signin');
     }
     const msg = error?.response?.data?.message || error?.message;
     msg && enqueueSnackbar(msg, { variant: 'error' });

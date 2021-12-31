@@ -1,7 +1,7 @@
 import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { UserApiFactory, User, Template, TemplateApiFactory, ApiV1alpha1UserAddons } from "../../api/dashboard/v1alpha1";
+import { useNavigate } from "react-router-dom";
+import { ApiV1alpha1UserAddons, Template, TemplateApiFactory, User, UserApiFactory } from "../../api/dashboard/v1alpha1";
 import { ModuleContext } from "../../components/ContextProvider";
 import { useProgress } from "../../components/ProgressProvider";
 
@@ -10,13 +10,13 @@ import { useProgress } from "../../components/ProgressProvider";
    */
 const useHandleError = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleError = (error: any) => {
     console.log('handleError', error);
     console.log('handleError', error.response);
     if (error?.response?.status === 401) {
-      history.push('/signin');
+      navigate('/signin');
     }
     const msg = error?.response?.data?.message || error?.message;
     msg && enqueueSnackbar(msg, { variant: 'error' });
@@ -110,7 +110,7 @@ const useUser = () => {
 /**
  * TemplateModule
  */
- export const useTemplates = () => {
+export const useTemplates = () => {
   console.log('useTemplates');
 
   const [templates, setTemplates] = useState<Template[]>([]);

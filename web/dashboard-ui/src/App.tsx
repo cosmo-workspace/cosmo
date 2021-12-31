@@ -1,7 +1,7 @@
 import { CircularProgress } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import React, { Suspense } from 'react';
-import { HashRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { AuthRoute } from './components/AuthRoute';
 import { LoginProvider } from './components/LoginProvider';
@@ -41,12 +41,12 @@ const Loading: React.VFC = () => {
 
 function SwitchApp() {
   return (
-    <Switch>
-      <Route path="/signin" component={SignIn} exact />
-      <AuthRoute path="/workspace" component={WorkspacePage} exact />
-      <AuthRoute path="/user" component={UserPage} admin exact />
-      <Route><Redirect to="/workspace" /></Route>
-    </Switch>
+    <Routes>
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/workspace" element={<AuthRoute><WorkspacePage /></AuthRoute>} />
+      <Route path="/user" element={<AuthRoute admin><UserPage /></AuthRoute>} />
+      <Route path='*' element={<Navigate to="/workspace" />} />
+    </Routes>
   );
 }
 

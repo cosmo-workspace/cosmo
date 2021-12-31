@@ -2,7 +2,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Avatar, Button, Container, CssBaseline, Stack, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLogin } from '../../components/LoginProvider';
 import { PasswordTextField } from '../atoms/PasswordTextField';
 import { PasswordChangeDialogContext } from '../organisms/PasswordChangeDialog';
@@ -37,7 +37,9 @@ const SignInContent: React.VFC = () => {
   console.log('SignIn');
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
   const { login } = useLogin();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
 
   /**
@@ -49,13 +51,13 @@ const SignInContent: React.VFC = () => {
     if (requirePasswordUpdate) {
       passwordChangeDialogDispach(true);
     }
-    let _location = history.location;
+    let _location = location;
     let _route = '/workspace'
     if (_location.state && (_location.state as any).from) {
       _route = (_location.state as any).from.pathname;
     }
     console.log(_route);
-    history.push(_route);
+    navigate(_route);
   }
 
   return (

@@ -14,9 +14,7 @@ jest.mock('../../../components/LoginProvider');
 jest.mock('../../../api/dashboard/v1alpha1/api');
 jest.mock('../../../components/ProgressProvider');
 jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: jest.fn(),
-  }),
+  useNavigate: () => jest.fn(),
 }));
 
 //type ReturnMemberType<T extends (...args: any) => any, K extends keyof ReturnType<T>> = ReturnType<T>[K];

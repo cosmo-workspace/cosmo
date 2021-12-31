@@ -1,35 +1,26 @@
-import React from 'react';
-import { Redirect, Route, RouteProps } from 'react-router-dom';
+import React, { ReactElement } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useLogin } from './LoginProvider';
 
-type Props = RouteProps & {
-  component: any;
+type Props = {
+  children: ReactElement;
   admin?: boolean;
 }
 
-export const AuthRoute = ({ component: Component, admin, ...rest }: Props) => {
+export const AuthRoute: React.VFC<Props> = ({ children, admin }) => {
   const { loginUser } = useLogin();
   const isAdmin = loginUser && loginUser.role === 'cosmo-admin';
+  let location = useLocation();
 
-  return (
-    <Route
-      {...rest}
-      render={(props) => {
-        console.log('props', props);
-        if (!loginUser) {
-          return (<Redirect
-            to={{
-              pathname: '/signin',
-              search: `from=${props.location.pathname}`,
-              state: { from: props.location },
-            }}
-          />);
-        }
-        if (admin && !isAdmin) {
-          return (<Redirect to='/' />);
-        }
-        return (<Component {...props} />);
-      }}
-    />
-  )
+  if (!loginUser) {
+    return (<Navigate
+      to={{ pathname: '/signin', search: `from=${location.pathname}` }}
+      state={{ from: location }}
+      replace
+    />);
+  } else if (admin && !isAdmin) {
+    return (<Navigate to='/' replace />);
+  } else {
+    return children;
+  }
 }
