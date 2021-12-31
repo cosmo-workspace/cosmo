@@ -38,6 +38,7 @@ const wsMock: MockedMemberFunction<typeof WorkspaceApiFactory> = {
 const restTemplateMock = TemplateApiFactory as jest.MockedFunction<typeof TemplateApiFactory>;
 const templateMock: MockedMemberFunction<typeof TemplateApiFactory> = {
   getWorkspaceTemplates: jest.fn(),
+  getUserAddonTemplates: jest.fn(),
 }
 const useProgressMock = useProgress as jest.MockedFunction<typeof useProgress>;
 const progressMock: MockedMemberFunction<typeof useProgress> = {
@@ -68,7 +69,7 @@ const user1: User = { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: '
 const user2: User = { id: 'user2', displayName: 'user2 name' };
 const user3: User = { id: 'user3', displayName: 'user2 name' };
 const tmpl1: Template = { name: 'tmpl1' };
-const tmpl2: Template = { name: 'tmpl2', requiredVars: ['var1', 'var2'] };
+const tmpl2: Template = { name: 'tmpl2', requiredVars: [{ varName: 'var1' }, { varName: 'var2' }] };
 const tmpl3: Template = { name: 'tmpl3' };
 const ws11 = newWorkspace('ws11', user1, tmpl1);
 const ws12 = newWorkspace('ws12', user1, tmpl2);
@@ -164,6 +165,8 @@ describe('useWorkspace', () => {
       const wsRunning = wsStat(ws12, 1, 'Running');
 
       jest.useFakeTimers();
+      jest.spyOn(global, 'setTimeout');
+
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, wsCreateing, ws13] }));
       await act(async () => { result.current.getWorkspaces(user1.id) });
@@ -208,6 +211,7 @@ describe('useWorkspace', () => {
       expect(result.current.workspaces).toStrictEqual([ws11, wsStoping, ws13]);
 
       jest.useFakeTimers();
+      jest.spyOn(global, 'setTimeout');
 
       // refReshWorkspace
       await act(async () => { result.current.refreshWorkspace(wsStoping) });
@@ -240,6 +244,8 @@ describe('useWorkspace', () => {
       ];
 
       jest.useFakeTimers();
+      jest.spyOn(global, 'setTimeout');
+
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, wsRunning1, ws13] }));
       await act(async () => { result.current.getWorkspaces(user1.id) });
@@ -271,6 +277,7 @@ describe('useWorkspace', () => {
       expect(result.current.workspaces).toStrictEqual([ws11, wsStoping, ws13]);
 
       jest.useFakeTimers();
+      jest.spyOn(global, 'setTimeout');
 
       // refReshWorkspace
       await act(async () => { result.current.refreshWorkspace(wsStoping) });
@@ -299,6 +306,8 @@ describe('useWorkspace', () => {
     } as any
 
     jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
+
     await act(async () => { result.current.refreshWorkspace(wsStoping) });
 
     wsMock.getWorkspace.mockRejectedValueOnce(err);

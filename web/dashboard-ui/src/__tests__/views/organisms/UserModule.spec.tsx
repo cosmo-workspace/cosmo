@@ -1,7 +1,7 @@
 import { act, renderHook, RenderResult } from '@testing-library/react-hooks';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useSnackbar } from "notistack";
-import { ListTemplatesResponse, Template, TemplateApiFactory, User, UserApiFactory, UserResponse } from "../../../api/dashboard/v1alpha1";
+import { CreateUserResponse, DeleteUserResponse, ListTemplatesResponse, ListUsersResponse, Template, TemplateApiFactory, UpdateUserRoleResponse, User, UserApiFactory, UserRoleEnum } from "../../../api/dashboard/v1alpha1";
 import { useProgress } from '../../../components/ProgressProvider';
 import { UserContext, useTemplates, useUserModule } from '../../../views/organisms/UserModule';
 
@@ -52,7 +52,7 @@ const snackbarMock: MockedMemberFunction<typeof useSnackbar> = {
 //--------------------------------------------------
 // mock data definition
 //--------------------------------------------------
-const user1: User = { id: 'user1', role: 'cosmo-admin', displayName: 'user1 name' };
+const user1: User = { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' };
 const user2: User = { id: 'user2', displayName: 'user2 name' };
 const user3: User = { id: 'user3', displayName: 'user3 name' };
 
@@ -90,16 +90,22 @@ describe('useUserModule', () => {
       expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
     });
 
+    it('normal', async () => {
+      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: undefined as any }));
+      await act(async () => { result.current.getUsers() });
+      expect(result.current.users).toStrictEqual([]);
+      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+    });
 
     it('normal', async () => {
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: undefined }));
+      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [] }));
       await act(async () => { result.current.getUsers() });
       expect(result.current.users).toStrictEqual([]);
       expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
     });
 
     it('error', async () => {
-      const err: AxiosError<UserResponse> = {
+      const err: AxiosError<ListUsersResponse> = {
         response: { data: { message: undefined }, status: 402 } as any,
       } as any
       userMock.getUsers.mockRejectedValue(err);
@@ -124,7 +130,7 @@ describe('useUserModule', () => {
     });
 
     it('error', async () => {
-      const err: AxiosError<UserResponse> = {
+      const err: AxiosError<CreateUserResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
       userMock.postUser.mockRejectedValue(err);
@@ -147,7 +153,7 @@ describe('useUserModule', () => {
     });
 
     it('error', async () => {
-      const err: AxiosError<UserResponse> = {
+      const err: AxiosError<UpdateUserRoleResponse> = {
         response: { data: { message: 'data.message' }, status: 402 } as any,
       } as any
       userMock.putUserRole.mockRejectedValue(err);
@@ -170,7 +176,7 @@ describe('useUserModule', () => {
     });
 
     it('error', async () => {
-      const err: AxiosError<UserResponse> = {
+      const err: AxiosError<DeleteUserResponse> = {
         response: { data: { message: 'data.message' }, status: 402 } as any,
       } as any
       userMock.deleteUser.mockRejectedValue(err);
