@@ -9,6 +9,8 @@ import { MyThemeProvider } from './components/MyThemeProvider';
 import { PageSettingsProvider } from './components/PageSettingsProvider';
 import { ProgressProvider } from './components/ProgressProvider';
 import { PasswordChangeDialogContext } from './views/organisms/PasswordChangeDialog';
+import { UserContext } from './views/organisms/UserModule';
+import { UserNameChangeDialogContext } from './views/organisms/UserNameChangeDialog';
 import { SignIn } from './views/pages/SignIn';
 import { UserPage } from './views/pages/UserPage';
 import { WorkspacePage } from './views/pages/WorkspacePage';
@@ -62,9 +64,13 @@ function App() {
               <ProgressProvider>
                 <HashRouter >
                   <LoginProvider>
-                    <PasswordChangeDialogContext.Provider>
-                      <SwitchApp />
-                    </PasswordChangeDialogContext.Provider>
+                    <UserContext.Provider>
+                      <UserNameChangeDialogContext.Provider>
+                        <PasswordChangeDialogContext.Provider>
+                          <SwitchApp />
+                        </PasswordChangeDialogContext.Provider>
+                      </UserNameChangeDialogContext.Provider>
+                    </UserContext.Provider>
                   </LoginProvider>
                 </HashRouter >
               </ProgressProvider>

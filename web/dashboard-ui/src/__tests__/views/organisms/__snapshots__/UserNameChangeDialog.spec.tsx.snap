@@ -1,0 +1,486 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserNameChangeDialog UserNameChangeDialogContext open/close: 1.initial render 1`] = `
+<body
+  style=""
+>
+  <div>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      open
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      close
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+  </div>
+</body>
+`;
+
+exports[`UserNameChangeDialog UserNameChangeDialogContext open/close: 2.opend 1`] = `
+<body
+  style="padding-right: 1024px; overflow: hidden;"
+>
+  <div
+    aria-hidden="true"
+  >
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      open
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      close
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+  </div>
+  <div
+    class="MuiModal-root MuiDialog-root css-zw3mfo-MuiModal-root-MuiDialog-root"
+    role="presentation"
+  >
+    <div
+      aria-hidden="true"
+      class="MuiBackdrop-root css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
+      style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+    />
+    <div
+      data-test="sentinelStart"
+      tabindex="0"
+    />
+    <div
+      class="MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container"
+      role="presentation"
+      style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+      tabindex="-1"
+    >
+      <div
+        aria-labelledby="mui-0000_for_toMatchSnapShot"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthXs MuiDialog-paperFullWidth css-twia2z-MuiPaper-root-MuiDialog-paper"
+        role="dialog"
+      >
+        <h2
+          class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-bdhsul-MuiTypography-root-MuiDialogTitle-root"
+          id="mui-0000_for_toMatchSnapShot"
+        >
+          Change user name
+        </h2>
+        <form>
+          <div
+            class="MuiDialogContent-root css-ypiqx9-MuiDialogContent-root"
+          >
+            <div
+              class="css-1lwbda4-MuiStack-root"
+            >
+              <div
+                class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
+              >
+                <label
+                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-au3a9q-MuiFormLabel-root-MuiInputLabel-root"
+                  data-shrink="true"
+                  for="mui-0000_for_toMatchSnapShot"
+                  id="mui-0000_for_toMatchSnapShot-label"
+                >
+                  User ID
+                </label>
+                <div
+                  class="MuiFilledInput-root MuiFilledInput-underline MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart css-4wkuxf-MuiInputBase-root-MuiFilledInput-root"
+                >
+                  <div
+                    class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-filled MuiInputAdornment-sizeMedium css-9mc7sf-MuiInputAdornment-root"
+                  >
+                    <span
+                      class="notranslate"
+                    >
+                      ​
+                    </span>
+                    <svg
+                      aria-hidden="true"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                      data-testid="PersonOutlineTwoToneIcon"
+                      focusable="false"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        cx="12"
+                        cy="8"
+                        opacity=".3"
+                        r="2.1"
+                      />
+                      <path
+                        d="M12 14.9c-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2V17c0-.64-3.13-2.1-6.1-2.1z"
+                        opacity=".3"
+                      />
+                      <path
+                        d="M12 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6.1 5.1H5.9V17c0-.64 3.13-2.1 6.1-2.1s6.1 1.46 6.1 2.1v1.1zM12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6.1c1.16 0 2.1.94 2.1 2.1 0 1.16-.94 2.1-2.1 2.1S9.9 9.16 9.9 8c0-1.16.94-2.1 2.1-2.1z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    aria-invalid="false"
+                    class="MuiFilledInput-input MuiInputBase-input MuiInputBase-inputAdornedStart css-1vbc0rj-MuiInputBase-input-MuiFilledInput-input"
+                    id="mui-0000_for_toMatchSnapShot"
+                    readonly=""
+                    tabindex="-1"
+                    type="text"
+                    value="user1"
+                  />
+                </div>
+              </div>
+              <div
+                class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
+              >
+                <label
+                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-1kty9di-MuiFormLabel-root-MuiInputLabel-root"
+                  data-shrink="true"
+                  for="mui-0000_for_toMatchSnapShot"
+                  id="mui-0000_for_toMatchSnapShot-label"
+                >
+                  User Name
+                </label>
+                <div
+                  class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart css-8j6b76-MuiInputBase-root-MuiOutlinedInput-root"
+                >
+                  <div
+                    class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-outlined MuiInputAdornment-sizeMedium css-ittuaa-MuiInputAdornment-root"
+                  >
+                    <span
+                      class="notranslate"
+                    >
+                      ​
+                    </span>
+                    <svg
+                      aria-hidden="true"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                      data-testid="PersonOutlineTwoToneIcon"
+                      focusable="false"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        cx="12"
+                        cy="8"
+                        opacity=".3"
+                        r="2.1"
+                      />
+                      <path
+                        d="M12 14.9c-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2V17c0-.64-3.13-2.1-6.1-2.1z"
+                        opacity=".3"
+                      />
+                      <path
+                        d="M12 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6.1 5.1H5.9V17c0-.64 3.13-2.1 6.1-2.1s6.1 1.46 6.1 2.1v1.1zM12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6.1c1.16 0 2.1.94 2.1 2.1 0 1.16-.94 2.1-2.1 2.1S9.9 9.16 9.9 8c0-1.16.94-2.1 2.1-2.1z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    aria-invalid="false"
+                    autocomplete="off"
+                    class="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedStart css-1o9s3wi-MuiInputBase-input-MuiOutlinedInput-input"
+                    id="mui-0000_for_toMatchSnapShot"
+                    name="name"
+                    type="text"
+                    value=""
+                  />
+                  <fieldset
+                    aria-hidden="true"
+                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                  >
+                    <legend
+                      class="css-1z7n62"
+                    >
+                      <span>
+                        User Name
+                      </span>
+                    </legend>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="MuiDialogActions-root MuiDialogActions-spacing css-hlj6pa-MuiDialogActions-root"
+          >
+            <button
+              class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+              tabindex="0"
+              type="button"
+            >
+              Cancel
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              class="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root  css-sghohy-MuiButtonBase-root-MuiButton-root"
+              tabindex="0"
+              type="submit"
+            >
+              Update
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div
+      data-test="sentinelEnd"
+      tabindex="0"
+    />
+  </div>
+</body>
+`;
+
+exports[`UserNameChangeDialog UserNameChangeDialogContext open/close: 3.closed 1`] = `
+<body
+  style=""
+>
+  <div>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      open
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      close
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+  </div>
+</body>
+`;
+
+exports[`UserNameChangeDialog render render 1`] = `
+<body
+  style="padding-right: 1024px; overflow: hidden;"
+>
+  <div
+    aria-hidden="true"
+  />
+  <div
+    class="MuiModal-root MuiDialog-root css-zw3mfo-MuiModal-root-MuiDialog-root"
+    role="presentation"
+  >
+    <div
+      aria-hidden="true"
+      class="MuiBackdrop-root css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
+      style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+    />
+    <div
+      data-test="sentinelStart"
+      tabindex="0"
+    />
+    <div
+      class="MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container"
+      role="presentation"
+      style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+      tabindex="-1"
+    >
+      <div
+        aria-labelledby="mui-0000_for_toMatchSnapShot"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthXs MuiDialog-paperFullWidth css-twia2z-MuiPaper-root-MuiDialog-paper"
+        role="dialog"
+      >
+        <h2
+          class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-bdhsul-MuiTypography-root-MuiDialogTitle-root"
+          id="mui-0000_for_toMatchSnapShot"
+        >
+          Change user name
+        </h2>
+        <form>
+          <div
+            class="MuiDialogContent-root css-ypiqx9-MuiDialogContent-root"
+          >
+            <div
+              class="css-1lwbda4-MuiStack-root"
+            >
+              <div
+                class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
+              >
+                <label
+                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-au3a9q-MuiFormLabel-root-MuiInputLabel-root"
+                  data-shrink="true"
+                  for="mui-0000_for_toMatchSnapShot"
+                  id="mui-0000_for_toMatchSnapShot-label"
+                >
+                  User ID
+                </label>
+                <div
+                  class="MuiFilledInput-root MuiFilledInput-underline MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart css-4wkuxf-MuiInputBase-root-MuiFilledInput-root"
+                >
+                  <div
+                    class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-filled MuiInputAdornment-sizeMedium css-9mc7sf-MuiInputAdornment-root"
+                  >
+                    <span
+                      class="notranslate"
+                    >
+                      ​
+                    </span>
+                    <svg
+                      aria-hidden="true"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                      data-testid="PersonOutlineTwoToneIcon"
+                      focusable="false"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        cx="12"
+                        cy="8"
+                        opacity=".3"
+                        r="2.1"
+                      />
+                      <path
+                        d="M12 14.9c-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2V17c0-.64-3.13-2.1-6.1-2.1z"
+                        opacity=".3"
+                      />
+                      <path
+                        d="M12 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6.1 5.1H5.9V17c0-.64 3.13-2.1 6.1-2.1s6.1 1.46 6.1 2.1v1.1zM12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6.1c1.16 0 2.1.94 2.1 2.1 0 1.16-.94 2.1-2.1 2.1S9.9 9.16 9.9 8c0-1.16.94-2.1 2.1-2.1z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    aria-invalid="false"
+                    class="MuiFilledInput-input MuiInputBase-input MuiInputBase-inputAdornedStart css-1vbc0rj-MuiInputBase-input-MuiFilledInput-input"
+                    id="mui-0000_for_toMatchSnapShot"
+                    readonly=""
+                    tabindex="-1"
+                    type="text"
+                    value="user1"
+                  />
+                </div>
+              </div>
+              <div
+                class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
+              >
+                <label
+                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-1kty9di-MuiFormLabel-root-MuiInputLabel-root"
+                  data-shrink="true"
+                  for="mui-0000_for_toMatchSnapShot"
+                  id="mui-0000_for_toMatchSnapShot-label"
+                >
+                  User Name
+                </label>
+                <div
+                  class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart css-8j6b76-MuiInputBase-root-MuiOutlinedInput-root"
+                >
+                  <div
+                    class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-outlined MuiInputAdornment-sizeMedium css-ittuaa-MuiInputAdornment-root"
+                  >
+                    <span
+                      class="notranslate"
+                    >
+                      ​
+                    </span>
+                    <svg
+                      aria-hidden="true"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                      data-testid="PersonOutlineTwoToneIcon"
+                      focusable="false"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        cx="12"
+                        cy="8"
+                        opacity=".3"
+                        r="2.1"
+                      />
+                      <path
+                        d="M12 14.9c-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2V17c0-.64-3.13-2.1-6.1-2.1z"
+                        opacity=".3"
+                      />
+                      <path
+                        d="M12 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6.1 5.1H5.9V17c0-.64 3.13-2.1 6.1-2.1s6.1 1.46 6.1 2.1v1.1zM12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6.1c1.16 0 2.1.94 2.1 2.1 0 1.16-.94 2.1-2.1 2.1S9.9 9.16 9.9 8c0-1.16.94-2.1 2.1-2.1z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    aria-invalid="false"
+                    autocomplete="off"
+                    class="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputAdornedStart css-1o9s3wi-MuiInputBase-input-MuiOutlinedInput-input"
+                    id="mui-0000_for_toMatchSnapShot"
+                    name="name"
+                    type="text"
+                    value=""
+                  />
+                  <fieldset
+                    aria-hidden="true"
+                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                  >
+                    <legend
+                      class="css-1z7n62"
+                    >
+                      <span>
+                        User Name
+                      </span>
+                    </legend>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="MuiDialogActions-root MuiDialogActions-spacing css-hlj6pa-MuiDialogActions-root"
+          >
+            <button
+              class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+              tabindex="0"
+              type="button"
+            >
+              Cancel
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              class="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root  css-sghohy-MuiButtonBase-root-MuiButton-root"
+              tabindex="0"
+              type="submit"
+            >
+              Update
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div
+      data-test="sentinelEnd"
+      tabindex="0"
+    />
+  </div>
+</body>
+`;

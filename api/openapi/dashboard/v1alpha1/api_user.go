@@ -76,6 +76,12 @@ func (c *UserApiController) Routes() Routes {
 			c.PostUser,
 		},
 		{
+			"PutUserName",
+			strings.ToUpper("Put"),
+			"/api/v1alpha1/user/{userid}/name",
+			c.PutUserName,
+		},
+		{
 			"PutUserPassword",
 			strings.ToUpper("Put"),
 			"/api/v1alpha1/user/{userid}/password",
@@ -149,6 +155,33 @@ func (c *UserApiController) PostUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	result, err := c.service.PostUser(r.Context(), createUserRequestParam)
+	// If an error occurred, encode the error with the status code
+	if err != nil {
+		c.errorHandler(w, r, err, &result)
+		return
+	}
+	// If no error, encode the body and the result code
+	EncodeJSONResponse(result.Body, &result.Code, w)
+
+}
+
+// PutUserName - Update user name
+func (c *UserApiController) PutUserName(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	useridParam := params["userid"]
+
+	updateUserNameRequestParam := UpdateUserNameRequest{}
+	d := json.NewDecoder(r.Body)
+	d.DisallowUnknownFields()
+	if err := d.Decode(&updateUserNameRequestParam); err != nil {
+		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
+		return
+	}
+	if err := AssertUpdateUserNameRequestRequired(updateUserNameRequestParam); err != nil {
+		c.errorHandler(w, r, err, nil)
+		return
+	}
+	result, err := c.service.PutUserName(r.Context(), useridParam, updateUserNameRequestParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)

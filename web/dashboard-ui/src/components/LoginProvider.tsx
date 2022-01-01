@@ -73,10 +73,10 @@ const useLoginModule = () => {
    */
   const getMyUserInfo = async (userId: string) => {
     console.log('getMyUserInfo', userId);
-    if (loginUser || !userId) {
-      console.log('getMyUserInfo cancel', loginUser, userId);
-      return;
-    }
+    // if (loginUser || !userId) {
+    //   console.log('getMyUserInfo cancel', loginUser, userId);
+    //   return;
+    // }
     try {
       const responseUser = await getUser(userId);
       setLoginUser(prev => { console.log('setLoginUser', prev, responseUser.data.user); return responseUser.data.user! });
@@ -88,6 +88,15 @@ const useLoginModule = () => {
     }
   }
 
+  /**
+   * login: MyUserInfo
+   */
+  const refreshUserInfo = async () => {
+    console.log('refreshUserInfo');
+    if (loginUser) {
+      getMyUserInfo(loginUser.id);
+    }
+  }
 
   /**
    * logout: Pagetemplate 
@@ -143,6 +152,7 @@ const useLoginModule = () => {
     verifyLogin,
     login,
     logout,
+    refreshUserInfo,
     updataPassword,
   };
 }

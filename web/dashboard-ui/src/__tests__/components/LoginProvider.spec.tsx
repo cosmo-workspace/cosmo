@@ -2,7 +2,7 @@ import { act, renderHook, RenderHookResult } from "@testing-library/react-hooks"
 import { AxiosResponse } from "axios";
 import { useSnackbar } from "notistack";
 import React from 'react';
-import { AuthApiFactory, UserApiFactory } from "../../api/dashboard/v1alpha1";
+import { AuthApiFactory, UserApiFactory, UserRoleEnum } from "../../api/dashboard/v1alpha1";
 import { LoginProvider, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 
@@ -14,7 +14,7 @@ jest.mock('notistack');
 jest.mock('../../api/dashboard/v1alpha1/api');
 jest.mock('../../components/ProgressProvider');
 jest.mock('react-router-dom', () => ({
-  useHistory: jest.fn(),
+  //useHistory: jest.fn(),
 }),
 );
 
@@ -50,6 +50,7 @@ const userMock: MockedMemberFunction<typeof UserApiFactory> = {
   getUser: jest.fn(),
   getUsers: jest.fn(),
   deleteUser: jest.fn(),
+  putUserName: jest.fn(),
 }
 
 function axiosNormalResponse<T>(data: T): AxiosResponse<T> {
@@ -74,7 +75,6 @@ describe('LoginProvider', () => {
     jest.restoreAllMocks();
   });
 
-
   describe('verify', () => {
 
     it('ok', async () => {
@@ -85,7 +85,7 @@ describe('LoginProvider', () => {
       }));
       userMock.getUser.mockResolvedValue(axiosNormalResponse({
         message: "ok",
-        user: { id: 'user1', role: 'cosmo-admin', displayName: 'user1 name' },
+        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
 
       const { result, waitForNextUpdate } = renderHook(() => useLogin(), {
@@ -98,7 +98,7 @@ describe('LoginProvider', () => {
 
     it('ng / id is undefined', async () => {
       authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
-        id: undefined,
+        id: undefined as any,
         expireAt: 'xxxx',
         requirePasswordUpdate: false,
       }));
@@ -165,7 +165,7 @@ describe('LoginProvider', () => {
       }));
       userMock.getUser.mockResolvedValue(axiosNormalResponse({
         message: "ok",
-        user: { id: 'user1', role: 'cosmo-admin', displayName: 'user1 name' },
+        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
 
       await act(async () => {
@@ -190,7 +190,7 @@ describe('LoginProvider', () => {
       }));
       userMock.getUser.mockResolvedValue(axiosNormalResponse({
         message: "ok",
-        user: { id: 'user1', role: 'cosmo-admin', displayName: 'user1 name' },
+        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
 
       authMock.login.mockRejectedValue({ response: { data: { message: 'login error' }, status: 401 } as any } as any);
@@ -222,6 +222,60 @@ describe('LoginProvider', () => {
   });
 
 
+  describe('refreshUserInfo', () => {
+
+    let hookResult: RenderHookResult<unknown, ReturnType<typeof useLogin>>;
+
+    describe('not login', () => {
+
+      beforeEach(async () => {
+        hookResult = renderHook(() => useLogin(), {
+          wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
+        });
+        await hookResult.waitForNextUpdate();
+      });
+
+
+      it('ok', async () => {
+        const { result } = hookResult;
+        await act(async () => {
+          await expect(result.current.refreshUserInfo()).resolves.toMatchSnapshot();
+          expect(result.current.loginUser).toMatchSnapshot();
+        });
+      });
+
+    });
+
+    describe('logined', () => {
+
+      beforeEach(async () => {
+        authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
+          id: 'user1',
+          expireAt: 'xxxx',
+          requirePasswordUpdate: false,
+        }));
+        userMock.getUser.mockResolvedValue(axiosNormalResponse({
+          message: "ok",
+          user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
+        }));
+        hookResult = renderHook(() => useLogin(), {
+          wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
+        });
+        await hookResult.waitForNextUpdate();
+      });
+
+      it('ok', async () => {
+        const { result } = hookResult;
+        await act(async () => {
+          await expect(result.current.refreshUserInfo()).resolves.toMatchSnapshot();
+          expect(result.current.loginUser).toMatchSnapshot();
+        });
+      });
+
+    });
+  });
+
+
   describe('logout', () => {
 
     let hookResult: RenderHookResult<unknown, ReturnType<typeof useLogin>>;
@@ -234,7 +288,7 @@ describe('LoginProvider', () => {
       }));
       userMock.getUser.mockResolvedValue(axiosNormalResponse({
         message: "ok",
-        user: { id: 'user1', role: 'cosmo-admin', displayName: 'user1 name' },
+        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
       hookResult = renderHook(() => useLogin(), {
         wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
@@ -277,7 +331,7 @@ describe('LoginProvider', () => {
       }));
       userMock.getUser.mockResolvedValue(axiosNormalResponse({
         message: "ok",
-        user: { id: 'user1', role: 'cosmo-admin', displayName: 'user1 name' },
+        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
       hookResult = renderHook(() => useLogin(), {
         wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),

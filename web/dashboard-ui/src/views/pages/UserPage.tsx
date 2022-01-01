@@ -1,5 +1,5 @@
+import { AddTwoTone, Badge, Clear, DeleteTwoTone, ManageAccountsTwoTone, MoreVert, RefreshTwoTone, SearchTwoTone } from "@mui/icons-material";
 import { Box, Card, CardHeader, Chip, Fab, Grid, IconButton, InputAdornment, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
-import { AddTwoTone, Clear, DeleteTwoTone, ManageAccountsTwoTone, MoreVert, RefreshTwoTone, SearchTwoTone } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { User } from "../../api/dashboard/v1alpha1";
 import { useLogin } from "../../components/LoginProvider";
@@ -7,7 +7,8 @@ import { NameAvatar } from "../atoms/NameAvatar";
 import { PasswordDialogContext } from "../organisms/PasswordDialog";
 import { RoleChangeDialogContext } from "../organisms/RoleChangeDialog";
 import { UserCreateDialogContext, UserDeleteDialogContext, UserInfoDialogContext } from "../organisms/UserActionDialog";
-import { UserContext, useUserModule } from "../organisms/UserModule";
+import { useUserModule } from "../organisms/UserModule";
+import { UserNameChangeDialogContext } from "../organisms/UserNameChangeDialog";
 import { PageTemplate } from "../templates/PageTemplate";
 
 /**
@@ -18,6 +19,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const roleChangeDialogDispatch = RoleChangeDialogContext.useDispatch();
   const userDeleteDialogDispatch = UserDeleteDialogContext.useDispatch();
+  const userNameChangeDispatch = UserNameChangeDialogContext.useDispatch();
 
   return (<>
     <Box>
@@ -32,6 +34,13 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
       >
+        <MenuItem onClick={() => {
+          userNameChangeDispatch(true, { user: us });
+          setAnchorEl(null);
+        }}>
+          <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
+          <ListItemText>Change user name...</ListItemText>
+        </MenuItem>
         <MenuItem onClick={() => {
           roleChangeDialogDispatch(true, { user: us });
           setAnchorEl(null);
@@ -120,19 +129,17 @@ export const UserPage: React.VFC = () => {
 
   return (
     <PageTemplate title="Users">
-      <UserContext.Provider>
-        <PasswordDialogContext.Provider>
-          <UserCreateDialogContext.Provider>
-            <RoleChangeDialogContext.Provider>
-              <UserDeleteDialogContext.Provider>
-                <UserInfoDialogContext.Provider>
-                  <UserList />
-                </UserInfoDialogContext.Provider>
-              </UserDeleteDialogContext.Provider>
-            </RoleChangeDialogContext.Provider>
-          </UserCreateDialogContext.Provider>
-        </PasswordDialogContext.Provider>
-      </UserContext.Provider>
+      <PasswordDialogContext.Provider>
+        <UserCreateDialogContext.Provider>
+          <RoleChangeDialogContext.Provider>
+            <UserDeleteDialogContext.Provider>
+              <UserInfoDialogContext.Provider>
+                <UserList />
+              </UserInfoDialogContext.Provider>
+            </UserDeleteDialogContext.Provider>
+          </RoleChangeDialogContext.Provider>
+        </UserCreateDialogContext.Provider>
+      </PasswordDialogContext.Provider>
     </PageTemplate>
   );
 }

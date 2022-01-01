@@ -40,6 +40,7 @@ type UserApiRouter interface {
 	GetUser(http.ResponseWriter, *http.Request)
 	GetUsers(http.ResponseWriter, *http.Request)
 	PostUser(http.ResponseWriter, *http.Request)
+	PutUserName(http.ResponseWriter, *http.Request)
 	PutUserPassword(http.ResponseWriter, *http.Request)
 	PutUserRole(http.ResponseWriter, *http.Request)
 }
@@ -85,6 +86,7 @@ type UserApiServicer interface {
 	GetUser(context.Context, string) (ImplResponse, error)
 	GetUsers(context.Context) (ImplResponse, error)
 	PostUser(context.Context, CreateUserRequest) (ImplResponse, error)
+	PutUserName(context.Context, string, UpdateUserNameRequest) (ImplResponse, error)
 	PutUserPassword(context.Context, string, UpdateUserPasswordRequest) (ImplResponse, error)
 	PutUserRole(context.Context, string, UpdateUserRoleRequest) (ImplResponse, error)
 }

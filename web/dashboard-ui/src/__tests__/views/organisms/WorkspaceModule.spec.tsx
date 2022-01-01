@@ -529,6 +529,7 @@ describe('useWorkspaceUsers', () => {
     login: jest.fn(),
     logout: jest.fn(),
     updataPassword: jest.fn(),
+    refreshUserInfo: jest.fn(),
   }
   const RestUserMock = UserApiFactory as jest.MockedFunction<typeof UserApiFactory>;
   const userMock: MockedMemberFunction<typeof UserApiFactory> = {
@@ -538,6 +539,7 @@ describe('useWorkspaceUsers', () => {
     getUser: jest.fn(),
     getUsers: jest.fn(),
     deleteUser: jest.fn(),
+    putUserName: jest.fn(),
   }
 
   let result: RenderResult<ReturnType<typeof useWorkspaceUsersModule>>;
@@ -558,6 +560,7 @@ describe('useWorkspaceUsers', () => {
         login: jest.fn(),
         logout: jest.fn(),
         updataPassword: jest.fn(),
+        refreshUserInfo: jest.fn(),
       });
       result = renderHook(() => useWorkspaceUsersModule(), {
         wrapper: ({ children }) => (<WorkspaceUsersContext.Provider>{children}</WorkspaceUsersContext.Provider>),
