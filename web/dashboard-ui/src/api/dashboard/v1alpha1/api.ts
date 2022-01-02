@@ -446,6 +446,38 @@ export interface TemplateRequiredVars {
 /**
  * 
  * @export
+ * @interface UpdateUserNameRequest
+ */
+export interface UpdateUserNameRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserNameRequest
+     */
+    'displayName': string;
+}
+/**
+ * 
+ * @export
+ * @interface UpdateUserNameResponse
+ */
+export interface UpdateUserNameResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserNameResponse
+     */
+    'message': string;
+    /**
+     * 
+     * @type {User}
+     * @memberof UpdateUserNameResponse
+     */
+    'user': User | null;
+}
+/**
+ * 
+ * @export
  * @interface UpdateUserPasswordRequest
  */
 export interface UpdateUserPasswordRequest {
@@ -1271,6 +1303,48 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
+         * Update user display name
+         * @summary Update user name
+         * @param {string} userid user id
+         * @param {UpdateUserNameRequest} updateUserNameRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putUserName: async (userid: string, updateUserNameRequest: UpdateUserNameRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'userid' is not null or undefined
+            assertParamExists('putUserName', 'userid', userid)
+            // verify required parameter 'updateUserNameRequest' is not null or undefined
+            assertParamExists('putUserName', 'updateUserNameRequest', updateUserNameRequest)
+            const localVarPath = `/api/v1alpha1/user/{userid}/name`
+                .replace(`{${"userid"}}`, encodeURIComponent(String(userid)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateUserNameRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Update a single User password
          * @summary Update user password
          * @param {string} userid user id
@@ -1408,6 +1482,18 @@ export const UserApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Update user display name
+         * @summary Update user name
+         * @param {string} userid user id
+         * @param {UpdateUserNameRequest} updateUserNameRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putUserName(userid: string, updateUserNameRequest: UpdateUserNameRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpdateUserNameResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putUserName(userid, updateUserNameRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Update a single User password
          * @summary Update user password
          * @param {string} userid user id
@@ -1479,6 +1565,17 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
          */
         postUser(createUserRequest: CreateUserRequest, options?: any): AxiosPromise<CreateUserResponse> {
             return localVarFp.postUser(createUserRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update user display name
+         * @summary Update user name
+         * @param {string} userid user id
+         * @param {UpdateUserNameRequest} updateUserNameRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putUserName(userid: string, updateUserNameRequest: UpdateUserNameRequest, options?: any): AxiosPromise<UpdateUserNameResponse> {
+            return localVarFp.putUserName(userid, updateUserNameRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Update a single User password
@@ -1557,6 +1654,19 @@ export class UserApi extends BaseAPI {
      */
     public postUser(createUserRequest: CreateUserRequest, options?: AxiosRequestConfig) {
         return UserApiFp(this.configuration).postUser(createUserRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update user display name
+     * @summary Update user name
+     * @param {string} userid user id
+     * @param {UpdateUserNameRequest} updateUserNameRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UserApi
+     */
+    public putUserName(userid: string, updateUserNameRequest: UpdateUserNameRequest, options?: AxiosRequestConfig) {
+        return UserApiFp(this.configuration).putUserName(userid, updateUserNameRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

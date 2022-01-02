@@ -11,6 +11,39 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
 
+func (s *Server) PutUserName(ctx context.Context, userId string, req dashv1alpha1.UpdateUserNameRequest) (dashv1alpha1.ImplResponse, error) {
+	log := clog.FromContext(ctx).WithCaller()
+	log.Debug().Info("request", "userId", userId, "req", req)
+
+	user := userFromContext(ctx)
+	if user == nil {
+		log.Info("user not found in context")
+		return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
+	}
+
+	user.Spec.DisplayName = req.DisplayName
+
+	res := &dashv1alpha1.UpdateUserNameResponse{}
+
+	err := s.Klient.Update(ctx, user)
+	if err != nil {
+		if apierrs.IsNotFound(err) {
+			res.Message = err.Error()
+			log.Error(err, res.Message, "userid", user.Name)
+			return dashv1alpha1.Response(http.StatusNotFound, res), nil
+		} else {
+			res.Message = "Failed to update user"
+			log.Error(err, res.Message, "userid", user.Name)
+			return dashv1alpha1.Response(http.StatusInternalServerError, res), nil
+		}
+	}
+
+	res.User = convertUserToDashv1alpha1User(*user)
+	res.Message = "Successfully updated"
+	log.Info(res.Message, "userid", user.Name)
+	return dashv1alpha1.Response(http.StatusOK, res), nil
+}
+
 func (s *Server) PutUserRole(ctx context.Context, userId string, req dashv1alpha1.UpdateUserRoleRequest) (dashv1alpha1.ImplResponse, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "userId", userId, "req", req)

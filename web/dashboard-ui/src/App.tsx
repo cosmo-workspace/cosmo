@@ -1,7 +1,7 @@
 import { CircularProgress } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import React, { Suspense } from 'react';
-import { HashRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { AuthRoute } from './components/AuthRoute';
 import { LoginProvider } from './components/LoginProvider';
@@ -9,6 +9,8 @@ import { MyThemeProvider } from './components/MyThemeProvider';
 import { PageSettingsProvider } from './components/PageSettingsProvider';
 import { ProgressProvider } from './components/ProgressProvider';
 import { PasswordChangeDialogContext } from './views/organisms/PasswordChangeDialog';
+import { UserContext } from './views/organisms/UserModule';
+import { UserNameChangeDialogContext } from './views/organisms/UserNameChangeDialog';
 import { SignIn } from './views/pages/SignIn';
 import { UserPage } from './views/pages/UserPage';
 import { WorkspacePage } from './views/pages/WorkspacePage';
@@ -41,12 +43,12 @@ const Loading: React.VFC = () => {
 
 function SwitchApp() {
   return (
-    <Switch>
-      <Route path="/signin" component={SignIn} exact />
-      <AuthRoute path="/workspace" component={WorkspacePage} exact />
-      <AuthRoute path="/user" component={UserPage} admin exact />
-      <Route><Redirect to="/workspace" /></Route>
-    </Switch>
+    <Routes>
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/workspace" element={<AuthRoute><WorkspacePage /></AuthRoute>} />
+      <Route path="/user" element={<AuthRoute admin><UserPage /></AuthRoute>} />
+      <Route path='*' element={<Navigate to="/workspace" />} />
+    </Routes>
   );
 }
 
@@ -62,9 +64,13 @@ function App() {
               <ProgressProvider>
                 <HashRouter >
                   <LoginProvider>
-                    <PasswordChangeDialogContext.Provider>
-                      <SwitchApp />
-                    </PasswordChangeDialogContext.Provider>
+                    <UserContext.Provider>
+                      <UserNameChangeDialogContext.Provider>
+                        <PasswordChangeDialogContext.Provider>
+                          <SwitchApp />
+                        </PasswordChangeDialogContext.Provider>
+                      </UserNameChangeDialogContext.Provider>
+                    </UserContext.Provider>
                   </LoginProvider>
                 </HashRouter >
               </ProgressProvider>

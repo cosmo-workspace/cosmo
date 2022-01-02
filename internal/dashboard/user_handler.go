@@ -24,7 +24,7 @@ func (s *Server) useUserMiddleWare(router *mux.Router, routes dashv1alpha1.Route
 		router.Get(rtName).Handler(s.preFetchUserMiddleware(router.Get(rtName).GetHandler()))
 		router.Get(rtName).Handler(s.authorizationMiddleware(router.Get(rtName).GetHandler()))
 	}
-	for _, rtName := range []string{"GetUser", "DeleteUser", "PutUserPassword"} {
+	for _, rtName := range []string{"GetUser", "DeleteUser", "PutUserPassword", "PutUserName"} {
 		router.Get(rtName).Handler(s.userAuthenticationMiddleware(router.Get(rtName).GetHandler()))
 		router.Get(rtName).Handler(s.preFetchUserMiddleware(router.Get(rtName).GetHandler()))
 		router.Get(rtName).Handler(s.authorizationMiddleware(router.Get(rtName).GetHandler()))

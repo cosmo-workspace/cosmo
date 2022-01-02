@@ -1,9 +1,10 @@
 import { Box } from '@mui/system';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { MemoryRouter, Route, Switch } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthRoute } from '../../components/AuthRoute';
 import { useLogin } from '../../components/LoginProvider';
+import { UserRoleEnum } from '../../api/dashboard/v1alpha1';
 
 //--------------------------------------------------
 // mock definition
@@ -21,8 +22,8 @@ type MockedMemberFunction<T extends (...args: any) => any> = {
 describe('AuthRoute', () => {
 
   const useLoginMock = useLogin as jest.MockedFunction<typeof useLogin>;
-  // todo: compile error
   const loginMock: MockedMemberFunction<typeof useLogin> = {
+    loginUser: undefined as any,
     verifyLogin: jest.fn(),
     login: jest.fn(),
     logout: jest.fn(),
@@ -38,12 +39,12 @@ describe('AuthRoute', () => {
   const routerTester = (path: string) => {
     return render(
       <MemoryRouter initialEntries={[path]}>
-        <Switch>
-          <Route path="/signin" component={() => (<div>signin</div>)} exact />
-          <AuthRoute path="/workspace" component={() => (<div>workspace</div>)} exact />
-          <AuthRoute path="/user" component={() => (<div>user</div>)} admin exact />
-          <Route component={() => (<Box>404</Box>)} />
-        </Switch>
+        <Routes>
+          <Route path="/signin" element={<div>signin</div>} />
+          <Route path="/workspace" element={<AuthRoute><div>workspace</div></AuthRoute>} />
+          <Route path="/user" element={<AuthRoute admin><div>user</div></AuthRoute>} />
+          <Route path='*' element={<Box>404</Box>} />
+        </Routes>
       </MemoryRouter >
     );
   }
@@ -65,7 +66,7 @@ describe('AuthRoute', () => {
   });
 
   it('normal login admin => /user', async () => {
-    useLoginMock.mockReturnValue({ loginUser: { id: 'user1', role: 'cosmo-admin' } } as ReturnType<typeof useLogin>);
+    useLoginMock.mockReturnValue({ loginUser: { id: 'user1', role: UserRoleEnum.CosmoAdmin } } as ReturnType<typeof useLogin>);
     const { asFragment } = routerTester('/user');
     expect(asFragment()).toMatchSnapshot();
   });

@@ -146,7 +146,7 @@ paths:
           description: Not authorized
         "500":
           description: Internal server error
-  
+
   /api/v1alpha1/template/useraddon:
     get:
       tags:
@@ -358,6 +358,60 @@ paths:
         "500":
           description: Internal server error
 
+  /api/v1alpha1/user/{userid}/name:
+    put:
+      tags:
+        - user
+      operationId: putUserName
+      summary: Update user name
+      description: Update user display name
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: userid
+          in: path
+          description: user id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: name to update
+        required: true
+        content:
+          application/json:
+            schema:
+              title: UpdateUserNameRequest
+              type: object
+              required:
+                - displayName
+              properties:
+                displayName:
+                  type: string
+      responses:
+        "200":
+          description: Successfully user updated
+          content:
+            application/json:
+              schema:
+                title: UpdateUserNameResponse
+                type: object
+                required:
+                  - message
+                  - user
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Not authorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal server error
+
   /api/v1alpha1/user/{userid}/role:
     put:
       tags:
@@ -542,7 +596,7 @@ paths:
                     type: string
       responses:
         "201":
-          description: Successfully workspace created 
+          description: Successfully workspace created
           content:
             application/json:
               schema:

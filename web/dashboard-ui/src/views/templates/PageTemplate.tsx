@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 import MuiAppBar, { AppBarProps } from '@mui/material/AppBar';
 import { experimentalStyled as styled } from "@mui/material/styles";
-import { AccountCircle, ExitToApp, LockOutlined, Menu as MenuIcon, SupervisorAccountTwoTone, VpnKey, WebTwoTone } from "@mui/icons-material";
+import { AccountCircle, Badge, ExitToApp, LockOutlined, Menu as MenuIcon, SupervisorAccountTwoTone, VpnKey, WebTwoTone } from "@mui/icons-material";
 import React from "react";
 import { ErrorBoundary } from 'react-error-boundary';
 import { Link as RouterLink } from "react-router-dom";
@@ -13,6 +13,7 @@ import { useLogin } from "../../components/LoginProvider";
 import logo from "../../logo-with-name-small.png";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { PasswordChangeDialogContext } from "../organisms/PasswordChangeDialog";
+import { UserNameChangeDialogContext } from "../organisms/UserNameChangeDialog";
 
 
 const AppBar = styled(MuiAppBar)<AppBarProps>(({ theme }) => ({
@@ -43,8 +44,15 @@ export const PageTemplate: React.FC<PageTemplateProps> = ({ children, title, }) 
 
   const { loginUser, logout } = useLogin();
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
+  const userNameChangeDialogDispach = UserNameChangeDialogContext.useDispatch();
   const isAdmin = (loginUser?.role === 'cosmo-admin');
   const isSignIn = Boolean(loginUser);
+
+  const changeUserName = () => {
+    console.log('changeUserName');
+    userNameChangeDialogDispach(true, { user: loginUser! });
+    setAnchorEl(null);
+  }
 
   const changePassword = () => {
     console.log('changePassword');
@@ -123,9 +131,13 @@ export const PageTemplate: React.FC<PageTemplateProps> = ({ children, title, }) 
                 {loginUser?.role && <Chip variant="outlined" size="small" label={loginUser?.role} />}
               </Stack>
               <Divider sx={{ mb: 1 }} />
+              {isSignIn && <MenuItem onClick={() => changeUserName()}>
+                <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
+                <ListItemText>Change user name...</ListItemText>
+              </MenuItem>}
               {isSignIn && <MenuItem onClick={() => changePassword()}>
                 <ListItemIcon><VpnKey fontSize="small" /></ListItemIcon>
-                <ListItemText>Change Password...</ListItemText>
+                <ListItemText>Change password...</ListItemText>
               </MenuItem>}
               <Divider />
               {isSignIn && <MenuItem onClick={() => logout()}>

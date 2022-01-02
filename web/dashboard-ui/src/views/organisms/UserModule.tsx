@@ -1,7 +1,7 @@
 import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { UserApiFactory, User, Template, TemplateApiFactory, ApiV1alpha1UserAddons } from "../../api/dashboard/v1alpha1";
+import { useNavigate } from "react-router-dom";
+import { ApiV1alpha1UserAddons, Template, TemplateApiFactory, User, UserApiFactory } from "../../api/dashboard/v1alpha1";
 import { ModuleContext } from "../../components/ContextProvider";
 import { useProgress } from "../../components/ProgressProvider";
 
@@ -10,13 +10,13 @@ import { useProgress } from "../../components/ProgressProvider";
    */
 const useHandleError = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleError = (error: any) => {
     console.log('handleError', error);
     console.log('handleError', error.response);
     if (error?.response?.status === 401) {
-      history.push('/signin');
+      navigate('/signin');
     }
     const msg = error?.response?.data?.message || error?.message;
     msg && enqueueSnackbar(msg, { variant: 'error' });
@@ -58,42 +58,62 @@ const useUser = () => {
       enqueueSnackbar(result.data.message, { variant: 'success' });
       return result.data.user;
     }
-    catch (error) {
-      handleError(error);
+    catch (error) { handleError(error); }
+    finally { releaseMask(); }
+  }
+
+  /**
+   * updateNameDialog: Update user name
+   */
+  const updateName = async (id: string, userName: string) => {
+    console.log('updateUserName', id, userName);
+    try {
+      setMask();
+      const result = await restUser.putUserName(id, { displayName: userName });
+      const newUser = result.data.user;
+      enqueueSnackbar(result.data.message, { variant: 'success' });
+      if (users && newUser) {
+        setUsers(prev => prev.map(us => us.id === newUser.id ? { ...newUser } : us));
+      }
+      return newUser;
     }
-    finally {
-      releaseMask();
-    }
+    catch (error) { handleError(error); }
+    finally { releaseMask(); }
   }
 
   /**
    * updateRoleDialog: Update user 
    */
-  const updateRole = (id: string, role: string) => {
+  const updateRole = async (id: string, role: string) => {
     console.log('updateRole', id, role);
-    setMask();
-    return restUser.putUserRole(id, { role })
-      .then(result => {
-        enqueueSnackbar(result.data.message, { variant: 'success' });
-        getUsers();
-      })
-      .catch(error => { handleError(error); })
-      .finally(() => { releaseMask() });
+    try {
+      setMask();
+      const result = await restUser.putUserRole(id, { role });
+      const newUser = result.data.user;
+      enqueueSnackbar(result.data.message, { variant: 'success' });
+      if (users && newUser) {
+        setUsers(prev => prev.map(us => us.id === newUser.id ? { ...newUser } : us));
+      }
+      return newUser;
+    }
+    catch (error) { handleError(error); }
+    finally { releaseMask(); }
   }
 
   /**
    * DeleteDialog: Delete user 
    */
-  const deleteUser = (userId: string) => {
+  const deleteUser = async (userId: string) => {
     console.log('deleteUser');
-    setMask();
-    return restUser.deleteUser(userId)
-      .then(result => {
-        enqueueSnackbar(result.data.message, { variant: 'success' });
-        setUsers(users.filter((u) => u.id !== userId));
-      })
-      .catch(error => { handleError(error); })
-      .finally(() => { releaseMask(); });
+    try {
+      setMask();
+      const result = await restUser.deleteUser(userId);
+      enqueueSnackbar(result.data.message, { variant: 'success' });
+      setUsers(users.filter((u) => u.id !== userId));
+      return result;
+    }
+    catch (error) { handleError(error); }
+    finally { releaseMask(); }
   }
 
   return (
@@ -101,6 +121,7 @@ const useUser = () => {
       users,
       getUsers,
       createUser,
+      updateName,
       updateRole,
       deleteUser,
     }
@@ -110,7 +131,7 @@ const useUser = () => {
 /**
  * TemplateModule
  */
- export const useTemplates = () => {
+export const useTemplates = () => {
   console.log('useTemplates');
 
   const [templates, setTemplates] = useState<Template[]>([]);

@@ -130,6 +130,24 @@ Array [
 ]
 `;
 
+exports[`LoginProvider refreshUserInfo logined ok 1`] = `undefined`;
+
+exports[`LoginProvider refreshUserInfo logined ok 2`] = `
+Object {
+  "displayName": "user1 name",
+  "id": "user1",
+  "role": "cosmo-admin",
+}
+`;
+
+exports[`LoginProvider refreshUserInfo logined ok: enqueueSnackbar calls 1`] = `Array []`;
+
+exports[`LoginProvider refreshUserInfo not login ok 1`] = `undefined`;
+
+exports[`LoginProvider refreshUserInfo not login ok 2`] = `undefined`;
+
+exports[`LoginProvider refreshUserInfo not login ok: enqueueSnackbar calls 1`] = `Array []`;
+
 exports[`LoginProvider updataPassword error 1`] = `
 Object {
   "message": "updataPassword error",
