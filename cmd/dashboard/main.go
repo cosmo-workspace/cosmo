@@ -130,5 +130,5 @@ func printOptions() {
 }
 
 func printVersion() {
-	fmt.Println("cosmo-dashboard - cosmo v0.2.2 cosmo-workspace 2021")
+	fmt.Println("cosmo-dashboard - cosmo v0.2.3 cosmo-workspace 2021")
 }
