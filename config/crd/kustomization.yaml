@@ -4,13 +4,15 @@
 resources:
 - bases/cosmo.cosmo-workspace.github.io_instances.yaml
 - bases/cosmo.cosmo-workspace.github.io_templates.yaml
+- bases/workspace.cosmo-workspace.github.io_users.yaml
+- bases/workspace.cosmo-workspace.github.io_workspaces.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix.
 # patches here are for enabling the conversion webhook for each CRD
-#- patches/webhook_in_instances.yaml
-#- patches/webhook_in_templates.yaml
+# - patches/webhook_in_instances.yaml
+# - patches/webhook_in_templates.yaml
 #+kubebuilder:scaffold:crdkustomizewebhookpatch
 
 # [CERTMANAGER] To enable webhook, uncomment all the sections with [CERTMANAGER] prefix.
