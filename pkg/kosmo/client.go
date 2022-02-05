@@ -93,7 +93,7 @@ func (c *Client) ListInstancesByType(ctx context.Context, namespace string, type
 	instList := cosmov1alpha1.InstanceList{}
 
 	ls := labels.NewSelector()
-	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyTemplateType, selection.In, types)
+	req, _ := labels.NewRequirement(cosmov1alpha1.TemplateLabelKeyType, selection.In, types)
 	ls = ls.Add(*req)
 
 	opts := &client.ListOptions{
@@ -116,7 +116,7 @@ func (c *Client) ListTemplatesByType(ctx context.Context, tmplTypes []string) ([
 	tmplList := cosmov1alpha1.TemplateList{}
 
 	ls := labels.NewSelector()
-	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyTemplateType, selection.In, tmplTypes)
+	req, _ := labels.NewRequirement(cosmov1alpha1.TemplateLabelKeyType, selection.In, tmplTypes)
 	ls = ls.Add(*req)
 
 	opts := &client.ListOptions{

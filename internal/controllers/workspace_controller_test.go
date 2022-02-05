@@ -44,7 +44,7 @@ var _ = Describe("Workspace controller", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: tmplName,
 			Labels: map[string]string{
-				cosmov1alpha1.LabelKeyTemplateType: wsv1alpha1.TemplateTypeWorkspace,
+				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
 			},
 			Annotations: map[string]string{
 				wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      wsConfig.DeploymentName,

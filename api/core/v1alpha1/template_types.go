@@ -7,8 +7,8 @@ import (
 const (
 	// LabelKeyTemplate is a template name label on the resources created by instance
 	LabelKeyTemplate = "cosmo/template"
-	// LabelKeyTemplateType is a additional type infomartion on template
-	LabelKeyTemplateType = "cosmo/type"
+	// TemplateLabelKeyType is a additional type infomartion on template
+	TemplateLabelKeyType = "cosmo/type"
 )
 
 func init() {

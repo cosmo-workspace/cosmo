@@ -10,8 +10,8 @@ import (
 const (
 	// LabelKeyInstance is a instance name label on the each child resources associated with the instance
 	LabelKeyInstance = "cosmo/instance"
-	// AnnKeyTemplateUpdated is a annotation on instance to notify template updates to reconcile
-	AnnKeyTemplateUpdated = "cosmo/template-updated"
+	// InstanceAnnKeyTemplateUpdated is a annotation on instance to notify template updates to reconcile
+	InstanceAnnKeyTemplateUpdated = "cosmo/template-updated"
 )
 
 func init() {

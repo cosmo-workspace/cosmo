@@ -33,7 +33,7 @@ func init() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "tmpl1",
 			Labels: map[string]string{
-				cosmov1alpha1.LabelKeyTemplateType: "test",
+				cosmov1alpha1.TemplateLabelKeyType: "test",
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{

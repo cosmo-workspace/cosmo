@@ -32,7 +32,7 @@ var _ = Describe("Template webhook", func() {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "code-server-test-wh",
 					Labels: map[string]string{
-						cosmov1alpha1.LabelKeyTemplateType: wsv1alpha1.TemplateTypeWorkspace,
+						cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
 					},
 					Annotations: map[string]string{
 						wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      wsConfig.DeploymentName,

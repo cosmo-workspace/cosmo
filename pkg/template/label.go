@@ -12,7 +12,7 @@ func SetTemplateType(l LabelHolder, tmplType string) {
 	if labels == nil {
 		labels = make(map[string]string)
 	}
-	labels[cosmov1alpha1.LabelKeyTemplateType] = tmplType
+	labels[cosmov1alpha1.TemplateLabelKeyType] = tmplType
 	l.SetLabels(labels)
 }
 
@@ -22,6 +22,6 @@ func GetTemplateType(l LabelHolder) (string, bool) {
 		return "", false
 	}
 
-	tmplType, ok := labels[cosmov1alpha1.LabelKeyTemplateType]
+	tmplType, ok := labels[cosmov1alpha1.TemplateLabelKeyType]
 	return tmplType, ok
 }
