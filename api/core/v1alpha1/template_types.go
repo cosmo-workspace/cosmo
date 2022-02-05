@@ -9,6 +9,8 @@ const (
 	LabelKeyTemplate = "cosmo/template"
 	// TemplateLabelKeyType is a additional type infomartion on template
 	TemplateLabelKeyType = "cosmo/type"
+	// AnnKeyDisableNamePrefix is a annotation on instance to notify controller not to add name prefix
+	TemplateAnnKeyDisableNamePrefix = "cosmo/disable-nameprefix"
 )
 
 func init() {

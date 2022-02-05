@@ -1,0 +1,17 @@
+apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+kind: Template
+metadata:
+  annotations:
+    cosmo/disable-nameprefix: "true"
+  labels:
+    cosmo/type: user-addon
+  name: eks-irsa
+spec:
+  rawYaml: |
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
+      name: default
+      namespace: '{{NAMESPACE}}'

@@ -44,6 +44,7 @@ type generateOption struct {
 	TypeUserAddon       bool
 	SetDefaultUserAddon bool
 	SetSysnsUserAddon   string
+	DisableNamePrefix   bool
 
 	tmpl cosmov1alpha1.Template
 }
@@ -97,6 +98,7 @@ Example:
 	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type user-addon")
 	cmd.Flags().BoolVar(&o.SetDefaultUserAddon, "set-default-user-addon", false, "set default user addon")
 	cmd.Flags().StringVar(&o.SetSysnsUserAddon, "set-sysns-user-addon", "", "user addon in system namespace")
+	cmd.Flags().BoolVar(&o.DisableNamePrefix, "disable-nameprefix", false, "disable adding instance name prefix on child resource name")
 
 	return cmd
 }
@@ -182,6 +184,9 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 		}
 		if o.SetSysnsUserAddon != "" {
 			ann[wsv1alpha1.TemplateAnnKeySysNsUserAddon] = o.SetSysnsUserAddon
+		}
+		if o.DisableNamePrefix {
+			ann[cosmov1alpha1.TemplateAnnKeyDisableNamePrefix] = strconv.FormatBool(true)
 		}
 		o.tmpl.SetAnnotations(ann)
 	}

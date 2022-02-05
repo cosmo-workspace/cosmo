@@ -2,6 +2,7 @@ package transformer
 
 import (
 	"fmt"
+	"strconv"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -11,20 +12,23 @@ import (
 )
 
 type MetadataTransformer struct {
-	inst   *cosmov1alpha1.Instance
-	tmpl   *cosmov1alpha1.Template
-	scheme *runtime.Scheme
+	inst            *cosmov1alpha1.Instance
+	tmplName        string
+	tmplAnnotations map[string]string
+	scheme          *runtime.Scheme
 }
 
 func NewMetadataTransformer(inst *cosmov1alpha1.Instance, tmpl *cosmov1alpha1.Template, scheme *runtime.Scheme) *MetadataTransformer {
-	return &MetadataTransformer{inst: inst, tmpl: tmpl, scheme: scheme}
+	return &MetadataTransformer{inst: inst, tmplName: tmpl.GetName(), tmplAnnotations: tmpl.GetAnnotations(), scheme: scheme}
 }
 
 func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstructured.Unstructured, error) {
 	obj := src.DeepCopy()
 
 	// Set name prefix
-	obj.SetName(cosmov1alpha1.InstanceResourceName(t.inst.Name, obj.GetName()))
+	if !t.disableNamePrefix() {
+		obj.SetName(cosmov1alpha1.InstanceResourceName(t.inst.Name, obj.GetName()))
+	}
 
 	// Set namespace
 	obj.SetNamespace(t.inst.Namespace)
@@ -35,7 +39,7 @@ func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstru
 		labels = make(map[string]string)
 	}
 	labels[cosmov1alpha1.LabelKeyInstance] = t.inst.Name
-	labels[cosmov1alpha1.LabelKeyTemplate] = t.tmpl.Name
+	labels[cosmov1alpha1.LabelKeyTemplate] = t.tmplName
 	obj.SetLabels(labels)
 
 	// Set owner reference
@@ -45,4 +49,17 @@ func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstru
 	}
 
 	return obj, nil
+}
+
+func (t *MetadataTransformer) disableNamePrefix() bool {
+	ann := t.tmplAnnotations
+	if ann == nil {
+		return false
+	}
+	val := ann[cosmov1alpha1.TemplateAnnKeyDisableNamePrefix]
+	disable, err := strconv.ParseBool(val)
+	if err != nil {
+		return false
+	}
+	return disable
 }
