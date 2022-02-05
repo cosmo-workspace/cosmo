@@ -290,24 +290,22 @@ spec:
 				if err != nil {
 					return err
 				}
-				return nil
-			}, time.Second*10).Should(Succeed())
 
-			// update Workspace spec
-			ws.Spec.Replicas = pointer.Int64(0)
-			ws.Spec.Network = []wsv1alpha1.NetworkRule{
-				{
-					PortName:         "port1",
-					PortNumber:       3000,
-					HTTPPath:         "/path",
-					TargetPortNumber: pointer.Int32(30000),
-					Group:            pointer.String("group1"),
-					Public:           false,
-				},
-			}
+				// update Workspace spec
+				ws.Spec.Replicas = pointer.Int64(0)
+				ws.Spec.Network = []wsv1alpha1.NetworkRule{
+					{
+						PortName:         "port1",
+						PortNumber:       3000,
+						HTTPPath:         "/path",
+						TargetPortNumber: pointer.Int32(30000),
+						Group:            pointer.String("group1"),
+						Public:           false,
+					},
+				}
+				return k8sClient.Update(ctx, &ws)
 
-			err := k8sClient.Update(ctx, &ws)
-			Expect(err).ShouldNot(HaveOccurred())
+			}, time.Second*20).Should(Succeed())
 
 			var createdInst cosmov1alpha1.Instance
 			Eventually(func() error {
