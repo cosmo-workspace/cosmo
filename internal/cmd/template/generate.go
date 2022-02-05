@@ -67,8 +67,7 @@ Example:
   * Pipe from helm template and generate Workspace Template with cosmo-auth-proxy injection
 	
   	  helm template code-server ci/helm-chart \
-		| cosmoctl template generate --name TEMPLATE_NAME --workspace \
-			--workspace-urlbase 'https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.yourdomain:443'
+		| cosmoctl template generate --name TEMPLATE_NAME --workspace
 
   * Input merged config file (kustomize build ... or helm template ... etc.) and save it to file
 
@@ -89,11 +88,11 @@ Example:
 	cmd.Flags().StringVar(&o.InjectAuthProxyTLSSecretName, "inject-auth-proxy-tls-secret", "", "TLS secret name for https sidecar cosmo-auth-proxy. Be empty if http. use with --workspace")
 	cmd.Flags().StringVar(&o.ServiceAccount, "serviceaccount", "default", "service account name for cosmo-auth-proxy rolebinding")
 
-	cmd.Flags().StringVar(&o.wsConfig.DeploymentName, "workspace-deployment-name", "", "Deployment name for Workspace. use with --workspace")
-	cmd.Flags().StringVar(&o.wsConfig.ServiceName, "workspace-service-name", "", "Service name for Workspace. use with --workspace")
-	cmd.Flags().StringVar(&o.wsConfig.IngressName, "workspace-ingress-name", "", "Ingress name for Workspace. use with --workspace")
-	cmd.Flags().StringVar(&o.wsConfig.ServiceMainPortName, "workspace-main-service-port-name", "", "ServicePort name for Workspace main container port. use with --workspace")
-	cmd.Flags().StringVar(&o.wsConfig.URLBase, "workspace-urlbase", "", "Workspace URLBase. use with --workspace")
+	cmd.Flags().StringVar(&o.wsConfig.DeploymentName, "workspace-deployment-name", "", "Deployment name for Workspace. use with --workspace (auto detected if not specified)")
+	cmd.Flags().StringVar(&o.wsConfig.ServiceName, "workspace-service-name", "", "Service name for Workspace. use with --workspace (auto detected if not specified)")
+	cmd.Flags().StringVar(&o.wsConfig.IngressName, "workspace-ingress-name", "", "Ingress name for Workspace. use with --workspace (auto detected if not specified)")
+	cmd.Flags().StringVar(&o.wsConfig.ServiceMainPortName, "workspace-main-service-port-name", "", "ServicePort name for Workspace main container port. use with --workspace (auto detected if not specified)")
+	cmd.Flags().StringVar(&o.wsConfig.URLBase, "workspace-urlbase", "", "Workspace URLBase. use with --workspace (use default urlbase in cosmo-controller-manager if not specified)")
 
 	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type user-addon")
 	cmd.Flags().BoolVar(&o.SetDefaultUserAddon, "set-default-user-addon", false, "set default user addon")
