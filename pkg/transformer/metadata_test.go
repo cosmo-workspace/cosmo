@@ -53,9 +53,6 @@ func TestMetadataTransformer_Transform(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "code-server",
 					},
-					Spec: cosmov1alpha1.TemplateSpec{
-						RawYaml: "data",
-					},
 				},
 				scheme: scheme,
 			},
@@ -96,7 +93,7 @@ spec:
 			wantErr: false,
 		},
 		{
-			name: "Append label",
+			name: "Append label and Namespace",
 			fields: fields{
 				inst: &cosmov1alpha1.Instance{
 					ObjectMeta: metav1.ObjectMeta{
@@ -115,9 +112,6 @@ spec:
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "code-server",
 					},
-					Spec: cosmov1alpha1.TemplateSpec{
-						RawYaml: "data",
-					},
 				},
 				scheme: scheme,
 			},
@@ -131,7 +125,6 @@ metadata:
   labels:
     key: val
   name: test
-  namespace: cosmo-user-tom
 spec:
   host: example.com
 `,
@@ -157,6 +150,112 @@ metadata:
     uid: ""
 spec:
   host: example.com
+`,
+			wantErr: false,
+		},
+		{
+			name: "Disable Name Prefix",
+			fields: fields{
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "useraddon-eks-irsa",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "eks-irsa",
+						},
+					},
+				},
+				tmpl: &cosmov1alpha1.Template{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "eks-irsa",
+						Annotations: map[string]string{
+							cosmov1alpha1.TemplateAnnKeyDisableNamePrefix: "1",
+						},
+					},
+				},
+				scheme: scheme,
+			},
+			args: args{
+				src: `apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
+  name: default
+`,
+			},
+			want: `apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
+  labels:
+    cosmo/instance: useraddon-eks-irsa
+    cosmo/template: eks-irsa
+  name: default
+  namespace: cosmo-user-tom
+  ownerReferences:
+  - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Instance
+    name: useraddon-eks-irsa
+    uid: ""
+`,
+			wantErr: false,
+		},
+		{
+			name: "Disable Name Prefix annotation invalid",
+			fields: fields{
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "useraddon-eks-irsa",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "eks-irsa",
+						},
+					},
+				},
+				tmpl: &cosmov1alpha1.Template{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "eks-irsa",
+						Annotations: map[string]string{
+							cosmov1alpha1.TemplateAnnKeyDisableNamePrefix: "invalid",
+						},
+					},
+				},
+				scheme: scheme,
+			},
+			args: args{
+				src: `apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
+  name: default
+`,
+			},
+			want: `apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
+  labels:
+    cosmo/instance: useraddon-eks-irsa
+    cosmo/template: eks-irsa
+  name: useraddon-eks-irsa-default
+  namespace: cosmo-user-tom
+  ownerReferences:
+  - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Instance
+    name: useraddon-eks-irsa
+    uid: ""
 `,
 			wantErr: false,
 		},

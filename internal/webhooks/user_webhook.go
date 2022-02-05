@@ -167,7 +167,7 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Template.Name))
 			}
 
-			if t, ok := label[cosmov1alpha1.LabelKeyTemplateType]; !ok || t != wsv1alpha1.TemplateTypeUserAddon {
+			if t, ok := label[cosmov1alpha1.TemplateLabelKeyType]; !ok || t != wsv1alpha1.TemplateTypeUserAddon {
 				h.Log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
 				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Template.Name))
 			}

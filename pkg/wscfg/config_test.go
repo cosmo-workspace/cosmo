@@ -107,7 +107,7 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 						Name:      "tmpl1",
 						Namespace: wsv1alpha1.UserNamespace("tom"),
 						Labels: map[string]string{
-							cosmov1alpha1.LabelKeyTemplateType: wsv1alpha1.TemplateTypeWorkspace,
+							cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
 						},
 						Annotations: map[string]string{
 							wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      "workspace1",

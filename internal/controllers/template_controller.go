@@ -52,7 +52,7 @@ func (r *TemplateReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		if ann == nil {
 			ann = make(map[string]string)
 		}
-		ann[cosmov1alpha1.AnnKeyTemplateUpdated] = now.String()
+		ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated] = now.String()
 		inst.SetAnnotations(ann)
 
 		if err := r.Update(ctx, &inst); err != nil {

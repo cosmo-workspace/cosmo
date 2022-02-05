@@ -20,7 +20,7 @@ var _ = Describe("User webhook", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "normal-user-addon-test",
 			Labels: map[string]string{
-				cosmov1alpha1.LabelKeyTemplateType: wsv1alpha1.TemplateTypeUserAddon,
+				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
 			},
 		},
 	}
@@ -29,7 +29,7 @@ var _ = Describe("User webhook", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "default-user-addon-test",
 			Labels: map[string]string{
-				cosmov1alpha1.LabelKeyTemplateType: wsv1alpha1.TemplateTypeUserAddon,
+				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
 			},
 			Annotations: map[string]string{
 				wsv1alpha1.TemplateAnnKeyDefaultUserAddon: "true",

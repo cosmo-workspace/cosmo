@@ -26,7 +26,7 @@ func SetConfigOnTemplateAnnotations(tmpl *cosmov1alpha1.Template, cfg wsv1alpha1
 
 func ConfigFromTemplateAnnotations(tmpl *cosmov1alpha1.Template) (cfg wsv1alpha1.Config, err error) {
 	// check TemplateType label is for Workspace
-	tmplType, ok := tmpl.Labels[cosmov1alpha1.LabelKeyTemplateType]
+	tmplType, ok := tmpl.Labels[cosmov1alpha1.TemplateLabelKeyType]
 	if !ok || tmplType != wsv1alpha1.TemplateTypeWorkspace {
 		return cfg, ErrNotTypeWorkspace
 	}

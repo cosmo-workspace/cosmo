@@ -130,7 +130,7 @@ spec:
 					return errors.New("child resources still not created")
 				}
 				return nil
-			}, time.Second*10).Should(Succeed())
+			}, time.Second*30).Should(Succeed())
 
 			By("checking if child resources is as expected in template")
 

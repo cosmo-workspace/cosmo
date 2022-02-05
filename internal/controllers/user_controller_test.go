@@ -25,7 +25,7 @@ var _ = Describe("User controller", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "testaddon",
 			Labels: map[string]string{
-				cosmov1alpha1.LabelKeyTemplateType: wsv1alpha1.TemplateTypeUserAddon,
+				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
@@ -55,7 +55,7 @@ spec:
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "eksctl",
 			Labels: map[string]string{
-				cosmov1alpha1.LabelKeyTemplateType: wsv1alpha1.TemplateTypeUserAddon,
+				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
 			},
 			Annotations: map[string]string{
 				wsv1alpha1.TemplateAnnKeySysNsUserAddon: "kube-system",

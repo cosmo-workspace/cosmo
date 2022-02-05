@@ -32,7 +32,7 @@ func TestSetTemplateType(t *testing.T) {
 			},
 			want: map[string]string{
 				"foo":                              "bar",
-				cosmov1alpha1.LabelKeyTemplateType: "workspace",
+				cosmov1alpha1.TemplateLabelKeyType: "workspace",
 			},
 		},
 		{
@@ -42,14 +42,14 @@ func TestSetTemplateType(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "code-server",
 						Labels: map[string]string{
-							cosmov1alpha1.LabelKeyTemplateType: "workspace",
+							cosmov1alpha1.TemplateLabelKeyType: "workspace",
 						},
 					},
 				},
 				tmplType: "workspace",
 			},
 			want: map[string]string{
-				cosmov1alpha1.LabelKeyTemplateType: "workspace",
+				cosmov1alpha1.TemplateLabelKeyType: "workspace",
 			},
 		},
 		{
@@ -63,7 +63,7 @@ func TestSetTemplateType(t *testing.T) {
 				tmplType: "workspace",
 			},
 			want: map[string]string{
-				cosmov1alpha1.LabelKeyTemplateType: "workspace",
+				cosmov1alpha1.TemplateLabelKeyType: "workspace",
 			},
 		},
 	}
@@ -92,7 +92,7 @@ func TestGetTemplateType(t *testing.T) {
 						Name: "code-server",
 						Labels: map[string]string{
 							"foo":                              "bar",
-							cosmov1alpha1.LabelKeyTemplateType: "workspace",
+							cosmov1alpha1.TemplateLabelKeyType: "workspace",
 						},
 					},
 				},

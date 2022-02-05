@@ -146,7 +146,7 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 			}
 			rawTmplVars := strings.Join(vars, ",")
 
-			tmplType := v.Labels[cosmov1alpha1.LabelKeyTemplateType]
+			tmplType := v.Labels[cosmov1alpha1.TemplateLabelKeyType]
 			rowdata := []string{v.Name, rawTmplVars, tmplType}
 			fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 		}
