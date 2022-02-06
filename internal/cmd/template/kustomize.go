@@ -10,25 +10,26 @@ import (
 
 const (
 	DefaultPackagedFile = "packaged.yaml"
-	NamePrefix          = template.DefaultVarsInstance + "-"
 )
 
 var (
 	SecretFileDefaultMode = int32(420)
 )
 
-func NewKustomize() *types.Kustomization {
+func NewKustomize(disableNamePrefix bool) *types.Kustomization {
 	label := make(map[string]string)
 	label[cosmov1alpha1.LabelKeyInstance] = template.DefaultVarsInstance
 	label[cosmov1alpha1.LabelKeyTemplate] = template.DefaultVarsTemplate
 
 	kust := &types.Kustomization{
 		CommonLabels: label,
-		NamePrefix:   NamePrefix,
 		Namespace:    template.DefaultVarsNamespace,
 		Resources: []string{
 			DefaultPackagedFile,
 		},
+	}
+	if !disableNamePrefix {
+		kust.NamePrefix = template.DefaultVarsInstance + "-"
 	}
 	return kust
 }

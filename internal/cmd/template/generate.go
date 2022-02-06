@@ -239,7 +239,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 		wscfg.SetConfigOnTemplateAnnotations(&o.tmpl, o.wsConfig)
 	}
 
-	kust := NewKustomize()
+	kust := NewKustomize(o.DisableNamePrefix)
 
 	// inject cosmo-auth-proxy if enabled
 	o.Logr.Debug().Info("inject cosmo-auth-proxy", "enabled", o.TypeWorkspace, "image", o.InjectAuthProxyImage)
