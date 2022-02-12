@@ -1,0 +1,7 @@
+{
+    "go.testEnvVars": {
+        "ACK_GINKGO_DEPRECATIONS": "1.16.5",
+        "KUBEBUILDER_ASSETS": "${workspaceFolder}/testbin/bin"
+    },
+    "go.testFlags" : ["-v"]
+}
