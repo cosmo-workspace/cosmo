@@ -17,15 +17,22 @@ import (
 )
 
 func (s *Server) useWorkspaceMiddleWare(router *mux.Router, routes dashv1alpha1.Routes) {
-	for _, rtName := range []string{
-		"GetWorkspace", "PatchWorkspace", "DeleteWorkspace",
-		"PutNetworkRule", "DeleteNetworkRule"} {
-		router.Get(rtName).Handler(s.preFetchWorkspaceMiddleware(router.Get(rtName).GetHandler()))
+	for _, rtName := range []string{"GetWorkspaces", "PostWorkspace"} {
+		route := router.Get(rtName)
+		route.Handler(
+			s.authorizationMiddleware(
+				s.userAuthenticationMiddleware(
+					s.preFetchUserMiddleware(
+						route.GetHandler()))))
 	}
-	for _, rt := range routes {
-		router.Get(rt.Name).Handler(s.userAuthenticationMiddleware(router.Get(rt.Name).GetHandler()))
-		router.Get(rt.Name).Handler(s.preFetchUserMiddleware(router.Get(rt.Name).GetHandler()))
-		router.Get(rt.Name).Handler(s.authorizationMiddleware(router.Get(rt.Name).GetHandler()))
+	for _, rtName := range []string{"GetWorkspace", "PatchWorkspace", "DeleteWorkspace", "PutNetworkRule", "DeleteNetworkRule"} {
+		route := router.Get(rtName)
+		route.Handler(
+			s.authorizationMiddleware(
+				s.userAuthenticationMiddleware(
+					s.preFetchUserMiddleware(
+						s.preFetchWorkspaceMiddleware(
+							route.GetHandler())))))
 	}
 }
 

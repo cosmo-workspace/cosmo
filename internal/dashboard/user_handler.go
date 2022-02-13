@@ -17,18 +17,27 @@ import (
 
 func (s *Server) useUserMiddleWare(router *mux.Router, routes dashv1alpha1.Routes) {
 	for _, rtName := range []string{"GetUsers", "PostUser"} {
-		router.Get(rtName).Handler(s.adminAuthenticationMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.authorizationMiddleware(router.Get(rtName).GetHandler()))
+		route := router.Get(rtName)
+		route.Handler(
+			s.authorizationMiddleware(
+				s.adminAuthenticationMiddleware(
+					route.GetHandler())))
 	}
 	for _, rtName := range []string{"PutUserRole", "DeleteUser"} {
-		router.Get(rtName).Handler(s.adminAuthenticationMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.preFetchUserMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.authorizationMiddleware(router.Get(rtName).GetHandler()))
+		route := router.Get(rtName)
+		route.Handler(
+			s.authorizationMiddleware(
+				s.adminAuthenticationMiddleware(
+					s.preFetchUserMiddleware(
+						route.GetHandler()))))
 	}
 	for _, rtName := range []string{"GetUser", "PutUserPassword", "PutUserName"} {
-		router.Get(rtName).Handler(s.userAuthenticationMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.preFetchUserMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.authorizationMiddleware(router.Get(rtName).GetHandler()))
+		route := router.Get(rtName)
+		route.Handler(
+			s.authorizationMiddleware(
+				s.userAuthenticationMiddleware(
+					s.preFetchUserMiddleware(
+						route.GetHandler()))))
 	}
 }
 
