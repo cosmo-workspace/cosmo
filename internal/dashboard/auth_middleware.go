@@ -12,6 +12,7 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/gorilla/mux"
 )
 
 type ctxKeyCaller struct{}
@@ -146,14 +147,11 @@ func (s *Server) userAuthenticationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		user := userFromContext(ctx)
-		if user == nil {
-			log.Info("request user not found")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+		// Get UserID from path
+		vars := mux.Vars(r)
+		userID := vars["userid"]
 
-		if caller.Name != user.Name {
+		if caller.Name != userID {
 			if wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
 				// Admin user have access to all resources
 				log.WithName("audit").Info(fmt.Sprintf("admin request %s %s %s", caller.Name, r.Method, r.URL),
@@ -161,7 +159,7 @@ func (s *Server) userAuthenticationMiddleware(next http.Handler) http.Handler {
 
 			} else {
 				// General User have access only to the own resources
-				log.Info("invalid user authentication: general user trying to access other's resource", "userid", caller.Name, "target", user.Name)
+				log.Info("invalid user authentication: general user trying to access other's resource", "userid", caller.Name, "target", userID)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
@@ -188,6 +186,22 @@ func (s *Server) adminAuthenticationMiddleware(next http.Handler) http.Handler {
 			log.Info("invalid admin authentication: NOT cosmo-admin", "userid", caller.Name)
 			w.WriteHeader(http.StatusForbidden)
 			return
+		}
+
+		// Get UserID from path
+		vars := mux.Vars(r)
+		userID := vars["userid"]
+
+		if caller.Name == userID {
+			var match mux.RouteMatch
+			if s.http.Handler.(*mux.Router).Match(r, &match) {
+				if match.Route.GetName() == "DeleteUser" {
+					// Prevent deletion of own user
+					log.Info("invalid user authentication: trying to delete own user", "userid", caller.Name, "target", userID)
+					w.WriteHeader(http.StatusForbidden)
+					return
+				}
+			}
 		}
 
 		log.WithName("audit").Info(fmt.Sprintf("admin request %s %s %s", caller.Name, r.Method, r.URL),
