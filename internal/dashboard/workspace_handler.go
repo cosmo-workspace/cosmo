@@ -6,6 +6,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/utils/pointer"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
@@ -202,12 +203,16 @@ func (s *Server) PatchWorkspace(ctx context.Context, userId string, workspaceNam
 }
 
 func convertWorkspaceTodashv1alpha1Workspace(ws wsv1alpha1.Workspace) *dashv1alpha1.Workspace {
+	replicas := ws.Spec.Replicas
+	if replicas == nil {
+		replicas = pointer.Int64(0)
+	}
 	return &dashv1alpha1.Workspace{
 		Name:    ws.Name,
 		OwnerID: wsv1alpha1.UserIDByNamespace(ws.Namespace),
 		Spec: dashv1alpha1.WorkspaceSpec{
 			Template:          ws.Spec.Template.Name,
-			Replicas:          *ws.Spec.Replicas,
+			Replicas:          *replicas,
 			Vars:              ws.Spec.Vars,
 			AdditionalNetwork: convertNetRulesTodashv1alpha1NetRules(ws.Spec.Network, ws.Status.URLs, ws.Status.Config.ServiceMainPortName),
 		},
