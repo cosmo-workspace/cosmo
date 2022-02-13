@@ -3,6 +3,7 @@ package dashboard
 import (
 	"context"
 	"net/http"
+	"sort"
 	"strconv"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
@@ -37,6 +38,7 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 	}
 
 	res.Items = addonTmpls
+	sort.Slice(res.Items, func(i, j int) bool { return res.Items[i].Name < res.Items[j].Name })
 
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
@@ -72,6 +74,7 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 	}
 
 	res.Items = addonTmpls
+	sort.Slice(res.Items, func(i, j int) bool { return res.Items[i].Name < res.Items[j].Name })
 
 	if len(res.Items) == 0 {
 		res.Message = "No items found"

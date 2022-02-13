@@ -3,6 +3,7 @@ package dashboard
 import (
 	"context"
 	"net/http"
+	"sort"
 	"time"
 
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
@@ -68,8 +69,8 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 	}
 
 	log.Debug().Info("creating user object", "user", user)
-	var err error
-	err = s.Klient.Create(ctx, user)
+
+	err := s.Klient.Create(ctx, user)
 	if err != nil {
 		if apierrs.IsAlreadyExists(err) {
 			res.Message = "User already exists"
@@ -131,6 +132,8 @@ func (s *Server) GetUsers(ctx context.Context) (dashv1alpha1.ImplResponse, error
 	for i := range users {
 		res.Items[i] = *convertUserToDashv1alpha1User(users[i])
 	}
+
+	sort.Slice(res.Items, func(i, j int) bool { return res.Items[i].Id < res.Items[j].Id })
 
 	if len(res.Items) == 0 {
 		res.Message = "No items found"

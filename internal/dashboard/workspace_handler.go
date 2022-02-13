@@ -3,6 +3,7 @@ package dashboard
 import (
 	"context"
 	"net/http"
+	"sort"
 
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
@@ -102,6 +103,8 @@ func (s *Server) GetWorkspaces(ctx context.Context, userId string) (dashv1alpha1
 		apiwss[i] = *convertWorkspaceTodashv1alpha1Workspace(v)
 	}
 	res.Items = apiwss
+
+	sort.Slice(res.Items, func(i, j int) bool { return res.Items[i].Name < res.Items[j].Name })
 
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
