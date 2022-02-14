@@ -436,8 +436,6 @@ paths:
             schema:
               title: UpdateUserRoleRequest
               type: object
-              required:
-                - role
               properties:
                 role:
                   type: string

@@ -495,30 +495,29 @@ var _ = Describe("Dashboard server [User]", func() {
 				})
 			})
 
-			// TODO:
-			// When("role is empty", func() {
-			// 	It("should successfully updated", func() {
-			// 		test_HttpSendAndVerify(adminSession,
-			// 			request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": ""}`},
-			// 			response{
-			// 				statusCode: http.StatusOK,
-			// 				body: `{"message": "Successfully updated",` +
-			// 					`"user": { "id": "usertest", "displayName": "お名前", "authType": "kosmo-secret"}}`,
-			// 			},
-			// 		)
-			// 		userObj, err := k8sClient.GetUser(context.Background(), "usertest")
-			// 		Expect(err).NotTo(HaveOccurred())
+			When("role is empty", func() {
+				It("should successfully updated", func() {
+					test_HttpSendAndVerify(adminSession,
+						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": ""}`},
+						response{
+							statusCode: http.StatusOK,
+							body: `{"message": "Successfully updated",` +
+								`"user": { "id": "usertest", "displayName": "お名前", "authType": "kosmo-secret"}}`,
+						},
+					)
+					userObj, err := k8sClient.GetUser(context.Background(), "usertest")
+					Expect(err).NotTo(HaveOccurred())
 
-			// 		user := convertUserToDashv1alpha1User(*userObj)
-			// 		Expect(&dashv1alpha1.User{
-			// 			Id:          "usertest",
-			// 			DisplayName: "お名前",
-			// 			Role:        "",
-			// 			AuthType:    "kosmo-secret",
-			// 			Addons:      []dashv1alpha1.ApiV1alpha1UserAddons{},
-			// 		}).Should(Equal(user))
-			// 	})
-			// })
+					user := convertUserToDashv1alpha1User(*userObj)
+					Expect(&dashv1alpha1.User{
+						Id:          "usertest",
+						DisplayName: "お名前",
+						Role:        "",
+						AuthType:    "kosmo-secret",
+						Addons:      []dashv1alpha1.ApiV1alpha1UserAddons{},
+					}).Should(Equal(user))
+				})
+			})
 
 		})
 	})
