@@ -518,7 +518,7 @@ export interface UpdateUserRoleRequest {
      * @type {string}
      * @memberof UpdateUserRoleRequest
      */
-    'role': string;
+    'role'?: string;
 }
 /**
  * 

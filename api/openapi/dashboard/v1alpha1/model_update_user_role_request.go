@@ -11,20 +11,11 @@
 package v1alpha1
 
 type UpdateUserRoleRequest struct {
-	Role string `json:"role"`
+	Role string `json:"role,omitempty"`
 }
 
 // AssertUpdateUserRoleRequestRequired checks if the required fields are not zero-ed
 func AssertUpdateUserRoleRequestRequired(obj UpdateUserRoleRequest) error {
-	elements := map[string]interface{}{
-		"role": obj.Role,
-	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
-		}
-	}
-
 	return nil
 }
 
