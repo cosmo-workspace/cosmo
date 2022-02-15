@@ -23,13 +23,11 @@ func (s *Server) useTemplateMiddleWare(router *mux.Router, routes dashv1alpha1.R
 func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	res := dashv1alpha1.ListTemplatesResponse{}
-
 	tmpls, err := s.Klient.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeWorkspace})
 	if err != nil {
-		res.Message = "Failed to list WorkspaceTemplates"
-		log.Error(err, res.Message)
-		return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
+		message := "Failed to list WorkspaceTemplates"
+		log.Error(err, message)
+		return ErrorResponse(http.StatusInternalServerError, message)
 	}
 
 	addonTmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
@@ -37,25 +35,24 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 		addonTmpls = append(addonTmpls, convertTemplateToDashv1alpha1Template(v))
 	}
 
+	res := dashv1alpha1.ListTemplatesResponse{}
 	res.Items = addonTmpls
 	sort.Slice(res.Items, func(i, j int) bool { return res.Items[i].Name < res.Items[j].Name })
 
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
 	}
-	return dashv1alpha1.Response(http.StatusOK, res), nil
+	return NormalResponse(http.StatusOK, res)
 }
 
 func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	res := dashv1alpha1.ListTemplatesResponse{}
-
 	tmpls, err := s.Klient.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeUserAddon})
 	if err != nil {
-		res.Message = "Failed to list UserAddon Templates"
-		log.Error(err, res.Message)
-		return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
+		message := "Failed to list UserAddon Templates"
+		log.Error(err, message)
+		return ErrorResponse(http.StatusInternalServerError, message)
 	}
 
 	addonTmpls := make([]dashv1alpha1.Template, len(tmpls))
@@ -73,13 +70,14 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 		addonTmpls[i] = tmpl
 	}
 
+	res := dashv1alpha1.ListTemplatesResponse{}
 	res.Items = addonTmpls
 	sort.Slice(res.Items, func(i, j int) bool { return res.Items[i].Name < res.Items[j].Name })
 
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
 	}
-	return dashv1alpha1.Response(http.StatusOK, res), nil
+	return NormalResponse(http.StatusOK, res)
 }
 
 func convertTemplateToDashv1alpha1Template(tmpl cosmov1alpha1.Template) dashv1alpha1.Template {

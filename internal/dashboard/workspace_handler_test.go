@@ -139,8 +139,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "","template": "template1"}`,
 						},
-						// TODO: message
-						response{statusCode: http.StatusUnprocessableEntity, body: `"required field 'name' is zero value."` + "\n"},
+						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'name' is zero value."}`},
 					)
 				})
 			})
@@ -151,8 +150,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": ""}`,
 						},
-						// TODO: message
-						response{statusCode: http.StatusUnprocessableEntity, body: `"required field 'template' is zero value."` + "\n"},
+						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'template' is zero value."}`},
 					)
 				})
 			})
@@ -163,8 +161,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "XXXX","template": "template1"}`,
 						},
-						// TODO: message
-						response{statusCode: http.StatusInternalServerError, body: "null\n"},
+						response{statusCode: http.StatusInternalServerError, body: `{"message": "failed to create workspace"}`},
 					)
 				})
 			})
@@ -175,7 +172,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": "XXX"}`,
 						},
-						response{statusCode: http.StatusBadRequest, body: "null\n"},
+						response{statusCode: http.StatusBadRequest, body: ``},
 					)
 				})
 			})
@@ -188,8 +185,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": "template1"}`,
 						},
-						//TODO: message
-						response{statusCode: http.StatusTooManyRequests, body: "null\n"},
+						response{statusCode: http.StatusTooManyRequests, body: `{"message": "Workspace already exists"}`},
 					)
 				})
 			})
@@ -643,8 +639,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2"},
-						// TODO:
-						response{statusCode: http.StatusBadRequest, body: "null\n"},
+						response{statusCode: http.StatusBadRequest, body: `{"message":"port name nw2 is not found"}`},
 					)
 				})
 			})

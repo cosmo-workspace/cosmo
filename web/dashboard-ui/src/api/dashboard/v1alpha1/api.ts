@@ -181,6 +181,19 @@ export interface DeleteWorkspaceResponse {
 /**
  * 
  * @export
+ * @interface ErrorResponse
+ */
+export interface ErrorResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof ErrorResponse
+     */
+    'message'?: string;
+}
+/**
+ * 
+ * @export
  * @interface GetUserResponse
  */
 export interface GetUserResponse {

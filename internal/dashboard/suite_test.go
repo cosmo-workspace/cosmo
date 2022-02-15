@@ -98,8 +98,8 @@ var _ = BeforeSuite(func() {
 	serv := (&Server{
 		Log:                 clog.NewLogger(ctrl.Log.WithName("dashboard")),
 		Klient:              klient,
-		GracefulShutdownDur: time.Second * time.Duration(3),
-		ResponseTimeout:     time.Second * time.Duration(3),
+		GracefulShutdownDur: time.Second * time.Duration(4),
+		ResponseTimeout:     time.Second * time.Duration(4),
 		StaticFileDir:       filepath.Join(".", "test"),
 		Port:                8888,
 		MaxAgeSeconds:       60,
@@ -192,7 +192,7 @@ func test_HttpSendAndVerify(session []*http.Cookie, reqParam request, expect res
 
 func test_CreateTemplate(templateType string, templateName string) {
 	ctx := context.Background()
-	inst := cosmov1alpha1.Template{
+	tmpl := cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: templateName,
 			Labels: map[string]string{
@@ -205,7 +205,7 @@ func test_CreateTemplate(templateType string, templateName string) {
 			},
 		},
 	}
-	err := k8sClient.Create(ctx, &inst)
+	err := k8sClient.Create(ctx, &tmpl)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() error {

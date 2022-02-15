@@ -24,18 +24,18 @@ func (s *Server) Verify(ctx context.Context) (dashv1alpha1.ImplResponse, error) 
 
 	caller := callerFromContext(ctx)
 	if caller == nil {
-		return dashv1alpha1.Response(http.StatusUnauthorized, nil), nil
+		return ErrorResponse(http.StatusUnauthorized, "")
 	}
 	deadline := deadlineFromContext(ctx)
 	if deadline.Before(time.Now()) {
-		return dashv1alpha1.Response(http.StatusUnauthorized, nil), nil
+		return ErrorResponse(http.StatusUnauthorized, "")
 	}
 
 	res := &dashv1alpha1.VerifyResponse{
 		Id:       caller.Name,
 		ExpireAt: deadline,
 	}
-	return dashv1alpha1.Response(http.StatusOK, res), nil
+	return NormalResponse(http.StatusOK, res)
 }
 
 func (s *Server) Logout(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
@@ -46,9 +46,9 @@ func (s *Server) Logout(ctx context.Context) (dashv1alpha1.ImplResponse, error) 
 	_, _, err := s.authorizeWithSession(r)
 	if err != nil {
 		if errors.Is(err, ErrNotAuthorized) {
-			return dashv1alpha1.Response(http.StatusUnauthorized, nil), nil
+			return ErrorResponse(http.StatusUnauthorized, "")
 		} else {
-			return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
+			return ErrorResponse(http.StatusInternalServerError, "")
 		}
 	}
 
@@ -56,7 +56,7 @@ func (s *Server) Logout(ctx context.Context) (dashv1alpha1.ImplResponse, error) 
 	cookie.MaxAge = -1
 	http.SetCookie(w, cookie)
 
-	return dashv1alpha1.Response(http.StatusOK, nil), nil
+	return NormalResponse(http.StatusOK, nil)
 }
 
 func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dashv1alpha1.ImplResponse, error) {
@@ -70,29 +70,29 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 	user, err := s.Klient.GetUser(ctx, req.Id)
 	if err != nil {
 		log.Info(err.Error(), "userid", req.Id)
-		return dashv1alpha1.Response(http.StatusForbidden, nil), nil
+		return ErrorResponse(http.StatusForbidden, "")
 	}
 	// Check password
 	authrizer, ok := s.Authorizers[user.Spec.AuthType]
 	if !ok {
 		log.Info("authrizer not found", "userid", req.Id, "authType", user.Spec.AuthType)
-		return dashv1alpha1.Response(http.StatusServiceUnavailable, nil), nil
+		return ErrorResponse(http.StatusServiceUnavailable, "")
 	}
 	verified, err := authrizer.Authorize(ctx, req)
 	if err != nil {
 		log.Error(err, "authorize failed", "userid", req.Id)
-		return dashv1alpha1.Response(http.StatusForbidden, nil), nil
+		return ErrorResponse(http.StatusForbidden, "")
 	}
 	if !verified {
 		log.Info("login failed: password invalid", "userid", req.Id)
-		return dashv1alpha1.Response(http.StatusForbidden, nil), nil
+		return ErrorResponse(http.StatusForbidden, "")
 	}
 	var isDefault bool
 	if wsv1alpha1.UserAuthType(user.Spec.AuthType) == wsv1alpha1.UserAuthTypeKosmoSecert {
 		isDefault, err = s.Klient.IsDefaultPassword(ctx, req.Id)
 		if err != nil {
 			log.Error(err, "failed to check is default password", "userid", req.Id)
-			return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
+			return ErrorResponse(http.StatusInternalServerError, "")
 		}
 	}
 
@@ -111,7 +111,7 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 	err = s.sessionStore.Save(r, w, ses)
 	if err != nil {
 		log.Error(err, "failed to save session")
-		return dashv1alpha1.Response(http.StatusInternalServerError, nil), nil
+		return ErrorResponse(http.StatusInternalServerError, "")
 	}
 
 	res := &dashv1alpha1.LoginResponse{
@@ -120,5 +120,5 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 		RequirePasswordUpdate: isDefault,
 	}
 
-	return dashv1alpha1.Response(http.StatusOK, res), nil
+	return NormalResponse(http.StatusOK, res)
 }

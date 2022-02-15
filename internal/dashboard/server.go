@@ -40,10 +40,10 @@ type Server struct {
 
 func (s *Server) setupRouter() error {
 
-	authRouter := dashv1alpha1.NewAuthApiController(s)
-	workspaceRouter := dashv1alpha1.NewWorkspaceApiController(s)
-	templateRouter := dashv1alpha1.NewTemplateApiController(s)
-	userRouter := dashv1alpha1.NewUserApiController(s)
+	authRouter := dashv1alpha1.NewAuthApiController(s, dashv1alpha1.WithAuthApiErrorHandler(errorHandler))
+	workspaceRouter := dashv1alpha1.NewWorkspaceApiController(s, dashv1alpha1.WithWorkspaceApiErrorHandler(errorHandler))
+	templateRouter := dashv1alpha1.NewTemplateApiController(s, dashv1alpha1.WithTemplateApiErrorHandler(errorHandler))
+	userRouter := dashv1alpha1.NewUserApiController(s, dashv1alpha1.WithUserApiErrorHandler(errorHandler))
 
 	router := dashv1alpha1.NewRouter(authRouter, workspaceRouter, templateRouter, userRouter)
 
@@ -81,7 +81,29 @@ func (s *Server) sessionCookieKey() *http.Cookie {
 }
 
 func (s *Server) timeoutHandler(next http.Handler) http.Handler {
-	return http.TimeoutHandler(next, s.ResponseTimeout, "")
+	return http.TimeoutHandler(next, s.ResponseTimeout, `{"message": "Request timeout"}`+"\n")
+}
+
+func errorHandler(w http.ResponseWriter, r *http.Request, err error, result *dashv1alpha1.ImplResponse) {
+	// see api/openapi/dashboard/vialpha1/errors.go DefaultErrorHandler
+
+	var status int
+	if _, ok := err.(*dashv1alpha1.ParsingError); ok {
+		status = http.StatusBadRequest
+	} else if _, ok := err.(*dashv1alpha1.RequiredError); ok {
+		status = http.StatusUnprocessableEntity
+	} else {
+		status = result.Code
+	}
+
+	if err.Error() != "" {
+		errorResponse := dashv1alpha1.ErrorResponse{
+			Message: err.Error(),
+		}
+		dashv1alpha1.EncodeJSONResponse(errorResponse, &status, w)
+	} else {
+		w.WriteHeader(status)
+	}
 }
 
 // Start run server

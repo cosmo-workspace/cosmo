@@ -117,7 +117,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create", "role": "xxxxxx"}`},
-						response{statusCode: http.StatusBadRequest, body: "null\n"},
+						response{statusCode: http.StatusBadRequest, body: `{"message": "'userrole' is invalid"}`},
 					)
 				})
 			})
@@ -126,7 +126,16 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create", "authType": "xxxxx"}`},
-						response{statusCode: http.StatusBadRequest, body: "null\n"},
+						response{statusCode: http.StatusBadRequest, body: `{"message": "'authtype' is invalid"}`},
+					)
+				})
+			})
+
+			When("user id empty", func() {
+				It("should deny with 503 ServiceUnavailable", func() {
+					test_HttpSendAndVerify(adminSession,
+						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": ""}`},
+						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'id' is zero value."}`},
 					)
 				})
 			})
@@ -135,7 +144,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 503 ServiceUnavailable", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-createX"}`},
-						response{statusCode: http.StatusServiceUnavailable, body: `{"message":"failed to create user","user": null}`},
+						response{statusCode: http.StatusServiceUnavailable, body: `{"message":"failed to create user"}`},
 					)
 				})
 			})
@@ -146,7 +155,7 @@ var _ = Describe("Dashboard server [User]", func() {
 
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create-alreadyexist"}`},
-						response{statusCode: http.StatusTooManyRequests, body: `{"message": "User already exists", "user":null}`},
+						response{statusCode: http.StatusTooManyRequests, body: `{"message": "user already exists"}`},
 					)
 				})
 			})
@@ -275,8 +284,7 @@ var _ = Describe("Dashboard server [User]", func() {
 						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create-timeout"}`},
 						response{
 							statusCode: http.StatusServiceUnavailable,
-							//TODO: message
-							body: "<html><head><title>Timeout</title></head><body><h1>Timeout</h1></body></html>",
+							body:       `{"message": "Request timeout"}`,
 						},
 					)
 					user, _ := k8sClient.GetUser(context.Background(), "user-create-timeout")
@@ -394,22 +402,20 @@ var _ = Describe("Dashboard server [User]", func() {
 				})
 			})
 
-			When("diplayname is empty", func() {
+			When("diplayName is empty", func() {
 				It("should deny with 422 UnprocessableEntity", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": ""}`},
-						// TODO: message
-						response{statusCode: http.StatusUnprocessableEntity, body: `"required field 'displayName' is zero value."` + "\n"},
+						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'displayName' is zero value."}`},
 					)
 				})
 			})
 
-			When("diplayname is not specified", func() {
+			When("diplayName is not specified", func() {
 				It("should deny with 422 UnprocessableEntity", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{}`},
-						// TODO: message
-						response{statusCode: http.StatusUnprocessableEntity, body: `"required field 'displayName' is zero value."` + "\n"},
+						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'displayName' is zero value."}`},
 					)
 				})
 			})
@@ -463,7 +469,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "xxxxx"}`},
-						response{statusCode: http.StatusBadRequest, body: "null\n"},
+						response{statusCode: http.StatusBadRequest, body: ""},
 					)
 				})
 			})
@@ -543,8 +549,7 @@ var _ = Describe("Dashboard server [User]", func() {
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
 							body: `{ "currentPassword": "", "newPassword": "newPassword"}`},
-						// TODO: message
-						response{statusCode: http.StatusUnprocessableEntity, body: `"required field 'currentPassword' is zero value."` + "\n"},
+						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'currentPassword' is zero value."}`},
 					)
 				})
 			})
@@ -555,8 +560,7 @@ var _ = Describe("Dashboard server [User]", func() {
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
 							body: `{ "currentPassword": "password", "newPassword": ""}`},
-						// TODO: message
-						response{statusCode: http.StatusUnprocessableEntity, body: `"required field 'newPassword' is zero value."` + "\n"},
+						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'newPassword' is zero value."}`},
 					)
 				})
 			})

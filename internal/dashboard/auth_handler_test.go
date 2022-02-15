@@ -28,7 +28,7 @@ var _ = Describe("Dashboard server [auth]", func() {
 			It("should deny with 403 Forbidden", func() {
 				test_HttpSendAndVerify(nil,
 					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "usertest", "password": "invalid"}`},
-					response{statusCode: http.StatusForbidden, body: "null\n"},
+					response{statusCode: http.StatusForbidden, body: ""},
 				)
 			})
 		})
