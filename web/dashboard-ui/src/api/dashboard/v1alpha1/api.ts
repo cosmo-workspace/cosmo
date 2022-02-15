@@ -633,20 +633,16 @@ export interface User {
     'status'?: string;
 }
 
-/**
-    * @export
-    * @enum {string}
-    */
-export enum UserRoleEnum {
-    CosmoAdmin = 'cosmo-admin'
-}
-/**
-    * @export
-    * @enum {string}
-    */
-export enum UserAuthTypeEnum {
-    KosmoSecret = 'kosmo-secret'
-}
+export const UserRoleEnum = {
+    CosmoAdmin: 'cosmo-admin'
+} as const;
+
+export type UserRoleEnum = typeof UserRoleEnum[keyof typeof UserRoleEnum];
+export const UserAuthTypeEnum = {
+    KosmoSecret: 'kosmo-secret'
+} as const;
+
+export type UserAuthTypeEnum = typeof UserAuthTypeEnum[keyof typeof UserAuthTypeEnum];
 
 /**
  * 
