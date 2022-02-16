@@ -4,11 +4,12 @@ categories:
   - title: '🚀 Features'
     labels:
       - 'enhancement'
-  - title: '🐛 Bug Fixes'
-    labels:
-      - 'bug'
-  - title: '🧰 Maintenance'
+  - title: '🛠 Improvements'
     label: 'improvement'
+  - title: '🐛 Bug Fixes'
+    label: 'bug'
+  - title: '🧰 Maintenance'
+    label: 'chore'
   - title: '⛓️ Dependency update'
     label: 'dependencies'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
