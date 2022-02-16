@@ -7,7 +7,6 @@ categories:
   - title: '🐛 Bug Fixes'
     labels:
       - 'bug'
-  - title: '
   - title: '🧰 Maintenance'
     label: 'improvement'
   - title: '⛓️ Dependency update'
