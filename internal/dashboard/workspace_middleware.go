@@ -32,7 +32,7 @@ func (s *Server) preFetchWorkspaceMiddleware(next http.Handler) http.Handler {
 
 		user := userFromContext(ctx)
 		if user == nil {
-			log.Info("user not found in context")
+			log.Info("user is not found in context")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

@@ -31,7 +31,7 @@ var _ = Describe("Dashboard server [User]", func() {
 		deny403 := func(whenText string, request request) {
 			When(whenText, func() {
 				It("should deny with 403 Forbidden", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: ""})
+					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: `{"message": "not authorized"}`})
 				})
 			})
 		}
@@ -328,7 +328,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodGet, path: "/api/v1alpha1/user/XXXXX"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -357,7 +357,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodDelete, path: "/api/v1alpha1/user/XXXXX"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -397,7 +397,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPut, path: "/api/v1alpha1/user/XXXXXX/name", body: `{"displayName": "namechanged"}`},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -460,7 +460,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPut, path: "/api/v1alpha1/user/XXXXXX/role", body: `{"role": "cosmo-admin"}`},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -469,7 +469,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "xxxxx"}`},
-						response{statusCode: http.StatusBadRequest, body: ""},
+						response{statusCode: http.StatusBadRequest, body: `{"message": "'userrole' is invalid"}`},
 					)
 				})
 			})
@@ -538,7 +538,7 @@ var _ = Describe("Dashboard server [User]", func() {
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/xxxxxxxx/password",
 							body: `{ "currentPassword": "password", "newPassword": "newPassword"}`},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -550,6 +550,17 @@ var _ = Describe("Dashboard server [User]", func() {
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
 							body: `{ "currentPassword": "", "newPassword": "newPassword"}`},
 						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'currentPassword' is zero value."}`},
+					)
+				})
+			})
+
+			When("currentPassword is invarid", func() {
+				It("should deny with 403 Forbidden", func() {
+					test_HttpSendAndVerify(adminSession,
+						request{
+							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
+							body: `{ "currentPassword": "xxxxxx", "newPassword": "newPassword"}`},
+						response{statusCode: http.StatusForbidden, body: `{"message":"current password is invalid"}`},
 					)
 				})
 			})

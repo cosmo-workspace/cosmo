@@ -32,7 +32,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 		deny403 := func(whenText string, request request) {
 			When(whenText, func() {
 				It("should deny with 403 Forbidden", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: ""})
+					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: `{"message": "not authorized"}`})
 				})
 			})
 		}
@@ -128,7 +128,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/xxxxx/workspace", body: `{"name": "","template": "template1"}`,
 						},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -172,7 +172,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": "XXX"}`,
 						},
-						response{statusCode: http.StatusBadRequest, body: ``},
+						response{statusCode: http.StatusBadRequest, body: `{"message": "template is invalid"}`},
 					)
 				})
 			})
@@ -294,7 +294,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodGet, path: "/api/v1alpha1/user/xxxx/workspace"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -335,7 +335,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodGet, path: "/api/v1alpha1/user/xxxxxx/workspace/ws1"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -376,7 +376,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodDelete, path: "/api/v1alpha1/user/xxxx/workspace/ws1"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -422,7 +422,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPatch, path: "/api/v1alpha1/user/xxxxx/workspace/ws1", body: `{"replicas": 0}`},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -515,7 +515,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 							method: http.MethodPut, path: "/api/v1alpha1/user/xxxxx/workspace/ws1/network/nw2",
 							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
 						},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})
@@ -618,7 +618,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodDelete, path: "/api/v1alpha1/user/xxxxx/workspace/ws1/network/nw2"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
 				})
 			})

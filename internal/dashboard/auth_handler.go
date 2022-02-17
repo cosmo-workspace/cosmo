@@ -28,7 +28,7 @@ func (s *Server) Verify(ctx context.Context) (dashv1alpha1.ImplResponse, error) 
 	}
 	deadline := deadlineFromContext(ctx)
 	if deadline.Before(time.Now()) {
-		return ErrorResponse(http.StatusUnauthorized, "")
+		return ErrorResponse(http.StatusUnauthorized, "session is invalid")
 	}
 
 	res := &dashv1alpha1.VerifyResponse{
@@ -46,7 +46,7 @@ func (s *Server) Logout(ctx context.Context) (dashv1alpha1.ImplResponse, error) 
 	_, _, err := s.authorizeWithSession(r)
 	if err != nil {
 		if errors.Is(err, ErrNotAuthorized) {
-			return ErrorResponse(http.StatusUnauthorized, "")
+			return ErrorResponse(http.StatusUnauthorized, "session is invalid")
 		} else {
 			return ErrorResponse(http.StatusInternalServerError, "")
 		}
@@ -70,7 +70,7 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 	user, err := s.Klient.GetUser(ctx, req.Id)
 	if err != nil {
 		log.Info(err.Error(), "userid", req.Id)
-		return ErrorResponse(http.StatusForbidden, "")
+		return ErrorResponse(http.StatusForbidden, "incorrect user or password")
 	}
 	// Check password
 	authrizer, ok := s.Authorizers[user.Spec.AuthType]
@@ -81,11 +81,11 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 	verified, err := authrizer.Authorize(ctx, req)
 	if err != nil {
 		log.Error(err, "authorize failed", "userid", req.Id)
-		return ErrorResponse(http.StatusForbidden, "")
+		return ErrorResponse(http.StatusForbidden, "incorrect user or password")
 	}
 	if !verified {
 		log.Info("login failed: password invalid", "userid", req.Id)
-		return ErrorResponse(http.StatusForbidden, "")
+		return ErrorResponse(http.StatusForbidden, "incorrect user or password")
 	}
 	var isDefault bool
 	if wsv1alpha1.UserAuthType(user.Spec.AuthType) == wsv1alpha1.UserAuthTypeKosmoSecert {

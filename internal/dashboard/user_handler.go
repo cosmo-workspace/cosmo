@@ -57,8 +57,6 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 		return ErrorResponse(http.StatusBadRequest, "'authtype' is invalid")
 	}
 
-	res := &dashv1alpha1.CreateUserResponse{}
-
 	user := &wsv1alpha1.User{}
 	user.SetName(req.Id)
 	user.Spec = wsv1alpha1.UserSpec{
@@ -108,9 +106,9 @@ UserCreationWaitLoop:
 		}
 	}
 
+	res := &dashv1alpha1.CreateUserResponse{}
 	res.User = convertUserToDashv1alpha1User(*user)
 	res.User.DefaultPassword = *defaultPassword
-
 	res.Message = "Successfully created"
 	log.Info(res.Message, "userid", user.Name)
 	return NormalResponse(http.StatusCreated, res)
@@ -146,7 +144,7 @@ func (s *Server) GetUser(ctx context.Context, userId string) (dashv1alpha1.ImplR
 
 	user := userFromContext(ctx)
 	if user == nil {
-		log.Info("user not found in context")
+		log.Info("user is not found in context")
 		return ErrorResponse(http.StatusInternalServerError, "")
 	}
 
@@ -161,26 +159,26 @@ func (s *Server) DeleteUser(ctx context.Context, userId string) (dashv1alpha1.Im
 
 	user := userFromContext(ctx)
 	if user == nil {
-		log.Info("user not found in context")
+		log.Info("user is not found in context")
 		return ErrorResponse(http.StatusInternalServerError, "")
 	}
-
-	res := &dashv1alpha1.DeleteUserResponse{}
 
 	err := s.Klient.Delete(ctx, user)
 	if err != nil {
 		if apierrs.IsNotFound(err) {
-			return dashv1alpha1.Response(http.StatusNotFound, res), nil
+			log.Error(err, err.Error(), "userid", userId)
+			return ErrorResponse(http.StatusNotFound, err.Error())
 		} else {
 			message := "failed to delete user"
-			log.Error(err, message, "userid", user.Name)
+			log.Error(err, message, "userid", userId)
 			return ErrorResponse(http.StatusInternalServerError, message)
 		}
 	}
 
+	res := &dashv1alpha1.DeleteUserResponse{}
 	res.User = convertUserToDashv1alpha1User(*user)
 	res.Message = "Successfully deleted"
-	log.Info(res.Message, "userid", user.Name)
+	log.Info(res.Message, "userid", userId)
 	return NormalResponse(http.StatusOK, res)
 }
 
