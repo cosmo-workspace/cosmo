@@ -17,12 +17,6 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "userId", userId, "workspaceName", workspaceName, "networkRuleName", networkRuleName, "req", req)
 
-	user := userFromContext(ctx)
-	if user == nil {
-		log.Info("user not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
-	}
-
 	ws := workspaceFromContext(ctx)
 	if ws == nil {
 		log.Info("workspace not found in context")
@@ -42,7 +36,7 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	ws.Spec.Network, err = wsnet.UpsertNetRule(ws.Spec.Network, netRule)
 	if err != nil {
 		message := err.Error()
-		log.Error(err, message, "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return ErrorResponse(http.StatusBadRequest, message)
 	}
 
@@ -50,13 +44,13 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	log.DebugAll().PrintObjectDiff(before, ws)
 
 	if equality.Semantic.DeepEqual(before, ws) {
-		log.Info("no change", "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Info("no change", "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return ErrorResponse(http.StatusBadRequest, "")
 	}
 
 	if err := s.Klient.Update(ctx, ws); err != nil {
 		message := "Failed to upsert network rule"
-		log.Error(err, message, "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return ErrorResponse(http.StatusInternalServerError, message)
 	}
 
@@ -69,12 +63,6 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspaceName string, networkRuleName string) (dashv1alpha1.ImplResponse, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "userId", userId, "workspaceName", workspaceName, "networkRuleName", networkRuleName)
-
-	user := userFromContext(ctx)
-	if user == nil {
-		log.Info("user not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
-	}
 
 	ws := workspaceFromContext(ctx)
 	if ws == nil {
@@ -92,22 +80,18 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 	}
 	if delRule == nil {
 		message := fmt.Sprintf("port name %s is not found", networkRuleName)
-		log.Info(message, "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Info(message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return ErrorResponse(http.StatusBadRequest, message)
 	}
 
 	ws.Spec.Network = wsnet.RemoveNetworkOverrideByName(ws.Spec.Network, *delRule)
-	log.DebugAll().Info("NetworkRule removed", "ws", ws, "userid", user.Name, "netRuleName", networkRuleName)
+	log.DebugAll().Info("NetworkRule removed", "ws", ws, "userid", userId, "netRuleName", networkRuleName)
 
 	log.DebugAll().PrintObjectDiff(before, ws)
-	if equality.Semantic.DeepEqual(before, ws) {
-		log.Info("no change", "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
-		return ErrorResponse(http.StatusBadRequest, "")
-	}
 
 	if err := s.Klient.Update(ctx, ws); err != nil {
 		message := "Failed to remove network rule"
-		log.Error(err, message, "userid", user.Name, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return ErrorResponse(http.StatusInternalServerError, message)
 	}
 

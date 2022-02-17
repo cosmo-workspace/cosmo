@@ -7,7 +7,9 @@ import (
 	"github.com/gorilla/mux"
 
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/utils/pointer"
 
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
@@ -42,7 +44,10 @@ func (s *Server) preFetchUserMiddleware(next http.Handler) http.Handler {
 		user, err := s.Klient.GetUser(ctx, userID)
 		if err != nil {
 			if apierrs.IsNotFound(err) {
-				w.WriteHeader(http.StatusNotFound)
+				errorResponse := dashv1alpha1.ErrorResponse{
+					Message: "user is not found",
+				}
+				dashv1alpha1.EncodeJSONResponse(errorResponse, pointer.Int(http.StatusNotFound), w)
 				return
 
 			} else {

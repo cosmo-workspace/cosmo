@@ -17,7 +17,7 @@ func (s *Server) PutUserName(ctx context.Context, userId string, req dashv1alpha
 
 	user := userFromContext(ctx)
 	if user == nil {
-		log.Info("user not found in context")
+		log.Info("user is not found in context")
 		return ErrorResponse(http.StatusInternalServerError, "")
 	}
 
@@ -26,11 +26,11 @@ func (s *Server) PutUserName(ctx context.Context, userId string, req dashv1alpha
 	err := s.Klient.Update(ctx, user)
 	if err != nil {
 		if apierrs.IsNotFound(err) {
-			log.Error(err, err.Error(), "userid", user.Name)
+			log.Error(err, err.Error(), "userid", userId)
 			return ErrorResponse(http.StatusNotFound, err.Error())
 		} else {
 			message := "Failed to update user"
-			log.Error(err, message, "userid", user.Name)
+			log.Error(err, message, "userid", userId)
 			return ErrorResponse(http.StatusInternalServerError, message)
 		}
 	}
@@ -38,7 +38,7 @@ func (s *Server) PutUserName(ctx context.Context, userId string, req dashv1alpha
 	res := &dashv1alpha1.UpdateUserNameResponse{}
 	res.User = convertUserToDashv1alpha1User(*user)
 	res.Message = "Successfully updated"
-	log.Info(res.Message, "userid", user.Name)
+	log.Info(res.Message, "userid", userId)
 	return NormalResponse(http.StatusOK, res)
 }
 
@@ -48,25 +48,25 @@ func (s *Server) PutUserRole(ctx context.Context, userId string, req dashv1alpha
 
 	user := userFromContext(ctx)
 	if user == nil {
-		log.Info("user not found in context")
+		log.Info("user is not found in context")
 		return ErrorResponse(http.StatusInternalServerError, "")
 	}
 
 	userrole := wsv1alpha1.UserRole(req.Role)
 	if !userrole.IsValid() {
-		log.Info("invalid request", "id", user.Name, "role", userrole)
-		return ErrorResponse(http.StatusBadRequest, "")
+		log.Info("invalid request", "id", userId, "role", userrole)
+		return ErrorResponse(http.StatusBadRequest, "'userrole' is invalid")
 	}
 	user.Spec.Role = userrole
 
 	err := s.Klient.Update(ctx, user)
 	if err != nil {
 		if apierrs.IsNotFound(err) {
-			log.Error(err, err.Error(), "userid", user.Name)
+			log.Error(err, err.Error(), "userid", userId)
 			return ErrorResponse(http.StatusNotFound, err.Error())
 		} else {
 			message := "Failed to update user"
-			log.Error(err, message, "userid", user.Name)
+			log.Error(err, message, "userid", userId)
 			return ErrorResponse(http.StatusInternalServerError, message)
 		}
 	}
@@ -74,7 +74,7 @@ func (s *Server) PutUserRole(ctx context.Context, userId string, req dashv1alpha
 	res := &dashv1alpha1.UpdateUserNameResponse{}
 	res.User = convertUserToDashv1alpha1User(*user)
 	res.Message = "Successfully updated"
-	log.Info(res.Message, "userid", user.Name)
+	log.Info(res.Message, "userid", userId)
 	return NormalResponse(http.StatusOK, res)
 }
 
@@ -82,33 +82,27 @@ func (s *Server) PutUserPassword(ctx context.Context, userId string, req dashv1a
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "userId", userId, "req", req)
 
-	user := userFromContext(ctx)
-	if user == nil {
-		log.Info("user not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
-	}
-
 	// check current password is valid
-	verified, _, err := s.Klient.VerifyPassword(ctx, user.Name, []byte(req.CurrentPassword))
+	verified, _, err := s.Klient.VerifyPassword(ctx, userId, []byte(req.CurrentPassword))
 	if err != nil {
-		log.Error(err, "failed to get password", "userid", user.Name)
+		log.Error(err, "failed to get password", "userid", userId)
 		return ErrorResponse(http.StatusInternalServerError, "")
 	}
 
 	if !verified {
-		log.Info("current password invalid", "userid", user.Name)
-		return ErrorResponse(http.StatusForbidden, "")
+		log.Info("current password is invalid", "userid", userId)
+		return ErrorResponse(http.StatusForbidden, "current password is invalid")
 	}
 
 	// Upsert password
-	if err := s.Klient.RegisterPassword(ctx, user.Name, []byte(req.NewPassword)); err != nil {
+	if err := s.Klient.RegisterPassword(ctx, userId, []byte(req.NewPassword)); err != nil {
 		message := "Failed to update user password"
-		log.Error(err, message, "userid", user.Name)
+		log.Error(err, message, "userid", userId)
 		return ErrorResponse(http.StatusInternalServerError, message)
 	}
 
 	res := &dashv1alpha1.UpdateUserPasswordResponse{}
 	res.Message = "Successfully updated"
-	log.Info(res.Message, "userid", user.Name)
+	log.Info(res.Message, "userid", userId)
 	return NormalResponse(http.StatusOK, res)
 }

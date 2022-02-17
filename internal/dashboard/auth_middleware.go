@@ -8,7 +8,9 @@ import (
 	"time"
 
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/utils/pointer"
 
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -79,7 +81,10 @@ func (s *Server) authorizationMiddleware(next http.Handler) http.Handler {
 			log.Error(err, "session authorization err")
 
 			if errors.Is(err, ErrNotAuthorized) {
-				w.WriteHeader(http.StatusUnauthorized)
+				errorResponse := dashv1alpha1.ErrorResponse{
+					Message: "session is invalid",
+				}
+				dashv1alpha1.EncodeJSONResponse(errorResponse, pointer.Int(http.StatusUnauthorized), w)
 				return
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
@@ -148,7 +153,7 @@ func (s *Server) userAuthenticationMiddleware(next http.Handler) http.Handler {
 
 		user := userFromContext(ctx)
 		if user == nil {
-			log.Info("request user not found")
+			log.Info("request user is not found")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -162,7 +167,10 @@ func (s *Server) userAuthenticationMiddleware(next http.Handler) http.Handler {
 			} else {
 				// General User have access only to the own resources
 				log.Info("invalid user authentication: general user trying to access other's resource", "userid", caller.Name, "target", user.Name)
-				w.WriteHeader(http.StatusForbidden)
+				errorResponse := dashv1alpha1.ErrorResponse{
+					Message: "not authorized",
+				}
+				dashv1alpha1.EncodeJSONResponse(errorResponse, pointer.Int(http.StatusForbidden), w)
 				return
 			}
 		}
@@ -186,7 +194,10 @@ func (s *Server) adminAuthenticationMiddleware(next http.Handler) http.Handler {
 		// Check if the user role is Admin
 		if !wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
 			log.Info("invalid admin authentication: NOT cosmo-admin", "userid", caller.Name)
-			w.WriteHeader(http.StatusForbidden)
+			errorResponse := dashv1alpha1.ErrorResponse{
+				Message: "not authorized",
+			}
+			dashv1alpha1.EncodeJSONResponse(errorResponse, pointer.Int(http.StatusForbidden), w)
 			return
 		}
 
