@@ -269,7 +269,6 @@ paths:
         "400": { $ref: "#/components/responses/400_BadRequest" }
         "401": { $ref: "#/components/responses/401_Unauthorized" }
         "403": { $ref: "#/components/responses/403_Forbidden" }
-        "422": { $ref: "#/components/responses/422_UnprocessableEntity" }
         "429": { $ref: "#/components/responses/404_NotFound" }
         "500": { $ref: "#/components/responses/500_InternalServerError" }
 
@@ -876,13 +875,6 @@ components:
 
     404_NotFound:
       description: Not found
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorResponse"
-
-    422_UnprocessableEntity:
-      description: Unprocessable entity
       content:
         application/json:
           schema:
