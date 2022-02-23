@@ -91,7 +91,7 @@ func errorHandler(w http.ResponseWriter, r *http.Request, err error, result *das
 	if _, ok := err.(*dashv1alpha1.ParsingError); ok {
 		status = http.StatusBadRequest
 	} else if _, ok := err.(*dashv1alpha1.RequiredError); ok {
-		status = http.StatusUnprocessableEntity
+		status = http.StatusBadRequest
 	} else {
 		status = result.Code
 	}

@@ -81,10 +81,7 @@ func (s *Server) authorizationMiddleware(next http.Handler) http.Handler {
 			log.Error(err, "session authorization err")
 
 			if errors.Is(err, ErrNotAuthorized) {
-				errorResponse := dashv1alpha1.ErrorResponse{
-					Message: "session is invalid",
-				}
-				dashv1alpha1.EncodeJSONResponse(errorResponse, pointer.Int(http.StatusUnauthorized), w)
+				w.WriteHeader(http.StatusUnauthorized)
 				return
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)

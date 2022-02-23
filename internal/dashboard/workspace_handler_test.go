@@ -134,23 +134,23 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			})
 
 			When("name is empty", func() {
-				It("should deny with 422 UnprocessableEntity", func() {
+				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "","template": "template1"}`,
 						},
-						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'name' is zero value."}`},
+						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'name' is zero value."}`},
 					)
 				})
 			})
 
 			When("template is empty", func() {
-				It("should deny with 422 UnprocessableEntity", func() {
+				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": ""}`,
 						},
-						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'template' is zero value."}`},
+						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'template' is zero value."}`},
 					)
 				})
 			})
@@ -344,7 +344,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
 					)
 				})
 			})
@@ -385,7 +385,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
 					)
 				})
 			})
@@ -431,7 +431,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx", body: `{"replicas": 0}`},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
 					)
 				})
 			})
@@ -527,7 +527,29 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx/network/nw2",
 							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
 						},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
+					)
+				})
+			})
+
+			When("no change in network rules", func() {
+				It("should deny with 400 BadRequest", func() {
+					test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
+
+					test_HttpSendAndVerify(adminSession,
+						request{
+							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
+							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
+						},
+						response{statusCode: http.StatusOK, body: "@ignore"},
+					)
+					By("Update with the same rules")
+					test_HttpSendAndVerify(adminSession,
+						request{
+							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
+							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
+						},
+						response{statusCode: http.StatusBadRequest, body: `{ "message": "no change in network rules"}`},
 					)
 				})
 			})
@@ -627,7 +649,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should deny with 404 NotFound", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx/network/nw2"},
-						response{statusCode: http.StatusNotFound, body: ""},
+						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
 					)
 				})
 			})

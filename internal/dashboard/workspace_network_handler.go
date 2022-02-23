@@ -45,7 +45,7 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 
 	if equality.Semantic.DeepEqual(before, ws) {
 		log.Info("no change", "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
-		return ErrorResponse(http.StatusBadRequest, "")
+		return ErrorResponse(http.StatusBadRequest, "no change in network rules")
 	}
 
 	if err := s.Klient.Update(ctx, ws); err != nil {

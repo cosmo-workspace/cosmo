@@ -28,7 +28,7 @@ func (s *Server) Verify(ctx context.Context) (dashv1alpha1.ImplResponse, error) 
 	}
 	deadline := deadlineFromContext(ctx)
 	if deadline.Before(time.Now()) {
-		return ErrorResponse(http.StatusUnauthorized, "session is invalid")
+		return ErrorResponse(http.StatusUnauthorized, "")
 	}
 
 	res := &dashv1alpha1.VerifyResponse{
@@ -46,7 +46,7 @@ func (s *Server) Logout(ctx context.Context) (dashv1alpha1.ImplResponse, error) 
 	_, _, err := s.authorizeWithSession(r)
 	if err != nil {
 		if errors.Is(err, ErrNotAuthorized) {
-			return ErrorResponse(http.StatusUnauthorized, "session is invalid")
+			return ErrorResponse(http.StatusUnauthorized, "")
 		} else {
 			return ErrorResponse(http.StatusInternalServerError, "")
 		}

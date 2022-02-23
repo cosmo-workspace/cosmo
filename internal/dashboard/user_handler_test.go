@@ -132,10 +132,10 @@ var _ = Describe("Dashboard server [User]", func() {
 			})
 
 			When("user id empty", func() {
-				It("should deny with 503 ServiceUnavailable", func() {
+				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": ""}`},
-						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'id' is zero value."}`},
+						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'id' is zero value."}`},
 					)
 				})
 			})
@@ -403,19 +403,19 @@ var _ = Describe("Dashboard server [User]", func() {
 			})
 
 			When("diplayName is empty", func() {
-				It("should deny with 422 UnprocessableEntity", func() {
+				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": ""}`},
-						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'displayName' is zero value."}`},
+						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'displayName' is zero value."}`},
 					)
 				})
 			})
 
 			When("diplayName is not specified", func() {
-				It("should deny with 422 UnprocessableEntity", func() {
+				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{}`},
-						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'displayName' is zero value."}`},
+						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'displayName' is zero value."}`},
 					)
 				})
 			})
@@ -544,12 +544,12 @@ var _ = Describe("Dashboard server [User]", func() {
 			})
 
 			When("currentPassword is empty", func() {
-				It("should deny with 422 UnprocessableEntity", func() {
+				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
 							body: `{ "currentPassword": "", "newPassword": "newPassword"}`},
-						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'currentPassword' is zero value."}`},
+						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'currentPassword' is zero value."}`},
 					)
 				})
 			})
@@ -566,12 +566,12 @@ var _ = Describe("Dashboard server [User]", func() {
 			})
 
 			When("newPassword is empty", func() {
-				It("should deny with 422 UnprocessableEntity", func() {
+				It("should deny with 400 BadRequest", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
 							body: `{ "currentPassword": "password", "newPassword": ""}`},
-						response{statusCode: http.StatusUnprocessableEntity, body: `{"message":"required field 'newPassword' is zero value."}`},
+						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'newPassword' is zero value."}`},
 					)
 				})
 			})

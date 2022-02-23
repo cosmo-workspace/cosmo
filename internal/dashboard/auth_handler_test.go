@@ -25,19 +25,19 @@ var _ = Describe("Dashboard server [auth]", func() {
 	When("Login", func() {
 
 		When("user is empty", func() {
-			It("should deny with 422 UnprocessableEntity", func() {
+			It("should deny with 400 BadRequest", func() {
 				test_HttpSendAndVerify(nil,
 					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"password": "password"}`},
-					response{statusCode: http.StatusUnprocessableEntity, body: `{"message": "required field 'id' is zero value."}`},
+					response{statusCode: http.StatusBadRequest, body: `{"message": "required field 'id' is zero value."}`},
 				)
 			})
 		})
 
 		When("password is empty", func() {
-			It("should deny 422 UnprocessableEntity", func() {
+			It("should deny 400 BadRequest", func() {
 				test_HttpSendAndVerify(nil,
 					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "usertest"}`},
-					response{statusCode: http.StatusUnprocessableEntity, body: `{"message": "required field 'password' is zero value."}`},
+					response{statusCode: http.StatusBadRequest, body: `{"message": "required field 'password' is zero value."}`},
 				)
 			})
 		})
@@ -117,7 +117,7 @@ var _ = Describe("Dashboard server [auth]", func() {
 				By("verify")
 				test_HttpSendAndVerify(invalidSession,
 					request{method: http.MethodPost, path: "/api/v1alpha1/auth/verify"},
-					response{statusCode: http.StatusUnauthorized, body: `{"message": "session is invalid"}`},
+					response{statusCode: http.StatusUnauthorized, body: ""},
 				)
 			})
 		})
@@ -162,7 +162,7 @@ var _ = Describe("Dashboard server [auth]", func() {
 				By("invalid logout")
 				test_HttpSendAndVerify(invalidSession,
 					request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"},
-					response{statusCode: http.StatusUnauthorized, body: `{"message": "session is invalid"}`},
+					response{statusCode: http.StatusUnauthorized, body: ""},
 				)
 			})
 		})
