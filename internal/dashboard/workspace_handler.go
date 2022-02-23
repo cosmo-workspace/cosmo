@@ -36,7 +36,7 @@ func (s *Server) PostWorkspace(ctx context.Context, userId string, req dashv1alp
 	cfg, err := s.Klient.GetWorkspaceConfig(ctx, req.Template)
 	if err != nil {
 		log.Error(err, "failed to get workspace config from template", "template", req.Template)
-		return ErrorResponse(http.StatusBadRequest, "template is invalid")
+		return ErrorResponse(http.StatusBadRequest, "failed to get workspace config in template")
 	}
 
 	ws := &wsv1alpha1.Workspace{}
