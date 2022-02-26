@@ -31,7 +31,7 @@ var _ = Describe("Dashboard server [User]", func() {
 		deny403 := func(whenText string, request request) {
 			When(whenText, func() {
 				It("should deny with 403 Forbidden", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: `{"message": "not authorized"}`})
+					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: ""})
 				})
 			})
 		}
@@ -560,7 +560,7 @@ var _ = Describe("Dashboard server [User]", func() {
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
 							body: `{ "currentPassword": "xxxxxx", "newPassword": "newPassword"}`},
-						response{statusCode: http.StatusForbidden, body: `{"message":"current password is invalid"}`},
+						response{statusCode: http.StatusForbidden, body: `{"message":"incorrect user or password"}`},
 					)
 				})
 			})

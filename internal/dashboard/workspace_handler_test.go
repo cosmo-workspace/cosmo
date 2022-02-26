@@ -32,7 +32,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 		deny403 := func(whenText string, request request) {
 			When(whenText, func() {
 				It("should deny with 403 Forbidden", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: `{"message": "not authorized"}`})
+					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: ""})
 				})
 			})
 		}

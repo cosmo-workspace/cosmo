@@ -91,7 +91,7 @@ func (s *Server) PutUserPassword(ctx context.Context, userId string, req dashv1a
 
 	if !verified {
 		log.Info("current password is invalid", "userid", userId)
-		return ErrorResponse(http.StatusForbidden, "current password is invalid")
+		return ErrorResponse(http.StatusForbidden, "incorrect user or password")
 	}
 
 	// Upsert password
