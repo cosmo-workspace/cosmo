@@ -8,9 +8,9 @@
     "ts:gen": "../../api/openapi/openapi_v1alpha1.yaml"
   },
   "scripts": {
-    "version-manage": "openapi-generator-cli version-manager set 5.3.0",
-    "go:gen": "run-s version-manage go:_gen go:_remove* go:modify",
-    "go:gen_nofix": "run-s version-manage go:_gen go:_remove*",
+    "version-manage": "openapi-generator-cli version-manager set 5.4.0",
+    "go:gen": "run-s version-manage go:clean go:_gen go:_remove* go:modify",
+    "go:gen_nofix": "run-s version-manage go:clean go:_gen go:_remove*",
     "go:clean": "rimraf ../../api/openapi/dashboard/v1alpha1",
     "go:_gen": "openapi-generator-cli generate -g go-server -t ./go-server -i ../../api/openapi/dashboard/openapi-v1alpha1.yaml  -o ../../api/openapi/dashboard/ --additional-properties=packageName=v1alpha1,sourceFolder=v1alpha1",
     "go:_remove1": "rimraf ../../api/openapi/dashboard/.openapi*",

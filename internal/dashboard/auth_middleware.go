@@ -148,7 +148,7 @@ func (s *Server) userAuthenticationMiddleware(next http.Handler) http.Handler {
 
 		user := userFromContext(ctx)
 		if user == nil {
-			log.Info("request user not found")
+			log.Info("request user is not found")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

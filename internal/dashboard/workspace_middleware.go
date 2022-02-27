@@ -6,7 +6,9 @@ import (
 
 	"github.com/gorilla/mux"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/utils/pointer"
 
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
@@ -30,29 +32,33 @@ func (s *Server) preFetchWorkspaceMiddleware(next http.Handler) http.Handler {
 		ctx := r.Context()
 		log := clog.FromContext(ctx).WithName("preFetchWorkspace")
 
-		user := userFromContext(ctx)
-		if user == nil {
-			log.Info("user not found in context")
-			w.WriteHeader(http.StatusInternalServerError)
+		vars := mux.Vars(r)
+
+		// Get UserID from path
+		userID, ok := vars["userid"]
+		if !ok {
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		// Get Workspace name from path
-		vars := mux.Vars(r)
 		wsName, ok := vars["wsName"]
 		if !ok {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		ws, err := s.Klient.GetWorkspaceByUserID(ctx, wsName, user.Name)
+		ws, err := s.Klient.GetWorkspaceByUserID(ctx, wsName, userID)
 		if err != nil {
 			if apierrs.IsNotFound(err) {
-				w.WriteHeader(http.StatusNotFound)
+				errorResponse := dashv1alpha1.ErrorResponse{
+					Message: "workspace is not found",
+				}
+				dashv1alpha1.EncodeJSONResponse(errorResponse, pointer.Int(http.StatusNotFound), w)
 				return
 
 			} else {
-				log.Error(err, "failed to get workspace", "userid", user.Name, "workspace", wsName)
+				log.Error(err, "failed to get workspace", "userid", userID, "workspace", wsName)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}

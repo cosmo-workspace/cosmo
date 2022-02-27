@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Cosmo Dashboard API
   description: Manipulate cosmo dashboard resource API
@@ -14,6 +14,10 @@ info:
 servers:
   - url: https://cosmo-dashboard.cosmo-system.svc.cluster.local:8443
     description: Dashboard server in Kubernetes cluster
+
+#-------------------------------------------
+# paths
+#-------------------------------------------
 paths:
   /api/v1alpha1/auth/login:
     post:
@@ -58,10 +62,8 @@ paths:
                     format: date-time
                   requirePasswordUpdate:
                     type: boolean
-        "403":
-          description: Invalid ID or password
-        "500":
-          description: Internal server error
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/auth/verify:
     post:
@@ -92,10 +94,9 @@ paths:
                     format: date-time
                   requirePasswordUpdate:
                     type: boolean
-        "401":
-          description: Not authorized
-        "500":
-          description: Internal server error
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
+
   /api/v1alpha1/auth/logout:
     post:
       tags:
@@ -109,10 +110,8 @@ paths:
       responses:
         "200":
           description: Successfully logged out
-        "401":
-          description: Not authorized
-        "500":
-          description: Internal server error
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/template/workspace:
     get:
@@ -142,10 +141,8 @@ paths:
                     items:
                       $ref: "#/components/schemas/Template"
 
-        "401":
-          description: Not authorized
-        "500":
-          description: Internal server error
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/template/useraddon:
     get:
@@ -175,10 +172,8 @@ paths:
                     items:
                       $ref: "#/components/schemas/Template"
 
-        "401":
-          description: Not authorized
-        "500":
-          description: Internal server error
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/user:
     get:
@@ -207,12 +202,11 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/User"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
+
     post:
       tags:
         - user
@@ -271,14 +265,12 @@ paths:
                     type: string
                   user:
                     $ref: "#/components/schemas/User"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "429":
-          description: Already exist
-        "500":
-          description: Internal server error
+
+        "400": { $ref: "#/components/responses/400_BadRequest" }
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "429": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/user/{userid}:
     get:
@@ -309,14 +301,11 @@ paths:
                 properties:
                   user:
                     $ref: "#/components/schemas/User"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
     delete:
       tags:
@@ -349,14 +338,11 @@ paths:
                     type: string
                   user:
                     $ref: "#/components/schemas/User"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/user/{userid}/name:
     put:
@@ -403,14 +389,11 @@ paths:
                     type: string
                   user:
                     $ref: "#/components/schemas/User"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/user/{userid}/role:
     put:
@@ -455,14 +438,11 @@ paths:
                     type: string
                   user:
                     $ref: "#/components/schemas/User"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/user/{userid}/password:
     put:
@@ -509,14 +489,11 @@ paths:
                 properties:
                   message:
                     type: string
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/user/{userid}/workspace:
     get:
@@ -551,12 +528,11 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Workspace"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
+
     post:
       tags:
         - workspace
@@ -608,16 +584,12 @@ paths:
                     type: string
                   workspace:
                     $ref: "#/components/schemas/Workspace"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: User not found
-        "429":
-          description: Already exist
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "429": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/user/{userid}/workspace/{wsName}:
     get:
@@ -654,14 +626,12 @@ paths:
                 properties:
                   workspace:
                     $ref: "#/components/schemas/Workspace"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
+
     delete:
       tags:
         - workspace
@@ -699,14 +669,12 @@ paths:
                     type: string
                   workspace:
                     $ref: "#/components/schemas/Workspace"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
+
     patch:
       tags:
         - workspace
@@ -757,14 +725,11 @@ paths:
                     type: string
                   workspace:
                     $ref: "#/components/schemas/Workspace"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
 
   /api/v1alpha1/user/{userid}/workspace/{wsName}/network/{networkRuleName}:
     put:
@@ -828,12 +793,11 @@ paths:
                     type: string
                   networkRule:
                     $ref: "#/components/schemas/NetworkRule"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "500":
-          description: Internal server error
+
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
+
     delete:
       tags:
         - workspace
@@ -877,16 +841,66 @@ paths:
                     type: string
                   networkRule:
                     $ref: "#/components/schemas/NetworkRule"
-        "401":
-          description: Not authorized
-        "403":
-          description: Forbidden
-        "404":
-          description: Not found
-        "500":
-          description: Internal server error
 
+        "401": { $ref: "#/components/responses/401_Unauthorized" }
+        "403": { $ref: "#/components/responses/403_Forbidden" }
+        "404": { $ref: "#/components/responses/404_NotFound" }
+        "500": { $ref: "#/components/responses/500_InternalServerError" }
+
+#-------------------------------------------
+# components
+#-------------------------------------------
 components:
+  responses:
+    400_BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    401_Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    403_Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    404_NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    429_TooManyRequests:
+      description: Too many requests, or Already exist.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    500_InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    503_ServiceUnavailable:
+      description: Service unavailable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
   securitySchemes:
     cookieAuth:
       type: apiKey
@@ -894,6 +908,12 @@ components:
       name: cosmo-dashboard
 
   schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
     Template:
       type: object
       required:
