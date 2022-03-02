@@ -1,9 +1,9 @@
 import { Close } from "@mui/icons-material";
 import {
-  Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle,
-  IconButton, Stack, TextField
+  Alert, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel,
+  IconButton, Stack, TextField, Typography
 } from "@mui/material";
-import { useForm, UseFormRegisterReturn } from "react-hook-form";
+import { Controller, useForm, UseFormRegisterReturn } from "react-hook-form";
 import { NetworkRule, Workspace } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
@@ -20,7 +20,7 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
   = ({ workspace, networkRule, onClose }) => {
     console.log('NetworkRuleUpsertDialog', networkRule);
     const networkRuleModule = useNetworkRule();
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm<NetworkRule>({
+    const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<NetworkRule>({
       defaultValues: networkRule || { portNumber: 0, httpPath: '/' },
     });
 
@@ -76,14 +76,6 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
                   helperText={(errors.portNumber && errors.portNumber.message) || '1 - 65535.'}
                 />
               }
-              <TextField label="HTTP Path" fullWidth
-                {...registerMui(register('httpPath', {
-                  required: { value: true, message: "Required" },
-                  maxLength: { value: 127, message: "Max 127 characters" },
-                }))}
-                error={Boolean(errors.httpPath)}
-                helperText={(errors.httpPath && errors.httpPath.message) || 'ex) /api'}
-              />
               <TextField label="Group" fullWidth
                 {...registerMui(register('group', {
                   required: { value: true, message: "Required" },
@@ -95,6 +87,31 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
                 }))}
                 error={Boolean(errors.group)}
                 helperText={(errors.group && errors.group.message)}
+              />
+              <TextField label="HTTP Path" fullWidth
+                {...registerMui(register('httpPath', {
+                  required: { value: true, message: "Required" },
+                  maxLength: { value: 127, message: "Max 127 characters" },
+                }))}
+                error={Boolean(errors.httpPath)}
+                helperText={(errors.httpPath && errors.httpPath.message)}
+              />
+              <FormControlLabel
+                sx={{ my: 2 }}
+                control={<Controller
+                  name="public"
+                  control={control}
+                  defaultValue={false}
+                  render={({ field }) => <Checkbox checked={field.value} {...field} />}
+                />}
+                label={<>
+                  <Stack spacing={2}>
+                    public
+                    <Typography color="text.secondary" variant="caption" >
+                      No authentication is required for this URL.
+                    </Typography>
+                  </Stack>
+                </>}
               />
             </Stack>
             <DialogActions>

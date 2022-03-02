@@ -20,6 +20,8 @@ type NetworkRule struct {
 	HttpPath string `json:"httpPath,omitempty"`
 
 	Url string `json:"url,omitempty"`
+
+	Public bool `json:"public"`
 }
 
 // AssertNetworkRuleRequired checks if the required fields are not zero-ed
@@ -27,6 +29,7 @@ func AssertNetworkRuleRequired(obj NetworkRule) error {
 	elements := map[string]interface{}{
 		"portName":   obj.PortName,
 		"portNumber": obj.PortNumber,
+		"public":     obj.Public,
 	}
 	for name, el := range elements {
 		if isZero := IsZeroValue(el); isZero {

@@ -776,6 +776,8 @@ paths:
                   type: string
                 httpPath:
                   type: string
+                public:
+                  type: boolean
 
       responses:
         "200":
@@ -1026,6 +1028,7 @@ components:
       required:
         - portName
         - portNumber
+        - public
       properties:
         portName:
           type: string
@@ -1037,3 +1040,5 @@ components:
           type: string
         url:
           type: string
+        public:
+          type: boolean

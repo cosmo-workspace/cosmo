@@ -211,6 +211,7 @@ export const useNetworkRule = () => {
       portNumber: networkRule.portNumber,
       group: networkRule.group,
       httpPath: networkRule.httpPath,
+      public: networkRule.public,
     }
     return restNetwork.putNetworkRule(workspace.ownerID!, workspace.name, networkRule.portName, nwReq)
       .then(result => {

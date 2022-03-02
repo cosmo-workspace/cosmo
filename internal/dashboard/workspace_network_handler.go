@@ -29,6 +29,7 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 		PortNumber: int(req.PortNumber),
 		Group:      pointer.String(req.Group),
 		HTTPPath:   req.HttpPath,
+		Public:     req.Public,
 	}
 	log.Debug().Info("upserting network rule", "ws", ws.Name, "namespace", ws.Namespace, "netRule", netRule)
 
@@ -57,7 +58,7 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	res := &dashv1alpha1.UpsertNetworkRuleResponse{}
 	res.Message = "Successfully upserted network rule"
 	res.NetworkRule = convertNetRuleTodashv1alpha1NetRule(netRule)
-	return dashv1alpha1.Response(http.StatusOK, res), nil
+	return NormalResponse(http.StatusOK, res)
 }
 
 func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspaceName string, networkRuleName string) (dashv1alpha1.ImplResponse, error) {
@@ -122,5 +123,6 @@ func convertNetRuleTodashv1alpha1NetRule(v wsv1alpha1.NetworkRule) dashv1alpha1.
 		PortNumber: int32(v.PortNumber),
 		Group:      *v.Group,
 		HttpPath:   v.HTTPPath,
+		Public:     v.Public,
 	}
 }
