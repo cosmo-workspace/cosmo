@@ -10,17 +10,17 @@ updates:
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "yarn" # See documentation for possible values
+  - package-ecosystem: "npm" # See documentation for possible values
     directory: "/web/dashboard-ui" # Location of package manifests
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "yarn" # See documentation for possible values
+  - package-ecosystem: "npm" # See documentation for possible values
     directory: "/web/auth-proxy-ui" # Location of package manifests
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "yarn" # See documentation for possible values
+  - package-ecosystem: "npm" # See documentation for possible values
     directory: "/hack/api-generate" # Location of package manifests
     schedule:
       interval: "daily"
