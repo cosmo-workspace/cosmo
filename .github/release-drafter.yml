@@ -33,9 +33,9 @@ template: |
   $CHANGES
 
   ## Docker Images
-  [ghcr.io/cosmo-workspace/cosmo-controller-manager:v$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-controller-manager/13139572?tag=v$RESOLVED_VERSION)
-  [ghcr.io/cosmo-workspace/cosmo-dashboard:$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-dashboard/13139669?tag=v$RESOLVED_VERSION)
-  [ghcr.io/cosmo-workspace/cosmo-auth-proxy:$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-auth-proxy/13139664?tag=v$RESOLVED_VERSION)
+  [ghcr.io/cosmo-workspace/cosmo-controller-manager:v$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-controller-manager)
+  [ghcr.io/cosmo-workspace/cosmo-dashboard:$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-dashboard)
+  [ghcr.io/cosmo-workspace/cosmo-auth-proxy:$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-auth-proxy)
 
   ## How to install
 
