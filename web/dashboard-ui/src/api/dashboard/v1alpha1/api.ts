@@ -354,6 +354,12 @@ export interface NetworkRule {
      * @memberof NetworkRule
      */
     'url'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof NetworkRule
+     */
+    'public': boolean;
 }
 /**
  * 
@@ -576,6 +582,12 @@ export interface UpsertNetworkRuleRequest {
      * @memberof UpsertNetworkRuleRequest
      */
     'httpPath'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UpsertNetworkRuleRequest
+     */
+    'public'?: boolean;
 }
 /**
  * 

@@ -16,6 +16,8 @@ type UpsertNetworkRuleRequest struct {
 	Group string `json:"group,omitempty"`
 
 	HttpPath string `json:"httpPath,omitempty"`
+
+	Public bool `json:"public,omitempty"`
 }
 
 // AssertUpsertNetworkRuleRequestRequired checks if the required fields are not zero-ed

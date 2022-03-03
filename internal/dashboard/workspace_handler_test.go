@@ -513,7 +513,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/xxxxx/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
+							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
 						},
 						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
 					)
@@ -525,7 +525,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
+							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
 						},
 						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
 					)
@@ -539,7 +539,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
+							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
 						},
 						response{statusCode: http.StatusOK, body: "@ignore"},
 					)
@@ -547,7 +547,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
+							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
 						},
 						response{statusCode: http.StatusBadRequest, body: `{ "message": "no change in network rules"}`},
 					)
@@ -566,12 +566,12 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`,
+							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
 						},
 						response{
 							statusCode: http.StatusOK,
 							body: `{"message":"Successfully upserted network rule",` +
-								`"networkRule":{"portName":"nw2","portNumber":3000,"group":"gp2","httpPath":"/"}}`},
+								`"networkRule":{"portName":"nw2","portNumber":3000,"group":"gp2","httpPath":"/","public":false}}`},
 					)
 
 					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
@@ -601,12 +601,12 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 					test_HttpSendAndVerify(adminSession,
 						request{
 							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000}`,
+							body: `{"portNumber": 3000,"public":true}`,
 						},
 						response{
 							statusCode: http.StatusOK,
 							body: `{"message":"Successfully upserted network rule",` +
-								`"networkRule":{"portName":"nw2","portNumber":3000}}`},
+								`"networkRule":{"portName":"nw2","portNumber":3000,"public":true}}`},
 					)
 
 					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
@@ -620,7 +620,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 							Template: "template1",
 							Replicas: 0,
 							AdditionalNetwork: []dashv1alpha1.NetworkRule{
-								{PortName: "nw2", PortNumber: 3000, Group: "", HttpPath: "", Url: ""},
+								{PortName: "nw2", PortNumber: 3000, Group: "", HttpPath: "", Url: "", Public: true},
 							},
 						},
 						Status: dashv1alpha1.WorkspaceStatus{Phase: "", MainUrl: "", UrlBase: ""},
@@ -683,7 +683,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						response{
 							statusCode: http.StatusOK,
 							body: `{"message":"Successfully removed network rule",` +
-								`"networkRule":{"portName":"nw1","portNumber":9999,"group":"gp1","httpPath":"/"}}`},
+								`"networkRule":{"portName":"nw1","portNumber":9999,"group":"gp1","httpPath":"/","public":false}}`},
 					)
 
 					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
