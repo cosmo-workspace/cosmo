@@ -98,7 +98,7 @@ exports[`UserNameChangeDialog UserNameChangeDialogContext open/close: 2.opend 1`
                 class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
               >
                 <label
-                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-au3a9q-MuiFormLabel-root-MuiInputLabel-root"
+                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-o943dk-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="true"
                   for="mui-0000_for_toMatchSnapShot"
                   id="mui-0000_for_toMatchSnapShot-label"
@@ -153,7 +153,7 @@ exports[`UserNameChangeDialog UserNameChangeDialogContext open/close: 2.opend 1`
                 class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
               >
                 <label
-                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-1kty9di-MuiFormLabel-root-MuiInputLabel-root"
+                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="true"
                   for="mui-0000_for_toMatchSnapShot"
                   id="mui-0000_for_toMatchSnapShot-label"
@@ -207,7 +207,7 @@ exports[`UserNameChangeDialog UserNameChangeDialogContext open/close: 2.opend 1`
                     class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-1z7n62"
+                      class="css-7nxzgd"
                     >
                       <span>
                         User Name
@@ -330,7 +330,7 @@ exports[`UserNameChangeDialog render render 1`] = `
                 class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
               >
                 <label
-                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-au3a9q-MuiFormLabel-root-MuiInputLabel-root"
+                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-o943dk-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="true"
                   for="mui-0000_for_toMatchSnapShot"
                   id="mui-0000_for_toMatchSnapShot-label"
@@ -385,7 +385,7 @@ exports[`UserNameChangeDialog render render 1`] = `
                 class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
               >
                 <label
-                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-1kty9di-MuiFormLabel-root-MuiInputLabel-root"
+                  class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="true"
                   for="mui-0000_for_toMatchSnapShot"
                   id="mui-0000_for_toMatchSnapShot-label"
@@ -439,7 +439,7 @@ exports[`UserNameChangeDialog render render 1`] = `
                     class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-1z7n62"
+                      class="css-7nxzgd"
                     >
                       <span>
                         User Name
