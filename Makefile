@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-VERSION ?= v0.3.0
+VERSION ?= v0.4.0
 
 MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
