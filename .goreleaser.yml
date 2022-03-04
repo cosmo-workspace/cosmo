@@ -19,7 +19,7 @@ archives:
     name_template: "cosmoctl_{{ .Tag }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     wrap_in_directory: false
     format: tar.gz
-release:
-  draft: true
+# release:
+#   draft: true
 changelog:
   skip: true
