@@ -1,16 +1,35 @@
 name: Release Drafter
 
 on:
-  push:
-    # tags:
-    #   - "v*.*.*"
+  # push:
+  #   # tags:
+  #   #   - "v*.*.*"
+  #   branches:
+  #     - main
+  pull_request:
+    types:
+      - closed
     branches:
       - main
 
 jobs:
   update_release_draft:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v2
+
+      - name: update-version
+        run: |
+          make update-version VERSION=${{ steps.update_release_draft.outputs.tag_name  }}
+
+      - name: Commit updates
+        uses: EndBug/add-and-commit@v7
+        with:
+          branch: main
+          message: "Bump version: ${{ steps.update_release_draft.outputs.tag_name  }}"
+          # add: "['src/global.js', 'package.json', 'package-lock.json']"
