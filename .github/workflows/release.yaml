@@ -4,7 +4,7 @@ on:
   #   tags:
   #   - 'v*.*.*'
   release:
-    types: [published]
+    types: [prereleased]
 jobs:
   goreleaser:
     if: "github.event.release.prerelease"
