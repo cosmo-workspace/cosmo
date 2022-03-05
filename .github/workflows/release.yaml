@@ -7,6 +7,7 @@ on:
     types: [published]
 jobs:
   goreleaser:
+    if: "github.event.release.prerelease"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,8 +24,15 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: release-drafter
+        uses: release-drafter/release-drafter@v5
+        with:
+          version: ${{ github.event.release.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   controller-manager:
+    if: "github.event.release.prerelease"
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -54,6 +62,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   dashboard:
+    if: "github.event.release.prerelease"
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -83,6 +92,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   auth-proxy:
+    if: "github.event.release.prerelease"
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
