@@ -1,23 +1,25 @@
 before:
   hooks:
-  - go mod download
+    - go mod download
 builds:
-- id: cosmoctl
-  main: ./cmd/cosmoctl/main.go
-  binary: cosmoctl
-  env:
-  - CGO_ENABLED=0
-  goos:
-  - linux
-  - darwin
-  - windows
-  goarch:
-  - amd64
+  - id: cosmoctl
+    main: ./cmd/cosmoctl/main.go
+    binary: cosmoctl
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
 archives:
-- builds:
-  - cosmoctl
-  name_template: "cosmoctl_{{ .Tag }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-  wrap_in_directory: false
-  format: tar.gz
+  - builds:
+      - cosmoctl
+    name_template: "cosmoctl_{{ .Tag }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    wrap_in_directory: false
+    format: tar.gz
 release:
   draft: true
+changelog:
+  skip: true
