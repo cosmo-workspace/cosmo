@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-VERSION ?= v0.4.0
+VERSION ?=
 
 MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
@@ -88,23 +88,32 @@ swaggerui:
 ##@ Build
 
 # Build manager binary
-manager: update-version generate fmt vet
+manager: generate fmt vet
 	CGO_ENABLED=0 go build -o bin/manager ./cmd/controller-manager/main.go
 
 # Build cosmoctl binary
-cosmoctl: update-version generate fmt vet
+cosmoctl: generate fmt vet
 	CGO_ENABLED=0 go build -o bin/cosmoctl ./cmd/cosmoctl/main.go
 
 # Build dashboard binary
-dashboard: update-version generate fmt vet
+dashboard: generate fmt vet
 	CGO_ENABLED=0 go build -o bin/dashboard ./cmd/dashboard/main.go
 
 # Build auth-proxy binary
-auth-proxy: update-version generate fmt vet
+auth-proxy: generate fmt vet
 	CGO_ENABLED=0 go build -o bin/auth-proxy ./cmd/auth-proxy/main.go
 
 # Update version in version.go
 update-version:
+ifndef VERSION
+	@echo "Usage: make update-version VERSION=v9.9.9"
+	@exit 9
+else
+ifeq ($(shell expr $(VERSION) : '^v[0-9]\+\.[0-9]\+\.[0-9]\+$$'),0)
+	@echo "Usage: make update-version VERSION=v9.9.9"
+	@exit 9
+endif
+endif
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${MANAGER_VERSION} cosmo-workspace/" ./cmd/controller-manager/main.go
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${DASHBOARD_VERSION} cosmo-workspace/" ./cmd/dashboard/main.go
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${COSMOCTL_VERSION} cosmo-workspace/" ./cmd/cosmoctl/main.go
