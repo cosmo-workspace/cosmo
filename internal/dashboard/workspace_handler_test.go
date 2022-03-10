@@ -315,13 +315,24 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				It("should return items", func() {
 					test_CreateWorkspace("usertest-admin", "ws1", "template1", nil)
 					test_CreateWorkspace("usertest-admin", "ws2", "template1", nil)
+					test_createNetworkRule("usertest-admin", "ws2", "nw1", 1111, "gp1", "/")
+					test_createNetworkRule("usertest-admin", "ws2", "nw3", 2222, "gp1", "/")
+					test_createNetworkRule("usertest-admin", "ws2", "nw2", 3333, "gp1", "/")
 
 					test_HttpSendAndVerify(adminSession,
 						request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"},
 						response{statusCode: http.StatusOK, body: `{"items":[` +
 							`{"name": "ws1","ownerID": "usertest-admin","spec": {"template": "template1","replicas": 0},"status": {"phase": ""}},` +
-							`{"name": "ws2","ownerID": "usertest-admin","spec": {"template": "template1","replicas": 0},"status": {"phase": ""}}` +
-							`]}`})
+							`{"name": "ws2","ownerID": "usertest-admin","spec": {"template": "template1","replicas": 0,` +
+							`"additionalNetwork": [` +
+							`{"portName": "nw1","portNumber": 1111,"group": "gp1","httpPath": "/","public": false},` +
+							`{"portName": "nw2","portNumber": 3333,"group": "gp1","httpPath": "/","public": false},` +
+							`{"portName": "nw3","portNumber": 2222,"group": "gp1","httpPath": "/","public": false}` +
+							`]},` +
+							`"status": {"phase": ""}}` +
+							`]}`,
+						},
+					)
 				})
 			})
 		})
