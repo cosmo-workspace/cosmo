@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"sort"
 
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
@@ -114,6 +115,8 @@ func convertNetRulesTodashv1alpha1NetRules(netRules []wsv1alpha1.NetworkRule, ur
 
 		apirules = append(apirules, r)
 	}
+	sort.Slice(apirules, func(i, j int) bool { return apirules[i].PortName < apirules[j].PortName })
+
 	return apirules
 }
 
