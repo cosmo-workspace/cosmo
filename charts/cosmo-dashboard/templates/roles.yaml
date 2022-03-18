@@ -1,0 +1,92 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    {{- include "cosmo-dashboard.labels" . | nindent 4 }}
+  name: cosmo-dashboard
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - namespaces
+  - secrets
+  verbs:
+  - create
+  - delete
+  - patch
+  - update
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  verbs:
+  - create
+  - delete
+  - patch
+  - update
+  - get
+  - list
+  - watch
+  - bind
+- apiGroups:
+  - workspace.cosmo-workspace.github.io
+  resources:
+  - workspaces
+  - users
+  verbs:
+  - create
+  - delete
+  - patch
+  - update
+  - get
+  - list
+  - watch
+- apiGroups:
+  - workspace.cosmo-workspace.github.io
+  resources:
+  - workspaces/status
+  - users/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cosmo.cosmo-workspace.github.io
+  resources:
+  - instances
+  - templates
+  verbs:
+  - create
+  - delete
+  - patch
+  - update
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cosmo.cosmo-workspace.github.io
+  resources:
+  - instances/status
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    {{- include "cosmo-dashboard.labels" . | nindent 4 }}
+  name: cosmo-dashboard-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cosmo-dashboard
+subjects:
+- kind: ServiceAccount
+  name: cosmo-dashboard
+  namespace: {{ .Release.Namespace }}
