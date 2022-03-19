@@ -8,6 +8,9 @@ DASHBOARD_VERSION ?= $(VERSION)
 COSMOCTL_VERSION  ?= $(VERSION)
 AUTHPROXY_VERSION ?= $(VERSION)
 
+CHART_MANAGER_VERSION   ?= $(MANAGER_VERSION)
+CHART_DASHBOARD_VERSION ?= $(DASHBOARD_VERSION)
+
 IMG_MANAGER ?= cosmo-controller-manager:$(MANAGER_VERSION)
 IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
 IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
@@ -122,12 +125,12 @@ endif
 	cd config/manager && kustomize edit set image controller=${IMG_MANAGER}
 	cd config/dashboard && kustomize edit set image dashboard=${IMG_DASHBOARD}
 	sed -i.bk \
-		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${MANAGER_VERSION:v%=%}/" \
+		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_MANAGER_VERSION:v%=%}/" \
 		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${MANAGER_VERSION}/" \
 		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
 		charts/cosmo-controller-manager/Chart.yaml
 	sed -i.bk \
-		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${DASHBOARD_VERSION:v%=%}/" \
+		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_DASHBOARD_VERSION:v%=%}/" \
 		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${DASHBOARD_VERSION}/" \
 		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
 		charts/cosmo-dashboard/Chart.yaml
