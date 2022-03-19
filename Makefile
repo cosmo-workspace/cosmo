@@ -1,6 +1,7 @@
 
 # Image URL to use all building/pushing image targets
 VERSION ?=
+PRERELEASE ?= false
 
 MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
@@ -120,6 +121,17 @@ endif
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${AUTHPROXY_VERSION} cosmo-workspace/" ./cmd/auth-proxy/main.go
 	cd config/manager && kustomize edit set image controller=${IMG_MANAGER}
 	cd config/dashboard && kustomize edit set image dashboard=${IMG_DASHBOARD}
+	sed -i.bk \
+		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${MANAGER_VERSION:v%=%}/" \
+		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${MANAGER_VERSION}/" \
+		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
+		charts/cosmo-controller-manager/Chart.yaml
+	sed -i.bk \
+		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${DASHBOARD_VERSION:v%=%}/" \
+		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${DASHBOARD_VERSION}/" \
+		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
+		charts/cosmo-dashboard/Chart.yaml
+
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run-dashboard: generate fmt vet manifests

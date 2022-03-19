@@ -1,0 +1,36 @@
+{{ $tls := fromYaml ( include "cosmo-dashboard.gen-certs" . ) }}
+---
+{{- if $.Values.cert.enableCertManager }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  labels:
+    {{- include "cosmo-dashboard.labels" . | nindent 4 }}
+  name: cosmo-dashboard-cert
+  namespace: {{ .Release.Namespace }}
+spec:
+  dnsNames:
+    - cosmo-dashboard.{{.Release.Namespace}}.svc
+    - cosmo-dashboard.{{.Release.Namespace}}.svc.cluster.local
+    {{- if .Values.dnsName }}
+    - {{ .Values.dnsName }}
+    {{- end }}
+  {{- with .Values.cert.issuerRef }}
+  issuerRef:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  secretName: {{ .Values.cert.secretName }}
+{{- else }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.cert.secretName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "cosmo-dashboard.labels" . | nindent 4 }}
+type: kubernetes.io/tls
+data:
+  ca.crt: {{ $tls.caCert }}
+  tls.crt: {{ $tls.clientCert }}
+  tls.key: {{ $tls.clientKey }}
+{{- end }}
