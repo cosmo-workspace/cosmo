@@ -53,8 +53,13 @@ template: |
   # get current values for cosmo-dashboard
   helm get values cosmo-dashboard -n cosmo-system | tail -n +2 > dashboard.values.yaml
 
+  # TODO: fix values.yaml if chart options is updated
+
   # upgrade cosmo-controller-manager
   helm upgrade cosmo-controller-manager cosmo/cosmo-controller-manager -n cosmo-system --values controller-manager.values.yaml
+
+  # update default Templates
+  kubectl apply -f https://raw.githubusercontent.com/cosmo-workspace/cosmo/v$RESOLVED_VERSION/config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml
 
   # upgrade cosmo-dashboard
   helm upgrade cosmo-dashboard cosmo/cosmo-dashboard -n cosmo-system --values dashboard.values.yaml
