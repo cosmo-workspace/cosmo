@@ -210,7 +210,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 								  "ownerID": "usertest-admin",
 								  "spec": {
 									"template": "template1",
-									"replicas": 0,
+									"replicas": 1,
 									"vars": {
 									  "HOGE": "HOGEHOGE"
 									}
@@ -231,7 +231,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						OwnerID: "usertest-admin",
 						Spec: dashv1alpha1.WorkspaceSpec{
 							Template:          "template1",
-							Replicas:          0,
+							Replicas:          1,
 							Vars:              map[string]string{"HOGE": "HOGEHOGE"},
 							AdditionalNetwork: []dashv1alpha1.NetworkRule{},
 						},
@@ -257,7 +257,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 								  "ownerID": "usertest-admin",
 								  "spec": {
 									"template": "template1",
-									"replicas": 0
+									"replicas": 1
 								  },
 								  "status": {
 									"phase": "Pending"
@@ -275,7 +275,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 						OwnerID: "usertest-admin",
 						Spec: dashv1alpha1.WorkspaceSpec{
 							Template:          "template1",
-							Replicas:          0,
+							Replicas:          1,
 							AdditionalNetwork: []dashv1alpha1.NetworkRule{},
 						},
 						Status: dashv1alpha1.WorkspaceStatus{},

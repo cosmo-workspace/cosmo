@@ -187,7 +187,7 @@ func (s *Server) PatchWorkspace(ctx context.Context, userId string, workspaceNam
 func convertWorkspaceTodashv1alpha1Workspace(ws wsv1alpha1.Workspace) *dashv1alpha1.Workspace {
 	replicas := ws.Spec.Replicas
 	if replicas == nil {
-		replicas = pointer.Int64(0)
+		replicas = pointer.Int64(1)
 	}
 	return &dashv1alpha1.Workspace{
 		Name:    ws.Name,
