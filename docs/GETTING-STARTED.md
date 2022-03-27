@@ -123,6 +123,14 @@ Install cosmo-controller-manager
 helm upgrade --install -n cosmo-system --create-namespace cosmo-controller-manager cosmo/cosmo-controller-manager
 ```
 
+Install default Templates.
+
+```sh
+LATEST_TAG=`curl https://api.github.com/repos/cosmo-workspace/cosmo/releases/latest | jq  -r '.tag_name'`
+
+kubectl apply -f https://raw.githubusercontent.com/cosmo-workspace/cosmo/$LATEST_TAG/config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml
+```
+
 ## Install [`COSMO Dashboard`](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-dashboard)
 
 Since you need to access Dashboard from a browser, install Dashboard with the appropriate network options.
