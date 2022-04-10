@@ -12,7 +12,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 var _ = Describe("Template webhook", func() {
@@ -142,7 +142,7 @@ spec:
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			eq := kosmo.LooseDeepEqual(createdTmpl.DeepCopy(), expectedTmpl.DeepCopy(), kosmo.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(createdTmpl.DeepCopy(), expectedTmpl.DeepCopy(), kubeutil.WithPrintDiff())
 			Expect(eq).Should(BeTrue())
 		})
 	})

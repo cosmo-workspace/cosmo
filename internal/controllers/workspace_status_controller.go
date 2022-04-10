@@ -20,6 +20,7 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
 
@@ -82,7 +83,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 				ws.Status.Phase = "Stopping"
 				requeue = true
 			} else {
-				ws.Status.Phase = kosmo.PodStatusReason(pods[0])
+				ws.Status.Phase = kubeutil.PodStatusReason(pods[0])
 			}
 
 		} else {

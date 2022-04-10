@@ -19,6 +19,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/transformer"
 )
@@ -176,7 +177,7 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 			}
 
 			// compare current with the desired state
-			if !kosmo.LooseDeepEqual(current.DeepCopy(), desired.DeepCopy()) {
+			if !kubeutil.LooseDeepEqual(current.DeepCopy(), desired.DeepCopy()) {
 				log.Info("current is not desired state, synced", "kind", desired.GetKind(), "name", desired.GetName())
 				log.PrintObjectDiff(current, desired)
 
