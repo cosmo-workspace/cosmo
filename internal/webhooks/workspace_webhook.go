@@ -151,14 +151,12 @@ func (h *WorkspaceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) 
 
 func sortNetworkRule(netRules []wsv1alpha1.NetworkRule) []wsv1alpha1.NetworkRule {
 	sort.SliceStable(netRules, func(i, j int) bool {
-		return *netRules[i].Group < *netRules[j].Group
-	})
-	sort.SliceStable(netRules, func(i, j int) bool {
-		if netRules[i].Group != netRules[j].Group {
-			return false
-		} else {
+		if *netRules[i].Group < *netRules[j].Group {
+			return true
+		} else if *netRules[i].Group == *netRules[j].Group {
 			return netRules[i].HTTPPath > netRules[j].HTTPPath
 		}
+		return false
 	})
 	return netRules
 }
