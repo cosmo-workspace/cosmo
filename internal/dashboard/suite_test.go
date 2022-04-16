@@ -131,8 +131,8 @@ var _ = AfterSuite(func() {
 type request struct {
 	method string
 	path   string
-	query  map[string]string
-	body   string
+	// query  map[string]string
+	body string
 }
 type response struct {
 	statusCode int
@@ -295,10 +295,13 @@ func test_CreateLoginUserSession(id, displayName string, role wsv1alpha1.UserRol
 }
 
 func test_Login(userId string, password string) []*http.Cookie {
-	got, _ := test_HttpSend(nil, request{
-		method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "` + userId + `", "password": "` + password + `"}`,
-	})
-	Expect(http.StatusOK).Should(Equal(got.StatusCode))
+	var got *http.Response
+	Eventually(func() *http.Response {
+		got, _ = test_HttpSend(nil, request{
+			method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "` + userId + `", "password": "` + password + `"}`,
+		})
+		return got
+	}, time.Second*5, time.Millisecond*100).Should(HaveHTTPStatus(http.StatusOK))
 
 	return got.Cookies()
 }
