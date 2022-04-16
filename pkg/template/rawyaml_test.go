@@ -4,14 +4,13 @@ import (
 	"reflect"
 	"testing"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
 
-func TestNewUnstructuredBuilder(t *testing.T) {
+func TestNewRawYAMLBuilder(t *testing.T) {
 	type args struct {
 		data string
 		inst *cosmov1alpha1.Instance
@@ -19,7 +18,7 @@ func TestNewUnstructuredBuilder(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *UnstructuredBuilder
+		want *RawYAMLBuilder
 	}{
 		{
 			name: "OK",
@@ -58,7 +57,7 @@ spec:
 					},
 				},
 			},
-			want: &UnstructuredBuilder{
+			want: &RawYAMLBuilder{
 				rawYaml: `apiVersion: networking.k8s.io/v1
 kind: XXXX
 metadata:
@@ -97,14 +96,14 @@ spec:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewUnstructuredBuilder(tt.args.data, tt.args.inst); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewUnstructuredBuilder() = %v, want %v", got, tt.want)
+			if got := NewRawYAMLBuilder(tt.args.data, tt.args.inst); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewRawYAMLBuilder() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestUnstructuredBuilder_Build(t *testing.T) {
+func TestRawYAMLBuilder_Build(t *testing.T) {
 	type fields struct {
 		data string
 		inst *cosmov1alpha1.Instance
@@ -315,17 +314,17 @@ data:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tr := &UnstructuredBuilder{
+			tr := &RawYAMLBuilder{
 				rawYaml: tt.fields.data,
 				inst:    tt.fields.inst,
 			}
 			got, err := tr.Build()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("UnstructuredBuilder.Build() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("RawYAMLBuilder.Build() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("UnstructuredBuilder.Build() = %v, want %v", got, tt.want)
+				t.Errorf("RawYAMLBuilder.Build() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -445,6 +444,260 @@ func TestUnstructuredToJSONBytes(t *testing.T) {
 			}
 			if string(got) != tt.want {
 				t.Errorf("UnstructuredToJSONBytes() = %v, want %v", string(got), tt.want)
+			}
+		})
+	}
+}
+
+func TestRawYAMLBuilder_ReplaceDefaultVars(t *testing.T) {
+	type fields struct {
+		rawYaml string
+		inst    *cosmov1alpha1.Instance
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   *RawYAMLBuilder
+	}{
+		{
+			name: "OK",
+			fields: fields{
+				rawYaml: "{{INSTANCE}}-{{NAMESPACE}}-{{TEMPLATE}}",
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"{{TEST}}": "OK"},
+					},
+				},
+			},
+			want: &RawYAMLBuilder{
+				rawYaml: "cs1-cosmo-user-tom-code-server",
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"{{TEST}}": "OK"},
+					},
+				},
+			},
+		},
+		{
+			name: "without brackets",
+			fields: fields{
+				rawYaml: "{{INSTANCE}}-{{NAMESPACE}}-{{TEMPLATE}}",
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"TEST": "OK"},
+					},
+				},
+			},
+			want: &RawYAMLBuilder{
+				rawYaml: "cs1-cosmo-user-tom-code-server",
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"TEST": "OK"},
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tr := &RawYAMLBuilder{
+				rawYaml: tt.fields.rawYaml,
+				inst:    tt.fields.inst,
+			}
+			if got := tr.ReplaceDefaultVars(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RawYAMLBuilder.ReplaceDefaultVars() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRawYAMLBuilder_ReplaceCustomVars(t *testing.T) {
+	type fields struct {
+		rawYaml string
+		inst    *cosmov1alpha1.Instance
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   *RawYAMLBuilder
+	}{
+		{
+			name: "OK",
+			fields: fields{
+				rawYaml: "{{INSTANCE}}-{{NAMESPACE}}-{{TEMPLATE}}-{{TEST}}",
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"{{TEST}}": "OK"},
+					},
+				},
+			},
+			want: &RawYAMLBuilder{
+				rawYaml: "{{INSTANCE}}-{{NAMESPACE}}-{{TEMPLATE}}-OK",
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"{{TEST}}": "OK"},
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tr := &RawYAMLBuilder{
+				rawYaml: tt.fields.rawYaml,
+				inst:    tt.fields.inst,
+			}
+			if got := tr.ReplaceCustomVars(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RawYAMLBuilder.ReplaceCustomVars() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestValidCustomVars(t *testing.T) {
+	type args struct {
+		varString string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "OK",
+			args: args{
+				varString: "{{INSTACE}}",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Invalid",
+			args: args{
+				varString: "INSTACE",
+			},
+			wantErr: true,
+		},
+		{
+			name: "Invalid sufix",
+			args: args{
+				varString: "{{INSTACE)",
+			},
+			wantErr: true,
+		},
+		{
+			name: "Invalid prefix",
+			args: args{
+				varString: "$(INSTACE}}",
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ValidCustomVars(tt.args.varString); (err != nil) != tt.wantErr {
+				t.Errorf("ValidCustomVars() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestFixupTemplateVarKey(t *testing.T) {
+	type args struct {
+		key string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "OK",
+			args: args{
+				key: "INSTANCE",
+			},
+			want: "{{INSTANCE}}",
+		},
+		{
+			name: "Valid prefix",
+			args: args{
+				key: "{{INSTANCE",
+			},
+			want: "{{INSTANCE}}",
+		},
+		{
+			name: "Valid sufix",
+			args: args{
+				key: "INSTANCE}}",
+			},
+			want: "{{INSTANCE}}",
+		},
+		{
+			name: "No change",
+			args: args{
+				key: "{{INSTANCE}}",
+			},
+			want: "{{INSTANCE}}",
+		},
+		{
+			name: "No change 2",
+			args: args{
+				key: "{INSTA{{NCE}}}",
+			},
+			want: "{{{INSTA{{NCE}}}",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FixupTemplateVarKey(tt.args.key); got != tt.want {
+				t.Errorf("FixupTemplateVarKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

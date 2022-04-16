@@ -66,7 +66,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	// Build child resource config by template
-	builts, err := template.NewUnstructuredBuilder(tmpl.Spec.RawYaml, &inst).
+	builts, err := template.NewRawYAMLBuilder(tmpl.Spec.RawYaml, &inst).
 		ReplaceDefaultVars().
 		ReplaceCustomVars().
 		Build()

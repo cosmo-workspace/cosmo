@@ -214,7 +214,7 @@ func (h *InstanceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) e
 }
 
 func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl cosmov1alpha1.Template, inst cosmov1alpha1.Instance) error {
-	builts, err := template.NewUnstructuredBuilder(tmpl.Spec.RawYaml, &inst).
+	builts, err := template.NewRawYAMLBuilder(tmpl.Spec.RawYaml, &inst).
 		ReplaceDefaultVars().
 		ReplaceCustomVars().
 		Build()

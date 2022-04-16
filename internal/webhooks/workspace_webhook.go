@@ -254,6 +254,6 @@ func preTemplateBuild(ws wsv1alpha1.Workspace, rawTmpl string) ([]unstructured.U
 	inst.SetName(ws.GetName())
 	inst.SetNamespace(ws.GetNamespace())
 
-	builder := template.NewUnstructuredBuilder(rawTmpl, &inst)
+	builder := template.NewRawYAMLBuilder(rawTmpl, &inst)
 	return builder.Build()
 }
