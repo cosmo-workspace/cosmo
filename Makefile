@@ -52,8 +52,65 @@ help: ## Display this help.
 
 ##@ Development
 
+define WEBHOOK_CHART_SUFIX
+---
+{{- if not $$.Values.enableCertManager }}
+apiVersion: v1
+kind: Secret
+metadata:
+name: webhook-server-cert
+namespace: {{ .Release.Namespace }}
+labels:
+	{{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+type: kubernetes.io/tls
+data:
+ca.crt: {{ $$tls.caCert }}
+tls.crt: {{ $$tls.clientCert }}
+tls.key: {{ $$tls.clientKey }}
+{{- else }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+labels:
+	{{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+name: cosmo-serving-cert
+namespace: {{ .Release.Namespace }}
+spec:
+dnsNames:
+- cosmo-webhook-service.{{ .Release.Namespace }}.svc
+- cosmo-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
+issuerRef:
+	kind: ClusterIssuer
+	name: cosmo-selfsigned-clusterissuer
+secretName: webhook-server-cert
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+labels:
+	{{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+name: cosmo-selfsigned-clusterissuer
+namespace: {{ .Release.Namespace }}
+spec:
+selfSigned: {}
+{{- end }}
+endef
+
+WEBHOOK_CHART_YAML ?= charts/cosmo-controller-manager/templates/webhook.yaml
+
+export WEBHOOK_CHART_SUFIX
+gen-charts:
+	cp config/crd/bases/* charts/cosmo-controller-manager/crds/
+	kustomize build config/webhook-chart \
+		| sed -e 's/namespace: system/namespace: {{ .Release.Namespace }}/g' \
+		| sed -z 's;apiVersion: v1\nkind: Service\nmetadata:\n  name: cosmo-webhook-service\n  namespace: {{ .Release.Namespace }}\nspec:\n  ports:\n  - port: 443\n    targetPort: 9443\n  selector:\n    control-plane: controller-manager;{{ $$tls := fromYaml ( include "cosmo-controller-manager.gen-certs" . ) }};g' \
+		| sed -z 's;creationTimestamp: null;{{- if $$.Values.enableCertManager }}\n  annotations:\n    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/cosmo-serving-cert\n  {{- end }}\n  labels:\n    {{- include "cosmo-controller-manager.labels" . | nindent 4 }};g' \
+		| sed -z 's;clientConfig:;clientConfig:\n    caBundle: {{ if not $$.Values.enableCertManager -}}{{ $$tls.caCert }}{{- else -}}Cg=={{ end }};g' > $(WEBHOOK_CHART_YAML)
+	echo "$$WEBHOOK_CHART_SUFIX" >> $(WEBHOOK_CHART_YAML)
+
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	make gen-charts
 
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
