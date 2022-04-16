@@ -147,7 +147,7 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 			continue
 		}
 
-		current, err := r.GetUnstructured(ctx, built.GroupVersionKind(), built.GetName(), built.GetNamespace())
+		current, err := kubeutil.GetUnstructured(ctx, r.Client, built.GroupVersionKind(), built.GetName(), built.GetNamespace())
 		if err != nil {
 			// if not found, create resource
 			if apierrs.IsNotFound(err) {
@@ -220,11 +220,11 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 }
 
 func (r *InstanceReconciler) dryrunApply(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
-	return r.Client.Apply(ctx, obj, InstControllerFieldManager, true, true)
+	return kubeutil.Apply(ctx, r.Client, obj, InstControllerFieldManager, true, true)
 }
 
 func (r *InstanceReconciler) apply(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
-	return r.Client.Apply(ctx, obj, InstControllerFieldManager, false, true)
+	return kubeutil.Apply(ctx, r.Client, obj, InstControllerFieldManager, false, true)
 }
 
 func (r *InstanceReconciler) SetupWithManager(mgr ctrl.Manager) error {
