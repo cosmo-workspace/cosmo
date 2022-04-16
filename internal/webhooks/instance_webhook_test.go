@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 
@@ -333,7 +334,7 @@ spec:
 
 			expectedInst.ObjectMeta = createdInst.ObjectMeta
 
-			eq := kubeutil.LooseDeepEqual(createdInst.DeepCopy(), expectedInst.DeepCopy(), kubeutil.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdInst, &expectedInst, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})
@@ -391,7 +392,7 @@ spec:
 
 			expectedInst.ObjectMeta = createdInst.ObjectMeta
 
-			eq := kubeutil.LooseDeepEqual(createdInst.DeepCopy(), expectedInst.DeepCopy(), kubeutil.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdInst, &expectedInst, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})

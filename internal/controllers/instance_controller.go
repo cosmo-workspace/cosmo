@@ -177,7 +177,7 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 			}
 
 			// compare current with the desired state
-			if !kubeutil.LooseDeepEqual(current.DeepCopy(), desired.DeepCopy()) {
+			if !kubeutil.LooseDeepEqual(current, desired) {
 				log.Info("current is not desired state, synced", "kind", desired.GetKind(), "name", desired.GetName())
 				log.PrintObjectDiff(current, desired)
 

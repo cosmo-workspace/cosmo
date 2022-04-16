@@ -2,17 +2,18 @@ package kubeutil
 
 import (
 	"io"
-	"os"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type Comparable interface {
 	GetManagedFields() []metav1.ManagedFieldsEntry
 	SetManagedFields(managedFields []metav1.ManagedFieldsEntry)
 	SetResourceVersion(resourceVersion string)
+	DeepCopyObject() runtime.Object
 }
 
 func resetManagedFieldTime(obj Comparable) {
@@ -39,13 +40,15 @@ func (o printDiff) Apply(x, y Comparable) {
 	clog.PrintObjectDiff(o.out, x, y)
 }
 
-func WithPrintDiff() DeepEqualOption {
-	return printDiff{out: os.Stderr}
+func WithPrintDiff(w io.Writer) DeepEqualOption {
+	return printDiff{out: w}
 }
 
 // LooseDeepEqual deep equal objects without dynamic values
-// This function removes some fields, so you should give deep-copied objects.
-func LooseDeepEqual(x, y Comparable, opts ...DeepEqualOption) bool {
+func LooseDeepEqual(xObj, yObj Comparable, opts ...DeepEqualOption) bool {
+	x := xObj.DeepCopyObject().(Comparable)
+	y := yObj.DeepCopyObject().(Comparable)
+
 	resetManagedFieldTime(x)
 	resetManagedFieldTime(y)
 

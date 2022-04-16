@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"context"
+	"os"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -142,7 +143,7 @@ spec:
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			eq := kubeutil.LooseDeepEqual(createdTmpl.DeepCopy(), expectedTmpl.DeepCopy(), kubeutil.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdTmpl, expectedTmpl, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})

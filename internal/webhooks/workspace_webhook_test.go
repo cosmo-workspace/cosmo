@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"context"
+	"os"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -284,7 +285,7 @@ spec:
 
 			expectedWs.ObjectMeta = createdWs.ObjectMeta
 
-			eq := kubeutil.LooseDeepEqual(createdWs.DeepCopy(), expectedWs.DeepCopy(), kubeutil.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdWs, &expectedWs, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})
@@ -358,7 +359,7 @@ spec:
 
 			expectedWs.ObjectMeta = createdWs.ObjectMeta
 
-			eq := kubeutil.LooseDeepEqual(createdWs.DeepCopy(), expectedWs.DeepCopy(), kubeutil.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdWs, &expectedWs, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})

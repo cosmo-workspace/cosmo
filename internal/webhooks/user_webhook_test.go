@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 
@@ -76,7 +77,7 @@ var _ = Describe("User webhook", func() {
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			// eq := kubeutil.LooseDeepEqual(user.DeepCopy(), createdUser.DeepCopy(), kubeutil.WithPrintDiff())
+			// eq := kubeutil.LooseDeepEqual(user.DeepCopy(), createdUser.DeepCopy(), kubeutil.WithPrintDiff(os.Stderr))
 			// Expect(eq).Should(BeTrue())
 		})
 	})
@@ -117,7 +118,7 @@ var _ = Describe("User webhook", func() {
 
 			expectedUser.ObjectMeta = createdUser.ObjectMeta
 
-			eq := kubeutil.LooseDeepEqual(expectedUser, createdUser.DeepCopy(), kubeutil.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(expectedUser, &createdUser, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})
@@ -194,7 +195,7 @@ var _ = Describe("User webhook", func() {
 
 			expectedUser.ObjectMeta = createdUser.ObjectMeta
 
-			eq := kubeutil.LooseDeepEqual(expectedUser, createdUser.DeepCopy())
+			eq := kubeutil.LooseDeepEqual(expectedUser, &createdUser)
 			Expect(eq).Should(BeTrue())
 		})
 	})
