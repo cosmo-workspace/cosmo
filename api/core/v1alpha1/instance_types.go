@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
@@ -31,6 +32,18 @@ type Instance struct {
 
 	Spec   InstanceSpec   `json:"spec,omitempty"`
 	Status InstanceStatus `json:"status,omitempty"`
+}
+
+func (i *Instance) GetSpec() *InstanceSpec {
+	return &i.Spec
+}
+
+func (i *Instance) GetStatus() *InstanceStatus {
+	return &i.Status
+}
+
+func (i *Instance) GetScope() meta.RESTScope {
+	return meta.RESTScopeNamespace
 }
 
 // +kubebuilder:object:root=true

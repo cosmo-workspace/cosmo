@@ -29,6 +29,10 @@ type Template struct {
 	Spec TemplateSpec `json:"spec,omitempty"`
 }
 
+func (t *Template) GetSpec() *TemplateSpec {
+	return &t.Spec
+}
+
 // +kubebuilder:object:root=true
 // TemplateList contains a list of Template
 type TemplateList struct {
