@@ -20,6 +20,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
@@ -207,22 +208,22 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 		h.Log.DebugAll().Info("workspace config in template",
 			"gvk", u.GroupVersionKind(),
 			"cfgServiceName", cfg.ServiceName, "cfgIngressName", cfg.IngressName,
-			"instFixedName", cosmov1alpha1.InstanceResourceName(template.DefaultVarsInstance, u.GetName()),
-			"svcGvkEqual", cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK),
-			"ingGvkEqual", cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK),
-			"svcNameEqual", cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName),
-			"ingNameEqual", cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.IngressName),
+			"instFixedName", instance.InstanceResourceName(template.DefaultVarsInstance, u.GetName()),
+			"svcGvkEqual", kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK),
+			"ingGvkEqual", kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK),
+			"svcNameEqual", instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName),
+			"ingNameEqual", instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.IngressName),
 		)
 
-		if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) &&
-			cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName) {
+		if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) &&
+			instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName) {
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &svc)
 			if err != nil {
 				return err
 			}
 
-		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) &&
-			cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.IngressName) {
+		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) &&
+			instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.IngressName) {
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &ing)
 			if err != nil {
 				return err

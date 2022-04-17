@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	. "github.com/onsi/gomega"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
@@ -716,6 +717,58 @@ status:
 						Expect(strings.Join(diff, "\n")).Should(BeEquivalentTo(tt.wantDiff))
 					}
 				}
+			}
+		})
+	}
+}
+
+func TestIsGVKEqual(t *testing.T) {
+	type args struct {
+		a schema.GroupVersionKind
+		b schema.GroupVersionKind
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "Equal",
+			args: args{
+				a: schema.GroupVersionKind{
+					Group:   "apps",
+					Version: "v1",
+					Kind:    "Ingress",
+				},
+				b: schema.GroupVersionKind{
+					Group:   "apps",
+					Version: "v1",
+					Kind:    "Ingress",
+				},
+			},
+			want: true,
+		},
+		{
+			name: "Not Equal",
+			args: args{
+				a: schema.GroupVersionKind{
+					Group:   "apps",
+					Version: "v1",
+					Kind:    "Ingress",
+				},
+				b: schema.GroupVersionKind{
+					Group:   "extentions",
+					Version: "v1",
+					Kind:    "Ingress",
+				},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsGVKEqual(tt.args.a, tt.args.b); got != tt.want {
+				t.Errorf("IsGVKEqual() = %v, want %v", got, tt.want)
 			}
 		})
 	}

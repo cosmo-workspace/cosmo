@@ -15,6 +15,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
@@ -81,14 +82,14 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 	if netSpec != nil {
 		for i, ingSpec := range netSpec.Ingress {
 			if ingSpec.TargetName != "" {
-				netSpec.Ingress[i].TargetName = cosmov1alpha1.InstanceResourceName(inst.GetName(), ingSpec.TargetName)
+				netSpec.Ingress[i].TargetName = instance.InstanceResourceName(inst.GetName(), ingSpec.TargetName)
 				fixIngressBackendName(netSpec.Ingress[i].Rules, inst.GetName())
 			}
 		}
 
 		for i, svcSpec := range netSpec.Service {
 			if svcSpec.TargetName != "" {
-				netSpec.Service[i].TargetName = cosmov1alpha1.InstanceResourceName(inst.GetName(), svcSpec.TargetName)
+				netSpec.Service[i].TargetName = instance.InstanceResourceName(inst.GetName(), svcSpec.TargetName)
 			}
 		}
 	}
@@ -96,14 +97,14 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 	scaleSpecs := inst.Spec.Override.Scale
 	for i, scaleSpec := range scaleSpecs {
 		if scaleSpec.Target.Name != "" {
-			scaleSpecs[i].Target.Name = cosmov1alpha1.InstanceResourceName(inst.GetName(), scaleSpec.Target.Name)
+			scaleSpecs[i].Target.Name = instance.InstanceResourceName(inst.GetName(), scaleSpec.Target.Name)
 		}
 	}
 
 	patchSpec := inst.Spec.Override.PatchesJson6902
 	for i, p := range patchSpec {
 		if p.Target.Name != "" {
-			patchSpec[i].Target.Name = cosmov1alpha1.InstanceResourceName(inst.GetName(), p.Target.Name)
+			patchSpec[i].Target.Name = instance.InstanceResourceName(inst.GetName(), p.Target.Name)
 		}
 	}
 
@@ -121,10 +122,10 @@ func fixIngressBackendName(ingRules []netv1.IngressRule, instName string) {
 	for _, rule := range ingRules {
 		for _, path := range rule.HTTP.Paths {
 			if path.Backend.Service != nil {
-				path.Backend.Service.Name = cosmov1alpha1.InstanceResourceName(instName, path.Backend.Service.Name)
+				path.Backend.Service.Name = instance.InstanceResourceName(instName, path.Backend.Service.Name)
 			}
 			if path.Backend.Resource != nil {
-				path.Backend.Resource.Name = cosmov1alpha1.InstanceResourceName(instName, path.Backend.Resource.Name)
+				path.Backend.Resource.Name = instance.InstanceResourceName(instName, path.Backend.Resource.Name)
 			}
 		}
 	}

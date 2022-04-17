@@ -23,6 +23,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
 var _ = Describe("Template controller", func() {
@@ -52,7 +53,7 @@ spec:
 	}
 
 	expectedPodApply := func(instName, namespace string, ownerRef metav1.OwnerReference) *corev1apply.PodApplyConfiguration {
-		return corev1apply.Pod(cosmov1alpha1.InstanceResourceName(instName, "alpine"), namespace).
+		return corev1apply.Pod(instance.InstanceResourceName(instName, "alpine"), namespace).
 			WithAPIVersion("v1").
 			WithKind("Pod").
 			WithLabels(map[string]string{
@@ -140,7 +141,7 @@ spec:
 			var pod corev1.Pod
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "alpine"),
+					Name:      instance.InstanceResourceName(instName, "alpine"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &pod)
@@ -160,7 +161,7 @@ spec:
 			Expect(eq).Should(BeTrue())
 
 			pod.SetGroupVersionKind(schema.FromAPIVersionAndKind("v1", "Pod"))
-			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &pod)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(createdInst, &pod)).Should(BeTrue())
 		})
 	})
 
@@ -208,7 +209,7 @@ spec:
 			var pod corev1.Pod
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "alpine"),
+					Name:      instance.InstanceResourceName(instName, "alpine"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &pod)

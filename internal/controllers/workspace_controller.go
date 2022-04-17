@@ -19,6 +19,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
@@ -125,7 +126,7 @@ func (r *WorkspaceReconciler) patchInstanceToWorkspaceDesired(inst *cosmov1alpha
 	for i, netRule := range ws.Spec.Network {
 		svcPorts[i] = netRule.ServicePort()
 		ingRules[i] = netRule.IngressRule(
-			cosmov1alpha1.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName))
+			instance.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName))
 	}
 
 	scaleTargetRef := func(ws wsv1alpha1.Workspace) cosmov1alpha1.ObjectRef {

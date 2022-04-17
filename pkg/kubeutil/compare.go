@@ -2,11 +2,13 @@ package kubeutil
 
 import (
 	"io"
+	"reflect"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 type Comparable interface {
@@ -60,4 +62,8 @@ func LooseDeepEqual(xObj, yObj Comparable, opts ...DeepEqualOption) bool {
 	}
 
 	return equality.Semantic.DeepEqual(x, y)
+}
+
+func IsGVKEqual(a, b schema.GroupVersionKind) bool {
+	return reflect.DeepEqual(a, b)
 }

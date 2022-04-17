@@ -22,6 +22,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -220,7 +221,7 @@ spec:
 
 	inst2Pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      cosmov1alpha1.InstanceResourceName(inst2.Name, "alpine"),
+			Name:      instance.InstanceResourceName(inst2.Name, "alpine"),
 			Namespace: inst2.Namespace,
 			Labels: map[string]string{
 				cosmov1alpha1.LabelKeyInstance: "inst2",

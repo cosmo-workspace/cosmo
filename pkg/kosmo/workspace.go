@@ -13,6 +13,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
@@ -88,7 +89,7 @@ func (c *Client) GetWorkspaceServicesAndIngress(ctx context.Context, ws wsv1alph
 	}
 
 	for _, v := range svcList.Items {
-		if cosmov1alpha1.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.ServiceName) {
+		if instance.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.ServiceName) {
 			svc = v
 		}
 	}
@@ -98,7 +99,7 @@ func (c *Client) GetWorkspaceServicesAndIngress(ctx context.Context, ws wsv1alph
 	}
 
 	for _, v := range ingList.Items {
-		if cosmov1alpha1.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.IngressName) {
+		if instance.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.IngressName) {
 			ing = v
 		}
 	}

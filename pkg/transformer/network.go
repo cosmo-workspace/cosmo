@@ -6,6 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
@@ -26,7 +27,7 @@ func (t *NetworkTransformer) Transform(src *unstructured.Unstructured) (*unstruc
 	}
 
 	for _, ingSpec := range t.netSpec.Ingress {
-		if cosmov1alpha1.IsGVKEqual(obj.GroupVersionKind(), kubeutil.IngressGVK) && cosmov1alpha1.EqualInstanceResourceName(t.instName, obj.GetName(), ingSpec.TargetName) {
+		if kubeutil.IsGVKEqual(obj.GroupVersionKind(), kubeutil.IngressGVK) && instance.EqualInstanceResourceName(t.instName, obj.GetName(), ingSpec.TargetName) {
 			// Append ingress rules
 			overrideIngressRules(obj, ingSpec.Rules)
 
@@ -36,7 +37,7 @@ func (t *NetworkTransformer) Transform(src *unstructured.Unstructured) (*unstruc
 	}
 
 	for _, svcSpec := range t.netSpec.Service {
-		if cosmov1alpha1.IsGVKEqual(obj.GroupVersionKind(), kubeutil.ServiceGVK) && cosmov1alpha1.EqualInstanceResourceName(t.instName, obj.GetName(), svcSpec.TargetName) {
+		if kubeutil.IsGVKEqual(obj.GroupVersionKind(), kubeutil.ServiceGVK) && instance.EqualInstanceResourceName(t.instName, obj.GetName(), svcSpec.TargetName) {
 			// Append service ports
 			overrideServicePort(obj, svcSpec.Ports)
 		}

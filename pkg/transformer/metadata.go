@@ -9,6 +9,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
 type MetadataTransformer struct {
@@ -27,7 +28,7 @@ func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstru
 
 	// Set name prefix
 	if !t.disableNamePrefix() {
-		obj.SetName(cosmov1alpha1.InstanceResourceName(t.inst.Name, obj.GetName()))
+		obj.SetName(instance.InstanceResourceName(t.inst.Name, obj.GetName()))
 	}
 
 	// Set namespace

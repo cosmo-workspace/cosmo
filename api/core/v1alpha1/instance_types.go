@@ -106,15 +106,6 @@ type ObjectRef struct {
 	UpdateTimestamp        *metav1.Time `json:"updateTimestamp,omitempty"`
 }
 
-type gvkObject interface {
-	GroupVersionKind() schema.GroupVersionKind
-	GetName() string
-}
-
-func (r ObjectRef) IsTarget(instanceName string, obj gvkObject) bool {
-	return IsGVKEqual(r.GroupVersionKind(), obj.GroupVersionKind()) && EqualInstanceResourceName(instanceName, r.Name, obj.GetName())
-}
-
 func (r *ObjectRef) SetName(name string) {
 	r.Name = name
 }

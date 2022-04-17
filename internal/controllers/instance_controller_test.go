@@ -36,6 +36,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
@@ -129,7 +130,7 @@ spec:
 	}
 
 	expectedDeployApply := func(instName, namespace, imageTag string, ownerRef metav1.OwnerReference) *appsv1apply.DeploymentApplyConfiguration {
-		return appsv1apply.Deployment(cosmov1alpha1.InstanceResourceName(instName, "nginx"), namespace).
+		return appsv1apply.Deployment(instance.InstanceResourceName(instName, "nginx"), namespace).
 			WithAPIVersion("apps/v1").
 			WithKind("Deployment").
 			WithLabels(map[string]string{
@@ -169,7 +170,7 @@ spec:
 	}
 
 	expectedServiceApply := func(instName, namespace string, ownerRef metav1.OwnerReference) *corev1apply.ServiceApplyConfiguration {
-		return corev1apply.Service(cosmov1alpha1.InstanceResourceName(instName, "nginx"), namespace).
+		return corev1apply.Service(instance.InstanceResourceName(instName, "nginx"), namespace).
 			WithAPIVersion("v1").
 			WithKind("Service").
 			WithLabels(map[string]string{
@@ -198,7 +199,7 @@ spec:
 	}
 
 	expectedIngressApply := func(instName, namespace, domain string, ownerRef metav1.OwnerReference) *netv1apply.IngressApplyConfiguration {
-		return netv1apply.Ingress(cosmov1alpha1.InstanceResourceName(instName, "nginx"), namespace).
+		return netv1apply.Ingress(instance.InstanceResourceName(instName, "nginx"), namespace).
 			WithAPIVersion("networking.k8s.io/v1").
 			WithKind("Ingress").
 			WithLabels(map[string]string{
@@ -223,7 +224,7 @@ spec:
 							WithPathType(netv1.PathTypePrefix).
 							WithBackend(netv1apply.IngressBackend().
 								WithService(netv1apply.IngressServiceBackend().
-									WithName(cosmov1alpha1.InstanceResourceName(instName, "nginx")).
+									WithName(instance.InstanceResourceName(instName, "nginx")).
 									WithPort(netv1apply.ServiceBackendPort().
 										WithNumber(80))))))))
 	}
@@ -297,7 +298,7 @@ spec:
 			var deploy appsv1.Deployment
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &deploy)
@@ -321,13 +322,13 @@ spec:
 
 			deploy.SetGroupVersionKind(kubeutil.DeploymentGVK)
 
-			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &deploy)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(createdInst, &deploy)).Should(BeTrue())
 
 			// Service
 			var svc corev1.Service
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &svc)
@@ -350,13 +351,13 @@ spec:
 
 			svc.SetGroupVersionKind(kubeutil.ServiceGVK)
 
-			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &svc)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(createdInst, &svc)).Should(BeTrue())
 
 			// Ingress
 			var ing netv1.Ingress
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &ing)
@@ -379,7 +380,7 @@ spec:
 
 			ing.SetGroupVersionKind(kubeutil.IngressGVK)
 
-			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &ing)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(createdInst, &ing)).Should(BeTrue())
 
 			By("checking creation time equal to update time")
 
@@ -534,7 +535,7 @@ spec:
 			var deploy appsv1.Deployment
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &deploy)
@@ -557,7 +558,7 @@ spec:
 			var svc corev1.Service
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &svc)
@@ -580,7 +581,7 @@ spec:
 			var ing netv1.Ingress
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &ing)
@@ -661,7 +662,7 @@ rules:
 
 			var cr rbacv1.ClusterRole
 			key = client.ObjectKey{
-				Name: cosmov1alpha1.InstanceResourceName(clusterLevelInstName, "privileged"),
+				Name: instance.InstanceResourceName(clusterLevelInstName, "privileged"),
 			}
 			err = k8sClient.Get(ctx, key, &cr)
 			Expect(apierrs.IsNotFound(err)).Should(BeTrue())

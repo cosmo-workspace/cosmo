@@ -1,9 +1,9 @@
-package v1alpha1
+package instance
 
 import (
 	"testing"
 
-	"k8s.io/apimachinery/pkg/runtime/schema"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
 
 func Test_InstanceResourceName(t *testing.T) {
@@ -77,31 +77,10 @@ func TestEqualInstanceResourceName(t *testing.T) {
 	}
 }
 
-func TestIsGVKEqual(t *testing.T) {
-	type args struct {
-		a schema.GroupVersionKind
-		b schema.GroupVersionKind
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := IsGVKEqual(tt.args.a, tt.args.b); got != tt.want {
-				t.Errorf("IsGVKEqual() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestExistInLastApplyed(t *testing.T) {
 	type args struct {
-		inst   Instance
-		gvkObj gvkObject
+		inst   cosmov1alpha1.Instance
+		gvkObj GVKNameGetter
 	}
 	tests := []struct {
 		name string
