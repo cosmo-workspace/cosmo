@@ -9,7 +9,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
@@ -23,12 +22,7 @@ func NewClient(c client.Client) Client {
 }
 
 func NewClientByRestConfig(cfg *rest.Config, scheme *runtime.Scheme) (Client, error) {
-	mapper, err := apiutil.NewDynamicRESTMapper(cfg)
-	if err != nil {
-		return Client{}, err
-	}
-
-	clientOptions := client.Options{Scheme: scheme, Mapper: mapper}
+	clientOptions := client.Options{Scheme: scheme}
 	client, err := client.New(cfg, clientOptions)
 	if err != nil {
 		return Client{}, err
@@ -50,25 +44,21 @@ func (c *Client) GetInstance(ctx context.Context, name, namespace string) (*cosm
 	return &inst, nil
 }
 
+func (c *Client) GetClusterInstance(ctx context.Context, name string) (*cosmov1alpha1.ClusterInstance, error) {
+	inst := cosmov1alpha1.ClusterInstance{}
+	key := types.NamespacedName{
+		Name: name,
+	}
+
+	if err := c.Get(ctx, key, &inst); err != nil {
+		return nil, err
+	}
+	return &inst, nil
+}
+
 func (c *Client) ListInstances(ctx context.Context, namespace string) ([]cosmov1alpha1.Instance, error) {
 	instList := cosmov1alpha1.InstanceList{}
 	opts := &client.ListOptions{Namespace: namespace}
-
-	err := c.List(ctx, &instList, opts)
-	return instList.Items, err
-}
-
-func (c *Client) ListInstancesByType(ctx context.Context, namespace string, types []string) ([]cosmov1alpha1.Instance, error) {
-	instList := cosmov1alpha1.InstanceList{}
-
-	ls := labels.NewSelector()
-	req, _ := labels.NewRequirement(cosmov1alpha1.TemplateLabelKeyType, selection.In, types)
-	ls = ls.Add(*req)
-
-	opts := &client.ListOptions{
-		LabelSelector: ls,
-		Namespace:     namespace,
-	}
 
 	err := c.List(ctx, &instList, opts)
 	return instList.Items, err
@@ -98,6 +88,19 @@ func (c *Client) ListTemplatesByType(ctx context.Context, tmplTypes []string) ([
 
 func (c *Client) GetTemplate(ctx context.Context, tmplName string) (*cosmov1alpha1.Template, error) {
 	tmpl := cosmov1alpha1.Template{}
+
+	key := types.NamespacedName{
+		Name: tmplName,
+	}
+
+	if err := c.Get(ctx, key, &tmpl); err != nil {
+		return nil, err
+	}
+	return &tmpl, nil
+}
+
+func (c *Client) GetClusterTemplate(ctx context.Context, tmplName string) (*cosmov1alpha1.ClusterTemplate, error) {
+	tmpl := cosmov1alpha1.ClusterTemplate{}
 
 	key := types.NamespacedName{
 		Name: tmplName,

@@ -35,6 +35,9 @@ var etmpl2 *cosmov1alpha1.Template
 var einst2 *cosmov1alpha1.Instance
 var einst2Pod *corev1.Pod
 
+var ectmpl1 *cosmov1alpha1.ClusterTemplate
+var ecinst1 *cosmov1alpha1.ClusterInstance
+
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
 
@@ -65,7 +68,7 @@ var _ = BeforeSuite(func() {
 
 	//+kubebuilder:scaffold:scheme
 
-	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
+	k8sClient, err = NewClientByRestConfig(cfg, scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 	Expect(k8sClient).NotTo(BeNil())
 
@@ -75,6 +78,9 @@ var _ = BeforeSuite(func() {
 	Expect(k8sClient.Create(ctx, etmpl2)).ShouldNot(HaveOccurred())
 	Expect(k8sClient.Create(ctx, einst2)).ShouldNot(HaveOccurred())
 	Expect(k8sClient.Create(ctx, einst2Pod)).ShouldNot(HaveOccurred())
+
+	Expect(k8sClient.Create(ctx, ecinst1)).ShouldNot(HaveOccurred())
+	Expect(k8sClient.Create(ctx, ectmpl1)).ShouldNot(HaveOccurred())
 
 }, 60)
 
