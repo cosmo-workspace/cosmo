@@ -58,41 +58,41 @@ define WEBHOOK_CHART_SUFIX
 apiVersion: v1
 kind: Secret
 metadata:
-name: webhook-server-cert
-namespace: {{ .Release.Namespace }}
-labels:
-  {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+  name: webhook-server-cert
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
 type: kubernetes.io/tls
 data:
-ca.crt: {{ $$tls.caCert }}
-tls.crt: {{ $$tls.clientCert }}
-tls.key: {{ $$tls.clientKey }}
+  ca.crt: {{ $$tls.caCert }}
+  tls.crt: {{ $$tls.clientCert }}
+  tls.key: {{ $$tls.clientKey }}
 {{- else }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-labels:
-  {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
-name: cosmo-serving-cert
-namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+  name: cosmo-serving-cert
+  namespace: {{ .Release.Namespace }}
 spec:
-dnsNames:
-- cosmo-webhook-service.{{ .Release.Namespace }}.svc
-- cosmo-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
-issuerRef:
-  kind: ClusterIssuer
-  name: cosmo-selfsigned-clusterissuer
-secretName: webhook-server-cert
+  dnsNames:
+  - cosmo-webhook-service.{{ .Release.Namespace }}.svc
+  - cosmo-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    kind: ClusterIssuer
+    name: cosmo-selfsigned-clusterissuer
+  secretName: webhook-server-cert
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-labels:
-  {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
-name: cosmo-selfsigned-clusterissuer
-namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+  name: cosmo-selfsigned-clusterissuer
+  namespace: {{ .Release.Namespace }}
 spec:
-selfSigned: {}
+  selfSigned: {}
 {{- end }}
 endef
 
