@@ -146,6 +146,43 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 			},
 			wantErr: ErrNotTypeWorkspace,
 		},
+		{
+			name: "not type workspace",
+			args: args{
+				obj: &cosmov1alpha1.Template{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "tmpl1",
+						Namespace: wsv1alpha1.UserNamespace("tom"),
+						Labels: map[string]string{
+							cosmov1alpha1.TemplateLabelKeyType: "invalid",
+						},
+						Annotations: map[string]string{
+							wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      "workspace1",
+							wsv1alpha1.TemplateAnnKeyWorkspaceService:         "workspace2",
+							wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         "workspace3",
+							wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
+							wsv1alpha1.TemplateAnnKeyURLBase:                  "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+						},
+					},
+				},
+			},
+			wantErr: ErrNotTypeWorkspace,
+		},
+		{
+			name: "no annotations",
+			args: args{
+				obj: &cosmov1alpha1.Template{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "tmpl1",
+						Namespace: wsv1alpha1.UserNamespace("tom"),
+						Labels: map[string]string{
+							cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
+						},
+					},
+				},
+			},
+			want: wsv1alpha1.Config{},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
