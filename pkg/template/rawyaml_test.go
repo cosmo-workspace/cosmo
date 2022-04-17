@@ -7,7 +7,6 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 func TestNewRawYAMLBuilder(t *testing.T) {
@@ -325,125 +324,6 @@ data:
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("RawYAMLBuilder.Build() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestStringToUnstructured(t *testing.T) {
-	type args struct {
-		str string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantGvk schema.GroupVersionKind
-		want    unstructured.Unstructured
-		wantErr bool
-	}{
-		{
-			name: "OK",
-			args: args{
-				str: `apiVersion: networking.k8s.io/v1
-kind: XXXX
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: alb
-    cosmo/ingress-patch-enable: "true"
-  labels:
-    key: val
-  name: test
-  namespace: default
-spec:
-  host: example.com`},
-			wantGvk: schema.GroupVersionKind{Kind: "XXXX", Group: "networking.k8s.io", Version: "v1"},
-			want: unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"apiVersion": "networking.k8s.io/v1",
-					"kind":       "XXXX",
-					"metadata": map[string]interface{}{
-						"name":      "test",
-						"namespace": "default",
-						"labels": map[string]interface{}{
-							"key": "val",
-						},
-						"annotations": map[string]interface{}{
-							"kubernetes.io/ingress.class": "alb",
-							"cosmo/ingress-patch-enable":  "true",
-						},
-					},
-					"spec": map[string]interface{}{
-						"host": "example.com",
-					},
-				},
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotGvk, got, err := StringToUnstructured(tt.args.str)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("StringToUnstructured() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(*gotGvk, tt.wantGvk) {
-				t.Errorf("StringToUnstructured() gotGvk = %v, wantGvk %v", *gotGvk, tt.wantGvk)
-			}
-			if !reflect.DeepEqual(*got, tt.want) {
-				t.Errorf("StringToUnstructured() got = %v, want %v", got, &tt.want)
-			}
-		})
-	}
-}
-
-func TestUnstructuredToJSONBytes(t *testing.T) {
-	type args struct {
-		obj *unstructured.Unstructured
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name: "OK",
-			args: args{
-				obj: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"apiVersion": "networking.k8s.io/v1",
-						"kind":       "Ingress",
-						"metadata": map[string]interface{}{
-							"name":      "test",
-							"namespace": "default",
-							"labels": map[string]interface{}{
-								"key": "val",
-							},
-							"annotations": map[string]interface{}{
-								"kubernetes.io/ingress.class": "alb",
-								"cosmo/ingress-patch-enable":  "true",
-							},
-						},
-						"spec": map[string]interface{}{
-							"host": "example.com",
-						},
-					},
-				},
-			},
-			want:    `{"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"cosmo/ingress-patch-enable":"true","kubernetes.io/ingress.class":"alb"},"labels":{"key":"val"},"name":"test","namespace":"default"},"spec":{"host":"example.com"}}`,
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := UnstructuredToJSONBytes(tt.args.obj)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("UnstructuredToJSONBytes() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if string(got) != tt.want {
-				t.Errorf("UnstructuredToJSONBytes() = %v, want %v", string(got), tt.want)
 			}
 		})
 	}
