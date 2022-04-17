@@ -21,6 +21,7 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
@@ -207,20 +208,20 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 			"gvk", u.GroupVersionKind(),
 			"cfgServiceName", cfg.ServiceName, "cfgIngressName", cfg.IngressName,
 			"instFixedName", cosmov1alpha1.InstanceResourceName(template.DefaultVarsInstance, u.GetName()),
-			"svcGvkEqual", cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kosmo.ServiceGVK),
-			"ingGvkEqual", cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kosmo.IngressGVK),
+			"svcGvkEqual", cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK),
+			"ingGvkEqual", cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK),
 			"svcNameEqual", cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName),
 			"ingNameEqual", cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.IngressName),
 		)
 
-		if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kosmo.ServiceGVK) &&
+		if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) &&
 			cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName) {
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &svc)
 			if err != nil {
 				return err
 			}
 
-		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kosmo.IngressGVK) &&
+		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) &&
 			cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.IngressName) {
 			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &ing)
 			if err != nil {
@@ -253,6 +254,6 @@ func preTemplateBuild(ws wsv1alpha1.Workspace, rawTmpl string) ([]unstructured.U
 	inst.SetName(ws.GetName())
 	inst.SetNamespace(ws.GetNamespace())
 
-	builder := template.NewUnstructuredBuilder(rawTmpl, &inst)
+	builder := template.NewRawYAMLBuilder(rawTmpl, &inst)
 	return builder.Build()
 }

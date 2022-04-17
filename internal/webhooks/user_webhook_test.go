@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -76,7 +77,7 @@ var _ = Describe("User webhook", func() {
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			// eq := kosmo.LooseDeepEqual(user.DeepCopy(), createdUser.DeepCopy(), kosmo.WithPrintDiff())
+			// eq := kubeutil.LooseDeepEqual(user.DeepCopy(), createdUser.DeepCopy(), kubeutil.WithPrintDiff(os.Stderr))
 			// Expect(eq).Should(BeTrue())
 		})
 	})
@@ -117,7 +118,7 @@ var _ = Describe("User webhook", func() {
 
 			expectedUser.ObjectMeta = createdUser.ObjectMeta
 
-			eq := kosmo.LooseDeepEqual(expectedUser, createdUser.DeepCopy(), kosmo.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(expectedUser, &createdUser, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})
@@ -194,7 +195,7 @@ var _ = Describe("User webhook", func() {
 
 			expectedUser.ObjectMeta = createdUser.ObjectMeta
 
-			eq := kosmo.LooseDeepEqual(expectedUser, createdUser.DeepCopy())
+			eq := kubeutil.LooseDeepEqual(expectedUser, &createdUser)
 			Expect(eq).Should(BeTrue())
 		})
 	})

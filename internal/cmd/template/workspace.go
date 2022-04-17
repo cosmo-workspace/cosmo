@@ -15,7 +15,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/internal/authproxy"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
@@ -33,11 +33,11 @@ func completeWorkspaceConfig(wsConfig *wsv1alpha1.Config, unst []unstructured.Un
 	svcs := make([]unstructured.Unstructured, 0)
 	ings := make([]unstructured.Unstructured, 0)
 	for _, u := range unst {
-		if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kosmo.DeploymentGVK) {
+		if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.DeploymentGVK) {
 			dps = append(dps, u)
-		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kosmo.ServiceGVK) {
+		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) {
 			svcs = append(svcs, u)
-		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kosmo.IngressGVK) {
+		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) {
 			ings = append(ings, u)
 		}
 	}

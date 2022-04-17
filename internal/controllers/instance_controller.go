@@ -19,6 +19,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/transformer"
 )
@@ -65,7 +66,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	// Build child resource config by template
-	builts, err := template.NewUnstructuredBuilder(tmpl.Spec.RawYaml, &inst).
+	builts, err := template.NewRawYAMLBuilder(tmpl.Spec.RawYaml, &inst).
 		ReplaceDefaultVars().
 		ReplaceCustomVars().
 		Build()
@@ -146,7 +147,7 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 			continue
 		}
 
-		current, err := r.GetUnstructured(ctx, built.GroupVersionKind(), built.GetName(), built.GetNamespace())
+		current, err := kubeutil.GetUnstructured(ctx, r.Client, built.GroupVersionKind(), built.GetName(), built.GetNamespace())
 		if err != nil {
 			// if not found, create resource
 			if apierrs.IsNotFound(err) {
@@ -176,7 +177,7 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 			}
 
 			// compare current with the desired state
-			if !kosmo.LooseDeepEqual(current.DeepCopy(), desired.DeepCopy()) {
+			if !kubeutil.LooseDeepEqual(current, desired) {
 				log.Info("current is not desired state, synced", "kind", desired.GetKind(), "name", desired.GetName())
 				log.PrintObjectDiff(current, desired)
 
@@ -219,11 +220,11 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 }
 
 func (r *InstanceReconciler) dryrunApply(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
-	return r.Client.Apply(ctx, obj, InstControllerFieldManager, true, true)
+	return kubeutil.Apply(ctx, r.Client, obj, InstControllerFieldManager, true, true)
 }
 
 func (r *InstanceReconciler) apply(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
-	return r.Client.Apply(ctx, obj, InstControllerFieldManager, false, true)
+	return kubeutil.Apply(ctx, r.Client, obj, InstControllerFieldManager, false, true)
 }
 
 func (r *InstanceReconciler) SetupWithManager(mgr ctrl.Manager) error {

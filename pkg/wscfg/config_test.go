@@ -167,6 +167,6 @@ func preTemplateBuild(rawTmpl string) ([]unstructured.Unstructured, error) {
 	inst.SetName("dummy")
 	inst.SetNamespace("dummy")
 
-	builder := template.NewUnstructuredBuilder(rawTmpl, &inst)
+	builder := template.NewRawYAMLBuilder(rawTmpl, &inst)
 	return builder.Build()
 }

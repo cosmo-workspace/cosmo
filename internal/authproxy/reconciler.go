@@ -18,7 +18,6 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/internal/authproxy/proxy"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 const (
@@ -30,7 +29,7 @@ const (
 
 // NetworkRuleReconciler reconciles the Instance network override for my own Instance.
 type NetworkRuleReconciler struct {
-	kosmo.Client
+	client.Client
 	Recorder     record.EventRecorder
 	Scheme       *runtime.Scheme
 	ProxyManager *proxy.Manager

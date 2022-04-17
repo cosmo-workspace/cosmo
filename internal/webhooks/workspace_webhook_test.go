@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"context"
+	"os"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -14,7 +15,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 var _ = Describe("Workspace webhook", func() {
@@ -284,7 +285,7 @@ spec:
 
 			expectedWs.ObjectMeta = createdWs.ObjectMeta
 
-			eq := kosmo.LooseDeepEqual(createdWs.DeepCopy(), expectedWs.DeepCopy(), kosmo.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdWs, &expectedWs, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})
@@ -358,7 +359,7 @@ spec:
 
 			expectedWs.ObjectMeta = createdWs.ObjectMeta
 
-			eq := kosmo.LooseDeepEqual(createdWs.DeepCopy(), expectedWs.DeepCopy(), kosmo.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdWs, &expectedWs, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})

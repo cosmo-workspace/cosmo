@@ -1,4 +1,4 @@
-package kosmo
+package kubeutil
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -14,9 +15,12 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/types"
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
-	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/utils/pointer"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -29,9 +33,7 @@ var _ = Describe("Client", func() {
 			It("should create no object and dryrun succeed", func() {
 				ctx := context.Background()
 
-				c := NewClient(k8sClient)
-
-				_, err := c.GetUnstructured(ctx, schema.GroupVersionKind{Version: "v1", Kind: "Pod"}, "nginx", "default")
+				_, err := GetUnstructured(ctx, k8sClient, schema.GroupVersionKind{Version: "v1", Kind: "Pod"}, "nginx", "default")
 				Expect(apierrs.IsNotFound(err)).Should(BeTrue())
 
 				applyObjStr := `apiVersion: v1
@@ -48,12 +50,12 @@ spec:
 				_, applyObj, err := template.StringToUnstructured(applyObjStr)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				_, err = c.Apply(ctx, applyObj, "test-controller", true, true)
+				_, err = Apply(ctx, k8sClient, applyObj, "test-controller", true, true)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				time.Sleep(time.Second * 3)
 
-				_, err = c.GetUnstructured(ctx, schema.GroupVersionKind{Version: "v1", Kind: "Pod"}, "nginx", "default")
+				_, err = GetUnstructured(ctx, k8sClient, schema.GroupVersionKind{Version: "v1", Kind: "Pod"}, "nginx", "default")
 				Expect(apierrs.IsNotFound(err)).Should(BeTrue())
 			})
 		})
@@ -64,10 +66,7 @@ spec:
 			It("should create new object", func() {
 				ctx := context.Background()
 
-				c, err := NewClientByRestConfig(cfg, scheme.Scheme)
-				Expect(err).ShouldNot(HaveOccurred())
-
-				_, err = c.GetUnstructured(ctx, schema.GroupVersionKind{Version: "v1", Kind: "Pod"}, "nginx", "default")
+				_, err := GetUnstructured(ctx, k8sClient, schema.GroupVersionKind{Version: "v1", Kind: "Pod"}, "nginx", "default")
 				Expect(apierrs.IsNotFound(err)).Should(BeTrue())
 
 				applyObjStr := `apiVersion: v1
@@ -91,7 +90,7 @@ spec:
 				_, applyObj, err := template.StringToUnstructured(applyObjStr)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				_, err = c.Apply(ctx, applyObj, "test-controller", false, true)
+				_, err = Apply(ctx, k8sClient, applyObj, "test-controller", false, true)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				var pod corev1.Pod
@@ -119,7 +118,6 @@ spec:
 		Context("when apply existing object", func() {
 			It("should update the object", func() {
 				ctx := context.Background()
-				c := NewClient(k8sClient)
 
 				var currentPod corev1.Pod
 				key := client.ObjectKey{
@@ -154,7 +152,7 @@ spec:
 				_, applyObj, err := template.StringToUnstructured(applyObjStr)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				_, err = c.Apply(ctx, applyObj, "test-controller", false, true)
+				_, err = Apply(ctx, k8sClient, applyObj, "test-controller", false, true)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				var appliedPod corev1.Pod
@@ -199,10 +197,90 @@ spec:
 			})
 		})
 	})
-})
 
-func dumpObject(obj interface{}) string {
-	out, err := yaml.Marshal(obj)
-	Expect(err).ShouldNot(HaveOccurred())
-	return string(out)
-}
+	Context("when changing invalid fields", func() {
+		It("should not update the object", func() {
+			ctx := context.Background()
+
+			pod := corev1.Pod{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "test-invalid-field",
+					Namespace: "default",
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name:  "sh",
+							Image: "busybox",
+							Command: []string{
+								"sleep", "inginity",
+							},
+						},
+					},
+				},
+			}
+
+			err := k8sClient.Create(ctx, &pod)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			p := pod.DeepCopy()
+
+			pod.Spec.Containers[0].Command = []string{"patch"}
+
+			obj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&pod)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			var u unstructured.Unstructured
+			u.Object = obj
+			u.SetAPIVersion("v1")
+			u.SetKind("Pod")
+
+			_, err = Apply(ctx, k8sClient, &u, "test-controller", false, true)
+			Expect(err).Should(HaveOccurred())
+
+			var p2 corev1.Pod
+			err = k8sClient.Get(ctx, types.NamespacedName{Name: pod.Name, Namespace: pod.Namespace}, &p2)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			Expect(p.ResourceVersion).Should(BeEquivalentTo(p2.ResourceVersion))
+		})
+	})
+
+	Describe("GetUnstructured", func() {
+		It("should get pod as unstructured", func() {
+			ctx := context.Background()
+
+			svcYAML := `
+apiVersion: v1
+kind: Service
+metadata:
+  name: http
+  namespace: default
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+`
+			var svc corev1.Service
+			err := yaml.Unmarshal([]byte(svcYAML), &svc)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			err = k8sClient.Create(ctx, &svc)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			expectObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&svc)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			expect := &unstructured.Unstructured{}
+			expect.Object = expectObj
+			expect.SetGroupVersionKind(ServiceGVK)
+
+			got, err := GetUnstructured(ctx, k8sClient, ServiceGVK, svc.Name, svc.Namespace)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			diff := cmp.Diff(got, expect)
+			Expect(diff).Should(BeEmpty())
+		})
+	})
+})

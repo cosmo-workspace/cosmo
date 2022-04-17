@@ -8,13 +8,11 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-	"sigs.k8s.io/yaml"
 )
 
 var k8sFakeClient client.Client
@@ -198,80 +196,6 @@ spec:
 		WithScheme(scheme).
 		WithObjects(tmpl1, inst1, tmpl2, inst2, inst2Pod).
 		Build()
-}
-
-func TestClient_GetUnstructured(t *testing.T) {
-	inst2PodUnst, _ := runtime.DefaultUnstructuredConverter.ToUnstructured(inst2Pod)
-	inst2PodUnst["apiVersion"] = "v1"
-	inst2PodUnst["kind"] = "Pod"
-
-	type fields struct {
-		Client client.Client
-	}
-	type args struct {
-		ctx       context.Context
-		gvk       schema.GroupVersionKind
-		name      string
-		namespace string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    *unstructured.Unstructured
-		wantErr bool
-	}{
-		{
-			name: "OK",
-			fields: fields{
-				Client: k8sFakeClient,
-			},
-			args: args{
-				ctx:       context.TODO(),
-				gvk:       schema.GroupVersionKind{Version: "v1", Kind: "Pod"},
-				name:      inst2Pod.Name,
-				namespace: "default",
-			},
-			want: &unstructured.Unstructured{
-				Object: inst2PodUnst,
-			},
-			wantErr: false,
-		},
-		{
-			name: "not found",
-			fields: fields{
-				Client: k8sFakeClient,
-			},
-			args: args{
-				ctx:       context.TODO(),
-				gvk:       schema.GroupVersionKind{Version: "v1", Kind: "Pod"},
-				name:      "not found",
-				namespace: "default",
-			},
-			want:    nil,
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := &Client{
-				Client: tt.fields.Client,
-			}
-			got, err := c.GetUnstructured(tt.args.ctx, tt.args.gvk, tt.args.name, tt.args.namespace)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Client.GetUnstructured() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr && !equality.Semantic.DeepEqual(got, tt.want) {
-				gotYaml, _ := yaml.Marshal(got)
-				wantYaml, _ := yaml.Marshal(tt.want)
-				t.Error(string(gotYaml))
-				t.Error(string(wantYaml))
-				t.Error(string(gotYaml) == string(wantYaml))
-				t.Errorf("Client.GetUnstructured() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func TestClient_GetInstance(t *testing.T) {

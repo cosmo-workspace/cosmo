@@ -192,7 +192,7 @@ func (o *validateOption) RunE(cmd *cobra.Command, args []string) error {
 	o.Logr.Info("smoke test: create dummy instance to apply each resources", "instance", dummyInst.GetName())
 	o.Logr.Debug().DumpObject(o.Scheme, &dummyInst, "test instance")
 
-	builts, err := template.NewUnstructuredBuilder(o.tmpl.Spec.RawYaml, &dummyInst).
+	builts, err := template.NewRawYAMLBuilder(o.tmpl.Spec.RawYaml, &dummyInst).
 		ReplaceDefaultVars().
 		ReplaceCustomVars().
 		Build()

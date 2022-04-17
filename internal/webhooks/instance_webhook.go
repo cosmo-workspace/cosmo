@@ -16,6 +16,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/transformer"
 )
@@ -201,7 +202,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 	}
 
 	// dryrun apply
-	if err := h.dryrunApply(ctx, *tmpl, *inst); err != nil {
+	if err := h.dryrunApply(ctx, tmpl, *inst); err != nil {
 		return admission.Denied(err.Error())
 	}
 
@@ -213,8 +214,8 @@ func (h *InstanceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) e
 	return nil
 }
 
-func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl cosmov1alpha1.Template, inst cosmov1alpha1.Instance) error {
-	builts, err := template.NewUnstructuredBuilder(tmpl.Spec.RawYaml, &inst).
+func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl *cosmov1alpha1.Template, inst cosmov1alpha1.Instance) error {
+	builts, err := template.NewRawYAMLBuilder(tmpl.Spec.RawYaml, &inst).
 		ReplaceDefaultVars().
 		ReplaceCustomVars().
 		Build()
@@ -226,7 +227,7 @@ func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl
 	// Transform
 	ts := []transformer.Transformer{
 		// MetadataTransformer perform update each object's metadata
-		transformer.NewMetadataTransformer(&inst, &tmpl, h.Client.Scheme()),
+		transformer.NewMetadataTransformer(&inst, tmpl, h.Client.Scheme()),
 		// NetworkTransformer perform update ingresses and services by network override
 		transformer.NewNetworkTransformer(inst.Spec.Override.Network, inst.Name),
 		// JSONPatchTransformer perform JSONPatch
@@ -240,7 +241,7 @@ func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl
 	}
 
 	for _, built := range builts {
-		if _, err := h.Client.Apply(ctx, &built, "instance-webhook", true, true); err != nil {
+		if _, err := kubeutil.Apply(ctx, h.Client, &built, "instance-webhook", true, true); err != nil {
 			// ignore NotFound in case the template contains a dependency resource that was not found.
 			if !apierrs.IsNotFound(err) {
 				return fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err)

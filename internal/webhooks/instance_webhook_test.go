@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 var _ = Describe("Instance webhook", func() {
@@ -333,7 +334,7 @@ spec:
 
 			expectedInst.ObjectMeta = createdInst.ObjectMeta
 
-			eq := kosmo.LooseDeepEqual(createdInst.DeepCopy(), expectedInst.DeepCopy(), kosmo.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdInst, &expectedInst, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})
@@ -391,7 +392,7 @@ spec:
 
 			expectedInst.ObjectMeta = createdInst.ObjectMeta
 
-			eq := kosmo.LooseDeepEqual(createdInst.DeepCopy(), expectedInst.DeepCopy(), kosmo.WithPrintDiff())
+			eq := kubeutil.LooseDeepEqual(&createdInst, &expectedInst, kubeutil.WithPrintDiff(os.Stderr))
 			Expect(eq).Should(BeTrue())
 		})
 	})

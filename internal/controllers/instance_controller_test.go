@@ -36,7 +36,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 var _ = Describe("Instance controller", func() {
@@ -319,7 +319,7 @@ spec:
 			eq := equality.Semantic.DeepEqual(deployApplyCfg, expectedDeployApplyCfg)
 			Expect(eq).Should(BeTrue())
 
-			deploy.SetGroupVersionKind(kosmo.DeploymentGVK)
+			deploy.SetGroupVersionKind(kubeutil.DeploymentGVK)
 
 			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &deploy)).Should(BeTrue())
 
@@ -348,7 +348,7 @@ spec:
 			eq = equality.Semantic.DeepEqual(svcApplyCfg, expectedServiceApplyCfg)
 			Expect(eq).Should(BeTrue())
 
-			svc.SetGroupVersionKind(kosmo.ServiceGVK)
+			svc.SetGroupVersionKind(kubeutil.ServiceGVK)
 
 			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &svc)).Should(BeTrue())
 
@@ -377,7 +377,7 @@ spec:
 			eq = equality.Semantic.DeepEqual(ingApplyCfg, expectedIngApplyCfg)
 			Expect(eq).Should(BeTrue())
 
-			ing.SetGroupVersionKind(kosmo.IngressGVK)
+			ing.SetGroupVersionKind(kubeutil.IngressGVK)
 
 			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &ing)).Should(BeTrue())
 
