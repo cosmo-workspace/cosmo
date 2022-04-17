@@ -61,7 +61,7 @@ metadata:
 name: webhook-server-cert
 namespace: {{ .Release.Namespace }}
 labels:
-	{{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+  {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
 type: kubernetes.io/tls
 data:
 ca.crt: {{ $$tls.caCert }}
@@ -72,7 +72,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
 labels:
-	{{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+  {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
 name: cosmo-serving-cert
 namespace: {{ .Release.Namespace }}
 spec:
@@ -80,15 +80,15 @@ dnsNames:
 - cosmo-webhook-service.{{ .Release.Namespace }}.svc
 - cosmo-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
 issuerRef:
-	kind: ClusterIssuer
-	name: cosmo-selfsigned-clusterissuer
+  kind: ClusterIssuer
+  name: cosmo-selfsigned-clusterissuer
 secretName: webhook-server-cert
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
 labels:
-	{{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+  {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
 name: cosmo-selfsigned-clusterissuer
 namespace: {{ .Release.Namespace }}
 spec:
