@@ -9,13 +9,15 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 )
 
 type Comparable interface {
+	runtime.Object
+	SetGroupVersionKind(gvk schema.GroupVersionKind)
 	GetManagedFields() []metav1.ManagedFieldsEntry
 	SetManagedFields(managedFields []metav1.ManagedFieldsEntry)
 	SetResourceVersion(resourceVersion string)
-	DeepCopyObject() runtime.Object
 }
 
 func resetManagedFieldTime(obj Comparable) {
@@ -46,10 +48,43 @@ func WithPrintDiff(w io.Writer) DeepEqualOption {
 	return printDiff{out: w}
 }
 
+type fixGVK struct {
+	scheme *runtime.Scheme
+}
+
+func (f fixGVK) Apply(x, y Comparable) {
+	xgvk, _ := apiutil.GVKForObject(x, f.scheme)
+	x.SetGroupVersionKind(xgvk)
+
+	ygvk, _ := apiutil.GVKForObject(y, f.scheme)
+	y.SetGroupVersionKind(ygvk)
+}
+
+func WithFixGVK(scheme *runtime.Scheme) DeepEqualOption {
+	return fixGVK{scheme: scheme}
+}
+
 // LooseDeepEqual deep equal objects without dynamic values
 func LooseDeepEqual(xObj, yObj Comparable, opts ...DeepEqualOption) bool {
-	x := xObj.DeepCopyObject().(Comparable)
-	y := yObj.DeepCopyObject().(Comparable)
+	if xObj == nil && yObj == nil {
+		return true
+	}
+	if xObj == nil || yObj == nil {
+		return false
+	}
+
+	xCopy := xObj.DeepCopyObject()
+	yCopy := yObj.DeepCopyObject()
+
+	if xCopy == nil && yCopy == nil {
+		return true
+	}
+	if xCopy == nil || yCopy == nil {
+		return false
+	}
+
+	x := xCopy.(Comparable)
+	y := yCopy.(Comparable)
 
 	resetManagedFieldTime(x)
 	resetManagedFieldTime(y)
