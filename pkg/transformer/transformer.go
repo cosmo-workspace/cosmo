@@ -4,9 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
 // Transformer is interface to modify unstructured object
@@ -44,4 +48,17 @@ func ApplyTransformers(ctx context.Context, transformers []Transformer, objects 
 		}
 	}
 	return applied, nil
+}
+
+func AllTransformers(inst cosmov1alpha1.InstanceObject, scheme *runtime.Scheme, tmpl cosmov1alpha1.TemplateObject) []Transformer {
+	return []Transformer{
+		// MetadataTransformer perform update each object's metadata
+		NewMetadataTransformer(inst, scheme, template.IsDisableNamePrefix(tmpl)),
+		// NetworkTransformer perform update ingresses and services by network override
+		NewNetworkTransformer(inst.GetSpec().Override.Network, inst.GetName()),
+		// JSONPatchTransformer perform JSONPatch
+		NewJSONPatchTransformer(inst.GetSpec().Override.PatchesJson6902, inst.GetName()),
+		// ScalingTransformer perform override replicas
+		NewScalingTransformer(inst.GetSpec().Override.Scale, inst.GetName()),
+	}
 }
