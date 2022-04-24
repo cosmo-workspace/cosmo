@@ -220,11 +220,21 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 }
 
 func (r *InstanceReconciler) dryrunApply(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
-	return kubeutil.Apply(ctx, r.Client, obj, InstControllerFieldManager, true, true)
+	if obj.GetKind() == "Service" {
+		// Interim support to avoid "duplicate value" errors when changing port numbers.
+		return kubeutil.ApplyOrUpdate(ctx, r.Client, obj, InstControllerFieldManager, true, true)
+	} else {
+		return kubeutil.Apply(ctx, r.Client, obj, InstControllerFieldManager, true, true)
+	}
 }
 
 func (r *InstanceReconciler) apply(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
-	return kubeutil.Apply(ctx, r.Client, obj, InstControllerFieldManager, false, true)
+	if obj.GetKind() == "Service" {
+		// Interim support to avoid "duplicate value" errors when changing port numbers.
+		return kubeutil.ApplyOrUpdate(ctx, r.Client, obj, InstControllerFieldManager, false, true)
+	} else {
+		return kubeutil.Apply(ctx, r.Client, obj, InstControllerFieldManager, false, true)
+	}
 }
 
 func (r *InstanceReconciler) SetupWithManager(mgr ctrl.Manager) error {
