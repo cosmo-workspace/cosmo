@@ -27,7 +27,7 @@ func Apply(ctx context.Context, c client.Client, obj *unstructured.Unstructured,
 	return patched, nil
 }
 
-func Update(ctx context.Context, c client.Client, obj *unstructured.Unstructured, fieldManager string, dryrun, force bool) (patched *unstructured.Unstructured, err error) {
+func Update(ctx context.Context, c client.Client, obj *unstructured.Unstructured, fieldManager string, dryrun bool) (patched *unstructured.Unstructured, err error) {
 	patched = obj.DeepCopy()
 
 	options := &client.UpdateOptions{
@@ -45,7 +45,7 @@ func Update(ctx context.Context, c client.Client, obj *unstructured.Unstructured
 func ApplyOrUpdate(ctx context.Context, c client.Client, obj *unstructured.Unstructured, fieldManager string, dryrun, force bool) (patched *unstructured.Unstructured, err error) {
 	patched, err = Apply(ctx, c, obj, fieldManager, dryrun, force)
 	if err != nil {
-		patched, err = Update(ctx, c, obj, fieldManager, dryrun, force)
+		patched, err = Update(ctx, c, obj, fieldManager, dryrun)
 	}
 	return patched, err
 }
