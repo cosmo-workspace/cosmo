@@ -197,9 +197,9 @@ spec:
                                                 it can contain characters disallowed
                                                 from the conventional "path" part
                                                 of a URL as defined by RFC 3986. Paths
-                                                must begin with a '/'. When unspecified,
-                                                all paths from incoming requests are
-                                                matched.
+                                                must begin with a '/' and must be
+                                                present when using PathType with value
+                                                "Exact" or "Prefix".
                                               type: string
                                             pathType:
                                               description: 'PathType determines the
@@ -229,6 +229,7 @@ spec:
                                               type: string
                                           required:
                                           - backend
+                                          - pathType
                                           type: object
                                         type: array
                                         x-kubernetes-list-type: atomic
@@ -258,9 +259,7 @@ spec:
                                       for IANA standard service names (as per RFC-6335
                                       and http://www.iana.org/assignments/service-names).
                                       Non-standard protocols should use prefixed names
-                                      such as mycompany.com/my-custom-protocol. This
-                                      is a beta field that is guarded by the ServiceAppProtocol
-                                      feature gate and enabled by default.
+                                      such as mycompany.com/my-custom-protocol.
                                     type: string
                                   name:
                                     description: The name of this port within the
@@ -331,22 +330,45 @@ spec:
                             is created by the Instance
                           properties:
                             apiVersion:
+                              description: API version of the referent.
                               type: string
                             creationTimestamp:
                               format: date-time
                               type: string
+                            fieldPath:
+                              description: 'If referring to a piece of an object instead
+                                of an entire object, this string should contain a
+                                valid JSON/Go field access statement, such as desiredState.manifest.containers[2].
+                                For example, if the object reference is to a container
+                                within a pod, this would take on a value like: "spec.containers{name}"
+                                (where "name" refers to the name of the container
+                                that triggered the event) or if no container name
+                                is specified "spec.containers[2]" (container with
+                                index 2 in this pod). This syntax is chosen only to
+                                have some well-defined way of referencing a part of
+                                an object. TODO: this design is not final and this
+                                field is subject to change in the future.'
+                              type: string
                             kind:
+                              description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
                               type: string
                             name:
+                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
                               type: string
                             namespace:
+                              description: 'Namespace of the referent. More info:
+                                https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                              type: string
+                            resourceVersion:
+                              description: 'Specific resourceVersion to which this
+                                reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                              type: string
+                            uid:
+                              description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                               type: string
                             updateTimestamp:
                               format: date-time
                               type: string
-                          required:
-                          - apiVersion
-                          - kind
                           type: object
                       required:
                       - target
@@ -364,22 +386,45 @@ spec:
                             is created by the Instance
                           properties:
                             apiVersion:
+                              description: API version of the referent.
                               type: string
                             creationTimestamp:
                               format: date-time
                               type: string
+                            fieldPath:
+                              description: 'If referring to a piece of an object instead
+                                of an entire object, this string should contain a
+                                valid JSON/Go field access statement, such as desiredState.manifest.containers[2].
+                                For example, if the object reference is to a container
+                                within a pod, this would take on a value like: "spec.containers{name}"
+                                (where "name" refers to the name of the container
+                                that triggered the event) or if no container name
+                                is specified "spec.containers[2]" (container with
+                                index 2 in this pod). This syntax is chosen only to
+                                have some well-defined way of referencing a part of
+                                an object. TODO: this design is not final and this
+                                field is subject to change in the future.'
+                              type: string
                             kind:
+                              description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
                               type: string
                             name:
+                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
                               type: string
                             namespace:
+                              description: 'Namespace of the referent. More info:
+                                https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                              type: string
+                            resourceVersion:
+                              description: 'Specific resourceVersion to which this
+                                reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                              type: string
+                            uid:
+                              description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                               type: string
                             updateTimestamp:
                               format: date-time
                               type: string
-                          required:
-                          - apiVersion
-                          - kind
                           type: object
                       required:
                       - replicas
@@ -411,22 +456,43 @@ spec:
                     by the Instance
                   properties:
                     apiVersion:
+                      description: API version of the referent.
                       type: string
                     creationTimestamp:
                       format: date-time
                       type: string
+                    fieldPath:
+                      description: 'If referring to a piece of an object instead of
+                        an entire object, this string should contain a valid JSON/Go
+                        field access statement, such as desiredState.manifest.containers[2].
+                        For example, if the object reference is to a container within
+                        a pod, this would take on a value like: "spec.containers{name}"
+                        (where "name" refers to the name of the container that triggered
+                        the event) or if no container name is specified "spec.containers[2]"
+                        (container with index 2 in this pod). This syntax is chosen
+                        only to have some well-defined way of referencing a part of
+                        an object. TODO: this design is not final and this field is
+                        subject to change in the future.'
+                      type: string
                     kind:
+                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
                       type: string
                     name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
                       type: string
                     namespace:
+                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                      type: string
+                    resourceVersion:
+                      description: 'Specific resourceVersion to which this reference
+                        is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                      type: string
+                    uid:
+                      description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                       type: string
                     updateTimestamp:
                       format: date-time
                       type: string
-                  required:
-                  - apiVersion
-                  - kind
                   type: object
                 type: array
               templateName:
