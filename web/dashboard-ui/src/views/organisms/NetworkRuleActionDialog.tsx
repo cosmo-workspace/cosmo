@@ -62,20 +62,16 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
                   helperText={(errors.portName && errors.portName.message) || 'Lowercase Alphanumeric or in ["-"]'}
                 />
               }
-              {networkRule ?
-                <TextFieldLabel label="Port Number" fullWidth type='number' value={networkRule.portNumber} />
-                :
-                <TextField label="Port Number" fullWidth type='number'
-                  {...registerMui(register('portNumber', {
-                    required: { value: true, message: "Required" },
-                    valueAsNumber: true,
-                    min: { value: 1, message: "Min 1" },
-                    max: { value: 65535, message: "Max 65535" },
-                  }))}
-                  error={Boolean(errors.portNumber)}
-                  helperText={(errors.portNumber && errors.portNumber.message) || '1 - 65535.'}
-                />
-              }
+              <TextField label="Port Number" fullWidth type='number'
+                {...registerMui(register('portNumber', {
+                  required: { value: true, message: "Required" },
+                  valueAsNumber: true,
+                  min: { value: 1, message: "Min 1" },
+                  max: { value: 65535, message: "Max 65535" },
+                }))}
+                error={Boolean(errors.portNumber)}
+                helperText={(errors.portNumber && errors.portNumber.message) || '1 - 65535.'}
+              />
               <TextField label="Group" fullWidth
                 {...registerMui(register('group', {
                   required: { value: true, message: "Required" },

@@ -8,6 +8,7 @@ import (
 
 	netv1 "k8s.io/api/networking/v1"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -242,7 +243,7 @@ func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl
 	}
 
 	for _, built := range builts {
-		if _, err := kubeutil.Apply(ctx, h.Client, &built, "instance-webhook", true, true); err != nil {
+		if _, err := h.dryrun(ctx, &built); err != nil {
 			// ignore NotFound in case the template contains a dependency resource that was not found.
 			if !apierrs.IsNotFound(err) {
 				return fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err)
@@ -250,4 +251,13 @@ func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl
 		}
 	}
 	return nil
+}
+
+func (h *InstanceValidationWebhookHandler) dryrun(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
+	if obj.GetKind() == "Service" {
+		// Interim support to avoid "duplicate value" errors when changing port numbers.
+		return kubeutil.ApplyOrUpdate(ctx, h.Client, obj, "instance-webhook", true, true)
+	} else {
+		return kubeutil.Apply(ctx, h.Client, obj, "instance-webhook", true, true)
+	}
 }
