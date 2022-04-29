@@ -65,5 +65,11 @@ defaultURLBase:
   # this values are passed to the entrypoint args as follows
   # --workspace-default-urlbase=https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com
   protocol: https
-  host: '{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}'
+  host: "{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}"
   domain: example.com
+
+localRunTest:
+  enabled: false
+  webhookEndpoint:
+    ip: 127.0.0.1
+    port: 9443

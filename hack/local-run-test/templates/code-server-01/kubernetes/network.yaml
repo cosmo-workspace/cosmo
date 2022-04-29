@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: workspace
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: workspace
+                port:
+                  name: main
+            path: /
+            pathType: Prefix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workspace
+spec:
+  type: ClusterIP
+  ports:
+    - name: main
+      port: 18080
+      protocol: TCP

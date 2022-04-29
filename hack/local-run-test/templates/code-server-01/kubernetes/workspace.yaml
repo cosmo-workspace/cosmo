@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workspace
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: code-server
+          image: codercom/code-server:latest
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+            - |
+              /usr/bin/entrypoint.sh --log debug --auth=none --bind-addr 0.0.0.0:18080 .
+          securityContext:
+            runAsUser: 1000
+          ports:
+            - name: main
+              containerPort: 18080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 18080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 18080
+          resources:
+            requests:
+              memory: 100Mi
+            limits:
+              memory: 6Gi
+      serviceAccountName: default

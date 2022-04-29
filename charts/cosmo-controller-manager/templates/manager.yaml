@@ -45,9 +45,27 @@ spec:
   ports:
   - port: 443
     targetPort: 9443
+  {{- if not .Values.localRunTest.enabled }}
   selector:
     {{- include "cosmo-controller-manager.selectorLabels" . | nindent 4 }}
+  {{- end }}
 ---
+{{- if .Values.localRunTest.enabled }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  labels:
+    {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+  name: cosmo-webhook-service
+  namespace: {{ .Release.Namespace }}
+subsets:
+- addresses:
+  - ip: {{ .Values.localRunTest.webhookEndpoint.ip }}
+  ports:
+  - port: {{ .Values.localRunTest.webhookEndpoint.port }}
+    protocol: TCP
+---
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
