@@ -152,23 +152,24 @@ docker-build-cs:
 	@echo ====== $@ ======
 	cd templates/code-server-01 && $(MAKE) docker-build
 
-apply-template: kubectl docker-build-cs
+apply-template: kubectl cosmoctl docker-build-cs
 	@echo ====== $@ ======
 	until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
 	cd templates/code-server-01 && $(MAKE) apply
 
 BASEURL := https://$(DASHBOARD_URL)
 
-add-user: kubectl
+add-user: kubectl cosmoctl
 	@echo ====== $@ ======
 	-cosmoctl user create tom --admin 2> /dev/null
 	export PASSWORD=`cosmoctl user reset-password tom | grep -Po "(?<=New password: ).*")` && \
 	bash -c 'until (curl -L -c bin/cookie.txt -X POST $(BASEURL)/api/v1alpha1/auth/login -d "{\"id\":\"tom\",\"password\":\"$${PASSWORD}\"}") do sleep 1; done' && \
 	curl -L -b bin/cookie.txt -X PUT $(BASEURL)/api/v1alpha1/user/tom/password -d "{\"currentPassword\":\"$${PASSWORD}\",\"newPassword\": \"vvv\"}"
 
-add-workspace: kubectl
+add-workspace: kubectl cosmoctl
 	@echo ====== $@ ======
 	-cosmoctl workspace create --user=tom --template=code-server-01 ws1
+	sleep 5
 	-cosmoctl workspace open-port --user=tom ws1 --name=dash1 --port=7701
 
 ##---------------------------------------------------------------------
@@ -229,6 +230,11 @@ stop: ## Stop test.
 ##---------------------------------------------------------------------
 bin:
 	mkdir -p $(BIN)
+
+cosmoctl: bin bin/cosmoctl ## cosmoctl
+bin/cosmoctl:
+	@echo ====== $@ ======
+	CGO_ENABLED=0 go build -o bin/cosmoctl ../../cmd/cosmoctl/main.go
 
 k3d: bin bin/k3d ## k3d
 bin/k3d:
