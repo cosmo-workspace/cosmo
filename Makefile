@@ -2,6 +2,7 @@
 # Image URL to use all building/pushing image targets
 VERSION ?=
 PRERELEASE ?= false
+QUICK_BUILD ?= no
 
 MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
@@ -34,7 +35,9 @@ SHELL = /usr/bin/env bash -o pipefail
 
 all: manager cosmoctl dashboard auth-proxy
 
+##---------------------------------------------------------------------
 ##@ General
+##---------------------------------------------------------------------
 
 # The help target prints out all targets with their descriptions organized
 # beneath their categories. The categories are represented by '##@' and the
@@ -50,8 +53,9 @@ all: manager cosmoctl dashboard auth-proxy
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
+##---------------------------------------------------------------------
 ##@ Development
-
+##---------------------------------------------------------------------
 define WEBHOOK_CHART_SUFIX
 ---
 {{- if not $$.Values.enableCertManager }}
@@ -61,7 +65,7 @@ metadata:
   name: webhook-server-cert
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
+  {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
 type: kubernetes.io/tls
 data:
   ca.crt: {{ $$tls.caCert }}
@@ -77,8 +81,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   dnsNames:
-  - cosmo-webhook-service.{{ .Release.Namespace }}.svc
-  - cosmo-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
+    - cosmo-webhook-service.{{ .Release.Namespace }}.svc
+    - cosmo-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
   issuerRef:
     kind: ClusterIssuer
     name: cosmo-selfsigned-clusterissuer
@@ -109,11 +113,15 @@ gen-charts:
 	echo "$$WEBHOOK_CHART_SUFIX" >> $(WEBHOOK_CHART_YAML)
 
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
+ifeq ($(QUICK_BUILD),no)
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
 	make gen-charts
+endif
 
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
+ifeq ($(QUICK_BUILD),no)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
+endif
 
 api-generate:
 	make -C hack/api-generate generate
@@ -126,46 +134,49 @@ chart-check: chart-crd
 	./hack/diff-chart-kust.sh dashboard
 
 fmt: ## Run go fmt against code.
+ifeq ($(QUICK_BUILD),no)
 	go fmt ./...
+endif
 
 vet: ## Run go vet against code.
+ifeq ($(QUICK_BUILD),no)
 	go vet ./...
+endif
 
 ENVTEST_ASSETS_DIR=$(shell pwd)/testbin
 export ACK_GINKGO_DEPRECATIONS=1.16.5 ## To silence deprecations message when you execute "go test -v"
 export ACK_GINKGO_RC=true             ## To silence deprecations message when you execute "go test -v"
+
 test: manifests generate fmt vet ## Run tests.
+ifeq ($(QUICK_BUILD),no)
 	mkdir -p ${ENVTEST_ASSETS_DIR}
 	test -f ${ENVTEST_ASSETS_DIR}/setup-envtest.sh || curl -sSLo ${ENVTEST_ASSETS_DIR}/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/v0.8.3/hack/setup-envtest.sh
 	source ${ENVTEST_ASSETS_DIR}/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR); go test ./... -coverprofile $(COVER_PROFILE)
+endif
 
-ui-test:
+ui-test: ## Run UI tests.
 	cd web/dashboard-ui && yarn install && yarn test  --coverage  --ci --watchAll=false
 
 swaggerui:
 	docker run --rm --name swagger -p 8090:8080 \
 		-e SWAGGER_JSON=/cosmo/openapi.yaml -v `pwd`/api/openapi/dashboard/openapi-v1alpha1.yaml:/cosmo swaggerapi/swagger-ui
 
+##---------------------------------------------------------------------
 ##@ Build
-
-# Build manager binary
-manager: generate fmt vet
+##---------------------------------------------------------------------
+manager: generate fmt vet ## Build manager binary.
 	CGO_ENABLED=0 go build -o bin/manager ./cmd/controller-manager/main.go
 
-# Build cosmoctl binary
-cosmoctl: generate fmt vet
+cosmoctl: generate fmt vet ## Build cosmoctl binary.
 	CGO_ENABLED=0 go build -o bin/cosmoctl ./cmd/cosmoctl/main.go
 
-# Build dashboard binary
-dashboard: generate fmt vet
+dashboard: generate fmt vet ## Build dashboard binary.
 	CGO_ENABLED=0 go build -o bin/dashboard ./cmd/dashboard/main.go
 
-# Build auth-proxy binary
-auth-proxy: generate fmt vet
+auth-proxy: generate fmt vet ## Build auth-proxy binary.
 	CGO_ENABLED=0 go build -o bin/auth-proxy ./cmd/auth-proxy/main.go
 
-# Update version in version.go
-update-version:
+update-version: ## Update version in version.go.
 ifndef VERSION
 	@echo "Usage: make update-version VERSION=v9.9.9"
 	@exit 9
@@ -192,38 +203,46 @@ endif
 		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
 		charts/cosmo-dashboard/Chart.yaml
 
-
+##---------------------------------------------------------------------
+##@ Run
+##---------------------------------------------------------------------
 # Run against the configured Kubernetes cluster in ~/.kube/config
-run-dashboard: generate fmt vet manifests
+run-dashboard: generate fmt vet manifests ## Run dashboard against the configured Kubernetes cluster in ~/.kube/config.
 	go run ./cmd/dashboard/main.go \
 		--zap-log-level 3 \
 		--insecure
 
-run-dashboard-ui:
+run-dashboard-ui: ## Run dashboard-ui.
 	cd web/dashboard-ui && yarn install && yarn start
 
-# Run against the configured Kubernetes cluster in ~/.kube/config
-run: generate fmt vet manifests
+run-auth-proxy: generate fmt vet manifests ## Run auth-proxy against the configured Kubernetes cluster in ~/.kube/config.
+	go run ./cmd/auth-proxy/main.go \
+		--zap-log-level 3 \
+		--insecure
+
+run-auth-proxy-ui: ## Run auth-proxy-ui.
+	cd web/auth-proxy-ui && yarn install && PORT=3010 yarn start
+
+run: generate fmt vet manifests ## Run controller-manager against the configured Kubernetes cluster in ~/.kube/config.
 	go run ./cmd/controller-manager/main.go --metrics-bind-address :8085 --cert-dir .
 
+##---------------------------------------------------------------------
+##@ Docker build
+##---------------------------------------------------------------------
+docker-build: docker-build-manager docker-build-dashboard docker-build-auth-proxy ## Build the docker image.
 
-# Build the docker image
-docker-build: docker-build-manager docker-build-dashboard docker-build-auth-proxy
+docker-build-manager: test ## Build the docker image for controller-manager.
+	DOCKER_BUILDKIT=1 docker build . -t ${IMG_MANAGER} -f dockerfile/controller-manager.Dockerfile
 
-# Build the docker image for controller-manager
-docker-build-manager: test
-	docker build . -t ${IMG_MANAGER} -f dockerfile/controller-manager.Dockerfile
+docker-build-dashboard: test ## Build the docker image for dashboard.
+	DOCKER_BUILDKIT=1 docker build . -t ${IMG_DASHBOARD} -f dockerfile/dashboard.Dockerfile
 
-# Build the docker image for dashboard
-docker-build-dashboard: test
-	docker build . -t ${IMG_DASHBOARD} -f dockerfile/dashboard.Dockerfile
+docker-build-auth-proxy: test ## Build the docker image for auth-proxy.
+	DOCKER_BUILDKIT=1 docker build . -t ${IMG_AUTHPROXY} -f dockerfile/auth-proxy.Dockerfile
 
-# Build the docker image for auth-proxy
-docker-build-auth-proxy: test
-	docker build . -t ${IMG_AUTHPROXY} -f dockerfile/auth-proxy.Dockerfile
-
+##---------------------------------------------------------------------
 ##@ Deployment
-
+##---------------------------------------------------------------------
 install: manifests kustomize ## Install CRDs into the K8s cluster specified in ~/.kube/config.
 	$(KUSTOMIZE) build config/crd | kubectl apply -f -
 
@@ -239,7 +258,9 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 CONTROLLER_GEN = $(shell pwd)/bin/controller-gen
 controller-gen: ## Download controller-gen locally if necessary.
+ifeq ($(QUICK_BUILD),no)
 	$(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.0)
+endif
 
 KUSTOMIZE = $(shell pwd)/bin/kustomize
 kustomize: ## Download kustomize locally if necessary.
