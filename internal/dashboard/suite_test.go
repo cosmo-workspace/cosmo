@@ -42,6 +42,8 @@ var (
 	cfg       *rest.Config
 	k8sClient kosmo.Client
 	testEnv   *envtest.Environment
+	ctx       context.Context
+	cancel    context.CancelFunc
 
 	userSession  []*http.Cookie
 	adminSession []*http.Cookie
@@ -58,7 +60,10 @@ func TestAPIs(t *testing.T) {
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
+	ctx, cancel = context.WithCancel(ctrl.SetupSignalHandler())
+
 	By("bootstrapping test environment")
+
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
@@ -110,10 +115,9 @@ var _ = BeforeSuite(func() {
 	err = mgr.Add(serv)
 	Expect(err).NotTo(HaveOccurred())
 
-	ctx := ctrl.SetupSignalHandler()
-
 	go func() {
-		err = mgr.Start(ctx)
+		defer GinkgoRecover()
+		err := mgr.Start(ctx)
 		Expect(err).NotTo(HaveOccurred())
 	}()
 
@@ -123,6 +127,7 @@ var _ = BeforeSuite(func() {
 }, 60)
 
 var _ = AfterSuite(func() {
+	cancel()
 	By("tearing down the test environment")
 	err := testEnv.Stop()
 	Expect(err).NotTo(HaveOccurred())

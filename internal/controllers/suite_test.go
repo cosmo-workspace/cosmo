@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"path/filepath"
 	"testing"
 
@@ -26,9 +27,13 @@ import (
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
-var cfg *rest.Config
-var k8sClient kosmo.Client
-var testEnv *envtest.Environment
+var (
+	cfg       *rest.Config
+	k8sClient kosmo.Client
+	testEnv   *envtest.Environment
+	ctx       context.Context
+	cancel    context.CancelFunc
+)
 
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -41,7 +46,10 @@ func TestAPIs(t *testing.T) {
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
+	ctx, cancel = context.WithCancel(ctrl.SetupSignalHandler())
+
 	By("bootstrapping test environment")
+
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
@@ -106,7 +114,8 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	go func() {
-		err = mgr.Start(ctrl.SetupSignalHandler())
+		defer GinkgoRecover()
+		err := mgr.Start(ctx)
 		Expect(err).NotTo(HaveOccurred())
 	}()
 
@@ -116,6 +125,7 @@ var _ = BeforeSuite(func() {
 }, 60)
 
 var _ = AfterSuite(func() {
+	cancel()
 	By("tearing down the test environment")
 	err := testEnv.Stop()
 	Expect(err).NotTo(HaveOccurred())
