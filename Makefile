@@ -18,8 +18,6 @@ IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true,generateEmbeddedObjectMeta=true,preserveUnknownFields=false"
 
-COVER_PROFILE ?= cover.out
-
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION ?= 1.19.x
 
@@ -155,17 +153,25 @@ ifeq ($(QUICK_BUILD),no)
 	go vet ./...
 endif
 
-export ACK_GINKGO_DEPRECATIONS=1.16.5 ## To silence deprecations message when you execute "go test -v"
-export ACK_GINKGO_RC=true             ## To silence deprecations message when you execute "go test -v"
+##---------------------------------------------------------------------
+##@ Test
+##---------------------------------------------------------------------
+TEST_FILES ?= ./...
+COVER_PROFILE ?= cover.out
+#TEST_OPTS ?= --ginkgo.focus 'Dashboard server \[User\]' -ginkgo.v -ginkgo.progress -test.v > test.out 2>&1
+
+.PHONY: go-test.env
+go-test.env: 
+	@echo KUBEBUILDER_ASSETS=$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path) > ./.vscode/go-test.env
 
 .PHONY: test
-test: manifests generate fmt vet envtest ## Run tests.
+test: manifests generate fmt vet envtest go-test.env go-test ## Run tests.
+
+.PHONY: go-test
+go-test:
 ifeq ($(QUICK_BUILD),no)
-	@# for vscode command 'Go: Toggle Test Coverage in Current Package' 
-		@echo ACK_GINKGO_DEPRECATIONS=$(ACK_GINKGO_DEPRECATIONS)                         > ./.vscode/go-test.env
-		@echo ACK_GINKGO_RC=true                                                        >> ./.vscode/go-test.env
-		@echo KUBEBUILDER_ASSETS=$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path) >> ./.vscode/go-test.env
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" go test ./... -coverprofile $(COVER_PROFILE)
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" \
+	go test $(TEST_FILES) -coverprofile $(COVER_PROFILE) $(TEST_OPTS)
 endif
 
 .PHONY: test-all-k8s-versions
