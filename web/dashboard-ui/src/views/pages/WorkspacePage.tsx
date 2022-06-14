@@ -125,7 +125,11 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
   const urlLink = (nwRule: NetworkRule) => {
     let url = workspace.status?.urlBase || ''
     url = url.replace('{{INSTANCE}}', workspace.name);
+    url = url.replace('{{WORKSPACE}}', workspace.name);
     url = url.replace('{{NAMESPACE}}', 'cosmo-user-' + workspace.ownerID);
+    url = url.replace('{{USERID}}', workspace.ownerID || '');
+    url = url.replace('{{PORT_NAME}}', networkRule.portName);
+    url = url.replace('{{PORT_NUMBER}}', networkRule.portNumber.toString());
     const urlParts = url.split('{{NETRULE_GROUP}}');
     return (<>
       <Link href={networkRule.url || ''} target='_blank'>
