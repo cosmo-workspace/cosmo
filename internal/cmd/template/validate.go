@@ -107,7 +107,7 @@ func (o *validateOption) Complete(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("no input via stdin")
 		}
 		// input data from stdin
-		input, err = io.ReadAll(os.Stdin)
+		input, err = io.ReadAll(o.In)
 		if err != nil {
 			return fmt.Errorf("failed to read input: %w", err)
 		}

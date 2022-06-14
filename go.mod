@@ -14,7 +14,9 @@ require (
 	github.com/mattn/go-isatty v0.0.14
 	github.com/onsi/ginkgo/v2 v2.1.4
 	github.com/onsi/gomega v1.19.0
+	github.com/pelletier/go-toml/v2 v2.0.1
 	github.com/sethvargo/go-password v0.2.0
+	github.com/spf13/afero v1.6.0
 	github.com/spf13/cobra v1.2.1
 	go.uber.org/zap v1.19.1
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa

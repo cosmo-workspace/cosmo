@@ -36,6 +36,7 @@ type CliOptions struct {
 	KubeConfigPath string
 	KubeContext    string
 	LogLevel       int
+	In             io.Reader
 	Out            io.Writer
 	ErrOut         io.Writer
 
@@ -86,28 +87,30 @@ func (o *CliOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 	debug := o.Logr.WithCaller().DebugAll()
 
-	cfgFlg := genericclioptions.NewConfigFlags(true)
-	debug.Info("kubeconfigs", "kubeConfigPath", o.KubeConfigPath, "kubeContext", o.KubeContext)
+	if o.Client == nil {
+		cfgFlg := genericclioptions.NewConfigFlags(true)
+		debug.Info("kubeconfigs", "kubeConfigPath", o.KubeConfigPath, "kubeContext", o.KubeContext)
 
-	if o.KubeConfigPath != "" {
-		cfgFlg.KubeConfig = &o.KubeConfigPath
-	}
-	if o.KubeContext != "" {
-		cfgFlg.Context = &o.KubeContext
-	}
+		if o.KubeConfigPath != "" {
+			cfgFlg.KubeConfig = &o.KubeConfigPath
+		}
+		if o.KubeContext != "" {
+			cfgFlg.Context = &o.KubeContext
+		}
 
-	cfg, err := cfgFlg.ToRESTConfig()
-	if err != nil {
-		return err
-	}
-	debug.Info("RestConfig", "cfg", cfg)
+		cfg, err := cfgFlg.ToRESTConfig()
+		if err != nil {
+			return err
+		}
+		debug.Info("RestConfig", "cfg", cfg)
 
-	baseclient, err := kosmo.NewClientByRestConfig(cfg, scheme)
-	if err != nil {
-		return err
+		baseclient, err := kosmo.NewClientByRestConfig(cfg, scheme)
+		if err != nil {
+			return err
+		}
+		o.Client = &baseclient
+		o.Scheme = scheme
 	}
-	o.Client = &baseclient
-	o.Scheme = scheme
 
 	return nil
 }
