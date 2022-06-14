@@ -4,7 +4,8 @@ metadata:
   name: workspace
 spec:
   rules:
-    - http:
+    - host: main-{{INSTANCE}}-{{NAMESPACE}}.domain
+      http:
         paths:
           - backend:
               service:
