@@ -10,7 +10,7 @@ unexport KUBERNETES_PORT
 #                                   |-----PARENT_URLBASE-----| |--DOMAIN-|
 PARENT_URLBASE ?= $(shell echo $$VSCODE_PROXY_URI | grep -Po "(?<=://main-)[^\.]*")
 DOMAIN ?= $(shell echo $$VSCODE_PROXY_URI | grep -Po "(?<=\.)[^/]*")
-DEFAULT_URLBASE := \\{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}-k3d-$(PARENT_URLBASE)
+DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}-k3d-$(PARENT_URLBASE)
 DASHBOARD_URL := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
 
 ##---------------------------------------------------------------------
@@ -106,8 +106,8 @@ install-manager: helm kubectl create-cluster docker-build-manager ## Install cos
 		--set image.repository=cosmo.io:5000/cosmo-controller-manager \
 		--set image.tag=latest \
 		--set image.pullPolicy=Always \
-		--set defaultURLBase.host=$(DEFAULT_URLBASE) \
-		--set defaultURLBase.domain=$(DOMAIN)
+		--set defaultURLBase.host="\$(DEFAULT_URLBASE_HOST)" \
+		--set defaultURLBase.domain="\$(DOMAIN)"
 
 install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-manager resources.
 	@echo ====== $@ ======
@@ -117,9 +117,9 @@ install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-ma
 		--set image.repository=cosmo.io:5000/cosmo-controller-manager \
 		--set image.tag=latest \
 		--set image.pullPolicy=Always \
+		--set defaultURLBase.host="\$(DEFAULT_URLBASE_HOST)" \
+		--set defaultURLBase.domain="\$(DOMAIN)" \
 		--set replicaCount=0 \
-		--set defaultURLBase.host=$(DEFAULT_URLBASE) \
-		--set defaultURLBase.domain=$(DOMAIN) \
 		--set localRunTest.enabled=true \
 		--set localRunTest.webhookEndpoint.ip=$(shell hostname -i) \
 		--set localRunTest.webhookEndpoint.port=9443
@@ -185,7 +185,7 @@ run-manager:
 		--metrics-bind-address :8085 \
 		--cert-dir . \
 		--zap-log-level=debug \
-		--workspace-default-urlbase=$(DEFAULT_URLBASE)
+		--workspace-default-urlbase=https://$(DEFAULT_URLBASE_HOST).$(DOMAIN)
 
 run-local: kubectl ## Run test.
 	-@make uninstall-manager
@@ -214,6 +214,8 @@ run-local: kubectl ## Run test.
 		tmux send-keys -t 1 '(cd ../.. && make run-dashboard-ui 2>&1 | tee -a $${BIN_DIR}/local-dashboard-ui.log)' Enter && \
 		# ======== run dashboard ======== \
 		tmux send-keys -t 2 '(cd ../.. && make run-dashboard QUICK_BUILD=yes 2>&1 | tee -a $${BIN_DIR}/local-dashboard.log)' Enter && \
+		# ======== move to pane 3 ======== \
+		tmux select-pane -t 3 && \
 		# ======== attach ======== \
 		tmux attach-session -d -t cosmo && \
 		echo end ; \

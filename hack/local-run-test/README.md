@@ -22,7 +22,7 @@ $ make delete-all
 $ make help
 ```
 
-## Run the COSMO module outside of K8S
+## Run the COSMO modules outside of K8S
 
 For repeating programming and testing.
 
