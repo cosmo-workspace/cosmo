@@ -100,7 +100,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port ws1 --user user1 --port-name nw11 -A 1']
 SnapShot = """
-Error: validation error: --all-namespace is not supported in this command
+Error: validation error: --all-namespaces is not supported in this command
 Usage:
   cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
@@ -374,7 +374,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --user user1 --template template1 --all-namespaces 1']
 SnapShot = """
-Error: validation error: --all-namespace is not supported in this command
+Error: validation error: --all-namespaces is not supported in this command
 Usage:
   cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
 
@@ -678,7 +678,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [delete] fail with invalid args: workspace delete ws1 --user user1 -A 1']
 SnapShot = """
-Error: validation error: --all-namespace is not supported in this command
+Error: validation error: --all-namespaces is not supported in this command
 Usage:
   cosmoctl workspace delete WORKSPACE_NAME [flags]
 
@@ -724,7 +724,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [delete] fail with invalid args: workspace delete xxxx --user user1 -A 1']
 SnapShot = """
-Error: validation error: --all-namespace is not supported in this command
+Error: validation error: --all-namespaces is not supported in this command
 Usage:
   cosmoctl workspace delete WORKSPACE_NAME [flags]
 
@@ -914,7 +914,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] fail with invalid args: workspace get -A --user user1 1']
 SnapShot = """
-Error: validation error: --all-namespace connot be used with --namespace or --user
+Error: validation error: --all-namespaces connot be used with --namespace or --user
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -1401,7 +1401,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path / -A 1']
 SnapShot = """
-Error: validation error: --all-namespace is not supported in this command
+Error: validation error: --all-namespaces is not supported in this command
 Usage:
   cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
 
@@ -1685,7 +1685,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [run-instance] fail with invalid args: workspace run-instance ws1 --user user1 -A 1']
 SnapShot = """
-Error: validation error: --all-namespace connot be used with --namespace or --user
+Error: validation error: --all-namespaces connot be used with --namespace or --user
 Usage:
   cosmoctl workspace run-instance WORKSPACE_NAME [flags]
 
@@ -1876,7 +1876,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [stop-instance] fail with invalid args: workspace stop-instance ws1 --user user1 -A 1']
 SnapShot = """
-Error: validation error: --all-namespace connot be used with --namespace or --user
+Error: validation error: --all-namespaces connot be used with --namespace or --user
 Usage:
   cosmoctl workspace stop-instance WORKSPACE_NAME [flags]
 
