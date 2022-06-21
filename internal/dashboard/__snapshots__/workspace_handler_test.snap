@@ -1,0 +1,539 @@
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw1 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw1 2']
+SnapShot = """
+{\"message\":\"Successfully removed network rule\",\"networkRule\":{\"portName\":\"nw1\",\"portNumber\":9999,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false}}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw1 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw1 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw1 2']
+SnapShot = """
+{\"message\":\"failed to remove network rule\"}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, xxx 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, xxx 2']
+SnapShot = """
+{\"message\":\"port name xxx is not found\"}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, xxx, nw2 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, xxx, nw2 2']
+SnapShot = """
+{\"message\":\"workspace is not found\"}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: xxxxx, ws1, nw2 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: xxxxx, ws1, nw2 2']
+SnapShot = """
+{\"message\":\"user is not found\"}
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: usertest, ws1 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: usertest, ws1 2']
+SnapShot = """
+{\"message\":\"Successfully deleted\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"\"}}}
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: usertest, ws1 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: usertest, ws1 2']
+SnapShot = """
+{\"message\":\"failed to delete workspace\"}
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: usertest-admin, xxx 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: usertest-admin, xxx 2']
+SnapShot = """
+{\"message\":\"workspace is not found\"}
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1 2']
+SnapShot = """
+{\"message\":\"user is not found\"}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: usertest, ws1 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: usertest, ws1 2']
+SnapShot = """
+{\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"},\"additionalNetwork\":[{\"portName\":\"main\",\"portNumber\":18080,\"group\":\"mainnw\",\"httpPath\":\"/\",\"public\":false}]},\"status\":{\"phase\":\"\"}}}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: usertest, ws1 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: usertest, ws1 2']
+SnapShot = """
+{\"message\":\"failed to get workspace\"}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: usertest-admin, xxx 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: usertest-admin, xxx 2']
+SnapShot = """
+{\"message\":\"workspace is not found\"}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1 2']
+SnapShot = """
+{\"message\":\"user is not found\"}
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest 2']
+SnapShot = """
+{\"message\":\"No items found\",\"items\":[]}
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest-admin 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest-admin 2']
+SnapShot = """
+{\"items\":[{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1},\"status\":{\"phase\":\"\"}},{\"name\":\"ws2\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"additionalNetwork\":[{\"portName\":\"nw1\",\"portNumber\":1111,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false},{\"portName\":\"nw2\",\"portNumber\":3333,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false},{\"portName\":\"nw3\",\"portNumber\":2222,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false}]},\"status\":{\"phase\":\"\"}}]}
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with invalid request: Entry: xxxxx 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with invalid request: Entry: xxxxx 2']
+SnapShot = """
+{\"message\":\"user is not found\"}
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with unexpected error: Entry: usertest-admin 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with unexpected error: Entry: usertest-admin 2']
+SnapShot = """
+{\"message\":\"failed to list workspaces\"}
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 0} 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 0} 2']
+SnapShot = """
+{\"message\":\"Successfully updated\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":0},\"status\":{\"phase\":\"\"}}}
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 0} 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 0
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 5} 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 5} 2']
+SnapShot = """
+{\"message\":\"Successfully updated\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":5},\"status\":{\"phase\":\"\"}}}
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 5} 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 5
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, {"replicas": 0} 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, {"replicas": 0} 2']
+SnapShot = """
+{\"message\":\"failed to update workspace\"}
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: usertest, xxx, {"replicas": 1} 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: usertest, xxx, {"replicas": 1} 2']
+SnapShot = """
+{\"message\":\"workspace is not found\"}
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"replicas": 1} 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"replicas": 1} 2']
+SnapShot = """
+{\"message\":\"no change\"}
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1, {"replicas": 0} 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1, {"replicas": 0} 2']
+SnapShot = """
+{\"message\":\"user is not found\"}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}} 1']
+SnapShot = """
+201
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}} 2']
+SnapShot = """
+{\"message\":\"Successfully created\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"Pending\"}}}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}} 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"vars\": {
+      \"HOGE\": \"HOGEHOGE\"
+    }
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1"} 1']
+SnapShot = """
+201
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1"} 2']
+SnapShot = """
+{\"message\":\"Successfully created\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1},\"status\":{\"phase\":\"Pending\"}}}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1"} 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    }
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, , {"name": "","template": "template1"} 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, , {"name": "","template": "template1"} 2']
+SnapShot = """
+{\"message\":\"required field 'name' is zero value.\"}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, , {"name": "existing-ws","template": "template1"} 1']
+SnapShot = """
+429
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, , {"name": "existing-ws","template": "template1"} 2']
+SnapShot = """
+{\"message\":\"Workspace already exists\"}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, XXXX, {"name": "XXXX","template": "template1"} 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, XXXX, {"name": "XXXX","template": "template1"} 2']
+SnapShot = """
+{\"message\":\"failed to create workspace\"}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"name": "ws1","template": ""} 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"name": "ws1","template": ""} 2']
+SnapShot = """
+{\"message\":\"required field 'template' is zero value.\"}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"name": "ws1","template": "XXX"} 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"name": "ws1","template": "XXX"} 2']
+SnapShot = """
+{\"message\":\"failed to get workspace config in template\"}
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1, {"name": "ws1","template": "template1"} 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1, {"name": "ws1","template": "template1"} 2']
+SnapShot = """
+{\"message\":\"user is not found\"}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 2']
+SnapShot = """
+{\"message\":\"Successfully upserted network rule\",\"networkRule\":{\"portName\":\"nw2\",\"portNumber\":3000,\"group\":\"gp2\",\"httpPath\":\"/\",\"public\":false}}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 9999,
+        \"httpPath\": \"/\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 3000,
+        \"httpPath\": \"/\",
+        \"group\": \"gp2\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"public":true} 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"public":true} 2']
+SnapShot = """
+{\"message\":\"Successfully upserted network rule\",\"networkRule\":{\"portName\":\"nw2\",\"portNumber\":3000,\"public\":true}}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"public":true} 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 9999,
+        \"httpPath\": \"/\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 3000,
+        \"httpPath\": \"\",
+        \"group\": \"\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 2']
+SnapShot = """
+{\"message\":\"failed to upsert network rule\"}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw1, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw1, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 2']
+SnapShot = """
+{\"message\":\"no change in network rules\"}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw9, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw9, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 2']
+SnapShot = """
+{\"message\":\"port 9999 is already used\"}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, xxx, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, xxx, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 2']
+SnapShot = """
+{\"message\":\"workspace is not found\"}
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: xxxxx, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 1']
+SnapShot = """
+404
+"""
+
+['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: xxxxx, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 2']
+SnapShot = """
+{\"message\":\"user is not found\"}
+"""
+

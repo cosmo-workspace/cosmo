@@ -21,6 +21,10 @@ func (s *Server) PutUserName(ctx context.Context, userId string, req dashv1alpha
 		return ErrorResponse(http.StatusInternalServerError, "")
 	}
 
+	if user.Spec.DisplayName == req.DisplayName {
+		log.Info("no change")
+		return ErrorResponse(http.StatusBadRequest, "no change")
+	}
 	user.Spec.DisplayName = req.DisplayName
 
 	err := s.Klient.Update(ctx, user)
@@ -29,7 +33,7 @@ func (s *Server) PutUserName(ctx context.Context, userId string, req dashv1alpha
 			log.Error(err, err.Error(), "userid", userId)
 			return ErrorResponse(http.StatusNotFound, err.Error())
 		} else {
-			message := "Failed to update user"
+			message := "failed to update user"
 			log.Error(err, message, "userid", userId)
 			return ErrorResponse(http.StatusInternalServerError, message)
 		}
@@ -57,6 +61,10 @@ func (s *Server) PutUserRole(ctx context.Context, userId string, req dashv1alpha
 		log.Info("invalid request", "id", userId, "role", userrole)
 		return ErrorResponse(http.StatusBadRequest, "'userrole' is invalid")
 	}
+	if user.Spec.Role == userrole {
+		log.Info("no change")
+		return ErrorResponse(http.StatusBadRequest, "no change")
+	}
 	user.Spec.Role = userrole
 
 	err := s.Klient.Update(ctx, user)
@@ -65,7 +73,7 @@ func (s *Server) PutUserRole(ctx context.Context, userId string, req dashv1alpha
 			log.Error(err, err.Error(), "userid", userId)
 			return ErrorResponse(http.StatusNotFound, err.Error())
 		} else {
-			message := "Failed to update user"
+			message := "failed to update user"
 			log.Error(err, message, "userid", userId)
 			return ErrorResponse(http.StatusInternalServerError, message)
 		}
@@ -96,7 +104,7 @@ func (s *Server) PutUserPassword(ctx context.Context, userId string, req dashv1a
 
 	// Upsert password
 	if err := s.Klient.RegisterPassword(ctx, userId, []byte(req.NewPassword)); err != nil {
-		message := "Failed to update user password"
+		message := "failed to update user password"
 		log.Error(err, message, "userid", userId)
 		return ErrorResponse(http.StatusInternalServerError, message)
 	}

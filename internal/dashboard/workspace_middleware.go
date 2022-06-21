@@ -59,7 +59,10 @@ func (s *Server) preFetchWorkspaceMiddleware(next http.Handler) http.Handler {
 
 			} else {
 				log.Error(err, "failed to get workspace", "userid", userID, "workspace", wsName)
-				w.WriteHeader(http.StatusInternalServerError)
+				errorResponse := dashv1alpha1.ErrorResponse{
+					Message: "failed to get workspace",
+				}
+				dashv1alpha1.EncodeJSONResponse(errorResponse, pointer.Int(http.StatusInternalServerError), w)
 				return
 			}
 		}
