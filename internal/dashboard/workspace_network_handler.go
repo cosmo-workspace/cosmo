@@ -51,7 +51,7 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	}
 
 	if err := s.Klient.Update(ctx, ws); err != nil {
-		message := "Failed to upsert network rule"
+		message := "failed to upsert network rule"
 		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return ErrorResponse(http.StatusInternalServerError, message)
 	}
@@ -92,7 +92,7 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 	log.DebugAll().PrintObjectDiff(before, ws)
 
 	if err := s.Klient.Update(ctx, ws); err != nil {
-		message := "Failed to remove network rule"
+		message := "failed to remove network rule"
 		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return ErrorResponse(http.StatusInternalServerError, message)
 	}

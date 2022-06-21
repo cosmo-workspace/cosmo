@@ -52,7 +52,10 @@ func (s *Server) preFetchUserMiddleware(next http.Handler) http.Handler {
 
 			} else {
 				log.Error(err, "failed to get user", "userid", userID)
-				w.WriteHeader(http.StatusInternalServerError)
+				errorResponse := dashv1alpha1.ErrorResponse{
+					Message: "failed to get user",
+				}
+				dashv1alpha1.EncodeJSONResponse(errorResponse, pointer.Int(http.StatusInternalServerError), w)
 				return
 			}
 		}

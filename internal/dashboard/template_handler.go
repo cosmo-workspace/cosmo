@@ -25,7 +25,7 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 
 	tmpls, err := s.Klient.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeWorkspace})
 	if err != nil {
-		message := "Failed to list WorkspaceTemplates"
+		message := "failed to list WorkspaceTemplates"
 		log.Error(err, message)
 		return ErrorResponse(http.StatusInternalServerError, message)
 	}
@@ -50,7 +50,7 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 
 	tmpls, err := s.Klient.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeUserAddon})
 	if err != nil {
-		message := "Failed to list UserAddon Templates"
+		message := "failed to list UserAddon Templates"
 		log.Error(err, message)
 		return ErrorResponse(http.StatusInternalServerError, message)
 	}
