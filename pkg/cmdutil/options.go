@@ -117,7 +117,7 @@ func (o *CliOptions) Complete(cmd *cobra.Command, args []string) error {
 
 func (o *NamespacedCliOptions) Validate(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace && o.Namespace != "" {
-		return errors.New("--all-namespace connot be used with --namespace")
+		return errors.New("--all-namespaces connot be used with --namespace")
 	}
 	return o.CliOptions.Validate(cmd, args)
 }
@@ -141,7 +141,7 @@ func (o *UserNamespacedCliOptions) Validate(cmd *cobra.Command, args []string) e
 		return errors.New("--user and --namespace connot be used at the same time")
 	}
 	if o.AllNamespace && (o.Namespace != "" || o.User != "") {
-		return errors.New("--all-namespace connot be used with --namespace or --user")
+		return errors.New("--all-namespaces connot be used with --namespace or --user")
 	}
 	return o.NamespacedCliOptions.Validate(cmd, args)
 }

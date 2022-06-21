@@ -58,7 +58,7 @@ func (o *createOption) PreRunE(cmd *cobra.Command, args []string) error {
 
 func (o *createOption) Validate(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace {
-		return errors.New("--all-namespace is not supported in this command")
+		return errors.New("--all-namespaces is not supported in this command")
 	}
 	if err := o.UserNamespacedCliOptions.Validate(cmd, args); err != nil {
 		return err
