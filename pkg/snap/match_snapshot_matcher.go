@@ -40,16 +40,16 @@ func MatchSnapShot(options ...Option) types.GomegaMatcher {
 	shotCountMap[testLabel] = count
 	snapId := fmt.Sprintf("%s %d", testLabel, count)
 
-	return &snapShotMacher{
+	return &snapShotMatcher{
 		snapFilePath: snapFile,
 		snapId:       snapId,
 		fs:           cacheFs,
 	}
 }
 
-type Option func(*snapShotMacher)
+type Option func(m *snapShotMatcher)
 
-type snapShotMacher struct {
+type snapShotMatcher struct {
 	snapFilePath string
 	snapId       string
 	fs           afero.Fs
@@ -57,7 +57,7 @@ type snapShotMacher struct {
 	actualJson   string
 }
 
-func (m *snapShotMacher) Match(actual interface{}) (success bool, err error) {
+func (m *snapShotMatcher) Match(actual interface{}) (success bool, err error) {
 
 	switch v := actual.(type) {
 	case string:
@@ -88,20 +88,12 @@ func (m *snapShotMacher) Match(actual interface{}) (success bool, err error) {
 	return m.actualJson == m.expectedJson, nil
 }
 
-func (m *snapShotMacher) FailureMessage(actual interface{}) (message string) {
-	// var act interface{}
-	// if err := json.Unmarshal([]byte(m.actualJson), &act); err != nil {
-	// 	return fmt.Errorf("json decode error: %w", err).Error()
-	// }
-	// var exp interface{}
-	// if err := json.Unmarshal([]byte(m.expectedJson), &exp); err != nil {
-	// 	return fmt.Errorf("json decode error: %w", err).Error()
-	// }
-	//return "Expected to match\n" + cmp.Diff(exp, act) + "\n"
+func (m *snapShotMatcher) FailureMessage(actual interface{}) (message string) {
+
 	return "Expected to match\n" + cmp.Diff(m.expectedJson, m.actualJson) + "\n"
 }
 
-func (m *snapShotMacher) NegatedFailureMessage(actual interface{}) (message string) {
+func (m *snapShotMatcher) NegatedFailureMessage(actual interface{}) (message string) {
 	var act interface{}
 	if err := json.Unmarshal([]byte(m.actualJson), &act); err != nil {
 		return fmt.Errorf("json decode error: %w", err).Error()
@@ -115,17 +107,12 @@ func (m *snapShotMacher) NegatedFailureMessage(actual interface{}) (message stri
 
 //-----------------------------------------------------------
 
-// type snapData struct {
-// 	SnapShots map[string]interface{} `toml:"SnapShots,multiline,omitempty"`
-// 	// SnapShots map[string]string `json:"snapshots"`
-// }
-
 type snapData map[string]data
 type data struct {
 	SnapShot interface{} `toml:"SnapShot,multiline,omitempty"`
 }
 
-func (m *snapShotMacher) ReadSnapShot() (*string, error) {
+func (m *snapShotMatcher) ReadSnapShot() (*string, error) {
 
 	snapFileData, err := m.readSnapFileData()
 	if err != nil {
@@ -140,7 +127,7 @@ func (m *snapShotMacher) ReadSnapShot() (*string, error) {
 	}
 }
 
-func (m *snapShotMacher) WriteSnapShot(snap []byte) error {
+func (m *snapShotMatcher) WriteSnapShot(snap []byte) error {
 
 	snapFileData, err := m.readSnapFileData()
 
@@ -158,7 +145,7 @@ func (m *snapShotMacher) WriteSnapShot(snap []byte) error {
 	return nil
 }
 
-func (m *snapShotMacher) readSnapFileData() (*snapData, error) {
+func (m *snapShotMatcher) readSnapFileData() (*snapData, error) {
 	exists, err := afero.Exists(m.fs, m.snapFilePath)
 	if err != nil {
 		return nil, fmt.Errorf("file check error: %w", err)
@@ -181,7 +168,7 @@ func (m *snapShotMacher) readSnapFileData() (*snapData, error) {
 	return &datas, nil
 }
 
-func (m *snapShotMacher) writeSnapFileData(snapFileData *snapData) error {
+func (m *snapShotMatcher) writeSnapFileData(snapFileData *snapData) error {
 	if err := m.fs.MkdirAll(filepath.Dir(m.snapFilePath), os.ModePerm); err != nil {
 		return fmt.Errorf("create snapfile directory error: %w", err)
 	}
@@ -199,45 +186,3 @@ func (m *snapShotMacher) writeSnapFileData(snapFileData *snapData) error {
 	}
 	return nil
 }
-
-// func (m *snapShotMacher) readSnapFileData() (*snapData, error) {
-// 	exists, err := afero.Exists(m.fs, m.snapFilePath)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("file check error: %w", err)
-// 	} else if !exists {
-// 		return nil, afero.ErrFileNotFound
-// 	}
-
-// 	file, err := m.fs.Open(m.snapFilePath)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("file open error: %w", err)
-// 	}
-
-// 	defer file.Close()
-
-// 	var datas snapData
-// 	if err := json.NewDecoder(file).Decode(&datas); err != nil {
-// 		return nil, fmt.Errorf("json decode error: %w", err)
-// 	}
-// 	return &datas, nil
-// }
-
-// func (m *snapShotMacher) writeSnapFileData(snapFileData *snapData) error {
-// 	if err := m.fs.MkdirAll(filepath.Dir(m.snapFilePath), os.ModePerm); err != nil {
-// 		return fmt.Errorf("create snapfile directory error: %w", err)
-// 	}
-// 	file, err := m.fs.Create(m.snapFilePath)
-// 	if err != nil {
-// 		return fmt.Errorf("open snapfile error: %w", err)
-// 	}
-// 	defer file.Close()
-
-// 	enc := json.NewEncoder(file)
-// 	enc.SetEscapeHTML(true)
-// 	enc.SetIndent("", strings.Repeat(" ", 4))
-
-// 	if err := enc.Encode(snapFileData); err != nil {
-// 		return fmt.Errorf("json encode error: %w", err)
-// 	}
-// 	return nil
-// }

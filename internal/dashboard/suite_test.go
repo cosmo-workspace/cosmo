@@ -38,11 +38,12 @@ import (
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
 var (
-	cfg       *rest.Config
-	k8sClient kosmo.Client
-	testEnv   *envtest.Environment
-	ctx       context.Context
-	cancel    context.CancelFunc
+	cfg        *rest.Config
+	k8sClient  kosmo.Client
+	clientMock kosmo.ClientMock
+	testEnv    *envtest.Environment
+	ctx        context.Context
+	cancel     context.CancelFunc
 
 	userSession  []*http.Cookie
 	adminSession []*http.Cookie
@@ -82,6 +83,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	k8sClient = kosmo.NewClient(c)
+	Expect(k8sClient).NotTo(BeNil())
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:             scheme.Scheme,
@@ -91,7 +93,8 @@ var _ = BeforeSuite(func() {
 
 	// Setup server
 	By("bootstrapping server")
-	klient := kosmo.NewClient(mgr.GetClient())
+	clientMock = kosmo.NewClientMock(mgr.GetClient())
+	klient := kosmo.NewClient(&clientMock)
 
 	auths := make(map[wsv1alpha1.UserAuthType]auth.Authorizer)
 	auths[wsv1alpha1.UserAuthTypeKosmoSecert] = auth.NewKosmoSecretAuthorizer(klient)
@@ -116,9 +119,6 @@ var _ = BeforeSuite(func() {
 		err := mgr.Start(ctx)
 		Expect(err).NotTo(HaveOccurred())
 	}()
-
-	Expect(err).NotTo(HaveOccurred())
-	Expect(k8sClient).NotTo(BeNil())
 
 })
 
@@ -199,6 +199,10 @@ func test_CreateTemplate(templateType string, templateName string) {
 			Labels: map[string]string{
 				cosmov1alpha1.TemplateLabelKeyType: templateType,
 			},
+			Annotations: map[string]string{
+				wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
+				wsv1alpha1.TemplateAnnKeyDefaultUserAddon:         "true",
+			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
 			RequiredVars: []cosmov1alpha1.RequiredVarSpec{
@@ -217,11 +221,8 @@ func test_CreateTemplate(templateType string, templateName string) {
 
 func test_DeleteTemplateAll() {
 	ctx := context.Background()
-	templates, err := k8sClient.ListTemplates(ctx)
+	err := k8sClient.DeleteAllOf(ctx, &cosmov1alpha1.Template{})
 	Expect(err).ShouldNot(HaveOccurred())
-	for _, template := range templates {
-		k8sClient.Delete(ctx, &template)
-	}
 	Eventually(func() ([]cosmov1alpha1.Template, error) {
 		return k8sClient.ListTemplates(ctx)
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
@@ -243,7 +244,7 @@ func test_CreateCosmoUser(id string, dispayName string, role wsv1alpha1.UserRole
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() error {
-		err := k8sClient.Get(ctx, client.ObjectKey{Name: id}, &wsv1alpha1.User{})
+		_, err := k8sClient.GetUser(ctx, id)
 		return err
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
@@ -317,11 +318,11 @@ func test_CreateWorkspace(userId string, name string, template string, vars map[
 		Template: cosmov1alpha1.TemplateRef{
 			Name: template,
 		},
-		Replicas: pointer.Int64(0),
+		Replicas: pointer.Int64(1),
 		Vars:     vars,
 	}
-
 	err := k8sClient.Create(ctx, ws)
+	//_, err := k8sClient.CreateWorkspace(ctx, userId, name, template, vars)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() (*wsv1alpha1.Workspace, error) {
@@ -329,13 +330,19 @@ func test_CreateWorkspace(userId string, name string, template string, vars map[
 	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
 }
 
+// func test_StopWorkspace(userId string, name string) {
+// 	ctx := context.Background()
+// 	ws, err := k8sClient.GetWorkspaceByUserID(ctx, name, userId)
+// 	Expect(err).ShouldNot(HaveOccurred())
+// 	ws.Spec.Replicas = pointer.Int64(0)
+// 	err = k8sClient.Update(ctx, ws)
+// 	Expect(err).ShouldNot(HaveOccurred())
+// }
+
 func test_DeleteWorkspaceAllByUserId(userId string) {
 	ctx := context.Background()
-	workspaces, err := k8sClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userId))
+	err := k8sClient.DeleteAllOf(ctx, &wsv1alpha1.Workspace{}, client.InNamespace(wsv1alpha1.UserNamespace(userId)))
 	Expect(err).ShouldNot(HaveOccurred())
-	for _, workspace := range workspaces {
-		k8sClient.Delete(ctx, &workspace)
-	}
 	Eventually(func() ([]wsv1alpha1.Workspace, error) {
 		return k8sClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userId))
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())

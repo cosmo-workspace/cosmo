@@ -2,14 +2,20 @@ package dashboard
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
+	"regexp"
+	"strings"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 )
 
 var _ = Describe("Dashboard server [User]", func() {
@@ -20,581 +26,373 @@ var _ = Describe("Dashboard server [User]", func() {
 	})
 
 	AfterEach(func() {
+		clientMock.Clear()
 		test_DeleteCosmoUserAll()
 		test_DeleteTemplateAll()
 	})
 
+	//==================================================================================
+	replace := func(src, reg, repl string) string {
+		return regexp.MustCompile(reg).ReplaceAllString(src, repl)
+	}
+
+	userSnap := func(us *wsv1alpha1.User) struct{ Name, Namespace, Spec, Status interface{} } {
+		return struct{ Name, Namespace, Spec, Status interface{} }{
+			Name:      us.Name,
+			Namespace: us.Namespace,
+			Spec:      us.Spec,
+			Status:    us.Status,
+		}
+	}
+	//==================================================================================
 	Describe("authorization by role", func() {
 
-		var session []*http.Cookie
-
-		deny403 := func(whenText string, request request) {
-			When(whenText, func() {
-				It("should deny with 403 Forbidden", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: ""})
-				})
-			})
-		}
-		ok200 := func(whenText string, request request) {
-			When(whenText, func() {
-				It("should succeed with 200 ok", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusOK, body: "@ignore"})
-				})
-			})
-		}
-		ok201 := func(whenText string, request request) {
-			When(whenText, func() {
-				It("should succeed with 201 created", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusCreated, body: "@ignore"})
-				})
-			})
-		}
-
-		When("access API with normal user session", func() {
-
-			BeforeEach(func() {
-				session = userSession
-			})
-
-			When("update own resource", func() {
-				deny403("Create a new User", request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`})
-				deny403("Get all users", request{method: http.MethodGet, path: "/api/v1alpha1/user"})
-				ok200("Get user by ID", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest"})
-				ok200("Delete user by ID", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest"})
-				ok200("Update user name", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": "newname"}`})
-				deny403("Update user role", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "cosmo-admin"}`})
-				ok200("Update user password", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`})
-			})
-
-			When("update resource of others", func() {
-				deny403("Create a new User", request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`})
-				deny403("Get all users", request{method: http.MethodGet, path: "/api/v1alpha1/user"})
-				deny403("Get user by ID", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin"})
-				deny403("Delete user by ID", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin"})
-				deny403("Update user name", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/name", body: `{"displayName": "newname"}`})
-				deny403("Update user role", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/role", body: `{"role": "cosmo-admin"}`})
-				deny403("Update user password", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`})
-			})
-
-		})
-
-		When("access API with admin user session", func() {
-
-			BeforeEach(func() {
-				session = adminSession
+		DescribeTable("access API with admin user session:",
+			func(stat int, req request) {
 				test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
-			})
+				By("---------------test start----------------")
+				res, _ := test_HttpSend(adminSession, req)
+				Ω(res.StatusCode).Should(Equal(stat))
+				By("---------------test end---------------")
+			},
+			func(stat int, req request) string { return fmt.Sprintf("%d %+v", stat, req) },
+			// update own resource
+			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user"}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin"}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin"}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/name", body: `{"displayName": "newname"}`}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/role", body: `{"role": ""}`}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`}),
+			// update resource of others
+			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user"}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest"}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest"}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": "newname"}`}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "cosmo-admin"}`}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`}),
+		)
 
-			When("update own resource", func() {
-				ok201("Create a new User", request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`})
-				ok200("Get all users", request{method: http.MethodGet, path: "/api/v1alpha1/user"})
-				ok200("Get user by ID", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin"})
-				ok200("Delete user by ID", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin"})
-				ok200("Update user name", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/name", body: `{"displayName": "newname"}`})
-				ok200("Update user role", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/role", body: `{"role": "cosmo-admin"}`})
-				ok200("Update user password", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`})
-			})
-
-			When("update resource of others", func() {
-				ok201("Create a new User", request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`})
-				ok200("Get all users", request{method: http.MethodGet, path: "/api/v1alpha1/user"})
-				ok200("Get user by ID", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest"})
-				ok200("Delete user by ID", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest"})
-				ok200("Update user name", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": "newname"}`})
-				ok200("Update user role", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "cosmo-admin"}`})
-				ok200("Update user password", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`})
-			})
-
-		})
-
+		DescribeTable("access API with normal user session:",
+			func(stat int, req request) {
+				test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
+				By("---------------test start----------------")
+				res, _ := test_HttpSend(userSession, req)
+				Ω(res.StatusCode).Should(Equal(stat))
+				By("---------------test end---------------")
+			},
+			func(stat int, req request) string { return fmt.Sprintf("%d %+v", stat, req) },
+			// update own resource
+			Entry(nil, 403, request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`}),
+			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user"}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest"}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest"}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": "newname"}`}),
+			Entry(nil, 403, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "cosmo-admin"}`}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`}),
+			// update resource of others
+			Entry(nil, 403, request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`}),
+			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user"}),
+			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin"}),
+			Entry(nil, 403, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin"}),
+			Entry(nil, 403, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/name", body: `{"displayName": "newname"}`}),
+			Entry(nil, 403, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/role", body: `{"role": ""}`}),
+			Entry(nil, 403, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`}),
+		)
 	})
 
-	When("create a new User", func() {
+	//==================================================================================
+	Describe("[PostUser]", func() {
 
-		Describe("invalid request error", func() {
-
-			When("user role is invalid", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create", "role": "xxxxxx"}`},
-						response{statusCode: http.StatusBadRequest, body: `{"message": "'userrole' is invalid"}`},
-					)
+		run_test := func(userId, requestBody string) {
+			if userId == "user-create" {
+				test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
+				test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-temple1")
+			} else if userId == "user-create-later" {
+				timer := time.AfterFunc(100*time.Millisecond, func() {
+					test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-later")
 				})
-			})
-
-			When("authtype is invalid", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create", "authType": "xxxxx"}`},
-						response{statusCode: http.StatusBadRequest, body: `{"message": "'authtype' is invalid"}`},
-					)
+				defer timer.Stop()
+			} else if userId == "user-create-timeout" {
+				timer := time.AfterFunc(30*time.Second, func() {
+					test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-timeout")
 				})
-			})
+				defer timer.Stop()
+			}
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodPost, path: "/api/v1alpha1/user", body: requestBody})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(replace(string(body), `"defaultPassword":".*"`, `"defaultPassword":"xxxxxxxx"`)).To(MatchSnapShot())
 
-			When("user id empty", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": ""}`},
-						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'id' is zero value."}`},
-					)
-				})
-			})
-
-			When("user id is invalid (include upper case)", func() {
-				It("should deny with 503 ServiceUnavailable", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-createX"}`},
-						response{statusCode: http.StatusServiceUnavailable, body: `{"message":"failed to create user"}`},
-					)
-				})
-			})
-
-			When("user is already exists", func() {
-				It("should deny witn 429 TooManyRequests", func() {
-					test_CreateCosmoUser("user-create-alreadyexist", "already", "")
-
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create-alreadyexist"}`},
-						response{statusCode: http.StatusTooManyRequests, body: `{"message": "user already exists"}`},
-					)
-				})
-			})
-		})
-
-		Describe("valid request", func() {
-
-			When("all valid arguments are specified", func() {
-				It("should be registered as specified", func() {
-					test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
-					test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-temple1")
-
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost,
-							path:   "/api/v1alpha1/user",
-							body: `{ "id": "user-create", "displayName": "create 1", "role":"cosmo-admin", "authType": "kosmo-secret",` +
-								`"addons": [{"template": "user-temple1","vars": {"HOGE": "FUGA"}}]}`,
-						},
-						response{
-							statusCode: http.StatusCreated,
-							body: `{"message": "Successfully created",` +
-								`"user": { "id": "user-create", "displayName": "create 1", "role":"cosmo-admin", "authType": "kosmo-secret", ` +
-								`"addons": [{"template": "user-temple1", "vars": {"HOGE": "FUGA"}}],` +
-								`"defaultPassword": "%s"}}`,
-							bodyValues: func() []interface{} {
-								defaultPass, _ := k8sClient.GetDefaultPassword(context.Background(), "user-create")
-								return []interface{}{*defaultPass}
-							},
-						},
-					)
-					userObj, err := k8sClient.GetUser(context.Background(), "user-create")
-					Expect(err).NotTo(HaveOccurred()) // created
-
-					user := convertUserToDashv1alpha1User(*userObj)
-					Expect(&dashv1alpha1.User{
-						Id:          "user-create",
-						DisplayName: "create 1",
-						Role:        "cosmo-admin",
-						AuthType:    "kosmo-secret",
-						Addons: []dashv1alpha1.ApiV1alpha1UserAddons{
-							{
-								Template: "user-temple1",
-								Vars:     map[string]string{"HOGE": "FUGA"},
-							},
-						},
-					}).Should(Equal(user))
-				})
-			})
-
-			When("optional arguments are omitted", func() {
-				It("should be registered default value", func() {
-					test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
-
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost,
-							path:   "/api/v1alpha1/user",
-							body:   `{ "id": "user-create"}`,
-						},
-						response{
-							statusCode: http.StatusCreated,
-							body: `{"message": "Successfully created",` +
-								`"user": { "id": "user-create", "displayName": "user-create", "authType": "kosmo-secret", ` +
-								`"defaultPassword": "%s"}}`,
-							bodyValues: func() []interface{} {
-								defaultPass, _ := k8sClient.GetDefaultPassword(context.Background(), "user-create")
-								return []interface{}{*defaultPass}
-							},
-						},
-					)
-					userObj, err := k8sClient.GetUser(context.Background(), "user-create")
-					Expect(err).NotTo(HaveOccurred()) // created
-
-					user := convertUserToDashv1alpha1User(*userObj)
-					Expect(&dashv1alpha1.User{
-						Id:          "user-create",
-						DisplayName: "user-create",
-						Role:        "",
-						AuthType:    "kosmo-secret",
-						Addons:      []dashv1alpha1.ApiV1alpha1UserAddons{},
-					}).Should(Equal(user))
-				})
-			})
-		})
-
-		Describe("default password creation timing", func() {
-
-			When("password create immediately", func() {
-				It("should succeed", func() {
-					test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
-
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create"}`},
-						response{statusCode: http.StatusCreated, body: "@ignore"},
-					)
-					user, _ := k8sClient.GetUser(context.Background(), "user-create")
-					Expect(user).ShouldNot(BeNil()) // created
-				})
-			})
-
-			When("password create later", func() {
-				It("should succeed", func() {
-					timer := time.AfterFunc(100*time.Millisecond, func() {
-						test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-later")
-					})
-					defer timer.Stop()
-
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create-later"}`},
-						response{statusCode: http.StatusCreated, body: "@ignore"},
-					)
-					user, _ := k8sClient.GetUser(context.Background(), "user-create-later")
-					Expect(user).ShouldNot(BeNil()) // created
-				})
-			})
-
-			When("password create timeout", func() {
-				It("should create user and fail with 503 ServiceUnavailable", func() {
-					timer := time.AfterFunc(30*time.Second, func() {
-						test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-timeout")
-					})
-					defer timer.Stop()
-
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create-timeout"}`},
-						response{
-							statusCode: http.StatusServiceUnavailable,
-							body:       `{"message": "Request timeout"}`,
-						},
-					)
-					user, _ := k8sClient.GetUser(context.Background(), "user-create-timeout")
-					Expect(user).ShouldNot(BeNil()) // created
-				})
-			})
-		})
-	})
-
-	When("get all users", func() {
-
-		Describe("invalid request error", func() {
-			// nothing
-		})
-
-		When("user is empty", func() {
-			// Can't test
-		})
-
-		When("user is not empty", func() {
-			It("should return items", func() {
-				test_HttpSendAndVerify(adminSession,
-					request{method: http.MethodGet, path: "/api/v1alpha1/user"},
-					response{
-						statusCode: http.StatusOK,
-						body: `{"items":[` +
-							`{"id":"usertest","displayName":"お名前","authType":"kosmo-secret"},` +
-							`{"id":"usertest-admin","displayName":"アドミン","role":"cosmo-admin","authType":"kosmo-secret"}` +
-							`]}`,
-					},
-				)
-			})
-		})
-	})
-
-	When("get user by ID", func() {
-
-		Describe("invalid request error", func() {
-
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodGet, path: "/api/v1alpha1/user/XXXXX"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
-		})
-
-		Describe("valid request", func() {
-
-			It("should return item", func() {
-				test_HttpSendAndVerify(userSession,
-					request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest"},
-					response{
-						statusCode: http.StatusOK,
-						body:       `{"user": { "id": "usertest", "displayName": "お名前",  "authType": "kosmo-secret"}}`,
-					},
-				)
-			})
-		})
-
-	})
-
-	When("delete user by ID", func() {
-
-		Describe("invalid request error", func() {
-
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodDelete, path: "/api/v1alpha1/user/XXXXX"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
-
-			When("user is empty", func() {
-				// Can't test
-			})
-		})
-
-		Describe("valid request", func() {
-
-			When("user is exist", func() {
-				It("should successfully deleted", func() {
-					test_CreateCosmoUser("user-delete1", "delete", "")
-
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodDelete, path: "/api/v1alpha1/user/user-delete1"},
-						response{
-							statusCode: http.StatusOK,
-							body: `{ "message": "Successfully deleted",` +
-								`"user": { "id": "user-delete1", "displayName": "delete", "authType": "kosmo-secret"}}`,
-						},
-					)
-					user, _ := k8sClient.GetUser(context.Background(), "user-delete1")
-					Expect(user).Should(BeNil()) // deleted
-				})
-			})
-
-		})
-	})
-
-	When("update user name", func() {
-
-		Describe("invalid request error", func() {
-
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPut, path: "/api/v1alpha1/user/XXXXXX/name", body: `{"displayName": "namechanged"}`},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
-
-			When("diplayName is empty", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": ""}`},
-						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'displayName' is zero value."}`},
-					)
-				})
-			})
-
-			When("diplayName is not specified", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{}`},
-						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'displayName' is zero value."}`},
-					)
-				})
-			})
-
-		})
-
-		Describe("valid request", func() {
-
-			When("update own name", func() {
-				It("should successfully updated", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": "namechanged"}`},
-						response{
-							statusCode: http.StatusOK,
-							body: `{"message": "Successfully updated",` +
-								`"user": { "id": "usertest", "displayName": "namechanged", "authType": "kosmo-secret"}}`,
-						},
-					)
-					userObj, err := k8sClient.GetUser(context.Background(), "usertest")
+			if userId != "" {
+				wsv1User, err := k8sClient.GetUser(context.Background(), userId)
+				if res.StatusCode == http.StatusCreated {
 					Expect(err).NotTo(HaveOccurred())
+					Ω(userSnap(wsv1User)).To(MatchSnapShot())
+				} else {
+					Expect(err).To(HaveOccurred())
+				}
+			}
+			By("---------------test end---------------")
+		}
+		desc := func(args ...string) string { return strings.Join(args, " ") }
 
-					user := convertUserToDashv1alpha1User(*userObj)
-					Expect(&dashv1alpha1.User{
-						Id:          "usertest",
-						DisplayName: "namechanged",
-						Role:        "",
-						AuthType:    "kosmo-secret",
-						Addons:      []dashv1alpha1.ApiV1alpha1UserAddons{},
-					}).Should(Equal(user))
-				})
-			})
+		DescribeTable("✅ success succeed in normal context:",
+			run_test,
+			Entry(desc, "user-create", `{ "id": "user-create", "displayName": "create 1", "role":"cosmo-admin", "authType": "kosmo-secret","addons": [{"template": "user-temple1","vars": {"HOGE": "FUGA"}}]}`),
+			Entry(desc, "user-create", `{ "id": "user-create"}`),
+			Entry(desc, "user-create-later", `{ "id": "user-create-later"}`),
+		)
 
-		})
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(desc, "user-create", `{ "id": "user-create", "role": "xxxxxx"}`),
+			Entry(desc, "user-create", `{ "id": "user-create", "authType": "xxxxx"}`),
+			Entry(desc, "", `{ "id": ""}`),
+			Entry(desc, "user-createX", `{ "id": "user-createX"}`),
+			Entry(desc, "", `{ "id": "usertest"}`),
+		)
 
+		DescribeTable("❌ fail to create password timeout",
+			run_test,
+			Entry(desc, "", `{ "id": "user-create-timeout"}`),
+		)
 	})
 
-	When("update user role", func() {
+	//==================================================================================
+	Describe("[GetUsers]", func() {
 
-		Describe("invalid request error", func() {
+		run_test := func() {
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodGet, path: "/api/v1alpha1/user"})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPut, path: "/api/v1alpha1/user/XXXXXX/role", body: `{"role": "cosmo-admin"}`},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil),
+		)
 
-			When("user role is invalid", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "xxxxx"}`},
-						response{statusCode: http.StatusBadRequest, body: `{"message": "'userrole' is invalid"}`},
-					)
-				})
-			})
-		})
+		DescribeTable("✅ success with empty user:",
+			func() {
+				clientMock.SetListError((*Server).GetUsers, nil)
+				run_test()
+			},
+			Entry(nil),
+		)
 
-		Describe("valid request", func() {
-
-			When("access API with admin user session and update own name", func() {
-				It("should successfully updated", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "cosmo-admin"}`},
-						response{
-							statusCode: http.StatusOK,
-							body: `{"message": "Successfully updated",` +
-								`"user": { "id": "usertest", "displayName": "お名前", "role": "cosmo-admin", "authType": "kosmo-secret"}}`,
-						},
-					)
-					userObj, err := k8sClient.GetUser(context.Background(), "usertest")
-					Expect(err).NotTo(HaveOccurred())
-
-					user := convertUserToDashv1alpha1User(*userObj)
-					Expect(&dashv1alpha1.User{
-						Id:          "usertest",
-						DisplayName: "お名前",
-						Role:        "cosmo-admin",
-						AuthType:    "kosmo-secret",
-						Addons:      []dashv1alpha1.ApiV1alpha1UserAddons{},
-					}).Should(Equal(user))
-				})
-			})
-
-			When("role is empty", func() {
-				It("should successfully updated", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": ""}`},
-						response{
-							statusCode: http.StatusOK,
-							body: `{"message": "Successfully updated",` +
-								`"user": { "id": "usertest", "displayName": "お名前", "authType": "kosmo-secret"}}`,
-						},
-					)
-					userObj, err := k8sClient.GetUser(context.Background(), "usertest")
-					Expect(err).NotTo(HaveOccurred())
-
-					user := convertUserToDashv1alpha1User(*userObj)
-					Expect(&dashv1alpha1.User{
-						Id:          "usertest",
-						DisplayName: "お名前",
-						Role:        "",
-						AuthType:    "kosmo-secret",
-						Addons:      []dashv1alpha1.ApiV1alpha1UserAddons{},
-					}).Should(Equal(user))
-				})
-			})
-
-		})
+		DescribeTable("❌ fail with an unexpected error at list:",
+			func() {
+				clientMock.SetListError((*Server).GetUsers, errors.New("mock user list error"))
+				run_test()
+			},
+			Entry(nil),
+		)
 	})
 
-	When("update user password", func() {
+	//==================================================================================
+	Describe("[GetUser]", func() {
 
-		Describe("invalid request error", func() {
+		run_test := func(userId string) {
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodGet, path: fmt.Sprintf("/api/v1alpha1/user/%s", userId)})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/xxxxxxxx/password",
-							body: `{ "currentPassword": "password", "newPassword": "newPassword"}`},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest"),
+		)
 
-			When("currentPassword is empty", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
-							body: `{ "currentPassword": "", "newPassword": "newPassword"}`},
-						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'currentPassword' is zero value."}`},
-					)
-				})
-			})
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "XXXXX"),
+		)
 
-			When("currentPassword is invarid", func() {
-				It("should deny with 403 Forbidden", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
-							body: `{ "currentPassword": "xxxxxx", "newPassword": "newPassword"}`},
-						response{statusCode: http.StatusForbidden, body: `{"message":"incorrect user or password"}`},
-					)
-				})
-			})
+		DescribeTable("❌ fail with an unexpected error to get:",
+			func(userId string) {
+				clientMock.SetGetError(`\\.GetUser$`, errors.New("mock get user error"))
+				//clientMock.SetGetError((*Server).GetUser, errors.New("get user error"))
+				run_test(userId)
+			},
+			Entry(nil, "usertest"),
+		)
+	})
 
-			When("newPassword is empty", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
-							body: `{ "currentPassword": "password", "newPassword": ""}`},
-						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'newPassword' is zero value."}`},
-					)
-				})
-			})
+	//==================================================================================
+	Describe("[DeleteUser]", func() {
 
-		})
+		run_test := func(userId string) {
+			test_CreateCosmoUser("user-delete1", "delete", "")
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodDelete, path: fmt.Sprintf("/api/v1alpha1/user/%s", userId)})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
 
-		Describe("valid request", func() {
+			_, err := k8sClient.GetUser(context.Background(), "user-delete1")
+			if res.StatusCode == http.StatusOK {
+				Expect(err).To(HaveOccurred())
+			} else {
+				Expect(err).NotTo(HaveOccurred())
+			}
+			By("---------------test end---------------")
+		}
 
-			When("update own password", func() {
-				It("should successfully updated", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password",
-							body: `{ "currentPassword": "password", "newPassword": "newPassword"}`},
-						response{
-							statusCode: http.StatusOK,
-							body:       `{"message": "Successfully updated"}`,
-						},
-					)
-					verified, _, _ := k8sClient.VerifyPassword(context.Background(), "usertest-admin", []byte("newPassword"))
-					Expect(verified).Should(BeTrue())
-				})
-			})
-		})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "user-delete1"),
+		)
+
+		DescribeTable("❌ fail with user not found:",
+			run_test,
+			Entry(nil, "xxxxxx"),
+		)
+
+		DescribeTable("❌ fail with an unexpected error to get:",
+			func(userId string) {
+				clientMock.SetGetError(`\.preFetchUserMiddleware\.|\.DeleteUser$`, errors.New("mock get user error")) ///
+				//clientMock.SetGetError((*Server).DeleteUser, errors.New("mock get user error"))
+				run_test(userId)
+			},
+			Entry(nil, "user-delete1"),
+		)
+
+		DescribeTable("❌ fail with an unexpected error to delete:",
+			func(userId string) {
+				clientMock.SetDeleteError((*Server).DeleteUser, errors.New("mock delete user error"))
+				run_test(userId)
+			},
+			Entry(nil, "user-delete1"),
+		)
+	})
+
+	//==================================================================================
+	Describe("[PutUserName]", func() {
+
+		run_test := func(userId, requestBody string) {
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodPut, path: fmt.Sprintf("/api/v1alpha1/user/%s/name", userId), body: requestBody})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+
+			if res.StatusCode == http.StatusOK {
+				wsv1User, err := k8sClient.GetUser(context.Background(), userId)
+				Expect(err).NotTo(HaveOccurred())
+				Ω(userSnap(wsv1User)).To(MatchSnapShot())
+			}
+			By("---------------test end---------------")
+		}
+
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest", `{"displayName": "namechanged"}`),
+		)
+
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "XXXXXX", `{"displayName": "namechanged"}`),
+			Entry(nil, "usertest", `{"displayName": ""}`),
+			Entry(nil, "usertest", `{}`),
+			Entry(nil, "usertest", `{"displayName": "お名前"}`),
+		)
+
+		DescribeTable("❌ fail with an unexpected error to update:",
+			func(userId, requestBody string) {
+				clientMock.SetUpdateError((*Server).PutUserName, errors.New("mock update user error"))
+				run_test(userId, requestBody)
+			},
+			Entry(nil, "usertest", `{"displayName": "namechanged"}`),
+		)
+	})
+
+	//==================================================================================
+	Describe("[PutUserRole]", func() {
+
+		run_test := func(userId, requestBody string) {
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodPut, path: fmt.Sprintf("/api/v1alpha1/user/%s/role", userId), body: requestBody})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+
+			if res.StatusCode == http.StatusOK {
+				wsv1User, err := k8sClient.GetUser(context.Background(), userId)
+				Expect(err).NotTo(HaveOccurred())
+				Ω(userSnap(wsv1User)).To(MatchSnapShot())
+			}
+			By("---------------test end---------------")
+		}
+
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest", `{"role": "cosmo-admin"}`),
+			Entry(nil, "usertest-admin", `{"role": ""}`),
+		)
+
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "XXXXXX", `{"role": "cosmo-admin"}`),
+			Entry(nil, "usertest", `{"role": "xxxxx"}`),
+			Entry(nil, "usertest-admin", `{"role": "cosmo-admin"}`),
+			Entry(nil, "usertest", `{"displayName": "お名前"}`),
+		)
+
+		DescribeTable("❌ fail with an unexpected error to update:",
+			func(userId, requestBody string) {
+				clientMock.SetUpdateError((*Server).PutUserRole, errors.New("mock update user error"))
+				run_test(userId, requestBody)
+			},
+			Entry(nil, "usertest", `{"role": "cosmo-admin"}`),
+		)
+	})
+
+	//==================================================================================
+	Describe("[PutUserPassword]", func() {
+
+		run_test := func(userId, requestBody string) {
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodPut, path: fmt.Sprintf("/api/v1alpha1/user/%s/password", userId), body: requestBody})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+
+			if res.StatusCode == http.StatusOK {
+				verified, _, _ := k8sClient.VerifyPassword(context.Background(), userId, []byte("newPassword"))
+				Expect(verified).Should(BeTrue())
+			}
+			By("---------------test end---------------")
+		}
+
+		DescribeTable("✅ success with invalid request:",
+			run_test,
+			Entry(nil, "usertest-admin", `{ "currentPassword": "password", "newPassword": "newPassword"}`),
+		)
+
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "XXXXXX", `{ "currentPassword": "password", "newPassword": "newPassword"}`),
+			Entry(nil, "usertest-admin", `{ "currentPassword": "", "newPassword": "newPassword"}`),
+			Entry(nil, "usertest-admin", `{ "currentPassword": "xxxxxx", "newPassword": "newPassword"}`),
+			Entry(nil, "usertest-admin", `{ "currentPassword": "password", "newPassword": ""}`),
+		)
+
+		DescribeTable("❌ fail to verify password:",
+			func(userId, requestBody string) {
+				clientMock.SetGetError((*Server).PutUserPassword, apierrs.NewNotFound(schema.GroupResource{}, "secret"))
+				run_test(userId, requestBody)
+			},
+			Entry(nil, "usertest-admin", `{ "currentPassword": "password", "newPassword": "newPassword"}`),
+		)
+
+		DescribeTable("❌ fail with an unexpected error :",
+			func(userId, requestBody string) {
+				clientMock.SetUpdateError((*Server).PutUserPassword, errors.New("mock update error"))
+				run_test(userId, requestBody)
+			},
+			Entry(nil, "usertest-admin", `{ "currentPassword": "password", "newPassword": "newPassword"}`),
+		)
 	})
 })

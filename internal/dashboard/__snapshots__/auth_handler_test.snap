@@ -1,0 +1,112 @@
+['Dashboard server [auth] [Login] ✅ success in normal context: Entry: {"id": "usertest", "password": "password1"} 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [auth] [Login] ✅ success in normal context: Entry: {"id": "usertest", "password": "password1"} 2']
+SnapShot = """
+{\"id\":\"usertest\",\"expireAt\":\"9999-99-99T99:99:99.99999999+9:00\"}
+"""
+
+['Dashboard server [auth] [Login] ✅ success in normal context: Entry: {"id": "usertest-admin", "password": "password2"} 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [auth] [Login] ✅ success in normal context: Entry: {"id": "usertest-admin", "password": "password2"} 2']
+SnapShot = """
+{\"id\":\"usertest-admin\",\"expireAt\":\"9999-99-99T99:99:99.99999999+9:00\"}
+"""
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: {"id": "usertest", "password": "invalid"} 1']
+SnapShot = """
+403
+"""
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: {"id": "usertest", "password": "invalid"} 2']
+SnapShot = """
+{\"message\":\"incorrect user or password\"}
+"""
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: {"id": "usertest"} 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: {"id": "usertest"} 2']
+SnapShot = """
+{\"message\":\"required field 'password' is zero value.\"}
+"""
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: {"id": "xxxxxxx", "password": "password1"} 1']
+SnapShot = """
+403
+"""
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: {"id": "xxxxxxx", "password": "password1"} 2']
+SnapShot = """
+{\"message\":\"incorrect user or password\"}
+"""
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: {"password": "password1"} 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: {"password": "password1"} 2']
+SnapShot = """
+{\"message\":\"required field 'id' is zero value.\"}
+"""
+
+['Dashboard server [auth] [Logout] ✅ success in normal context: Entry: logined session 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [auth] [Logout] ✅ success in normal context: Entry: logined session 2']
+SnapShot = """
+null
+"""
+
+['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: logouted session 1']
+SnapShot = """
+401
+"""
+
+['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: logouted session 2']
+SnapShot = ''
+
+['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: nil session 1']
+SnapShot = """
+401
+"""
+
+['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: nil session 2']
+SnapShot = ''
+
+['Dashboard server [auth] [Verify] ✅ success in normal context: Entry: logined session 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [auth] [Verify] ✅ success in normal context: Entry: logined session 2']
+SnapShot = """
+{\"id\":\"usertest\",\"expireAt\":\"9999-99-99T99:99:99.99999999+9:00\"}
+"""
+
+['Dashboard server [auth] [Verify] ❌ fail with invalid request: Entry: logouted session 1']
+SnapShot = """
+401
+"""
+
+['Dashboard server [auth] [Verify] ❌ fail with invalid request: Entry: logouted session 2']
+SnapShot = ''
+
+['Dashboard server [auth] [Verify] ❌ fail with invalid request: Entry: nil session 1']
+SnapShot = """
+401
+"""
+
+['Dashboard server [auth] [Verify] ❌ fail with invalid request: Entry: nil session 2']
+SnapShot = ''
+
