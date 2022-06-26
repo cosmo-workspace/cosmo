@@ -21,9 +21,11 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 
 	//+kubebuilder:scaffold:imports
 
+	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
@@ -38,6 +40,8 @@ var (
 	ctx       context.Context
 	cancel    context.CancelFunc
 )
+
+const DefaultURLBase = "https://default.example.com"
 
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -54,6 +58,9 @@ var _ = BeforeSuite(func() {
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
+		WebhookInstallOptions: envtest.WebhookInstallOptions{
+			Paths: []string{filepath.Join("..", "..", "config", "webhook")},
+		},
 	}
 
 	var err error
@@ -74,6 +81,58 @@ var _ = BeforeSuite(func() {
 
 	k8sClient = kosmo.NewClient(c)
 	Expect(k8sClient).NotTo(BeNil())
+
+	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
+		Scheme:             scheme.Scheme,
+		MetricsBindAddress: "0",
+		CertDir:            testEnv.WebhookInstallOptions.LocalServingCertDir,
+		Port:               testEnv.WebhookInstallOptions.LocalServingPort,
+	})
+	Expect(err).NotTo(HaveOccurred())
+
+	// webhook
+	(&webhooks.InstanceMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.InstanceValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.WorkspaceMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.WorkspaceValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.UserMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.UserValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.TemplateMutationWebhookHandler{
+		Client:         k8sClient,
+		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
+		DefaultURLBase: DefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
+
+	go func() {
+		defer GinkgoRecover()
+		err := mgr.Start(ctx)
+		Expect(err).NotTo(HaveOccurred())
+	}()
+
 })
 
 var _ = AfterSuite(func() {
@@ -93,6 +152,7 @@ func test_CreateTemplate(templateType string, templateName string) {
 			},
 			Annotations: map[string]string{
 				wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
+				wsv1alpha1.TemplateAnnKeyDefaultUserAddon:         "true",
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
@@ -189,6 +249,9 @@ func test_CreateLoginUser(id, displayName string, role wsv1alpha1.UserRole, pass
 func test_CreateWorkspace(userId string, name string, template string, vars map[string]string) {
 	ctx := context.Background()
 
+	cfg, err := k8sClient.GetWorkspaceConfig(ctx, template)
+	Expect(err).ShouldNot(HaveOccurred())
+
 	ws := &wsv1alpha1.Workspace{}
 	ws.SetName(name)
 	ws.SetNamespace(wsv1alpha1.UserNamespace(userId))
@@ -199,25 +262,13 @@ func test_CreateWorkspace(userId string, name string, template string, vars map[
 		Replicas: pointer.Int64(1),
 		Vars:     vars,
 	}
-
-	err := k8sClient.Create(ctx, ws)
+	err = k8sClient.Create(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 
-	ws.Status = wsv1alpha1.WorkspaceStatus{
-		Instance: cosmov1alpha1.ObjectRef{},
-		Phase:    "",
-		URLs:     map[string]string{},
-		Config: wsv1alpha1.Config{
-			DeploymentName:      "",
-			ServiceName:         "",
-			IngressName:         "",
-			ServiceMainPortName: "main",
-			URLBase:             "",
-		},
-	}
+	ws.Status.Phase = "Pending"
+	ws.Status.Config = cfg
 	err = k8sClient.Status().Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
-
 	Eventually(func() (*wsv1alpha1.Workspace, error) {
 		return k8sClient.GetWorkspaceByUserID(ctx, name, userId)
 	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
@@ -269,8 +320,13 @@ func test_createNetworkRule(userId, workspaceName, networkRuleName string, portN
 	err = k8sClient.Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 
-	Eventually(func() []wsv1alpha1.NetworkRule {
+	Eventually(func() bool {
 		ws, _ := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
-		return ws.Spec.Network
-	}, time.Second*5, time.Millisecond*100).Should(ContainElement(netRule))
+		for _, n := range ws.Spec.Network {
+			if n.PortName == netRule.PortName {
+				return true
+			}
+		}
+		return false
+	}, time.Second*5, time.Millisecond*100).Should(BeTrue())
 }

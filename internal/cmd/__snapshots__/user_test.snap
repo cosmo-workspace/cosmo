@@ -248,6 +248,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -276,6 +277,7 @@ SnapShot = """
   \"Spec\": {
     \"displayName\": \"create 1\",
     \"role\": \"cosmo-admin\",
+    \"authType\": \"kosmo-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -307,6 +309,7 @@ SnapShot = """
   \"Spec\": {
     \"displayName\": \"create 1\",
     \"role\": \"cosmo-admin\",
+    \"authType\": \"kosmo-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -336,7 +339,15 @@ SnapShot = """
   \"Name\": \"user-create\",
   \"Namespace\": \"\",
   \"Spec\": {
-    \"displayName\": \"user-create\"
+    \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        }
+      }
+    ]
   },
   \"Status\": {
     \"namespace\": {}
