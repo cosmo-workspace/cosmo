@@ -529,45 +529,12 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw1, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 1']
 SnapShot = """
-200
+400
 """
 
 ['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw1, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 2']
 SnapShot = """
-{\"message\":\"Successfully upserted network rule\",\"networkRule\":{\"portName\":\"nw1\",\"portNumber\":9999,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false}}
-"""
-
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw1, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 3']
-SnapShot = """
-{
-  \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-usertest-admin\",
-  \"Spec\": {
-    \"template\": {
-      \"name\": \"template1\"
-    },
-    \"replicas\": 1,
-    \"network\": [
-      {
-        \"portName\": \"nw1\",
-        \"portNumber\": 9999,
-        \"httpPath\": \"/\",
-        \"targetPortNumber\": 9999,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
-        \"public\": false
-      }
-    ]
-  },
-  \"Status\": {
-    \"instance\": {},
-    \"phase\": \"Pending\",
-    \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
-    }
-  }
-}
+{\"message\":\"no change in network rules\"}
 """
 
 ['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw9, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 1']

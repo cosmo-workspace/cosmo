@@ -1356,6 +1356,30 @@ Global Flags:
 
 """
 
+['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --name nw1 --port 1111 --path / --group gp1 1']
+SnapShot = """
+Error: no change
+Usage:
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+
+Flags:
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
 ['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --path / 1']
 SnapShot = """
 Error: validation error: --port-number is required

@@ -24,7 +24,11 @@ func UpsertNetRule(netRules []wsv1alpha1.NetworkRule, r wsv1alpha1.NetworkRule) 
 		}
 	}
 	if index >= 0 {
-		netRules[index] = r
+		netRules[index].PortName = r.PortName
+		netRules[index].PortNumber = r.PortNumber
+		netRules[index].Group = r.Group
+		netRules[index].HTTPPath = r.HTTPPath
+		netRules[index].Public = r.Public
 	} else {
 		netRules = append(netRules, r)
 	}
