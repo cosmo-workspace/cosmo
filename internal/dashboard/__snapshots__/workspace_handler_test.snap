@@ -17,7 +17,18 @@ SnapShot = """
     \"template\": {
       \"name\": \"template1\"
     },
-    \"replicas\": 1
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"main\",
+        \"portNumber\": 18080,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 18080,
+        \"host\": \"default.example.com\",
+        \"group\": \"main\",
+        \"public\": false
+      }
+    ]
   },
   \"Status\": {
     \"instance\": {},
@@ -38,6 +49,16 @@ SnapShot = """
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw1 2']
 SnapShot = """
 {\"message\":\"failed to remove network rule\"}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, main 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, main 2']
+SnapShot = """
+{\"message\":\"main port cannot be removed\"}
 """
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, xxx 1']

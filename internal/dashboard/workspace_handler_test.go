@@ -337,6 +337,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 		run_test := func(userId, wsName, nw string) {
 			test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
 			test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
+			test_createNetworkRule("usertest-admin", "ws1", "main", 18080, "main", "/")
 			By("---------------test start----------------")
 			res, body := test_HttpSend(adminSession, request{method: http.MethodDelete, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s/network/%s", userId, wsName, nw)})
 			Ω(res.StatusCode).To(MatchSnapShot())
@@ -360,6 +361,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			Entry(nil, "xxxxx", "ws1", "nw2"),
 			Entry(nil, "usertest-admin", "xxx", "nw2"),
 			Entry(nil, "usertest-admin", "ws1", "xxx"),
+			Entry(nil, "usertest-admin", "ws1", "main"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",

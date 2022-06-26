@@ -74,6 +74,10 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 
 	before := ws.DeepCopy()
 
+	if networkRuleName == ws.Status.Config.ServiceMainPortName {
+		return ErrorResponse(http.StatusBadRequest, "main port cannot be removed")
+	}
+
 	var delRule *wsv1alpha1.NetworkRule
 	for _, v := range ws.Spec.Network {
 		if v.PortName == networkRuleName {
