@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"io/ioutil"
 	"os"
@@ -13,7 +12,6 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/spf13/cobra"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -59,108 +57,86 @@ var _ = Describe("cosmoctl [template]", func() {
 		options.ErrOut = outBuf
 		options.Scheme = scheme
 		rootCmd = NewRootCmd(options)
-		By("---------------BeforeEach end----------------")
 	})
 
 	AfterEach(func() {
-		By("---------------AfterEach start---------------")
 		clientMock.Clear()
 		test_DeleteTemplateAll()
 	})
 
 	//==================================================================================
+	desc := func(args ...string) string { return strings.Join(args, " ") }
+	errSnap := func(err error) string {
+		if err == nil {
+			return "success"
+		} else {
+			return err.Error()
+		}
+	}
+
+	//==================================================================================
 	Describe("[generate]", func() {
 
-		Describe("succeed", func() {
+		run_test := func(args ...string) {
+			inBuf.WriteString(yamlData)
+			By("---------------test start----------------")
+			rootCmd.SetArgs(args)
+			err := rootCmd.Execute()
+			Expect(consoleOut()).To(MatchSnapShot())
+			Ω(errSnap(err)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					inBuf.WriteString(yamlData)
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "template", "generate", "--workspace", "--workspace-main-service-port-name", "main", "--serviceaccount", "hoge", "--required-vars", "HOGE:HOGEHOGE,FUGA:FUGAFUGA"),
-				Entry(nil, "template", "generate", "--workspace", "--workspace-main-service-port-name", "main", "-o", "/tmp/test-cosmo-template"),
-				Entry(nil, "template", "generate", "--user-addon", "--set-default-user-addon", "--set-sysns-user-addon", "cosmo-system", "--disable-nameprefix"),
-			)
-		})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(desc, "template", "generate", "--workspace", "--workspace-main-service-port-name", "main", "--serviceaccount", "hoge", "--required-vars", "HOGE:HOGEHOGE,FUGA:FUGAFUGA"),
+			Entry(desc, "template", "generate", "--workspace", "--workspace-main-service-port-name", "main", "-o", "/tmp/test-cosmo-template"),
+			Entry(desc, "template", "generate", "--user-addon", "--set-default-user-addon", "--set-sysns-user-addon", "cosmo-system", "--disable-nameprefix"),
+		)
 
-		Describe("fail", func() {
-
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					inBuf.WriteString(yamlData)
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "template", "generate", "--workspace", "--user-addon", "--workspace-main-service-port-name", "main"),
-			)
-		})
+		DescribeTable("❌ fail with invalid args:",
+			run_test,
+			Entry(desc, "template", "generate", "--workspace", "--user-addon", "--workspace-main-service-port-name", "main"),
+		)
 	})
 
 	//==================================================================================
 	Describe("[get]", func() {
 
-		BeforeEach(func() {
+		run_test := func(args ...string) {
 			test_CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
 			test_CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template2")
 			test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "template3")
-		})
+			By("---------------test start----------------")
+			rootCmd.SetArgs(args)
+			err := rootCmd.Execute()
+			Expect(consoleOut()).To(MatchSnapShot())
+			Ω(errSnap(err)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-		Describe("succeed", func() {
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(desc, "template", "get"),
+			Entry(desc, "template", "get", "--workspace"),
+			Entry(desc, "template", "get", "template2"),
+			Entry(desc, "template", "get", "template2", "--workspace"),
+		)
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "template", "get"),
-				Entry(nil, "template", "get", "--workspace"),
-				Entry(nil, "template", "get", "template2"),
-				Entry(nil, "template", "get", "template2", "--workspace"),
-			)
-		})
+		DescribeTable("❌ fail with invalid args:",
+			run_test,
+			func(args ...string) string { return strings.Join(args, " ") },
+			Entry(desc, "template", "get", "xxxxx"),
+		)
 
-		Describe("fail", func() {
-
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "template", "get", "xxxxx"),
-			)
-
-			DescribeTable("with an unexpected error at list users:",
-				func(args ...string) {
-					clientMock.ListMock = func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.RunE$") {
-							return true, errors.New("list error")
-						}
-						return false, nil
-					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "template", "get"),
-				Entry(nil, "template", "get", "--workspace"),
-			)
-		})
+		DescribeTable("❌ fail with an unexpected error at list users:",
+			func(args ...string) {
+				clientMock.SetListError("\\.RunE$", errors.New("mock list error"))
+				run_test(args...)
+			},
+			Entry(desc, "template", "get"),
+			Entry(desc, "template", "get", "--workspace"),
+		)
 	})
 
 	//==================================================================================
@@ -177,63 +153,44 @@ var _ = Describe("cosmoctl [template]", func() {
 			return f.Name()
 		}
 
-		Describe("succeed", func() {
+		run_test := func(args ...string) {
+			inBuf.WriteString(tmplData)
+			By("---------------test start----------------")
+			rootCmd.SetArgs(args)
+			err := rootCmd.Execute()
+			o := consoleOut()
+			o = regexp.MustCompile(`cosmoctl-validate-[^-]+-`).ReplaceAllString(o, "cosmoctl-validate-XXXXXXXX-")
+			Expect(o).To(MatchSnapShot())
+			Ω(errSnap(err)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					inBuf.WriteString(tmplData)
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					o := consoleOut()
-					o = regexp.MustCompile(`cosmoctl-validate-[^-]+-`).ReplaceAllString(o, "cosmoctl-validate-XXXXXXXX-")
-					Expect(o).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "template", "validate", "--file", createFile(tmplData, "test-template.yaml"), "--vars", "HOGE:hoge,FUGA:fuga"),
-				Entry(nil, "template", "validate", "--file", "-"),
-				Entry(nil, "template", "validate", "--file", "-", "--client"),
-			)
-		})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(desc, "template", "validate", "--file", createFile(tmplData, "test-template.yaml"), "--vars", "HOGE:hoge,FUGA:fuga"),
+			Entry(desc, "template", "validate", "--file", "-"),
+			Entry(desc, "template", "validate", "--file", "-", "--client"),
+		)
 
-		Describe("fail", func() {
+		DescribeTable("❌ fail with invalid args:",
+			run_test,
+			Entry(desc, "template", "validate"),
+			Entry(desc, "template", "validate", "--file"),
+			Entry(desc, "template", "validate", "--file", "/tmp/(xx*xx)"),
+			Entry(desc, "template", "validate", "--file", createFile("", "test-empty-template.yaml")),
+			Entry(desc, "template", "validate", "--file", createFile("hoge", "test-invalid-template.yaml")),
+			Entry(desc, "template", "validate", "--file", "-", "--vars", "HOGE"),
+			Entry(desc, "template", "validate", "--file", createFile(userAddonTmplData, "test-user-addon-template.yaml")),
+		)
 
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					inBuf.WriteString(tmplData)
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "template", "validate"),
-				Entry(nil, "template", "validate", "--file"),
-				Entry(nil, "template", "validate", "--file", "/tmp/(xx*xx)"),
-				Entry(nil, "template", "validate", "--file", createFile("", "test-empty-template.yaml")),
-				Entry(nil, "template", "validate", "--file", createFile("hoge", "test-invalid-template.yaml")),
-				Entry(nil, "template", "validate", "--file", "-", "--vars", "HOGE"),
-				Entry(nil, "template", "validate", "--file", createFile(userAddonTmplData, "test-user-addon-template.yaml")),
-			)
-
-			DescribeTable("with an unexpected error at list users:",
-				func(args ...string) {
-					clientMock.ListMock = func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.RunE$") {
-							return true, errors.New("list error")
-						}
-						return false, nil
-					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				// Entry(nil, "template", "get"),
-				// Entry(nil, "template", "get", "--workspace"),
-			)
-		})
+		DescribeTable("❌ fail with an unexpected error at list users:",
+			func(args ...string) {
+				clientMock.SetListError("\\.RunE$", errors.New("mock list error"))
+				run_test(args...)
+			},
+			// Entry(desc, "template", "get"),
+			// Entry(desc, "template", "get", "--workspace"),
+		)
 	})
 
 })

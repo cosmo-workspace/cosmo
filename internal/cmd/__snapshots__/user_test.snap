@@ -1,4 +1,4 @@
-['cosmoctl [user] [all] fail with invalid arg: kubeconfig user create user1 --kubeconfig XXXX 1']
+['cosmoctl [user] [all] ❌ fail with invalid arg: kubeconfig user create user1 --kubeconfig XXXX 1']
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
@@ -19,7 +19,7 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [all] fail with invalid arg: kubeconfig user delete user1 --kubeconfig XXXX 1']
+['cosmoctl [user] [all] ❌ fail with invalid arg: kubeconfig user delete user1 --kubeconfig XXXX 1']
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
@@ -38,7 +38,7 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [all] fail with invalid arg: kubeconfig user get --kubeconfig XXXX 1']
+['cosmoctl [user] [all] ❌ fail with invalid arg: kubeconfig user get --kubeconfig XXXX 1']
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
@@ -54,7 +54,7 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [all] fail with invalid arg: kubeconfig user reset-password user1 --kubeconfig XXXX 1']
+['cosmoctl [user] [all] ❌ fail with invalid arg: kubeconfig user reset-password user1 --kubeconfig XXXX 1']
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
@@ -70,7 +70,7 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [all] fail with invalid arg: kubeconfig user update user1 --kubeconfig XXXX 1']
+['cosmoctl [user] [all] ❌ fail with invalid arg: kubeconfig user update user1 --kubeconfig XXXX 1']
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
@@ -88,7 +88,187 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] fail to create password timeout user create user-create-timeout 1']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"create 1\",
+    \"role\": \"cosmo-admin\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        },
+        \"vars\": {
+          \"HOGE\": \"HOGEHOGE\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"create 1\",
+    \"role\": \"cosmo-admin\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        },
+        \"vars\": {
+          \"HOGE\": \"HOGEHOGE\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success to create password immediately: user create user-create 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success to create password immediately: user create user-create 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success to create password immediately: user create user-create 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success to create password later: user create user-create-later 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create-later
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success to create password later: user create user-create-later 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success to create password later: user create user-create-later 3']
+SnapShot = """
+{
+  \"Name\": \"user-create-later\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create-later\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ❌ fail to create password timeout user create user-create-timeout 1']
 SnapShot = """
 Error: reached to timeout in user creation
 Usage:
@@ -109,7 +289,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] fail with invalid args: user create --admin 1']
+['cosmoctl [user] [create] ❌ fail to create password timeout user create user-create-timeout 2']
+SnapShot = 'reached to timeout in user creation'
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create --admin 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
@@ -130,7 +313,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] fail with invalid args: user create 1']
+['cosmoctl [user] [create] ❌ fail with invalid args: user create --admin 2']
+SnapShot = 'validation error: invalid args'
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
@@ -151,7 +337,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] fail with invalid args: user create TESTuser 1']
+['cosmoctl [user] [create] ❌ fail with invalid args: user create 2']
+SnapShot = 'validation error: invalid args'
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create TESTuser 1']
 SnapShot = """
 Error: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
 Usage:
@@ -172,7 +361,11 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] fail with invalid args: user create user-create --admin --role cosmo-admin 1']
+['cosmoctl [user] [create] ❌ fail with invalid args: user create TESTuser 2']
+SnapShot = """
+User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --admin --role cosmo-admin 1']
 SnapShot = """
 Error: validation error: --role and --admin is not used at the same time
 Usage:
@@ -193,7 +386,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] fail with invalid args: user create user-create --role xxx 1']
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --admin --role cosmo-admin 2']
+SnapShot = 'validation error: --role and --admin is not used at the same time'
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --role xxx 1']
 SnapShot = """
 Error: validation error: role xxx is invalid
 Usage:
@@ -214,7 +410,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] fail with invalid args: user create user-create user-test --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=xxx=yyy 1']
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --role xxx 2']
+SnapShot = 'validation error: role xxx is invalid'
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create user-test --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=xxx=yyy 1']
 SnapShot = """
 Error: invalid options: invalid addon vars format: user-temple1,HOGE=xxx=yyy
 Usage:
@@ -235,141 +434,20 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] succeed in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 1']
-SnapShot = """
-\u001B[32mSuccessfully created user user-create
-\u001B[0mDefault password: xxxxxxxx
-"""
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create user-test --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=xxx=yyy 2']
+SnapShot = 'invalid options: invalid addon vars format: user-temple1,HOGE=xxx=yyy'
 
-['cosmoctl [user] [create] succeed in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 2']
+['cosmoctl [user] [delete] ✅ success in normal context: user delete user-delete1 1']
 SnapShot = """
-{
-  \"Name\": \"user-create\",
-  \"Namespace\": \"\",
-  \"Spec\": {
-    \"displayName\": \"user-create\",
-    \"authType\": \"kosmo-secret\",
-    \"addons\": [
-      {
-        \"template\": {
-          \"name\": \"user-temple1\"
-        }
-      }
-    ]
-  },
-  \"Status\": {
-    \"namespace\": {}
-  }
-}
-"""
+\u001B[32mSuccessfully deleted user user-delete1
+\u001B[0m"""
 
-['cosmoctl [user] [create] succeed in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 1']
-SnapShot = """
-\u001B[32mSuccessfully created user user-create
-\u001B[0mDefault password: xxxxxxxx
-"""
+['cosmoctl [user] [delete] ✅ success in normal context: user delete user-delete1 2']
+SnapShot = 'success'
 
-['cosmoctl [user] [create] succeed in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 2']
+['cosmoctl [user] [delete] ❌ fail with an unexpected error at delete: user delete user-delete1 1']
 SnapShot = """
-{
-  \"Name\": \"user-create\",
-  \"Namespace\": \"\",
-  \"Spec\": {
-    \"displayName\": \"create 1\",
-    \"role\": \"cosmo-admin\",
-    \"authType\": \"kosmo-secret\",
-    \"addons\": [
-      {
-        \"template\": {
-          \"name\": \"user-temple1\"
-        },
-        \"vars\": {
-          \"HOGE\": \"HOGEHOGE\"
-        }
-      }
-    ]
-  },
-  \"Status\": {
-    \"namespace\": {}
-  }
-}
-"""
-
-['cosmoctl [user] [create] succeed in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 1']
-SnapShot = """
-\u001B[32mSuccessfully created user user-create
-\u001B[0mDefault password: xxxxxxxx
-"""
-
-['cosmoctl [user] [create] succeed in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 2']
-SnapShot = """
-{
-  \"Name\": \"user-create\",
-  \"Namespace\": \"\",
-  \"Spec\": {
-    \"displayName\": \"create 1\",
-    \"role\": \"cosmo-admin\",
-    \"authType\": \"kosmo-secret\",
-    \"addons\": [
-      {
-        \"template\": {
-          \"name\": \"user-temple1\"
-        },
-        \"vars\": {
-          \"HOGE\": \"HOGEHOGE\"
-        }
-      }
-    ]
-  },
-  \"Status\": {
-    \"namespace\": {}
-  }
-}
-"""
-
-['cosmoctl [user] [create] succeed in normal context: user create user-create 1']
-SnapShot = """
-\u001B[32mSuccessfully created user user-create
-\u001B[0mDefault password: xxxxxxxx
-"""
-
-['cosmoctl [user] [create] succeed in normal context: user create user-create 2']
-SnapShot = """
-{
-  \"Name\": \"user-create\",
-  \"Namespace\": \"\",
-  \"Spec\": {
-    \"displayName\": \"user-create\",
-    \"authType\": \"kosmo-secret\",
-    \"addons\": [
-      {
-        \"template\": {
-          \"name\": \"user-temple1\"
-        }
-      }
-    ]
-  },
-  \"Status\": {
-    \"namespace\": {}
-  }
-}
-"""
-
-['cosmoctl [user] [create] succeed to create password immediately: user create user-create 1']
-SnapShot = """
-\u001B[32mSuccessfully created user user-create
-\u001B[0mDefault password: xxxxxxxx
-"""
-
-['cosmoctl [user] [create] succeed to create password later: user create user-create-later 1']
-SnapShot = """
-\u001B[32mSuccessfully created user user-create-later
-\u001B[0mDefault password: xxxxxxxx
-"""
-
-['cosmoctl [user] [delete] fail with an unexpected error at delete: user delete user-delete1 1']
-SnapShot = """
-Error: delete user error
+Error: mock delete user error
 Usage:
   cosmoctl user delete USER_ID [flags]
 
@@ -386,7 +464,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [delete] fail with invalid args: user delete 1']
+['cosmoctl [user] [delete] ❌ fail with an unexpected error at delete: user delete user-delete1 2']
+SnapShot = 'mock delete user error'
+
+['cosmoctl [user] [delete] ❌ fail with invalid args: user delete 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
@@ -405,7 +486,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [delete] fail with invalid args: user delete XXXXX 1']
+['cosmoctl [user] [delete] ❌ fail with invalid args: user delete 2']
+SnapShot = 'validation error: invalid args'
+
+['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 1']
 SnapShot = """
 Error: users.workspace.cosmo-workspace.github.io \"XXXXX\" not found
 Usage:
@@ -424,14 +508,30 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [delete] succeed in normal context: user delete user-delete1 1']
-SnapShot = """
-\u001B[32mSuccessfully deleted user user-delete1
-\u001B[0m"""
+['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 2']
+SnapShot = 'users.workspace.cosmo-workspace.github.io "XXXXX" not found'
 
-['cosmoctl [user] [get] fail with an unexpected error at list: user get 1']
+['cosmoctl [user] [get] ✅ success in normal context: user get 1']
 SnapShot = """
-Error: user list error
+ID      NAME    ROLE          NAMESPACE   STATUS
+user1   name1                             
+user2   name2   cosmo-admin               
+"""
+
+['cosmoctl [user] [get] ✅ success in normal context: user get 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [get] ✅ success with empty user: user get 1']
+SnapShot = """
+ID    NAME   ROLE   NAMESPACE   STATUS
+"""
+
+['cosmoctl [user] [get] ✅ success with empty user: user get 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [get] ❌ fail with an unexpected error at list: user get 1']
+SnapShot = """
+Error: mock user list error
 Usage:
   cosmoctl user get [flags]
 
@@ -445,19 +545,19 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [get] succeed in normal context: user get 1']
+['cosmoctl [user] [get] ❌ fail with an unexpected error at list: user get 2']
+SnapShot = 'mock user list error'
+
+['cosmoctl [user] [reset-password] ✅ success in normal context: user reset-password user1 1']
 SnapShot = """
-ID      NAME    ROLE          NAMESPACE   STATUS
-user1   name1                             
-user2   name2   cosmo-admin               
+\u001B[32mSuccessfully reset password: user user1
+\u001B[0mNew password: xxxxxxxx
 """
 
-['cosmoctl [user] [get] succeed with empty user: user get 1']
-SnapShot = """
-ID    NAME   ROLE   NAMESPACE   STATUS
-"""
+['cosmoctl [user] [reset-password] ✅ success in normal context: user reset-password user1 2']
+SnapShot = 'success'
 
-['cosmoctl [user] [reset-password] fail with an unexpected error at update: user reset-password user1 1']
+['cosmoctl [user] [reset-password] ❌ fail with an unexpected error at update: user reset-password user1 1']
 SnapShot = """
 \u001B[32mSuccessfully reset password: user user1
 \u001B[0mError: failed to get password secret: mock get error
@@ -474,7 +574,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [reset-password] fail with invalid args: user reset-password 1']
+['cosmoctl [user] [reset-password] ❌ fail with an unexpected error at update: user reset-password user1 2']
+SnapShot = 'failed to get password secret: mock get error'
+
+['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
@@ -490,7 +593,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [reset-password] fail with invalid args: user reset-password XXXXXX 1']
+['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password 2']
+SnapShot = 'validation error: invalid args'
+
+['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 1']
 SnapShot = """
 Error: namespaces \"cosmo-user-XXXXXX\" not found
 Usage:
@@ -506,13 +612,80 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [reset-password] succeed in normal context: user reset-password user1 1']
+['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 2']
+SnapShot = 'namespaces "cosmo-user-XXXXXX" not found'
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user1 --name namechanged 1']
 SnapShot = """
-\u001B[32mSuccessfully reset password: user user1
-\u001B[0mNew password: xxxxxxxx
+\u001B[32mSuccessfully updated user user1
+\u001B[0m"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user1 --name namechanged 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user1 --name namechanged 3']
+SnapShot = """
+{
+  \"Name\": \"user1\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"namechanged\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
 """
 
-['cosmoctl [user] [update] fail with an unexpected error at update: user update user1 --name namechanged 1']
+['cosmoctl [user] [update] ✅ success in normal context: user update user1 --role cosmo-admin 1']
+SnapShot = """
+\u001B[32mSuccessfully updated user user1
+\u001B[0m"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user1 --role cosmo-admin 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user1 --role cosmo-admin 3']
+SnapShot = """
+{
+  \"Name\": \"user1\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"name1\",
+    \"role\": \"cosmo-admin\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role  1']
+SnapShot = """
+\u001B[32mSuccessfully updated user user2
+\u001B[0m"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role  2']
+SnapShot = 'success'
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role  3']
+SnapShot = """
+{
+  \"Name\": \"user2\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"name2\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ❌ fail with an unexpected error at update: user update user1 --name namechanged 1']
 SnapShot = """
 Error: mock update error
 Usage:
@@ -530,7 +703,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] fail with invalid args: user update 1']
+['cosmoctl [user] [update] ❌ fail with an unexpected error at update: user update user1 --name namechanged 2']
+SnapShot = 'mock update error'
+
+['cosmoctl [user] [update] ❌ fail with invalid args: user update 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
@@ -548,7 +724,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 1']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update 2']
+SnapShot = 'validation error: invalid args'
+
+['cosmoctl [user] [update] ❌ fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 1']
 SnapShot = """
 Error: users.workspace.cosmo-workspace.github.io \"XXXXXX\" not found
 Usage:
@@ -566,7 +745,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] fail with invalid args: user update user1 --name  1']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 2']
+SnapShot = 'users.workspace.cosmo-workspace.github.io "XXXXXX" not found'
+
+['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name  1']
 SnapShot = """
 Error: no change
 Usage:
@@ -584,7 +766,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] fail with invalid args: user update user1 --name name1 --role  1']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name  2']
+SnapShot = 'no change'
+
+['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name name1 --role  1']
 SnapShot = """
 Error: no change
 Usage:
@@ -602,7 +787,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] fail with invalid args: user update user1 --role xxxxx 1']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name name1 --role  2']
+SnapShot = 'no change'
+
+['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --role xxxxx 1']
 SnapShot = """
 Error: validation error: role xxxxx is invalid
 Usage:
@@ -620,7 +808,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] fail with invalid args: user update user1 1']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --role xxxxx 2']
+SnapShot = 'validation error: role xxxxx is invalid'
+
+['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 1']
 SnapShot = """
 Error: no change
 Usage:
@@ -638,64 +829,6 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] succeed in normal context: user update user1 --name namechanged 1']
-SnapShot = """
-\u001B[32mSuccessfully updated user user1
-\u001B[0m"""
-
-['cosmoctl [user] [update] succeed in normal context: user update user1 --name namechanged 2']
-SnapShot = """
-{
-  \"Name\": \"user1\",
-  \"Namespace\": \"\",
-  \"Spec\": {
-    \"displayName\": \"namechanged\",
-    \"authType\": \"kosmo-secret\"
-  },
-  \"Status\": {
-    \"namespace\": {}
-  }
-}
-"""
-
-['cosmoctl [user] [update] succeed in normal context: user update user1 --role cosmo-admin 1']
-SnapShot = """
-\u001B[32mSuccessfully updated user user1
-\u001B[0m"""
-
-['cosmoctl [user] [update] succeed in normal context: user update user1 --role cosmo-admin 2']
-SnapShot = """
-{
-  \"Name\": \"user1\",
-  \"Namespace\": \"\",
-  \"Spec\": {
-    \"displayName\": \"name1\",
-    \"role\": \"cosmo-admin\",
-    \"authType\": \"kosmo-secret\"
-  },
-  \"Status\": {
-    \"namespace\": {}
-  }
-}
-"""
-
-['cosmoctl [user] [update] succeed in normal context: user update user2 --role  1']
-SnapShot = """
-\u001B[32mSuccessfully updated user user2
-\u001B[0m"""
-
-['cosmoctl [user] [update] succeed in normal context: user update user2 --role  2']
-SnapShot = """
-{
-  \"Name\": \"user2\",
-  \"Namespace\": \"\",
-  \"Spec\": {
-    \"displayName\": \"name2\",
-    \"authType\": \"kosmo-secret\"
-  },
-  \"Status\": {
-    \"namespace\": {}
-  }
-}
-"""
+['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 2']
+SnapShot = 'no change'
 

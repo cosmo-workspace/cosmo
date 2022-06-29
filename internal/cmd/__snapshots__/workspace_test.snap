@@ -1,209 +1,12 @@
-['cosmoctl [workspace] [close-port] fail with an unexpected error at update: workspace close-port ws1 --user user1 --port-name nw1 1']
-SnapShot = """
-Error: update error
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port 1']
-SnapShot = """
-Error: validation error: invalid args
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port ws1 --namespace xxxxx --port-name nw11 1']
-SnapShot = """
-Error: invalid options: namespace xxxxx is not cosmo user's namespace
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port ws1 --user user1 --namespace cosmo-user-user1 --port-name nw11 1']
-SnapShot = """
-Error: validation error: --user and --namespace connot be used at the same time
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port ws1 --user user1 --port-name main 1']
-SnapShot = """
-Error: main port cannot be removed
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port ws1 --user user1 --port-name nw11 -A 1']
-SnapShot = """
-Error: validation error: --all-namespaces is not supported in this command
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port ws1 --user user1 --port-name xxxx 1']
-SnapShot = """
-Error: port name xxxx is not found
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port ws1 --user user1 1']
-SnapShot = """
-Error: validation error: port name is required
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port ws1 --user xxxxx --port-name nw11 1']
-SnapShot = """
-Error: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] fail with invalid args: workspace close-port xxx --user user1 --port-name nw11 1']
-SnapShot = """
-Error: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
-Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
-
-Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [close-port] succeed in normal context: workspace close-port ws1 --user user1 --port-name nw1 1']
+['cosmoctl [workspace] [close-port] ✅ success in normal context: workspace close-port ws1 --user user1 --port-name nw1 1']
 SnapShot = """
 \u001B[32mSuccessfully closed port 'nw1' for workspace 'ws1'
 \u001B[0m"""
 
-['cosmoctl [workspace] [close-port] succeed in normal context: workspace close-port ws1 --user user1 --port-name nw1 2']
+['cosmoctl [workspace] [close-port] ✅ success in normal context: workspace close-port ws1 --user user1 --port-name nw1 2']
+SnapShot = 'success'
+
+['cosmoctl [workspace] [close-port] ✅ success in normal context: workspace close-port ws1 --user user1 --port-name nw1 3']
 SnapShot = """
 {
   \"template\": {
@@ -224,20 +27,38 @@ SnapShot = """
 }
 """
 
-['cosmoctl [workspace] [create] fail with invalid args: workspace create --user user1 --template template1 1']
+['cosmoctl [workspace] [close-port] ❌ fail with an unexpected error at update: workspace close-port ws1 --user user1 --port-name nw1 1']
+SnapShot = """
+Error: mock update error
+Usage:
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+
+Flags:
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [close-port] ❌ fail with an unexpected error at update: workspace close-port ws1 --user user1 --port-name nw1 2']
+SnapShot = 'mock update error'
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -249,20 +70,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [create] fail with invalid args: workspace create 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port 2']
+SnapShot = 'validation error: invalid args'
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --namespace xxxxx --port-name nw11 1']
 SnapShot = """
-Error: validation error: invalid args
+Error: invalid options: namespace xxxxx is not cosmo user's namespace
 Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -274,70 +93,19 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --namespace xxxx --template template1 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --namespace xxxxx --port-name nw11 2']
 SnapShot = """
-Error: invalid options: namespace xxxx is not cosmo user's namespace
-Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+invalid options: namespace xxxxx is not cosmo user's namespace"""
 
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
-
-Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --user --template template1 1']
-SnapShot = """
-Error: validation error: --template is required
-Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
-
-Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --user user1 --namespace user1 --template template1 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --namespace cosmo-user-user1 --port-name nw11 1']
 SnapShot = """
 Error: validation error: --user and --namespace connot be used at the same time
 Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -349,20 +117,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --user user1 --template 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --namespace cosmo-user-user1 --port-name nw11 2']
+SnapShot = 'validation error: --user and --namespace connot be used at the same time'
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name main 1']
 SnapShot = """
-Error: flag needs an argument: --template
+Error: main port cannot be removed
 Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -374,20 +140,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --user user1 --template template1 --all-namespaces 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name main 2']
+SnapShot = 'main port cannot be removed'
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name nw11 -A 1']
 SnapShot = """
 Error: validation error: --all-namespaces is not supported in this command
 Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -399,20 +163,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --user user1 --template template1 --vars HOGE 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name nw11 -A 2']
+SnapShot = 'validation error: --all-namespaces is not supported in this command'
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name xxxx 1']
 SnapShot = """
-Error: invalid options: vars format error: vars HOGE must be 'VAR:VAL'
+Error: port name xxxx is not found
 Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -424,20 +186,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --user xxxxx --template template1 --dry-run 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name xxxx 2']
+SnapShot = 'port name xxxx is not found'
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 1']
 SnapShot = """
-Error: namespaces \"cosmo-user-xxxxx\" not found
+Error: validation error: port name is required
 Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -449,20 +209,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [create] fail with invalid args: workspace create ws1 --user xxxxx --template template1 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 2']
+SnapShot = 'validation error: port name is required'
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user xxxxx --port-name nw11 1']
 SnapShot = """
-Error: namespaces \"cosmo-user-xxxxx\" not found
+Error: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
-  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
-
-Examples:
-create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -474,12 +232,38 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [create] succeed in normal context: workspace create ws1 --user user1 --template template1 --vars HOGE:HOGEHOGE 1']
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user xxxxx --port-name nw11 2']
+SnapShot = 'users.workspace.cosmo-workspace.github.io "xxxxx" not found'
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port xxx --user user1 --port-name nw11 1']
+SnapShot = """
+Error: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
+Usage:
+  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+
+Flags:
+  -h, --help               help for close-port
+      --port-name string   port name (Required)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port xxx --user user1 --port-name nw11 2']
+SnapShot = 'workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
+
+['cosmoctl [workspace] [create] ✅ success in normal context: workspace create ws1 --user user1 --template template1 --vars HOGE:HOGEHOGE 1']
 SnapShot = """
 \u001B[32mSuccessfully created workspace ws1
 \u001B[0m"""
 
-['cosmoctl [workspace] [create] succeed in normal context: workspace create ws1 --user user1 --template template1 --vars HOGE:HOGEHOGE 2']
+['cosmoctl [workspace] [create] ✅ success in normal context: workspace create ws1 --user user1 --template template1 --vars HOGE:HOGEHOGE 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -500,12 +284,12 @@ SnapShot = """
 }
 """
 
-['cosmoctl [workspace] [create] succeed in normal context: workspace create ws1 --user user1 --template template1 1']
+['cosmoctl [workspace] [create] ✅ success in normal context: workspace create ws1 --user user1 --template template1 1']
 SnapShot = """
 \u001B[32mSuccessfully created workspace ws1
 \u001B[0m"""
 
-['cosmoctl [workspace] [create] succeed in normal context: workspace create ws1 --user user1 --template template1 2']
+['cosmoctl [workspace] [create] ✅ success in normal context: workspace create ws1 --user user1 --template template1 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -523,7 +307,7 @@ SnapShot = """
 }
 """
 
-['cosmoctl [workspace] [create] succeed with dry-run: workspace create ws1 --user user1 --template template1 --vars HOGE:HOGEHOGE --dry-run 1']
+['cosmoctl [workspace] [create] ✅ success with dry-run: workspace create ws1 --user user1 --template template1 --vars HOGE:HOGEHOGE --dry-run 1']
 SnapShot = """
 apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
 kind: Workspace
@@ -566,9 +350,279 @@ status:
 \u001B[32mSuccessfully created workspace ws1 (dry-run)
 \u001B[0m"""
 
-['cosmoctl [workspace] [delete] fail with an unexpected error at delete: workspace delete ws1 --dry-run --user user1 1']
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create --user user1 --template template1 1']
 SnapShot = """
-Error: Delete error
+Error: validation error: invalid args
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create 1']
+SnapShot = """
+Error: validation error: invalid args
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --namespace xxxx --template template1 1']
+SnapShot = """
+Error: invalid options: namespace xxxx is not cosmo user's namespace
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user --template template1 1']
+SnapShot = """
+Error: validation error: --template is required
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user user1 --namespace user1 --template template1 1']
+SnapShot = """
+Error: validation error: --user and --namespace connot be used at the same time
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user user1 --template 1']
+SnapShot = """
+Error: flag needs an argument: --template
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user user1 --template template1 --all-namespaces 1']
+SnapShot = """
+Error: validation error: --all-namespaces is not supported in this command
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user user1 --template template1 --vars HOGE 1']
+SnapShot = """
+Error: invalid options: vars format error: vars HOGE must be 'VAR:VAL'
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user xxxxx --template template1 --dry-run 1']
+SnapShot = """
+Error: namespaces \"cosmo-user-xxxxx\" not found
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user xxxxx --template template1 1']
+SnapShot = """
+Error: namespaces \"cosmo-user-xxxxx\" not found
+Usage:
+  cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
+
+Examples:
+create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
+
+Flags:
+      --dry-run           dry run
+  -h, --help              help for create
+  -t, --template string   template name
+      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [delete] ✅ success in normal context: workspace delete ws2 --namespace cosmo-user-user1 1']
+SnapShot = """
+\u001B[32mSuccessfully deleted workspace ws2
+\u001B[0m"""
+
+['cosmoctl [workspace] [delete] ✅ success in normal context: workspace delete ws2 --user user1 1']
+SnapShot = """
+\u001B[32mSuccessfully deleted workspace ws2
+\u001B[0m"""
+
+['cosmoctl [workspace] [delete] ✅ success with dry-run: workspace delete ws2 --dry-run --namespace cosmo-user-user1 1']
+SnapShot = """
+\u001B[32mSuccessfully deleted workspace ws2 (dry-run)
+\u001B[0m"""
+
+['cosmoctl [workspace] [delete] ✅ success with dry-run: workspace delete ws2 --dry-run --user user1 1']
+SnapShot = """
+\u001B[32mSuccessfully deleted workspace ws2 (dry-run)
+\u001B[0m"""
+
+['cosmoctl [workspace] [delete] ❌ fail with an unexpected error at delete: workspace delete ws1 --dry-run --user user1 1']
+SnapShot = """
+Error: mock delete error
 Usage:
   cosmoctl workspace delete WORKSPACE_NAME [flags]
 
@@ -589,9 +643,9 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [delete] fail with an unexpected error at delete: workspace delete ws1 --user user1 1']
+['cosmoctl [workspace] [delete] ❌ fail with an unexpected error at delete: workspace delete ws1 --user user1 1']
 SnapShot = """
-Error: Delete error
+Error: mock delete error
 Usage:
   cosmoctl workspace delete WORKSPACE_NAME [flags]
 
@@ -612,7 +666,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [delete] fail with invalid args: workspace delete 1']
+['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
@@ -635,7 +689,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [delete] fail with invalid args: workspace delete ws1 --namespace cosmo-user-user1 --user user1 1']
+['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --namespace cosmo-user-user1 --user user1 1']
 SnapShot = """
 Error: validation error: --user and --namespace connot be used at the same time
 Usage:
@@ -658,7 +712,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [delete] fail with invalid args: workspace delete ws1 --namespace xxxx 1']
+['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --namespace xxxx 1']
 SnapShot = """
 Error: invalid options: namespace xxxx is not cosmo user's namespace
 Usage:
@@ -681,7 +735,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [delete] fail with invalid args: workspace delete ws1 --user user1 -A 1']
+['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 -A 1']
 SnapShot = """
 Error: validation error: --all-namespaces is not supported in this command
 Usage:
@@ -704,7 +758,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [delete] fail with invalid args: workspace delete ws1 --user user1 xxx 1']
+['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 xxx 1']
 SnapShot = """
 Error: workspaces.workspace.cosmo-workspace.github.io \"ws1\" not found
 Usage:
@@ -727,7 +781,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [delete] fail with invalid args: workspace delete xxxx --user user1 -A 1']
+['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete xxxx --user user1 -A 1']
 SnapShot = """
 Error: validation error: --all-namespaces is not supported in this command
 Usage:
@@ -750,29 +804,313 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [delete] succeed in normal context: workspace delete ws2 --namespace cosmo-user-user1 1']
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --namespace cosmo-user-user1 1']
 SnapShot = """
-\u001B[32mSuccessfully deleted workspace ws2
-\u001B[0m"""
+USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
+cosmo-user-user1   ws1    template1   Pending
+cosmo-user-user1   ws2    template1   Pending
+"""
 
-['cosmoctl [workspace] [delete] succeed in normal context: workspace delete ws2 --user user1 1']
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --namespace cosmo-user-user1 ws2 1']
 SnapShot = """
-\u001B[32mSuccessfully deleted workspace ws2
-\u001B[0m"""
+USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
+cosmo-user-user1   ws2    template1   Pending
+"""
 
-['cosmoctl [workspace] [delete] succeed with dry-run: workspace delete ws2 --dry-run --namespace cosmo-user-user1 1']
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --user user1 1']
 SnapShot = """
-\u001B[32mSuccessfully deleted workspace ws2 (dry-run)
-\u001B[0m"""
+USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
+cosmo-user-user1   ws1    template1   Pending
+cosmo-user-user1   ws2    template1   Pending
+"""
 
-['cosmoctl [workspace] [delete] succeed with dry-run: workspace delete ws2 --dry-run --user user1 1']
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --user user1 ws2 1']
 SnapShot = """
-\u001B[32mSuccessfully deleted workspace ws2 (dry-run)
-\u001B[0m"""
+USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
+cosmo-user-user1   ws2    template1   Pending
+"""
 
-['cosmoctl [workspace] [get] fail with an unexpected error at list users: workspace get -A 1']
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o wide 1']
 SnapShot = """
-Error: failed to list users: ListUsers error
+USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
+cosmo-user-user1   ws2              nw1         1111          gp1     /           
+cosmo-user-user1   ws2              nw3         2222          gp1     /           
+"""
+
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o yaml 1']
+SnapShot = """
+apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+kind: Workspace
+metadata:
+  creationTimestamp: xxxxxxxx
+  generation: 1
+  managedFields:
+  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:replicas: {}
+        f:template:
+          .: {}
+          f:name: {}
+      f:status:
+        .: {}
+        f:config:
+          .: {}
+          f:mainServicePortName: {}
+          f:urlbase: {}
+        f:instance: {}
+        f:phase: {}
+    manager: cmd.test
+    operation: Update
+    time: xxxxxxxx
+  name: ws1
+  namespace: cosmo-user-user1
+  resourceVersion: xxxxxxxx
+  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws1
+  uid: xxxxxxxx
+spec:
+  replicas: 1
+  template:
+    name: template1
+status:
+  config:
+    mainServicePortName: main
+    urlbase: https://default.example.com
+  instance: {}
+  phase: Pending
+---
+apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+kind: Workspace
+metadata:
+  creationTimestamp: xxxxxxxx
+  generation: 3
+  managedFields:
+  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:network: {}
+        f:replicas: {}
+        f:template:
+          .: {}
+          f:name: {}
+      f:status:
+        .: {}
+        f:config:
+          .: {}
+          f:mainServicePortName: {}
+          f:urlbase: {}
+        f:instance: {}
+        f:phase: {}
+    manager: cmd.test
+    operation: Update
+    time: xxxxxxxx
+  name: ws2
+  namespace: cosmo-user-user1
+  resourceVersion: xxxxxxxx
+  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws2
+  uid: xxxxxxxx
+spec:
+  network:
+  - group: gp1
+    host: default.example.com
+    httpPath: /
+    portName: nw1
+    portNumber: 1111
+    public: false
+    targetPortNumber: 1111
+  - group: gp1
+    host: default.example.com
+    httpPath: /
+    portName: nw3
+    portNumber: 2222
+    public: false
+    targetPortNumber: 2222
+  replicas: 1
+  template:
+    name: template1
+status:
+  config:
+    mainServicePortName: main
+    urlbase: https://default.example.com
+  instance: {}
+  phase: Pending
+---
+
+"""
+
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network 1']
+SnapShot = """
+USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
+cosmo-user-user1   ws2              nw1         1111          gp1     /           
+cosmo-user-user1   ws2              nw3         2222          gp1     /           
+"""
+
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o wide 1']
+SnapShot = """
+USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE   URLS
+cosmo-user-user1   ws1    template1   Pending     map[]
+cosmo-user-user1   ws2    template1   Pending     map[]
+"""
+
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o yaml 1']
+SnapShot = """
+apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+kind: Workspace
+metadata:
+  creationTimestamp: xxxxxxxx
+  generation: 1
+  managedFields:
+  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:replicas: {}
+        f:template:
+          .: {}
+          f:name: {}
+      f:status:
+        .: {}
+        f:config:
+          .: {}
+          f:mainServicePortName: {}
+          f:urlbase: {}
+        f:instance: {}
+        f:phase: {}
+    manager: cmd.test
+    operation: Update
+    time: xxxxxxxx
+  name: ws1
+  namespace: cosmo-user-user1
+  resourceVersion: xxxxxxxx
+  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws1
+  uid: xxxxxxxx
+spec:
+  replicas: 1
+  template:
+    name: template1
+status:
+  config:
+    mainServicePortName: main
+    urlbase: https://default.example.com
+  instance: {}
+  phase: Pending
+---
+apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+kind: Workspace
+metadata:
+  creationTimestamp: xxxxxxxx
+  generation: 3
+  managedFields:
+  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:network: {}
+        f:replicas: {}
+        f:template:
+          .: {}
+          f:name: {}
+      f:status:
+        .: {}
+        f:config:
+          .: {}
+          f:mainServicePortName: {}
+          f:urlbase: {}
+        f:instance: {}
+        f:phase: {}
+    manager: cmd.test
+    operation: Update
+    time: xxxxxxxx
+  name: ws2
+  namespace: cosmo-user-user1
+  resourceVersion: xxxxxxxx
+  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws2
+  uid: xxxxxxxx
+spec:
+  network:
+  - group: gp1
+    host: default.example.com
+    httpPath: /
+    portName: nw1
+    portNumber: 1111
+    public: false
+    targetPortNumber: 1111
+  - group: gp1
+    host: default.example.com
+    httpPath: /
+    portName: nw3
+    portNumber: 2222
+    public: false
+    targetPortNumber: 2222
+  replicas: 1
+  template:
+    name: template1
+status:
+  config:
+    mainServicePortName: main
+    urlbase: https://default.example.com
+  instance: {}
+  phase: Pending
+---
+
+"""
+
+['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A 1']
+SnapShot = """
+USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
+cosmo-user-user1   ws1    template1   Pending
+cosmo-user-user1   ws2    template1   Pending
+"""
+
+['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --all-namespaces 1']
+SnapShot = """
+USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
+"""
+
+['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --namespace cosmo-user-user1 1']
+SnapShot = """
+USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
+"""
+
+['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --user user1 1']
+SnapShot = """
+USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
+"""
+
+['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network -o wide 1']
+SnapShot = """
+USER-NAMESPACE   WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
+"""
+
+['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network -o yaml 1']
+SnapShot = """
+
+"""
+
+['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network 1']
+SnapShot = """
+USER-NAMESPACE   WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
+"""
+
+['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A -o wide 1']
+SnapShot = """
+USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE   URLS
+"""
+
+['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A -o yaml 1']
+SnapShot = """
+
+"""
+
+['cosmoctl [workspace] [get] ❌ fail with an unexpected error at list users: workspace get -A 1']
+SnapShot = """
+Error: failed to list users: mock listUsers error
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -791,9 +1129,9 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with an unexpected error at list workspace: workspace get --user user1 1']
+['cosmoctl [workspace] [get] ❌ fail with an unexpected error at list workspace: workspace get --user user1 1']
 SnapShot = """
-Error: failed to list workspaces: ListWorkspacesByUserID error
+Error: failed to list workspaces: mock listWorkspacesByUserID error
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -812,9 +1150,9 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with an unexpected error at list workspace: workspace get -A 1']
+['cosmoctl [workspace] [get] ❌ fail with an unexpected error at list workspace: workspace get -A 1']
 SnapShot = """
-Error: failed to list workspaces: ListWorkspacesByUserID error
+Error: failed to list workspaces: mock listWorkspacesByUserID error
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -833,7 +1171,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with invalid args: workspace get --namespace cosmo-user-user1 --user user1 1']
+['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --namespace cosmo-user-user1 --user user1 1']
 SnapShot = """
 Error: validation error: --user and --namespace connot be used at the same time
 Usage:
@@ -854,7 +1192,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with invalid args: workspace get --namespace xxx 1']
+['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --namespace xxx 1']
 SnapShot = """
 Error: invalid options: namespace xxx is not cosmo user's namespace
 Usage:
@@ -875,7 +1213,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with invalid args: workspace get --user user1 xxx 1']
+['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --user user1 xxx 1']
 SnapShot = """
 Error: failed to get workspace: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
 Usage:
@@ -896,7 +1234,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with invalid args: workspace get --user xxxx 1']
+['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --user xxxx 1']
 SnapShot = """
 Error: failed to get user: users.workspace.cosmo-workspace.github.io \"xxxx\" not found
 Usage:
@@ -917,7 +1255,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with invalid args: workspace get -A --user user1 1']
+['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get -A --user user1 1']
 SnapShot = """
 Error: validation error: --all-namespaces connot be used with --namespace or --user
 Usage:
@@ -938,7 +1276,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with invalid args: workspace get -A -o xxxx 1']
+['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get -A -o xxxx 1']
 SnapShot = """
 Error: validation error: invalid output format: available formats is ['wide', 'yaml']
 Usage:
@@ -959,7 +1297,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] fail with invalid args: workspace get -A ws1 1']
+['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get -A ws1 1']
 SnapShot = """
 Error: invalid options: --all-namespaces is not allowed to use if WORKSPACE_NAME specified
 Usage:
@@ -980,580 +1318,12 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [get] succeed in normal context: workspace get --namespace cosmo-user-user1 1']
-SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get --namespace cosmo-user-user1 ws2 1']
-SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws2    template1   Pending
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get --user user1 1']
-SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get --user user1 ws2 1']
-SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws2    template1   Pending
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get -A --network -o wide 1']
-SnapShot = """
-USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
-cosmo-user-user1   ws2              nw1         1111          gp1     /           
-cosmo-user-user1   ws2              nw3         2222          gp1     /           
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get -A --network -o yaml 1']
-SnapShot = """
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 1
-  managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        .: {}
-        f:replicas: {}
-        f:template:
-          .: {}
-          f:name: {}
-      f:status:
-        .: {}
-        f:config:
-          .: {}
-          f:mainServicePortName: {}
-          f:urlbase: {}
-        f:instance: {}
-        f:phase: {}
-    manager: cmd.test
-    operation: Update
-    time: xxxxxxxx
-  name: ws1
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws1
-  uid: xxxxxxxx
-spec:
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    urlbase: https://default.example.com
-  instance: {}
-  phase: Pending
----
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 3
-  managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        .: {}
-        f:network: {}
-        f:replicas: {}
-        f:template:
-          .: {}
-          f:name: {}
-      f:status:
-        .: {}
-        f:config:
-          .: {}
-          f:mainServicePortName: {}
-          f:urlbase: {}
-        f:instance: {}
-        f:phase: {}
-    manager: cmd.test
-    operation: Update
-    time: xxxxxxxx
-  name: ws2
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws2
-  uid: xxxxxxxx
-spec:
-  network:
-  - group: gp1
-    host: default.example.com
-    httpPath: /
-    portName: nw1
-    portNumber: 1111
-    public: false
-    targetPortNumber: 1111
-  - group: gp1
-    host: default.example.com
-    httpPath: /
-    portName: nw3
-    portNumber: 2222
-    public: false
-    targetPortNumber: 2222
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    urlbase: https://default.example.com
-  instance: {}
-  phase: Pending
----
-
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get -A --network 1']
-SnapShot = """
-USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
-cosmo-user-user1   ws2              nw1         1111          gp1     /           
-cosmo-user-user1   ws2              nw3         2222          gp1     /           
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get -A -o wide 1']
-SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE   URLS
-cosmo-user-user1   ws1    template1   Pending     map[]
-cosmo-user-user1   ws2    template1   Pending     map[]
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get -A -o yaml 1']
-SnapShot = """
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 1
-  managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        .: {}
-        f:replicas: {}
-        f:template:
-          .: {}
-          f:name: {}
-      f:status:
-        .: {}
-        f:config:
-          .: {}
-          f:mainServicePortName: {}
-          f:urlbase: {}
-        f:instance: {}
-        f:phase: {}
-    manager: cmd.test
-    operation: Update
-    time: xxxxxxxx
-  name: ws1
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws1
-  uid: xxxxxxxx
-spec:
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    urlbase: https://default.example.com
-  instance: {}
-  phase: Pending
----
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 3
-  managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        .: {}
-        f:network: {}
-        f:replicas: {}
-        f:template:
-          .: {}
-          f:name: {}
-      f:status:
-        .: {}
-        f:config:
-          .: {}
-          f:mainServicePortName: {}
-          f:urlbase: {}
-        f:instance: {}
-        f:phase: {}
-    manager: cmd.test
-    operation: Update
-    time: xxxxxxxx
-  name: ws2
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws2
-  uid: xxxxxxxx
-spec:
-  network:
-  - group: gp1
-    host: default.example.com
-    httpPath: /
-    portName: nw1
-    portNumber: 1111
-    public: false
-    targetPortNumber: 1111
-  - group: gp1
-    host: default.example.com
-    httpPath: /
-    portName: nw3
-    portNumber: 2222
-    public: false
-    targetPortNumber: 2222
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    urlbase: https://default.example.com
-  instance: {}
-  phase: Pending
----
-
-"""
-
-['cosmoctl [workspace] [get] succeed in normal context: workspace get -A 1']
-SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
-"""
-
-['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get --all-namespaces 1']
-SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
-"""
-
-['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get --namespace cosmo-user-user1 1']
-SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
-"""
-
-['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get --user user1 1']
-SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
-"""
-
-['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get -A --network -o wide 1']
-SnapShot = """
-USER-NAMESPACE   WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
-"""
-
-['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get -A --network -o yaml 1']
-SnapShot = """
-
-"""
-
-['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get -A --network 1']
-SnapShot = """
-USER-NAMESPACE   WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
-"""
-
-['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get -A -o wide 1']
-SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE   URLS
-"""
-
-['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get -A -o yaml 1']
-SnapShot = """
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with an unexpected error at update: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 1']
-SnapShot = """
-Error: update error
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port 1']
-SnapShot = """
-Error: validation error: invalid args
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --namespace xxxxx --name nw11 --port 3000 --path / 1']
-SnapShot = """
-Error: invalid options: namespace xxxxx is not cosmo user's namespace
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --name nw1 --port 1111 --path / --group gp1 1']
-SnapShot = """
-Error: no change
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --path / 1']
-SnapShot = """
-Error: validation error: --port-number is required
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 1111 --path / 1']
-SnapShot = """
-Error: failed to upsert network rule: port 1111 is already used
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path / -A 1']
-SnapShot = """
-Error: validation error: --all-namespaces is not supported in this command
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --namespace cosmo-user-user1 --name nw11 --port 3000 --path / 1']
-SnapShot = """
-Error: validation error: --user and --namespace connot be used at the same time
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user user1 --port 3000 --path / 1']
-SnapShot = """
-Error: validation error: --port-name is required
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port ws1 --user xxxxx --name nw11 --port 3000 --path / 1']
-SnapShot = """
-Error: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] fail with invalid args: workspace open-port xxx --user user1 --name nw11 --port 3000 --path / 1']
-SnapShot = """
-Error: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] succeed in normal context: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 1']
+['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 1']
 SnapShot = """
 \u001B[32mSuccessfully open port 'nw11' for workspace 'ws1'
 \u001B[0m"""
 
-['cosmoctl [workspace] [open-port] succeed in normal context: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 2']
+['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 2']
 SnapShot = """
 {
   \"template\": {
@@ -1592,12 +1362,12 @@ SnapShot = """
 }
 """
 
-['cosmoctl [workspace] [open-port] succeed in normal context: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 1']
+['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 1']
 SnapShot = """
 \u001B[32mSuccessfully open port 'nw12' for workspace 'ws1'
 \u001B[0m"""
 
-['cosmoctl [workspace] [open-port] succeed in normal context: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 2']
+['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 2']
 SnapShot = """
 {
   \"template\": {
@@ -1636,17 +1406,19 @@ SnapShot = """
 }
 """
 
-['cosmoctl [workspace] [run-instance] fail with an unexpected error at update: workspace run-instance ws1 --user user1 1']
+['cosmoctl [workspace] [open-port] ❌ fail with an unexpected error at update: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 1']
 SnapShot = """
-Error: update error
+Error: mock update error
 Usage:
-  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
-
-Aliases:
-  run-instance, run
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help   help for run-instance
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1658,17 +1430,19 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [run-instance] fail with invalid args: workspace run-instance 1']
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
-
-Aliases:
-  run-instance, run
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help   help for run-instance
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1680,17 +1454,19 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [run-instance] fail with invalid args: workspace run-instance ws1 --namespace xxxxx 1']
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --namespace xxxxx --name nw11 --port 3000 --path / 1']
 SnapShot = """
 Error: invalid options: namespace xxxxx is not cosmo user's namespace
 Usage:
-  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
-
-Aliases:
-  run-instance, run
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help   help for run-instance
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1702,83 +1478,19 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [run-instance] fail with invalid args: workspace run-instance ws1 --user user1 --namespace cosmo-user-user1 1']
-SnapShot = """
-Error: validation error: --user and --namespace connot be used at the same time
-Usage:
-  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
-
-Aliases:
-  run-instance, run
-
-Flags:
-  -h, --help   help for run-instance
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [run-instance] fail with invalid args: workspace run-instance ws1 --user user1 -A 1']
-SnapShot = """
-Error: validation error: --all-namespaces connot be used with --namespace or --user
-Usage:
-  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
-
-Aliases:
-  run-instance, run
-
-Flags:
-  -h, --help   help for run-instance
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [run-instance] fail with invalid args: workspace run-instance ws1 --user xxxxx 1']
-SnapShot = """
-Error: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
-Usage:
-  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
-
-Aliases:
-  run-instance, run
-
-Flags:
-  -h, --help   help for run-instance
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [run-instance] fail with invalid args: workspace run-instance ws2 --user user1 1']
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw1 --port 1111 --path / --group gp1 1']
 SnapShot = """
 Error: no change
 Usage:
-  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
-
-Aliases:
-  run-instance, run
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help   help for run-instance
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1790,17 +1502,163 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [run-instance] fail with invalid args: workspace run-instance xxx --user user1 1']
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --path / 1']
+SnapShot = """
+Error: validation error: --port-number is required
+Usage:
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+
+Flags:
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 1111 --path / 1']
+SnapShot = """
+Error: failed to upsert network rule: port 1111 is already used
+Usage:
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+
+Flags:
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path / -A 1']
+SnapShot = """
+Error: validation error: --all-namespaces is not supported in this command
+Usage:
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+
+Flags:
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --namespace cosmo-user-user1 --name nw11 --port 3000 --path / 1']
+SnapShot = """
+Error: validation error: --user and --namespace connot be used at the same time
+Usage:
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+
+Flags:
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --port 3000 --path / 1']
+SnapShot = """
+Error: validation error: --port-name is required
+Usage:
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+
+Flags:
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user xxxxx --name nw11 --port 3000 --path / 1']
+SnapShot = """
+Error: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
+Usage:
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+
+Flags:
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port xxx --user user1 --name nw11 --port 3000 --path / 1']
 SnapShot = """
 Error: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
 Usage:
-  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
-
-Aliases:
-  run-instance, run
+  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help   help for run-instance
+      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
+  -h, --help           help for open-port
+      --name string    Serivce port name (Required)
+      --path string    Path for Ingress path when using ingress (default \"/\")
+      --port int       Serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1812,12 +1670,15 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [run-instance] succeed in normal context: workspace run-instance ws1 --user user1 1']
+['cosmoctl [workspace] [run-instance] ✅ success in normal context: workspace run-instance ws1 --user user1 1']
 SnapShot = """
 \u001B[32mSuccessfully run workspace ws1
 \u001B[0m"""
 
-['cosmoctl [workspace] [run-instance] succeed in normal context: workspace run-instance ws1 --user user1 2']
+['cosmoctl [workspace] [run-instance] ✅ success in normal context: workspace run-instance ws1 --user user1 2']
+SnapShot = 'success'
+
+['cosmoctl [workspace] [run-instance] ✅ success in normal context: workspace run-instance ws1 --user user1 3']
 SnapShot = """
 {
   \"template\": {
@@ -1827,9 +1688,240 @@ SnapShot = """
 }
 """
 
-['cosmoctl [workspace] [stop-instance] fail with an unexpected error at update: workspace stop-instance ws1 --user user1 1']
+['cosmoctl [workspace] [run-instance] ❌ fail with an unexpected error at update: workspace run-instance ws1 --user user1 1']
 SnapShot = """
-Error: update error
+Error: mock update error
+Usage:
+  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
+
+Aliases:
+  run-instance, run
+
+Flags:
+  -h, --help   help for run-instance
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with an unexpected error at update: workspace run-instance ws1 --user user1 2']
+SnapShot = 'mock update error'
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance 1']
+SnapShot = """
+Error: validation error: invalid args
+Usage:
+  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
+
+Aliases:
+  run-instance, run
+
+Flags:
+  -h, --help   help for run-instance
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance 2']
+SnapShot = 'validation error: invalid args'
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --namespace xxxxx 1']
+SnapShot = """
+Error: invalid options: namespace xxxxx is not cosmo user's namespace
+Usage:
+  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
+
+Aliases:
+  run-instance, run
+
+Flags:
+  -h, --help   help for run-instance
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --namespace xxxxx 2']
+SnapShot = """
+invalid options: namespace xxxxx is not cosmo user's namespace"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user user1 --namespace cosmo-user-user1 1']
+SnapShot = """
+Error: validation error: --user and --namespace connot be used at the same time
+Usage:
+  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
+
+Aliases:
+  run-instance, run
+
+Flags:
+  -h, --help   help for run-instance
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user user1 --namespace cosmo-user-user1 2']
+SnapShot = 'validation error: --user and --namespace connot be used at the same time'
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user user1 -A 1']
+SnapShot = """
+Error: validation error: --all-namespaces connot be used with --namespace or --user
+Usage:
+  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
+
+Aliases:
+  run-instance, run
+
+Flags:
+  -h, --help   help for run-instance
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user user1 -A 2']
+SnapShot = 'validation error: --all-namespaces connot be used with --namespace or --user'
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user xxxxx 1']
+SnapShot = """
+Error: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
+Usage:
+  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
+
+Aliases:
+  run-instance, run
+
+Flags:
+  -h, --help   help for run-instance
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user xxxxx 2']
+SnapShot = 'users.workspace.cosmo-workspace.github.io "xxxxx" not found'
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws2 --user user1 1']
+SnapShot = """
+Error: no change
+Usage:
+  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
+
+Aliases:
+  run-instance, run
+
+Flags:
+  -h, --help   help for run-instance
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws2 --user user1 2']
+SnapShot = 'no change'
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance xxx --user user1 1']
+SnapShot = """
+Error: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
+Usage:
+  cosmoctl workspace run-instance WORKSPACE_NAME [flags]
+
+Aliases:
+  run-instance, run
+
+Flags:
+  -h, --help   help for run-instance
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance xxx --user user1 2']
+SnapShot = 'workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
+
+['cosmoctl [workspace] [stop-instance] ✅ success in normal context: workspace stop-instance ws1 --user user1 1']
+SnapShot = """
+\u001B[32mSuccessfully stopped workspace ws1
+\u001B[0m"""
+
+['cosmoctl [workspace] [stop-instance] ✅ success in normal context: workspace stop-instance ws1 --user user1 2']
+SnapShot = 'success'
+
+['cosmoctl [workspace] [stop-instance] ✅ success in normal context: workspace stop-instance ws1 --user user1 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-user1\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 0
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['cosmoctl [workspace] [stop-instance] ❌ fail with an unexpected error at update: workspace stop-instance ws1 --user user1 1']
+SnapShot = """
+Error: mock update error
 Usage:
   cosmoctl workspace stop-instance WORKSPACE_NAME [flags]
 
@@ -1849,7 +1941,10 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [stop-instance] fail with invalid args: workspace stop-instance 1']
+['cosmoctl [workspace] [stop-instance] ❌ fail with an unexpected error at update: workspace stop-instance ws1 --user user1 2']
+SnapShot = 'mock update error'
+
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
@@ -1871,7 +1966,10 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [stop-instance] fail with invalid args: workspace stop-instance ws1 --namespace xxxxx 1']
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance 2']
+SnapShot = 'validation error: invalid args'
+
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --namespace xxxxx 1']
 SnapShot = """
 Error: invalid options: namespace xxxxx is not cosmo user's namespace
 Usage:
@@ -1893,7 +1991,11 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [stop-instance] fail with invalid args: workspace stop-instance ws1 --user user1 --namespace cosmo-user-user1 1']
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --namespace xxxxx 2']
+SnapShot = """
+invalid options: namespace xxxxx is not cosmo user's namespace"""
+
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user user1 --namespace cosmo-user-user1 1']
 SnapShot = """
 Error: validation error: --user and --namespace connot be used at the same time
 Usage:
@@ -1915,7 +2017,10 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [stop-instance] fail with invalid args: workspace stop-instance ws1 --user user1 -A 1']
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user user1 --namespace cosmo-user-user1 2']
+SnapShot = 'validation error: --user and --namespace connot be used at the same time'
+
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user user1 -A 1']
 SnapShot = """
 Error: validation error: --all-namespaces connot be used with --namespace or --user
 Usage:
@@ -1937,7 +2042,10 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [stop-instance] fail with invalid args: workspace stop-instance ws1 --user xxxxx 1']
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user user1 -A 2']
+SnapShot = 'validation error: --all-namespaces connot be used with --namespace or --user'
+
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user xxxxx 1']
 SnapShot = """
 Error: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
@@ -1959,7 +2067,10 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [stop-instance] fail with invalid args: workspace stop-instance ws2 --user user1 1']
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user xxxxx 2']
+SnapShot = 'users.workspace.cosmo-workspace.github.io "xxxxx" not found'
+
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws2 --user user1 1']
 SnapShot = """
 Error: no change
 Usage:
@@ -1981,7 +2092,10 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [stop-instance] fail with invalid args: workspace stop-instance xxx --user user1 1']
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws2 --user user1 2']
+SnapShot = 'no change'
+
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance xxx --user user1 1']
 SnapShot = """
 Error: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
 Usage:
@@ -2003,18 +2117,6 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [stop-instance] succeed in normal context: workspace stop-instance ws1 --user user1 1']
-SnapShot = """
-\u001B[32mSuccessfully stopped workspace ws1
-\u001B[0m"""
-
-['cosmoctl [workspace] [stop-instance] succeed in normal context: workspace stop-instance ws1 --user user1 2']
-SnapShot = """
-{
-  \"template\": {
-    \"name\": \"template1\"
-  },
-  \"replicas\": 0
-}
-"""
+['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance xxx --user user1 2']
+SnapShot = 'workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
 
