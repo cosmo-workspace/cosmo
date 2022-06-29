@@ -215,6 +215,8 @@ SnapShot = """
       \"portName\": \"nw2\",
       \"portNumber\": 2222,
       \"httpPath\": \"/\",
+      \"targetPortNumber\": 2222,
+      \"host\": \"default.example.com\",
       \"group\": \"gp1\",
       \"public\": false
     }
@@ -486,6 +488,7 @@ SnapShot = """
     \"template\": {
       \"name\": \"template1\"
     },
+    \"replicas\": 1,
     \"vars\": {
       \"HOGE\": \"HOGEHOGE\"
     }
@@ -510,7 +513,8 @@ SnapShot = """
   \"Spec\": {
     \"template\": {
       \"name\": \"template1\"
-    }
+    },
+    \"replicas\": 1
   },
   \"Status\": {
     \"instance\": {},
@@ -550,6 +554,7 @@ metadata:
   selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws1
   uid: xxxxxxxx
 spec:
+  replicas: 1
   template:
     name: template1
   vars:
@@ -978,27 +983,27 @@ Global Flags:
 ['cosmoctl [workspace] [get] succeed in normal context: workspace get --namespace cosmo-user-user1 1']
 SnapShot = """
 USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   
-cosmo-user-user1   ws2    template1   
+cosmo-user-user1   ws1    template1   Pending
+cosmo-user-user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] succeed in normal context: workspace get --namespace cosmo-user-user1 ws2 1']
 SnapShot = """
 USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws2    template1   
+cosmo-user-user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] succeed in normal context: workspace get --user user1 1']
 SnapShot = """
 USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   
-cosmo-user-user1   ws2    template1   
+cosmo-user-user1   ws1    template1   Pending
+cosmo-user-user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] succeed in normal context: workspace get --user user1 ws2 1']
 SnapShot = """
 USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws2    template1   
+cosmo-user-user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] succeed in normal context: workspace get -A --network -o wide 1']
@@ -1030,7 +1035,9 @@ metadata:
         f:config:
           .: {}
           f:mainServicePortName: {}
+          f:urlbase: {}
         f:instance: {}
+        f:phase: {}
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
@@ -1046,7 +1053,9 @@ spec:
 status:
   config:
     mainServicePortName: main
+    urlbase: https://default.example.com
   instance: {}
+  phase: Pending
 ---
 apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
 kind: Workspace
@@ -1069,7 +1078,9 @@ metadata:
         f:config:
           .: {}
           f:mainServicePortName: {}
+          f:urlbase: {}
         f:instance: {}
+        f:phase: {}
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
@@ -1081,22 +1092,28 @@ metadata:
 spec:
   network:
   - group: gp1
+    host: default.example.com
     httpPath: /
     portName: nw1
     portNumber: 1111
     public: false
+    targetPortNumber: 1111
   - group: gp1
+    host: default.example.com
     httpPath: /
     portName: nw3
     portNumber: 2222
     public: false
+    targetPortNumber: 2222
   replicas: 1
   template:
     name: template1
 status:
   config:
     mainServicePortName: main
+    urlbase: https://default.example.com
   instance: {}
+  phase: Pending
 ---
 
 """
@@ -1111,8 +1128,8 @@ cosmo-user-user1   ws2              nw3         2222          gp1     /
 ['cosmoctl [workspace] [get] succeed in normal context: workspace get -A -o wide 1']
 SnapShot = """
 USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE   URLS
-cosmo-user-user1   ws1    template1               map[]
-cosmo-user-user1   ws2    template1               map[]
+cosmo-user-user1   ws1    template1   Pending     map[]
+cosmo-user-user1   ws2    template1   Pending     map[]
 """
 
 ['cosmoctl [workspace] [get] succeed in normal context: workspace get -A -o yaml 1']
@@ -1137,7 +1154,9 @@ metadata:
         f:config:
           .: {}
           f:mainServicePortName: {}
+          f:urlbase: {}
         f:instance: {}
+        f:phase: {}
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
@@ -1153,7 +1172,9 @@ spec:
 status:
   config:
     mainServicePortName: main
+    urlbase: https://default.example.com
   instance: {}
+  phase: Pending
 ---
 apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
 kind: Workspace
@@ -1176,7 +1197,9 @@ metadata:
         f:config:
           .: {}
           f:mainServicePortName: {}
+          f:urlbase: {}
         f:instance: {}
+        f:phase: {}
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
@@ -1188,22 +1211,28 @@ metadata:
 spec:
   network:
   - group: gp1
+    host: default.example.com
     httpPath: /
     portName: nw1
     portNumber: 1111
     public: false
+    targetPortNumber: 1111
   - group: gp1
+    host: default.example.com
     httpPath: /
     portName: nw3
     portNumber: 2222
     public: false
+    targetPortNumber: 2222
   replicas: 1
   template:
     name: template1
 status:
   config:
     mainServicePortName: main
+    urlbase: https://default.example.com
   instance: {}
+  phase: Pending
 ---
 
 """
@@ -1211,8 +1240,8 @@ status:
 ['cosmoctl [workspace] [get] succeed in normal context: workspace get -A 1']
 SnapShot = """
 USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   
-cosmo-user-user1   ws2    template1   
+cosmo-user-user1   ws1    template1   Pending
+cosmo-user-user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] succeed when workspace is empty: workspace get --all-namespaces 1']
@@ -1536,6 +1565,8 @@ SnapShot = """
       \"portName\": \"nw1\",
       \"portNumber\": 1111,
       \"httpPath\": \"/\",
+      \"targetPortNumber\": 1111,
+      \"host\": \"default.example.com\",
       \"group\": \"gp1\",
       \"public\": false
     },
@@ -1543,6 +1574,8 @@ SnapShot = """
       \"portName\": \"nw3\",
       \"portNumber\": 2222,
       \"httpPath\": \"/\",
+      \"targetPortNumber\": 2222,
+      \"host\": \"default.example.com\",
       \"group\": \"gp1\",
       \"public\": false
     },
@@ -1550,6 +1583,8 @@ SnapShot = """
       \"portName\": \"nw11\",
       \"portNumber\": 3000,
       \"httpPath\": \"/abc\",
+      \"targetPortNumber\": 3000,
+      \"host\": \"default.example.com\",
       \"group\": \"gp11\",
       \"public\": false
     }
@@ -1574,6 +1609,8 @@ SnapShot = """
       \"portName\": \"nw1\",
       \"portNumber\": 1111,
       \"httpPath\": \"/\",
+      \"targetPortNumber\": 1111,
+      \"host\": \"default.example.com\",
       \"group\": \"gp1\",
       \"public\": false
     },
@@ -1581,6 +1618,8 @@ SnapShot = """
       \"portName\": \"nw3\",
       \"portNumber\": 2222,
       \"httpPath\": \"/\",
+      \"targetPortNumber\": 2222,
+      \"host\": \"default.example.com\",
       \"group\": \"gp1\",
       \"public\": false
     },
@@ -1588,6 +1627,8 @@ SnapShot = """
       \"portName\": \"nw12\",
       \"portNumber\": 4000,
       \"httpPath\": \"/def\",
+      \"targetPortNumber\": 4000,
+      \"host\": \"default.example.com\",
       \"group\": \"nw12\",
       \"public\": false
     }

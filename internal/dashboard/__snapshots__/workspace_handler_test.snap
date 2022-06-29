@@ -17,11 +17,26 @@ SnapShot = """
     \"template\": {
       \"name\": \"template1\"
     },
-    \"replicas\": 1
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"main\",
+        \"portNumber\": 18080,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 18080,
+        \"host\": \"default.example.com\",
+        \"group\": \"main\",
+        \"public\": false
+      }
+    ]
   },
   \"Status\": {
     \"instance\": {},
-    \"config\": {}
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
   }
 }
 """
@@ -34,6 +49,16 @@ SnapShot = """
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw1 2']
 SnapShot = """
 {\"message\":\"failed to remove network rule\"}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, main 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, main 2']
+SnapShot = """
+{\"message\":\"main port cannot be removed\"}
 """
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, xxx 1']
@@ -73,7 +98,7 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: usertest, ws1 2']
 SnapShot = """
-{\"message\":\"Successfully deleted\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"\"}}}
+{\"message\":\"Successfully deleted\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
 """
 
 ['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: usertest, ws1 1']
@@ -113,7 +138,7 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: usertest, ws1 2']
 SnapShot = """
-{\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"},\"additionalNetwork\":[{\"portName\":\"main\",\"portNumber\":18080,\"group\":\"mainnw\",\"httpPath\":\"/\",\"public\":false}]},\"status\":{\"phase\":\"\"}}}
+{\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
 """
 
 ['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: usertest, ws1 1']
@@ -163,7 +188,7 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest-admin 2']
 SnapShot = """
-{\"items\":[{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1},\"status\":{\"phase\":\"\"}},{\"name\":\"ws2\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"additionalNetwork\":[{\"portName\":\"nw1\",\"portNumber\":1111,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false},{\"portName\":\"nw2\",\"portNumber\":3333,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false},{\"portName\":\"nw3\",\"portNumber\":2222,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false}]},\"status\":{\"phase\":\"\"}}]}
+{\"items\":[{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}},{\"name\":\"ws2\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"additionalNetwork\":[{\"portName\":\"nw1\",\"portNumber\":1111,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false},{\"portName\":\"nw2\",\"portNumber\":3333,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false},{\"portName\":\"nw3\",\"portNumber\":2222,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false}]},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}]}
 """
 
 ['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with invalid request: Entry: xxxxx 1']
@@ -193,7 +218,7 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 0} 2']
 SnapShot = """
-{\"message\":\"Successfully updated\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":0},\"status\":{\"phase\":\"\"}}}
+{\"message\":\"Successfully updated\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":0},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
 """
 
 ['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 0} 3']
@@ -209,7 +234,11 @@ SnapShot = """
   },
   \"Status\": {
     \"instance\": {},
-    \"config\": {}
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
   }
 }
 """
@@ -221,7 +250,7 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 5} 2']
 SnapShot = """
-{\"message\":\"Successfully updated\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":5},\"status\":{\"phase\":\"\"}}}
+{\"message\":\"Successfully updated\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":5},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
 """
 
 ['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 5} 3']
@@ -237,7 +266,11 @@ SnapShot = """
   },
   \"Status\": {
     \"instance\": {},
-    \"config\": {}
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
   }
 }
 """
@@ -289,7 +322,7 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}} 2']
 SnapShot = """
-{\"message\":\"Successfully created\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"Pending\"}}}
+{\"message\":\"Successfully created\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
 """
 
 ['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}} 3']
@@ -301,6 +334,7 @@ SnapShot = """
     \"template\": {
       \"name\": \"template1\"
     },
+    \"replicas\": 1,
     \"vars\": {
       \"HOGE\": \"HOGEHOGE\"
     }
@@ -319,7 +353,7 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1"} 2']
 SnapShot = """
-{\"message\":\"Successfully created\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1},\"status\":{\"phase\":\"Pending\"}}}
+{\"message\":\"Successfully created\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
 """
 
 ['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1"} 3']
@@ -330,7 +364,8 @@ SnapShot = """
   \"Spec\": {
     \"template\": {
       \"name\": \"template1\"
-    }
+    },
+    \"replicas\": 1
   },
   \"Status\": {
     \"instance\": {},
@@ -424,6 +459,8 @@ SnapShot = """
         \"portName\": \"nw1\",
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
+        \"targetPortNumber\": 9999,
+        \"host\": \"default.example.com\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -431,6 +468,8 @@ SnapShot = """
         \"portName\": \"nw2\",
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
+        \"targetPortNumber\": 3000,
+        \"host\": \"default.example.com\",
         \"group\": \"gp2\",
         \"public\": false
       }
@@ -438,7 +477,11 @@ SnapShot = """
   },
   \"Status\": {
     \"instance\": {},
-    \"config\": {}
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
   }
 }
 """
@@ -468,21 +511,29 @@ SnapShot = """
         \"portName\": \"nw1\",
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
+        \"targetPortNumber\": 9999,
+        \"host\": \"default.example.com\",
         \"group\": \"gp1\",
         \"public\": false
       },
       {
         \"portName\": \"nw2\",
         \"portNumber\": 3000,
-        \"httpPath\": \"\",
-        \"group\": \"\",
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 3000,
+        \"host\": \"default.example.com\",
+        \"group\": \"nw2\",
         \"public\": true
       }
     ]
   },
   \"Status\": {
     \"instance\": {},
-    \"config\": {}
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
   }
 }
 """

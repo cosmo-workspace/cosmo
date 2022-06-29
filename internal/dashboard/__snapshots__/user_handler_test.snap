@@ -141,7 +141,7 @@ SnapShot = """
 
 ['Dashboard server [User] [PostUser] ✅ success succeed in normal context: user-create { "id": "user-create"} 2']
 SnapShot = """
-{\"message\":\"Successfully created\",\"user\":{\"id\":\"user-create\",\"displayName\":\"user-create\",\"authType\":\"kosmo-secret\",\"defaultPassword\":\"xxxxxxxx\"}}
+{\"message\":\"Successfully created\",\"user\":{\"id\":\"user-create\",\"displayName\":\"user-create\",\"authType\":\"kosmo-secret\",\"addons\":[{\"template\":\"user-temple1\"}],\"defaultPassword\":\"xxxxxxxx\"}}
 """
 
 ['Dashboard server [User] [PostUser] ✅ success succeed in normal context: user-create { "id": "user-create"} 3']
@@ -151,7 +151,14 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"user-create\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        }
+      }
+    ]
   },
   \"Status\": {
     \"namespace\": {}

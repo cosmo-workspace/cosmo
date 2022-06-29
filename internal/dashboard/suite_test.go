@@ -28,6 +28,7 @@ import (
 
 	//+kubebuilder:scaffold:imports
 
+	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
@@ -49,6 +50,8 @@ var (
 	adminSession []*http.Cookie
 )
 
+const DefaultURLBase = "https://default.example.com"
+
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Dashboard Suite")
@@ -64,6 +67,9 @@ var _ = BeforeSuite(func() {
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
+		WebhookInstallOptions: envtest.WebhookInstallOptions{
+			Paths: []string{filepath.Join("..", "..", "config", "webhook")},
+		},
 	}
 
 	var err error
@@ -88,8 +94,47 @@ var _ = BeforeSuite(func() {
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:             scheme.Scheme,
 		MetricsBindAddress: "0",
+		CertDir:            testEnv.WebhookInstallOptions.LocalServingCertDir,
+		Port:               testEnv.WebhookInstallOptions.LocalServingPort,
 	})
 	Expect(err).NotTo(HaveOccurred())
+
+	// webhook
+	(&webhooks.InstanceMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.InstanceValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.WorkspaceMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.WorkspaceValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.UserMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.UserValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.TemplateMutationWebhookHandler{
+		Client:         k8sClient,
+		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
+		DefaultURLBase: DefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
 
 	// Setup server
 	By("bootstrapping server")
@@ -311,6 +356,9 @@ func test_Login(userId string, password string) []*http.Cookie {
 func test_CreateWorkspace(userId string, name string, template string, vars map[string]string) {
 	ctx := context.Background()
 
+	cfg, err := k8sClient.GetWorkspaceConfig(ctx, template)
+	Expect(err).ShouldNot(HaveOccurred())
+
 	ws := &wsv1alpha1.Workspace{}
 	ws.SetName(name)
 	ws.SetNamespace(wsv1alpha1.UserNamespace(userId))
@@ -321,10 +369,13 @@ func test_CreateWorkspace(userId string, name string, template string, vars map[
 		Replicas: pointer.Int64(1),
 		Vars:     vars,
 	}
-	err := k8sClient.Create(ctx, ws)
-	//_, err := k8sClient.CreateWorkspace(ctx, userId, name, template, vars)
+	err = k8sClient.Create(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 
+	ws.Status.Phase = "Pending"
+	ws.Status.Config = cfg
+	err = k8sClient.Status().Update(ctx, ws)
+	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() (*wsv1alpha1.Workspace, error) {
 		return k8sClient.GetWorkspaceByUserID(ctx, name, userId)
 	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
@@ -376,8 +427,13 @@ func test_createNetworkRule(userId, workspaceName, networkRuleName string, portN
 	err = k8sClient.Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 
-	Eventually(func() []wsv1alpha1.NetworkRule {
+	Eventually(func() bool {
 		ws, _ := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
-		return ws.Spec.Network
-	}, time.Second*5, time.Millisecond*100).Should(ContainElement(netRule))
+		for _, n := range ws.Spec.Network {
+			if n.PortName == netRule.PortName {
+				return true
+			}
+		}
+		return false
+	}, time.Second*5, time.Millisecond*100).Should(BeTrue())
 }

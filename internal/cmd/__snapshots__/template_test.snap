@@ -347,8 +347,8 @@ Global Flags:
 ['cosmoctl [template] [get] succeed in normal context: template get --workspace 1']
 SnapShot = """
 NAME        REQUIRED-VARS       DEPLOYMENT/SERVICE/INGRESS   URLBASE
-template1   {{HOGE}},{{FUGA}}   //                           
-template2   {{HOGE}},{{FUGA}}   //                           
+template1   {{HOGE}},{{FUGA}}   //                           https://default.example.com
+template2   {{HOGE}},{{FUGA}}   //                           https://default.example.com
 """
 
 ['cosmoctl [template] [get] succeed in normal context: template get 1']
@@ -362,7 +362,7 @@ template3   {{HOGE}},{{FUGA}}   user-addon
 ['cosmoctl [template] [get] succeed in normal context: template get template2 --workspace 1']
 SnapShot = """
 NAME        REQUIRED-VARS       DEPLOYMENT/SERVICE/INGRESS   URLBASE
-template2   {{HOGE}},{{FUGA}}   //                           
+template2   {{HOGE}},{{FUGA}}   //                           https://default.example.com
 """
 
 ['cosmoctl [template] [get] succeed in normal context: template get template2 1']
