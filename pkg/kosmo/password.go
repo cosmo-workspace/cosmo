@@ -3,7 +3,6 @@ package kosmo
 import (
 	"context"
 	"crypto/subtle"
-	"fmt"
 	"strconv"
 
 	"github.com/gorilla/securecookie"
@@ -18,6 +17,12 @@ import (
 )
 
 func (c *Client) VerifyPassword(ctx context.Context, userid string, pass []byte) (verified bool, isDefault bool, err error) {
+	log := clog.FromContext(ctx).WithCaller()
+
+	if _, err := c.GetUser(ctx, userid); err != nil {
+		return false, isDefault, err
+	}
+
 	secret := corev1.Secret{}
 	key := types.NamespacedName{
 		Namespace: wsv1alpha1.UserNamespace(userid),
@@ -25,12 +30,13 @@ func (c *Client) VerifyPassword(ctx context.Context, userid string, pass []byte)
 	}
 
 	if err := c.Get(ctx, key, &secret); err != nil {
-		return false, isDefault, fmt.Errorf("failed to get password secret: %w", err)
+		log.Error(err, "failed to get password", "userid", userid)
+		return false, isDefault, NewInternalServerError("failed to get password", err)
 	}
 
 	storedPass, ok := secret.Data[wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSecret]
 	if !ok {
-		return false, isDefault, fmt.Errorf("password not found")
+		return false, isDefault, NewNotFoundError("password not found", nil)
 	}
 
 	// check is default from annotation
@@ -48,7 +54,7 @@ func (c *Client) VerifyPassword(ctx context.Context, userid string, pass []byte)
 	} else {
 		salt, ok := secret.Data[wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSalt]
 		if !ok {
-			return false, isDefault, fmt.Errorf("salt not found")
+			return false, isDefault, NewNotFoundError("salt not found", nil)
 		}
 		hashedPass, _ := hash(pass, salt)
 		return BytesEqual(hashedPass, storedPass), isDefault, nil
@@ -67,7 +73,7 @@ func (c *Client) IsDefaultPassword(ctx context.Context, userid string) (bool, er
 	}
 
 	if err := c.Get(ctx, key, &secret); err != nil {
-		return false, fmt.Errorf("failed to get password secret: %w", err)
+		return false, NewInternalServerError("failed to get password secret", err)
 	}
 
 	if ann := secret.GetAnnotations(); ann != nil {
@@ -88,12 +94,12 @@ func (c *Client) GetDefaultPassword(ctx context.Context, userid string) (*string
 	}
 
 	if err := c.Get(ctx, key, &secret); err != nil {
-		return nil, fmt.Errorf("failed to get password secret: %w", err)
+		return nil, NewInternalServerError("failed to get password secret", err)
 	}
 
 	pass, ok := secret.Data[wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSecret]
 	if !ok {
-		return nil, fmt.Errorf("password not found")
+		return nil, NewNotFoundError("password not found", nil)
 	}
 
 	var isDefault bool
@@ -106,7 +112,7 @@ func (c *Client) GetDefaultPassword(ctx context.Context, userid string) (*string
 	}
 
 	if !isDefault {
-		return nil, fmt.Errorf("not default")
+		return nil, NewInternalServerError("not default", nil)
 	}
 
 	p := string(pass)
@@ -118,12 +124,12 @@ func (c *Client) ResetPassword(ctx context.Context, userid string) error {
 		Symbols: "~!@#$%^&*()_+-={}|[]:<>?,./",
 	})
 	if err != nil {
-		return fmt.Errorf("failed to create password generator: %w", err)
+		return NewInternalServerError("failed to create password generator", err)
 	}
 
 	pass, err := g.Generate(16, 3, 3, false, false)
 	if err != nil {
-		return fmt.Errorf("failed to generate random password: %w", err)
+		return NewInternalServerError("failed to generate random password", err)
 	}
 
 	return c.registerPassword(ctx, userid, []byte(pass), nil)
@@ -156,9 +162,13 @@ func (c *Client) registerPassword(ctx context.Context, userid string, password, 
 		}
 		return nil
 	})
-	log.Info("register password secret", "name", secret.Name, "ns", secret.Namespace, "op", op, "error", err)
+	if err != nil {
+		log.Error(err, "failed to update user password", "user", userid)
+		return NewInternalServerError("failed to update user password", err)
+	}
 
-	return err
+	log.Info("register password secret", "name", secret.Name, "ns", secret.Namespace, "op", op, "error", err)
+	return nil
 }
 
 type argon2params struct {

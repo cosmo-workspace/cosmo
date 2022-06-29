@@ -3,10 +3,6 @@ package dashboard
 import (
 	"context"
 	"net/http"
-	"sort"
-	"time"
-
-	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
@@ -16,19 +12,17 @@ import (
 )
 
 func (s *Server) useUserMiddleWare(router *mux.Router, routes dashv1alpha1.Routes) {
-	for _, rtName := range []string{"GetUsers", "PostUser"} {
-		router.Get(rtName).Handler(s.adminAuthenticationMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.authorizationMiddleware(router.Get(rtName).GetHandler()))
-	}
-	for _, rtName := range []string{"PutUserRole"} {
-		router.Get(rtName).Handler(s.adminAuthenticationMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.preFetchUserMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.authorizationMiddleware(router.Get(rtName).GetHandler()))
+	for _, rtName := range []string{"GetUsers", "PostUser", "PutUserRole"} {
+		router.Get(rtName).Handler(
+			s.authorizationMiddleware(
+				s.adminAuthenticationMiddleware(
+					router.Get(rtName).GetHandler())))
 	}
 	for _, rtName := range []string{"GetUser", "DeleteUser", "PutUserPassword", "PutUserName"} {
-		router.Get(rtName).Handler(s.userAuthenticationMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.preFetchUserMiddleware(router.Get(rtName).GetHandler()))
-		router.Get(rtName).Handler(s.authorizationMiddleware(router.Get(rtName).GetHandler()))
+		router.Get(rtName).Handler(
+			s.authorizationMiddleware(
+				s.userAuthenticationMiddleware(
+					router.Get(rtName).GetHandler())))
 	}
 }
 
@@ -36,80 +30,25 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	log.Info("creating user", "id", req.Id, "displayName", req.DisplayName, "role", req.Role)
-
-	if req.DisplayName == "" {
-		req.DisplayName = req.Id
-	}
-
-	userrole := wsv1alpha1.UserRole(req.Role)
-	if !userrole.IsValid() {
-		log.Info("invalid request", "id", req.Id, "role", userrole)
-		return ErrorResponse_old(http.StatusBadRequest, "'userrole' is invalid")
-	}
-
-	authtype := wsv1alpha1.UserAuthType(req.AuthType)
-	if authtype == "" {
-		authtype = wsv1alpha1.UserAuthTypeKosmoSecert
-	}
-	if !authtype.IsValid() {
-		log.Info("invalid request", "id", req.Id, "authtype", authtype)
-		return ErrorResponse_old(http.StatusBadRequest, "'authtype' is invalid")
-	}
-
-	user := &wsv1alpha1.User{}
-	user.SetName(req.Id)
-	user.Spec = wsv1alpha1.UserSpec{
-		DisplayName: req.DisplayName,
-		Role:        userrole,
-		AuthType:    authtype,
-		Addons:      convertDashv1alpha1UserToUserAddon(req.Addons),
-	}
-
-	log.Debug().Info("creating user object", "user", user)
-
-	err := s.Klient.Create(ctx, user)
+	// create user
+	user, err := s.Klient.CreateUser(ctx, req.Id, req.DisplayName,
+		req.Role, req.AuthType, convertDashv1alpha1UserToUserAddon(req.Addons))
 	if err != nil {
-		if apierrs.IsAlreadyExists(err) {
-			return ErrorResponse_old(http.StatusTooManyRequests, "user already exists")
-		} else {
-			message := "failed to create user"
-			log.Error(err, message, "userid", req.Id)
-			return ErrorResponse_old(http.StatusServiceUnavailable, message)
-		}
+		return ErrorResponse(log, err)
 	}
 
 	// Wait until user created
-	tk := time.NewTicker(time.Second)
-	defer tk.Stop()
-	var defaultPassword *string
-	log.Debug().Info("wait for default password creation", "user", user)
-
-UserCreationWaitLoop:
-	for {
-		p, err := s.Klient.GetDefaultPassword(ctx, req.Id)
-		if err == nil {
-			log.Debug().Info("got default password")
-			tk.Stop()
-			defaultPassword = p
-			break UserCreationWaitLoop
-		}
-
-		select {
-		case <-ctx.Done():
-			tk.Stop()
-			message := "Reached to timeout in user creation"
-			log.Error(err, message, "userid", user.Name)
-			return ErrorResponse_old(http.StatusInternalServerError, message)
-		default:
-			<-tk.C
-		}
+	defaultPassword, err := s.Klient.GetDefaultPasswordAwait(ctx, req.Id)
+	if err != nil {
+		return ErrorResponse(log, err)
 	}
 
-	res := &dashv1alpha1.CreateUserResponse{}
-	res.User = convertUserToDashv1alpha1User(*user)
-	res.User.DefaultPassword = *defaultPassword
-	res.Message = "Successfully created"
+	resUser := convertUserToDashv1alpha1User(*user)
+	resUser.DefaultPassword = *defaultPassword
+	res := &dashv1alpha1.CreateUserResponse{
+		Message: "Successfully created",
+		User:    resUser,
+	}
 	log.Info(res.Message, "userid", user.Name)
 	return NormalResponse(http.StatusCreated, res)
 }
@@ -117,21 +56,16 @@ UserCreationWaitLoop:
 func (s *Server) GetUsers(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	res := &dashv1alpha1.ListUsersResponse{}
-
 	users, err := s.Klient.ListUsers(ctx)
 	if err != nil {
-		message := "failed to list users"
-		log.Error(err, message)
-		return ErrorResponse_old(http.StatusInternalServerError, message)
+		return ErrorResponse(log, err)
 	}
+
+	res := &dashv1alpha1.ListUsersResponse{}
 	res.Items = make([]dashv1alpha1.User, len(users))
 	for i := range users {
 		res.Items[i] = *convertUserToDashv1alpha1User(users[i])
 	}
-
-	sort.Slice(res.Items, func(i, j int) bool { return res.Items[i].Id < res.Items[j].Id })
-
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
 	}
@@ -142,14 +76,14 @@ func (s *Server) GetUser(ctx context.Context, userId string) (dashv1alpha1.ImplR
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "userId", userId)
 
-	user := userFromContext(ctx)
-	if user == nil {
-		log.Info("user is not found in context")
-		return ErrorResponse_old(http.StatusInternalServerError, "")
+	user, err := s.Klient.GetUser(ctx, userId)
+	if err != nil {
+		return ErrorResponse(log, err)
 	}
 
-	res := &dashv1alpha1.GetUserResponse{}
-	res.User = convertUserToDashv1alpha1User(*user)
+	res := &dashv1alpha1.GetUserResponse{
+		User: convertUserToDashv1alpha1User(*user),
+	}
 	return NormalResponse(http.StatusOK, res)
 }
 
@@ -157,27 +91,15 @@ func (s *Server) DeleteUser(ctx context.Context, userId string) (dashv1alpha1.Im
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "userId", userId)
 
-	user := userFromContext(ctx)
-	if user == nil {
-		log.Info("user is not found in context")
-		return ErrorResponse_old(http.StatusInternalServerError, "")
-	}
-
-	err := s.Klient.Delete(ctx, user)
+	user, err := s.Klient.DeleteUser(ctx, userId)
 	if err != nil {
-		if apierrs.IsNotFound(err) {
-			log.Error(err, err.Error(), "userid", userId)
-			return ErrorResponse_old(http.StatusNotFound, err.Error())
-		} else {
-			message := "failed to delete user"
-			log.Error(err, message, "userid", userId)
-			return ErrorResponse_old(http.StatusInternalServerError, message)
-		}
+		return ErrorResponse(log, err)
 	}
 
-	res := &dashv1alpha1.DeleteUserResponse{}
-	res.User = convertUserToDashv1alpha1User(*user)
-	res.Message = "Successfully deleted"
+	res := &dashv1alpha1.DeleteUserResponse{
+		Message: "Successfully deleted",
+		User:    convertUserToDashv1alpha1User(*user),
+	}
 	log.Info(res.Message, "userid", userId)
 	return NormalResponse(http.StatusOK, res)
 }

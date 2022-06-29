@@ -56,11 +56,6 @@ func NormalResponse(code int, body interface{}) (dashv1alpha1.ImplResponse, erro
 	return dashv1alpha1.Response(code, body), nil
 }
 
-//todo:delete
-func ErrorResponse_old(code int, message string) (dashv1alpha1.ImplResponse, error) {
-	return dashv1alpha1.Response(code, nil), errors.New(message)
-}
-
 func ErrorResponse(log *clog.Logger, err error) (dashv1alpha1.ImplResponse, error) {
 
 	var statusCode int
