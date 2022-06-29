@@ -21,7 +21,7 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	ws := workspaceFromContext(ctx)
 	if ws == nil {
 		log.Info("workspace not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
+		return ErrorResponse_old(http.StatusInternalServerError, "")
 	}
 	before := ws.DeepCopy()
 
@@ -39,7 +39,7 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 	if err != nil {
 		message := err.Error()
 		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
-		return ErrorResponse(http.StatusBadRequest, message)
+		return ErrorResponse_old(http.StatusBadRequest, message)
 	}
 
 	log.DebugAll().Info("NetworkRule upserted", "ws", ws, "namespace", ws.Namespace, "netRule", netRule)
@@ -47,13 +47,13 @@ func (s *Server) PutNetworkRule(ctx context.Context, userId string, workspaceNam
 
 	if equality.Semantic.DeepEqual(before, ws) {
 		log.Info("no change", "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
-		return ErrorResponse(http.StatusBadRequest, "no change in network rules")
+		return ErrorResponse_old(http.StatusBadRequest, "no change in network rules")
 	}
 
 	if err := s.Klient.Update(ctx, ws); err != nil {
 		message := "failed to upsert network rule"
 		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
-		return ErrorResponse(http.StatusInternalServerError, message)
+		return ErrorResponse_old(http.StatusInternalServerError, message)
 	}
 
 	res := &dashv1alpha1.UpsertNetworkRuleResponse{}
@@ -69,13 +69,13 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 	ws := workspaceFromContext(ctx)
 	if ws == nil {
 		log.Info("workspace not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
+		return ErrorResponse_old(http.StatusInternalServerError, "")
 	}
 
 	before := ws.DeepCopy()
 
 	if networkRuleName == ws.Status.Config.ServiceMainPortName {
-		return ErrorResponse(http.StatusBadRequest, "main port cannot be removed")
+		return ErrorResponse_old(http.StatusBadRequest, "main port cannot be removed")
 	}
 
 	var delRule *wsv1alpha1.NetworkRule
@@ -87,7 +87,7 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 	if delRule == nil {
 		message := fmt.Sprintf("port name %s is not found", networkRuleName)
 		log.Info(message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
-		return ErrorResponse(http.StatusBadRequest, message)
+		return ErrorResponse_old(http.StatusBadRequest, message)
 	}
 
 	ws.Spec.Network = wsnet.RemoveNetworkOverrideByName(ws.Spec.Network, *delRule)
@@ -98,7 +98,7 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, userId string, workspace
 	if err := s.Klient.Update(ctx, ws); err != nil {
 		message := "failed to remove network rule"
 		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
-		return ErrorResponse(http.StatusInternalServerError, message)
+		return ErrorResponse_old(http.StatusInternalServerError, message)
 	}
 
 	res := &dashv1alpha1.RemoveNetworkRuleResponse{}

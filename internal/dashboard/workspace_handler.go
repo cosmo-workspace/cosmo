@@ -36,7 +36,7 @@ func (s *Server) PostWorkspace(ctx context.Context, userId string, req dashv1alp
 	cfg, err := s.Klient.GetWorkspaceConfig(ctx, req.Template)
 	if err != nil {
 		log.Error(err, "failed to get workspace config from template", "template", req.Template)
-		return ErrorResponse(http.StatusBadRequest, "failed to get workspace config in template")
+		return ErrorResponse_old(http.StatusBadRequest, "failed to get workspace config in template")
 	}
 
 	ws := &wsv1alpha1.Workspace{}
@@ -51,12 +51,12 @@ func (s *Server) PostWorkspace(ctx context.Context, userId string, req dashv1alp
 
 	if err := s.Klient.Create(ctx, ws); err != nil {
 		if apierrs.IsAlreadyExists(err) {
-			return ErrorResponse(http.StatusTooManyRequests, "Workspace already exists")
+			return ErrorResponse_old(http.StatusTooManyRequests, "Workspace already exists")
 
 		} else {
 			message := "failed to create workspace"
 			log.Error(err, message, "userid", userId, "workspace", req.Name, "template", req.Template)
-			return ErrorResponse(http.StatusInternalServerError, message)
+			return ErrorResponse_old(http.StatusInternalServerError, message)
 		}
 	}
 
@@ -78,7 +78,7 @@ func (s *Server) GetWorkspaces(ctx context.Context, userId string) (dashv1alpha1
 	if err != nil {
 		message := "failed to list workspaces"
 		log.Error(err, message, "userid", userId)
-		return ErrorResponse(http.StatusInternalServerError, message)
+		return ErrorResponse_old(http.StatusInternalServerError, message)
 	}
 
 	apiwss := make([]dashv1alpha1.Workspace, len(wss))
@@ -103,7 +103,7 @@ func (s *Server) GetWorkspace(ctx context.Context, userId string, workspaceName 
 	ws := workspaceFromContext(ctx)
 	if ws == nil {
 		log.Info("workspace not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
+		return ErrorResponse_old(http.StatusInternalServerError, "")
 	}
 
 	res := &dashv1alpha1.GetWorkspaceResponse{}
@@ -119,7 +119,7 @@ func (s *Server) DeleteWorkspace(ctx context.Context, userId string, workspaceNa
 	ws := workspaceFromContext(ctx)
 	if ws == nil {
 		log.Info("workspace not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
+		return ErrorResponse_old(http.StatusInternalServerError, "")
 	}
 
 	res := &dashv1alpha1.DeleteWorkspaceResponse{}
@@ -127,11 +127,11 @@ func (s *Server) DeleteWorkspace(ctx context.Context, userId string, workspaceNa
 	err := s.Klient.Delete(ctx, ws)
 	if err != nil {
 		if apierrs.IsNotFound(err) {
-			return ErrorResponse(http.StatusNotFound, err.Error())
+			return ErrorResponse_old(http.StatusNotFound, err.Error())
 		} else {
 			res.Message = "failed to delete workspace"
 			log.Error(err, res.Message, "userid", userId, "workspace", ws.Name)
-			return ErrorResponse(http.StatusInternalServerError, res.Message)
+			return ErrorResponse_old(http.StatusInternalServerError, res.Message)
 		}
 	}
 
@@ -149,7 +149,7 @@ func (s *Server) PatchWorkspace(ctx context.Context, userId string, workspaceNam
 	ws := workspaceFromContext(ctx)
 	if ws == nil {
 		log.Info("workspace not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
+		return ErrorResponse_old(http.StatusInternalServerError, "")
 	}
 
 	res := &dashv1alpha1.PatchWorkspaceResponse{}
@@ -166,17 +166,17 @@ func (s *Server) PatchWorkspace(ctx context.Context, userId string, workspaceNam
 			if apierrs.IsNotFound(err) {
 				message := err.Error()
 				log.Error(err, message, "userid", userId, "workspace", ws.Name)
-				return ErrorResponse(http.StatusInternalServerError, message)
+				return ErrorResponse_old(http.StatusInternalServerError, message)
 			} else {
 				message := "failed to update workspace"
 				log.Error(err, message, "userid", userId, "workspace", ws.Name)
-				return ErrorResponse(http.StatusInternalServerError, message)
+				return ErrorResponse_old(http.StatusInternalServerError, message)
 			}
 		}
 		res.Message = "Successfully updated"
 	} else {
 		log.Info("no change")
-		return ErrorResponse(http.StatusBadRequest, "no change")
+		return ErrorResponse_old(http.StatusBadRequest, "no change")
 	}
 
 	res.Workspace = convertWorkspaceTodashv1alpha1Workspace(*ws)

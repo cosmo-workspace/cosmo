@@ -45,7 +45,7 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 	userrole := wsv1alpha1.UserRole(req.Role)
 	if !userrole.IsValid() {
 		log.Info("invalid request", "id", req.Id, "role", userrole)
-		return ErrorResponse(http.StatusBadRequest, "'userrole' is invalid")
+		return ErrorResponse_old(http.StatusBadRequest, "'userrole' is invalid")
 	}
 
 	authtype := wsv1alpha1.UserAuthType(req.AuthType)
@@ -54,7 +54,7 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 	}
 	if !authtype.IsValid() {
 		log.Info("invalid request", "id", req.Id, "authtype", authtype)
-		return ErrorResponse(http.StatusBadRequest, "'authtype' is invalid")
+		return ErrorResponse_old(http.StatusBadRequest, "'authtype' is invalid")
 	}
 
 	user := &wsv1alpha1.User{}
@@ -71,11 +71,11 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 	err := s.Klient.Create(ctx, user)
 	if err != nil {
 		if apierrs.IsAlreadyExists(err) {
-			return ErrorResponse(http.StatusTooManyRequests, "user already exists")
+			return ErrorResponse_old(http.StatusTooManyRequests, "user already exists")
 		} else {
 			message := "failed to create user"
 			log.Error(err, message, "userid", req.Id)
-			return ErrorResponse(http.StatusServiceUnavailable, message)
+			return ErrorResponse_old(http.StatusServiceUnavailable, message)
 		}
 	}
 
@@ -100,7 +100,7 @@ UserCreationWaitLoop:
 			tk.Stop()
 			message := "Reached to timeout in user creation"
 			log.Error(err, message, "userid", user.Name)
-			return ErrorResponse(http.StatusInternalServerError, message)
+			return ErrorResponse_old(http.StatusInternalServerError, message)
 		default:
 			<-tk.C
 		}
@@ -123,7 +123,7 @@ func (s *Server) GetUsers(ctx context.Context) (dashv1alpha1.ImplResponse, error
 	if err != nil {
 		message := "failed to list users"
 		log.Error(err, message)
-		return ErrorResponse(http.StatusInternalServerError, message)
+		return ErrorResponse_old(http.StatusInternalServerError, message)
 	}
 	res.Items = make([]dashv1alpha1.User, len(users))
 	for i := range users {
@@ -145,7 +145,7 @@ func (s *Server) GetUser(ctx context.Context, userId string) (dashv1alpha1.ImplR
 	user := userFromContext(ctx)
 	if user == nil {
 		log.Info("user is not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
+		return ErrorResponse_old(http.StatusInternalServerError, "")
 	}
 
 	res := &dashv1alpha1.GetUserResponse{}
@@ -160,18 +160,18 @@ func (s *Server) DeleteUser(ctx context.Context, userId string) (dashv1alpha1.Im
 	user := userFromContext(ctx)
 	if user == nil {
 		log.Info("user is not found in context")
-		return ErrorResponse(http.StatusInternalServerError, "")
+		return ErrorResponse_old(http.StatusInternalServerError, "")
 	}
 
 	err := s.Klient.Delete(ctx, user)
 	if err != nil {
 		if apierrs.IsNotFound(err) {
 			log.Error(err, err.Error(), "userid", userId)
-			return ErrorResponse(http.StatusNotFound, err.Error())
+			return ErrorResponse_old(http.StatusNotFound, err.Error())
 		} else {
 			message := "failed to delete user"
 			log.Error(err, message, "userid", userId)
-			return ErrorResponse(http.StatusInternalServerError, message)
+			return ErrorResponse_old(http.StatusInternalServerError, message)
 		}
 	}
 
