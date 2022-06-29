@@ -8,7 +8,9 @@ import (
 	"regexp"
 	"strconv"
 
+	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
@@ -111,7 +113,7 @@ func (h *UserMutationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
 }
 
 type UserValidationWebhookHandler struct {
-	Client  kosmo.Client
+	Client  client.Client
 	Log     *clog.Logger
 	decoder *admission.Decoder
 }
@@ -155,7 +157,8 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 	// check addon template is labeled as user-addon
 	if len(user.Spec.Addons) > 0 {
 		for _, addon := range user.Spec.Addons {
-			tmpl, err := h.Client.GetTemplate(ctx, addon.Template.Name)
+			tmpl := &cosmov1alpha1.Template{}
+			err = h.Client.Get(ctx, types.NamespacedName{Name: addon.Template.Name}, tmpl)
 			if err != nil {
 				h.Log.Error(err, "failed to create addon", "user", user.Name, "addon", addon.Template.Name)
 				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s :%v", addon.Template.Name, err))

@@ -7,19 +7,19 @@ import (
 	"net/http"
 
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
 type TemplateMutationWebhookHandler struct {
-	Client  kosmo.Client
+	Client  client.Client
 	Log     *clog.Logger
 	decoder *admission.Decoder
 
@@ -27,6 +27,7 @@ type TemplateMutationWebhookHandler struct {
 }
 
 //+kubebuilder:webhook:path=/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=templates,verbs=create;update,versions=v1alpha1,name=mtemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=clustertemplates,verbs=create;update,versions=v1alpha1,name=mclustertemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *TemplateMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
@@ -36,29 +37,52 @@ func (h *TemplateMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manage
 }
 
 func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
-	tmpl := &cosmov1alpha1.Template{}
-	err := h.decoder.Decode(req, tmpl)
-	if err != nil {
+
+	var tmpl cosmov1alpha1.TemplateObject
+
+	switch req.RequestKind.Kind {
+	case "Template":
+		tmpl = &cosmov1alpha1.Template{}
+		err := h.decoder.Decode(req, tmpl)
+		if err != nil {
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
+
+	case "ClusterTemplate":
+		tmpl = &cosmov1alpha1.ClusterTemplate{}
+		err := h.decoder.Decode(req, tmpl)
+		if err != nil {
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
+
+	default:
+		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
 		h.Log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	before := tmpl.DeepCopy()
-	h.Log.DebugAll().DumpObject(h.Client.Scheme(), before, "request template")
+
+	before := tmpl.DeepCopyObject().(cosmov1alpha1.TemplateObject)
 
 	// mutate the fields in template
 	tmplType, _ := template.GetTemplateType(tmpl)
+
 	switch tmplType {
 	case wsv1alpha1.TemplateTypeWorkspace:
-		cfg, err := wscfg.ConfigFromTemplateAnnotations(tmpl)
-		if err != nil {
-			h.Log.Error(err, "failed to get workspace config")
-			return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to get workspace config: %w", err))
-		}
-		if cfg.URLBase == "" {
-			cfg.URLBase = h.DefaultURLBase
-		}
+		t, ok := tmpl.(*cosmov1alpha1.Template)
+		if ok {
+			cfg, err := wscfg.ConfigFromTemplateAnnotations(t)
+			if err != nil {
+				h.Log.Error(err, "failed to get workspace config")
+				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to get workspace config: %w", err))
+			}
+			if cfg.URLBase == "" {
+				cfg.URLBase = h.DefaultURLBase
+			}
 
-		wscfg.SetConfigOnTemplateAnnotations(tmpl, cfg)
+			wscfg.SetConfigOnTemplateAnnotations(t, cfg)
+		}
 	}
 
 	h.Log.Debug().PrintObjectDiff(before, tmpl)
@@ -76,51 +100,80 @@ func (h *TemplateMutationWebhookHandler) InjectDecoder(d *admission.Decoder) err
 	return nil
 }
 
-// type TemplateValidateHandler interface {
-// 	Valudate(context.Context, cosmov1alpha1.Template) error
-// }
+type TemplateValidationWebhookHandler struct {
+	Client  client.Client
+	Log     *clog.Logger
+	decoder *admission.Decoder
 
-// type TemplateValidationWebhookHandler struct {
-// 	Client  kosmo.Client
-// 	Log     *clog.Logger
-// 	decoder *admission.Decoder
+	FieldManager string
+}
 
-// 	WsTmplValidator TemplateValidateHandler
-// }
+//+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=templates,verbs=create;update,versions=v1alpha1,name=vtemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=clustertemplates,verbs=create;update,versions=v1alpha1,name=vclustertemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
 
-// //+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=templates,verbs=create;update,versions=v1alpha1,name=vtemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
+func (h *TemplateValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
+	mgr.GetWebhookServer().Register(
+		"/validate-cosmo-cosmo-workspace-github-io-v1alpha1-template",
+		&webhook.Admission{Handler: h},
+	)
+}
 
-// func (h *TemplateValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
-// 	mgr.GetWebhookServer().Register(
-// 		"/validate-cosmo-cosmo-workspace-github-io-v1alpha1-template",
-// 		&webhook.Admission{Handler: h},
-// 	)
-// }
+// Handle validates the fields in Template
+func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 
-// // Handle validates the fields in Template
-// func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
-// 	tmpl := &cosmov1alpha1.Template{}
-// 	err := h.decoder.Decode(req, tmpl)
-// 	if err != nil {
-// 		h.Log.Error(err, "failed to decode request")
-// 		return admission.Errored(http.StatusBadRequest, err)
-// 	}
-// 	h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
+	var tmpl cosmov1alpha1.TemplateObject
+	var dummyInst cosmov1alpha1.InstanceObject
 
-// 	tmplType, _ := template.GetTemplateType(tmpl)
-// 	switch tmplType {
-// 	case wsv1alpha1.TemplateTypeWorkspace:
-// 		err := h.WsTmplValidator.Valudate(ctx, *tmpl)
-// 		if err != nil {
-// 			h.Log.Error(err, "invalid workspace template")
-// 			return admission.Errored(http.StatusForbidden, fmt.Errorf("invalid workspace template: %w", err))
-// 		}
-// 	}
+	switch req.RequestKind.Kind {
+	case "Template":
+		tmpl = &cosmov1alpha1.Template{}
+		err := h.decoder.Decode(req, tmpl)
+		if err != nil {
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
 
-// 	return admission.Allowed("Validation OK")
-// }
+		dummyInst = &cosmov1alpha1.Instance{}
+		dummyInst.SetName("dummy")
+		dummyInst.SetNamespace("default")
 
-// func (h *TemplateValidationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
-// 	h.decoder = d
-// 	return nil
-// }
+	case "ClusterTemplate":
+		tmpl = &cosmov1alpha1.ClusterTemplate{}
+		err := h.decoder.Decode(req, tmpl)
+		if err != nil {
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
+
+		dummyInst = &cosmov1alpha1.ClusterInstance{}
+		dummyInst.SetName("dummy")
+
+	default:
+		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
+		h.Log.Error(err, "failed to decode request")
+		return admission.Errored(http.StatusBadRequest, err)
+	}
+
+	warnings := make([]string, 0)
+	if !template.IsSkipValidation(tmpl) {
+		// dryrun apply
+		// if errs := dryrunReconcile(ctx, h.Client, h.FieldManager, dummyInst, tmpl); len(errs) > 0 {
+		// 	for _, err := range errs {
+		// 		warnings = append(warnings, err.Error())
+		// 	}
+		// }
+	} else {
+		h.Log.Info("skip dryrun validation", "kind", req.RequestKind.Kind, "name", tmpl.GetName())
+	}
+
+	res := admission.Allowed("Validation OK")
+	if len(warnings) > 0 {
+		res.Warnings = warnings
+	}
+	return res
+}
+
+func (h *TemplateValidationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
+	h.decoder = d
+	return nil
+}

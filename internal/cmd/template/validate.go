@@ -192,15 +192,12 @@ func (o *validateOption) RunE(cmd *cobra.Command, args []string) error {
 	o.Logr.Info("smoke test: create dummy instance to apply each resources", "instance", dummyInst.GetName())
 	o.Logr.Debug().DumpObject(o.Scheme, &dummyInst, "test instance")
 
-	builts, err := template.NewRawYAMLBuilder(o.tmpl.Spec.RawYaml, &dummyInst).
-		ReplaceDefaultVars().
-		ReplaceCustomVars().
-		Build()
+	builts, err := template.BuildObjects(o.tmpl.Spec, &dummyInst)
 	if err != nil {
 		return fmt.Errorf("failed to build test instance: %w", err)
 	}
 	// only apply MetadataTransformer
-	ts := []transformer.Transformer{transformer.NewMetadataTransformer(&dummyInst, &o.tmpl, o.Scheme)}
+	ts := []transformer.Transformer{transformer.NewMetadataTransformer(&dummyInst, o.Scheme, template.IsDisableNamePrefix(&o.tmpl))}
 	builts, err = transformer.ApplyTransformers(ctx, ts, builts)
 	if err != nil {
 		return fmt.Errorf("failed to transform objects: %w", err)

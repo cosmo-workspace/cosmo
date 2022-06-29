@@ -23,6 +23,20 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
+const (
+	controllerFieldManager string = "cosmo-instance-controller"
+)
+
+const (
+	instController        string = "cosmo-instance-controller"
+	clusterInstController string = "cosmo-cluster-instance-controller"
+	tmplController        string = "cosmo-template-controller"
+	clusterTmplController string = "cosmo-cluster-template-controller"
+	userController        string = "cosmo-user-controller"
+	wsController          string = "cosmo-workspace-controller"
+	wsStatController      string = "cosmo-workspace-status-controller"
+)
+
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
@@ -74,8 +88,15 @@ var _ = BeforeSuite(func() {
 	err = (&InstanceReconciler{
 		Client:   kosmo.NewClient(mgr.GetClient()),
 		Scheme:   mgr.GetScheme(),
-		Recorder: mgr.GetEventRecorderFor(InstControllerFieldManager),
-	}).SetupWithManager(mgr)
+		Recorder: mgr.GetEventRecorderFor(instController),
+	}).SetupWithManager(mgr, controllerFieldManager)
+	Expect(err).NotTo(HaveOccurred())
+
+	err = (&ClusterInstanceReconciler{
+		Client:   kosmo.NewClient(mgr.GetClient()),
+		Scheme:   mgr.GetScheme(),
+		Recorder: mgr.GetEventRecorderFor(instController),
+	}).SetupWithManager(mgr, controllerFieldManager)
 	Expect(err).NotTo(HaveOccurred())
 
 	err = (&TemplateReconciler{
@@ -84,24 +105,31 @@ var _ = BeforeSuite(func() {
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 
+	err = (&ClusterTemplateReconciler{
+		Client: kosmo.NewClient(mgr.GetClient()),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr)
+	Expect(err).NotTo(HaveOccurred())
+
 	err = (&WorkspaceReconciler{
 		Client:   kosmo.NewClient(mgr.GetClient()),
 		Scheme:   mgr.GetScheme(),
-		Recorder: mgr.GetEventRecorderFor(WsControllerFieldManager),
+		Recorder: mgr.GetEventRecorderFor(wsController),
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 
 	err = (&WorkspaceStatusReconciler{
-		Client:   kosmo.NewClient(mgr.GetClient()),
-		Scheme:   mgr.GetScheme(),
-		Recorder: mgr.GetEventRecorderFor(WsStatControllerFieldManager),
+		Client:         kosmo.NewClient(mgr.GetClient()),
+		Scheme:         mgr.GetScheme(),
+		Recorder:       mgr.GetEventRecorderFor(wsStatController),
+		DefaultURLBase: "",
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 
 	err = (&UserReconciler{
 		Client:   kosmo.NewClient(mgr.GetClient()),
 		Scheme:   mgr.GetScheme(),
-		Recorder: mgr.GetEventRecorderFor(UserControllerFieldManager),
+		Recorder: mgr.GetEventRecorderFor(userController),
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 

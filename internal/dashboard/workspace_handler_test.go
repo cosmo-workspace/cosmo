@@ -166,16 +166,16 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				})
 			})
 
-			When("failed to get workspace config in template", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": "XXX"}`,
-						},
-						response{statusCode: http.StatusBadRequest, body: `{"message": "failed to get workspace config in template"}`},
-					)
-				})
-			})
+			// When("failed to get workspace config in template", func() {
+			// 	It("should deny with 400 BadRequest", func() {
+			// 		test_HttpSendAndVerify(adminSession,
+			// 			request{
+			// 				method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": "XXX"}`,
+			// 			},
+			// 			response{statusCode: http.StatusBadRequest, body: `{"message": "failed to get workspace config in template"}`},
+			// 		)
+			// 	})
+			// })
 
 			When("workspace is already exists", func() {
 				It("should deny witn 429 TooManyRequests", func() {

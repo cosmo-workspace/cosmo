@@ -33,12 +33,6 @@ func (s *Server) PostWorkspace(ctx context.Context, userId string, req dashv1alp
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req, "userId", userId)
 
-	cfg, err := s.Klient.GetWorkspaceConfig(ctx, req.Template)
-	if err != nil {
-		log.Error(err, "failed to get workspace config from template", "template", req.Template)
-		return ErrorResponse(http.StatusBadRequest, "failed to get workspace config in template")
-	}
-
 	ws := &wsv1alpha1.Workspace{}
 	ws.SetName(req.Name)
 	ws.SetNamespace(wsv1alpha1.UserNamespace(userId))
@@ -61,7 +55,6 @@ func (s *Server) PostWorkspace(ctx context.Context, userId string, req dashv1alp
 	}
 
 	ws.Status.Phase = "Pending"
-	ws.Status.Config = cfg
 
 	res := &dashv1alpha1.CreateWorkspaceResponse{}
 	res.Workspace = convertWorkspaceTodashv1alpha1Workspace(*ws)

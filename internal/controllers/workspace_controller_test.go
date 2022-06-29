@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"time"
 
+	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -23,7 +23,6 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
 
 var _ = Describe("Workspace controller", func() {
@@ -251,9 +250,7 @@ spec:
 
 			created := looseDeepCopyObject(createdInst)
 
-			clog.PrintObjectDiff(os.Stderr, created, expected)
-			eq := equality.Semantic.DeepEqual(created, expected)
-			Expect(eq).Should(BeTrue())
+			Expect(created).Should(BeEqualityDeepEqual(expected))
 
 			By("fetching workspace resource and checking workspace status")
 
@@ -374,10 +371,7 @@ spec:
 			}
 
 			created := looseDeepCopyObject(createdInst)
-
-			clog.PrintObjectDiff(os.Stderr, created, expected)
-			eq := equality.Semantic.DeepEqual(created, expected)
-			Expect(eq).Should(BeTrue())
+			Expect(created).Should(BeEqualityDeepEqual(expected))
 		})
 	})
 })

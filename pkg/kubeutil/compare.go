@@ -86,17 +86,19 @@ func LooseDeepEqual(xObj, yObj Comparable, opts ...DeepEqualOption) bool {
 	x := xCopy.(Comparable)
 	y := yCopy.(Comparable)
 
-	resetManagedFieldTime(x)
-	resetManagedFieldTime(y)
-
-	resetResourceVersion(x)
-	resetResourceVersion(y)
+	RemoveDynamicFields(x)
+	RemoveDynamicFields(y)
 
 	for _, o := range opts {
 		o.Apply(x, y)
 	}
 
 	return equality.Semantic.DeepEqual(x, y)
+}
+
+func RemoveDynamicFields(obj Comparable) {
+	resetManagedFieldTime(obj)
+	resetResourceVersion(obj)
 }
 
 func IsGVKEqual(a, b schema.GroupVersionKind) bool {

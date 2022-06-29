@@ -12,8 +12,10 @@ import (
 	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
@@ -21,7 +23,6 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
@@ -29,7 +30,7 @@ import (
 )
 
 type WorkspaceMutationWebhookHandler struct {
-	Client  kosmo.Client
+	Client  client.Client
 	Log     *clog.Logger
 	decoder *admission.Decoder
 }
@@ -54,7 +55,8 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 	before := ws.DeepCopy()
 	h.Log.DebugAll().DumpObject(h.Client.Scheme(), before, "request workspace")
 
-	tmpl, err := h.Client.GetTemplate(ctx, ws.Spec.Template.Name)
+	tmpl := &cosmov1alpha1.Template{}
+	err = h.Client.Get(ctx, types.NamespacedName{Name: ws.Spec.Template.Name}, tmpl)
 	if err != nil {
 		h.Log.Error(err, "failed to get template")
 		return admission.Errored(http.StatusBadRequest, err)
@@ -101,7 +103,7 @@ func (h *WorkspaceMutationWebhookHandler) InjectDecoder(d *admission.Decoder) er
 }
 
 type WorkspaceValidationWebhookHandler struct {
-	Client  kosmo.Client
+	Client  client.Client
 	Log     *clog.Logger
 	decoder *admission.Decoder
 }

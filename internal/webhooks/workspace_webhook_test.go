@@ -2,20 +2,19 @@ package webhooks
 
 import (
 	"context"
-	"os"
 	"time"
 
+	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 var _ = Describe("Workspace webhook", func() {
@@ -214,7 +213,7 @@ spec:
 			err = k8sClient.Create(ctx, &tmpl)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			ns := v1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "cosmo-user-testuser-ws"}}
+			ns := corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "cosmo-user-testuser-ws"}}
 			err = k8sClient.Create(ctx, &ns)
 			Expect(err).ShouldNot(HaveOccurred())
 
@@ -284,9 +283,7 @@ spec:
 			}, time.Second*10).Should(Succeed())
 
 			expectedWs.ObjectMeta = createdWs.ObjectMeta
-
-			eq := kubeutil.LooseDeepEqual(&createdWs, &expectedWs, kubeutil.WithPrintDiff(os.Stderr))
-			Expect(eq).Should(BeTrue())
+			Expect(&createdWs).Should(BeLooseDeepEqual(&expectedWs))
 		})
 	})
 
@@ -358,9 +355,7 @@ spec:
 			}, time.Second*10).Should(Succeed())
 
 			expectedWs.ObjectMeta = createdWs.ObjectMeta
-
-			eq := kubeutil.LooseDeepEqual(&createdWs, &expectedWs, kubeutil.WithPrintDiff(os.Stderr))
-			Expect(eq).Should(BeTrue())
+			Expect(&createdWs).Should(BeLooseDeepEqual(&expectedWs))
 		})
 	})
 

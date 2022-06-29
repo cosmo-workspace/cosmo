@@ -23,6 +23,10 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
+const (
+	instControllerFieldManager string = "cosmo-instance-controller"
+)
+
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
@@ -42,6 +46,10 @@ func TestAPIs(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
+	// logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter),
+	// 	zap.UseFlagOptions(&zap.Options{
+	// 		Development: true,
+	// 		Level:       zapcore.Level(-clog.LEVEL_DEBUG_ALL)})))
 
 	By("bootstrapping test environment")
 
@@ -81,8 +89,9 @@ var _ = BeforeSuite(func() {
 	}).SetupWebhookWithManager(mgr)
 
 	(&InstanceValidationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		Client:       k8sClient,
+		Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		FieldManager: instControllerFieldManager,
 	}).SetupWebhookWithManager(mgr)
 
 	(&WorkspaceMutationWebhookHandler{
@@ -109,6 +118,12 @@ var _ = BeforeSuite(func() {
 		Client:         k8sClient,
 		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
 		DefaultURLBase: DefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
+
+	(&TemplateValidationWebhookHandler{
+		Client:       k8sClient,
+		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
+		FieldManager: instControllerFieldManager,
 	}).SetupWebhookWithManager(mgr)
 
 	go func() {

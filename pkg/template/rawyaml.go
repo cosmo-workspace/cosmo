@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
@@ -49,8 +50,11 @@ func (t *RawYAMLBuilder) Build() ([]unstructured.Unstructured, error) {
 
 func (t *RawYAMLBuilder) ReplaceDefaultVars() *RawYAMLBuilder {
 	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsInstance, t.inst.GetName())
-	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsNamespace, t.inst.GetNamespace())
 	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsTemplate, t.inst.GetSpec().Template.Name)
+
+	if t.inst.GetScope() == meta.RESTScopeNamespace {
+		t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsNamespace, t.inst.GetNamespace())
+	}
 	return t
 }
 

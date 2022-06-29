@@ -21,10 +21,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
-const (
-	UserControllerFieldManager string = "cosmo-user-controller"
-)
-
 // UserReconciler reconciles a Template object
 type UserReconciler struct {
 	kosmo.Client

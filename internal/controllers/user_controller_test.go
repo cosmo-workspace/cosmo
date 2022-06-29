@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -164,8 +165,7 @@ spec:
 			By("check namespace owner reference")
 
 			ownerref := ownerRef(&user, scheme.Scheme)
-			eq := equality.Semantic.DeepEqual(createdNs.OwnerReferences, []metav1.OwnerReference{ownerref})
-			Expect(eq).Should(BeTrue())
+			Expect(createdNs.OwnerReferences).Should(BeEqualityDeepEqual([]metav1.OwnerReference{ownerref}))
 
 			By("check user's namespace reference")
 

@@ -6,14 +6,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/yaml"
+
+	"github.com/google/go-cmp/cmp"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -22,6 +20,8 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
 	"k8s.io/utils/pointer"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/yaml"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
@@ -109,9 +109,7 @@ spec:
 				podApplyCfg, err := corev1apply.ExtractPod(&pod, "test-controller")
 				Expect(err).ShouldNot(HaveOccurred())
 
-				eq := equality.Semantic.DeepEqual(podApplyCfg, expectedPodApplyCfg)
-				Expect(eq).Should(BeTrue())
-
+				Expect(podApplyCfg).Should(Equal(expectedPodApplyCfg))
 			})
 		})
 
@@ -171,10 +169,7 @@ spec:
 				By("checking if applied properties are as expected")
 				podApplyCfg, err := corev1apply.ExtractPod(&appliedPod, "test-controller")
 				Expect(err).ShouldNot(HaveOccurred())
-
-				clog.PrintObjectDiff(os.Stderr, podApplyCfg, expectedPodApplyCfg)
-				eq := equality.Semantic.DeepEqual(podApplyCfg, expectedPodApplyCfg)
-				Expect(eq).Should(BeTrue())
+				Expect(podApplyCfg).Should(Equal(expectedPodApplyCfg))
 
 				By("checking resourceVersion is next one")
 				clog.PrintObjectDiff(os.Stderr, currentPod, appliedPod)
@@ -185,15 +180,14 @@ spec:
 				aftVer, err := strconv.Atoi(appliedPod.ResourceVersion)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				Expect(befVer+1 == aftVer).Should(BeTrue())
+				Expect(aftVer).Should(Equal(befVer + 1))
 
 				By("checking other properties is not modified")
 
 				// fix spec to applied values
 				currentPodApplyCfg.Spec.Containers[0].Image = pointer.String("nginx:next")
 
-				eq = equality.Semantic.DeepEqual(currentPodApplyCfg, podApplyCfg)
-				Expect(eq).Should(BeTrue())
+				Expect(currentPodApplyCfg).Should(Equal(podApplyCfg))
 			})
 		})
 	})

@@ -108,8 +108,10 @@ type Json6902 struct {
 
 // InstanceStatus has status of Instance
 type InstanceStatus struct {
-	TemplateName string      `json:"templateName,omitempty"`
-	LastApplied  []ObjectRef `json:"lastApplied,omitempty"`
+	TemplateName            string      `json:"templateName,omitempty"`
+	LastApplied             []ObjectRef `json:"lastApplied,omitempty"`
+	LastAppliedObjectsCount int         `json:"lastAppliedObjectsCount,omitempty"`
+	TemplateObjectsCount    int         `json:"templateObjectsCount,omitempty"`
 }
 
 // ObjectRef is a reference of resource which is created by the Instance

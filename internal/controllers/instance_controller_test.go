@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"reflect"
 	"testing"
 	"time"
 
+	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -35,7 +35,6 @@ import (
 	netv1apply "k8s.io/client-go/applyconfigurations/networking/v1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
@@ -295,6 +294,8 @@ spec:
 			ownerRef := ownerRef(&inst, scheme.Scheme)
 
 			// Deployment
+			By("checking if deployment is as expected")
+
 			var deploy appsv1.Deployment
 			Eventually(func() error {
 				key := client.ObjectKey{
@@ -309,22 +310,18 @@ spec:
 			}, time.Second*10).Should(Succeed())
 			deploy.GroupVersionKind()
 
-			deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, InstControllerFieldManager)
+			deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			expectedDeployApplyCfg := expectedDeployApply(instName, nsName, "latest", ownerRef)
-
-			By("checking if deployment is as expected")
-
-			clog.PrintObjectDiff(os.Stderr, deployApplyCfg, expectedDeployApplyCfg)
-			eq := equality.Semantic.DeepEqual(deployApplyCfg, expectedDeployApplyCfg)
-			Expect(eq).Should(BeTrue())
+			Expect(deployApplyCfg).Should(BeEqualityDeepEqual(expectedDeployApplyCfg))
 
 			deploy.SetGroupVersionKind(kubeutil.DeploymentGVK)
-
-			Expect(instance.ExistInLastApplyed(createdInst, &deploy)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(&createdInst, &deploy)).Should(BeTrue())
 
 			// Service
+			By("checking if service is as expected")
+
 			var svc corev1.Service
 			Eventually(func() error {
 				key := client.ObjectKey{
@@ -338,22 +335,18 @@ spec:
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			svcApplyCfg, err := corev1apply.ExtractService(&svc, InstControllerFieldManager)
+			svcApplyCfg, err := corev1apply.ExtractService(&svc, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			expectedServiceApplyCfg := expectedServiceApply(instName, nsName, ownerRef)
-
-			By("checking if service is as expected")
-
-			clog.PrintObjectDiff(os.Stderr, svcApplyCfg, expectedServiceApplyCfg)
-			eq = equality.Semantic.DeepEqual(svcApplyCfg, expectedServiceApplyCfg)
-			Expect(eq).Should(BeTrue())
+			Expect(svcApplyCfg).Should(BeEqualityDeepEqual(expectedServiceApplyCfg))
 
 			svc.SetGroupVersionKind(kubeutil.ServiceGVK)
-
-			Expect(instance.ExistInLastApplyed(createdInst, &svc)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(&createdInst, &svc)).Should(BeTrue())
 
 			// Ingress
+			By("checking if ingress is as expected")
+
 			var ing netv1.Ingress
 			Eventually(func() error {
 				key := client.ObjectKey{
@@ -367,28 +360,19 @@ spec:
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			ingApplyCfg, err := netv1apply.ExtractIngress(&ing, InstControllerFieldManager)
+			ingApplyCfg, err := netv1apply.ExtractIngress(&ing, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			expectedIngApplyCfg := expectedIngressApply(instName, nsName, "example.com", ownerRef)
-
-			By("checking if ingress is as expected")
-
-			clog.PrintObjectDiff(os.Stderr, ingApplyCfg, expectedIngApplyCfg)
-			eq = equality.Semantic.DeepEqual(ingApplyCfg, expectedIngApplyCfg)
-			Expect(eq).Should(BeTrue())
+			Expect(ingApplyCfg).Should(BeEqualityDeepEqual(expectedIngApplyCfg))
 
 			ing.SetGroupVersionKind(kubeutil.IngressGVK)
-
-			Expect(instance.ExistInLastApplyed(createdInst, &ing)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(&createdInst, &ing)).Should(BeTrue())
 
 			By("checking creation time equal to update time")
 
 			for _, v := range createdInst.Status.LastApplied {
-				//fmt.Println("CreationTimestamp", v.CreationTimestamp)
-				//fmt.Println("UpdateTimestamp", v.UpdateTimestamp)
-
-				Expect(v.CreationTimestamp.Equal(v.UpdateTimestamp)).Should(BeTrue())
+				Expect(v.CreationTimestamp).Should(BeEquivalentTo(v.UpdateTimestamp))
 			}
 		})
 	})
@@ -496,8 +480,9 @@ spec:
 				},
 			}
 
-			err := k8sClient.Update(ctx, &inst)
-			Expect(err).ShouldNot(HaveOccurred())
+			Eventually(func() error {
+				return k8sClient.Update(ctx, &inst)
+			}).Should(Succeed())
 
 			By("checking if child resources updated")
 
@@ -543,7 +528,7 @@ spec:
 					return err
 				}
 
-				deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, InstControllerFieldManager)
+				deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				eq := equality.Semantic.DeepEqual(deployApplyCfg, expectedDeployApplyCfg)
@@ -566,7 +551,7 @@ spec:
 					return err
 				}
 
-				svcApplyCfg, err := corev1apply.ExtractService(&svc, InstControllerFieldManager)
+				svcApplyCfg, err := corev1apply.ExtractService(&svc, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				eq := equality.Semantic.DeepEqual(svcApplyCfg, expectedServiceApplyCfg)
@@ -589,7 +574,7 @@ spec:
 					return err
 				}
 
-				ingApplyCfg, err := netv1apply.ExtractIngress(&ing, InstControllerFieldManager)
+				ingApplyCfg, err := netv1apply.ExtractIngress(&ing, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				eq := equality.Semantic.DeepEqual(ingApplyCfg, expectedIngApplyCfg)

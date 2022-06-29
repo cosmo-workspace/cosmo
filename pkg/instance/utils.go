@@ -28,14 +28,14 @@ type GVKNameGetter interface {
 	GetName() string
 }
 
-func ExistInLastApplyed(inst cosmov1alpha1.Instance, targetObj GVKNameGetter) bool {
-	lastApplied := inst.Status.LastApplied
+func ExistInLastApplyed(inst cosmov1alpha1.InstanceObject, targetObj GVKNameGetter) bool {
+	lastApplied := inst.GetStatus().LastApplied
 	if len(lastApplied) == 0 {
 		return false
 	}
 
 	for _, ref := range lastApplied {
-		if IsTarget(ref, inst.Name, targetObj) {
+		if IsTarget(ref, inst.GetName(), targetObj) {
 			return true
 		}
 	}

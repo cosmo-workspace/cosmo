@@ -34,6 +34,27 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
+      path: /mutate-cosmo-cosmo-workspace-github-io-v1alpha1-instance
+  failurePolicy: Fail
+  name: mclusterinstance.kb.io
+  rules:
+  - apiGroups:
+    - cosmo.cosmo-workspace.github.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusterinstances
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1alpha1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
       path: /mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template
   failurePolicy: Fail
   name: mtemplate.kb.io
@@ -47,6 +68,27 @@ webhooks:
     - UPDATE
     resources:
     - templates
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1alpha1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template
+  failurePolicy: Fail
+  name: mclustertemplate.kb.io
+  rules:
+  - apiGroups:
+    - cosmo.cosmo-workspace.github.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clustertemplates
   sideEffects: None
 - admissionReviewVersions:
   - v1
@@ -107,6 +149,27 @@ webhooks:
       namespace: system
       path: /validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance
   failurePolicy: Fail
+  name: vclusterinstance.kb.io
+  rules:
+  - apiGroups:
+    - cosmo.cosmo-workspace.github.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusterinstances
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1alpha1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance
+  failurePolicy: Fail
   name: vinstance.kb.io
   rules:
   - apiGroups:
@@ -118,6 +181,48 @@ webhooks:
     - UPDATE
     resources:
     - instances
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1alpha1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-cosmo-cosmo-workspace-github-io-v1alpha1-template
+  failurePolicy: Fail
+  name: vtemplate.kb.io
+  rules:
+  - apiGroups:
+    - cosmo.cosmo-workspace.github.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - templates
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1alpha1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-cosmo-cosmo-workspace-github-io-v1alpha1-template
+  failurePolicy: Fail
+  name: vclustertemplate.kb.io
+  rules:
+  - apiGroups:
+    - cosmo.cosmo-workspace.github.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clustertemplates
   sideEffects: None
 - admissionReviewVersions:
   - v1

@@ -206,7 +206,7 @@ var _ = Describe("NamespacedCliOptions", func() {
 			Expect(o.Logr).ShouldNot(BeNil())
 			Expect(o.Client).ShouldNot(BeNil())
 
-			Expect(o.Namespace == "testtest").Should(BeTrue())
+			Expect(o.Namespace).Should(Equal("testtest"))
 			Expect(o.AllNamespace).Should(BeFalse())
 		})
 	})
@@ -233,7 +233,7 @@ var _ = Describe("NamespacedCliOptions", func() {
 			Expect(o.Logr).ShouldNot(BeNil())
 			Expect(o.Client).ShouldNot(BeNil())
 
-			Expect(o.Namespace == "").Should(BeTrue())
+			Expect(o.Namespace).Should(BeEmpty())
 			Expect(o.AllNamespace).Should(BeTrue())
 		})
 	})
@@ -331,7 +331,7 @@ var _ = Describe("UserNamespacedCliOptions", func() {
 			Expect(o.Logr).ShouldNot(BeNil())
 			Expect(o.Client).ShouldNot(BeNil())
 
-			Expect(o.Namespace == "cosmo-user-default").Should(BeTrue())
+			Expect(o.Namespace).Should(Equal("cosmo-user-default"))
 			Expect(o.AllNamespace).Should(BeFalse())
 		})
 	})
