@@ -97,8 +97,9 @@ var _ = BeforeSuite(func() {
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.InstanceValidationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		Client:       k8sClient,
+		Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		FieldManager: "cosmo-instance-controller",
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.WorkspaceMutationWebhookHandler{
@@ -125,6 +126,12 @@ var _ = BeforeSuite(func() {
 		Client:         k8sClient,
 		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
 		DefaultURLBase: DefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.TemplateValidationWebhookHandler{
+		Client:       k8sClient,
+		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
+		FieldManager: "cosmo-instance-controller",
 	}).SetupWebhookWithManager(mgr)
 
 	go func() {
