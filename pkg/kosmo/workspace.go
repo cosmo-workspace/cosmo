@@ -7,7 +7,9 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
 var (
@@ -41,4 +43,12 @@ func (c *Client) ListWorkspaces(ctx context.Context, namespace string) ([]wsv1al
 
 	err := c.List(ctx, &wsList, opts)
 	return wsList.Items, err
+}
+
+func (c *Client) GetWorkspaceConfig(ctx context.Context, tmplName string) (cfg wsv1alpha1.Config, err error) {
+	tmpl := &cosmov1alpha1.Template{}
+	if err := c.Get(ctx, types.NamespacedName{Name: tmplName}, tmpl); err != nil {
+		return cfg, err
+	}
+	return wscfg.ConfigFromTemplateAnnotations(tmpl)
 }
