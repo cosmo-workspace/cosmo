@@ -4,22 +4,18 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/google/go-cmp/cmp"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
 )
 
 func TestBeEqualityDeepEqual(t *testing.T) {
 	RegisterFailHandler(Fail)
 
-	RunSpecsWithDefaultAndCustomReporters(t,
-		"Custom Matcher Suite",
-		[]Reporter{printer.NewlineReporter{}})
+	RunSpecs(t, "Custom Matcher Suite")
 }
 
 var _ = Describe("TestBeEqualityDeepEqual", func() {
