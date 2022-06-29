@@ -124,7 +124,7 @@ func (s *Server) DeleteWorkspace(ctx context.Context, userId string, workspaceNa
 		} else {
 			res.Message = "failed to delete workspace"
 			log.Error(err, res.Message, "userid", userId, "workspace", ws.Name)
-			return ErrorResponse(http.StatusInternalServerError, "")
+			return ErrorResponse(http.StatusInternalServerError, res.Message)
 		}
 	}
 
@@ -168,7 +168,8 @@ func (s *Server) PatchWorkspace(ctx context.Context, userId string, workspaceNam
 		}
 		res.Message = "Successfully updated"
 	} else {
-		res.Message = "No change"
+		log.Info("no change")
+		return ErrorResponse(http.StatusBadRequest, "no change")
 	}
 
 	res.Workspace = convertWorkspaceTodashv1alpha1Workspace(*ws)

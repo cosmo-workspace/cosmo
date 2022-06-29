@@ -1,0 +1,60 @@
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: empty 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: empty 2']
+SnapShot = """
+{\"message\":\"No items found\",\"items\":[]}
+"""
+
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: not empty 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: not empty 2']
+SnapShot = """
+{\"items\":[{\"name\":\"useraddon1\",\"requiredVars\":[{\"varName\":\"{{HOGE}}\",\"defaultValue\":\"FUGA\"}],\"isDefaultUserAddon\":true},{\"name\":\"useraddon2\",\"requiredVars\":[{\"varName\":\"{{HOGE}}\",\"defaultValue\":\"FUGA\"}],\"isDefaultUserAddon\":true}]}
+"""
+
+['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: not empty 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: not empty 2']
+SnapShot = """
+{\"message\":\"failed to list UserAddon Templates\"}
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: empty 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: empty 2']
+SnapShot = """
+{\"message\":\"No items found\",\"items\":[]}
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: not empty 1']
+SnapShot = """
+200
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: not empty 2']
+SnapShot = """
+{\"items\":[{\"name\":\"template1\",\"requiredVars\":[{\"varName\":\"{{HOGE}}\",\"defaultValue\":\"FUGA\"}]},{\"name\":\"template2\",\"requiredVars\":[{\"varName\":\"{{HOGE}}\",\"defaultValue\":\"FUGA\"}]}]}
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: not empty 1']
+SnapShot = """
+500
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: not empty 2']
+SnapShot = """
+{\"message\":\"failed to list WorkspaceTemplates\"}
+"""
+

@@ -1,0 +1,701 @@
+['cosmoctl [user] [all] fail with invalid arg: kubeconfig user create user1 --kubeconfig XXXX 1']
+SnapShot = """
+Error: invalid options: stat XXXX: no such file or directory
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
+      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [all] fail with invalid arg: kubeconfig user delete user1 --kubeconfig XXXX 1']
+SnapShot = """
+Error: invalid options: stat XXXX: no such file or directory
+Usage:
+  cosmoctl user delete USER_ID [flags]
+
+Aliases:
+  delete, del
+
+Flags:
+  -h, --help   help for delete
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [all] fail with invalid arg: kubeconfig user get --kubeconfig XXXX 1']
+SnapShot = """
+Error: invalid options: stat XXXX: no such file or directory
+Usage:
+  cosmoctl user get [flags]
+
+Flags:
+  -h, --help   help for get
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [all] fail with invalid arg: kubeconfig user reset-password user1 --kubeconfig XXXX 1']
+SnapShot = """
+Error: invalid options: stat XXXX: no such file or directory
+Usage:
+  cosmoctl user reset-password USER_ID [flags]
+
+Flags:
+  -h, --help   help for reset-password
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [all] fail with invalid arg: kubeconfig user update user1 --kubeconfig XXXX 1']
+SnapShot = """
+Error: invalid options: stat XXXX: no such file or directory
+Usage:
+  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+
+Flags:
+  -h, --help          help for update
+      --name string   user name
+      --role string   user role (default \"-\")
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] fail to create password timeout user create user-create-timeout 1']
+SnapShot = """
+Error: reached to timeout in user creation
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
+      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] fail with invalid args: user create --admin 1']
+SnapShot = """
+Error: validation error: invalid args
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
+      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] fail with invalid args: user create 1']
+SnapShot = """
+Error: validation error: invalid args
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
+      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] fail with invalid args: user create TESTuser 1']
+SnapShot = """
+Error: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
+      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] fail with invalid args: user create user-create --admin --role cosmo-admin 1']
+SnapShot = """
+Error: validation error: --role and --admin is not used at the same time
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
+      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] fail with invalid args: user create user-create --role xxx 1']
+SnapShot = """
+Error: validation error: role xxx is invalid
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
+      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] fail with invalid args: user create user-create user-test --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=xxx=yyy 1']
+SnapShot = """
+Error: invalid options: invalid addon vars format: user-temple1,HOGE=xxx=yyy
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
+      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] succeed in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] succeed in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 2']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] succeed in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] succeed in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 2']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"create 1\",
+    \"role\": \"cosmo-admin\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        },
+        \"vars\": {
+          \"HOGE\": \"HOGEHOGE\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] succeed in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] succeed in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 2']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"create 1\",
+    \"role\": \"cosmo-admin\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        },
+        \"vars\": {
+          \"HOGE\": \"HOGEHOGE\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] succeed in normal context: user create user-create 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] succeed in normal context: user create user-create 2']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] succeed to create password immediately: user create user-create 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] succeed to create password later: user create user-create-later 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create-later
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [delete] fail with an unexpected error at delete: user delete user-delete1 1']
+SnapShot = """
+Error: delete user error
+Usage:
+  cosmoctl user delete USER_ID [flags]
+
+Aliases:
+  delete, del
+
+Flags:
+  -h, --help   help for delete
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [delete] fail with invalid args: user delete 1']
+SnapShot = """
+Error: validation error: invalid args
+Usage:
+  cosmoctl user delete USER_ID [flags]
+
+Aliases:
+  delete, del
+
+Flags:
+  -h, --help   help for delete
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [delete] fail with invalid args: user delete XXXXX 1']
+SnapShot = """
+Error: users.workspace.cosmo-workspace.github.io \"XXXXX\" not found
+Usage:
+  cosmoctl user delete USER_ID [flags]
+
+Aliases:
+  delete, del
+
+Flags:
+  -h, --help   help for delete
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [delete] succeed in normal context: user delete user-delete1 1']
+SnapShot = """
+\u001B[32mSuccessfully deleted user user-delete1
+\u001B[0m"""
+
+['cosmoctl [user] [get] fail with an unexpected error at list: user get 1']
+SnapShot = """
+Error: user list error
+Usage:
+  cosmoctl user get [flags]
+
+Flags:
+  -h, --help   help for get
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [get] succeed in normal context: user get 1']
+SnapShot = """
+ID      NAME    ROLE          NAMESPACE   STATUS
+user1   name1                             
+user2   name2   cosmo-admin               
+"""
+
+['cosmoctl [user] [get] succeed with empty user: user get 1']
+SnapShot = """
+ID    NAME   ROLE   NAMESPACE   STATUS
+"""
+
+['cosmoctl [user] [reset-password] fail with an unexpected error at update: user reset-password user1 1']
+SnapShot = """
+\u001B[32mSuccessfully reset password: user user1
+\u001B[0mError: failed to get password secret: mock get error
+Usage:
+  cosmoctl user reset-password USER_ID [flags]
+
+Flags:
+  -h, --help   help for reset-password
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [reset-password] fail with invalid args: user reset-password 1']
+SnapShot = """
+Error: validation error: invalid args
+Usage:
+  cosmoctl user reset-password USER_ID [flags]
+
+Flags:
+  -h, --help   help for reset-password
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [reset-password] fail with invalid args: user reset-password XXXXXX 1']
+SnapShot = """
+Error: namespaces \"cosmo-user-XXXXXX\" not found
+Usage:
+  cosmoctl user reset-password USER_ID [flags]
+
+Flags:
+  -h, --help   help for reset-password
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [reset-password] succeed in normal context: user reset-password user1 1']
+SnapShot = """
+\u001B[32mSuccessfully reset password: user user1
+\u001B[0mNew password: xxxxxxxx
+"""
+
+['cosmoctl [user] [update] fail with an unexpected error at update: user update user1 --name namechanged 1']
+SnapShot = """
+Error: mock update error
+Usage:
+  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+
+Flags:
+  -h, --help          help for update
+      --name string   user name
+      --role string   user role (default \"-\")
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [update] fail with invalid args: user update 1']
+SnapShot = """
+Error: validation error: invalid args
+Usage:
+  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+
+Flags:
+  -h, --help          help for update
+      --name string   user name
+      --role string   user role (default \"-\")
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [update] fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 1']
+SnapShot = """
+Error: users.workspace.cosmo-workspace.github.io \"XXXXXX\" not found
+Usage:
+  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+
+Flags:
+  -h, --help          help for update
+      --name string   user name
+      --role string   user role (default \"-\")
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [update] fail with invalid args: user update user1 --name  1']
+SnapShot = """
+Error: no change
+Usage:
+  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+
+Flags:
+  -h, --help          help for update
+      --name string   user name
+      --role string   user role (default \"-\")
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [update] fail with invalid args: user update user1 --name name1 --role  1']
+SnapShot = """
+Error: no change
+Usage:
+  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+
+Flags:
+  -h, --help          help for update
+      --name string   user name
+      --role string   user role (default \"-\")
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [update] fail with invalid args: user update user1 --role xxxxx 1']
+SnapShot = """
+Error: validation error: role xxxxx is invalid
+Usage:
+  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+
+Flags:
+  -h, --help          help for update
+      --name string   user name
+      --role string   user role (default \"-\")
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [update] fail with invalid args: user update user1 1']
+SnapShot = """
+Error: no change
+Usage:
+  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+
+Flags:
+  -h, --help          help for update
+      --name string   user name
+      --role string   user role (default \"-\")
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [update] succeed in normal context: user update user1 --name namechanged 1']
+SnapShot = """
+\u001B[32mSuccessfully updated user user1
+\u001B[0m"""
+
+['cosmoctl [user] [update] succeed in normal context: user update user1 --name namechanged 2']
+SnapShot = """
+{
+  \"Name\": \"user1\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"namechanged\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] succeed in normal context: user update user1 --role cosmo-admin 1']
+SnapShot = """
+\u001B[32mSuccessfully updated user user1
+\u001B[0m"""
+
+['cosmoctl [user] [update] succeed in normal context: user update user1 --role cosmo-admin 2']
+SnapShot = """
+{
+  \"Name\": \"user1\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"name1\",
+    \"role\": \"cosmo-admin\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] succeed in normal context: user update user2 --role  1']
+SnapShot = """
+\u001B[32mSuccessfully updated user user2
+\u001B[0m"""
+
+['cosmoctl [user] [update] succeed in normal context: user update user2 --role  2']
+SnapShot = """
+{
+  \"Name\": \"user2\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"name2\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+

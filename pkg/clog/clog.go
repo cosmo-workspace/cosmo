@@ -107,7 +107,8 @@ func (l *Logger) DumpObject(scheme *apiruntime.Scheme, obj NamedObject, msg stri
 
 func (l *Logger) PrintObjectDiff(x, y interface{}) {
 	if l.logger.Enabled() {
-		PrintObjectDiff(l.out, x, y)
+		diff := Diff(x, y)
+		l.Info(diff)
 	}
 }
 

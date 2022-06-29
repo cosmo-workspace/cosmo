@@ -6,11 +6,11 @@
 *.so
 *.dylib
 bin
-cover.out
 *.bk 
 
 # Test binary, build with `go test -c`
 *.test
+.vscode/go-test.env
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out

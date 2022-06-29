@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -20,7 +20,6 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
-	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
@@ -29,6 +28,7 @@ import (
 
 	//+kubebuilder:scaffold:imports
 
+	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
@@ -39,29 +39,37 @@ import (
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
 var (
-	cfg       *rest.Config
-	k8sClient kosmo.Client
-	testEnv   *envtest.Environment
+	cfg        *rest.Config
+	k8sClient  kosmo.Client
+	clientMock kosmo.ClientMock
+	testEnv    *envtest.Environment
+	ctx        context.Context
+	cancel     context.CancelFunc
 
 	userSession  []*http.Cookie
 	adminSession []*http.Cookie
 )
 
+const DefaultURLBase = "https://default.example.com"
+
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
-
-	RunSpecsWithDefaultAndCustomReporters(t,
-		"Dashboard Suite",
-		[]Reporter{printer.NewlineReporter{}})
+	RunSpecs(t, "Dashboard Suite")
 }
 
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
+	ctx, cancel = context.WithCancel(ctrl.SetupSignalHandler())
+
 	By("bootstrapping test environment")
+
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
+		WebhookInstallOptions: envtest.WebhookInstallOptions{
+			Paths: []string{filepath.Join("..", "..", "config", "webhook")},
+		},
 	}
 
 	var err error
@@ -81,16 +89,57 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	k8sClient = kosmo.NewClient(c)
+	Expect(k8sClient).NotTo(BeNil())
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:             scheme.Scheme,
 		MetricsBindAddress: "0",
+		CertDir:            testEnv.WebhookInstallOptions.LocalServingCertDir,
+		Port:               testEnv.WebhookInstallOptions.LocalServingPort,
 	})
 	Expect(err).NotTo(HaveOccurred())
 
+	// webhook
+	(&webhooks.InstanceMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.InstanceValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.WorkspaceMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.WorkspaceValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.UserMutationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.UserValidationWebhookHandler{
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.TemplateMutationWebhookHandler{
+		Client:         k8sClient,
+		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
+		DefaultURLBase: DefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
+
 	// Setup server
 	By("bootstrapping server")
-	klient := kosmo.NewClient(mgr.GetClient())
+	clientMock = kosmo.NewClientMock(mgr.GetClient())
+	klient := kosmo.NewClient(&clientMock)
 
 	auths := make(map[wsv1alpha1.UserAuthType]auth.Authorizer)
 	auths[wsv1alpha1.UserAuthTypeKosmoSecert] = auth.NewKosmoSecretAuthorizer(klient)
@@ -110,19 +159,16 @@ var _ = BeforeSuite(func() {
 	err = mgr.Add(serv)
 	Expect(err).NotTo(HaveOccurred())
 
-	ctx := ctrl.SetupSignalHandler()
-
 	go func() {
-		err = mgr.Start(ctx)
+		defer GinkgoRecover()
+		err := mgr.Start(ctx)
 		Expect(err).NotTo(HaveOccurred())
 	}()
 
-	Expect(err).NotTo(HaveOccurred())
-	Expect(k8sClient).NotTo(BeNil())
-
-}, 60)
+})
 
 var _ = AfterSuite(func() {
+	cancel()
 	By("tearing down the test environment")
 	err := testEnv.Stop()
 	Expect(err).NotTo(HaveOccurred())
@@ -198,6 +244,10 @@ func test_CreateTemplate(templateType string, templateName string) {
 			Labels: map[string]string{
 				cosmov1alpha1.TemplateLabelKeyType: templateType,
 			},
+			Annotations: map[string]string{
+				wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
+				wsv1alpha1.TemplateAnnKeyDefaultUserAddon:         "true",
+			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
 			RequiredVars: []cosmov1alpha1.RequiredVarSpec{
@@ -216,11 +266,8 @@ func test_CreateTemplate(templateType string, templateName string) {
 
 func test_DeleteTemplateAll() {
 	ctx := context.Background()
-	templates, err := k8sClient.ListTemplates(ctx)
+	err := k8sClient.DeleteAllOf(ctx, &cosmov1alpha1.Template{})
 	Expect(err).ShouldNot(HaveOccurred())
-	for _, template := range templates {
-		k8sClient.Delete(ctx, &template)
-	}
 	Eventually(func() ([]cosmov1alpha1.Template, error) {
 		return k8sClient.ListTemplates(ctx)
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
@@ -242,7 +289,7 @@ func test_CreateCosmoUser(id string, dispayName string, role wsv1alpha1.UserRole
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() error {
-		err := k8sClient.Get(ctx, client.ObjectKey{Name: id}, &wsv1alpha1.User{})
+		_, err := k8sClient.GetUser(ctx, id)
 		return err
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
@@ -309,6 +356,9 @@ func test_Login(userId string, password string) []*http.Cookie {
 func test_CreateWorkspace(userId string, name string, template string, vars map[string]string) {
 	ctx := context.Background()
 
+	cfg, err := k8sClient.GetWorkspaceConfig(ctx, template)
+	Expect(err).ShouldNot(HaveOccurred())
+
 	ws := &wsv1alpha1.Workspace{}
 	ws.SetName(name)
 	ws.SetNamespace(wsv1alpha1.UserNamespace(userId))
@@ -316,25 +366,34 @@ func test_CreateWorkspace(userId string, name string, template string, vars map[
 		Template: cosmov1alpha1.TemplateRef{
 			Name: template,
 		},
-		Replicas: pointer.Int64(0),
+		Replicas: pointer.Int64(1),
 		Vars:     vars,
 	}
-
-	err := k8sClient.Create(ctx, ws)
+	err = k8sClient.Create(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 
+	ws.Status.Phase = "Pending"
+	ws.Status.Config = cfg
+	err = k8sClient.Status().Update(ctx, ws)
+	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() (*wsv1alpha1.Workspace, error) {
 		return k8sClient.GetWorkspaceByUserID(ctx, name, userId)
 	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
 }
 
+// func test_StopWorkspace(userId string, name string) {
+// 	ctx := context.Background()
+// 	ws, err := k8sClient.GetWorkspaceByUserID(ctx, name, userId)
+// 	Expect(err).ShouldNot(HaveOccurred())
+// 	ws.Spec.Replicas = pointer.Int64(0)
+// 	err = k8sClient.Update(ctx, ws)
+// 	Expect(err).ShouldNot(HaveOccurred())
+// }
+
 func test_DeleteWorkspaceAllByUserId(userId string) {
 	ctx := context.Background()
-	workspaces, err := k8sClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userId))
+	err := k8sClient.DeleteAllOf(ctx, &wsv1alpha1.Workspace{}, client.InNamespace(wsv1alpha1.UserNamespace(userId)))
 	Expect(err).ShouldNot(HaveOccurred())
-	for _, workspace := range workspaces {
-		k8sClient.Delete(ctx, &workspace)
-	}
 	Eventually(func() ([]wsv1alpha1.Workspace, error) {
 		return k8sClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userId))
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
@@ -368,8 +427,13 @@ func test_createNetworkRule(userId, workspaceName, networkRuleName string, portN
 	err = k8sClient.Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 
-	Eventually(func() []wsv1alpha1.NetworkRule {
+	Eventually(func() bool {
 		ws, _ := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
-		return ws.Spec.Network
-	}, time.Second*5, time.Millisecond*100).Should(ContainElement(netRule))
+		for _, n := range ws.Spec.Network {
+			if n.PortName == netRule.PortName {
+				return true
+			}
+		}
+		return false
+	}, time.Second*5, time.Millisecond*100).Should(BeTrue())
 }

@@ -1,193 +1,125 @@
 package dashboard
 
 import (
-	"encoding/json"
 	"net/http"
-	"time"
+	"regexp"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 )
 
 var _ = Describe("Dashboard server [auth]", func() {
 
 	BeforeEach(func() {
-		userSession = test_CreateLoginUserSession("usertest", "お名前", "", "password")
-		adminSession = test_CreateLoginUserSession("usertest-admin", "アドミン", wsv1alpha1.UserAdminRole, "password")
+		test_CreateLoginUserSession("usertest", "user", "", "password1")
+		test_CreateLoginUserSession("usertest-admin", "admin", wsv1alpha1.UserAdminRole, "password2")
 	})
 
 	AfterEach(func() {
+		clientMock.Clear()
 		test_DeleteCosmoUserAll()
 	})
 
-	When("Login", func() {
+	//==================================================================================
+	replace := func(src, reg, repl string) string {
+		return regexp.MustCompile(reg).ReplaceAllString(src, repl)
+	}
 
-		When("user is empty", func() {
-			It("should deny with 400 BadRequest", func() {
-				test_HttpSendAndVerify(nil,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"password": "password"}`},
-					response{statusCode: http.StatusBadRequest, body: `{"message": "required field 'id' is zero value."}`},
-				)
-			})
-		})
+	//==================================================================================
+	Describe("[Login]", func() {
 
-		When("password is empty", func() {
-			It("should deny 400 BadRequest", func() {
-				test_HttpSendAndVerify(nil,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "usertest"}`},
-					response{statusCode: http.StatusBadRequest, body: `{"message": "required field 'password' is zero value."}`},
-				)
-			})
-		})
+		run_test := func(requestBody string) {
+			By("---------------test start----------------")
+			res, body := test_HttpSend(nil, request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: requestBody})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(replace(string(body), `"expireAt":".*"`, `"expireAt":"9999-99-99T99:99:99.99999999+9:00"`)).To(MatchSnapShot())
+			Expect(res.Cookies()).ShouldNot(BeNil())
+			By("---------------test end---------------")
+		}
 
-		When("invalid password", func() {
-			It("should deny with 403 Forbidden", func() {
-				test_HttpSendAndVerify(nil,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "usertest", "password": "invalid"}`},
-					response{statusCode: http.StatusForbidden, body: `{"message": "incorrect user or password"}`},
-				)
-			})
-		})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, `{"id": "usertest", "password": "password1"}`),
+			Entry(nil, `{"id": "usertest-admin", "password": "password2"}`),
+		)
 
-		When("user is not found", func() {
-			It("should deny with 403 Forbidden", func() {
-				test_HttpSendAndVerify(nil,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "xxxxxxx", "password": "password"}`},
-					response{statusCode: http.StatusForbidden, body: `{"message": "incorrect user or password"}`},
-				)
-			})
-		})
-
-		When("valid user authentication", func() {
-			It("should success and response with session cookie", func() {
-				got, gotBody := test_HttpSend(nil,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "usertest", "password": "password"}`},
-				)
-
-				Expect(got).Should(HaveHTTPStatus(http.StatusOK))
-
-				m := make(map[string]interface{})
-				json.Unmarshal(gotBody, &m)
-
-				Expect(m["id"]).Should(Equal("usertest"))
-
-				_, err := time.Parse(time.RFC3339Nano, m["expireAt"].(string))
-				Expect(err).NotTo(HaveOccurred())
-
-				Expect(got.Cookies()).ShouldNot(BeNil())
-			})
-		})
-
-		When("valid admin authentication", func() {
-			It("should success and response with session cookie", func() {
-				got, gotBody := test_HttpSend(nil,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "usertest-admin", "password": "password"}`},
-				)
-
-				Expect(got).Should(HaveHTTPStatus(http.StatusOK))
-
-				m := make(map[string]interface{})
-				json.Unmarshal(gotBody, &m)
-
-				Expect(m["id"]).Should(Equal("usertest-admin"))
-
-				_, err := time.Parse(time.RFC3339Nano, m["expireAt"].(string))
-				Expect(err).NotTo(HaveOccurred())
-
-				Expect(got.Cookies()).ShouldNot(BeNil())
-			})
-		})
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, `{"password": "password1"}`),
+			Entry(nil, `{"id": "usertest"}`),
+			Entry(nil, `{"id": "usertest", "password": "invalid"}`),
+			Entry(nil, `{"id": "xxxxxxx", "password": "password1"}`),
+		)
 	})
 
-	When("Verify", func() {
+	//==================================================================================
+	Describe("[Verify]", func() {
 
-		When("invalid user session", func() {
-			It("should deny with 403 Forbidden", func() {
-				session := test_Login("usertest", "password")
+		run_test := func(sessionType string) {
+			var session []*http.Cookie = nil
+			switch sessionType {
+			case "logined session":
+				session = test_Login("usertest", "password1")
+			case "logouted session":
+				session = test_Login("usertest", "password1")
+				res, _ := test_HttpSend(session, request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"})
+				Expect(res).Should(HaveHTTPStatus(http.StatusOK))
+				session = res.Cookies()
+			}
+			By("---------------test start----------------")
+			res, body := test_HttpSend(session, request{method: http.MethodPost, path: "/api/v1alpha1/auth/verify"})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(replace(string(body), `"expireAt":".*"`, `"expireAt":"9999-99-99T99:99:99.99999999+9:00"`)).To(MatchSnapShot())
+			Expect(res.Cookies()).ShouldNot(BeNil())
+			By("---------------test end---------------")
+		}
 
-				By("logout")
-				got, _ := test_HttpSend(session,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"},
-				)
-				Expect(got).Should(HaveHTTPStatus(http.StatusOK))
-				invalidSession := got.Cookies()
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "logined session"),
+		)
 
-				By("verify")
-				test_HttpSendAndVerify(invalidSession,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/verify"},
-					response{statusCode: http.StatusUnauthorized, body: ""},
-				)
-			})
-		})
-
-		When("valid user session", func() {
-			It("should success and response with session cookie", func() {
-
-				session := test_Login("usertest", "password")
-
-				got, gotBody := test_HttpSend(session,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/verify"},
-				)
-
-				Expect(got).Should(HaveHTTPStatus(http.StatusOK))
-
-				m := make(map[string]interface{})
-				json.Unmarshal(gotBody, &m)
-
-				Expect(m["id"]).Should(Equal("usertest"))
-
-				_, err := time.Parse(time.RFC3339Nano, m["expireAt"].(string))
-				Expect(err).NotTo(HaveOccurred())
-
-				Expect(got.Cookies()).ShouldNot(BeNil())
-			})
-		})
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "logouted session"),
+			Entry(nil, "nil session"),
+		)
 	})
 
-	When("Logout", func() {
+	//==================================================================================
+	Describe("[Logout]", func() {
 
-		When("invalid user session", func() {
-			It("should deny with 403 Forbidden", func() {
-				session := test_Login("usertest", "password")
+		run_test := func(sessionType string) {
+			var session []*http.Cookie = nil
+			switch sessionType {
+			case "logined session":
+				session = test_Login("usertest", "password1")
+			case "logouted session":
+				session = test_Login("usertest", "password1")
+				res, _ := test_HttpSend(session, request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"})
+				Expect(res).Should(HaveHTTPStatus(http.StatusOK))
+				session = res.Cookies()
+			}
+			By("---------------test start----------------")
+			res, body := test_HttpSend(session, request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+			Expect(res.Cookies()).ShouldNot(BeNil())
+			By("---------------test end---------------")
+		}
 
-				By("logout")
-				got, _ := test_HttpSend(session,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"},
-				)
-				Expect(got).Should(HaveHTTPStatus(http.StatusOK))
-				invalidSession := got.Cookies()
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "logined session"),
+		)
 
-				By("invalid logout")
-				test_HttpSendAndVerify(invalidSession,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"},
-					response{statusCode: http.StatusUnauthorized, body: ""},
-				)
-			})
-		})
-
-		When("valid user session", func() {
-			It("should success and response with session cookie", func() {
-
-				session := test_Login("usertest", "password")
-
-				got, gotBody := test_HttpSend(session,
-					request{method: http.MethodPost, path: "/api/v1alpha1/auth/verify"},
-				)
-
-				Expect(got).Should(HaveHTTPStatus(http.StatusOK))
-
-				m := make(map[string]interface{})
-				json.Unmarshal(gotBody, &m)
-
-				Expect(m["id"]).Should(Equal("usertest"))
-
-				_, err := time.Parse(time.RFC3339Nano, m["expireAt"].(string))
-				Expect(err).NotTo(HaveOccurred())
-
-				Expect(got.Cookies()).ShouldNot(BeNil())
-			})
-		})
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "logouted session"),
+			Entry(nil, "nil session"),
+		)
 	})
 })

@@ -2,13 +2,15 @@ package dashboard
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 )
 
 var _ = Describe("Dashboard server [Workspace]", func() {
@@ -20,701 +22,355 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 	})
 
 	AfterEach(func() {
+		clientMock.Clear()
 		test_DeleteWorkspaceAll()
 		test_DeleteCosmoUserAll()
 		test_DeleteTemplateAll()
 	})
 
+	//==================================================================================
+	workspaceSnap := func(ws *wsv1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
+		return struct{ Name, Namespace, Spec, Status interface{} }{
+			Name:      ws.Name,
+			Namespace: ws.Namespace,
+			Spec:      ws.Spec,
+			Status:    ws.Status,
+		}
+	}
+	//==================================================================================
 	Describe("authorization by role", func() {
 
-		var session []*http.Cookie
-
-		deny403 := func(whenText string, request request) {
-			When(whenText, func() {
-				It("should deny with 403 Forbidden", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusForbidden, body: ""})
-				})
-			})
-		}
-		ok200 := func(whenText string, request request) {
-			When(whenText, func() {
-				It("should succeed with 200 ok", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusOK, body: "@ignore"})
-				})
-			})
-		}
-		ok201 := func(whenText string, request request) {
-			When(whenText, func() {
-				It("should succeed with 201 created", func() {
-					test_HttpSendAndVerify(session, request, response{statusCode: http.StatusCreated, body: "@ignore"})
-				})
-			})
-		}
-
-		When("access API with normal user session", func() {
-
-			BeforeEach(func() {
-				session = userSession
+		DescribeTable("access API with admin user session:",
+			func(stat int, req request) {
 				test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{})
 				test_createNetworkRule("usertest", "ws1", "nw1", 9999, "gp1", "/")
 				test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
 				test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
-			})
+				By("---------------test start----------------")
+				res, _ := test_HttpSend(adminSession, req)
+				Ω(res.StatusCode).Should(Equal(stat))
+				By("---------------test end---------------")
+			},
+			func(stat int, req request) string { return fmt.Sprintf("%d %+v", stat, req) },
+			// update own resource
+			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws2","template": "template1"}`}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"}),
+			Entry(nil, 200, request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1", body: `{"replicas": 0}`}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw1"}),
+			// update resource of others
+			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest/workspace", body: `{"name": "ws2","template": "template1"}`}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace"}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace/ws1"}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1"}),
+			Entry(nil, 200, request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest/workspace/ws1", body: `{"replicas": 2}`}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw1"}),
+		)
 
-			When("update own resource", func() {
-
-				ok201("create a new workspace", request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest/workspace", body: `{"name": "ws2","template": "template1"}`})
-				ok200("Get all workspace of user", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace"})
-				ok200("get workspace by name", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace/ws1"})
-				ok200("Delete workspace", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1"})
-				ok200("Update workspace", request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest/workspace/ws1", body: `{"replicas": 1}`})
-				ok200("Upsert workspace network rule", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`})
-				ok200("Remove workspace network rule", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw1"})
-			})
-
-			When("update resource of others", func() {
-				deny403("create a new workspace", request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws2","template": "template1"}`})
-				deny403("Get all workspace of user", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"})
-				deny403("get workspace by name", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"})
-				deny403("Delete workspace", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"})
-				deny403("Update workspace", request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1", body: `{"replicas": 1}`})
-				deny403("Upsert workspace network rule", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`})
-				deny403("Remove workspace network rule", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw1"})
-			})
-
-		})
-
-		When("access API with admin user session", func() {
-
-			BeforeEach(func() {
-				session = adminSession
+		DescribeTable("access API with normal user session:",
+			func(stat int, req request) {
 				test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{})
 				test_createNetworkRule("usertest", "ws1", "nw1", 9999, "gp1", "/")
 				test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
 				test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
-			})
-
-			When("update own resource", func() {
-				ok201("create a new workspace", request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws2","template": "template1"}`})
-				ok200("Get all workspace of user", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"})
-				ok200("get workspace by name", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"})
-				ok200("Delete workspace", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"})
-				ok200("Update workspace", request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1", body: `{"replicas": 1}`})
-				ok200("Upsert workspace network rule", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`})
-				ok200("Remove workspace network rule", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw1"})
-			})
-
-			When("update resource of others", func() {
-				ok201("create a new workspace", request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest/workspace", body: `{"name": "ws2","template": "template1"}`})
-				ok200("Get all workspace of user", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace"})
-				ok200("get workspace by name", request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace/ws1"})
-				ok200("Delete workspace", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1"})
-				ok200("Update workspace", request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest/workspace/ws1", body: `{"replicas": 1}`})
-				ok200("Upsert workspace network rule", request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`})
-				ok200("Remove workspace network rule", request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw1"})
-			})
-
-		})
-
+				By("---------------test start----------------")
+				res, _ := test_HttpSend(userSession, req)
+				Ω(res.StatusCode).Should(Equal(stat))
+				By("---------------test end---------------")
+			},
+			func(stat int, req request) string { return fmt.Sprintf("%d %+v", stat, req) },
+			// update own resource
+			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest/workspace", body: `{"name": "ws2","template": "template1"}`}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace"}),
+			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace/ws1"}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1"}),
+			Entry(nil, 200, request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest/workspace/ws1", body: `{"replicas": 0}`}),
+			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`}),
+			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw1"}),
+			// update resource of others
+			Entry(nil, 403, request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws2","template": "template1"}`}),
+			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"}),
+			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"}),
+			Entry(nil, 403, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"}),
+			Entry(nil, 403, request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1", body: `{"replicas": 1}`}),
+			Entry(nil, 403, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`}),
+			Entry(nil, 403, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw1"}),
+		)
 	})
 
-	When("create a new Workspace", func() {
+	//==================================================================================
+	Describe("[PostWorkspace]", func() {
 
-		Describe("invalid request error", func() {
+		run_test := func(userId, wsName, requestBody string) {
+			test_CreateWorkspace("usertest-admin", "existing-ws", "template1", nil)
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodPost, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace", userId), body: requestBody})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
 
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost, path: "/api/v1alpha1/user/xxxxx/workspace", body: `{"name": "","template": "template1"}`,
-						},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
-
-			When("name is empty", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "","template": "template1"}`,
-						},
-						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'name' is zero value."}`},
-					)
-				})
-			})
-
-			When("template is empty", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": ""}`,
-						},
-						response{statusCode: http.StatusBadRequest, body: `{"message":"required field 'template' is zero value."}`},
-					)
-				})
-			})
-
-			When("name is invalid (include upper case)", func() {
-				It("should deny with 500 InternalServerError", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "XXXX","template": "template1"}`,
-						},
-						response{statusCode: http.StatusInternalServerError, body: `{"message": "failed to create workspace"}`},
-					)
-				})
-			})
-
-			// When("failed to get workspace config in template", func() {
-			// 	It("should deny with 400 BadRequest", func() {
-			// 		test_HttpSendAndVerify(adminSession,
-			// 			request{
-			// 				method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": "XXX"}`,
-			// 			},
-			// 			response{statusCode: http.StatusBadRequest, body: `{"message": "failed to get workspace config in template"}`},
-			// 		)
-			// 	})
-			// })
-
-			When("workspace is already exists", func() {
-				It("should deny witn 429 TooManyRequests", func() {
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", nil)
-
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws1","template": "template1"}`,
-						},
-						response{statusCode: http.StatusTooManyRequests, body: `{"message": "Workspace already exists"}`},
-					)
-				})
-			})
-		})
-
-		Describe("valid request", func() {
-
-			When("all valid arguments are specified", func() {
-				It("should be registered as specified", func() {
-
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace",
-							body: `{"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}}`,
-						},
-						response{
-							statusCode: http.StatusCreated,
-							body: `{
-								"message": "Successfully created",
-								"workspace": {
-								  "name": "ws1",
-								  "ownerID": "usertest-admin",
-								  "spec": {
-									"template": "template1",
-									"replicas": 1,
-									"vars": {
-									  "HOGE": "HOGEHOGE"
-									}
-								  },
-								  "status": {
-									"phase": "Pending"
-								  }
-								}
-							  }`,
-						},
-					)
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
-					Expect(err).NotTo(HaveOccurred()) // created
-
-					workspace := convertWorkspaceTodashv1alpha1Workspace(*wsv1Workspace)
-					Expect(&dashv1alpha1.Workspace{
-						Name:    "ws1",
-						OwnerID: "usertest-admin",
-						Spec: dashv1alpha1.WorkspaceSpec{
-							Template:          "template1",
-							Replicas:          1,
-							Vars:              map[string]string{"HOGE": "HOGEHOGE"},
-							AdditionalNetwork: []dashv1alpha1.NetworkRule{},
-						},
-						Status: dashv1alpha1.WorkspaceStatus{},
-					}).Should(Equal(workspace))
-				})
-			})
-
-			When("optional arguments are omitted", func() {
-				It("should be registered default value", func() {
-
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace",
-							body: `{"name": "ws1","template": "template1"}`,
-						},
-						response{
-							statusCode: http.StatusCreated,
-							body: `{
-								"message": "Successfully created",
-								"workspace": {
-								  "name": "ws1",
-								  "ownerID": "usertest-admin",
-								  "spec": {
-									"template": "template1",
-									"replicas": 1
-								  },
-								  "status": {
-									"phase": "Pending"
-								  }
-								}
-							  }`,
-						},
-					)
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
-					Expect(err).NotTo(HaveOccurred()) // created
-
-					workspace := convertWorkspaceTodashv1alpha1Workspace(*wsv1Workspace)
-					Expect(&dashv1alpha1.Workspace{
-						Name:    "ws1",
-						OwnerID: "usertest-admin",
-						Spec: dashv1alpha1.WorkspaceSpec{
-							Template:          "template1",
-							Replicas:          1,
-							AdditionalNetwork: []dashv1alpha1.NetworkRule{},
-						},
-						Status: dashv1alpha1.WorkspaceStatus{},
-					}).Should(Equal(workspace))
-				})
-			})
-
-		})
-	})
-
-	When("Get all workspace of user", func() {
-
-		Describe("invalid request error", func() {
-
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodGet, path: "/api/v1alpha1/user/xxxx/workspace"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
-
-		})
-
-		Describe("valid request", func() {
-
-			When("workspace is empty", func() {
-				It("should return no item", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"},
-						response{statusCode: http.StatusOK, body: `{"message":"No items found","items":[]}`})
-				})
-			})
-
-			When("workspace is not empty", func() {
-				It("should return items", func() {
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", nil)
-					test_CreateWorkspace("usertest-admin", "ws2", "template1", nil)
-					test_createNetworkRule("usertest-admin", "ws2", "nw1", 1111, "gp1", "/")
-					test_createNetworkRule("usertest-admin", "ws2", "nw3", 2222, "gp1", "/")
-					test_createNetworkRule("usertest-admin", "ws2", "nw2", 3333, "gp1", "/")
-
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"},
-						response{statusCode: http.StatusOK, body: `{"items":[` +
-							`{"name": "ws1","ownerID": "usertest-admin","spec": {"template": "template1","replicas": 0},"status": {"phase": ""}},` +
-							`{"name": "ws2","ownerID": "usertest-admin","spec": {"template": "template1","replicas": 0,` +
-							`"additionalNetwork": [` +
-							`{"portName": "nw1","portNumber": 1111,"group": "gp1","httpPath": "/","public": false},` +
-							`{"portName": "nw2","portNumber": 3333,"group": "gp1","httpPath": "/","public": false},` +
-							`{"portName": "nw3","portNumber": 2222,"group": "gp1","httpPath": "/","public": false}` +
-							`]},` +
-							`"status": {"phase": ""}}` +
-							`]}`,
-						},
-					)
-				})
-			})
-		})
-	})
-
-	When("get workspace by name", func() {
-
-		Describe("invalid request error", func() {
-
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodGet, path: "/api/v1alpha1/user/xxxxxx/workspace/ws1"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
-
-			When("workspace is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
-					)
-				})
-			})
-
-		})
-
-		Describe("valid request", func() {
-
-			When("access API with normal user session and get a own workspace", func() {
-				It("should return a workspace", func() {
-					test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace/ws1"},
-						response{statusCode: http.StatusOK, body: `{
-							"workspace": { "name": "ws1","ownerID": "usertest","spec": {"template": "template1","replicas": 0,"vars": {"HOGE": "HOGEHOGE"}},"status": { "phase": ""}}
-						  }`,
-						})
-				})
-			})
-		})
-
-	})
-
-	When("Delete workspace", func() {
-
-		Describe("invalid request error", func() {
-
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodDelete, path: "/api/v1alpha1/user/xxxx/workspace/ws1"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
-
-			When("workspace is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
-					)
-				})
-			})
-		})
-
-		Describe("valid request", func() {
-
-			When("workspace is exist", func() {
-				It("should successfully deleted", func() {
-					test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
-
-					test_HttpSendAndVerify(userSession,
-						request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1"},
-						response{
-							statusCode: http.StatusOK,
-							body: `{"message": "Successfully deleted",` +
-								`"workspace": {"name": "ws1","ownerID": "usertest",` +
-								`"spec": {"template": "template1","replicas": 0,"vars": {"HOGE": "HOGEHOGE"}},"status": {"phase": ""}}}`,
-						},
-					)
-					workspace, _ := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "user-delete1")
-					Expect(workspace).Should(BeNil()) // deleted
-				})
-			})
-
-		})
-	})
-
-	When("Update workspace", func() {
-
-		Describe("invalid request error", func() {
-
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPatch, path: "/api/v1alpha1/user/xxxxx/workspace/ws1", body: `{"replicas": 0}`},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
-
-			When("workspace is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx", body: `{"replicas": 0}`},
-						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
-					)
-				})
-			})
-
-		})
-
-		Describe("valid request", func() {
-
-			When("all valid arguments are specified", func() {
-				It("should be registered as specified", func() {
-
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1", body: `{"replicas": 5}`},
-						// TODO: message
-						response{statusCode: http.StatusOK,
-							body: `{"message":"Successfully updated",` +
-								`"workspace":{"name":"ws1","ownerID":"usertest-admin","spec":{"template":"template1","replicas":5},"status":{"phase":""}}}`},
-					)
-
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
+			if wsName != "" {
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), wsName, userId)
+				if res.StatusCode == http.StatusCreated {
 					Expect(err).NotTo(HaveOccurred())
+					Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+				} else {
+					Expect(err).To(HaveOccurred())
+				}
+			}
+			By("---------------test end---------------")
+		}
 
-					workspace := convertWorkspaceTodashv1alpha1Workspace(*wsv1Workspace)
-					Expect(&dashv1alpha1.Workspace{
-						Name:    "ws1",
-						OwnerID: "usertest-admin",
-						Spec: dashv1alpha1.WorkspaceSpec{
-							Template:          "template1",
-							Replicas:          5,
-							AdditionalNetwork: []dashv1alpha1.NetworkRule{},
-						},
-						Status: dashv1alpha1.WorkspaceStatus{},
-					}).Should(Equal(workspace))
-				})
-			})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest-admin", "ws1", `{"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}}`),
+			Entry(nil, "usertest-admin", "ws1", `{"name": "ws1","template": "template1"}`),
+		)
 
-			When("optional arguments are omitted", func() {
-				It("should be no changed", func() {
-
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1", body: `{}`},
-						// TODO: message
-						response{statusCode: http.StatusOK,
-							body: `{"message":"No change",` +
-								`"workspace":{"name":"ws1","ownerID":"usertest-admin","spec":{"template":"template1","replicas":0},"status":{"phase":""}}}`},
-					)
-
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
-					Expect(err).NotTo(HaveOccurred())
-
-					workspace := convertWorkspaceTodashv1alpha1Workspace(*wsv1Workspace)
-					Expect(&dashv1alpha1.Workspace{
-						Name:    "ws1",
-						OwnerID: "usertest-admin",
-						Spec: dashv1alpha1.WorkspaceSpec{
-							Template:          "template1",
-							Replicas:          0,
-							AdditionalNetwork: []dashv1alpha1.NetworkRule{},
-						},
-						Status: dashv1alpha1.WorkspaceStatus{},
-					}).Should(Equal(workspace))
-				})
-			})
-
-		})
-
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "xxxxx", "ws1", `{"name": "ws1","template": "template1"}`),
+			Entry(nil, "usertest-admin", "", `{"name": "","template": "template1"}`),
+			Entry(nil, "usertest-admin", "ws1", `{"name": "ws1","template": ""}`),
+			Entry(nil, "usertest-admin", "XXXX", `{"name": "XXXX","template": "template1"}`),
+			Entry(nil, "usertest-admin", "ws1", `{"name": "ws1","template": "XXX"}`),
+			Entry(nil, "usertest-admin", "", `{"name": "existing-ws","template": "template1"}`),
+		)
 	})
 
-	When("Upsert workspace network rule", func() {
+	//==================================================================================
+	Describe("[GetWorkspaces]", func() {
 
-		Describe("invalid request error", func() {
+		run_test := func(userId string) {
+			test_CreateWorkspace("usertest-admin", "ws1", "template1", nil)
+			test_CreateWorkspace("usertest-admin", "ws2", "template1", nil)
+			test_createNetworkRule("usertest-admin", "ws2", "nw1", 1111, "gp1", "/")
+			test_createNetworkRule("usertest-admin", "ws2", "nw3", 2222, "gp1", "/")
+			test_createNetworkRule("usertest-admin", "ws2", "nw2", 3333, "gp1", "/")
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodGet, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace", userId)})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/xxxxx/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
-						},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest-admin"),
+			Entry(nil, "usertest"),
+		)
 
-			When("workspace is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
-						},
-						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
-					)
-				})
-			})
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "xxxxx"),
+		)
 
-			When("no change in network rules", func() {
-				It("should deny with 400 BadRequest", func() {
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
-						},
-						response{statusCode: http.StatusOK, body: "@ignore"},
-					)
-					By("Update with the same rules")
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
-						},
-						response{statusCode: http.StatusBadRequest, body: `{ "message": "no change in network rules"}`},
-					)
-				})
-			})
-
-		})
-
-		Describe("valid request", func() {
-
-			When("all valid arguments are specified", func() {
-				It("should be registered as specified", func() {
-
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`,
-						},
-						response{
-							statusCode: http.StatusOK,
-							body: `{"message":"Successfully upserted network rule",` +
-								`"networkRule":{"portName":"nw2","portNumber":3000,"group":"gp2","httpPath":"/","public":false}}`},
-					)
-
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
-					Expect(err).NotTo(HaveOccurred())
-
-					workspace := convertWorkspaceTodashv1alpha1Workspace(*wsv1Workspace)
-					Expect(&dashv1alpha1.Workspace{
-						Name:    "ws1",
-						OwnerID: "usertest-admin",
-						Spec: dashv1alpha1.WorkspaceSpec{
-							Template: "template1",
-							Replicas: 0,
-							AdditionalNetwork: []dashv1alpha1.NetworkRule{
-								{PortName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Url: ""},
-							},
-						},
-						Status: dashv1alpha1.WorkspaceStatus{Phase: "", MainUrl: "", UrlBase: ""},
-					}).Should(Equal(workspace))
-				})
-			})
-
-			When("optional arguments are omitted", func() {
-				It("should be registered as specified", func() {
-
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2",
-							body: `{"portNumber": 3000,"public":true}`,
-						},
-						response{
-							statusCode: http.StatusOK,
-							body: `{"message":"Successfully upserted network rule",` +
-								`"networkRule":{"portName":"nw2","portNumber":3000,"public":true}}`},
-					)
-
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
-					Expect(err).NotTo(HaveOccurred())
-
-					workspace := convertWorkspaceTodashv1alpha1Workspace(*wsv1Workspace)
-					Expect(&dashv1alpha1.Workspace{
-						Name:    "ws1",
-						OwnerID: "usertest-admin",
-						Spec: dashv1alpha1.WorkspaceSpec{
-							Template: "template1",
-							Replicas: 0,
-							AdditionalNetwork: []dashv1alpha1.NetworkRule{
-								{PortName: "nw2", PortNumber: 3000, Group: "", HttpPath: "", Url: "", Public: true},
-							},
-						},
-						Status: dashv1alpha1.WorkspaceStatus{Phase: "", MainUrl: "", UrlBase: ""},
-					}).Should(Equal(workspace))
-				})
-			})
-
-		})
-
+		DescribeTable("❌ fail with unexpected error:",
+			func(userId string) {
+				clientMock.SetListError((*Server).GetWorkspaces, errors.New("mock get list error"))
+				run_test(userId)
+			},
+			Entry(nil, "usertest-admin"),
+		)
 	})
 
-	When("Remove workspace network rule", func() {
+	//==================================================================================
+	Describe("[GetWorkspace]", func() {
 
-		Describe("invalid request error", func() {
+		run_test := func(userId, wsName string) {
+			test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
+			test_createNetworkRule("usertest", "ws1", "main", 18080, "mainnw", "/")
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodGet, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s", userId, wsName)})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			When("user is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodDelete, path: "/api/v1alpha1/user/xxxxx/workspace/ws1/network/nw2"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "user is not found"}`},
-					)
-				})
-			})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest", "ws1"),
+		)
 
-			When("workspace is not found", func() {
-				It("should deny with 404 NotFound", func() {
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/xxx/network/nw2"},
-						response{statusCode: http.StatusNotFound, body: `{"message": "workspace is not found"}`},
-					)
-				})
-			})
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "xxxxx", "ws1"),
+			Entry(nil, "usertest-admin", "xxx"),
+		)
 
-			When("network rule is not found", func() {
-				It("should deny with 404 NotFound", func() {
+		DescribeTable("❌ fail with an unexpected error at list:",
+			func(userId, wsName string) {
+				clientMock.SetGetError(`\.GetWorkspace$`, errors.New("mock get workspace error"))
+				//clientMock.SetGetError((*Server).GetWorkspace, errors.New("mock get workspace error"))
+				run_test(userId, wsName)
+			},
+			Entry(nil, "usertest", "ws1"),
+		)
+	})
 
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
+	//==================================================================================
+	Describe("[DeleteWorkspace]", func() {
 
-					test_HttpSendAndVerify(adminSession,
-						request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2"},
-						response{statusCode: http.StatusBadRequest, body: `{"message":"port name nw2 is not found"}`},
-					)
-				})
-			})
+		run_test := func(userId, wsName string) {
+			test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodDelete, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s", userId, wsName)})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
 
-		})
+			_, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest")
+			if res.StatusCode == http.StatusOK {
+				Expect(err).To(HaveOccurred())
+			} else {
+				Expect(err).NotTo(HaveOccurred())
+			}
+			By("---------------test end---------------")
+		}
 
-		Describe("valid request", func() {
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest", "ws1"),
+		)
 
-			When("all valid arguments are specified", func() {
-				It("should be registered as specified", func() {
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "xxxxx", "ws1"),
+			Entry(nil, "usertest-admin", "xxx"),
+		)
 
-					test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-					test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
+		DescribeTable("❌ fail with an unexpected error at delete:",
+			func(userId, wsName string) {
+				clientMock.SetDeleteError((*Server).DeleteWorkspace, errors.New("mock delete workspace error"))
+				run_test(userId, wsName)
+			},
+			Entry(nil, "usertest", "ws1"),
+		)
+	})
 
-					test_HttpSendAndVerify(adminSession,
-						request{
-							method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw1",
-						},
-						response{
-							statusCode: http.StatusOK,
-							body: `{"message":"Successfully removed network rule",` +
-								`"networkRule":{"portName":"nw1","portNumber":9999,"group":"gp1","httpPath":"/","public":false}}`},
-					)
+	//==================================================================================
+	Describe("[PatchWorkspace]", func() {
 
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest-admin")
-					Expect(err).NotTo(HaveOccurred())
+		run_test := func(userId, wsName, requestBody string) {
+			test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodPatch, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s", userId, wsName), body: requestBody})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
 
-					workspace := convertWorkspaceTodashv1alpha1Workspace(*wsv1Workspace)
-					Expect(&dashv1alpha1.Workspace{
-						Name:    "ws1",
-						OwnerID: "usertest-admin",
-						Spec: dashv1alpha1.WorkspaceSpec{
-							Template:          "template1",
-							Replicas:          0,
-							AdditionalNetwork: []dashv1alpha1.NetworkRule{},
-						},
-						Status: dashv1alpha1.WorkspaceStatus{Phase: "", MainUrl: "", UrlBase: ""},
-					}).Should(Equal(workspace))
-				})
-			})
-		})
+			if res.StatusCode == http.StatusOK {
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), wsName, userId)
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			}
+			By("---------------test end---------------")
+		}
 
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest-admin", "ws1", `{"replicas": 0}`),
+			Entry(nil, "usertest-admin", "ws1", `{"replicas": 5}`),
+		)
+
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "xxxxx", "ws1", `{"replicas": 0}`),
+			Entry(nil, "usertest", "xxx", `{"replicas": 1}`),
+			Entry(nil, "usertest-admin", "ws1", `{"replicas": 1}`),
+		)
+
+		DescribeTable("❌ fail with an unexpected error at update:",
+			func(userId, wsName, requestBody string) {
+				clientMock.SetUpdateError((*Server).PatchWorkspace, errors.New("mock update workspace error"))
+				run_test(userId, wsName, requestBody)
+			},
+			Entry(nil, "usertest-admin", "ws1", `{"replicas": 0}`),
+		)
+	})
+
+	//==================================================================================
+	Describe("[PutNetworkRule]", func() {
+
+		run_test := func(userId, wsName, nw, requestBody string) {
+			test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
+			test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodPut, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s/network/%s", userId, wsName, nw), body: requestBody})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+
+			if res.StatusCode == http.StatusOK {
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), wsName, userId)
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			}
+			By("---------------test end---------------")
+		}
+
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest-admin", "ws1", "nw2", `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`),
+			Entry(nil, "usertest-admin", "ws1", "nw2", `{"portNumber": 3000,"public":true}`),
+		)
+
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "xxxxx", "ws1", "nw2", `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`),
+			Entry(nil, "usertest-admin", "xxx", "nw2", `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`),
+			Entry(nil, "usertest-admin", "ws1", "nw1", `{"portNumber": 9999,"group": "gp1","httpPath": "/","public":false}`),
+			Entry(nil, "usertest-admin", "ws1", "nw9", `{"portNumber": 9999,"group": "gp1","httpPath": "/","public":false}`),
+		)
+
+		DescribeTable("❌ fail with an unexpected error at update:",
+			func(userId, wsName, nw, requestBody string) {
+				clientMock.SetUpdateError((*Server).PutNetworkRule, errors.New("mock update networkrule error"))
+				run_test(userId, wsName, nw, requestBody)
+			},
+			Entry(nil, "usertest-admin", "ws1", "nw2", `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`),
+		)
+	})
+
+	//==================================================================================
+	Describe("[DeleteNetworkRule]", func() {
+
+		run_test := func(userId, wsName, nw string) {
+			test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
+			test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
+			test_createNetworkRule("usertest-admin", "ws1", "main", 18080, "main", "/")
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodDelete, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s/network/%s", userId, wsName, nw)})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+
+			if res.StatusCode == http.StatusOK {
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), wsName, userId)
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			}
+			By("---------------test end---------------")
+		}
+
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "usertest-admin", "ws1", "nw1"),
+		)
+
+		DescribeTable("❌ fail with invalid request:",
+			run_test,
+			Entry(nil, "xxxxx", "ws1", "nw2"),
+			Entry(nil, "usertest-admin", "xxx", "nw2"),
+			Entry(nil, "usertest-admin", "ws1", "xxx"),
+			Entry(nil, "usertest-admin", "ws1", "main"),
+		)
+
+		DescribeTable("❌ fail with an unexpected error at update:",
+			func(userId, wsName, nw string) {
+				clientMock.SetUpdateError((*Server).DeleteNetworkRule, errors.New("mock delete network rule error"))
+				run_test(userId, wsName, nw)
+			},
+			Entry(nil, "usertest-admin", "ws1", "nw1"),
+		)
 	})
 
 })

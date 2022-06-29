@@ -202,7 +202,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 	}
 
 	// input data from stdin
-	input, err := io.ReadAll(os.Stdin)
+	input, err := io.ReadAll(o.In)
 	if err != nil {
 		return fmt.Errorf("failed to read input file : %w", err)
 	}

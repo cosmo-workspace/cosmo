@@ -1,11 +1,14 @@
 package dashboard
 
 import (
+	"errors"
 	"net/http"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 )
 
 var _ = Describe("Dashboard server [Template]", func() {
@@ -16,69 +19,66 @@ var _ = Describe("Dashboard server [Template]", func() {
 	})
 
 	AfterEach(func() {
+		clientMock.Clear()
 		test_DeleteCosmoUserAll()
+		test_DeleteTemplateAll()
 	})
 
-	When("list workspace templates", func() {
+	Describe("[GetWorkspaceTemplates]", func() {
 
-		AfterEach(func() {
-			test_DeleteTemplateAll()
-		})
-
-		When("template is empty", func() {
-			It("should return empty item", func() {
-				test_HttpSendAndVerify(userSession,
-					request{method: http.MethodGet, path: "/api/v1alpha1/template/workspace"},
-					response{statusCode: http.StatusOK, body: `{ "message": "No items found", "items": []}`},
-				)
-			})
-		})
-
-		When("template is not empty", func() {
-			It("should return items", func() {
+		run_test := func(context string) {
+			if context == "not empty" {
 				test_CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
 				test_CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template2")
+			}
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodGet, path: "/api/v1alpha1/template/workspace"})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-				test_HttpSendAndVerify(userSession,
-					request{method: http.MethodGet, path: "/api/v1alpha1/template/workspace"},
-					response{
-						statusCode: http.StatusOK,
-						body: `{ "items": [` +
-							`{"name": "template1", "requiredVars": [ { "varName": "{{HOGE}}", "defaultValue": "FUGA"}]},` +
-							`{"name": "template2", "requiredVars": [ { "varName": "{{HOGE}}", "defaultValue": "FUGA"}]}` +
-							`]}`,
-					},
-				)
-			})
-		})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "empty"),
+			Entry(nil, "not empty"),
+		)
+
+		DescribeTable("❌ fail with an unexpected error at list:",
+			func(context string) {
+				clientMock.SetListError((*Server).GetWorkspaceTemplates, errors.New("template list error"))
+				run_test(context)
+			},
+			Entry(nil, "not empty"),
+		)
 	})
 
-	When("list useraddon templates", func() {
-		When("template is empty", func() {
-			It("should return empty item", func() {
-				test_HttpSendAndVerify(userSession,
-					request{method: http.MethodGet, path: "/api/v1alpha1/template/useraddon"},
-					response{statusCode: http.StatusOK, body: `{ "message": "No items found", "items": []}`},
-				)
-			})
-		})
+	Describe("[GetUserAddonTemplates]", func() {
 
-		When("template is not empty", func() {
-			It("should return items", func() {
+		run_test := func(context string) {
+			if context == "not empty" {
 				test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "useraddon1")
 				test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "useraddon2")
+			}
+			By("---------------test start----------------")
+			res, body := test_HttpSend(adminSession, request{method: http.MethodGet, path: "/api/v1alpha1/template/useraddon"})
+			Ω(res.StatusCode).To(MatchSnapShot())
+			Ω(string(body)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-				test_HttpSendAndVerify(userSession,
-					request{method: http.MethodGet, path: "/api/v1alpha1/template/useraddon"},
-					response{
-						statusCode: 200,
-						body: `{ "items": [` +
-							`{"name": "useraddon1", "requiredVars": [ { "varName": "{{HOGE}}", "defaultValue": "FUGA"}]},` +
-							`{"name": "useraddon2", "requiredVars": [ { "varName": "{{HOGE}}", "defaultValue": "FUGA"}]}` +
-							`]}`,
-					},
-				)
-			})
-		})
+		DescribeTable("✅ success in normal context:",
+			run_test,
+			Entry(nil, "empty"),
+			Entry(nil, "not empty"),
+		)
+
+		DescribeTable("❌ fail with an unexpected error at list:",
+			func(context string) {
+				clientMock.SetListError((*Server).GetUserAddonTemplates, errors.New("template list error"))
+				run_test(context)
+			},
+			Entry(nil, "not empty"),
+		)
 	})
 })

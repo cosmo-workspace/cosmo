@@ -45,7 +45,7 @@ func (o *deleteOption) PreRunE(cmd *cobra.Command, args []string) error {
 
 func (o *deleteOption) Validate(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace {
-		return errors.New("--all-namespace is not supported in this command")
+		return errors.New("--all-namespaces is not supported in this command")
 	}
 	if err := o.UserNamespacedCliOptions.Validate(cmd, args); err != nil {
 		return err
@@ -68,20 +68,20 @@ func (o *deleteOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 
-	inst, err := o.Client.GetInstance(ctx, o.WorkspaceName, o.Namespace)
+	ws, err := o.Client.GetWorkspace(ctx, o.WorkspaceName, o.Namespace)
 	if err != nil {
 		return err
 	}
 
-	o.Logr.Debug().Info("deleting workspace", "inst", inst, "dryrun", o.DryRun)
+	o.Logr.Debug().Info("deleting workspace", "workspace", ws, "dryrun", o.DryRun)
 	if o.DryRun {
-		if err := o.Client.Delete(ctx, inst, client.DryRunAll); err != nil {
+		if err := o.Client.Delete(ctx, ws, client.DryRunAll); err != nil {
 			return err
 		}
 		cmdutil.PrintfColorInfo(o.ErrOut, "Successfully deleted workspace %s (dry-run)\n", o.WorkspaceName)
 
 	} else {
-		if err := o.Client.Delete(ctx, inst); err != nil {
+		if err := o.Client.Delete(ctx, ws); err != nil {
 			return err
 		}
 		cmdutil.PrintfColorInfo(o.ErrOut, "Successfully deleted workspace %s\n", o.WorkspaceName)

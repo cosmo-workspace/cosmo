@@ -45,8 +45,10 @@
 | github.com/mattn/go-isatty       | MIT                  | https://github.com/mattn/go-isatty/blob/master/LICENSE                    |
 | github.com/onsi/ginkgo           | MIT                  | https://github.com/onsi/ginkgo/blob/master/LICENSE                        |
 | github.com/onsi/gomega           | MIT                  | https://github.com/onsi/gomega/blob/master/LICENSE                        |
+| github.com/pelletier/go-toml     | MIT                  | https://github.com/pelletier/go-toml/blob/v2/LICENSE                      |
 | github.com/sethvargo/go-password | MIT                  | https://github.com/sethvargo/go-password/blob/main/LICENSE                |
 | github.com/spf13/cobra           | Apache License 2.0   | https://github.com/spf13/cobra/blob/master/LICENSE.txt                    |
+| github.com/spf13/afero           | Apache License 2.0   | https://github.com/spf13/afero/blob/master/LICENSE.txt                    |
 | go.uber.org/zap                  | MIT                  | https://github.com/uber-go/zap/blob/master/LICENSE.txt                    |
 | golang.org/x/crypto              | BSD 3-Clause License | https://cs.opensource.google/go/x/crypto/+/master:LICENSE                 |
 | golang.org/x/tools               | BSD 3-Clause License | https://cs.opensource.google/go/x/tools/+/master:LICENSE                  |
