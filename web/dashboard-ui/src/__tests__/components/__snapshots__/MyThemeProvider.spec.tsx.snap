@@ -39,8 +39,10 @@ Object {
   "direction": "ltr",
   "mixins": Object {
     "toolbar": Object {
-      "@media (min-width:0px) and (orientation: landscape)": Object {
-        "minHeight": 48,
+      "@media (min-width:0px)": Object {
+        "@media (orientation: landscape)": Object {
+          "minHeight": 48,
+        },
       },
       "@media (min-width:600px)": Object {
         "minHeight": 64,
@@ -52,6 +54,7 @@ Object {
     "action": Object {
       "activatedOpacity": 0.24,
       "active": "#fff",
+      "activeChannel": "255 255 255",
       "disabled": "rgba(255, 255, 255, 0.3)",
       "disabledBackground": "rgba(255, 255, 255, 0.12)",
       "disabledOpacity": 0.38,
@@ -60,6 +63,7 @@ Object {
       "hover": "rgba(255, 255, 255, 0.08)",
       "hoverOpacity": 0.08,
       "selected": "rgba(255, 255, 255, 0.16)",
+      "selectedChannel": "255 255 255",
       "selectedOpacity": 0.16,
     },
     "augmentColor": [Function],
@@ -153,7 +157,9 @@ Object {
       "disabled": "rgba(255, 255, 255, 0.5)",
       "icon": "rgba(255, 255, 255, 0.5)",
       "primary": "#fff",
+      "primaryChannel": "255 255 255",
       "secondary": "rgba(255, 255, 255, 0.7)",
+      "secondaryChannel": "255 255 255",
     },
     "tonalOffset": 0.2,
     "warning": Object {
@@ -319,6 +325,7 @@ Object {
   "zIndex": Object {
     "appBar": 1100,
     "drawer": 1200,
+    "fab": 1050,
     "mobileStepper": 1000,
     "modal": 1300,
     "snackbar": 1400,
@@ -368,8 +375,10 @@ Object {
   "direction": "ltr",
   "mixins": Object {
     "toolbar": Object {
-      "@media (min-width:0px) and (orientation: landscape)": Object {
-        "minHeight": 48,
+      "@media (min-width:0px)": Object {
+        "@media (orientation: landscape)": Object {
+          "minHeight": 48,
+        },
       },
       "@media (min-width:600px)": Object {
         "minHeight": 64,
@@ -381,6 +390,7 @@ Object {
     "action": Object {
       "activatedOpacity": 0.12,
       "active": "rgba(0, 0, 0, 0.54)",
+      "activeChannel": "0 0 0",
       "disabled": "rgba(0, 0, 0, 0.26)",
       "disabledBackground": "rgba(0, 0, 0, 0.12)",
       "disabledOpacity": 0.38,
@@ -389,6 +399,7 @@ Object {
       "hover": "rgba(0, 0, 0, 0.04)",
       "hoverOpacity": 0.04,
       "selected": "rgba(0, 0, 0, 0.08)",
+      "selectedChannel": "0 0 0",
       "selectedOpacity": 0.08,
     },
     "augmentColor": [Function],
@@ -481,7 +492,9 @@ Object {
     "text": Object {
       "disabled": "rgba(0, 0, 0, 0.38)",
       "primary": "rgba(0, 0, 0, 0.87)",
+      "primaryChannel": "0 0 0",
       "secondary": "rgba(0, 0, 0, 0.6)",
+      "secondaryChannel": "0 0 0",
     },
     "tonalOffset": 0.2,
     "warning": Object {
@@ -647,6 +660,7 @@ Object {
   "zIndex": Object {
     "appBar": 1100,
     "drawer": 1200,
+    "fab": 1050,
     "mobileStepper": 1000,
     "modal": 1300,
     "snackbar": 1400,

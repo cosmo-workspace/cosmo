@@ -2,12 +2,61 @@
 
 exports[`NameAvatar NameAvatar 1`] = `
 <DocumentFragment>
-  <div
-    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-2s90m6-MuiAvatar-root"
+  .emotion-0 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #fff;
+  background-color: #bdbdbd;
+}
+
+.emotion-1 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  fill: currentColor;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  font-size: 1.5rem;
+}
+
+<div
+    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault emotion-0"
   >
     <svg
       aria-hidden="true"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium emotion-1"
       data-testid="AccountCircleIcon"
       focusable="false"
       viewBox="0 0 24 24"
@@ -22,12 +71,56 @@ exports[`NameAvatar NameAvatar 1`] = `
 
 exports[`NameAvatar NameAvatar name 1`] = `
 <DocumentFragment>
-  <div
-    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1u9n0jb-MuiAvatar-root"
+  .emotion-0 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #fff;
+  background-color: #bdbdbd;
+  background-color: #6949a7;
+}
+
+.emotion-1 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  font-size: inherit;
+  color: white;
+}
+
+<div
+    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault emotion-0"
     name="cosmo"
   >
     <p
-      class="MuiTypography-root MuiTypography-body1 css-1xez6if-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 emotion-1"
     >
       C
     </p>
@@ -37,12 +130,56 @@ exports[`NameAvatar NameAvatar name 1`] = `
 
 exports[`NameAvatar NameAvatar name dark 1`] = `
 <DocumentFragment>
-  <div
-    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1p8ifuh-MuiAvatar-root"
+  .emotion-0 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #121212;
+  background-color: #757575;
+  background-color: #6949a7;
+}
+
+.emotion-1 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  font-size: inherit;
+  color: black;
+}
+
+<div
+    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault emotion-0"
     name="cosmo"
   >
     <p
-      class="MuiTypography-root MuiTypography-body1 css-1uzwznl-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 emotion-1"
     >
       C
     </p>

@@ -19,7 +19,7 @@ exports[`AuthRoute normal login admin => /user 1`] = `
 exports[`AuthRoute normal login admin page not admin user page => 404 1`] = `
 <DocumentFragment>
   <div
-    class="MuiBox-root css-0"
+    class="MuiBox-root emotion-0"
   >
     404
   </div>
@@ -29,7 +29,7 @@ exports[`AuthRoute normal login admin page not admin user page => 404 1`] = `
 exports[`AuthRoute normal login another page => 404 1`] = `
 <DocumentFragment>
   <div
-    class="MuiBox-root css-0"
+    class="MuiBox-root emotion-0"
   >
     404
   </div>

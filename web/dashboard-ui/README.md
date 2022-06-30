@@ -22,7 +22,8 @@ yarn add \
   copy-to-clipboard \
   react-error-boundary \
   http-proxy-middleware \
-  @testing-library/react-hooks
+  @testing-library/react-hooks \
+  @emotion/jest
 
   default
   "dependencies": {
