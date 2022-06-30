@@ -4,19 +4,20 @@ import (
 	"context"
 
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// KosmoSecretAuthorizer authorize with cosmo user's password secret
-type KosmoSecretAuthorizer struct {
-	kosmo.Client
+// PasswordSecretAuthorizer authorize with cosmo user's password secret
+type PasswordSecretAuthorizer struct {
+	client.Client
 }
 
-func NewKosmoSecretAuthorizer(c kosmo.Client) *KosmoSecretAuthorizer {
-	return &KosmoSecretAuthorizer{c}
+func NewPasswordSecretAuthorizer(c client.Client) *PasswordSecretAuthorizer {
+	return &PasswordSecretAuthorizer{c}
 }
 
-func (a *KosmoSecretAuthorizer) Authorize(ctx context.Context, req dashv1alpha1.LoginRequest) (bool, error) {
-	verified, _, err := a.VerifyPassword(ctx, req.Id, []byte(req.Password))
+func (a *PasswordSecretAuthorizer) Authorize(ctx context.Context, req dashv1alpha1.LoginRequest) (bool, error) {
+	verified, _, err := password.VerifyPassword(ctx, a.Client, req.Id, []byte(req.Password))
 	return verified, err
 }

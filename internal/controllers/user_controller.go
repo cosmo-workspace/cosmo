@@ -17,13 +17,14 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 // UserReconciler reconciles a Template object
 type UserReconciler struct {
-	kosmo.Client
+	client.Client
 	Recorder record.EventRecorder
 	Scheme   *runtime.Scheme
 }
@@ -74,7 +75,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		user.Status.Namespace.CreationTimestamp = &now
 
 		log.Info("initializing password secret")
-		if err := r.ResetPassword(ctx, user.Name); err != nil {
+		if err := password.ResetPassword(ctx, r.Client, user.Name); err != nil {
 			r.Recorder.Eventf(&user, corev1.EventTypeWarning, "InitFailed", "failed to reset password: %v", err)
 			log.Error(err, "failed to reset password")
 			return ctrl.Result{}, err
@@ -150,7 +151,7 @@ func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.Us
 	}
 	log := clog.FromContext(ctx)
 
-	tmpls, err := r.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeUserAddon})
+	tmpls, err := kubeutil.ListTemplatesByType(ctx, r.Client, []string{wsv1alpha1.TemplateTypeUserAddon})
 	if err != nil {
 		log.Error(err, "failed to list templates")
 		return nil

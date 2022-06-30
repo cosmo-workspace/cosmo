@@ -107,7 +107,6 @@ func (m *snapShotMatcher) NegatedFailureMessage(actual interface{}) (message str
 
 //-----------------------------------------------------------
 
-type snapData map[string]data
 type data struct {
 	SnapShot interface{} `toml:"SnapShot,multiline,omitempty"`
 }
@@ -130,13 +129,9 @@ func (m *snapShotMatcher) ReadSnapShot() (*string, error) {
 func (m *snapShotMatcher) WriteSnapShot(snap []byte) error {
 
 	snapFileData, err := m.readSnapFileData()
-
-	if errors.Is(err, afero.ErrFileNotFound) {
-		snapFileData = &snapData{}
-	} else if err != nil {
+	if err != nil {
 		return err
 	}
-
 	(*snapFileData)[m.snapId] = data{SnapShot: string(snap)}
 
 	if err := m.writeSnapFileData(snapFileData); err != nil {
@@ -145,12 +140,13 @@ func (m *snapShotMatcher) WriteSnapShot(snap []byte) error {
 	return nil
 }
 
-func (m *snapShotMatcher) readSnapFileData() (*snapData, error) {
+func (m *snapShotMatcher) readSnapFileData() (*map[string]data, error) {
 	exists, err := afero.Exists(m.fs, m.snapFilePath)
 	if err != nil {
 		return nil, fmt.Errorf("file check error: %w", err)
-	} else if !exists {
-		return nil, afero.ErrFileNotFound
+	}
+	if !exists {
+		return &map[string]data{}, nil
 	}
 
 	file, err := m.fs.Open(m.snapFilePath)
@@ -160,15 +156,18 @@ func (m *snapShotMatcher) readSnapFileData() (*snapData, error) {
 
 	defer file.Close()
 
-	var datas snapData
+	var datas map[string]data
 	err = toml.NewDecoder(file).Decode(&datas)
 	if err != nil {
 		return nil, fmt.Errorf("toml decode error: %w", err)
 	}
+	if len(datas) == 0 {
+		return &map[string]data{}, nil
+	}
 	return &datas, nil
 }
 
-func (m *snapShotMatcher) writeSnapFileData(snapFileData *snapData) error {
+func (m *snapShotMatcher) writeSnapFileData(snapFileData *map[string]data) error {
 	if err := m.fs.MkdirAll(filepath.Dir(m.snapFilePath), os.ModePerm); err != nil {
 		return fmt.Errorf("create snapfile directory error: %w", err)
 	}

@@ -28,7 +28,7 @@ func getCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
 Get Users. This command is similar to "kubectl get namespace"
 `,
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	return cmd
 }

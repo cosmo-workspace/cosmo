@@ -7,13 +7,11 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/utils/pointer"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
-	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
 
 type openPortOption struct {
@@ -36,7 +34,7 @@ func openPortCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
 		Use:               "open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER",
 		Short:             "Update or insert workspace network port",
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	cmd.Flags().StringVar(&o.PortName, "name", "", "Serivce port name (Required)")
 	cmd.Flags().IntVar(&o.PortNumber, "port", 0, "Serivce port number (Required)")
@@ -103,30 +101,8 @@ func (o *openPortOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	if _, err := c.GetUser(ctx, o.User); err != nil {
-		return err
-	}
-
-	ws, err := c.GetWorkspace(ctx, o.WorkspaceName, o.Namespace)
-	if err != nil {
-		return err
-	}
-	o.Logr.DebugAll().Info("GetWorkspace", "ws", ws, "namespace", o.Namespace)
-
-	before := ws.DeepCopy()
-
-	ws.Spec.Network, err = wsnet.UpsertNetRule(ws.Spec.Network, o.rule)
-	if err != nil {
-		return fmt.Errorf("failed to upsert network rule: %w", err)
-	}
-	o.Logr.DebugAll().Info("NetworkRule upserted", "ws", ws, "namespace", o.Namespace, "netRule", o.rule)
-
-	o.Logr.Debug().PrintObjectDiff(before, ws)
-	if equality.Semantic.DeepEqual(before, ws) {
-		return errors.New("no change")
-	}
-
-	if err := c.Update(ctx, ws); err != nil {
+	if _, err := c.AddNetworkRule(ctx, o.WorkspaceName, o.User, o.rule.PortName,
+		o.rule.PortNumber, o.rule.Group, o.rule.HTTPPath, o.rule.Public); err != nil {
 		return err
 	}
 

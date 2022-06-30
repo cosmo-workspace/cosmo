@@ -58,7 +58,7 @@ var _ = Describe("User webhook", func() {
 			user := wsv1alpha1.User{}
 			user.SetName("testuser1")
 			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				Addons: []wsv1alpha1.UserAddon{
 					{Template: cosmov1alpha1.TemplateRef{Name: defaultUserAddon.GetName()}},
 					{Template: cosmov1alpha1.TemplateRef{Name: normalUserAddon.GetName()}},
@@ -92,7 +92,7 @@ var _ = Describe("User webhook", func() {
 					Name: "testuser2",
 				},
 				Spec: wsv1alpha1.UserSpec{
-					AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+					AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				},
 			}
 
@@ -126,7 +126,7 @@ var _ = Describe("User webhook", func() {
 			user := wsv1alpha1.User{}
 			user.SetName("testuser3")
 			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				Addons: []wsv1alpha1.UserAddon{
 					{Template: cosmov1alpha1.TemplateRef{Name: defaultUserAddon.GetName()}},
 					{Template: cosmov1alpha1.TemplateRef{Name: "notfound"}},
@@ -144,7 +144,7 @@ var _ = Describe("User webhook", func() {
 			user := wsv1alpha1.User{}
 			user.SetName("testuser4")
 			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				Addons: []wsv1alpha1.UserAddon{
 					{Template: cosmov1alpha1.TemplateRef{Name: defaultUserAddon.GetName()}},
 					{Template: cosmov1alpha1.TemplateRef{Name: notUserAddon.GetName()}},
@@ -175,7 +175,7 @@ var _ = Describe("User webhook", func() {
 			}
 
 			expectedUser := user.DeepCopy()
-			expectedUser.Spec.AuthType = wsv1alpha1.UserAuthTypeKosmoSecert
+			expectedUser.Spec.AuthType = wsv1alpha1.UserAuthTypePasswordSecert
 
 			err := k8sClient.Create(ctx, &user)
 			Expect(err).ShouldNot(HaveOccurred())
@@ -219,7 +219,7 @@ var _ = Describe("User webhook", func() {
 			user.SetName("testuser7")
 			user.Spec = wsv1alpha1.UserSpec{
 				Role:     "invalid",
-				AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				Addons: []wsv1alpha1.UserAddon{
 					{Template: cosmov1alpha1.TemplateRef{Name: defaultUserAddon.GetName()}},
 				},

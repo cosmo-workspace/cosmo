@@ -16,7 +16,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/internal/controllers"
 	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
@@ -141,7 +140,7 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&controllers.UserReconciler{
-		Client:   kosmo.NewClient(mgr.GetClient()), // TODO: remove dependence on kosmo
+		Client:   mgr.GetClient(),
 		Recorder: mgr.GetEventRecorderFor(userController),
 		Scheme:   mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
@@ -182,7 +181,7 @@ func main() {
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.UserMutationWebhookHandler{
-		Client: kosmo.NewClient(mgr.GetClient()), // TODO: remove dependence on kosmo
+		Client: mgr.GetClient(),
 		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.UserValidationWebhookHandler{

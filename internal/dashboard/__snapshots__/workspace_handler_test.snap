@@ -555,7 +555,7 @@ SnapShot = """
 
 ['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw1, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 2']
 SnapShot = """
-{\"message\":\"no change in network rules\"}
+{\"message\":\"no change\"}
 """
 
 ['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw9, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 1']

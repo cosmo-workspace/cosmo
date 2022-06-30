@@ -24,8 +24,9 @@ type createOption struct {
 	Admin       bool
 	Addons      string
 	AddonVars   string
+	UserAddons  []wsv1alpha1.UserAddon
 
-	user *wsv1alpha1.User
+	//user *wsv1alpha1.User
 }
 
 func createCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
@@ -34,7 +35,7 @@ func createCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
 		Use:               "create USER_ID --role cosmo-admin",
 		Short:             "Create user",
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	cmd.Flags().StringVar(&o.DisplayName, "name", "", "user display name (default: same as USER_ID)")
 	cmd.Flags().StringVar(&o.Role, "role", "", "user role")
@@ -79,20 +80,9 @@ func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
 
 	o.UserID = args[0]
 
-	o.user = &wsv1alpha1.User{}
-	o.user.SetName(o.UserID)
-	o.user.Spec = wsv1alpha1.UserSpec{}
-
-	if o.DisplayName != "" {
-		o.user.Spec.DisplayName = o.DisplayName
-	} else {
-		o.user.Spec.DisplayName = o.UserID
-	}
-
 	if o.Admin {
 		o.Role = wsv1alpha1.UserAdminRole.String()
 	}
-	o.user.Spec.Role = wsv1alpha1.UserRole(o.Role)
 
 	if o.Addons != "" {
 		// format is "ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2", split by ,
@@ -105,7 +95,7 @@ func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
 				},
 			}
 		}
-		o.user.Spec.Addons = addons
+		o.UserAddons = addons
 	}
 
 	if o.AddonVars != "" {
@@ -123,7 +113,7 @@ func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
 			}
 			varsAddonName := varsCol[0]
 
-			for i, addon := range o.user.Spec.Addons {
+			for i, addon := range o.UserAddons {
 				if addon.Template.Name == varsAddonName {
 
 					instVars := make(map[string]string)
@@ -137,7 +127,7 @@ func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
 						}
 						instVars[kvcol[0]] = kvcol[1]
 					}
-					o.user.Spec.Addons[i].Vars = instVars
+					o.UserAddons[i].Vars = instVars
 				}
 			}
 		}
@@ -151,36 +141,13 @@ func (o *createOption) RunE(cmd *cobra.Command, args []string) error {
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)
 
-	c := o.Client
-
-	o.Logr.DebugAll().Info("creating user", "user", o.user)
-
-	if err := c.Create(ctx, o.user); err != nil {
+	if _, err := o.Client.CreateUser(ctx, o.UserID, o.DisplayName, o.Role, "", o.UserAddons); err != nil {
 		return err
 	}
 
-	// Wait until user created
-	tk := time.NewTicker(time.Second)
-	defer tk.Stop()
-	var defaultPassword *string
-
-UserCreationWaitLoop:
-	for {
-		p, err := c.GetDefaultPassword(ctx, o.UserID)
-		if err == nil {
-			tk.Stop()
-			defaultPassword = p
-			break UserCreationWaitLoop
-		}
-
-		select {
-		case <-ctx.Done():
-			tk.Stop()
-			return fmt.Errorf("reached to timeout in user creation")
-
-		default:
-			<-tk.C
-		}
+	defaultPassword, err := o.Client.GetDefaultPasswordAwait(ctx, o.UserID)
+	if err != nil {
+		return err
 	}
 
 	cmdutil.PrintfColorInfo(o.Out, "Successfully created user %s\n", o.UserID)

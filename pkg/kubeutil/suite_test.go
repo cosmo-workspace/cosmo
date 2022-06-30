@@ -10,10 +10,8 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes/scheme"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -39,6 +37,7 @@ func TestAPIs(t *testing.T) {
 func init() {
 	cosmov1alpha1.AddToScheme(scheme.Scheme)
 	wsv1alpha1.AddToScheme(scheme.Scheme)
+	//+kubebuilder:scaffold:scheme
 }
 
 var _ = BeforeSuite(func() {
@@ -53,8 +52,6 @@ var _ = BeforeSuite(func() {
 	cfg, err := testEnv.Start()
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
-
-	//+kubebuilder:scaffold:scheme
 
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).NotTo(HaveOccurred())
@@ -71,10 +68,6 @@ var _ = AfterSuite(func() {
 })
 
 func createInitObjects(ctx context.Context) {
-	scheme := runtime.NewScheme()
-	clientgoscheme.AddToScheme(scheme)
-	cosmov1alpha1.AddToScheme(scheme)
-
 	tmpl1 := &cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "tmpl1",

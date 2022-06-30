@@ -64,7 +64,7 @@ Usage:
       cat cosmo-template.yaml | cosmoctl template validate -f -
 `,
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 
 	cmd.Flags().StringVarP(&o.File, "file", "f", "", "input COSMO Template file yaml path. when specified '-', input from Stdin")

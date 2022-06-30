@@ -105,7 +105,7 @@ func (r UserRole) String() string {
 type UserAuthType string
 
 const (
-	UserAuthTypeKosmoSecert UserAuthType = "kosmo-secret"
+	UserAuthTypePasswordSecert UserAuthType = "kosmo-secret" // TODO change password-secret
 	// TODO
 	// UserAuthTypeLDAP    = "ldap"
 	// UserAuthTypeOIDC    = "oidc"
@@ -114,7 +114,7 @@ const (
 
 func (t UserAuthType) IsValid() bool {
 	switch t {
-	case UserAuthTypeKosmoSecert:
+	case UserAuthTypePasswordSecert:
 		return true
 	default:
 		return false

@@ -27,7 +27,6 @@ import (
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
-	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
@@ -42,6 +41,12 @@ var (
 )
 
 const DefaultURLBase = "https://default.example.com"
+
+func init() {
+	cosmov1alpha1.AddToScheme(scheme.Scheme)
+	wsv1alpha1.AddToScheme(scheme.Scheme)
+	//+kubebuilder:scaffold:scheme
+}
 
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -67,14 +72,6 @@ var _ = BeforeSuite(func() {
 	cfg, err = testEnv.Start()
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
-
-	err = cosmov1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = wsv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	//+kubebuilder:scaffold:scheme
 
 	c, err := client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).NotTo(HaveOccurred())
@@ -196,7 +193,7 @@ func test_CreateCosmoUser(id string, dispayName string, role wsv1alpha1.UserRole
 		Spec: wsv1alpha1.UserSpec{
 			DisplayName: dispayName,
 			Role:        role,
-			AuthType:    wsv1alpha1.UserAuthTypeKosmoSecert,
+			AuthType:    wsv1alpha1.UserAuthTypePasswordSecert,
 		},
 	}
 	err := k8sClient.Create(ctx, &user)
@@ -311,26 +308,13 @@ func test_DeleteWorkspaceAll() {
 func test_createNetworkRule(userId, workspaceName, networkRuleName string, portNumber int, group, httpPath string) {
 	ctx := context.Background()
 
-	ws, err := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	netRule := wsv1alpha1.NetworkRule{
-		PortName:   networkRuleName,
-		PortNumber: portNumber,
-		Group:      pointer.String(group),
-		HTTPPath:   httpPath,
-	}
-
-	ws.Spec.Network, err = wsnet.UpsertNetRule(ws.Spec.Network, netRule)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	err = k8sClient.Update(ctx, ws)
+	_, err := k8sClient.AddNetworkRule(ctx, workspaceName, userId, networkRuleName, portNumber, &group, httpPath, false)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() bool {
 		ws, _ := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
 		for _, n := range ws.Spec.Network {
-			if n.PortName == netRule.PortName {
+			if n.PortName == networkRuleName {
 				return true
 			}
 		}

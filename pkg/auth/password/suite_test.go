@@ -1,14 +1,12 @@
-package kosmo
+package password
 
 import (
-	"context"
 	"path/filepath"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -28,15 +26,6 @@ var cfg *rest.Config
 var k8sClient client.Client
 var testEnv *envtest.Environment
 
-var etmpl1 *cosmov1alpha1.Template
-var einst1 *cosmov1alpha1.Instance
-var etmpl2 *cosmov1alpha1.Template
-var einst2 *cosmov1alpha1.Instance
-var einst2Pod *corev1.Pod
-
-var ectmpl1 *cosmov1alpha1.ClusterTemplate
-var ecinst1 *cosmov1alpha1.ClusterInstance
-
 func init() {
 	cosmov1alpha1.AddToScheme(scheme.Scheme)
 	wsv1alpha1.AddToScheme(scheme.Scheme)
@@ -45,7 +34,7 @@ func init() {
 
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Kosmo Suite")
+	RunSpecs(t, "Password Suite")
 }
 
 var _ = BeforeSuite(func() {
@@ -53,7 +42,7 @@ var _ = BeforeSuite(func() {
 
 	By("bootstrapping test environment")
 	testEnv = &envtest.Environment{
-		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
+		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
 	}
 
@@ -62,20 +51,8 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 
-	k8sClient, err = NewClientByRestConfig(cfg, scheme.Scheme)
+	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).NotTo(HaveOccurred())
-	Expect(k8sClient).NotTo(BeNil())
-
-	ctx := context.Background()
-	Expect(k8sClient.Create(ctx, etmpl1)).ShouldNot(HaveOccurred())
-	Expect(k8sClient.Create(ctx, einst1)).ShouldNot(HaveOccurred())
-	Expect(k8sClient.Create(ctx, etmpl2)).ShouldNot(HaveOccurred())
-	Expect(k8sClient.Create(ctx, einst2)).ShouldNot(HaveOccurred())
-	Expect(k8sClient.Create(ctx, einst2Pod)).ShouldNot(HaveOccurred())
-
-	Expect(k8sClient.Create(ctx, ecinst1)).ShouldNot(HaveOccurred())
-	Expect(k8sClient.Create(ctx, ectmpl1)).ShouldNot(HaveOccurred())
-
 })
 
 var _ = AfterSuite(func() {

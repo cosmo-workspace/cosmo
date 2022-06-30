@@ -70,554 +70,478 @@ var _ = Describe("cosmoctl [workspace]", func() {
 	})
 
 	//==================================================================================
+	desc := func(args ...string) string { return strings.Join(args, " ") }
+
+	errSnap := func(err error) string {
+		if err == nil {
+			return "success"
+		} else {
+			return err.Error()
+		}
+	}
+
+	workspaceSnap := func(ws *wsv1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
+		return struct{ Name, Namespace, Spec, Status interface{} }{
+			Name:      ws.Name,
+			Namespace: ws.Namespace,
+			Spec:      ws.Spec,
+			Status:    ws.Status,
+		}
+	}
+	//==================================================================================
 	Describe("[create]", func() {
 
-		Describe("succeed", func() {
+		DescribeTable("✅ success in normal context:",
+			func(args ...string) {
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).ShouldNot(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], args[4])
+				Expect(err).NotTo(HaveOccurred()) // created
 
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], args[4])
-					Expect(err).NotTo(HaveOccurred()) // created
+				wsSnap := struct{ Name, Namespace, Spec, Status interface{} }{
+					Name:      wsv1Workspace.Name,
+					Namespace: wsv1Workspace.Namespace,
+					Spec:      wsv1Workspace.Spec,
+					Status:    wsv1Workspace.Status,
+				}
+				Expect(wsSnap).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--vars", "HOGE:HOGEHOGE"),
+			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template", "template1"),
+		)
 
-					wsSnap := struct{ Name, Namespace, Spec, Status interface{} }{
-						Name:      wsv1Workspace.Name,
-						Namespace: wsv1Workspace.Namespace,
-						Spec:      wsv1Workspace.Spec,
-						Status:    wsv1Workspace.Status,
-					}
-					Expect(wsSnap).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--vars", "HOGE:HOGEHOGE"),
-				Entry(nil, "workspace", "create", "ws1", "--user", "user1", "--template", "template1"),
-			)
+		DescribeTable("✅ success with dry-run:",
+			func(args ...string) {
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).ShouldNot(HaveOccurred())
+				o := consoleOut()
+				o = regexp.MustCompile(`creationTimestamp: .+`).ReplaceAllString(o, "creationTimestamp: xxxxxxxx")
+				o = regexp.MustCompile(`time: .+`).ReplaceAllString(o, "time: xxxxxxxx")
+				o = regexp.MustCompile(`uid: .+`).ReplaceAllString(o, "uid: xxxxxxxx")
+				Expect(o).To(MatchSnapShot())
 
-			DescribeTable("with dry-run:",
-				func(args ...string) {
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					o := consoleOut()
-					o = regexp.MustCompile(`creationTimestamp: .+`).ReplaceAllString(o, "creationTimestamp: xxxxxxxx")
-					o = regexp.MustCompile(`time: .+`).ReplaceAllString(o, "time: xxxxxxxx")
-					o = regexp.MustCompile(`uid: .+`).ReplaceAllString(o, "uid: xxxxxxxx")
-					Expect(o).To(MatchSnapShot())
+				_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], args[4])
+				Expect(err).To(HaveOccurred()) // not created
+			},
+			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--vars", "HOGE:HOGEHOGE", "--dry-run"),
+		)
 
-					_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], args[4])
-					Expect(err).To(HaveOccurred()) // not created
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--vars", "HOGE:HOGEHOGE", "--dry-run"),
-			)
-		})
-
-		Describe("fail", func() {
-
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "create"),
-				Entry(nil, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--all-namespaces"),
-				Entry(nil, "workspace", "create", "ws1", "--user", "xxxxx", "--template", "template1"),
-				Entry(nil, "workspace", "create", "ws1", "--user", "user1", "--namespace", "user1", "--template", "template1"),
-				Entry(nil, "workspace", "create", "ws1", "--namespace", "xxxx", "--template", "template1"),
-				Entry(nil, "workspace", "create", "--user", "user1", "--template", "template1"),
-				Entry(nil, "workspace", "create", "ws1", "--user", "--template", "template1"),
-				Entry(nil, "workspace", "create", "ws1", "--user", "user1", "--template"),
-				Entry(nil, "workspace", "create", "ws1", "--user", "xxxxx", "--template", "template1", "--dry-run"),
-				Entry(nil, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--vars", "HOGE"),
-			)
-		})
+		DescribeTable("❌ fail with invalid args:",
+			func(args ...string) {
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).Should(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "create"),
+			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--all-namespaces"),
+			Entry(desc, "workspace", "create", "ws1", "--user", "xxxxx", "--template", "template1"),
+			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--namespace", "user1", "--template", "template1"),
+			Entry(desc, "workspace", "create", "ws1", "--namespace", "xxxx", "--template", "template1"),
+			Entry(desc, "workspace", "create", "--user", "user1", "--template", "template1"),
+			Entry(desc, "workspace", "create", "ws1", "--user", "--template", "template1"),
+			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template"),
+			Entry(desc, "workspace", "create", "ws1", "--user", "xxxxx", "--template", "template1", "--dry-run"),
+			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--vars", "HOGE"),
+		)
 	})
 
 	//==================================================================================
 	Describe("[get]", func() {
 
-		Describe("succeed", func() {
+		DescribeTable("✅ success in normal context:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_CreateWorkspace("user1", "ws2", "template1", nil)
+				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
+				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_CreateWorkspace("user1", "ws2", "template1", nil)
-					test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-					test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
-					test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).ShouldNot(HaveOccurred())
+				o := consoleOut()
+				o = regexp.MustCompile(`creationTimestamp: .+`).ReplaceAllString(o, "creationTimestamp: xxxxxxxx")
+				o = regexp.MustCompile(`time: .+`).ReplaceAllString(o, "time: xxxxxxxx")
+				o = regexp.MustCompile(`uid: .+`).ReplaceAllString(o, "uid: xxxxxxxx")
+				o = regexp.MustCompile(`resourceVersion: .+`).ReplaceAllString(o, "resourceVersion: xxxxxxxx")
+				Expect(o).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "get", "--user", "user1"),
+			Entry(desc, "workspace", "get", "--user", "user1", "ws2"),
+			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1"),
+			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1", "ws2"),
+			Entry(desc, "workspace", "get", "-A"),
+			Entry(desc, "workspace", "get", "-A", "-o", "yaml"),
+			Entry(desc, "workspace", "get", "-A", "-o", "wide"),
+			Entry(desc, "workspace", "get", "-A", "--network"),
+			Entry(desc, "workspace", "get", "-A", "--network", "-o", "yaml"),
+			Entry(desc, "workspace", "get", "-A", "--network", "-o", "wide"),
+		)
 
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					o := consoleOut()
-					o = regexp.MustCompile(`creationTimestamp: .+`).ReplaceAllString(o, "creationTimestamp: xxxxxxxx")
-					o = regexp.MustCompile(`time: .+`).ReplaceAllString(o, "time: xxxxxxxx")
-					o = regexp.MustCompile(`uid: .+`).ReplaceAllString(o, "uid: xxxxxxxx")
-					o = regexp.MustCompile(`resourceVersion: .+`).ReplaceAllString(o, "resourceVersion: xxxxxxxx")
-					Expect(o).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "get", "--user", "user1"),
-				Entry(nil, "workspace", "get", "--user", "user1", "ws2"),
-				Entry(nil, "workspace", "get", "--namespace", "cosmo-user-user1"),
-				Entry(nil, "workspace", "get", "--namespace", "cosmo-user-user1", "ws2"),
-				Entry(nil, "workspace", "get", "-A"),
-				Entry(nil, "workspace", "get", "-A", "-o", "yaml"),
-				Entry(nil, "workspace", "get", "-A", "-o", "wide"),
-				Entry(nil, "workspace", "get", "-A", "--network"),
-				Entry(nil, "workspace", "get", "-A", "--network", "-o", "yaml"),
-				Entry(nil, "workspace", "get", "-A", "--network", "-o", "wide"),
-			)
+		DescribeTable("✅ success when workspace is empty:",
+			func(args ...string) {
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).ShouldNot(HaveOccurred())
+				o := consoleOut()
+				o = regexp.MustCompile(`creationTimestamp: .+`).ReplaceAllString(o, "creationTimestamp: xxxxxxxx")
+				o = regexp.MustCompile(`time: .+`).ReplaceAllString(o, "time: xxxxxxxx")
+				o = regexp.MustCompile(`uid: .+`).ReplaceAllString(o, "uid: xxxxxxxx")
+				o = regexp.MustCompile(`resourceVersion: .+`).ReplaceAllString(o, "resourceVersion: xxxxxxxx")
+				Expect(o).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "get", "--user", "user1"),
+			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1"),
+			Entry(desc, "workspace", "get", "--all-namespaces"),
+			Entry(desc, "workspace", "get", "-A", "-o", "yaml"),
+			Entry(desc, "workspace", "get", "-A", "-o", "wide"),
+			Entry(desc, "workspace", "get", "-A", "--network"),
+			Entry(desc, "workspace", "get", "-A", "--network", "-o", "yaml"),
+			Entry(desc, "workspace", "get", "-A", "--network", "-o", "wide"),
+		)
 
-			DescribeTable("when workspace is empty:",
-				func(args ...string) {
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					o := consoleOut()
-					o = regexp.MustCompile(`creationTimestamp: .+`).ReplaceAllString(o, "creationTimestamp: xxxxxxxx")
-					o = regexp.MustCompile(`time: .+`).ReplaceAllString(o, "time: xxxxxxxx")
-					o = regexp.MustCompile(`uid: .+`).ReplaceAllString(o, "uid: xxxxxxxx")
-					o = regexp.MustCompile(`resourceVersion: .+`).ReplaceAllString(o, "resourceVersion: xxxxxxxx")
-					Expect(o).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "get", "--user", "user1"),
-				Entry(nil, "workspace", "get", "--namespace", "cosmo-user-user1"),
-				Entry(nil, "workspace", "get", "--all-namespaces"),
-				Entry(nil, "workspace", "get", "-A", "-o", "yaml"),
-				Entry(nil, "workspace", "get", "-A", "-o", "wide"),
-				Entry(nil, "workspace", "get", "-A", "--network"),
-				Entry(nil, "workspace", "get", "-A", "--network", "-o", "yaml"),
-				Entry(nil, "workspace", "get", "-A", "--network", "-o", "wide"),
-			)
-		})
+		DescribeTable("❌ fail with invalid args:",
+			func(args ...string) {
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).Should(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "get", "-A", "ws1"),
+			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1", "--user", "user1"),
+			Entry(desc, "workspace", "get", "--namespace", "xxx"),
+			Entry(desc, "workspace", "get", "-A", "--user", "user1"),
+			Entry(desc, "workspace", "get", "-A", "-o", "xxxx"),
+			Entry(desc, "workspace", "get", "--user", "user1", "xxx"),
+			Entry(desc, "workspace", "get", "--user", "xxxx"),
+		)
 
-		Describe("fail", func() {
-
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "get", "-A", "ws1"),
-				Entry(nil, "workspace", "get", "--namespace", "cosmo-user-user1", "--user", "user1"),
-				Entry(nil, "workspace", "get", "--namespace", "xxx"),
-				Entry(nil, "workspace", "get", "-A", "--user", "user1"),
-				Entry(nil, "workspace", "get", "-A", "-o", "xxxx"),
-				Entry(nil, "workspace", "get", "--user", "user1", "xxx"),
-				Entry(nil, "workspace", "get", "--user", "xxxx"),
-			)
-
-			DescribeTable("with an unexpected error at list users:",
-				func(args ...string) {
-					clientMock.ListMock = func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.ListUsers$") {
-							return true, errors.New("ListUsers error")
-						}
-						return false, nil
+		DescribeTable("❌ fail with an unexpected error at list users:",
+			func(args ...string) {
+				clientMock.ListMock = func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error) {
+					if clientMock.IsCallingFrom("\\.ListUsers$") {
+						return true, errors.New("mock listUsers error")
 					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "get", "-A"),
-			)
+					return false, nil
+				}
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).Should(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "get", "-A"),
+		)
 
-			DescribeTable("with an unexpected error at list workspace:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_CreateWorkspace("user1", "ws2", "template1", nil)
-					clientMock.ListMock = func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.ListWorkspacesByUserID$") {
-							return true, errors.New("ListWorkspacesByUserID error")
-						}
-						return false, nil
+		DescribeTable("❌ fail with an unexpected error at list workspace:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_CreateWorkspace("user1", "ws2", "template1", nil)
+				clientMock.ListMock = func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error) {
+					if clientMock.IsCallingFrom("\\.ListWorkspacesByUserID$") {
+						return true, errors.New("mock listWorkspacesByUserID error")
 					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "get", "-A"),
-				Entry(nil, "workspace", "get", "--user", "user1"),
-			)
-
-		})
+					return false, nil
+				}
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).Should(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "get", "-A"),
+			Entry(desc, "workspace", "get", "--user", "user1"),
+		)
 	})
 
 	//==================================================================================
 	Describe("[delete]", func() {
 
-		Describe("succeed", func() {
+		DescribeTable("✅ success in normal context:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws2", "template1", nil)
+				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
+				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws2", "template1", nil)
-					test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-					test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
-					test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).ShouldNot(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
 
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
+				_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).To(HaveOccurred()) // deleted
+			},
+			Entry(desc, "workspace", "delete", "ws2", "--user", "user1"),
+			Entry(desc, "workspace", "delete", "ws2", "--namespace", "cosmo-user-user1"),
+		)
 
-					_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-					Expect(err).To(HaveOccurred()) // deleted
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "delete", "ws2", "--user", "user1"),
-				Entry(nil, "workspace", "delete", "ws2", "--namespace", "cosmo-user-user1"),
-			)
+		DescribeTable("✅ success with dry-run:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws2", "template1", nil)
+				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
+				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 
-			DescribeTable("with dry-run:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws2", "template1", nil)
-					test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-					test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
-					test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).ShouldNot(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
 
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
+				_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred()) // undeleted
+			},
+			Entry(desc, "workspace", "delete", "ws2", "--dry-run", "--user", "user1"),
+			Entry(desc, "workspace", "delete", "ws2", "--dry-run", "--namespace", "cosmo-user-user1"),
+		)
 
-					_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-					Expect(err).NotTo(HaveOccurred()) // undeleted
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "delete", "ws2", "--dry-run", "--user", "user1"),
-				Entry(nil, "workspace", "delete", "ws2", "--dry-run", "--namespace", "cosmo-user-user1"),
-			)
-		})
+		DescribeTable("❌ fail with invalid args:",
+			func(args ...string) {
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).Should(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "delete", "ws1", "--user", "user1", "-A"),
+			Entry(desc, "workspace", "delete", "ws1", "--namespace", "cosmo-user-user1", "--user", "user1"),
+			Entry(desc, "workspace", "delete", "ws1", "--namespace", "xxxx"),
+			Entry(desc, "workspace", "delete"),
+			Entry(desc, "workspace", "delete", "xxxx", "--user", "user1", "-A"),
+			Entry(desc, "workspace", "delete", "ws1", "--user", "user1", "xxx"),
+		)
 
-		Describe("fail", func() {
-
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "delete", "ws1", "--user", "user1", "-A"),
-				Entry(nil, "workspace", "delete", "ws1", "--namespace", "cosmo-user-user1", "--user", "user1"),
-				Entry(nil, "workspace", "delete", "ws1", "--namespace", "xxxx"),
-				Entry(nil, "workspace", "delete"),
-				Entry(nil, "workspace", "delete", "xxxx", "--user", "user1", "-A"),
-				Entry(nil, "workspace", "delete", "ws1", "--user", "user1", "xxx"),
-			)
-
-			DescribeTable("with an unexpected error at delete:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					clientMock.DeleteMock = func(ctx context.Context, obj client.Object, opts ...client.DeleteOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.RunE$") {
-							return true, errors.New("Delete error")
-						}
-						return false, nil
+		DescribeTable("❌ fail with an unexpected error at delete:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				clientMock.DeleteMock = func(ctx context.Context, obj client.Object, opts ...client.DeleteOption) (mocked bool, err error) {
+					if clientMock.IsCallingFrom("\\.RunE$") {
+						return true, errors.New("mock delete error")
 					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "delete", "ws1", "--user", "user1"),
-				Entry(nil, "workspace", "delete", "ws1", "--dry-run", "--user", "user1"),
-			)
-
-		})
+					return false, nil
+				}
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).Should(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "delete", "ws1", "--user", "user1"),
+			Entry(desc, "workspace", "delete", "ws1", "--dry-run", "--user", "user1"),
+		)
 	})
 
 	//==================================================================================
 	Describe("[open-port]", func() {
 
-		Describe("succeed", func() {
+		DescribeTable("✅ success in normal context:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
+				test_createNetworkRule("user1", "ws1", "nw3", 2222, "gp1", "/")
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-					test_createNetworkRule("user1", "ws1", "nw3", 2222, "gp1", "/")
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).ShouldNot(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
 
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred())
+				Ω(wsv1Workspace.Spec).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/abc", "--group", "gp11"),
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
+		)
 
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-					Expect(err).NotTo(HaveOccurred())
-					Ω(wsv1Workspace.Spec).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/abc", "--group", "gp11"),
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
-			)
-		})
+		DescribeTable("❌ fail with invalid args:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
 
-		Describe("fail", func() {
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).Should(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/", "-A"),
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--name", "nw11", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "open-port", "ws1", "--namespace", "xxxxx", "--name", "nw11", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "open-port"),
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--path", "/"),
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "xxxxx", "--name", "nw11", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "open-port", "xxx", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "1111", "--path", "/"),
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw1", "--port", "1111", "--path", "/", "--group", "gp1"),
+		)
 
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/", "-A"),
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--name", "nw11", "--port", "3000", "--path", "/"),
-				Entry(nil, "workspace", "open-port", "ws1", "--namespace", "xxxxx", "--name", "nw11", "--port", "3000", "--path", "/"),
-				Entry(nil, "workspace", "open-port"),
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--port", "3000", "--path", "/"),
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--path", "/"),
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "xxxxx", "--name", "nw11", "--port", "3000", "--path", "/"),
-				Entry(nil, "workspace", "open-port", "xxx", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/"),
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "1111", "--path", "/"),
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw1", "--port", "1111", "--path", "/", "--group", "gp1"),
-			)
-
-			DescribeTable("with an unexpected error at update:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					clientMock.UpdateMock = func(ctx context.Context, obj client.Object, opts ...client.UpdateOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.RunE$") {
-							return true, errors.New("update error")
-						}
-						return false, nil
+		DescribeTable("❌ fail with an unexpected error at update:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				clientMock.UpdateMock = func(ctx context.Context, obj client.Object, opts ...client.UpdateOption) (mocked bool, err error) {
+					if clientMock.IsCallingFrom("\\.RunE$") {
+						return true, errors.New("mock update error")
 					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
-			)
-		})
+					return false, nil
+				}
+				rootCmd.SetArgs(args)
+				err := rootCmd.Execute()
+				Ω(err).Should(HaveOccurred())
+				Expect(consoleOut()).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
+		)
 	})
 
 	//==================================================================================
 	Describe("[close-port]", func() {
 
-		Describe("succeed", func() {
+		run_test := func(args ...string) {
+			By("---------------test start----------------")
+			rootCmd.SetArgs(args)
+			err := rootCmd.Execute()
+			Expect(consoleOut()).To(MatchSnapShot())
+			Ω(errSnap(err)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-					test_createNetworkRule("user1", "ws1", "nw2", 2222, "gp1", "/")
+		DescribeTable("✅ success in normal context:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
+				test_createNetworkRule("user1", "ws1", "nw2", 2222, "gp1", "/")
+				run_test(args...)
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred())
+				Ω(wsv1Workspace.Spec).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw1"),
+		)
 
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
+		DescribeTable("❌ fail with invalid args:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
+				run_test(args...)
+			},
+			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw11", "-A"),
+			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--port-name", "nw11"),
+			Entry(desc, "workspace", "close-port", "ws1", "--namespace", "xxxxx", "--port-name", "nw11"),
+			Entry(desc, "workspace", "close-port"),
+			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1"),
+			Entry(desc, "workspace", "close-port", "ws1", "--user", "xxxxx", "--port-name", "nw11"),
+			Entry(desc, "workspace", "close-port", "xxx", "--user", "user1", "--port-name", "nw11"),
+			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "main"),
+			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "xxxx"),
+		)
 
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-					Expect(err).NotTo(HaveOccurred())
-					Ω(wsv1Workspace.Spec).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw1"),
-			)
-		})
-
-		Describe("fail", func() {
-
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw11", "-A"),
-				Entry(nil, "workspace", "close-port", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--port-name", "nw11"),
-				Entry(nil, "workspace", "close-port", "ws1", "--namespace", "xxxxx", "--port-name", "nw11"),
-				Entry(nil, "workspace", "close-port"),
-				Entry(nil, "workspace", "close-port", "ws1", "--user", "user1"),
-				Entry(nil, "workspace", "close-port", "ws1", "--user", "xxxxx", "--port-name", "nw11"),
-				Entry(nil, "workspace", "close-port", "xxx", "--user", "user1", "--port-name", "nw11"),
-				Entry(nil, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "main"),
-				Entry(nil, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "xxxx"),
-			)
-
-			DescribeTable("with an unexpected error at update:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-					clientMock.UpdateMock = func(ctx context.Context, obj client.Object, opts ...client.UpdateOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.RunE$") {
-							return true, errors.New("update error")
-						}
-						return false, nil
-					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw1"),
-			)
-		})
+		DescribeTable("❌ fail with an unexpected error at update:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
+				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
+				run_test(args...)
+			},
+			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw1"),
+		)
 	})
 
 	//==================================================================================
 	Describe("[run-instance]", func() {
 
-		Describe("succeed", func() {
+		run_test := func(args ...string) {
+			By("---------------test start----------------")
+			rootCmd.SetArgs(args)
+			err := rootCmd.Execute()
+			Expect(consoleOut()).To(MatchSnapShot())
+			Ω(errSnap(err)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_StopWorkspace("user1", "ws1")
+		DescribeTable("✅ success in normal context:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_StopWorkspace("user1", "ws1")
+				run_test(args...)
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred())
+				Ω(wsv1Workspace.Spec).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "run-instance", "ws1", "--user", "user1"),
+		)
 
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
+		DescribeTable("❌ fail with invalid args:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_StopWorkspace("user1", "ws1")
+				test_CreateWorkspace("user1", "ws2", "template1", nil)
+				run_test(args...)
+			},
+			Entry(desc, "workspace", "run-instance", "ws1", "--user", "user1", "-A"),
+			Entry(desc, "workspace", "run-instance", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1"),
+			Entry(desc, "workspace", "run-instance", "ws1", "--namespace", "xxxxx"),
+			Entry(desc, "workspace", "run-instance"),
+			Entry(desc, "workspace", "run-instance", "ws1", "--user", "xxxxx"),
+			Entry(desc, "workspace", "run-instance", "xxx", "--user", "user1"),
+			Entry(desc, "workspace", "run-instance", "ws2", "--user", "user1"),
+		)
 
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-					Expect(err).NotTo(HaveOccurred())
-					Ω(wsv1Workspace.Spec).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "run-instance", "ws1", "--user", "user1"),
-			)
-		})
-
-		Describe("fail", func() {
-
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_StopWorkspace("user1", "ws1")
-					test_CreateWorkspace("user1", "ws2", "template1", nil)
-
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "run-instance", "ws1", "--user", "user1", "-A"),
-				Entry(nil, "workspace", "run-instance", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1"),
-				Entry(nil, "workspace", "run-instance", "ws1", "--namespace", "xxxxx"),
-				Entry(nil, "workspace", "run-instance"),
-				Entry(nil, "workspace", "run-instance", "ws1", "--user", "xxxxx"),
-				Entry(nil, "workspace", "run-instance", "xxx", "--user", "user1"),
-				Entry(nil, "workspace", "run-instance", "ws2", "--user", "user1"),
-			)
-
-			DescribeTable("with an unexpected error at update:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_StopWorkspace("user1", "ws1")
-					clientMock.UpdateMock = func(ctx context.Context, obj client.Object, opts ...client.UpdateOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.RunE$") {
-							return true, errors.New("update error")
-						}
-						return false, nil
-					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "run-instance", "ws1", "--user", "user1"),
-			)
-		})
+		DescribeTable("❌ fail with an unexpected error at update:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_StopWorkspace("user1", "ws1")
+				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
+				run_test(args...)
+			},
+			Entry(desc, "workspace", "run-instance", "ws1", "--user", "user1"),
+		)
 	})
 
 	//==================================================================================
 	Describe("[stop-instance]", func() {
 
-		Describe("succeed", func() {
+		run_test := func(args ...string) {
+			By("---------------test start----------------")
+			rootCmd.SetArgs(args)
+			err := rootCmd.Execute()
+			Expect(consoleOut()).To(MatchSnapShot())
+			Ω(errSnap(err)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
 
-			DescribeTable("in normal context:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
+		DescribeTable("✅ success in normal context:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				run_test(args...)
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			},
+			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "user1"),
+		)
 
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).ShouldNot(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
+		DescribeTable("❌ fail with invalid args:",
+			func(args ...string) {
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				test_CreateWorkspace("user1", "ws2", "template1", nil)
+				test_StopWorkspace("user1", "ws2")
+				run_test(args...)
+			},
+			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "user1", "-A"),
+			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1"),
+			Entry(desc, "workspace", "stop-instance", "ws1", "--namespace", "xxxxx"),
+			Entry(desc, "workspace", "stop-instance"),
+			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "xxxxx"),
+			Entry(desc, "workspace", "stop-instance", "xxx", "--user", "user1"),
+			Entry(desc, "workspace", "stop-instance", "ws2", "--user", "user1"),
+		)
 
-					wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-					Expect(err).NotTo(HaveOccurred())
-					Ω(wsv1Workspace.Spec).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "stop-instance", "ws1", "--user", "user1"),
-			)
-		})
-
-		Describe("fail", func() {
-
-			DescribeTable("with invalid args:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					test_CreateWorkspace("user1", "ws2", "template1", nil)
-					test_StopWorkspace("user1", "ws2")
-
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "stop-instance", "ws1", "--user", "user1", "-A"),
-				Entry(nil, "workspace", "stop-instance", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1"),
-				Entry(nil, "workspace", "stop-instance", "ws1", "--namespace", "xxxxx"),
-				Entry(nil, "workspace", "stop-instance"),
-				Entry(nil, "workspace", "stop-instance", "ws1", "--user", "xxxxx"),
-				Entry(nil, "workspace", "stop-instance", "xxx", "--user", "user1"),
-				Entry(nil, "workspace", "stop-instance", "ws2", "--user", "user1"),
-			)
-
-			DescribeTable("with an unexpected error at update:",
-				func(args ...string) {
-					test_CreateWorkspace("user1", "ws1", "template1", nil)
-					clientMock.UpdateMock = func(ctx context.Context, obj client.Object, opts ...client.UpdateOption) (mocked bool, err error) {
-						if clientMock.IsCallingFrom("\\.RunE$") {
-							return true, errors.New("update error")
-						}
-						return false, nil
-					}
-					rootCmd.SetArgs(args)
-					err := rootCmd.Execute()
-					Ω(err).Should(HaveOccurred())
-					Expect(consoleOut()).To(MatchSnapShot())
-				},
-				func(args ...string) string { return strings.Join(args, " ") },
-				Entry(nil, "workspace", "stop-instance", "ws1", "--user", "user1"),
-			)
-		})
+		DescribeTable("❌ fail with an unexpected error at update:",
+			func(args ...string) {
+				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
+				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				run_test(args...)
+			},
+			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "user1"),
+		)
 	})
 
 })

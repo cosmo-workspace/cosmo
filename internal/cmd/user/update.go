@@ -8,11 +8,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"k8s.io/apimachinery/pkg/api/equality"
-
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 type updateOption struct {
@@ -30,7 +29,7 @@ func updateCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
 		Use:               "update USER_ID --role ROLE --name NAME",
 		Short:             "Update user",
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	cmd.Flags().StringVar(&o.Name, "name", "", "user name")
 	cmd.Flags().StringVar(&o.Role, "role", "-", "user role")
@@ -73,33 +72,13 @@ func (o *updateOption) Complete(cmd *cobra.Command, args []string) error {
 func (o *updateOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
+
 	ctx = clog.IntoContext(ctx, o.Logr)
-
-	c := o.Client
-
-	user, err := c.GetUser(ctx, o.UserID)
+	_, err := o.Client.UpdateUser(ctx, o.UserID, kosmo.UpdateUserOpts{
+		DisplayName: &o.Name,
+		UserRole:    &o.Role,
+	})
 	if err != nil {
-		return err
-	}
-	o.Logr.DebugAll().Info("GetUser", "user", user)
-
-	before := user.DeepCopy()
-
-	if o.Name != "" {
-		user.Spec.DisplayName = o.Name
-		o.Logr.Debug().Info("name changed", "name", o.Name)
-	}
-
-	if o.Role != "-" {
-		user.Spec.Role = o.role
-	}
-	o.Logr.Debug().Info("role changed", "role", o.role)
-
-	if equality.Semantic.DeepEqual(before, user) {
-		return errors.New("no change")
-	}
-
-	if err := c.Update(ctx, user); err != nil {
 		return err
 	}
 
