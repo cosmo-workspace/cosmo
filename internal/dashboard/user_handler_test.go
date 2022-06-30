@@ -13,6 +13,7 @@ import (
 	. "github.com/onsi/gomega"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
@@ -381,7 +382,13 @@ var _ = Describe("Dashboard server [User]", func() {
 
 		DescribeTable("❌ fail to verify password:",
 			func(userId, requestBody string) {
-				clientMock.SetGetError((*Server).PutUserPassword, apierrs.NewNotFound(schema.GroupResource{}, "secret"))
+				clientMock.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object) (mocked bool, err error) {
+					if key.Name == wsv1alpha1.UserPasswordSecretName {
+						return true, apierrs.NewNotFound(schema.GroupResource{}, "secret")
+					}
+					return false, nil
+				}
+				//clientMock.SetGetError((*Server).PutUserPassword, apierrs.NewNotFound(schema.GroupResource{}, "secret"))
 				run_test(userId, requestBody)
 			},
 			Entry(nil, "usertest-admin", `{ "currentPassword": "password", "newPassword": "newPassword"}`),

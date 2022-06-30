@@ -7,6 +7,7 @@ import (
 
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/google/uuid"
 )
 
@@ -55,6 +56,34 @@ func NormalResponse(code int, body interface{}) (dashv1alpha1.ImplResponse, erro
 	return dashv1alpha1.Response(code, body), nil
 }
 
-func ErrorResponse(code int, message string) (dashv1alpha1.ImplResponse, error) {
-	return dashv1alpha1.Response(code, nil), errors.New(message)
+func ErrorResponse(log *clog.Logger, err error) (dashv1alpha1.ImplResponse, error) {
+
+	var statusCode int
+	if errors.Is(err, kosmo.ErrNotFound) {
+		statusCode = http.StatusNotFound
+
+	} else if errors.Is(err, kosmo.ErrIsAlreadyExists) {
+		statusCode = http.StatusTooManyRequests
+
+	} else if errors.Is(err, kosmo.ErrBadRequest) {
+		statusCode = http.StatusBadRequest
+
+	} else if errors.Is(err, kosmo.ErrForbidden) {
+		statusCode = http.StatusForbidden
+
+	} else if errors.Is(err, kosmo.ErrUnauthorized) {
+		statusCode = http.StatusUnauthorized
+
+	} else if errors.Is(err, kosmo.ErrServiceUnavailable) {
+		statusCode = http.StatusServiceUnavailable
+
+	} else if errors.Is(err, kosmo.ErrInternalServerError) {
+		statusCode = http.StatusInternalServerError
+
+	} else {
+		err = kosmo.NewInternalServerError("unexpected error occurred", err)
+		statusCode = http.StatusInternalServerError
+	}
+	log.WithCaller().Info(err.Error())
+	return dashv1alpha1.Response(statusCode, nil), err
 }

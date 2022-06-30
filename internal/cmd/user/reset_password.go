@@ -24,7 +24,7 @@ func resetPasswordCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
 		Use:               "reset-password USER_ID",
 		Short:             "Reset user password",
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	return cmd
 }
