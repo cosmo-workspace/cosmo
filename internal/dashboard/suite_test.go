@@ -32,7 +32,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
-	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
@@ -411,26 +410,13 @@ func test_DeleteWorkspaceAll() {
 func test_createNetworkRule(userId, workspaceName, networkRuleName string, portNumber int, group, httpPath string) {
 	ctx := context.Background()
 
-	ws, err := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	netRule := wsv1alpha1.NetworkRule{
-		PortName:   networkRuleName,
-		PortNumber: portNumber,
-		Group:      pointer.String(group),
-		HTTPPath:   httpPath,
-	}
-
-	ws.Spec.Network, err = wsnet.UpsertNetRule(ws.Spec.Network, netRule)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	err = k8sClient.Update(ctx, ws)
+	_, err := k8sClient.AddNetworkRule(ctx, workspaceName, userId, networkRuleName, portNumber, &group, httpPath, false)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() bool {
 		ws, _ := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
 		for _, n := range ws.Spec.Network {
-			if n.PortName == netRule.PortName {
+			if n.PortName == networkRuleName {
 				return true
 			}
 		}

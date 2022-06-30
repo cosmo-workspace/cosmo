@@ -159,7 +159,6 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_CreateWorkspace("user1", "ws2", "template1", nil)
 				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
 				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 
 				rootCmd.SetArgs(args)
 				err := rootCmd.Execute()
@@ -265,7 +264,6 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_CreateWorkspace("user1", "ws2", "template1", nil)
 				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
 				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 
 				rootCmd.SetArgs(args)
 				err := rootCmd.Execute()
@@ -283,7 +281,6 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws2", "template1", nil)
 				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 
 				rootCmd.SetArgs(args)
