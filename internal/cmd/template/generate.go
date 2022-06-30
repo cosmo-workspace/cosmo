@@ -74,7 +74,7 @@ Example:
       cosmoctl template generate --name TEMPLATE_NAME -o cosmo-template.yaml < merged.yaml
 `,
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "template name (use directory name if not specified)")

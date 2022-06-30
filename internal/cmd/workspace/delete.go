@@ -27,7 +27,7 @@ func deleteCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
 		Aliases:           []string{"del"},
 		Short:             "Delete workspace",
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	cmd.Flags().BoolVar(&o.DryRun, "dry-run", false, "dry run")
 	return cmd
@@ -68,20 +68,14 @@ func (o *deleteOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 
-	ws, err := o.Client.GetWorkspace(ctx, o.WorkspaceName, o.Namespace)
-	if err != nil {
-		return err
-	}
-
-	o.Logr.Debug().Info("deleting workspace", "workspace", ws, "dryrun", o.DryRun)
 	if o.DryRun {
-		if err := o.Client.Delete(ctx, ws, client.DryRunAll); err != nil {
+		if _, err := o.Client.DeleteWorkspace(ctx, o.WorkspaceName, o.User, client.DryRunAll); err != nil {
 			return err
 		}
 		cmdutil.PrintfColorInfo(o.ErrOut, "Successfully deleted workspace %s (dry-run)\n", o.WorkspaceName)
 
 	} else {
-		if err := o.Client.Delete(ctx, ws); err != nil {
+		if _, err := o.Client.DeleteWorkspace(ctx, o.WorkspaceName, o.User); err != nil {
 			return err
 		}
 		cmdutil.PrintfColorInfo(o.ErrOut, "Successfully deleted workspace %s\n", o.WorkspaceName)

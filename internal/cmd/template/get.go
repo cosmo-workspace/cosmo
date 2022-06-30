@@ -35,7 +35,7 @@ Basically it is similar to "kubectl get template"
 For type workspace template, use with --workspace flag to see more information. 
 `,
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	cmd.PersistentFlags().BoolVar(&o.TypeWorkspace, "workspace", false, "show type workspace template")
 	return cmd

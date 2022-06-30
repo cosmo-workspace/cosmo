@@ -8,6 +8,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
@@ -202,7 +203,13 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 
 		DescribeTable("❌ fail with an unexpected error at list:",
 			func(userId, wsName string) {
-				clientMock.SetGetError(`\.GetWorkspace$`, errors.New("mock get workspace error"))
+				clientMock.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object) (mocked bool, err error) {
+					if key.Name == wsName {
+						return true, errors.New("mock get workspace error")
+					}
+					return false, nil
+				}
+				//clientMock.SetGetError(`\.GetWorkspace$`, errors.New("mock get workspace error"))
 				//clientMock.SetGetError((*Server).GetWorkspace, errors.New("mock get workspace error"))
 				run_test(userId, wsName)
 			},

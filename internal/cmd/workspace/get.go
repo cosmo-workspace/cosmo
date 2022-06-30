@@ -41,7 +41,7 @@ But for Workspace detailed status or trouble shooting,
 use "kubectl describe workspace" or "kubectl describe instance" and see controller's events.
 `,
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	cmd.Flags().StringVarP(&o.outputFormat, "output", "o", "", "output format. available: 'wide', 'yaml'")
 	cmd.Flags().BoolVar(&o.showNetwork, "network", false, "show workspace network")
@@ -98,6 +98,8 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace {
 		users, err := c.ListUsers(ctx)
 		if err != nil {
+			// todo:
+			err = cmdutil.UnwrapKosmoError(err)
 			return fmt.Errorf("failed to list users: %v", err)
 		}
 		o.Logr.DebugAll().Info("ListUsers", "users", users)
@@ -105,6 +107,8 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 		for _, user := range users {
 			ws, err := c.ListWorkspacesByUserID(ctx, user.Name)
 			if err != nil {
+				// todo:
+				err = cmdutil.UnwrapKosmoError(err)
 				return fmt.Errorf("failed to list workspaces: %v", err)
 			}
 			o.Logr.DebugAll().Info("ListWorkspacesByUserID", "user", o.User, "wsCount", len(ws), "wsList", ws)
@@ -114,6 +118,8 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 	} else if o.WorkspaceName != "" {
 		ws, err := c.GetWorkspaceByUserID(ctx, o.WorkspaceName, o.User)
 		if err != nil {
+			// todo:
+			err = cmdutil.UnwrapKosmoError(err)
 			return fmt.Errorf("failed to get workspace: %v", err)
 		}
 		wss = []wsv1alpha1.Workspace{*ws}
@@ -122,11 +128,15 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 	} else {
 		_, err := c.GetUser(ctx, o.User)
 		if err != nil {
+			// todo:
+			err = cmdutil.UnwrapKosmoError(err)
 			return fmt.Errorf("failed to get user: %v", err)
 		}
 
 		wss, err = c.ListWorkspacesByUserID(ctx, o.User)
 		if err != nil {
+			// todo:
+			err = cmdutil.UnwrapKosmoError(err)
 			return fmt.Errorf("failed to list workspaces: %v", err)
 		}
 		o.Logr.DebugAll().Info("ListWorkspacesByUserID", "user", o.User, "wsCount", len(wss), "wsList", wss)
