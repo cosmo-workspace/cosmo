@@ -25,7 +25,7 @@ func deleteCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
 		Aliases:           []string{"del"},
 		Short:             "Delete user",
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	return cmd
 }
@@ -65,12 +65,7 @@ func (o *deleteOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	user, err := c.GetUser(ctx, o.UserID)
-	if err != nil {
-		return err
-	}
-
-	if err := c.Delete(ctx, user); err != nil {
+	if _, err := c.DeleteUser(ctx, o.UserID); err != nil {
 		return err
 	}
 

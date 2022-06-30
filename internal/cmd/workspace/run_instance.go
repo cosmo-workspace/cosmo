@@ -8,10 +8,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"k8s.io/apimachinery/pkg/api/equality"
+	"k8s.io/utils/pointer"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 type runInstanceOption struct {
@@ -28,7 +29,7 @@ func runInstanceCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
 		Aliases:           []string{"run"},
 		Short:             "Run workspace instance",
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 	}
 	return cmd
 }
@@ -68,27 +69,7 @@ func (o *runInstanceOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	if _, err := c.GetUser(ctx, o.User); err != nil {
-		return err
-	}
-
-	ws, err := c.GetWorkspace(ctx, o.InstanceName, o.Namespace)
-	if err != nil {
-		return err
-	}
-	o.Logr.DebugAll().Info("GetWorkspace", "ws", ws, "namespace", o.Namespace)
-
-	before := ws.DeepCopy()
-
-	var rep int64 = 1
-	ws.Spec.Replicas = &rep
-
-	o.Logr.Debug().PrintObjectDiff(before, ws)
-	if equality.Semantic.DeepEqual(before, ws) {
-		return errors.New("no change")
-	}
-
-	if err = c.Update(ctx, ws); err != nil {
+	if _, err := c.UpdateWorkspace(ctx, o.InstanceName, o.User, kosmo.UpdateWorkspaceOpts{Replicas: pointer.Int64(1)}); err != nil {
 		return err
 	}
 

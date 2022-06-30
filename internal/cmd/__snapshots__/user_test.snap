@@ -342,7 +342,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create TESTuser 1']
 SnapShot = """
-Error: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
+Error: failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
 Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
@@ -363,7 +363,7 @@ Global Flags:
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create TESTuser 2']
 SnapShot = """
-User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
+failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --admin --role cosmo-admin 1']
 SnapShot = """
@@ -447,7 +447,7 @@ SnapShot = 'success'
 
 ['cosmoctl [user] [delete] ❌ fail with an unexpected error at delete: user delete user-delete1 1']
 SnapShot = """
-Error: mock delete user error
+Error: failed to delete user: mock delete user error
 Usage:
   cosmoctl user delete USER_ID [flags]
 
@@ -465,7 +465,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [delete] ❌ fail with an unexpected error at delete: user delete user-delete1 2']
-SnapShot = 'mock delete user error'
+SnapShot = 'failed to delete user: mock delete user error'
 
 ['cosmoctl [user] [delete] ❌ fail with invalid args: user delete 1']
 SnapShot = """
@@ -491,7 +491,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 1']
 SnapShot = """
-Error: users.workspace.cosmo-workspace.github.io \"XXXXX\" not found
+Error: user is not found: users.workspace.cosmo-workspace.github.io \"XXXXX\" not found
 Usage:
   cosmoctl user delete USER_ID [flags]
 
@@ -509,7 +509,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 2']
-SnapShot = 'users.workspace.cosmo-workspace.github.io "XXXXX" not found'
+SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "XXXXX" not found'
 
 ['cosmoctl [user] [get] ✅ success in normal context: user get 1']
 SnapShot = """
@@ -531,7 +531,7 @@ SnapShot = 'success'
 
 ['cosmoctl [user] [get] ❌ fail with an unexpected error at list: user get 1']
 SnapShot = """
-Error: mock user list error
+Error: failed to list users: mock user list error
 Usage:
   cosmoctl user get [flags]
 
@@ -546,7 +546,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [get] ❌ fail with an unexpected error at list: user get 2']
-SnapShot = 'mock user list error'
+SnapShot = 'failed to list users: mock user list error'
 
 ['cosmoctl [user] [reset-password] ✅ success in normal context: user reset-password user1 1']
 SnapShot = """
@@ -598,7 +598,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 1']
 SnapShot = """
-Error: namespaces \"cosmo-user-XXXXXX\" not found
+Error: failed to update user password: namespaces \"cosmo-user-XXXXXX\" not found
 Usage:
   cosmoctl user reset-password USER_ID [flags]
 
@@ -613,7 +613,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 2']
-SnapShot = 'namespaces "cosmo-user-XXXXXX" not found'
+SnapShot = 'failed to update user password: namespaces "cosmo-user-XXXXXX" not found'
 
 ['cosmoctl [user] [update] ✅ success in normal context: user update user1 --name namechanged 1']
 SnapShot = """
@@ -687,7 +687,7 @@ SnapShot = """
 
 ['cosmoctl [user] [update] ❌ fail with an unexpected error at update: user update user1 --name namechanged 1']
 SnapShot = """
-Error: mock update error
+Error: failed to update user: mock update error
 Usage:
   cosmoctl user update USER_ID --role ROLE --name NAME [flags]
 
@@ -704,7 +704,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [update] ❌ fail with an unexpected error at update: user update user1 --name namechanged 2']
-SnapShot = 'mock update error'
+SnapShot = 'failed to update user: mock update error'
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update 1']
 SnapShot = """
@@ -729,7 +729,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 1']
 SnapShot = """
-Error: users.workspace.cosmo-workspace.github.io \"XXXXXX\" not found
+Error: user is not found: users.workspace.cosmo-workspace.github.io \"XXXXXX\" not found
 Usage:
   cosmoctl user update USER_ID --role ROLE --name NAME [flags]
 
@@ -746,7 +746,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 2']
-SnapShot = 'users.workspace.cosmo-workspace.github.io "XXXXXX" not found'
+SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "XXXXXX" not found'
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name  1']
 SnapShot = """

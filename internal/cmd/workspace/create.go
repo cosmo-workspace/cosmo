@@ -12,8 +12,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/yaml"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
@@ -36,7 +34,7 @@ func createCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
 		Use:               "create WORKSPACE_NAME --template TEMPLATE_NAME",
 		Short:             "Create workspace",
 		PersistentPreRunE: o.PreRunE,
-		RunE:              o.RunE,
+		RunE:              cmdutil.RunEHandler(o.RunE),
 		Example:           "create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10",
 	}
 	cmd.Flags().StringVarP(&o.Template, "template", "t", "", "template name")
@@ -101,24 +99,13 @@ func (o *createOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	ws := wsv1alpha1.Workspace{}
-	ws.SetName(o.WorkspaceName)
-	ws.SetNamespace(wsv1alpha1.UserNamespace(o.User))
-	ws.Spec = wsv1alpha1.WorkspaceSpec{
-		Template: cosmov1alpha1.TemplateRef{
-			Name: o.Template,
-		},
-		Vars: o.vars,
-	}
-
-	o.Logr.Debug().Info("creating workspace", "ws", ws, "dryrun", o.DryRun)
-
 	if o.DryRun {
-		if err := c.Create(ctx, &ws, client.DryRunAll); err != nil {
+		ws, err := c.CreateWorkspace(ctx, o.User, o.WorkspaceName, o.Template, o.vars, client.DryRunAll)
+		if err != nil {
 			return err
 		}
 
-		gvk, err := apiutil.GVKForObject(&ws, o.Scheme)
+		gvk, err := apiutil.GVKForObject(ws, o.Scheme)
 		if err != nil {
 			return err
 		}
@@ -130,9 +117,10 @@ func (o *createOption) RunE(cmd *cobra.Command, args []string) error {
 		cmdutil.PrintfColorInfo(o.ErrOut, "Successfully created workspace %s (dry-run)\n", o.WorkspaceName)
 
 	} else {
-		if err := c.Create(ctx, &ws); err != nil {
+		if _, err := c.CreateWorkspace(ctx, o.User, o.WorkspaceName, o.Template, o.vars); err != nil {
 			return err
 		}
+
 		cmdutil.PrintfColorInfo(o.ErrOut, "Successfully created workspace %s\n", o.WorkspaceName)
 	}
 
