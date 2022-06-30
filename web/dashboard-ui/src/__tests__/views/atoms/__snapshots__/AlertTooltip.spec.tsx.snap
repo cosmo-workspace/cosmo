@@ -4,7 +4,7 @@ exports[`AlertTooltip AlertTooltip 1`] = `
 <DocumentFragment>
   <div
     aria-label="title1"
-    class="MuiBox-root css-0"
+    class="MuiBox-root emotion-0"
     data-mui-internal-clone-element="true"
   />
 </DocumentFragment>
@@ -14,7 +14,7 @@ exports[`AlertTooltip AlertTooltip open 1`] = `
 <DocumentFragment>
   <div
     aria-label="title2"
-    class="MuiBox-root css-0"
+    class="MuiBox-root emotion-0"
     data-mui-internal-clone-element="true"
   />
 </DocumentFragment>
@@ -24,7 +24,7 @@ exports[`AlertTooltip AlertTooltip open dark 1`] = `
 <DocumentFragment>
   <div
     aria-label="title3"
-    class="MuiBox-root css-0"
+    class="MuiBox-root emotion-0"
     data-mui-internal-clone-element="true"
   />
 </DocumentFragment>

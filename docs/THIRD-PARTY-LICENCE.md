@@ -4,6 +4,7 @@
 
 |           software           |      license       |                                     licence url                                     |
 | :--------------------------- | :----------------- | ----------------------------------------------------------------------------------- |
+| @emotion/jest                | MIT                | https://github.com/emotion-js/emotion/blob/main/packages/jest/LICENSE               |
 | @emotion/react               | MIT                | https://github.com/emotion-js/emotion/blob/main/packages/react/LICENSE              |
 | @emotion/styled              | MIT                | https://github.com/emotion-js/emotion/blob/main/packages/styled/LICENSE             |
 | @mui/icons-material          | MIT                | https://github.com/mui-org/material-ui/blob/master/LICENSE                          |
