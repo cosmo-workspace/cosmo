@@ -351,7 +351,7 @@ SnapShot = """
 
 ['Dashboard server [User] [PutUserPassword] ❌ fail with an unexpected error : Entry: usertest-admin, { "currentPassword": "password", "newPassword": "newPassword"} 2']
 SnapShot = """
-{\"message\":\"failed to update user password\"}
+{\"message\":\"failed to register password\"}
 """
 
 ['Dashboard server [User] [PutUserPassword] ❌ fail with invalid request: Entry: XXXXXX, { "currentPassword": "password", "newPassword": "newPassword"} 1']

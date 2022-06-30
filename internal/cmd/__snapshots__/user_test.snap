@@ -560,7 +560,7 @@ SnapShot = 'success'
 ['cosmoctl [user] [reset-password] ❌ fail with an unexpected error at update: user reset-password user1 1']
 SnapShot = """
 \u001B[32mSuccessfully reset password: user user1
-\u001B[0mError: failed to get password secret: mock get error
+\u001B[0mError: failed to get default password: failed to get password secret: mock get error
 Usage:
   cosmoctl user reset-password USER_ID [flags]
 
@@ -575,7 +575,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [reset-password] ❌ fail with an unexpected error at update: user reset-password user1 2']
-SnapShot = 'failed to get password secret: mock get error'
+SnapShot = 'failed to get default password: failed to get password secret: mock get error'
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password 1']
 SnapShot = """
@@ -598,7 +598,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 1']
 SnapShot = """
-Error: failed to update user password: namespaces \"cosmo-user-XXXXXX\" not found
+Error: failed to reset password: namespaces \"cosmo-user-XXXXXX\" not found
 Usage:
   cosmoctl user reset-password USER_ID [flags]
 
@@ -613,7 +613,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 2']
-SnapShot = 'failed to update user password: namespaces "cosmo-user-XXXXXX" not found'
+SnapShot = 'failed to reset password: namespaces "cosmo-user-XXXXXX" not found'
 
 ['cosmoctl [user] [update] ✅ success in normal context: user update user1 --name namechanged 1']
 SnapShot = """

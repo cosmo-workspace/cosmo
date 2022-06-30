@@ -283,7 +283,7 @@ parameters:
 
 			Eventually(func() error {
 				return k8sClient.Update(ctx, &inst)
-			}).Should(Succeed())
+			}).Should(Succeed(), time.Second*10)
 
 			By("checking if child resources updated")
 
