@@ -16,7 +16,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
 
 func VerifyPassword(ctx context.Context, c client.Client, userid string, pass []byte) (verified bool, isDefault bool, err error) {
@@ -139,8 +138,6 @@ func RegisterPassword(ctx context.Context, c client.Client, userid string, passw
 }
 
 func registerPassword(ctx context.Context, c client.Client, userid string, password, salt []byte) error {
-	log := clog.FromContext(ctx).WithCaller()
-
 	isDefault := false
 	if salt == nil {
 		isDefault = true
@@ -150,7 +147,7 @@ func registerPassword(ctx context.Context, c client.Client, userid string, passw
 	secret.SetName(wsv1alpha1.UserPasswordSecretName)
 	secret.SetNamespace(wsv1alpha1.UserNamespace(userid))
 
-	op, err := ctrl.CreateOrUpdate(ctx, c, &secret, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, c, &secret, func() error {
 		secret.Annotations = map[string]string{
 			wsv1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault: strconv.FormatBool(isDefault)}
 
@@ -160,8 +157,6 @@ func registerPassword(ctx context.Context, c client.Client, userid string, passw
 		}
 		return nil
 	})
-	log.Info("register password secret", "name", secret.Name, "ns", secret.Namespace, "op", op, "error", err)
-
 	return err
 }
 
