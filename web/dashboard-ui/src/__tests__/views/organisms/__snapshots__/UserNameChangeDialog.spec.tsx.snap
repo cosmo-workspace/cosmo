@@ -106,7 +106,7 @@ exports[`UserNameChangeDialog UserNameChangeDialogContext open/close: 2.opend 1`
                   User ID
                 </label>
                 <div
-                  class="MuiFilledInput-root MuiFilledInput-underline MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart css-4wkuxf-MuiInputBase-root-MuiFilledInput-root"
+                  class="MuiFilledInput-root MuiFilledInput-underline MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart css-5z923u-MuiInputBase-root-MuiFilledInput-root"
                 >
                   <div
                     class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-filled MuiInputAdornment-sizeMedium css-9mc7sf-MuiInputAdornment-root"
@@ -207,7 +207,7 @@ exports[`UserNameChangeDialog UserNameChangeDialogContext open/close: 2.opend 1`
                     class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-7nxzgd"
+                      class="css-1in441m"
                     >
                       <span>
                         User Name
@@ -338,7 +338,7 @@ exports[`UserNameChangeDialog render render 1`] = `
                   User ID
                 </label>
                 <div
-                  class="MuiFilledInput-root MuiFilledInput-underline MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart css-4wkuxf-MuiInputBase-root-MuiFilledInput-root"
+                  class="MuiFilledInput-root MuiFilledInput-underline MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart css-5z923u-MuiInputBase-root-MuiFilledInput-root"
                 >
                   <div
                     class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-filled MuiInputAdornment-sizeMedium css-9mc7sf-MuiInputAdornment-root"
@@ -439,7 +439,7 @@ exports[`UserNameChangeDialog render render 1`] = `
                     class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-7nxzgd"
+                      class="css-1in441m"
                     >
                       <span>
                         User Name
