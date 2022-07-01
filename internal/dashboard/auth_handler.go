@@ -92,7 +92,7 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 		return ErrorResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
 	}
 	var isDefault bool
-	if wsv1alpha1.UserAuthType(user.Spec.AuthType) == wsv1alpha1.UserAuthTypeKosmoSecert {
+	if wsv1alpha1.UserAuthType(user.Spec.AuthType) == wsv1alpha1.UserAuthTypePasswordSecert {
 		isDefault, err = s.Klient.IsDefaultPassword(ctx, req.Id)
 		if err != nil {
 			log.Error(err, "failed to check is default password", "userid", req.Id)

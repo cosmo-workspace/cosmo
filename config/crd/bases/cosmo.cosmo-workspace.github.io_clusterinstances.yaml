@@ -1,0 +1,515 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.0
+  creationTimestamp: null
+  name: clusterinstances.cosmo.cosmo-workspace.github.io
+spec:
+  group: cosmo.cosmo-workspace.github.io
+  names:
+    kind: ClusterInstance
+    listKind: ClusterInstanceList
+    plural: clusterinstances
+    shortNames:
+    - cinst
+    singular: clusterinstance
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.templateName
+      name: ClusterTemplate
+      type: string
+    - jsonPath: .status.lastApplied[*].kind
+      name: Applied-Resources
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: ClusterInstance is the Schema for the instances API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: InstanceSpec defines the desired state of Instance
+            properties:
+              override:
+                description: OverrideSpec defines overrides to transform built objects
+                properties:
+                  network:
+                    description: NetworkOverrideSpec defines overrides to transform
+                      network resources
+                    properties:
+                      ingress:
+                        items:
+                          description: IngressOverrideSpec defines overrides to transform
+                            Ingress resources
+                          properties:
+                            annotations:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            rules:
+                              items:
+                                description: IngressRule represents the rules mapping
+                                  the paths under a specified host to the related
+                                  backend services. Incoming requests are first evaluated
+                                  for a host match, then routed to the backend associated
+                                  with the matching IngressRuleValue.
+                                properties:
+                                  host:
+                                    description: "Host is the fully qualified domain
+                                      name of a network host, as defined by RFC 3986.
+                                      Note the following deviations from the \"host\"
+                                      part of the URI as defined in RFC 3986: 1. IPs
+                                      are not allowed. Currently an IngressRuleValue
+                                      can only apply to    the IP in the Spec of the
+                                      parent Ingress. 2. The `:` delimiter is not
+                                      respected because ports are not allowed. \t
+                                      \ Currently the port of an Ingress is implicitly
+                                      :80 for http and \t  :443 for https. Both these
+                                      may change in the future. Incoming requests
+                                      are matched against the host before the IngressRuleValue.
+                                      If the host is unspecified, the Ingress routes
+                                      all traffic based on the specified IngressRuleValue.
+                                      \n Host can be \"precise\" which is a domain
+                                      name without the terminating dot of a network
+                                      host (e.g. \"foo.bar.com\") or \"wildcard\",
+                                      which is a domain name prefixed with a single
+                                      wildcard label (e.g. \"*.foo.com\"). The wildcard
+                                      character '*' must appear by itself as the first
+                                      DNS label and matches only a single label. You
+                                      cannot have a wildcard label by itself (e.g.
+                                      Host == \"*\"). Requests will be matched against
+                                      the Host field in the following way: 1. If Host
+                                      is precise, the request matches this rule if
+                                      the http host header is equal to Host. 2. If
+                                      Host is a wildcard, then the request matches
+                                      this rule if the http host header is to equal
+                                      to the suffix (removing the first label) of
+                                      the wildcard rule."
+                                    type: string
+                                  http:
+                                    description: 'HTTPIngressRuleValue is a list of
+                                      http selectors pointing to backends. In the
+                                      example: http://<host>/<path>?<searchpart> ->
+                                      backend where where parts of the url correspond
+                                      to RFC 3986, this resource will be used to match
+                                      against everything after the last ''/'' and
+                                      before the first ''?'' or ''#''.'
+                                    properties:
+                                      paths:
+                                        description: A collection of paths that map
+                                          requests to backends.
+                                        items:
+                                          description: HTTPIngressPath associates
+                                            a path with a backend. Incoming urls matching
+                                            the path are forwarded to the backend.
+                                          properties:
+                                            backend:
+                                              description: Backend defines the referenced
+                                                service endpoint to which the traffic
+                                                will be forwarded to.
+                                              properties:
+                                                resource:
+                                                  description: Resource is an ObjectRef
+                                                    to another Kubernetes resource
+                                                    in the namespace of the Ingress
+                                                    object. If resource is specified,
+                                                    a service.Name and service.Port
+                                                    must not be specified. This is
+                                                    a mutually exclusive setting with
+                                                    "Service".
+                                                  properties:
+                                                    apiGroup:
+                                                      description: APIGroup is the
+                                                        group for the resource being
+                                                        referenced. If APIGroup is
+                                                        not specified, the specified
+                                                        Kind must be in the core API
+                                                        group. For any other third-party
+                                                        types, APIGroup is required.
+                                                      type: string
+                                                    kind:
+                                                      description: Kind is the type
+                                                        of resource being referenced
+                                                      type: string
+                                                    name:
+                                                      description: Name is the name
+                                                        of resource being referenced
+                                                      type: string
+                                                  required:
+                                                  - kind
+                                                  - name
+                                                  type: object
+                                                service:
+                                                  description: Service references
+                                                    a Service as a Backend. This is
+                                                    a mutually exclusive setting with
+                                                    "Resource".
+                                                  properties:
+                                                    name:
+                                                      description: Name is the referenced
+                                                        service. The service must
+                                                        exist in the same namespace
+                                                        as the Ingress object.
+                                                      type: string
+                                                    port:
+                                                      description: Port of the referenced
+                                                        service. A port name or port
+                                                        number is required for a IngressServiceBackend.
+                                                      properties:
+                                                        name:
+                                                          description: Name is the
+                                                            name of the port on the
+                                                            Service. This is a mutually
+                                                            exclusive setting with
+                                                            "Number".
+                                                          type: string
+                                                        number:
+                                                          description: Number is the
+                                                            numerical port number
+                                                            (e.g. 80) on the Service.
+                                                            This is a mutually exclusive
+                                                            setting with "Name".
+                                                          format: int32
+                                                          type: integer
+                                                      type: object
+                                                  required:
+                                                  - name
+                                                  type: object
+                                              type: object
+                                            path:
+                                              description: Path is matched against
+                                                the path of an incoming request. Currently
+                                                it can contain characters disallowed
+                                                from the conventional "path" part
+                                                of a URL as defined by RFC 3986. Paths
+                                                must begin with a '/' and must be
+                                                present when using PathType with value
+                                                "Exact" or "Prefix".
+                                              type: string
+                                            pathType:
+                                              description: 'PathType determines the
+                                                interpretation of the Path matching.
+                                                PathType can be one of the following
+                                                values: * Exact: Matches the URL path
+                                                exactly. * Prefix: Matches based on
+                                                a URL path prefix split by ''/''.
+                                                Matching is   done on a path element
+                                                by element basis. A path element refers
+                                                is the   list of labels in the path
+                                                split by the ''/'' separator. A request
+                                                is a   match for path p if every p
+                                                is an element-wise prefix of p of
+                                                the   request path. Note that if the
+                                                last element of the path is a substring   of
+                                                the last element in request path,
+                                                it is not a match (e.g. /foo/bar   matches
+                                                /foo/bar/baz, but does not match /foo/barbaz).
+                                                * ImplementationSpecific: Interpretation
+                                                of the Path matching is up to   the
+                                                IngressClass. Implementations can
+                                                treat this as a separate PathType   or
+                                                treat it identically to Prefix or
+                                                Exact path types. Implementations
+                                                are required to support all path types.'
+                                              type: string
+                                          required:
+                                          - backend
+                                          - pathType
+                                          type: object
+                                        type: array
+                                        x-kubernetes-list-type: atomic
+                                    required:
+                                    - paths
+                                    type: object
+                                type: object
+                              type: array
+                            targetName:
+                              type: string
+                          type: object
+                        type: array
+                      service:
+                        items:
+                          description: ServiceOverrideSpec defines overrides to transform
+                            Service resources
+                          properties:
+                            ports:
+                              items:
+                                description: ServicePort contains information on service's
+                                  port.
+                                properties:
+                                  appProtocol:
+                                    description: The application protocol for this
+                                      port. This field follows standard Kubernetes
+                                      label syntax. Un-prefixed names are reserved
+                                      for IANA standard service names (as per RFC-6335
+                                      and http://www.iana.org/assignments/service-names).
+                                      Non-standard protocols should use prefixed names
+                                      such as mycompany.com/my-custom-protocol.
+                                    type: string
+                                  name:
+                                    description: The name of this port within the
+                                      service. This must be a DNS_LABEL. All ports
+                                      within a ServiceSpec must have unique names.
+                                      When considering the endpoints for a Service,
+                                      this must match the 'name' field in the EndpointPort.
+                                      Optional if only one ServicePort is defined
+                                      on this service.
+                                    type: string
+                                  nodePort:
+                                    description: 'The port on each node on which this
+                                      service is exposed when type is NodePort or
+                                      LoadBalancer.  Usually assigned by the system.
+                                      If a value is specified, in-range, and not in
+                                      use it will be used, otherwise the operation
+                                      will fail.  If not specified, a port will be
+                                      allocated if this Service requires one.  If
+                                      this field is specified when creating a Service
+                                      which does not need it, creation will fail.
+                                      This field will be wiped when updating a Service
+                                      to no longer need it (e.g. changing type from
+                                      NodePort to ClusterIP). More info: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport'
+                                    format: int32
+                                    type: integer
+                                  port:
+                                    description: The port that will be exposed by
+                                      this service.
+                                    format: int32
+                                    type: integer
+                                  protocol:
+                                    default: TCP
+                                    description: The IP protocol for this port. Supports
+                                      "TCP", "UDP", and "SCTP". Default is TCP.
+                                    type: string
+                                  targetPort:
+                                    anyOf:
+                                    - type: integer
+                                    - type: string
+                                    description: 'Number or name of the port to access
+                                      on the pods targeted by the service. Number
+                                      must be in the range 1 to 65535. Name must be
+                                      an IANA_SVC_NAME. If this is a string, it will
+                                      be looked up as a named port in the target Pod''s
+                                      container ports. If this is not specified, the
+                                      value of the ''port'' field is used (an identity
+                                      map). This field is ignored for services with
+                                      clusterIP=None, and should be omitted or set
+                                      equal to the ''port'' field. More info: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service'
+                                    x-kubernetes-int-or-string: true
+                                required:
+                                - port
+                                type: object
+                              type: array
+                            targetName:
+                              type: string
+                          type: object
+                        type: array
+                    type: object
+                  patchesJson6902:
+                    items:
+                      description: Json6902 defines JSONPatch specs.
+                      properties:
+                        patch:
+                          type: string
+                        target:
+                          description: ObjectRef is a reference of resource which
+                            is created by the Instance
+                          properties:
+                            apiVersion:
+                              description: API version of the referent.
+                              type: string
+                            creationTimestamp:
+                              format: date-time
+                              type: string
+                            fieldPath:
+                              description: 'If referring to a piece of an object instead
+                                of an entire object, this string should contain a
+                                valid JSON/Go field access statement, such as desiredState.manifest.containers[2].
+                                For example, if the object reference is to a container
+                                within a pod, this would take on a value like: "spec.containers{name}"
+                                (where "name" refers to the name of the container
+                                that triggered the event) or if no container name
+                                is specified "spec.containers[2]" (container with
+                                index 2 in this pod). This syntax is chosen only to
+                                have some well-defined way of referencing a part of
+                                an object. TODO: this design is not final and this
+                                field is subject to change in the future.'
+                              type: string
+                            kind:
+                              description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                              type: string
+                            name:
+                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                              type: string
+                            namespace:
+                              description: 'Namespace of the referent. More info:
+                                https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                              type: string
+                            resourceVersion:
+                              description: 'Specific resourceVersion to which this
+                                reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                              type: string
+                            uid:
+                              description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
+                              type: string
+                            updateTimestamp:
+                              format: date-time
+                              type: string
+                          type: object
+                      required:
+                      - target
+                      type: object
+                    type: array
+                  scale:
+                    items:
+                      description: ScalingOverrideSpec defines workload scales.
+                      properties:
+                        replicas:
+                          format: int64
+                          type: integer
+                        target:
+                          description: ObjectRef is a reference of resource which
+                            is created by the Instance
+                          properties:
+                            apiVersion:
+                              description: API version of the referent.
+                              type: string
+                            creationTimestamp:
+                              format: date-time
+                              type: string
+                            fieldPath:
+                              description: 'If referring to a piece of an object instead
+                                of an entire object, this string should contain a
+                                valid JSON/Go field access statement, such as desiredState.manifest.containers[2].
+                                For example, if the object reference is to a container
+                                within a pod, this would take on a value like: "spec.containers{name}"
+                                (where "name" refers to the name of the container
+                                that triggered the event) or if no container name
+                                is specified "spec.containers[2]" (container with
+                                index 2 in this pod). This syntax is chosen only to
+                                have some well-defined way of referencing a part of
+                                an object. TODO: this design is not final and this
+                                field is subject to change in the future.'
+                              type: string
+                            kind:
+                              description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                              type: string
+                            name:
+                              description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                              type: string
+                            namespace:
+                              description: 'Namespace of the referent. More info:
+                                https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                              type: string
+                            resourceVersion:
+                              description: 'Specific resourceVersion to which this
+                                reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                              type: string
+                            uid:
+                              description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
+                              type: string
+                            updateTimestamp:
+                              format: date-time
+                              type: string
+                          type: object
+                      required:
+                      - replicas
+                      - target
+                      type: object
+                    type: array
+                type: object
+              template:
+                description: TemplateRef defines template to use in Instance creation
+                properties:
+                  name:
+                    type: string
+                required:
+                - name
+                type: object
+              vars:
+                additionalProperties:
+                  type: string
+                type: object
+            required:
+            - template
+            type: object
+          status:
+            description: InstanceStatus has status of Instance
+            properties:
+              lastApplied:
+                items:
+                  description: ObjectRef is a reference of resource which is created
+                    by the Instance
+                  properties:
+                    apiVersion:
+                      description: API version of the referent.
+                      type: string
+                    creationTimestamp:
+                      format: date-time
+                      type: string
+                    fieldPath:
+                      description: 'If referring to a piece of an object instead of
+                        an entire object, this string should contain a valid JSON/Go
+                        field access statement, such as desiredState.manifest.containers[2].
+                        For example, if the object reference is to a container within
+                        a pod, this would take on a value like: "spec.containers{name}"
+                        (where "name" refers to the name of the container that triggered
+                        the event) or if no container name is specified "spec.containers[2]"
+                        (container with index 2 in this pod). This syntax is chosen
+                        only to have some well-defined way of referencing a part of
+                        an object. TODO: this design is not final and this field is
+                        subject to change in the future.'
+                      type: string
+                    kind:
+                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                      type: string
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                      type: string
+                    namespace:
+                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                      type: string
+                    resourceVersion:
+                      description: 'Specific resourceVersion to which this reference
+                        is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                      type: string
+                    uid:
+                      description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
+                      type: string
+                    updateTimestamp:
+                      format: date-time
+                      type: string
+                  type: object
+                type: array
+              lastAppliedObjectsCount:
+                type: integer
+              templateName:
+                type: string
+              templateObjectsCount:
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

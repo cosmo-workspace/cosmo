@@ -5,30 +5,34 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"strings"
 
 	netv1 "k8s.io/api/networking/v1"
-	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/transformer"
 )
 
 type InstanceMutationWebhookHandler struct {
-	Client  kosmo.Client
+	Client  client.Client
 	Log     *clog.Logger
 	decoder *admission.Decoder
 }
 
 //+kubebuilder:webhook:path=/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-instance,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=instances,verbs=create;update,versions=v1alpha1,name=minstance.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-instance,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=clusterinstances,verbs=create;update,versions=v1alpha1,name=mclusterinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *InstanceMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
@@ -38,73 +42,109 @@ func (h *InstanceMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manage
 }
 
 func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
-	inst := &cosmov1alpha1.Instance{}
-	err := h.decoder.Decode(req, inst)
-	if err != nil {
+
+	var inst cosmov1alpha1.InstanceObject
+	var instSpec *cosmov1alpha1.InstanceSpec
+	var tmpl cosmov1alpha1.TemplateObject
+	var tmplSpec *cosmov1alpha1.TemplateSpec
+
+	switch req.RequestKind.Kind {
+	case "Instance":
+		inst = &cosmov1alpha1.Instance{}
+		err := h.decoder.Decode(req, inst)
+		if err != nil {
+			h.Log.Error(err, "failed to decode request")
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
+
+		instSpec = inst.GetSpec()
+
+		tmpl = &cosmov1alpha1.Template{}
+		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
+		if err != nil {
+			h.Log.Error(err, "failed to get template")
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		tmplSpec = tmpl.GetSpec()
+
+	case "ClusterInstance":
+		inst = &cosmov1alpha1.ClusterInstance{}
+		err := h.decoder.Decode(req, inst)
+		if err != nil {
+			h.Log.Error(err, "failed to decode request")
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+
+		instSpec = inst.GetSpec()
+
+		tmpl = &cosmov1alpha1.ClusterTemplate{}
+		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
+		if err != nil {
+			h.Log.Error(err, "failed to get cluster template")
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		tmplSpec = tmpl.GetSpec()
+
+	default:
+		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
 		h.Log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	before := inst.DeepCopy()
-	h.Log.DebugAll().DumpObject(h.Client.Scheme(), before, "request instance")
+
+	before := inst.DeepCopyObject().(cosmov1alpha1.InstanceObject)
 
 	// mutate the fields in instance
-
-	// fetch template
-	tmpl, err := h.Client.GetTemplate(ctx, inst.Spec.Template.Name)
-	if err != nil {
-		h.Log.Error(err, "failed to get template")
-		return admission.Errored(http.StatusBadRequest, err)
-	}
-
 	// propagate template type annotation to instance annotation
 	if tmplType, ok := template.GetTemplateType(tmpl); ok {
 		template.SetTemplateType(inst, tmplType)
 	}
 
 	// defaulting required vars
-	for _, v := range tmpl.Spec.RequiredVars {
+	for _, v := range tmplSpec.RequiredVars {
 		found := false
-		for key := range inst.Spec.Vars {
+		for key := range instSpec.Vars {
 			if template.FixupTemplateVarKey(key) == template.FixupTemplateVarKey(v.Var) {
 				found = true
 			}
 		}
 		if !found && v.Default != "" {
-			if inst.Spec.Vars == nil {
-				inst.Spec.Vars = make(map[string]string)
+			if instSpec.Vars == nil {
+				instSpec.Vars = make(map[string]string)
 			}
-			inst.Spec.Vars[v.Var] = v.Default
+			instSpec.Vars[v.Var] = v.Default
 		}
 	}
 
 	// update name to instance fixed resource name
-	netSpec := inst.Spec.Override.Network
+	patchSpec := instSpec.Override.PatchesJson6902
+	for i, p := range patchSpec {
+		if p.Target.Name != "" {
+			patchSpec[i].Target.Name = instance.InstanceResourceName(inst.GetName(), p.Target.Name)
+		}
+	}
+
+	netSpec := instSpec.Override.Network
 	if netSpec != nil {
 		for i, ingSpec := range netSpec.Ingress {
 			if ingSpec.TargetName != "" {
-				netSpec.Ingress[i].TargetName = cosmov1alpha1.InstanceResourceName(inst.GetName(), ingSpec.TargetName)
+				netSpec.Ingress[i].TargetName = instance.InstanceResourceName(inst.GetName(), ingSpec.TargetName)
 				fixIngressBackendName(netSpec.Ingress[i].Rules, inst.GetName())
 			}
 		}
 
 		for i, svcSpec := range netSpec.Service {
 			if svcSpec.TargetName != "" {
-				netSpec.Service[i].TargetName = cosmov1alpha1.InstanceResourceName(inst.GetName(), svcSpec.TargetName)
+				netSpec.Service[i].TargetName = instance.InstanceResourceName(inst.GetName(), svcSpec.TargetName)
 			}
 		}
 	}
 
-	scaleSpecs := inst.Spec.Override.Scale
+	scaleSpecs := instSpec.Override.Scale
 	for i, scaleSpec := range scaleSpecs {
 		if scaleSpec.Target.Name != "" {
-			scaleSpecs[i].Target.Name = cosmov1alpha1.InstanceResourceName(inst.GetName(), scaleSpec.Target.Name)
-		}
-	}
-
-	patchSpec := inst.Spec.Override.PatchesJson6902
-	for i, p := range patchSpec {
-		if p.Target.Name != "" {
-			patchSpec[i].Target.Name = cosmov1alpha1.InstanceResourceName(inst.GetName(), p.Target.Name)
+			scaleSpecs[i].Target.Name = instance.InstanceResourceName(inst.GetName(), scaleSpec.Target.Name)
 		}
 	}
 
@@ -122,10 +162,10 @@ func fixIngressBackendName(ingRules []netv1.IngressRule, instName string) {
 	for _, rule := range ingRules {
 		for _, path := range rule.HTTP.Paths {
 			if path.Backend.Service != nil {
-				path.Backend.Service.Name = cosmov1alpha1.InstanceResourceName(instName, path.Backend.Service.Name)
+				path.Backend.Service.Name = instance.InstanceResourceName(instName, path.Backend.Service.Name)
 			}
 			if path.Backend.Resource != nil {
-				path.Backend.Resource.Name = cosmov1alpha1.InstanceResourceName(instName, path.Backend.Resource.Name)
+				path.Backend.Resource.Name = instance.InstanceResourceName(instName, path.Backend.Resource.Name)
 			}
 		}
 	}
@@ -137,11 +177,14 @@ func (h *InstanceMutationWebhookHandler) InjectDecoder(d *admission.Decoder) err
 }
 
 type InstanceValidationWebhookHandler struct {
-	Client  kosmo.Client
+	Client  client.Client
 	Log     *clog.Logger
 	decoder *admission.Decoder
+
+	FieldManager string
 }
 
+//+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=clusterinstances,verbs=create;update,versions=v1alpha1,name=vclusterinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
 //+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=instances,verbs=create;update,versions=v1alpha1,name=vinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *InstanceValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
@@ -152,30 +195,53 @@ func (h *InstanceValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Mana
 }
 
 func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
-	inst := &cosmov1alpha1.Instance{}
-	err := h.decoder.Decode(req, inst)
-	if err != nil {
+
+	var inst cosmov1alpha1.InstanceObject
+	var tmpl cosmov1alpha1.TemplateObject
+
+	switch req.RequestKind.Kind {
+	case "Instance":
+		inst = &cosmov1alpha1.Instance{}
+		err := h.decoder.Decode(req, inst)
+		if err != nil {
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
+
+		// whether template exist
+		tmpl = &cosmov1alpha1.Template{}
+		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
+		if err != nil {
+			h.Log.Error(err, "failed to get template")
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+
+	case "ClusterInstance":
+		inst = &cosmov1alpha1.ClusterInstance{}
+		err := h.decoder.Decode(req, inst)
+		if err != nil {
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+		h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+
+		// whether template exist
+		tmpl = &cosmov1alpha1.ClusterTemplate{}
+		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
+		if err != nil {
+			h.Log.Error(err, "failed to get clustertemplate")
+			return admission.Errored(http.StatusBadRequest, err)
+		}
+
+	default:
+		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
+		h.Log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
 
-	// validate the fields in instance
-
-	// whether template exist
-	tmpl, err := h.Client.GetTemplate(ctx, inst.Spec.Template.Name)
-	if err != nil {
-		if apierrs.IsNotFound(err) {
-			return admission.Denied(fmt.Sprintf("Template %s not found", inst.Spec.Template.Name))
-		} else {
-			h.Log.Error(err, "failed to get template")
-			return admission.Errored(http.StatusInternalServerError, err)
-		}
-	}
-
-	// whether instance overrides template's required vars
-	for _, v := range tmpl.Spec.RequiredVars {
+	// validate if satisfy template's required vars
+	for _, v := range tmpl.GetSpec().RequiredVars {
 		ok := false
-		for key := range inst.Spec.Vars {
+		for key := range inst.GetSpec().Vars {
 			if template.FixupTemplateVarKey(key) == template.FixupTemplateVarKey(v.Var) {
 				ok = true
 				break
@@ -186,16 +252,16 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		}
 	}
 
-	// whether valid apiVersion
-	scaleSpecs := inst.Spec.Override.Scale
+	// validate apiVersion
+	scaleSpecs := inst.GetSpec().Override.Scale
 	for _, scaleSpec := range scaleSpecs {
 		if _, err := schema.ParseGroupVersion(scaleSpec.Target.APIVersion); err != nil {
 			return admission.Denied(fmt.Sprintf("APIVersion '%s' is invalid: %v", scaleSpec.Target.APIVersion, err))
 		}
 	}
 
-	// whether valid apiVersion
-	patchSpecs := inst.Spec.Override.PatchesJson6902
+	// validate apiVersion
+	patchSpecs := inst.GetSpec().Override.PatchesJson6902
 	for _, patchSpec := range patchSpecs {
 		if _, err := schema.ParseGroupVersion(patchSpec.Target.APIVersion); err != nil {
 			return admission.Denied(fmt.Sprintf("APIVersion '%s' is invalid: %v", patchSpec.Target.APIVersion, err))
@@ -203,8 +269,12 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 	}
 
 	// dryrun apply
-	if err := h.dryrunApply(ctx, tmpl, *inst); err != nil {
-		return admission.Denied(err.Error())
+	if errs := dryrunReconcile(ctx, h.Client, h.FieldManager, inst, tmpl); len(errs) > 0 {
+		msg := make([]string, len(errs))
+		for i := range errs {
+			msg[i] = errs[i].Error()
+		}
+		return admission.Denied(strings.Join(msg, ": "))
 	}
 
 	return admission.Allowed("OK")
@@ -215,48 +285,35 @@ func (h *InstanceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) e
 	return nil
 }
 
-func (h *InstanceValidationWebhookHandler) dryrunApply(ctx context.Context, tmpl *cosmov1alpha1.Template, inst cosmov1alpha1.Instance) error {
-	builts, err := template.NewRawYAMLBuilder(tmpl.Spec.RawYaml, &inst).
-		ReplaceDefaultVars().
-		ReplaceCustomVars().
-		Build()
-
+func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, inst cosmov1alpha1.InstanceObject, tmpl cosmov1alpha1.TemplateObject) []error {
+	objects, err := template.BuildObjects(*tmpl.GetSpec(), inst)
 	if err != nil {
-		return fmt.Errorf("failed to build template: %w", err)
+		return []error{err}
 	}
 
-	// Transform
-	ts := []transformer.Transformer{
-		// MetadataTransformer perform update each object's metadata
-		transformer.NewMetadataTransformer(&inst, tmpl, h.Client.Scheme()),
-		// NetworkTransformer perform update ingresses and services by network override
-		transformer.NewNetworkTransformer(inst.Spec.Override.Network, inst.Name),
-		// JSONPatchTransformer perform JSONPatch
-		transformer.NewJSONPatchTransformer(inst.Spec.Override.PatchesJson6902, inst.Name),
-		// ScalingTransformer perform override replicas
-		transformer.NewScalingTransformer(inst.Spec.Override.Scale, inst.Name),
-	}
-	builts, err = transformer.ApplyTransformers(ctx, ts, builts)
+	objects, err = transformer.ApplyTransformers(ctx, transformer.AllTransformers(inst, c.Scheme(), tmpl), objects)
 	if err != nil {
-		return fmt.Errorf("failed to transform objects: %w", err)
+		return []error{fmt.Errorf("failed to transform objects: %w", err)}
 	}
 
-	for _, built := range builts {
-		if _, err := h.dryrun(ctx, &built); err != nil {
+	errs := make([]error, 0)
+	for _, built := range objects {
+		fmt.Fprintf(os.Stderr, "DRYRUN Applying %v\n", built)
+		if err := dryrunApply(ctx, c, fieldManager, &built); err != nil {
 			// ignore NotFound in case the template contains a dependency resource that was not found.
-			if !apierrs.IsNotFound(err) {
-				return fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err)
-			}
+			// if !apierrs.IsNotFound(err) {
+			errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
+			// }
 		}
 	}
-	return nil
+	return errs
 }
 
-func (h *InstanceValidationWebhookHandler) dryrun(ctx context.Context, obj *unstructured.Unstructured) (patched *unstructured.Unstructured, err error) {
-	if obj.GetKind() == "Service" {
-		// Interim support to avoid "duplicate value" errors when changing port numbers.
-		return kubeutil.ApplyOrUpdate(ctx, h.Client, obj, "instance-webhook", true, true)
-	} else {
-		return kubeutil.Apply(ctx, h.Client, obj, "instance-webhook", true, true)
+func dryrunApply(ctx context.Context, c client.Client, fieldManager string, obj *unstructured.Unstructured) error {
+	out, err := kubeutil.Apply(ctx, c, obj, fieldManager, true, true)
+	fmt.Fprintf(os.Stderr, "DRYRUN Applyed %v\n", out)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "DRYRUN Apply failed %v\n", err)
 	}
+	return err
 }

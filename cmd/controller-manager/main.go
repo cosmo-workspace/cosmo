@@ -16,11 +16,24 @@ import (
 	"github.com/cosmo-workspace/cosmo/internal/controllers"
 	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	// +kubebuilder:scaffold:imports
+)
+
+const (
+	controllerFieldManager string = "cosmo-instance-controller"
+)
+
+const (
+	instController        string = "cosmo-instance-controller"
+	clusterInstController string = "cosmo-cluster-instance-controller"
+	tmplController        string = "cosmo-template-controller"
+	clusterTmplController string = "cosmo-cluster-template-controller"
+	userController        string = "cosmo-user-controller"
+	wsController          string = "cosmo-workspace-controller"
+	wsStatController      string = "cosmo-workspace-status-controller"
 )
 
 var (
@@ -80,75 +93,100 @@ func main() {
 	}
 
 	if err = (&controllers.InstanceReconciler{
-		Client:   kosmo.NewClient(mgr.GetClient()),
-		Recorder: mgr.GetEventRecorderFor(controllers.InstControllerFieldManager),
+		Client:   mgr.GetClient(),
+		Recorder: mgr.GetEventRecorderFor(instController),
 		Scheme:   mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", controllers.InstControllerFieldManager)
+	}).SetupWithManager(mgr, controllerFieldManager); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", instController)
 		os.Exit(1)
 	}
 	if err = (&controllers.TemplateReconciler{
-		Client: kosmo.NewClient(mgr.GetClient()),
+		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", controllers.TmplControllerFieldManager)
+		setupLog.Error(err, "unable to create controller", "controller", tmplController)
+		os.Exit(1)
+	}
+	if err = (&controllers.ClusterInstanceReconciler{
+		Client:   mgr.GetClient(),
+		Recorder: mgr.GetEventRecorderFor(clusterInstController),
+		Scheme:   mgr.GetScheme(),
+	}).SetupWithManager(mgr, controllerFieldManager); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", clusterInstController)
+		os.Exit(1)
+	}
+	if err = (&controllers.ClusterTemplateReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", clusterTmplController)
 		os.Exit(1)
 	}
 	if err = (&controllers.WorkspaceReconciler{
-		Client:   kosmo.NewClient(mgr.GetClient()),
-		Recorder: mgr.GetEventRecorderFor(controllers.WsControllerFieldManager),
+		Client:   mgr.GetClient(),
+		Recorder: mgr.GetEventRecorderFor(wsController),
 		Scheme:   mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", controllers.WsControllerFieldManager)
+		setupLog.Error(err, "unable to create controller", "controller", wsController)
 		os.Exit(1)
 	}
 	if err = (&controllers.WorkspaceStatusReconciler{
-		Client:   kosmo.NewClient(mgr.GetClient()),
-		Recorder: mgr.GetEventRecorderFor(controllers.WsStatControllerFieldManager),
-		Scheme:   mgr.GetScheme(),
+		Client:         mgr.GetClient(),
+		Recorder:       mgr.GetEventRecorderFor(wsStatController),
+		Scheme:         mgr.GetScheme(),
+		DefaultURLBase: o.WorkspaceDefaultURLBase,
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", controllers.WsStatControllerFieldManager)
+		setupLog.Error(err, "unable to create controller", "controller", wsStatController)
 		os.Exit(1)
 	}
 	if err = (&controllers.UserReconciler{
-		Client:   kosmo.NewClient(mgr.GetClient()),
-		Recorder: mgr.GetEventRecorderFor(controllers.UserControllerFieldManager),
+		Client:   mgr.GetClient(),
+		Recorder: mgr.GetEventRecorderFor(userController),
 		Scheme:   mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", controllers.UserControllerFieldManager)
+		setupLog.Error(err, "unable to create controller", "controller", userController)
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
 
 	// Webhook
 	(&webhooks.InstanceMutationWebhookHandler{
-		Client: kosmo.NewClient(mgr.GetClient()),
+		Client: mgr.GetClient(),
 		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.InstanceValidationWebhookHandler{
-		Client: kosmo.NewClient(mgr.GetClient()),
-		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		Client:       mgr.GetClient(),
+		Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		FieldManager: controllerFieldManager,
 	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.TemplateMutationWebhookHandler{
+		Client:         mgr.GetClient(),
+		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
+		DefaultURLBase: o.WorkspaceDefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
+	(&webhooks.TemplateValidationWebhookHandler{
+		Client:       mgr.GetClient(),
+		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
+		FieldManager: controllerFieldManager,
+	}).SetupWebhookWithManager(mgr)
+
 	(&webhooks.WorkspaceMutationWebhookHandler{
-		Client: kosmo.NewClient(mgr.GetClient()),
+		Client: mgr.GetClient(),
 		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.WorkspaceValidationWebhookHandler{
-		Client: kosmo.NewClient(mgr.GetClient()),
+		Client: mgr.GetClient(),
 		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
+
 	(&webhooks.UserMutationWebhookHandler{
-		Client: kosmo.NewClient(mgr.GetClient()),
+		Client: mgr.GetClient(),
 		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.UserValidationWebhookHandler{
-		Client: kosmo.NewClient(mgr.GetClient()),
+		Client: mgr.GetClient(),
 		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
-	}).SetupWebhookWithManager(mgr)
-	(&webhooks.TemplateMutationWebhookHandler{
-		Client:         kosmo.NewClient(mgr.GetClient()),
-		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
-		DefaultURLBase: o.WorkspaceDefaultURLBase,
 	}).SetupWebhookWithManager(mgr)
 
 	ctx := ctrl.SetupSignalHandler()

@@ -2,18 +2,18 @@ package webhooks
 
 import (
 	"context"
-	"os"
 	"testing"
 	"time"
 
+	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 )
 
 var _ = Describe("User webhook", func() {
@@ -58,7 +58,7 @@ var _ = Describe("User webhook", func() {
 			user := wsv1alpha1.User{}
 			user.SetName("testuser1")
 			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				Addons: []wsv1alpha1.UserAddon{
 					{Template: cosmov1alpha1.TemplateRef{Name: defaultUserAddon.GetName()}},
 					{Template: cosmov1alpha1.TemplateRef{Name: normalUserAddon.GetName()}},
@@ -76,9 +76,6 @@ var _ = Describe("User webhook", func() {
 				}
 				return nil
 			}, time.Second*10).Should(Succeed())
-
-			// eq := kubeutil.LooseDeepEqual(user.DeepCopy(), createdUser.DeepCopy(), kubeutil.WithPrintDiff(os.Stderr))
-			// Expect(eq).Should(BeTrue())
 		})
 	})
 
@@ -95,7 +92,7 @@ var _ = Describe("User webhook", func() {
 					Name: "testuser2",
 				},
 				Spec: wsv1alpha1.UserSpec{
-					AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+					AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				},
 			}
 
@@ -117,9 +114,8 @@ var _ = Describe("User webhook", func() {
 			}, time.Second*10).Should(Succeed())
 
 			expectedUser.ObjectMeta = createdUser.ObjectMeta
+			Expect(&createdUser).Should(BeLooseDeepEqual(expectedUser))
 
-			eq := kubeutil.LooseDeepEqual(expectedUser, &createdUser, kubeutil.WithPrintDiff(os.Stderr))
-			Expect(eq).Should(BeTrue())
 		})
 	})
 
@@ -130,7 +126,7 @@ var _ = Describe("User webhook", func() {
 			user := wsv1alpha1.User{}
 			user.SetName("testuser3")
 			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				Addons: []wsv1alpha1.UserAddon{
 					{Template: cosmov1alpha1.TemplateRef{Name: defaultUserAddon.GetName()}},
 					{Template: cosmov1alpha1.TemplateRef{Name: "notfound"}},
@@ -148,7 +144,7 @@ var _ = Describe("User webhook", func() {
 			user := wsv1alpha1.User{}
 			user.SetName("testuser4")
 			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				Addons: []wsv1alpha1.UserAddon{
 					{Template: cosmov1alpha1.TemplateRef{Name: defaultUserAddon.GetName()}},
 					{Template: cosmov1alpha1.TemplateRef{Name: notUserAddon.GetName()}},
@@ -179,7 +175,7 @@ var _ = Describe("User webhook", func() {
 			}
 
 			expectedUser := user.DeepCopy()
-			expectedUser.Spec.AuthType = wsv1alpha1.UserAuthTypeKosmoSecert
+			expectedUser.Spec.AuthType = wsv1alpha1.UserAuthTypePasswordSecert
 
 			err := k8sClient.Create(ctx, &user)
 			Expect(err).ShouldNot(HaveOccurred())
@@ -194,9 +190,7 @@ var _ = Describe("User webhook", func() {
 			}, time.Second*10).Should(Succeed())
 
 			expectedUser.ObjectMeta = createdUser.ObjectMeta
-
-			eq := kubeutil.LooseDeepEqual(expectedUser, &createdUser)
-			Expect(eq).Should(BeTrue())
+			Expect(&createdUser).Should(BeLooseDeepEqual(expectedUser))
 		})
 	})
 
@@ -225,7 +219,7 @@ var _ = Describe("User webhook", func() {
 			user.SetName("testuser7")
 			user.Spec = wsv1alpha1.UserSpec{
 				Role:     "invalid",
-				AuthType: wsv1alpha1.UserAuthTypeKosmoSecert,
+				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
 				Addons: []wsv1alpha1.UserAddon{
 					{Template: cosmov1alpha1.TemplateRef{Name: defaultUserAddon.GetName()}},
 				},

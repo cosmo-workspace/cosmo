@@ -19,9 +19,9 @@ func TestMetadataTransformer_Transform(t *testing.T) {
 		t.Errorf("Failed to AddToScheme %v", err)
 	}
 	type fields struct {
-		inst   *cosmov1alpha1.Instance
-		tmpl   *cosmov1alpha1.Template
-		scheme *runtime.Scheme
+		inst              *cosmov1alpha1.Instance
+		disableNamePrefix bool
+		scheme            *runtime.Scheme
 	}
 	type args struct {
 		src string
@@ -49,12 +49,8 @@ func TestMetadataTransformer_Transform(t *testing.T) {
 						Vars:     map[string]string{"{{TEST}}": "OK"},
 					},
 				},
-				tmpl: &cosmov1alpha1.Template{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "code-server",
-					},
-				},
-				scheme: scheme,
+				disableNamePrefix: false,
+				scheme:            scheme,
 			},
 			args: args{
 				src: `apiVersion: networking.k8s.io/v1
@@ -108,12 +104,8 @@ spec:
 						Vars:     map[string]string{"{{TEST}}": "OK"},
 					},
 				},
-				tmpl: &cosmov1alpha1.Template{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "code-server",
-					},
-				},
-				scheme: scheme,
+				disableNamePrefix: false,
+				scheme:            scheme,
 			},
 			args: args{
 				src: `apiVersion: networking.k8s.io/v1
@@ -167,15 +159,8 @@ spec:
 						},
 					},
 				},
-				tmpl: &cosmov1alpha1.Template{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "eks-irsa",
-						Annotations: map[string]string{
-							cosmov1alpha1.TemplateAnnKeyDisableNamePrefix: "1",
-						},
-					},
-				},
-				scheme: scheme,
+				disableNamePrefix: true,
+				scheme:            scheme,
 			},
 			args: args{
 				src: `apiVersion: v1
@@ -220,15 +205,8 @@ metadata:
 						},
 					},
 				},
-				tmpl: &cosmov1alpha1.Template{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "eks-irsa",
-						Annotations: map[string]string{
-							cosmov1alpha1.TemplateAnnKeyDisableNamePrefix: "invalid",
-						},
-					},
-				},
-				scheme: scheme,
+				disableNamePrefix: false,
+				scheme:            scheme,
 			},
 			args: args{
 				src: `apiVersion: v1
@@ -259,10 +237,44 @@ metadata:
 `,
 			wantErr: false,
 		},
+		{
+			name: "Failed to set ownerref on resoruce due to already exist",
+			fields: fields{
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "useraddon-pv",
+						Namespace: "cosmo-user-tom",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "pv",
+						},
+					},
+				},
+				disableNamePrefix: false,
+				scheme:            scheme,
+			},
+			args: args{
+				src: `apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: default
+  ownerReferences:
+    - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Instance
+      name: useraddon-other-instance
+      uid: 5b286420-4444-4366-aa40-973b1092f840
+      resourceVersion: "19512263"
+`,
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tr := NewMetadataTransformer(tt.fields.inst, tt.fields.tmpl, tt.fields.scheme)
+			tr := NewMetadataTransformer(tt.fields.inst, tt.fields.scheme, tt.fields.disableNamePrefix)
 			_, obj, err := template.StringToUnstructured(tt.args.src)
 			if err != nil {
 				t.Errorf("MetadataTransformer.Transform() template.StringToUnstructured error = %v", err)

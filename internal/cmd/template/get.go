@@ -12,6 +12,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
@@ -92,7 +93,7 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 	} else {
 		switch o.tmpltype {
 		case wsv1alpha1.TemplateTypeWorkspace:
-			ts, err := c.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeWorkspace})
+			ts, err := kubeutil.ListTemplatesByType(ctx, o.Client, []string{wsv1alpha1.TemplateTypeWorkspace})
 			if err != nil {
 				return err
 			}

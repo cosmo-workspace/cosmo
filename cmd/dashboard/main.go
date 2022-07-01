@@ -87,7 +87,7 @@ func main() {
 	klient := kosmo.NewClient(mgr.GetClient())
 
 	auths := make(map[wsv1alpha1.UserAuthType]auth.Authorizer)
-	auths[wsv1alpha1.UserAuthTypeKosmoSecert] = auth.NewKosmoSecretAuthorizer(klient)
+	auths[wsv1alpha1.UserAuthTypePasswordSecert] = auth.NewPasswordSecretAuthorizer(klient)
 
 	serv := (&dashboard.Server{
 		Log:                 clog.NewLogger(ctrl.Log.WithName("dashboard")),

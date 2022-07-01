@@ -19,7 +19,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/internal/authproxy/proxy"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
@@ -114,10 +113,9 @@ func main() {
 
 	// Setup proxy manager
 	logger := clog.NewLogger(ctrl.Log.WithName("proxy-manager"))
-	klient := kosmo.NewClient(mgr.GetClient())
 
 	// only support KosmoSecert authorizer for now
-	authorizer := auth.NewKosmoSecretAuthorizer(klient)
+	authorizer := auth.NewPasswordSecretAuthorizer(mgr.GetClient())
 
 	proxyManager, err := (&proxy.Manager{
 		Log:                      logger,
@@ -138,7 +136,7 @@ func main() {
 
 	// Setup instance network reconciler
 	if err = (&authproxy.NetworkRuleReconciler{
-		Client:        klient,
+		Client:        mgr.GetClient(),
 		Recorder:      mgr.GetEventRecorderFor("cosmo-auth-proxy"),
 		Scheme:        mgr.GetScheme(),
 		ProxyManager:  proxyManager,

@@ -6,9 +6,13 @@ import (
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/api/equality"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/selection"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
@@ -19,18 +23,15 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
+	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
-)
-
-const (
-	WsControllerFieldManager string = "cosmo-workspace-controller"
 )
 
 // WorkspaceReconciler reconciles a Workspace object
 type WorkspaceReconciler struct {
-	kosmo.Client
+	client.Client
 	Recorder record.EventRecorder
 	Scheme   *runtime.Scheme
 }
@@ -48,14 +49,14 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		// we'll ignore not-found errors, since they can't be fixed by an immediate
 		// requeue (we'll need to wait for a new notification), and we can get them
 		// on deleted requests.
-		return ctrl.Result{}, ignoreNotFound(err)
+		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 	currentWs := ws.DeepCopy()
 
 	log.DebugAll().DumpObject(r.Scheme, currentWs, "request object")
 
 	// sync workspace config with template
-	cfg, err := r.GetWorkspaceConfig(ctx, ws.Spec.Template.Name)
+	cfg, err := getWorkspaceConfig(ctx, r.Client, ws.Spec.Template.Name)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -125,7 +126,7 @@ func (r *WorkspaceReconciler) patchInstanceToWorkspaceDesired(inst *cosmov1alpha
 	for i, netRule := range ws.Spec.Network {
 		svcPorts[i] = netRule.ServicePort()
 		ingRules[i] = netRule.IngressRule(
-			cosmov1alpha1.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName))
+			instance.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName))
 	}
 
 	scaleTargetRef := func(ws wsv1alpha1.Workspace) cosmov1alpha1.ObjectRef {
@@ -187,4 +188,52 @@ func addWorkspaceVars(vars map[string]string, ws wsv1alpha1.Workspace) map[strin
 	vars[wsv1alpha1.TemplateVarServiceMainPortName] = ws.Status.Config.ServiceMainPortName
 
 	return vars
+}
+
+func getWorkspaceServicesAndIngress(ctx context.Context, c client.Client, ws wsv1alpha1.Workspace) (svc corev1.Service, ing netv1.Ingress, err error) {
+	var svcList corev1.ServiceList
+	var ingList netv1.IngressList
+
+	ls := labels.NewSelector()
+	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstance, selection.In, []string{ws.GetName()})
+	ls = ls.Add(*req)
+
+	opts := &client.ListOptions{
+		LabelSelector: ls,
+		Namespace:     ws.GetNamespace(),
+	}
+
+	if err := c.List(ctx, &svcList, opts); err != nil {
+		return svc, ing, err
+	}
+
+	if len(svcList.Items) == 0 {
+		return svc, ing, errors.New("no services")
+	}
+
+	for _, v := range svcList.Items {
+		if instance.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.ServiceName) {
+			svc = v
+		}
+	}
+
+	if err := c.List(ctx, &ingList, opts); err != nil {
+		return svc, ing, err
+	}
+
+	for _, v := range ingList.Items {
+		if instance.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.IngressName) {
+			ing = v
+		}
+	}
+
+	return svc, ing, nil
+}
+
+func getWorkspaceConfig(ctx context.Context, c client.Client, tmplName string) (cfg wsv1alpha1.Config, err error) {
+	tmpl := &cosmov1alpha1.Template{}
+	if err := c.Get(ctx, types.NamespacedName{Name: tmplName}, tmpl); err != nil {
+		return cfg, err
+	}
+	return wscfg.ConfigFromTemplateAnnotations(tmpl)
 }

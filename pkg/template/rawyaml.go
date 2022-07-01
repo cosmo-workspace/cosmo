@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
@@ -21,10 +22,10 @@ var (
 
 type RawYAMLBuilder struct {
 	rawYaml string
-	inst    *cosmov1alpha1.Instance
+	inst    cosmov1alpha1.InstanceObject
 }
 
-func NewRawYAMLBuilder(rawYaml string, inst *cosmov1alpha1.Instance) *RawYAMLBuilder {
+func NewRawYAMLBuilder(rawYaml string, inst cosmov1alpha1.InstanceObject) *RawYAMLBuilder {
 	return &RawYAMLBuilder{
 		rawYaml: rawYaml,
 		inst:    inst,
@@ -48,15 +49,18 @@ func (t *RawYAMLBuilder) Build() ([]unstructured.Unstructured, error) {
 }
 
 func (t *RawYAMLBuilder) ReplaceDefaultVars() *RawYAMLBuilder {
-	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsInstance, t.inst.Name)
-	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsNamespace, t.inst.Namespace)
-	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsTemplate, t.inst.Spec.Template.Name)
+	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsInstance, t.inst.GetName())
+	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsTemplate, t.inst.GetSpec().Template.Name)
+
+	if t.inst.GetScope() == meta.RESTScopeNamespace {
+		t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsNamespace, t.inst.GetNamespace())
+	}
 	return t
 }
 
 func (t *RawYAMLBuilder) ReplaceCustomVars() *RawYAMLBuilder {
-	if t.inst.Spec.Vars != nil {
-		for key, val := range t.inst.Spec.Vars {
+	if t.inst.GetSpec().Vars != nil {
+		for key, val := range t.inst.GetSpec().Vars {
 			key = FixupTemplateVarKey(key)
 			t.rawYaml = strings.ReplaceAll(t.rawYaml, key, val)
 		}

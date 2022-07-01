@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
@@ -31,6 +32,18 @@ type Instance struct {
 
 	Spec   InstanceSpec   `json:"spec,omitempty"`
 	Status InstanceStatus `json:"status,omitempty"`
+}
+
+func (i *Instance) GetSpec() *InstanceSpec {
+	return &i.Spec
+}
+
+func (i *Instance) GetStatus() *InstanceStatus {
+	return &i.Status
+}
+
+func (i *Instance) GetScope() meta.RESTScope {
+	return meta.RESTScopeNamespace
 }
 
 // +kubebuilder:object:root=true
@@ -95,8 +108,10 @@ type Json6902 struct {
 
 // InstanceStatus has status of Instance
 type InstanceStatus struct {
-	TemplateName string      `json:"templateName,omitempty"`
-	LastApplied  []ObjectRef `json:"lastApplied,omitempty"`
+	TemplateName            string      `json:"templateName,omitempty"`
+	LastApplied             []ObjectRef `json:"lastApplied,omitempty"`
+	LastAppliedObjectsCount int         `json:"lastAppliedObjectsCount,omitempty"`
+	TemplateObjectsCount    int         `json:"templateObjectsCount,omitempty"`
 }
 
 // ObjectRef is a reference of resource which is created by the Instance
@@ -104,15 +119,6 @@ type ObjectRef struct {
 	corev1.ObjectReference `json:",inline"`
 	CreationTimestamp      *metav1.Time `json:"creationTimestamp,omitempty"`
 	UpdateTimestamp        *metav1.Time `json:"updateTimestamp,omitempty"`
-}
-
-type gvkObject interface {
-	GroupVersionKind() schema.GroupVersionKind
-	GetName() string
-}
-
-func (r ObjectRef) IsTarget(instanceName string, obj gvkObject) bool {
-	return IsGVKEqual(r.GroupVersionKind(), obj.GroupVersionKind()) && EqualInstanceResourceName(instanceName, r.Name, obj.GetName())
 }
 
 func (r *ObjectRef) SetName(name string) {

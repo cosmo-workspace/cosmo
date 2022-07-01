@@ -11,22 +11,20 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
-)
-
-const (
-	UserControllerFieldManager string = "cosmo-user-controller"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 // UserReconciler reconciles a Template object
 type UserReconciler struct {
-	kosmo.Client
+	client.Client
 	Recorder record.EventRecorder
 	Scheme   *runtime.Scheme
 }
@@ -39,7 +37,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	var user wsv1alpha1.User
 	if err := r.Get(ctx, req.NamespacedName, &user); err != nil {
-		return ctrl.Result{}, ignoreNotFound(err)
+		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 	currentUser := user.DeepCopy()
 
@@ -77,7 +75,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		user.Status.Namespace.CreationTimestamp = &now
 
 		log.Info("initializing password secret")
-		if err := r.ResetPassword(ctx, user.Name); err != nil {
+		if err := password.ResetPassword(ctx, r.Client, user.Name); err != nil {
 			r.Recorder.Eventf(&user, corev1.EventTypeWarning, "InitFailed", "failed to reset password: %v", err)
 			log.Error(err, "failed to reset password")
 			return ctrl.Result{}, err
@@ -153,7 +151,7 @@ func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.Us
 	}
 	log := clog.FromContext(ctx)
 
-	tmpls, err := r.ListTemplatesByType(ctx, []string{wsv1alpha1.TemplateTypeUserAddon})
+	tmpls, err := kubeutil.ListTemplatesByType(ctx, r.Client, []string{wsv1alpha1.TemplateTypeUserAddon})
 	if err != nil {
 		log.Error(err, "failed to list templates")
 		return nil

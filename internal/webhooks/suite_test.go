@@ -10,6 +10,7 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
@@ -20,7 +21,10 @@ import (
 	//+kubebuilder:scaffold:imports
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+)
+
+const (
+	instControllerFieldManager string = "cosmo-instance-controller"
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
@@ -28,13 +32,19 @@ import (
 
 var (
 	cfg       *rest.Config
-	k8sClient kosmo.Client
+	k8sClient client.Client
 	testEnv   *envtest.Environment
 	ctx       context.Context
 	cancel    context.CancelFunc
 )
 
 const DefaultURLBase = "https://default.example.com"
+
+func init() {
+	cosmov1alpha1.AddToScheme(scheme.Scheme)
+	wsv1alpha1.AddToScheme(scheme.Scheme)
+	//+kubebuilder:scaffold:scheme
+}
 
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -43,6 +53,10 @@ func TestAPIs(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
+	// logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter),
+	// 	zap.UseFlagOptions(&zap.Options{
+	// 		Development: true,
+	// 		Level:       zapcore.Level(-clog.LEVEL_DEBUG_ALL)})))
 
 	ctx, cancel = context.WithCancel(ctrl.SetupSignalHandler())
 
@@ -61,12 +75,6 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 
-	err = cosmov1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = wsv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:             scheme.Scheme,
 		MetricsBindAddress: "0",
@@ -75,7 +83,7 @@ var _ = BeforeSuite(func() {
 	})
 	Expect(err).NotTo(HaveOccurred())
 
-	k8sClient = kosmo.NewClient(mgr.GetClient())
+	k8sClient = mgr.GetClient()
 	Expect(k8sClient).NotTo(BeNil())
 
 	(&InstanceMutationWebhookHandler{
@@ -84,8 +92,9 @@ var _ = BeforeSuite(func() {
 	}).SetupWebhookWithManager(mgr)
 
 	(&InstanceValidationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		Client:       k8sClient,
+		Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		FieldManager: instControllerFieldManager,
 	}).SetupWebhookWithManager(mgr)
 
 	(&WorkspaceMutationWebhookHandler{
@@ -112,6 +121,12 @@ var _ = BeforeSuite(func() {
 		Client:         k8sClient,
 		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
 		DefaultURLBase: DefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
+
+	(&TemplateValidationWebhookHandler{
+		Client:       k8sClient,
+		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
+		FieldManager: instControllerFieldManager,
 	}).SetupWebhookWithManager(mgr)
 
 	go func() {

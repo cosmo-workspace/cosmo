@@ -34,6 +34,15 @@ var etmpl2 *cosmov1alpha1.Template
 var einst2 *cosmov1alpha1.Instance
 var einst2Pod *corev1.Pod
 
+var ectmpl1 *cosmov1alpha1.ClusterTemplate
+var ecinst1 *cosmov1alpha1.ClusterInstance
+
+func init() {
+	cosmov1alpha1.AddToScheme(scheme.Scheme)
+	wsv1alpha1.AddToScheme(scheme.Scheme)
+	//+kubebuilder:scaffold:scheme
+}
+
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Kosmo Suite")
@@ -53,15 +62,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 
-	err = cosmov1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = wsv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	//+kubebuilder:scaffold:scheme
-
-	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
+	k8sClient, err = NewClientByRestConfig(cfg, scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 	Expect(k8sClient).NotTo(BeNil())
 
@@ -71,6 +72,9 @@ var _ = BeforeSuite(func() {
 	Expect(k8sClient.Create(ctx, etmpl2)).ShouldNot(HaveOccurred())
 	Expect(k8sClient.Create(ctx, einst2)).ShouldNot(HaveOccurred())
 	Expect(k8sClient.Create(ctx, einst2Pod)).ShouldNot(HaveOccurred())
+
+	Expect(k8sClient.Create(ctx, ecinst1)).ShouldNot(HaveOccurred())
+	Expect(k8sClient.Create(ctx, ectmpl1)).ShouldNot(HaveOccurred())
 
 })
 

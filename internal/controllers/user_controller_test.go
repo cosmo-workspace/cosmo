@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
+	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -104,7 +106,7 @@ spec:
 				},
 				Spec: wsv1alpha1.UserSpec{
 					DisplayName: "お名前",
-					AuthType:    wsv1alpha1.UserAuthTypeKosmoSecert,
+					AuthType:    wsv1alpha1.UserAuthTypePasswordSecert,
 					Addons: []wsv1alpha1.UserAddon{
 						{
 							Template: cosmov1alpha1.TemplateRef{
@@ -164,8 +166,7 @@ spec:
 			By("check namespace owner reference")
 
 			ownerref := ownerRef(&user, scheme.Scheme)
-			eq := equality.Semantic.DeepEqual(createdNs.OwnerReferences, []metav1.OwnerReference{ownerref})
-			Expect(eq).Should(BeTrue())
+			Expect(createdNs.OwnerReferences).Should(BeEqualityDeepEqual([]metav1.OwnerReference{ownerref}))
 
 			By("check user's namespace reference")
 
@@ -176,7 +177,7 @@ spec:
 			By("check password secret is created")
 
 			Eventually(func() error {
-				_, err := k8sClient.GetDefaultPassword(ctx, user.Name)
+				_, err := password.GetDefaultPassword(ctx, k8sClient, user.Name)
 				return err
 			}, time.Second*10).Should(Succeed())
 

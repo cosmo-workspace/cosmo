@@ -8,10 +8,13 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/selection"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/source"
@@ -19,20 +22,16 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
 
-const (
-	WsStatControllerFieldManager string = "cosmo-workspace-status-controller"
-)
-
 // WorkspaceStatusReconciler reconciles a Workspace object
 type WorkspaceStatusReconciler struct {
-	kosmo.Client
-	Recorder record.EventRecorder
-	Scheme   *runtime.Scheme
+	client.Client
+	Recorder       record.EventRecorder
+	Scheme         *runtime.Scheme
+	DefaultURLBase string
 }
 
 //+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
@@ -48,7 +47,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	var ws wsv1alpha1.Workspace
 	if err := r.Get(ctx, key, &ws); err != nil {
-		return ctrl.Result{}, ignoreNotFound(err)
+		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
 	current := ws.DeepCopy()
@@ -56,9 +55,12 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	log.DebugAll().DumpObject(r.Scheme, &ws, "before workspace")
 
 	// sync workspace config with template
-	cfg, err := r.GetWorkspaceConfig(ctx, ws.Spec.Template.Name)
+	cfg, err := getWorkspaceConfig(ctx, r.Client, ws.Spec.Template.Name)
 	if err != nil {
 		return ctrl.Result{}, err
+	}
+	if cfg.URLBase == "" {
+		cfg.URLBase = r.DefaultURLBase
 	}
 	ws.Status.Config = cfg
 
@@ -72,7 +74,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	// set workspace phase
-	pods, err := r.ListWorkspacePods(ctx, ws)
+	pods, err := listWorkspacePods(ctx, r.Client, ws)
 	if err != nil {
 		log.Info("failed to list instance pods", "error", err, "ws", ws.Name, "logLevel", "warn")
 		ws.Status.Phase = "NotRunning"
@@ -164,7 +166,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 	log := clog.FromContext(ctx).WithCaller()
 	urlbase := wsnet.URLBase(ws.Status.Config.URLBase)
 
-	svc, _, err := r.GetWorkspaceServicesAndIngress(ctx, ws)
+	svc, _, err := getWorkspaceServicesAndIngress(ctx, r.Client, ws)
 	if err != nil {
 		return nil, err
 	}
@@ -214,4 +216,21 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 	}
 
 	return urlMap, nil
+}
+
+func listWorkspacePods(ctx context.Context, c client.Client, ws wsv1alpha1.Workspace) ([]corev1.Pod, error) {
+	var podList corev1.PodList
+
+	ls := labels.NewSelector()
+	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstance, selection.Equals, []string{ws.GetName()})
+	ls = ls.Add(*req)
+
+	opts := &client.ListOptions{
+		LabelSelector: ls,
+		Namespace:     ws.GetNamespace(),
+	}
+	if err := c.List(ctx, &podList, opts); err != nil {
+		return nil, err
+	}
+	return podList.Items, nil
 }

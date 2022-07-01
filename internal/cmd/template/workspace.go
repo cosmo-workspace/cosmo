@@ -12,9 +12,9 @@ import (
 	appsv1apply "k8s.io/client-go/applyconfigurations/apps/v1"
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/internal/authproxy"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
@@ -33,11 +33,11 @@ func completeWorkspaceConfig(wsConfig *wsv1alpha1.Config, unst []unstructured.Un
 	svcs := make([]unstructured.Unstructured, 0)
 	ings := make([]unstructured.Unstructured, 0)
 	for _, u := range unst {
-		if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.DeploymentGVK) {
+		if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.DeploymentGVK) {
 			dps = append(dps, u)
-		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) {
+		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) {
 			svcs = append(svcs, u)
-		} else if cosmov1alpha1.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) {
+		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) {
 			ings = append(ings, u)
 		}
 	}
@@ -128,7 +128,7 @@ func completeWorkspaceConfig(wsConfig *wsv1alpha1.Config, unst []unstructured.Un
 						if path.Backend.Service == nil {
 							continue
 						}
-						if !cosmov1alpha1.EqualInstanceResourceName(template.DefaultVarsInstance,
+						if !instance.EqualInstanceResourceName(template.DefaultVarsInstance,
 							path.Backend.Service.Name, wsConfig.ServiceName) {
 							continue
 						}

@@ -1,6 +1,10 @@
 package template
 
-import cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+import (
+	"strconv"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+)
 
 type LabelHolder interface {
 	GetLabels() map[string]string
@@ -24,4 +28,30 @@ func GetTemplateType(l LabelHolder) (string, bool) {
 
 	tmplType, ok := labels[cosmov1alpha1.TemplateLabelKeyType]
 	return tmplType, ok
+}
+
+func IsDisableNamePrefix(tmpl cosmov1alpha1.TemplateObject) bool {
+	ann := tmpl.GetAnnotations()
+	if ann == nil {
+		return false
+	}
+	val := ann[cosmov1alpha1.TemplateAnnKeyDisableNamePrefix]
+	disable, err := strconv.ParseBool(val)
+	if err != nil {
+		return false
+	}
+	return disable
+}
+
+func IsSkipValidation(tmpl cosmov1alpha1.TemplateObject) bool {
+	ann := tmpl.GetAnnotations()
+	if ann == nil {
+		return false
+	}
+	val := ann[cosmov1alpha1.TemplateAnnKeySkipValidation]
+	skip, err := strconv.ParseBool(val)
+	if err != nil {
+		return false
+	}
+	return skip
 }

@@ -10,10 +10,8 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes/scheme"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -21,6 +19,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -35,6 +34,12 @@ func TestAPIs(t *testing.T) {
 	RunSpecs(t, "Kubeutil Suite")
 }
 
+func init() {
+	cosmov1alpha1.AddToScheme(scheme.Scheme)
+	wsv1alpha1.AddToScheme(scheme.Scheme)
+	//+kubebuilder:scaffold:scheme
+}
+
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
@@ -47,14 +52,6 @@ var _ = BeforeSuite(func() {
 	cfg, err := testEnv.Start()
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
-
-	err = cosmov1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = wsv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	//+kubebuilder:scaffold:scheme
 
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).NotTo(HaveOccurred())
@@ -71,10 +68,6 @@ var _ = AfterSuite(func() {
 })
 
 func createInitObjects(ctx context.Context) {
-	scheme := runtime.NewScheme()
-	clientgoscheme.AddToScheme(scheme)
-	cosmov1alpha1.AddToScheme(scheme)
-
 	tmpl1 := &cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "tmpl1",
@@ -216,7 +209,7 @@ spec:
 
 	inst2Pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      cosmov1alpha1.InstanceResourceName(inst2.Name, "alpine"),
+			Name:      instance.InstanceResourceName(inst2.Name, "alpine"),
 			Namespace: inst2.Namespace,
 			Labels: map[string]string{
 				cosmov1alpha1.LabelKeyInstance: "inst2",

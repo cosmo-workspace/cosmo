@@ -42,6 +42,12 @@ var (
 
 const DefaultURLBase = "https://default.example.com"
 
+func init() {
+	cosmov1alpha1.AddToScheme(scheme.Scheme)
+	wsv1alpha1.AddToScheme(scheme.Scheme)
+	//+kubebuilder:scaffold:scheme
+}
+
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Cosmoctl cmd Suite")
@@ -67,14 +73,6 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 
-	err = cosmov1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = wsv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	//+kubebuilder:scaffold:scheme
-
 	c, err := client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).NotTo(HaveOccurred())
 
@@ -96,8 +94,9 @@ var _ = BeforeSuite(func() {
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.InstanceValidationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		Client:       k8sClient,
+		Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		FieldManager: "cosmo-instance-controller",
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.WorkspaceMutationWebhookHandler{
@@ -124,6 +123,12 @@ var _ = BeforeSuite(func() {
 		Client:         k8sClient,
 		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
 		DefaultURLBase: DefaultURLBase,
+	}).SetupWebhookWithManager(mgr)
+
+	(&webhooks.TemplateValidationWebhookHandler{
+		Client:       k8sClient,
+		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
+		FieldManager: "cosmo-instance-controller",
 	}).SetupWebhookWithManager(mgr)
 
 	go func() {
@@ -188,7 +193,7 @@ func test_CreateCosmoUser(id string, dispayName string, role wsv1alpha1.UserRole
 		Spec: wsv1alpha1.UserSpec{
 			DisplayName: dispayName,
 			Role:        role,
-			AuthType:    wsv1alpha1.UserAuthTypeKosmoSecert,
+			AuthType:    wsv1alpha1.UserAuthTypePasswordSecert,
 		},
 	}
 	err := k8sClient.Create(ctx, &user)

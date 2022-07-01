@@ -1,9 +1,12 @@
-package v1alpha1
+package instance
 
 import (
+	"reflect"
 	"strings"
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
 
 // InstanceResourceName is a child resource name created by instance
@@ -20,20 +23,25 @@ func EqualInstanceResourceName(instanceName, a, b string) bool {
 	return InstanceResourceName(instanceName, a) == InstanceResourceName(instanceName, b)
 }
 
-func IsGVKEqual(a, b schema.GroupVersionKind) bool {
-	return a.Group == b.Group && a.Kind == b.Kind && a.Version == b.Version
+type GVKNameGetter interface {
+	GroupVersionKind() schema.GroupVersionKind
+	GetName() string
 }
 
-func ExistInLastApplyed(inst Instance, gvkObj gvkObject) bool {
-	lastApplied := inst.Status.LastApplied
+func ExistInLastApplyed(inst cosmov1alpha1.InstanceObject, targetObj GVKNameGetter) bool {
+	lastApplied := inst.GetStatus().LastApplied
 	if len(lastApplied) == 0 {
 		return false
 	}
 
-	for _, v := range lastApplied {
-		if v.IsTarget(inst.Name, gvkObj) {
+	for _, ref := range lastApplied {
+		if IsTarget(ref, inst.GetName(), targetObj) {
 			return true
 		}
 	}
 	return false
+}
+
+func IsTarget(ref cosmov1alpha1.ObjectRef, instanceName string, obj GVKNameGetter) bool {
+	return reflect.DeepEqual(ref.GroupVersionKind(), obj.GroupVersionKind()) && EqualInstanceResourceName(instanceName, ref.Name, obj.GetName())
 }

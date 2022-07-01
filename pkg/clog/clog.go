@@ -89,22 +89,19 @@ type NamedObject interface {
 func (l *Logger) DumpObject(scheme *apiruntime.Scheme, obj NamedObject, msg string) {
 	if l.logger.Enabled() {
 		debugObj := obj.DeepCopyObject()
-		gvk, err := apiutil.GVKForObject(debugObj, scheme)
-		if err != nil {
-			return
-		}
+		gvk, _ := apiutil.GVKForObject(debugObj, scheme)
 		apiVersion := gvk.GroupVersion()
 		kind := gvk.Kind
 		name := obj.GetName()
 
-		b, err := yaml.Marshal(obj)
-		if err == nil {
-			fmt.Fprintf(l.out, `--- dump object: %s
+		b, _ := yaml.Marshal(obj)
+		// if err == nil {
+		fmt.Fprintf(l.out, `--- dump object: %s
 --- %s
 --- APIVersion: %s, Kind: %s, Name: %s
 %s
 `, msg, fileLine(), apiVersion, kind, name, b)
-		}
+		// }
 	}
 }
 

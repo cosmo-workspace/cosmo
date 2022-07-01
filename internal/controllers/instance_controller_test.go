@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"reflect"
 	"testing"
 	"time"
 
+	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -35,7 +35,7 @@ import (
 	netv1apply "k8s.io/client-go/applyconfigurations/networking/v1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
@@ -129,7 +129,7 @@ spec:
 	}
 
 	expectedDeployApply := func(instName, namespace, imageTag string, ownerRef metav1.OwnerReference) *appsv1apply.DeploymentApplyConfiguration {
-		return appsv1apply.Deployment(cosmov1alpha1.InstanceResourceName(instName, "nginx"), namespace).
+		return appsv1apply.Deployment(instance.InstanceResourceName(instName, "nginx"), namespace).
 			WithAPIVersion("apps/v1").
 			WithKind("Deployment").
 			WithLabels(map[string]string{
@@ -169,7 +169,7 @@ spec:
 	}
 
 	expectedServiceApply := func(instName, namespace string, ownerRef metav1.OwnerReference) *corev1apply.ServiceApplyConfiguration {
-		return corev1apply.Service(cosmov1alpha1.InstanceResourceName(instName, "nginx"), namespace).
+		return corev1apply.Service(instance.InstanceResourceName(instName, "nginx"), namespace).
 			WithAPIVersion("v1").
 			WithKind("Service").
 			WithLabels(map[string]string{
@@ -198,7 +198,7 @@ spec:
 	}
 
 	expectedIngressApply := func(instName, namespace, domain string, ownerRef metav1.OwnerReference) *netv1apply.IngressApplyConfiguration {
-		return netv1apply.Ingress(cosmov1alpha1.InstanceResourceName(instName, "nginx"), namespace).
+		return netv1apply.Ingress(instance.InstanceResourceName(instName, "nginx"), namespace).
 			WithAPIVersion("networking.k8s.io/v1").
 			WithKind("Ingress").
 			WithLabels(map[string]string{
@@ -223,7 +223,7 @@ spec:
 							WithPathType(netv1.PathTypePrefix).
 							WithBackend(netv1apply.IngressBackend().
 								WithService(netv1apply.IngressServiceBackend().
-									WithName(cosmov1alpha1.InstanceResourceName(instName, "nginx")).
+									WithName(instance.InstanceResourceName(instName, "nginx")).
 									WithPort(netv1apply.ServiceBackendPort().
 										WithNumber(80))))))))
 	}
@@ -294,10 +294,12 @@ spec:
 			ownerRef := ownerRef(&inst, scheme.Scheme)
 
 			// Deployment
+			By("checking if deployment is as expected")
+
 			var deploy appsv1.Deployment
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &deploy)
@@ -308,26 +310,22 @@ spec:
 			}, time.Second*10).Should(Succeed())
 			deploy.GroupVersionKind()
 
-			deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, InstControllerFieldManager)
+			deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			expectedDeployApplyCfg := expectedDeployApply(instName, nsName, "latest", ownerRef)
-
-			By("checking if deployment is as expected")
-
-			clog.PrintObjectDiff(os.Stderr, deployApplyCfg, expectedDeployApplyCfg)
-			eq := equality.Semantic.DeepEqual(deployApplyCfg, expectedDeployApplyCfg)
-			Expect(eq).Should(BeTrue())
+			Expect(deployApplyCfg).Should(BeEqualityDeepEqual(expectedDeployApplyCfg))
 
 			deploy.SetGroupVersionKind(kubeutil.DeploymentGVK)
-
-			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &deploy)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(&createdInst, &deploy)).Should(BeTrue())
 
 			// Service
+			By("checking if service is as expected")
+
 			var svc corev1.Service
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &svc)
@@ -337,26 +335,22 @@ spec:
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			svcApplyCfg, err := corev1apply.ExtractService(&svc, InstControllerFieldManager)
+			svcApplyCfg, err := corev1apply.ExtractService(&svc, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			expectedServiceApplyCfg := expectedServiceApply(instName, nsName, ownerRef)
-
-			By("checking if service is as expected")
-
-			clog.PrintObjectDiff(os.Stderr, svcApplyCfg, expectedServiceApplyCfg)
-			eq = equality.Semantic.DeepEqual(svcApplyCfg, expectedServiceApplyCfg)
-			Expect(eq).Should(BeTrue())
+			Expect(svcApplyCfg).Should(BeEqualityDeepEqual(expectedServiceApplyCfg))
 
 			svc.SetGroupVersionKind(kubeutil.ServiceGVK)
-
-			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &svc)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(&createdInst, &svc)).Should(BeTrue())
 
 			// Ingress
+			By("checking if ingress is as expected")
+
 			var ing netv1.Ingress
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &ing)
@@ -366,28 +360,19 @@ spec:
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			ingApplyCfg, err := netv1apply.ExtractIngress(&ing, InstControllerFieldManager)
+			ingApplyCfg, err := netv1apply.ExtractIngress(&ing, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			expectedIngApplyCfg := expectedIngressApply(instName, nsName, "example.com", ownerRef)
-
-			By("checking if ingress is as expected")
-
-			clog.PrintObjectDiff(os.Stderr, ingApplyCfg, expectedIngApplyCfg)
-			eq = equality.Semantic.DeepEqual(ingApplyCfg, expectedIngApplyCfg)
-			Expect(eq).Should(BeTrue())
+			Expect(ingApplyCfg).Should(BeEqualityDeepEqual(expectedIngApplyCfg))
 
 			ing.SetGroupVersionKind(kubeutil.IngressGVK)
-
-			Expect(cosmov1alpha1.ExistInLastApplyed(createdInst, &ing)).Should(BeTrue())
+			Expect(instance.ExistInLastApplyed(&createdInst, &ing)).Should(BeTrue())
 
 			By("checking creation time equal to update time")
 
 			for _, v := range createdInst.Status.LastApplied {
-				//fmt.Println("CreationTimestamp", v.CreationTimestamp)
-				//fmt.Println("UpdateTimestamp", v.UpdateTimestamp)
-
-				Expect(v.CreationTimestamp.Equal(v.UpdateTimestamp)).Should(BeTrue())
+				Expect(v.CreationTimestamp).Should(BeEquivalentTo(v.UpdateTimestamp))
 			}
 		})
 	})
@@ -495,8 +480,9 @@ spec:
 				},
 			}
 
-			err := k8sClient.Update(ctx, &inst)
-			Expect(err).ShouldNot(HaveOccurred())
+			Eventually(func() error {
+				return k8sClient.Update(ctx, &inst)
+			}).Should(Succeed(), time.Second*10)
 
 			By("checking if child resources updated")
 
@@ -534,7 +520,7 @@ spec:
 			var deploy appsv1.Deployment
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &deploy)
@@ -542,7 +528,7 @@ spec:
 					return err
 				}
 
-				deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, InstControllerFieldManager)
+				deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				eq := equality.Semantic.DeepEqual(deployApplyCfg, expectedDeployApplyCfg)
@@ -557,7 +543,7 @@ spec:
 			var svc corev1.Service
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &svc)
@@ -565,7 +551,7 @@ spec:
 					return err
 				}
 
-				svcApplyCfg, err := corev1apply.ExtractService(&svc, InstControllerFieldManager)
+				svcApplyCfg, err := corev1apply.ExtractService(&svc, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				eq := equality.Semantic.DeepEqual(svcApplyCfg, expectedServiceApplyCfg)
@@ -580,7 +566,7 @@ spec:
 			var ing netv1.Ingress
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      cosmov1alpha1.InstanceResourceName(instName, "nginx"),
+					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &ing)
@@ -588,7 +574,7 @@ spec:
 					return err
 				}
 
-				ingApplyCfg, err := netv1apply.ExtractIngress(&ing, InstControllerFieldManager)
+				ingApplyCfg, err := netv1apply.ExtractIngress(&ing, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				eq := equality.Semantic.DeepEqual(ingApplyCfg, expectedIngApplyCfg)
@@ -661,7 +647,7 @@ rules:
 
 			var cr rbacv1.ClusterRole
 			key = client.ObjectKey{
-				Name: cosmov1alpha1.InstanceResourceName(clusterLevelInstName, "privileged"),
+				Name: instance.InstanceResourceName(clusterLevelInstName, "privileged"),
 			}
 			err = k8sClient.Get(ctx, key, &cr)
 			Expect(apierrs.IsNotFound(err)).Should(BeTrue())

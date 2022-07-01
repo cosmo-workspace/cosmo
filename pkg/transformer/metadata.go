@@ -2,43 +2,46 @@ package transformer
 
 import (
 	"fmt"
-	"strconv"
 
+	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
 type MetadataTransformer struct {
-	inst            *cosmov1alpha1.Instance
-	tmplName        string
-	tmplAnnotations map[string]string
-	scheme          *runtime.Scheme
+	inst              cosmov1alpha1.InstanceObject
+	tmplName          string
+	scheme            *runtime.Scheme
+	disableNamePrefix bool
 }
 
-func NewMetadataTransformer(inst *cosmov1alpha1.Instance, tmpl *cosmov1alpha1.Template, scheme *runtime.Scheme) *MetadataTransformer {
-	return &MetadataTransformer{inst: inst, tmplName: tmpl.GetName(), tmplAnnotations: tmpl.GetAnnotations(), scheme: scheme}
+func NewMetadataTransformer(inst cosmov1alpha1.InstanceObject, scheme *runtime.Scheme, disableNamePrefix bool) *MetadataTransformer {
+	return &MetadataTransformer{inst: inst, tmplName: inst.GetSpec().Template.Name, scheme: scheme, disableNamePrefix: disableNamePrefix}
 }
 
 func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstructured.Unstructured, error) {
 	obj := src.DeepCopy()
 
 	// Set name prefix
-	if !t.disableNamePrefix() {
-		obj.SetName(cosmov1alpha1.InstanceResourceName(t.inst.Name, obj.GetName()))
+	if !t.disableNamePrefix {
+		obj.SetName(instance.InstanceResourceName(t.inst.GetName(), obj.GetName()))
 	}
 
-	// Set namespace
-	obj.SetNamespace(t.inst.Namespace)
+	if t.inst.GetScope() == meta.RESTScopeNamespace {
+		// Set namespace
+		obj.SetNamespace(t.inst.GetNamespace())
+	}
 
 	// Set labels
 	labels := obj.GetLabels()
 	if labels == nil {
 		labels = make(map[string]string)
 	}
-	labels[cosmov1alpha1.LabelKeyInstance] = t.inst.Name
+	labels[cosmov1alpha1.LabelKeyInstance] = t.inst.GetName()
 	labels[cosmov1alpha1.LabelKeyTemplate] = t.tmplName
 	obj.SetLabels(labels)
 
@@ -49,17 +52,4 @@ func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstru
 	}
 
 	return obj, nil
-}
-
-func (t *MetadataTransformer) disableNamePrefix() bool {
-	ann := t.tmplAnnotations
-	if ann == nil {
-		return false
-	}
-	val := ann[cosmov1alpha1.TemplateAnnKeyDisableNamePrefix]
-	disable, err := strconv.ParseBool(val)
-	if err != nil {
-		return false
-	}
-	return disable
 }

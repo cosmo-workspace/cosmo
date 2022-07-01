@@ -2,22 +2,21 @@ package webhooks
 
 import (
 	"context"
-	"os"
 	"testing"
 	"time"
 
+	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 var _ = Describe("Instance webhook", func() {
@@ -29,7 +28,7 @@ var _ = Describe("Instance webhook", func() {
 		URLBase:             "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com",
 	}
 
-	tmpl := cosmov1alpha1.Template{
+	cstmpl := cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "code-server-test",
 			Labels: map[string]string{
@@ -129,7 +128,7 @@ spec:
 			ctx := context.Background()
 
 			var err error
-			err = k8sClient.Create(ctx, &tmpl)
+			err = k8sClient.Create(ctx, &cstmpl)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			inst := cosmov1alpha1.Instance{
@@ -142,7 +141,7 @@ spec:
 					Namespace: "default",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Template: cosmov1alpha1.TemplateRef{Name: cstmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN":    "example.com",
 						"IMAGE_TAG": "latest",
@@ -239,7 +238,7 @@ spec:
 					Namespace: "default",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Template: cosmov1alpha1.TemplateRef{Name: cstmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN":    "example.com",
 						"IMAGE_TAG": "latest",
@@ -334,8 +333,7 @@ spec:
 
 			expectedInst.ObjectMeta = createdInst.ObjectMeta
 
-			eq := kubeutil.LooseDeepEqual(&createdInst, &expectedInst, kubeutil.WithPrintDiff(os.Stderr))
-			Expect(eq).Should(BeTrue())
+			Expect(&createdInst).Should(BeLooseDeepEqual(&expectedInst))
 		})
 	})
 
@@ -353,7 +351,7 @@ spec:
 					Namespace: "default",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Template: cosmov1alpha1.TemplateRef{Name: cstmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN": "example.com",
 					},
@@ -373,7 +371,7 @@ spec:
 					Namespace: "default",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Template: cosmov1alpha1.TemplateRef{Name: cstmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN":        "example.com",
 						"{{IMAGE_TAG}}": "latest",
@@ -391,9 +389,7 @@ spec:
 			}, time.Second*10).Should(Succeed())
 
 			expectedInst.ObjectMeta = createdInst.ObjectMeta
-
-			eq := kubeutil.LooseDeepEqual(&createdInst, &expectedInst, kubeutil.WithPrintDiff(os.Stderr))
-			Expect(eq).Should(BeTrue())
+			Expect(&createdInst).Should(BeLooseDeepEqual(&expectedInst))
 		})
 	})
 
@@ -429,7 +425,7 @@ spec:
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
 					Template: cosmov1alpha1.TemplateRef{
-						Name: tmpl.GetName(),
+						Name: cstmpl.GetName(),
 					},
 				},
 			}
@@ -449,7 +445,7 @@ spec:
 					Namespace: "default",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Template: cosmov1alpha1.TemplateRef{Name: cstmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN": "example.com",
 					},
@@ -485,7 +481,7 @@ spec:
 					Namespace: "default",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Template: cosmov1alpha1.TemplateRef{Name: cstmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN": "example.com",
 					},
@@ -525,12 +521,12 @@ spec:
 
 			inst := cosmov1alpha1.Instance{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      "testinst7",
+					Name:      "testinst7-invalid-var",
 					Namespace: "default",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
 					Template: cosmov1alpha1.TemplateRef{
-						Name: tmpl.GetName(),
+						Name: cstmpl.GetName(),
 					},
 					Vars: map[string]string{
 						"DOMAIN": "{{DOMAIN}}",
@@ -539,6 +535,173 @@ spec:
 			}
 
 			err := k8sClient.Create(ctx, &inst)
+			Expect(err).Should(HaveOccurred())
+		})
+	})
+
+	Context("when including ClusterRole in Template", func() {
+		It("should deny with invalid scope", func() {
+			ctx := context.Background()
+
+			tmpl := cosmov1alpha1.Template{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testtmpl7",
+				},
+				Spec: cosmov1alpha1.TemplateSpec{
+					RawYaml: `apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: privileged
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- nonResourceURLs:
+  - '*'
+  verbs:
+  - '*'
+`,
+				},
+			}
+			err := k8sClient.Create(ctx, &tmpl)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			inst := cosmov1alpha1.Instance{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testinst8",
+				},
+				Spec: cosmov1alpha1.InstanceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+				},
+			}
+
+			err = k8sClient.Create(ctx, &inst)
+			Expect(err).Should(HaveOccurred())
+		})
+	})
+
+	Context("when including ClusterRole in ClusterTemplate", func() {
+		It("should pass", func() {
+			ctx := context.Background()
+
+			tmpl := cosmov1alpha1.ClusterTemplate{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testctmpl1",
+				},
+				Spec: cosmov1alpha1.TemplateSpec{
+					RawYaml: `apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: privileged
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- nonResourceURLs:
+  - '*'
+  verbs:
+  - '*'
+`,
+				},
+			}
+			err := k8sClient.Create(ctx, &tmpl)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			inst := cosmov1alpha1.ClusterInstance{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testcinst1",
+				},
+				Spec: cosmov1alpha1.InstanceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+				},
+			}
+
+			err = k8sClient.Create(ctx, &inst)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+	})
+
+	Context("when including Pod in ClusterTemplate and ClusterInstance has namespace var", func() {
+		It("should pass", func() {
+			ctx := context.Background()
+
+			tmpl := cosmov1alpha1.ClusterTemplate{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testctmpl2",
+				},
+				Spec: cosmov1alpha1.TemplateSpec{
+					RawYaml: `apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: "{{NAMESPACE}}"
+spec:
+  containers:
+  - name: nginx
+    image: {{IMAGE}}:alpine
+`,
+				},
+			}
+			err := k8sClient.Create(ctx, &tmpl)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			inst := cosmov1alpha1.ClusterInstance{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testcinst2",
+				},
+				Spec: cosmov1alpha1.InstanceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Vars: map[string]string{
+						"NAMESPACE": "kube-system",
+						"IMAGE":     "var",
+					},
+				},
+			}
+
+			err = k8sClient.Create(ctx, &inst)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+	})
+
+	Context("when including Pod in ClusterTemplate", func() {
+		It("should deny with no namespace", func() {
+			ctx := context.Background()
+
+			tmpl := cosmov1alpha1.ClusterTemplate{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testctmpl3",
+				},
+				Spec: cosmov1alpha1.TemplateSpec{
+					RawYaml: `apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx2
+spec:
+  containers:
+  - name: nginx
+    image: nginx:alpine
+`,
+				},
+			}
+			err := k8sClient.Create(ctx, &tmpl)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			inst := cosmov1alpha1.ClusterInstance{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "testcinst3",
+				},
+				Spec: cosmov1alpha1.InstanceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+				},
+			}
+
+			err = k8sClient.Create(ctx, &inst)
 			Expect(err).Should(HaveOccurred())
 		})
 	})

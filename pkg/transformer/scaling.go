@@ -4,6 +4,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
 type ScalingTransformer struct {
@@ -19,7 +20,7 @@ func (t *ScalingTransformer) Transform(src *unstructured.Unstructured) (*unstruc
 	obj := src.DeepCopy()
 
 	for _, scaleSpec := range t.scaleSpecs {
-		if scaleSpec.Target.IsTarget(t.instName, obj) {
+		if instance.IsTarget(scaleSpec.Target, t.instName, obj) {
 			overrideReplicas(obj, scaleSpec.Replicas)
 		}
 	}
