@@ -283,7 +283,7 @@ spec:
 				if err != nil {
 					return err
 				}
-				if len(createdInst.Status.LastApplied) == 0 {
+				if createdInst.Status.LastAppliedObjectsCount == 0 {
 					return errors.New("child resources still not created")
 				}
 				return nil
@@ -643,7 +643,7 @@ rules:
 			}
 			err = k8sClient.Get(ctx, key, &createdInst)
 			Expect(err).ShouldNot(HaveOccurred())
-			Expect(len(createdInst.Status.LastApplied)).Should(BeZero())
+			Expect(createdInst.Status.LastAppliedObjectsCount).Should(BeZero())
 
 			var cr rbacv1.ClusterRole
 			key = client.ObjectKey{

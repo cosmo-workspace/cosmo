@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -30,8 +29,7 @@ import (
 )
 
 var _ = Describe("ClusterInstance controller", func() {
-	const tmplName string = "pv-test"
-	const instName string = "cinst-test"
+	const name string = "clusterinst-test"
 	const pvSufix string = "pv"
 	const scSufix string = "sc"
 	const varMountPath string = "MOUNT_PATH"
@@ -39,7 +37,7 @@ var _ = Describe("ClusterInstance controller", func() {
 
 	tmpl := cosmov1alpha1.ClusterTemplate{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: tmplName,
+			Name: name,
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
 			RawYaml: fmt.Sprintf(`
@@ -81,13 +79,13 @@ parameters:
 		},
 	}
 
-	expectedPVApply := func(instName, mountPath string, ownerRef metav1.OwnerReference) *corev1apply.PersistentVolumeApplyConfiguration {
-		return corev1apply.PersistentVolume(instance.InstanceResourceName(instName, pvSufix)).
+	expectedPVApply := func(mountPath string, ownerRef metav1.OwnerReference) *corev1apply.PersistentVolumeApplyConfiguration {
+		return corev1apply.PersistentVolume(instance.InstanceResourceName(name, pvSufix)).
 			WithAPIVersion("v1").
 			WithKind("PersistentVolume").
 			WithLabels(map[string]string{
-				cosmov1alpha1.LabelKeyInstance: instName,
-				cosmov1alpha1.LabelKeyTemplate: tmplName,
+				cosmov1alpha1.LabelKeyInstance: name,
+				cosmov1alpha1.LabelKeyTemplate: name,
 			}).
 			WithOwnerReferences(
 				metav1apply.OwnerReference().
@@ -103,20 +101,20 @@ parameters:
 				WithVolumeMode(corev1.PersistentVolumeMode("Filesystem")).
 				WithAccessModes(corev1.ReadWriteOnce).
 				WithPersistentVolumeReclaimPolicy(corev1.PersistentVolumeReclaimRecycle).
-				WithStorageClassName(instance.InstanceResourceName(instName, scSufix)).
+				WithStorageClassName(instance.InstanceResourceName(name, scSufix)).
 				WithMountOptions("hard", "nfsvers=4.1").
 				WithNFS(corev1apply.NFSVolumeSource().
 					WithServer("nfs-server.example.com").
 					WithPath(mountPath)))
 	}
 
-	expectedStorageClassApply := func(instName, mountPath string, ownerRef metav1.OwnerReference) *storagev1apply.StorageClassApplyConfiguration {
-		return storagev1apply.StorageClass(instance.InstanceResourceName(instName, scSufix)).
+	expectedStorageClassApply := func(mountPath string, ownerRef metav1.OwnerReference) *storagev1apply.StorageClassApplyConfiguration {
+		return storagev1apply.StorageClass(instance.InstanceResourceName(name, scSufix)).
 			WithAPIVersion("storage.k8s.io/v1").
 			WithKind("StorageClass").
 			WithLabels(map[string]string{
-				cosmov1alpha1.LabelKeyInstance: instName,
-				cosmov1alpha1.LabelKeyTemplate: tmplName,
+				cosmov1alpha1.LabelKeyInstance: name,
+				cosmov1alpha1.LabelKeyTemplate: name,
 			}).
 			WithOwnerReferences(
 				metav1apply.OwnerReference().
@@ -145,7 +143,7 @@ parameters:
 
 			var createdTmpl cosmov1alpha1.ClusterTemplate
 			Eventually(func() error {
-				err := k8sClient.Get(ctx, client.ObjectKey{Name: tmplName}, &createdTmpl)
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: name}, &createdTmpl)
 				if err != nil {
 					return err
 				}
@@ -160,11 +158,11 @@ parameters:
 
 			inst := cosmov1alpha1.ClusterInstance{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: instName,
+					Name: name,
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
 					Template: cosmov1alpha1.TemplateRef{
-						Name: tmplName,
+						Name: name,
 					},
 					Override: cosmov1alpha1.OverrideSpec{},
 					Vars: map[string]string{
@@ -178,19 +176,15 @@ parameters:
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
 			var createdInst cosmov1alpha1.ClusterInstance
-			Eventually(func() error {
+			Eventually(func() int {
 				key := client.ObjectKey{
-					Name: instName,
+					Name: name,
 				}
 				err := k8sClient.Get(ctx, key, &createdInst)
-				if err != nil {
-					return err
-				}
-				if len(createdInst.Status.LastApplied) == 0 {
-					return errors.New("child resources still not created")
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return createdInst.Status.LastAppliedObjectsCount
+			}, time.Second*60).Should(BeEquivalentTo(2))
 
 			By("checking if child resources is as expected in template")
 
@@ -202,7 +196,7 @@ parameters:
 			var pv corev1.PersistentVolume
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name: instance.InstanceResourceName(instName, pvSufix),
+					Name: instance.InstanceResourceName(name, pvSufix),
 				}
 				return k8sClient.Get(ctx, key, &pv)
 			}, time.Second*10).Should(Succeed())
@@ -210,7 +204,7 @@ parameters:
 			pvApplyCfg, err := corev1apply.ExtractPersistentVolume(&pv, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			expectedPVApplyCfg := expectedPVApply(instName, valMountPath, ownerRef)
+			expectedPVApplyCfg := expectedPVApply(valMountPath, ownerRef)
 			Expect(pvApplyCfg).Should(BeEqualityDeepEqual(expectedPVApplyCfg))
 
 			pv.SetGroupVersionKind(schema.FromAPIVersionAndKind(*pvApplyCfg.APIVersion, *pvApplyCfg.Kind))
@@ -222,7 +216,7 @@ parameters:
 			var sc storagev1.StorageClass
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name: instance.InstanceResourceName(instName, scSufix),
+					Name: instance.InstanceResourceName(name, scSufix),
 				}
 				return k8sClient.Get(ctx, key, &sc)
 			}, time.Second*10).Should(Succeed())
@@ -230,7 +224,7 @@ parameters:
 			scApplyCfg, err := storagev1apply.ExtractStorageClass(&sc, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			expectedSCApplyCfg := expectedStorageClassApply(instName, valMountPath, ownerRef)
+			expectedSCApplyCfg := expectedStorageClassApply(valMountPath, ownerRef)
 
 			Expect(scApplyCfg).Should(BeEqualityDeepEqual(expectedSCApplyCfg))
 
@@ -252,7 +246,7 @@ parameters:
 			var inst cosmov1alpha1.ClusterInstance
 			Eventually(func() error {
 				key := types.NamespacedName{
-					Name: instName,
+					Name: name,
 				}
 				return k8sClient.Get(ctx, key, &inst)
 			}, time.Second*10).Should(Succeed())
@@ -283,14 +277,14 @@ parameters:
 
 			Eventually(func() error {
 				return k8sClient.Update(ctx, &inst)
-			}).Should(Succeed(), time.Second*10)
+			}, time.Second*10).Should(Succeed())
 
 			By("checking if child resources updated")
 
 			ownerRef := ownerRef(&inst, scheme.Scheme)
 
 			// expected PersistentVolume
-			expectedPVApplyCfg := expectedPVApply(instName, valMountPath, ownerRef)
+			expectedPVApplyCfg := expectedPVApply(valMountPath, ownerRef)
 			expectedPVApplyCfg.Spec.WithCapacity(corev1.ResourceList{"storage": resource.MustParse("10Gi")})
 
 			By("checking if PersistentVolume updated")
@@ -298,7 +292,7 @@ parameters:
 			var pv corev1.PersistentVolume
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name: instance.InstanceResourceName(instName, pvSufix),
+					Name: instance.InstanceResourceName(name, pvSufix),
 				}
 				err := k8sClient.Get(ctx, key, &pv)
 				if err != nil {
@@ -316,14 +310,14 @@ parameters:
 			}, time.Second*10).Should(Succeed())
 
 			// expected StorageClass
-			expectedSCApplyCfg := expectedStorageClassApply(instName, valMountPath, ownerRef)
+			expectedSCApplyCfg := expectedStorageClassApply(valMountPath, ownerRef)
 
 			By("checking if StorageClass updated")
 
 			var sc storagev1.StorageClass
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name: instance.InstanceResourceName(instName, scSufix),
+					Name: instance.InstanceResourceName(name, scSufix),
 				}
 				err := k8sClient.Get(ctx, key, &sc)
 				if err != nil {
@@ -343,20 +337,18 @@ parameters:
 	})
 
 	Context("when creating pod", func() {
-		It("should not create namespaced-scope resource", func() {
+		It("create namespaced-scope resource even though namespace is not found", func() {
 			ctx := context.Background()
 
-			nsLevelTmplName := "ns-level-ctmpl"
-			nsLevelTmpl := cosmov1alpha1.ClusterTemplate{
+			t := cosmov1alpha1.ClusterTemplate{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: nsLevelTmplName,
+					Name: "ns-level-with-no-ns-err",
 				},
 				Spec: cosmov1alpha1.TemplateSpec{
 					RawYaml: `apiVersion: v1
 kind: Pod
 metadata:
   name: nginx
-  namespace: {{USER_NAMESPACE}}
 spec:
   containers:
   - name: nginx
@@ -364,37 +356,33 @@ spec:
 `,
 				},
 			}
-			err := k8sClient.Create(ctx, &nsLevelTmpl)
+			err := k8sClient.Create(ctx, &t)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			nsLevelInstName := "ns-level-inst"
 			nsLevelInst := cosmov1alpha1.ClusterInstance{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: nsLevelInstName,
+					Name: t.Name,
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
 					Template: cosmov1alpha1.TemplateRef{
-						Name: nsLevelTmplName,
-					},
-					Vars: map[string]string{
-						"USER_NAMESPACE": "default",
+						Name: t.Name,
 					},
 				},
 			}
 			err = k8sClient.Create(ctx, &nsLevelInst)
-			Expect(err).ShouldNot(HaveOccurred())
+			Expect(err).ShouldNot(HaveOccurred()) // pass here even though namespace is not found
 
-			podName := instance.InstanceResourceName(nsLevelInstName, "nginx")
+			podName := instance.InstanceResourceName(t.Name, "nginx")
 
 			time.Sleep(time.Second * 3)
 
 			var createdInst cosmov1alpha1.ClusterInstance
 			key := client.ObjectKey{
-				Name: nsLevelInstName,
+				Name: t.Name,
 			}
 			err = k8sClient.Get(ctx, key, &createdInst)
 			Expect(err).ShouldNot(HaveOccurred())
-			Expect(len(createdInst.Status.LastApplied)).Should(BeZero())
+			Expect(createdInst.Status.LastAppliedObjectsCount).Should(BeZero()) // Pod is not created
 
 			var pod corev1.Pod
 			key = types.NamespacedName{Namespace: "default", Name: podName}
