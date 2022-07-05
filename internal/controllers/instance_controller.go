@@ -8,6 +8,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -141,7 +142,8 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 			continue
 		}
 
-		if mapping.Scope != inst.GetScope() {
+		// nanespaced scope instance cannot create cluster scope resources
+		if inst.GetScope() == meta.RESTScopeNamespace && mapping.Scope != inst.GetScope() {
 			errs = append(errs, fmt.Errorf("kind %s is not scope %s: scope=%s name=%s", built.GetKind(), inst.GetScope(), mapping.Scope.Name(), built.GetName()))
 			continue
 		}
