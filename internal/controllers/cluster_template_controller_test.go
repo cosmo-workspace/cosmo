@@ -141,11 +141,7 @@ rules:
 				key := client.ObjectKey{
 					Name: crName,
 				}
-				err := k8sClient.Get(ctx, key, &cr)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, key, &cr)
 			}, time.Second*10).Should(Succeed())
 
 			crApplyCfg, err := rbacv1apply.ExtractClusterRole(&cr, controllerFieldManager)
@@ -170,7 +166,7 @@ rules:
 					Name: name,
 				}
 				return k8sClient.Get(ctx, key, &inst)
-			}, time.Second*30).Should(Succeed())
+			}, time.Second*10).Should(Succeed())
 
 			// fetch current clustertemplate
 			var tmpl cosmov1alpha1.ClusterTemplate

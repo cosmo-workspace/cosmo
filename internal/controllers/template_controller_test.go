@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
@@ -10,7 +9,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -21,7 +19,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
@@ -167,7 +164,7 @@ spec:
 					Namespace: nsName,
 				}
 				return k8sClient.Get(ctx, key, &inst)
-			}, time.Second*30).Should(Succeed())
+			}, time.Second*10).Should(Succeed())
 
 			// fetch current template
 			var tmpl cosmov1alpha1.Template
@@ -205,25 +202,19 @@ spec:
 			By("checking if pod updated")
 
 			var pod corev1.Pod
-			Eventually(func() error {
+			Eventually(func() *corev1apply.PodApplyConfiguration {
 				key := client.ObjectKey{
 					Name:      instance.InstanceResourceName(name, "alpine"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &pod)
-				if err != nil {
-					return err
-				}
+				Expect(err).ShouldNot(HaveOccurred())
 
 				podApplyCfg, err := corev1apply.ExtractPod(&pod, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				eq := equality.Semantic.DeepEqual(podApplyCfg, expectedPodApplyCfg)
-				if !eq {
-					return fmt.Errorf("not equal: %s", clog.Diff(podApplyCfg, expectedPodApplyCfg))
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				return podApplyCfg
+			}, time.Second*10).Should(BeEqualityDeepEqual(expectedPodApplyCfg))
 		})
 	})
 })

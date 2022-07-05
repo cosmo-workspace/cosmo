@@ -11,7 +11,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
-	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,7 +23,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
@@ -233,7 +231,7 @@ parameters:
 
 			By("checking creation time equal to update time")
 			for _, v := range createdInst.Status.LastApplied {
-				Expect(v.CreationTimestamp).Should(BeEquivalentTo(v.UpdateTimestamp))
+				Expect(*v.CreationTimestamp).Should(BeEquivalentTo(*v.UpdateTimestamp))
 			}
 		})
 	})
@@ -277,7 +275,7 @@ parameters:
 
 			Eventually(func() error {
 				return k8sClient.Update(ctx, &inst)
-			}, time.Second*10).Should(Succeed())
+			}, time.Second*60).Should(Succeed())
 
 			By("checking if child resources updated")
 
@@ -290,24 +288,18 @@ parameters:
 			By("checking if PersistentVolume updated")
 
 			var pv corev1.PersistentVolume
-			Eventually(func() error {
+			Eventually(func() *corev1apply.PersistentVolumeApplyConfiguration {
 				key := client.ObjectKey{
 					Name: instance.InstanceResourceName(name, pvSufix),
 				}
 				err := k8sClient.Get(ctx, key, &pv)
-				if err != nil {
-					return err
-				}
+				Expect(err).ShouldNot(HaveOccurred())
 
 				pvApplyCfg, err := corev1apply.ExtractPersistentVolume(&pv, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				eq := equality.Semantic.DeepEqual(pvApplyCfg, expectedPVApplyCfg)
-				if !eq {
-					return fmt.Errorf("not equal: %s", clog.Diff(pvApplyCfg, expectedPVApplyCfg))
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				return pvApplyCfg
+			}, time.Second*10).Should(BeEqualityDeepEqual(expectedPVApplyCfg))
 
 			// expected StorageClass
 			expectedSCApplyCfg := expectedStorageClassApply(valMountPath, ownerRef)
@@ -315,24 +307,18 @@ parameters:
 			By("checking if StorageClass updated")
 
 			var sc storagev1.StorageClass
-			Eventually(func() error {
+			Eventually(func() *storagev1apply.StorageClassApplyConfiguration {
 				key := client.ObjectKey{
 					Name: instance.InstanceResourceName(name, scSufix),
 				}
 				err := k8sClient.Get(ctx, key, &sc)
-				if err != nil {
-					return err
-				}
+				Expect(err).ShouldNot(HaveOccurred())
 
 				scApplyCfg, err := storagev1apply.ExtractStorageClass(&sc, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				eq := equality.Semantic.DeepEqual(scApplyCfg, expectedSCApplyCfg)
-				if !eq {
-					return fmt.Errorf("not equal: %s", clog.Diff(scApplyCfg, expectedSCApplyCfg))
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				return scApplyCfg
+			}, time.Second*10).Should(BeEqualityDeepEqual(expectedSCApplyCfg))
 		})
 	})
 

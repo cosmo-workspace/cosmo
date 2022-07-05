@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"reflect"
 	"testing"
@@ -19,7 +18,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
-	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -239,11 +237,7 @@ spec:
 
 			var createdTmpl cosmov1alpha1.Template
 			Eventually(func() error {
-				err := k8sClient.Get(ctx, client.ObjectKey{Name: tmplName}, &createdTmpl)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, client.ObjectKey{Name: tmplName}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
 		})
 	})
@@ -274,20 +268,16 @@ spec:
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
 			var createdInst cosmov1alpha1.Instance
-			Eventually(func() error {
+			Eventually(func() int {
 				key := client.ObjectKey{
 					Name:      instName,
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &createdInst)
-				if err != nil {
-					return err
-				}
-				if createdInst.Status.LastAppliedObjectsCount == 0 {
-					return errors.New("child resources still not created")
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return createdInst.Status.LastAppliedObjectsCount
+			}, time.Second*10).ShouldNot(BeEquivalentTo(0))
 
 			By("checking if child resources is as expected in template")
 
@@ -302,11 +292,7 @@ spec:
 					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
-				err := k8sClient.Get(ctx, key, &deploy)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, key, &deploy)
 			}, time.Second*10).Should(Succeed())
 			deploy.GroupVersionKind()
 
@@ -328,11 +314,7 @@ spec:
 					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
-				err := k8sClient.Get(ctx, key, &svc)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, key, &svc)
 			}, time.Second*10).Should(Succeed())
 
 			svcApplyCfg, err := corev1apply.ExtractService(&svc, controllerFieldManager)
@@ -353,11 +335,7 @@ spec:
 					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
-				err := k8sClient.Get(ctx, key, &ing)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, key, &ing)
 			}, time.Second*10).Should(Succeed())
 
 			ingApplyCfg, err := netv1apply.ExtractIngress(&ing, controllerFieldManager)
@@ -388,11 +366,7 @@ spec:
 					Name:      instName,
 					Namespace: nsName,
 				}
-				err := k8sClient.Get(ctx, key, &inst)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, key, &inst)
 			}, time.Second*10).Should(Succeed())
 
 			// update instance override spec
@@ -482,7 +456,7 @@ spec:
 
 			Eventually(func() error {
 				return k8sClient.Update(ctx, &inst)
-			}).Should(Succeed(), time.Second*10)
+			}, time.Second*60).Should(Succeed())
 
 			By("checking if child resources updated")
 
@@ -518,72 +492,53 @@ spec:
 			By("checking if deployment updated")
 
 			var deploy appsv1.Deployment
-			Eventually(func() error {
+			Eventually(func() *appsv1apply.DeploymentApplyConfiguration {
 				key := client.ObjectKey{
 					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &deploy)
-				if err != nil {
-					return err
-				}
+				Expect(err).ShouldNot(HaveOccurred())
 
 				deployApplyCfg, err := appsv1apply.ExtractDeployment(&deploy, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				eq := equality.Semantic.DeepEqual(deployApplyCfg, expectedDeployApplyCfg)
-				if !eq {
-					return errors.New("not equal")
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				return deployApplyCfg
+			}, time.Second*10).Should(BeEqualityDeepEqual(expectedDeployApplyCfg))
 
 			By("checking if service updated")
 
 			var svc corev1.Service
-			Eventually(func() error {
+			Eventually(func() *corev1apply.ServiceApplyConfiguration {
 				key := client.ObjectKey{
 					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &svc)
-				if err != nil {
-					return err
-				}
+				Expect(err).ShouldNot(HaveOccurred())
 
 				svcApplyCfg, err := corev1apply.ExtractService(&svc, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				eq := equality.Semantic.DeepEqual(svcApplyCfg, expectedServiceApplyCfg)
-				if !eq {
-					return errors.New("not equal")
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				return svcApplyCfg
+			}, time.Second*10).Should(BeEqualityDeepEqual(expectedServiceApplyCfg))
 
 			By("checking if ingress updated")
 
 			var ing netv1.Ingress
-			Eventually(func() error {
+			Eventually(func() *netv1apply.IngressApplyConfiguration {
 				key := client.ObjectKey{
 					Name:      instance.InstanceResourceName(instName, "nginx"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &ing)
-				if err != nil {
-					return err
-				}
+				Expect(err).ShouldNot(HaveOccurred())
 
 				ingApplyCfg, err := netv1apply.ExtractIngress(&ing, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				eq := equality.Semantic.DeepEqual(ingApplyCfg, expectedIngApplyCfg)
-				if !eq {
-					return errors.New("not equal")
-				}
-
-				return nil
-			}, time.Second*10).Should(Succeed())
+				return ingApplyCfg
+			}, time.Second*10).Should(BeEqualityDeepEqual(expectedIngApplyCfg))
 		})
 	})
 

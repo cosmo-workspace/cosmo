@@ -133,26 +133,18 @@ spec:
 				key := client.ObjectKey{
 					Name: wsv1alpha1.UserNamespace(user.Name),
 				}
-				err := k8sClient.Get(ctx, key, &createdNs)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, key, &createdNs)
 			}, time.Second*10).Should(Succeed())
 
-			Eventually(func() error {
+			Eventually(func() string {
 				key := client.ObjectKey{
 					Name: user.Name,
 				}
 				err := k8sClient.Get(ctx, key, &user)
-				if err != nil {
-					return err
-				}
-				if user.Status.Namespace.Name != wsv1alpha1.UserNamespace(user.Name) {
-					return errors.New("status not synced")
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return user.Status.Namespace.Name
+			}, time.Second*30).Should(BeEquivalentTo(wsv1alpha1.UserNamespace(user.Name)))
 
 			By("check namespace label")
 
