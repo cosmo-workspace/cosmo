@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	netv1 "k8s.io/api/networking/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -286,6 +286,8 @@ func (h *InstanceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) e
 }
 
 func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, inst cosmov1alpha1.InstanceObject, tmpl cosmov1alpha1.TemplateObject) []error {
+	log := clog.FromContext(ctx).WithCaller()
+
 	objects, err := template.BuildObjects(*tmpl.GetSpec(), inst)
 	if err != nil {
 		return []error{err}
@@ -298,22 +300,21 @@ func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, 
 
 	errs := make([]error, 0)
 	for _, built := range objects {
+		// in webhook, ownerReference should not be set because the error occuerd
+		// err -> metadata.ownerReferences.uid: Invalid value: "": uid must not be empty
+		built.SetOwnerReferences(nil)
+
 		fmt.Fprintf(os.Stderr, "DRYRUN Applying %v\n", built)
-		if err := dryrunApply(ctx, c, fieldManager, &built); err != nil {
+		log.Debug().Info(fmt.Sprintf("DRYRUN Applying %v\n", built))
+		out, err := kubeutil.Apply(ctx, c, &built, fieldManager, true, true)
+		log.Debug().Info(fmt.Sprintf("DRYRUN Applyed %v\n", out))
+
+		if err != nil {
 			// ignore NotFound in case the template contains a dependency resource that was not found.
-			// if !apierrs.IsNotFound(err) {
-			errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
-			// }
+			if !apierrs.IsNotFound(err) {
+				errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
+			}
 		}
 	}
 	return errs
-}
-
-func dryrunApply(ctx context.Context, c client.Client, fieldManager string, obj *unstructured.Unstructured) error {
-	out, err := kubeutil.Apply(ctx, c, obj, fieldManager, true, true)
-	fmt.Fprintf(os.Stderr, "DRYRUN Applyed %v\n", out)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "DRYRUN Apply failed %v\n", err)
-	}
-	return err
 }

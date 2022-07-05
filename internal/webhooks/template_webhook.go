@@ -157,11 +157,11 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 	warnings := make([]string, 0)
 	if !template.IsSkipValidation(tmpl) {
 		// dryrun apply
-		// if errs := dryrunReconcile(ctx, h.Client, h.FieldManager, dummyInst, tmpl); len(errs) > 0 {
-		// 	for _, err := range errs {
-		// 		warnings = append(warnings, err.Error())
-		// 	}
-		// }
+		if errs := dryrunReconcile(ctx, h.Client, h.FieldManager, dummyInst, tmpl); len(errs) > 0 {
+			for _, err := range errs {
+				warnings = append(warnings, err.Error())
+			}
+		}
 	} else {
 		h.Log.Info("skip dryrun validation", "kind", req.RequestKind.Kind, "name", tmpl.GetName())
 	}
