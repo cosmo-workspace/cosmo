@@ -631,7 +631,7 @@ rules:
 		It("should pass", func() {
 			ctx := context.Background()
 
-			tmpl := cosmov1alpha1.ClusterTemplate{
+			t := cosmov1alpha1.ClusterTemplate{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "testctmpl2",
 				},
@@ -648,15 +648,17 @@ spec:
 `,
 				},
 			}
-			err := k8sClient.Create(ctx, &tmpl)
+			err := k8sClient.Create(ctx, &t)
 			Expect(err).ShouldNot(HaveOccurred())
+
+			time.Sleep(3 * time.Second)
 
 			inst := cosmov1alpha1.ClusterInstance{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "testcinst2",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Template: cosmov1alpha1.TemplateRef{Name: t.GetName()},
 					Vars: map[string]string{
 						"NAMESPACE": "kube-system",
 						"IMAGE":     "var",
@@ -669,40 +671,126 @@ spec:
 		})
 	})
 
-	Context("when including Pod in ClusterTemplate", func() {
-		It("should deny with no namespace", func() {
+	Context("when creating role and its rolebinding at the same time", func() {
+		It("should pass even though role is not found", func() {
 			ctx := context.Background()
 
-			tmpl := cosmov1alpha1.ClusterTemplate{
+			name := "role-not-found-rolebinding"
+			t := cosmov1alpha1.Template{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: "testctmpl3",
+					Name: name,
 				},
 				Spec: cosmov1alpha1.TemplateSpec{
-					RawYaml: `apiVersion: v1
-kind: Pod
+					RequiredVars: []cosmov1alpha1.RequiredVarSpec{
+						{
+							Var:     "SERVICE_ACCOUNT",
+							Default: "default",
+						},
+					},
+					RawYaml: `apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
-  name: nginx2
-spec:
-  containers:
-  - name: nginx
-    image: nginx:alpine
+  labels:
+    cosmo/instance: '{{INSTANCE}}'
+    cosmo/template: '{{TEMPLATE}}'
+  name: '{{INSTANCE}}-role'
+  namespace: '{{NAMESPACE}}'
+rules:
+- apiGroups:
+  - workspace.cosmo-workspace.github.io
+  resources:
+  - workspaces
+  verbs:
+  - patch
+  - update
+  - get
+  - list
+  - watch
+- apiGroups:
+  - workspace.cosmo-workspace.github.io
+  resources:
+  - workspaces/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cosmo.cosmo-workspace.github.io
+  resources:
+  - instances
+  verbs:
+  - patch
+  - update
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cosmo.cosmo-workspace.github.io
+  resources:
+  - instances/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    cosmo/instance: '{{INSTANCE}}'
+    cosmo/template: '{{TEMPLATE}}'
+  name: '{{INSTANCE}}-rolebinding'
+  namespace: '{{NAMESPACE}}'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{INSTANCE}}-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{SERVICE_ACCOUNT}}'
+  namespace: '{{NAMESPACE}}'
 `,
 				},
 			}
-			err := k8sClient.Create(ctx, &tmpl)
+			err := k8sClient.Create(ctx, &t)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			inst := cosmov1alpha1.ClusterInstance{
+			i := cosmov1alpha1.Instance{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: "testcinst3",
+					Name:      name,
+					Namespace: "default",
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Template: cosmov1alpha1.TemplateRef{
+						Name: name,
+					},
 				},
 			}
-
-			err = k8sClient.Create(ctx, &inst)
-			Expect(err).Should(HaveOccurred())
+			err = k8sClient.Create(ctx, &i)
+			Expect(err).ShouldNot(HaveOccurred())
 		})
 	})
 })

@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	netv1 "k8s.io/api/networking/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -42,6 +42,7 @@ func (h *InstanceMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manage
 }
 
 func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
+	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 
 	var inst cosmov1alpha1.InstanceObject
 	var instSpec *cosmov1alpha1.InstanceSpec
@@ -53,17 +54,17 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		inst = &cosmov1alpha1.Instance{}
 		err := h.decoder.Decode(req, inst)
 		if err != nil {
-			h.Log.Error(err, "failed to decode request")
+			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
+		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
 
 		instSpec = inst.GetSpec()
 
 		tmpl = &cosmov1alpha1.Template{}
 		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
 		if err != nil {
-			h.Log.Error(err, "failed to get template")
+			log.Error(err, "failed to get template")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
 		tmplSpec = tmpl.GetSpec()
@@ -72,24 +73,24 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		inst = &cosmov1alpha1.ClusterInstance{}
 		err := h.decoder.Decode(req, inst)
 		if err != nil {
-			h.Log.Error(err, "failed to decode request")
+			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
 
 		instSpec = inst.GetSpec()
 
 		tmpl = &cosmov1alpha1.ClusterTemplate{}
 		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
 		if err != nil {
-			h.Log.Error(err, "failed to get cluster template")
+			log.Error(err, "failed to get cluster template")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
 		tmplSpec = tmpl.GetSpec()
 
 	default:
 		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
-		h.Log.Error(err, "failed to decode request")
+		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
@@ -148,11 +149,11 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		}
 	}
 
-	h.Log.Debug().PrintObjectDiff(before, inst)
+	log.Debug().PrintObjectDiff(before, inst)
 
 	marshaled, err := json.Marshal(inst)
 	if err != nil {
-		h.Log.Error(err, "failed to marshal response")
+		log.Error(err, "failed to marshal response")
 		return admission.Errored(http.StatusInternalServerError, err)
 	}
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
@@ -195,6 +196,7 @@ func (h *InstanceValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Mana
 }
 
 func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
+	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 
 	var inst cosmov1alpha1.InstanceObject
 	var tmpl cosmov1alpha1.TemplateObject
@@ -206,13 +208,13 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
+		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
 
 		// whether template exist
 		tmpl = &cosmov1alpha1.Template{}
 		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
 		if err != nil {
-			h.Log.Error(err, "failed to get template")
+			log.Error(err, "failed to get template")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
 
@@ -222,19 +224,19 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.Log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
 
 		// whether template exist
 		tmpl = &cosmov1alpha1.ClusterTemplate{}
 		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
 		if err != nil {
-			h.Log.Error(err, "failed to get clustertemplate")
+			log.Error(err, "failed to get clustertemplate")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
 
 	default:
 		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
-		h.Log.Error(err, "failed to decode request")
+		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
@@ -286,6 +288,8 @@ func (h *InstanceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) e
 }
 
 func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, inst cosmov1alpha1.InstanceObject, tmpl cosmov1alpha1.TemplateObject) []error {
+	log := clog.FromContext(ctx).WithCaller()
+
 	objects, err := template.BuildObjects(*tmpl.GetSpec(), inst)
 	if err != nil {
 		return []error{err}
@@ -298,22 +302,21 @@ func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, 
 
 	errs := make([]error, 0)
 	for _, built := range objects {
+		// in webhook, ownerReference should not be set because the error occuerd
+		// err -> metadata.ownerReferences.uid: Invalid value: "": uid must not be empty
+		built.SetOwnerReferences(nil)
+
 		fmt.Fprintf(os.Stderr, "DRYRUN Applying %v\n", built)
-		if err := dryrunApply(ctx, c, fieldManager, &built); err != nil {
+		log.Debug().Info(fmt.Sprintf("DRYRUN Applying %v\n", built))
+		out, err := kubeutil.Apply(ctx, c, &built, fieldManager, true, true)
+		log.Debug().Info(fmt.Sprintf("DRYRUN Applyed %v\n", out))
+
+		if err != nil {
 			// ignore NotFound in case the template contains a dependency resource that was not found.
-			// if !apierrs.IsNotFound(err) {
-			errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
-			// }
+			if !apierrs.IsNotFound(err) {
+				errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
+			}
 		}
 	}
 	return errs
-}
-
-func dryrunApply(ctx context.Context, c client.Client, fieldManager string, obj *unstructured.Unstructured) error {
-	out, err := kubeutil.Apply(ctx, c, obj, fieldManager, true, true)
-	fmt.Fprintf(os.Stderr, "DRYRUN Applyed %v\n", out)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "DRYRUN Apply failed %v\n", err)
-	}
-	return err
 }

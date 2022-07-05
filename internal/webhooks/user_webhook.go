@@ -37,18 +37,20 @@ func (h *UserMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 
 // Handle mutates the fields in user
 func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
+	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+
 	user := &wsv1alpha1.User{}
 	err := h.decoder.Decode(req, user)
 	if err != nil {
-		h.Log.Error(err, "failed to decode request")
+		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 	before := user.DeepCopy()
-	h.Log.DebugAll().DumpObject(h.Client.Scheme(), before, "request user")
+	log.DebugAll().DumpObject(h.Client.Scheme(), before, "request user")
 
 	addonTmpls, err := kubeutil.ListTemplatesByType(ctx, h.Client, []string{wsv1alpha1.TemplateTypeUserAddon})
 	if err != nil {
-		h.Log.Error(err, "failed to list templates")
+		log.Error(err, "failed to list templates")
 		return admission.Errored(http.StatusInternalServerError, err)
 	}
 
@@ -59,7 +61,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 
 	// add default user addon
 	for _, v := range addonTmpls {
-		h.Log.DebugAll().Info("user addon template", "name", v.Name)
+		log.DebugAll().Info("user addon template", "name", v.Name)
 
 		ann := v.GetAnnotations()
 		if ann == nil {
@@ -71,10 +73,10 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 		}
 		isDefaultUserAddon, err := strconv.ParseBool(val)
 		if err != nil {
-			h.Log.Error(err, "failed to parse default-user-addon annotation value: %s: %w", val, err)
+			log.Error(err, "failed to parse default-user-addon annotation value: %s: %w", val, err)
 			continue
 		}
-		h.Log.Debug().Info("defaulting user addon", "name", v.Name)
+		log.Debug().Info("defaulting user addon", "name", v.Name)
 
 		if isDefaultUserAddon {
 			addon := wsv1alpha1.UserAddon{Template: cosmov1alpha1.TemplateRef{Name: v.GetName()}}
@@ -82,12 +84,12 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 			var found bool
 			for _, v := range user.Spec.Addons {
 				if v.Template.Name == addon.Template.Name {
-					h.Log.Info("default addon is already defined", "user", user.Name, "addon", addon.Template.Name)
+					log.Info("default addon is already defined", "user", user.Name, "addon", addon.Template.Name)
 					found = true
 				}
 			}
 			if !found {
-				h.Log.Info("appended default addon", "user", user.Name, "addon", addon.Template.Name)
+				log.Info("appended default addon", "user", user.Name, "addon", addon.Template.Name)
 				if len(user.Spec.Addons) == 0 {
 					user.Spec.Addons = []wsv1alpha1.UserAddon{addon}
 				} else {
@@ -97,11 +99,11 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 		}
 	}
 
-	h.Log.Debug().PrintObjectDiff(before, user)
+	log.Debug().PrintObjectDiff(before, user)
 
 	marshaled, err := json.Marshal(user)
 	if err != nil {
-		h.Log.Error(err, "failed to marshal resoponse")
+		log.Error(err, "failed to marshal resoponse")
 		return admission.Errored(http.StatusInternalServerError, err)
 	}
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
@@ -129,13 +131,15 @@ func (h *UserValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager)
 
 // Handle validates the fields in User
 func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
+	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+
 	user := &wsv1alpha1.User{}
 	err := h.decoder.Decode(req, user)
 	if err != nil {
-		h.Log.Error(err, "failed to decode request")
+		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	h.Log.DebugAll().DumpObject(h.Client.Scheme(), user, "request user")
+	log.DebugAll().DumpObject(h.Client.Scheme(), user, "request user")
 
 	// check user name is valid for namespace
 	if !validName(user.Name) {
@@ -144,13 +148,13 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 
 	// check role is valid
 	if !user.Spec.Role.IsValid() {
-		h.Log.Info("invalid user role", "user", user.Name, "role", user.Spec.Role)
+		log.Info("invalid user role", "user", user.Name, "role", user.Spec.Role)
 		return admission.Denied("invalid user role")
 	}
 
 	// check auth type is valid
 	if !user.Spec.AuthType.IsValid() {
-		h.Log.Info("invalid auth type", "user", user.Name, "authType", user.Spec.AuthType)
+		log.Info("invalid auth type", "user", user.Name, "authType", user.Spec.AuthType)
 		return admission.Denied("invalid auth type")
 	}
 
@@ -160,18 +164,18 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 			tmpl := &cosmov1alpha1.Template{}
 			err = h.Client.Get(ctx, types.NamespacedName{Name: addon.Template.Name}, tmpl)
 			if err != nil {
-				h.Log.Error(err, "failed to create addon", "user", user.Name, "addon", addon.Template.Name)
+				log.Error(err, "failed to create addon", "user", user.Name, "addon", addon.Template.Name)
 				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s :%v", addon.Template.Name, err))
 			}
 
 			label := tmpl.GetLabels()
 			if label == nil {
-				h.Log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
+				log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
 				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Template.Name))
 			}
 
 			if t, ok := label[cosmov1alpha1.TemplateLabelKeyType]; !ok || t != wsv1alpha1.TemplateTypeUserAddon {
-				h.Log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
+				log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
 				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Template.Name))
 			}
 		}

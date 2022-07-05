@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"time"
 
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
@@ -11,7 +9,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -22,18 +19,16 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
 var _ = Describe("Template controller", func() {
-	const tmplName string = "alpine"
-	const instName string = "tmpl-test-inst"
+	const name string = "tmpl-test"
 	const nsName string = "default"
 
 	tmpl := cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: tmplName,
+			Name: name,
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
 			RawYaml: `apiVersion: v1
@@ -51,13 +46,13 @@ spec:
 		},
 	}
 
-	expectedPodApply := func(instName, namespace string, ownerRef metav1.OwnerReference) *corev1apply.PodApplyConfiguration {
-		return corev1apply.Pod(instance.InstanceResourceName(instName, "alpine"), namespace).
+	expectedPodApply := func(ownerRef metav1.OwnerReference) *corev1apply.PodApplyConfiguration {
+		return corev1apply.Pod(instance.InstanceResourceName(name, "alpine"), nsName).
 			WithAPIVersion("v1").
 			WithKind("Pod").
 			WithLabels(map[string]string{
-				cosmov1alpha1.LabelKeyInstance: instName,
-				cosmov1alpha1.LabelKeyTemplate: "alpine",
+				cosmov1alpha1.LabelKeyInstance: name,
+				cosmov1alpha1.LabelKeyTemplate: name,
 			}).
 			WithOwnerReferences(
 				metav1apply.OwnerReference().
@@ -86,12 +81,12 @@ spec:
 
 			var createdTmpl cosmov1alpha1.Template
 			Eventually(func() error {
-				return k8sClient.Get(ctx, client.ObjectKey{Name: tmplName}, &createdTmpl)
+				return k8sClient.Get(ctx, client.ObjectKey{Name: name}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
 
 			var pod corev1.Pod
 			key := client.ObjectKey{
-				Name:      instance.InstanceResourceName(instName, "alpine"),
+				Name:      instance.InstanceResourceName(name, "alpine"),
 				Namespace: nsName,
 			}
 			err = k8sClient.Get(ctx, key, &pod)
@@ -105,12 +100,12 @@ spec:
 
 			inst := cosmov1alpha1.Instance{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      instName,
+					Name:      name,
 					Namespace: nsName,
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
 					Template: cosmov1alpha1.TemplateRef{
-						Name: tmplName,
+						Name: name,
 					},
 					Override: cosmov1alpha1.OverrideSpec{},
 				},
@@ -121,20 +116,17 @@ spec:
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
 			var createdInst cosmov1alpha1.Instance
-			Eventually(func() error {
+			Eventually(func() int {
 				key := client.ObjectKey{
-					Name:      instName,
+					Name:      name,
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &createdInst)
 				if err != nil {
-					return err
+					return 0
 				}
-				if len(createdInst.Status.LastApplied) == 0 {
-					return errors.New("child resources still not created")
-				}
-				return nil
-			}, time.Second*30).Should(Succeed())
+				return createdInst.Status.LastAppliedObjectsCount
+			}, time.Second*90).Should(BeEquivalentTo(1))
 
 			By("checking if child resources is as expected in template")
 
@@ -144,7 +136,7 @@ spec:
 			var pod corev1.Pod
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      instance.InstanceResourceName(instName, "alpine"),
+					Name:      instance.InstanceResourceName(name, "alpine"),
 					Namespace: nsName,
 				}
 				return k8sClient.Get(ctx, key, &pod)
@@ -153,7 +145,7 @@ spec:
 			podApplyCfg, err := corev1apply.ExtractPod(&pod, controllerFieldManager)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			expectedPodApplyCfg := expectedPodApply(instName, nsName, instOwnerRef)
+			expectedPodApplyCfg := expectedPodApply(instOwnerRef)
 			Expect(podApplyCfg).Should(BeEqualityDeepEqual(expectedPodApplyCfg))
 
 			pod.SetGroupVersionKind(schema.FromAPIVersionAndKind(*podApplyCfg.APIVersion, *podApplyCfg.Kind))
@@ -168,17 +160,17 @@ spec:
 			var inst cosmov1alpha1.Instance
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      instName,
+					Name:      name,
 					Namespace: nsName,
 				}
 				return k8sClient.Get(ctx, key, &inst)
-			}, time.Second*30).Should(Succeed())
+			}, time.Second*10).Should(Succeed())
 
 			// fetch current template
 			var tmpl cosmov1alpha1.Template
 			Eventually(func() error {
 				key := types.NamespacedName{
-					Name: tmplName,
+					Name: name,
 				}
 				return k8sClient.Get(ctx, key, &tmpl)
 			}, time.Second*10).Should(Succeed())
@@ -204,31 +196,25 @@ spec:
 
 			instOwnerRef := ownerRef(&inst, scheme.Scheme)
 
-			expectedPodApplyCfg := expectedPodApply(instName, nsName, instOwnerRef)
+			expectedPodApplyCfg := expectedPodApply(instOwnerRef)
 			expectedPodApplyCfg.Spec.Containers[0].WithImage("alpine:next")
 
 			By("checking if pod updated")
 
 			var pod corev1.Pod
-			Eventually(func() error {
+			Eventually(func() *corev1apply.PodApplyConfiguration {
 				key := client.ObjectKey{
-					Name:      instance.InstanceResourceName(instName, "alpine"),
+					Name:      instance.InstanceResourceName(name, "alpine"),
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &pod)
-				if err != nil {
-					return err
-				}
+				Expect(err).ShouldNot(HaveOccurred())
 
 				podApplyCfg, err := corev1apply.ExtractPod(&pod, controllerFieldManager)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				eq := equality.Semantic.DeepEqual(podApplyCfg, expectedPodApplyCfg)
-				if !eq {
-					return fmt.Errorf("not equal: %s", clog.Diff(podApplyCfg, expectedPodApplyCfg))
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				return podApplyCfg
+			}, time.Second*10).Should(BeEqualityDeepEqual(expectedPodApplyCfg))
 		})
 	})
 })

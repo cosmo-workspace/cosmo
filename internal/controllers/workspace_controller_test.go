@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -14,7 +13,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
-	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -204,11 +202,7 @@ spec:
 
 			var createdTmpl cosmov1alpha1.Template
 			Eventually(func() error {
-				err := k8sClient.Get(ctx, client.ObjectKey{Name: tmplName}, &createdTmpl)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, client.ObjectKey{Name: tmplName}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
 		})
 	})
@@ -228,11 +222,7 @@ spec:
 					Name:      wsName,
 					Namespace: nsName,
 				}
-				err := k8sClient.Get(ctx, key, &createdInst)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, key, &createdInst)
 			}, time.Second*10).Should(Succeed())
 
 			instRef := corev1.ObjectReference{
@@ -255,20 +245,16 @@ spec:
 			By("fetching workspace resource and checking workspace status")
 
 			var createdWs wsv1alpha1.Workspace
-			Eventually(func() error {
+			Eventually(func() corev1.ObjectReference {
 				key := client.ObjectKey{
 					Name:      wsName,
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &createdWs)
-				if err != nil {
-					return err
-				}
-				if equality.Semantic.DeepEqual(createdWs.Status.Instance.ObjectReference, instRef) {
-					return errors.New("workspace status is not updated")
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return createdWs.Status.Instance.ObjectReference
+			}, time.Second*10).Should(BeEqualityDeepEqual(instRef))
 		})
 	})
 
@@ -302,23 +288,19 @@ spec:
 				}
 				return k8sClient.Update(ctx, &ws)
 
-			}, time.Second*20).Should(Succeed())
+			}, time.Second*60).Should(Succeed())
 
 			var createdInst cosmov1alpha1.Instance
-			Eventually(func() error {
+			Eventually(func() int64 {
 				key := client.ObjectKey{
 					Name:      wsName,
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &createdInst)
-				if err != nil {
-					return err
-				}
-				if createdInst.Spec.Override.Scale[0].Replicas != 0 {
-					return errors.New("replica is not zero")
-				}
-				return nil
-			}, time.Second*10).Should(Succeed())
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return createdInst.Spec.Override.Scale[0].Replicas
+			}, time.Second*10).Should(BeEquivalentTo(0))
 
 			expected := expectedInst.DeepCopy()
 			ownerRef := ownerRef(&ws, scheme.Scheme)
