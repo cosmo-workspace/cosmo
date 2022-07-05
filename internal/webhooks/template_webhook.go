@@ -37,6 +37,7 @@ func (h *TemplateMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manage
 }
 
 func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
+	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 
 	var tmpl cosmov1alpha1.TemplateObject
 
@@ -47,7 +48,7 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
+		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
 
 	case "ClusterTemplate":
 		tmpl = &cosmov1alpha1.ClusterTemplate{}
@@ -55,11 +56,11 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
+		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
 
 	default:
 		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
-		h.Log.Error(err, "failed to decode request")
+		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
@@ -74,7 +75,7 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		if ok {
 			cfg, err := wscfg.ConfigFromTemplateAnnotations(t)
 			if err != nil {
-				h.Log.Error(err, "failed to get workspace config")
+				log.Error(err, "failed to get workspace config")
 				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to get workspace config: %w", err))
 			}
 			if cfg.URLBase == "" {
@@ -85,11 +86,11 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		}
 	}
 
-	h.Log.Debug().PrintObjectDiff(before, tmpl)
+	log.Debug().PrintObjectDiff(before, tmpl)
 
 	marshaled, err := json.Marshal(tmpl)
 	if err != nil {
-		h.Log.Error(err, "failed to marshal response")
+		log.Error(err, "failed to marshal response")
 		return admission.Errored(http.StatusInternalServerError, err)
 	}
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
@@ -120,6 +121,7 @@ func (h *TemplateValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Mana
 
 // Handle validates the fields in Template
 func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
+	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 
 	var tmpl cosmov1alpha1.TemplateObject
 	var dummyInst cosmov1alpha1.InstanceObject
@@ -131,7 +133,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
+		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
 
 		dummyInst = &cosmov1alpha1.Instance{}
 		dummyInst.SetName("dummy")
@@ -143,14 +145,14 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.Log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
+		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
 
 		dummyInst = &cosmov1alpha1.ClusterInstance{}
 		dummyInst.SetName("dummy")
 
 	default:
 		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
-		h.Log.Error(err, "failed to decode request")
+		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
@@ -163,7 +165,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 			}
 		}
 	} else {
-		h.Log.Info("skip dryrun validation", "kind", req.RequestKind.Kind, "name", tmpl.GetName())
+		h.Log.Info("skip dryrun validation")
 	}
 
 	res := admission.Allowed("Validation OK")

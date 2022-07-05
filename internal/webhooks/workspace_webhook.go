@@ -46,28 +46,31 @@ func (h *WorkspaceMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manag
 
 // Handle mutates the fields in workspace
 func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
+	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
+
 	ws := &wsv1alpha1.Workspace{}
 	err := h.decoder.Decode(req, ws)
 	if err != nil {
-		h.Log.Error(err, "failed to decode request")
+		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 	before := ws.DeepCopy()
-	h.Log.DebugAll().DumpObject(h.Client.Scheme(), before, "request workspace")
+	log.DebugAll().DumpObject(h.Client.Scheme(), before, "request workspace")
 
 	tmpl := &cosmov1alpha1.Template{}
 	err = h.Client.Get(ctx, types.NamespacedName{Name: ws.Spec.Template.Name}, tmpl)
 	if err != nil {
-		h.Log.Error(err, "failed to get template")
+		log.Error(err, "failed to get template")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
 	cfg, err := wscfg.ConfigFromTemplateAnnotations(tmpl)
 	if err != nil {
-		h.Log.Error(err, "failed to get config")
+		log.Error(err, "failed to get config")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	h.Log.Debug().Info("workspace config in template", "cfg", cfg)
+	log.Debug().Info("workspace config in template", "cfg", cfg)
 
 	// default replica 1
 	if ws.Spec.Replicas == nil {
@@ -76,8 +79,8 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 	}
 
 	// migrate template service and ingress to network rule
-	if err := h.migrateTmplServiceAndIngressToNetworkRule(ws, tmpl.Spec.RawYaml, cfg); err != nil {
-		h.Log.Error(err, "failed to migrate service and ingress to network rule")
+	if err := h.migrateTmplServiceAndIngressToNetworkRule(ctx, ws, tmpl.Spec.RawYaml, cfg); err != nil {
+		log.Error(err, "failed to migrate service and ingress to network rule")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
@@ -87,11 +90,11 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 	// sort network rules
 	ws.Spec.Network = sortNetworkRule(ws.Spec.Network)
 
-	h.Log.Debug().PrintObjectDiff(before, ws)
+	log.Debug().PrintObjectDiff(before, ws)
 
 	marshaled, err := json.Marshal(ws)
 	if err != nil {
-		h.Log.Error(err, "failed to marshal resoponse")
+		log.Error(err, "failed to marshal resoponse")
 		return admission.Errored(http.StatusInternalServerError, err)
 	}
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
@@ -119,13 +122,16 @@ func (h *WorkspaceValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Man
 
 // Handle validates the fields in Workspace
 func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
+	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
+
 	ws := &wsv1alpha1.Workspace{}
 	err := h.decoder.Decode(req, ws)
 	if err != nil {
-		h.Log.Error(err, "failed to decode request")
+		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	h.Log.DebugAll().DumpObject(h.Client.Scheme(), ws, "request workspace")
+	log.DebugAll().DumpObject(h.Client.Scheme(), ws, "request workspace")
 
 	// check namespace for Workspace
 	userid := wsv1alpha1.UserIDByNamespace(ws.GetNamespace())
@@ -135,7 +141,7 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 
 	// check netrules
 	if err := checkNetworkRules(ws.Spec.Network); err != nil {
-		h.Log.Error(err, "network rules check failed")
+		log.Error(err, "network rules check failed")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
@@ -169,7 +175,6 @@ func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []wsv1alp
 	for i := range netRules {
 		netRules[i].Default()
 		netRules[i].Host = pointer.String(wsnet.GenerateIngressHost(netRules[i], name, namespace, urlBase))
-		h.Log.Debug().Info("defaulting network rule", "netRule", netRules[i])
 	}
 }
 
@@ -196,7 +201,9 @@ func duplicatedPort(netRules []wsv1alpha1.NetworkRule) int {
 	return 0
 }
 
-func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkRule(ws *wsv1alpha1.Workspace, rawTmpl string, cfg wsv1alpha1.Config) error {
+func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkRule(ctx context.Context, ws *wsv1alpha1.Workspace, rawTmpl string, cfg wsv1alpha1.Config) error {
+	log := clog.FromContext(ctx)
+
 	unst, err := preTemplateBuild(*ws, rawTmpl)
 	if err != nil {
 		return err
@@ -205,9 +212,9 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 	var svc corev1.Service
 	var ing netv1.Ingress
 	for _, u := range unst {
-		h.Log.Debug().Info("template resources", "gvk", u.GroupVersionKind(), "name", u.GetName(), "unstructured", u)
+		log.Debug().Info("template resources", "gvk", u.GroupVersionKind(), "name", u.GetName(), "unstructured", u)
 
-		h.Log.DebugAll().Info("workspace config in template",
+		log.DebugAll().Info("workspace config in template",
 			"gvk", u.GroupVersionKind(),
 			"cfgServiceName", cfg.ServiceName, "cfgIngressName", cfg.IngressName,
 			"instFixedName", instance.InstanceResourceName(template.DefaultVarsInstance, u.GetName()),
@@ -232,10 +239,10 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 			}
 		}
 	}
-	h.Log.Debug().Info("service and ingress in template", "service", svc, "ingress", ing)
+	log.Debug().Info("service and ingress in template", "service", svc, "ingress", ing)
 
 	netRules := wsv1alpha1.NetworkRulesByServiceAndIngress(svc, ing)
-	h.Log.Info("generated netrules by service and ingress in template", "netRules", netRules)
+	log.Info("generated netrules by service and ingress in template", "netRules", netRules)
 
 	// append network rules
 	for _, netRule := range netRules {
