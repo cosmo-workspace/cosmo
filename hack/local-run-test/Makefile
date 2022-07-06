@@ -71,26 +71,32 @@ delete-cluster: k3d  ## Delete k3s cluster.
 ##---------------------------------------------------------------------
 ##@ Docker image build
 ##---------------------------------------------------------------------
-.PHONY: docker-build-manager docker-build-dashboard docker-build-auth-proxy
+.PHONY: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-cache-clear
 
 docker-build-manager: ## build & push cosmo contoller-manager image.
 	@echo ====== $@ ======
 	cd ../.. && make docker-build-manager VERSION=latest QUICK_BUILD=yes
 	docker tag cosmo-controller-manager:latest localhost:5000/cosmo-controller-manager:latest
 	docker push localhost:5000/cosmo-controller-manager:latest
+	k3d image import localhost:5000/cosmo-controller-manager:latest -c $(CLUSTER_NAME)
 
 docker-build-dashboard: ## build & push cosmo dashboard image.
 	@echo ====== $@ ======
 	cd ../.. && make docker-build-dashboard VERSION=latest QUICK_BUILD=yes
 	docker tag cosmo-dashboard:latest localhost:5000/cosmo-dashboard:latest
 	docker push localhost:5000/cosmo-dashboard:latest
+	k3d image import localhost:5000/cosmo-dashboard:latest -c $(CLUSTER_NAME)
 
 docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
 	@echo ====== $@ ======
 	cd ../.. && make docker-build-auth-proxy VERSION=latest QUICK_BUILD=yes
 	docker tag cosmo-auth-proxy:latest localhost:5000/cosmo-auth-proxy:latest
 	docker push localhost:5000/cosmo-auth-proxy:latest
+	k3d image import localhost:5000/cosmo-auth-proxy:latest -c $(CLUSTER_NAME)
 
+docker-cache-clear: ## docker cache clear.
+	docker system df
+	docker builder prune
 
 ##---------------------------------------------------------------------
 ##@ Install to k8s
