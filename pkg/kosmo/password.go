@@ -10,10 +10,6 @@ import (
 func (c *Client) VerifyPassword(ctx context.Context, userid string, pass []byte) (verified bool, isDefault bool, err error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	if _, err := c.GetUser(ctx, userid); err != nil {
-		return false, isDefault, err
-	}
-
 	verified, isDefault, err = password.VerifyPassword(ctx, c, userid, pass)
 	if err != nil {
 		log.Error(err, "failed to verify password", "userid", userid)

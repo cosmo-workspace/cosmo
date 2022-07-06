@@ -356,13 +356,11 @@ SnapShot = """
 
 ['Dashboard server [User] [PutUserPassword] ❌ fail with invalid request: Entry: XXXXXX, { "currentPassword": "password", "newPassword": "newPassword"} 1']
 SnapShot = """
-404
+500
 """
 
 ['Dashboard server [User] [PutUserPassword] ❌ fail with invalid request: Entry: XXXXXX, { "currentPassword": "password", "newPassword": "newPassword"} 2']
-SnapShot = """
-{\"message\":\"user is not found\"}
-"""
+SnapShot = ''
 
 ['Dashboard server [User] [PutUserPassword] ❌ fail with invalid request: Entry: usertest-admin, { "currentPassword": "", "newPassword": "newPassword"} 1']
 SnapShot = """
