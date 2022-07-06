@@ -142,7 +142,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 			continue
 		}
 
-		// nanespaced scope instance cannot create cluster scope resources
+		// namespaced scope instance cannot create cluster scope resources
 		if inst.GetScope() == meta.RESTScopeNamespace && mapping.Scope != inst.GetScope() {
 			errs = append(errs, fmt.Errorf("kind %s is not scope %s: scope=%s name=%s", built.GetKind(), inst.GetScope(), mapping.Scope.Name(), built.GetName()))
 			continue
