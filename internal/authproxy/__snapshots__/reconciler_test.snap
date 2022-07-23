@@ -13,7 +13,7 @@ SnapShot = """
         \"portName\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 1111,
+        \"targetPortNumber\": 99999,
         \"host\": \"default.example.com\",
         \"group\": \"gp1\",
         \"public\": false
@@ -331,7 +331,7 @@ SnapShot = """
         \"portName\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 1111,
+        \"targetPortNumber\": 99999,
         \"host\": \"default.example.com\",
         \"group\": \"gp1\",
         \"public\": true
@@ -378,7 +378,7 @@ SnapShot = """
         \"portName\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 1111,
+        \"targetPortNumber\": 99999,
         \"host\": \"default.example.com\",
         \"group\": \"gp1\",
         \"public\": true
@@ -387,7 +387,7 @@ SnapShot = """
         \"portName\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 2222,
+        \"targetPortNumber\": 99999,
         \"host\": \"default.example.com\",
         \"group\": \"gp1\",
         \"public\": false
