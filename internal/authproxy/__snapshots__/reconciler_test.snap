@@ -484,13 +484,7 @@ SnapShot = """
 
 ['auth-proxy controller ✅ success in normal context: 06 wheh deleting the network rule 4']
 SnapShot = """
-[
-  {
-    \"PortName\": \"nw1\",
-    \"TargetPort\": 1111,
-    \"LocalPort\": 99999
-  }
-]
+[]
 """
 
 ['auth-proxy controller ✅ success in normal context: 07 when deleting the workspace 1']
@@ -558,12 +552,6 @@ SnapShot = """
 
 ['auth-proxy controller ✅ success in normal context: 07 when deleting the workspace 4']
 SnapShot = """
-[
-  {
-    \"PortName\": \"nw1\",
-    \"TargetPort\": 1111,
-    \"LocalPort\": 99999
-  }
-]
+[]
 """
 

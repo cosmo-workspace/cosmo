@@ -50,6 +50,7 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		// we'll ignore not-found errors, since they can't be fixed by an immediate
 		// requeue (we'll need to wait for a new notification), and we can get them
 		// on deleted requests.
+		r.ProxyManager.GC(ctx, []string{})
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
@@ -60,14 +61,10 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	before := ws.DeepCopy()
 
-	if len(ws.Spec.Network) == 0 {
-		// no network
-		return ctrl.Result{}, nil
-	}
-
 	usingProxyList := make([]string, 0, len(ws.Spec.Network))
 
 	for i, netRule := range ws.Spec.Network {
+
 		if netRule.Public {
 			continue
 		}
@@ -84,7 +81,6 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 				ws.Spec.Network[i].TargetPortNumber = pointer.Int32(int32(existingProxyPort))
 				continue
-
 			}
 
 			// target port is different, recreate proxy
