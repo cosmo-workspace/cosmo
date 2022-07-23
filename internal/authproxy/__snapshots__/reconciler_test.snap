@@ -1,0 +1,569 @@
+['auth-proxy controller ✅ success in normal context: 01 when starting a reconcile after creating network rules 1']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 1111,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 01 when starting a reconcile after creating network rules 2']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 1111,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 02 when starting a reconcile before creating network rules 1']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 99999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 02 when starting a reconcile before creating network rules 2']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 1111,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 03 when changing the port Number 1']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 3333,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 99999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 03 when changing the port Number 2']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 3333,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 03 when changing the port Number 3']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 3333,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 99999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 4444,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 99999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 03 when changing the port Number 4']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 3333,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 04 when changing the path  1']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/abc\",
+        \"targetPortNumber\": 99999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 04 when changing the path  2']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 1111,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 04 when changing the path  3']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/cdf\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      },
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/abc\",
+        \"targetPortNumber\": 99999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 04 when changing the path  4']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 1111,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 05 when changing the public flag 1']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 1111,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 05 when changing the public flag 2']
+SnapShot = """
+[]
+"""
+
+['auth-proxy controller ✅ success in normal context: 05 when changing the public flag 3']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 1111,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 05 when changing the public flag 4']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw2\",
+    \"TargetPort\": 2222,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 06 wheh deleting the network rule 1']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 99999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 06 wheh deleting the network rule 2']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 1111,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 06 wheh deleting the network rule 3']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 06 wheh deleting the network rule 4']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 1111,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 07 when deleting the workspace 1']
+SnapShot = """
+{
+  \"Name\": \"test-workspace\",
+  \"Namespace\": \"cosmo-user-test-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 99999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 07 when deleting the workspace 2']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 1111,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
+['auth-proxy controller ✅ success in normal context: 07 when deleting the workspace 3']
+SnapShot = """
+{
+  \"Name\": null,
+  \"Namespace\": null,
+  \"Spec\": null,
+  \"Status\": null
+}
+"""
+
+['auth-proxy controller ✅ success in normal context: 07 when deleting the workspace 4']
+SnapShot = """
+[
+  {
+    \"PortName\": \"nw1\",
+    \"TargetPort\": 1111,
+    \"LocalPort\": 99999
+  }
+]
+"""
+
