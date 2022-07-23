@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"sort"
 	"sync"
 	"time"
 
@@ -169,6 +170,26 @@ HealthCheckLoop:
 
 	log.Info("successfully created new auth proxy", "targetPort", proxyInfo.targetPort, "localPort", proxyInfo.localPort)
 	return localPort, nil
+}
+
+type RunningProxyInfo struct {
+	PortName   string
+	TargetPort int
+	LocalPort  int
+}
+
+func (m *Manager) GetRunningProxies() (runningProxies []RunningProxyInfo) {
+
+	runningProxies = make([]RunningProxyInfo, 0, len(m.proxyStore))
+	for portName, proxy := range m.proxyStore {
+		runningProxies = append(runningProxies, RunningProxyInfo{
+			PortName:   portName,
+			TargetPort: proxy.targetPort,
+			LocalPort:  proxy.localPort,
+		})
+	}
+	sort.Slice(runningProxies, func(i, j int) bool { return runningProxies[i].PortName < runningProxies[j].PortName })
+	return runningProxies
 }
 
 func (m *Manager) GetRunningProxy(name string) (localPort int, targetPort int, exist bool) {
