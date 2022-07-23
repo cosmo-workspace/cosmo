@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"sort"
 	"sync"
 	"time"
 
@@ -171,6 +172,26 @@ HealthCheckLoop:
 	return localPort, nil
 }
 
+type RunningProxyInfo struct {
+	PortName   string
+	TargetPort int
+	LocalPort  int
+}
+
+func (m *Manager) GetRunningProxies() (runningProxies []RunningProxyInfo) {
+
+	runningProxies = make([]RunningProxyInfo, 0, len(m.proxyStore))
+	for portName, proxy := range m.proxyStore {
+		runningProxies = append(runningProxies, RunningProxyInfo{
+			PortName:   portName,
+			TargetPort: proxy.targetPort,
+			LocalPort:  proxy.localPort,
+		})
+	}
+	sort.Slice(runningProxies, func(i, j int) bool { return runningProxies[i].PortName < runningProxies[j].PortName })
+	return runningProxies
+}
+
 func (m *Manager) GetRunningProxy(name string) (localPort int, targetPort int, exist bool) {
 	proxy, exist := m.proxyStore.Get(name)
 	if !exist {
@@ -235,11 +256,11 @@ func (m *Manager) GC(ctx context.Context, runningProxyNameList []string) {
 	for name, count := range proxyUseCounts {
 		if count == 0 {
 			wg.Add(1)
-			go func() {
+			go func(name string) {
 				defer wg.Done()
 				log.Info("shutdown unused proxy", "name", name)
 				m.shutdownProxy(ctx, name)
-			}()
+			}(name)
 		}
 	}
 	wg.Wait()

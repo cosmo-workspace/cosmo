@@ -43,12 +43,14 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	defer r.lock.Unlock()
 
 	log := clog.FromContext(ctx).WithName("NetworkRuleReconciler")
+	log.Debug().Info("start reconcile")
 
 	var ws wsv1alpha1.Workspace
 	if err := r.Get(ctx, req.NamespacedName, &ws); err != nil {
 		// we'll ignore not-found errors, since they can't be fixed by an immediate
 		// requeue (we'll need to wait for a new notification), and we can get them
 		// on deleted requests.
+		r.ProxyManager.GC(ctx, []string{})
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
@@ -59,14 +61,10 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	before := ws.DeepCopy()
 
-	if len(ws.Spec.Network) == 0 {
-		// no network
-		return ctrl.Result{}, nil
-	}
-
 	usingProxyList := make([]string, 0, len(ws.Spec.Network))
 
 	for i, netRule := range ws.Spec.Network {
+
 		if netRule.Public {
 			continue
 		}
@@ -83,7 +81,6 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 				ws.Spec.Network[i].TargetPortNumber = pointer.Int32(int32(existingProxyPort))
 				continue
-
 			}
 
 			// target port is different, recreate proxy
@@ -109,6 +106,7 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			r.Recorder.Eventf(&ws, corev1.EventTypeWarning, "Proxy create failed", "failed to create new proxy: %s proxyPort: %d targetPort: %d %v", netRule.PortName, proxyPort, netRule.PortNumber, err.Error())
 			continue
 		}
+		ws.Spec.Network[i].TargetPortNumber = pointer.Int32(int32(proxyPort))
 
 		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Proxy created", "successfully created new proxy: name=%s portNumber=%d proxyPort=%d",
 			netRule.PortName, netRule.PortNumber, proxyPort)

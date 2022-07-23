@@ -75,7 +75,7 @@ type NetworkRule struct {
 }
 
 func (r *NetworkRule) Default() {
-	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 {
+	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 || r.Public == true {
 		r.TargetPortNumber = pointer.Int32(int32(r.PortNumber))
 	}
 	if r.HTTPPath == "" {
