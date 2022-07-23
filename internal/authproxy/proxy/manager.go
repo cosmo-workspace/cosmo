@@ -256,11 +256,11 @@ func (m *Manager) GC(ctx context.Context, runningProxyNameList []string) {
 	for name, count := range proxyUseCounts {
 		if count == 0 {
 			wg.Add(1)
-			go func() {
+			go func(name string) {
 				defer wg.Done()
 				log.Info("shutdown unused proxy", "name", name)
 				m.shutdownProxy(ctx, name)
-			}()
+			}(name)
 		}
 	}
 	wg.Wait()
