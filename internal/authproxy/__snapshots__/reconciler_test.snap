@@ -44,7 +44,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw1\",
+    \"Name\": \"nw1\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -97,7 +97,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw1\",
+    \"Name\": \"nw1\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -150,7 +150,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw1\",
+    \"Name\": \"nw1\",
     \"TargetPort\": 3333,
     \"LocalPort\": 99999
   }
@@ -203,7 +203,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw1\",
+    \"Name\": \"nw1\",
     \"TargetPort\": 3333,
     \"LocalPort\": 99999
   }
@@ -256,7 +256,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw1\",
+    \"Name\": \"nw1\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -309,7 +309,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw1\",
+    \"Name\": \"nw1\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -409,7 +409,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw2\",
+    \"Name\": \"nw2\",
     \"TargetPort\": 2222,
     \"LocalPort\": 99999
   }
@@ -453,7 +453,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw1\",
+    \"Name\": \"nw1\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -533,7 +533,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"PortName\": \"nw1\",
+    \"Name\": \"nw1\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }

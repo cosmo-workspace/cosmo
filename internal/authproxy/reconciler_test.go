@@ -110,8 +110,8 @@ var _ = Describe("auth-proxy controller", func() {
 		}
 	}
 
-	proxySnap := func(proxies []proxy.RunningProxyInfo) []proxy.RunningProxyInfo {
-		snapProxies := make([]proxy.RunningProxyInfo, 0, len(proxies))
+	proxySnap := func(proxies []proxy.LocalPortProxyInfo) []proxy.LocalPortProxyInfo {
+		snapProxies := make([]proxy.LocalPortProxyInfo, 0, len(proxies))
 		for _, p := range proxies {
 			if p.LocalPort != 0 {
 				p.LocalPort = 99999
