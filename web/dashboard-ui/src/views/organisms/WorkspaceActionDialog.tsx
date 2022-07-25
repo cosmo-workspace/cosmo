@@ -1,7 +1,7 @@
 import { Close, PersonOutlineTwoTone, WebTwoTone } from "@mui/icons-material";
 import {
   Alert, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle,
-  IconButton, InputAdornment, MenuItem, Stack, TextField
+  IconButton, InputAdornment, MenuItem, Stack, TextField, Tooltip
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm, UseFormRegisterReturn } from "react-hook-form";
@@ -152,7 +152,11 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
               helperText={errors.templateName?.message}
             >
               {templ.templates.map(template =>
-                <MenuItem key={template.name} value={template.name}>{template.name}</MenuItem>)
+                <MenuItem key={template.name} value={template.name}>
+                  <Tooltip title={template.description || "No description"} placement="bottom" arrow enterDelay={1000}>
+                    <div>{template.name}</div>
+                  </Tooltip>
+                </MenuItem>)
               }
             </TextField>
             {template.requiredVars?.map((rqvar, index) =>
