@@ -338,16 +338,11 @@ metadata:
         f:vars:
           .: {}
           f:HOGE: {}
-      f:status:
-        .: {}
-        f:config: {}
-        f:instance: {}
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
   name: ws1
   namespace: cosmo-user-user1
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws1
   uid: xxxxxxxx
 spec:
   replicas: 1
@@ -920,7 +915,6 @@ metadata:
   name: ws1
   namespace: cosmo-user-user1
   resourceVersion: xxxxxxxx
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws1
   uid: xxxxxxxx
 spec:
   replicas: 1
@@ -963,7 +957,6 @@ metadata:
   name: ws2
   namespace: cosmo-user-user1
   resourceVersion: xxxxxxxx
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws2
   uid: xxxxxxxx
 spec:
   network:
@@ -1039,7 +1032,6 @@ metadata:
   name: ws1
   namespace: cosmo-user-user1
   resourceVersion: xxxxxxxx
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws1
   uid: xxxxxxxx
 spec:
   replicas: 1
@@ -1082,7 +1074,6 @@ metadata:
   name: ws2
   namespace: cosmo-user-user1
   resourceVersion: xxxxxxxx
-  selfLink: /apis/workspace.cosmo-workspace.github.io/v1alpha1/namespaces/cosmo-user-user1/workspaces/ws2
   uid: xxxxxxxx
 spec:
   network:
