@@ -88,7 +88,7 @@ var _ = Describe("Dashboard server [User]", func() {
 			Entry(nil, 403, request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`}),
 			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user"}),
 			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest"}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest"}),
+			Entry(nil, 403, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest"}),
 			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": "newname"}`}),
 			Entry(nil, 403, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "cosmo-admin"}`}),
 			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`}),

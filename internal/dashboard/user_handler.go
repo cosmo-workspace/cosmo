@@ -12,13 +12,13 @@ import (
 )
 
 func (s *Server) useUserMiddleWare(router *mux.Router, routes dashv1alpha1.Routes) {
-	for _, rtName := range []string{"GetUsers", "PostUser", "PutUserRole"} {
+	for _, rtName := range []string{"GetUsers", "PostUser", "DeleteUser", "PutUserRole"} {
 		router.Get(rtName).Handler(
 			s.authorizationMiddleware(
 				s.adminAuthenticationMiddleware(
 					router.Get(rtName).GetHandler())))
 	}
-	for _, rtName := range []string{"GetUser", "DeleteUser", "PutUserPassword", "PutUserName"} {
+	for _, rtName := range []string{"GetUser", "PutUserPassword", "PutUserName"} {
 		router.Get(rtName).Handler(
 			s.authorizationMiddleware(
 				s.userAuthenticationMiddleware(
