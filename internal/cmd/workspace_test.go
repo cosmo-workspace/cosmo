@@ -100,14 +100,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], args[4])
 				Expect(err).NotTo(HaveOccurred()) // created
-
-				wsSnap := struct{ Name, Namespace, Spec, Status interface{} }{
-					Name:      wsv1Workspace.Name,
-					Namespace: wsv1Workspace.Namespace,
-					Spec:      wsv1Workspace.Spec,
-					Status:    wsv1Workspace.Status,
-				}
-				Expect(wsSnap).To(MatchSnapShot())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			},
 			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--vars", "HOGE:HOGEHOGE"),
 			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template", "template1"),
@@ -259,18 +252,24 @@ var _ = Describe("cosmoctl [workspace]", func() {
 	//==================================================================================
 	Describe("[delete]", func() {
 
+		run_test := func(args ...string) {
+			By("---------------test start----------------")
+			rootCmd.SetArgs(args)
+			err := rootCmd.Execute()
+			Expect(consoleOut()).To(MatchSnapShot())
+			Ω(errSnap(err)).To(MatchSnapShot())
+			By("---------------test end---------------")
+		}
+
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws2", "template1", nil)
 				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
 				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 
-				rootCmd.SetArgs(args)
-				err := rootCmd.Execute()
-				Ω(err).ShouldNot(HaveOccurred())
-				Expect(consoleOut()).To(MatchSnapShot())
+				run_test(args...)
 
-				_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				_, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
 				Expect(err).To(HaveOccurred()) // deleted
 			},
 			Entry(desc, "workspace", "delete", "ws2", "--user", "user1"),
@@ -283,12 +282,9 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
 				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
 
-				rootCmd.SetArgs(args)
-				err := rootCmd.Execute()
-				Ω(err).ShouldNot(HaveOccurred())
-				Expect(consoleOut()).To(MatchSnapShot())
+				run_test(args...)
 
-				_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				_, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
 				Expect(err).NotTo(HaveOccurred()) // undeleted
 			},
 			Entry(desc, "workspace", "delete", "ws2", "--dry-run", "--user", "user1"),
@@ -296,12 +292,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 		)
 
 		DescribeTable("❌ fail with invalid args:",
-			func(args ...string) {
-				rootCmd.SetArgs(args)
-				err := rootCmd.Execute()
-				Ω(err).Should(HaveOccurred())
-				Expect(consoleOut()).To(MatchSnapShot())
-			},
+			run_test,
 			Entry(desc, "workspace", "delete", "ws1", "--user", "user1", "-A"),
 			Entry(desc, "workspace", "delete", "ws1", "--namespace", "cosmo-user-user1", "--user", "user1"),
 			Entry(desc, "workspace", "delete", "ws1", "--namespace", "xxxx"),
@@ -319,10 +310,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 					}
 					return false, nil
 				}
-				rootCmd.SetArgs(args)
-				err := rootCmd.Execute()
-				Ω(err).Should(HaveOccurred())
-				Expect(consoleOut()).To(MatchSnapShot())
+				run_test(args...)
 			},
 			Entry(desc, "workspace", "delete", "ws1", "--user", "user1"),
 			Entry(desc, "workspace", "delete", "ws1", "--dry-run", "--user", "user1"),
@@ -332,20 +320,26 @@ var _ = Describe("cosmoctl [workspace]", func() {
 	//==================================================================================
 	Describe("[open-port]", func() {
 
+		run_test := func(args ...string) {
+			By("---------------test start----------------")
+			rootCmd.SetArgs(args)
+			err := rootCmd.Execute()
+			Expect(consoleOut()).To(MatchSnapShot())
+			Ω(errSnap(err)).To(MatchSnapShot())
+			if err == nil {
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			}
+			By("---------------test end---------------")
+		}
+
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws1", "template1", nil)
 				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
 				test_createNetworkRule("user1", "ws1", "nw3", 2222, "gp1", "/")
-
-				rootCmd.SetArgs(args)
-				err := rootCmd.Execute()
-				Ω(err).ShouldNot(HaveOccurred())
-				Expect(consoleOut()).To(MatchSnapShot())
-
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-				Expect(err).NotTo(HaveOccurred())
-				Ω(wsv1Workspace.Spec).To(MatchSnapShot())
+				run_test(args...)
 			},
 			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/abc", "--group", "gp11"),
 			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
@@ -355,11 +349,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws1", "template1", nil)
 				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-
-				rootCmd.SetArgs(args)
-				err := rootCmd.Execute()
-				Ω(err).Should(HaveOccurred())
-				Expect(consoleOut()).To(MatchSnapShot())
+				run_test(args...)
 			},
 			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/", "-A"),
 			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--name", "nw11", "--port", "3000", "--path", "/"),
@@ -382,10 +372,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 					}
 					return false, nil
 				}
-				rootCmd.SetArgs(args)
-				err := rootCmd.Execute()
-				Ω(err).Should(HaveOccurred())
-				Expect(consoleOut()).To(MatchSnapShot())
+				run_test(args...)
 			},
 			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
 		)
@@ -400,6 +387,11 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			err := rootCmd.Execute()
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
+			if err == nil {
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			}
 			By("---------------test end---------------")
 		}
 
@@ -409,9 +401,6 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
 				test_createNetworkRule("user1", "ws1", "nw2", 2222, "gp1", "/")
 				run_test(args...)
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-				Expect(err).NotTo(HaveOccurred())
-				Ω(wsv1Workspace.Spec).To(MatchSnapShot())
 			},
 			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw1"),
 		)
@@ -453,6 +442,11 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			err := rootCmd.Execute()
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
+			if err == nil {
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			}
 			By("---------------test end---------------")
 		}
 
@@ -461,9 +455,6 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_CreateWorkspace("user1", "ws1", "template1", nil)
 				test_StopWorkspace("user1", "ws1")
 				run_test(args...)
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-				Expect(err).NotTo(HaveOccurred())
-				Ω(wsv1Workspace.Spec).To(MatchSnapShot())
 			},
 			Entry(desc, "workspace", "run-instance", "ws1", "--user", "user1"),
 		)
@@ -504,6 +495,11 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			err := rootCmd.Execute()
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
+			if err == nil {
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			}
 			By("---------------test end---------------")
 		}
 
@@ -511,9 +507,6 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws1", "template1", nil)
 				run_test(args...)
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
-				Expect(err).NotTo(HaveOccurred())
-				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			},
 			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "user1"),
 		)

@@ -232,17 +232,20 @@ rerun: stop run ## Rerun test.
 stop: ## Stop test.
 	-@tmux kill-session -t cosmo 2> /dev/null
 
+##---------------------------------------------------------------------
+##@ Build Binary
+##---------------------------------------------------------------------
+GO_SRC := $(shell find ../../internal ../../pkg -type f -regex ".*\.go")
+cosmoctl: bin bin/cosmoctl ## cosmoctl
+bin/cosmoctl: ../../cmd/cosmoctl/main.go $(GO_SRC)
+	@echo ====== $@ ======
+	CGO_ENABLED=0 go build -o bin/cosmoctl ../../cmd/cosmoctl/main.go
 
 ##---------------------------------------------------------------------
 ##@ Download Binary
 ##---------------------------------------------------------------------
 bin:
 	mkdir -p $(BIN)
-
-cosmoctl: bin bin/cosmoctl ## cosmoctl
-bin/cosmoctl:
-	@echo ====== $@ ======
-	CGO_ENABLED=0 go build -o bin/cosmoctl ../../cmd/cosmoctl/main.go
 
 k3d: bin bin/k3d ## k3d
 bin/k3d:
@@ -272,7 +275,7 @@ bin/kubectl:
 bash: ## Activate kubeconfig for local k8s. 
 	@bash --rcfile bashrc 
 
-helm-ls:
+helm-ls: ## helm list
 	@helm list -a -A
 
 k: ## Get k0s resources.
