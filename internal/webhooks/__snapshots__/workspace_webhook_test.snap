@@ -1,0 +1,66 @@
+['Workspace webhook when creating workspace with duplicated ports should deny 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: port '1111' is duplicated\",
+    \"reason\": \"port '1111' is duplicated\",
+    \"code\": 403
+  }
+}
+"""
+
+['Workspace webhook when creating workspace with invalid port name should deny 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: must be no more than 15 characters\",
+    \"code\": 400
+  }
+}
+"""
+
+['Workspace webhook when creating workspace with invalid port number should deny 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: must be between 1 and 65535, inclusive\",
+    \"code\": 400
+  }
+}
+"""
+
+['Workspace webhook when creating workspace within non user namespace should deny 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"namespaces \\\"cosmo-user-xxxxxx\\\" not found\",
+    \"reason\": \"NotFound\",
+    \"details\": {
+      \"name\": \"cosmo-user-xxxxxx\",
+      \"kind\": \"namespaces\"
+    },
+    \"code\": 404
+  }
+}
+"""
+
+['Workspace webhook when creating workspace without workspace label should deny 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"mworkspace.kb.io\\\" denied the request: not type workspace\",
+    \"code\": 400
+  }
+}
+"""
+
