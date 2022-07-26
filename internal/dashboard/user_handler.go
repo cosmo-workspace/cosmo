@@ -8,6 +8,7 @@ import (
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/gorilla/mux"
 )
 
@@ -90,6 +91,17 @@ func (s *Server) GetUser(ctx context.Context, userId string) (dashv1alpha1.ImplR
 func (s *Server) DeleteUser(ctx context.Context, userId string) (dashv1alpha1.ImplResponse, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "userId", userId)
+
+	caller := callerFromContext(ctx)
+	if caller == nil {
+		err := kosmo.NewInternalServerError("user is not found in context", nil)
+		return ErrorResponse(log, err)
+	}
+
+	if userId == caller.Name {
+		err := kosmo.NewForbiddenError("trying to delete own user", nil)
+		return ErrorResponse(log, err)
+	}
 
 	user, err := s.Klient.DeleteUser(ctx, userId)
 	if err != nil {
