@@ -151,6 +151,19 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 		return admission.Denied(fmt.Sprintf("port '%d' is duplicated", dupPort))
 	}
 
+	// TODO
+	// // dryrun
+	// inst := &cosmov1alpha1.Instance{}
+	// inst.SetName(ws.Name)
+	// inst.SetNamespace(ws.Namespace)
+
+	// _, err = kubeutil.DryrunCreateOrUpdate(ctx, h.Client, inst, func() error {
+	// 	return workspace.PatchWorkspaceInstanceAsDesired(inst, *ws, nil)
+	// })
+	// if err != nil {
+	// 	return admission.Denied(fmt.Sprintf("failed to dryrun create or update workspace instance: %v", err))
+	// }
+
 	return admission.Allowed("Validation OK")
 }
 
