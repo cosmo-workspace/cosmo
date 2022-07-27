@@ -91,7 +91,8 @@ var _ = Describe("cosmoctl [template]", func() {
 			run_test,
 			Entry(desc, "template", "generate", "--workspace", "--workspace-main-service-port-name", "main", "--serviceaccount", "hoge", "--required-vars", "HOGE:HOGEHOGE,FUGA:FUGAFUGA"),
 			Entry(desc, "template", "generate", "--workspace", "--workspace-main-service-port-name", "main", "-o", "/tmp/test-cosmo-template"),
-			Entry(desc, "template", "generate", "--user-addon", "--set-default-user-addon", "--set-sysns-user-addon", "cosmo-system", "--disable-nameprefix"),
+			Entry(desc, "template", "generate", "--user-addon", "--set-default-user-addon", "--disable-nameprefix"),
+			Entry(desc, "template", "generate", "--user-addon", "--set-default-user-addon", "--cluster-scope", "--disable-nameprefix"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
