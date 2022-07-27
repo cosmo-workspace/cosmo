@@ -122,6 +122,9 @@ SnapShot = """
         \"template\": {
           \"name\": \"user-temple1\"
         },
+        \"clusterTemplate\": {
+          \"name\": \"\"
+        },
         \"vars\": {
           \"HOGE\": \"FUGA\"
         }
@@ -156,6 +159,9 @@ SnapShot = """
       {
         \"template\": {
           \"name\": \"user-temple1\"
+        },
+        \"clusterTemplate\": {
+          \"name\": \"\"
         }
       }
     ]

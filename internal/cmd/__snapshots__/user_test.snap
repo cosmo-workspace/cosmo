@@ -109,6 +109,9 @@ SnapShot = """
       {
         \"template\": {
           \"name\": \"user-temple1\"
+        },
+        \"clusterTemplate\": {
+          \"name\": \"\"
         }
       }
     ]
@@ -141,6 +144,9 @@ SnapShot = """
       {
         \"template\": {
           \"name\": \"user-temple1\"
+        },
+        \"clusterTemplate\": {
+          \"name\": \"\"
         },
         \"vars\": {
           \"HOGE\": \"HOGEHOGE\"
@@ -177,6 +183,9 @@ SnapShot = """
         \"template\": {
           \"name\": \"user-temple1\"
         },
+        \"clusterTemplate\": {
+          \"name\": \"\"
+        },
         \"vars\": {
           \"HOGE\": \"HOGEHOGE\"
         }
@@ -210,6 +219,9 @@ SnapShot = """
       {
         \"template\": {
           \"name\": \"user-temple1\"
+        },
+        \"clusterTemplate\": {
+          \"name\": \"\"
         }
       }
     ]
