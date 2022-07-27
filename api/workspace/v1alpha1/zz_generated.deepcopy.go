@@ -91,6 +91,7 @@ func (in *User) DeepCopyObject() runtime.Object {
 func (in *UserAddon) DeepCopyInto(out *UserAddon) {
 	*out = *in
 	out.Template = in.Template
+	out.ClusterTemplate = in.ClusterTemplate
 	if in.Vars != nil {
 		in, out := &in.Vars, &out.Vars
 		*out = make(map[string]string, len(*in))

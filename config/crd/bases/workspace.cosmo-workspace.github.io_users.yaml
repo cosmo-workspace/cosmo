@@ -57,6 +57,15 @@ spec:
               addons:
                 items:
                   properties:
+                    clusterTemplate:
+                      description: TemplateRef defines template to use in Instance
+                        creation
+                      properties:
+                        name:
+                          type: string
+                      required:
+                      - name
+                      type: object
                     template:
                       description: TemplateRef defines template to use in Instance
                         creation

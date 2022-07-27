@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -18,6 +19,7 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
+	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 )
 
 type UserMutationWebhookHandler struct {
@@ -48,7 +50,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 	before := user.DeepCopy()
 	log.DebugAll().DumpObject(h.Client.Scheme(), before, "request user")
 
-	addonTmpls, err := kubeutil.ListTemplatesByType(ctx, h.Client, []string{wsv1alpha1.TemplateTypeUserAddon})
+	addonTmpls, err := kubeutil.ListTemplateObjectsByType(ctx, h.Client, []string{wsv1alpha1.TemplateTypeUserAddon})
 	if err != nil {
 		log.Error(err, "failed to list templates")
 		return admission.Errored(http.StatusInternalServerError, err)
@@ -60,10 +62,10 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 	}
 
 	// add default user addon
-	for _, v := range addonTmpls {
-		log.DebugAll().Info("user addon template", "name", v.Name)
+	for _, addonTmpl := range addonTmpls {
+		log.DebugAll().Info("user addon template", "name", addonTmpl.GetName())
 
-		ann := v.GetAnnotations()
+		ann := addonTmpl.GetAnnotations()
 		if ann == nil {
 			continue
 		}
@@ -76,25 +78,37 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 			log.Error(err, "failed to parse default-user-addon annotation value: %s: %w", val, err)
 			continue
 		}
-		log.Debug().Info("defaulting user addon", "name", v.Name)
+		log.Debug().Info("defaulting user addon", "name", addonTmpl.GetName())
 
 		if isDefaultUserAddon {
-			addon := wsv1alpha1.UserAddon{Template: cosmov1alpha1.TemplateRef{Name: v.GetName()}}
+			var defaultAddon wsv1alpha1.UserAddon
 
 			var found bool
-			for _, v := range user.Spec.Addons {
-				if v.Template.Name == addon.Template.Name {
-					log.Info("default addon is already defined", "user", user.Name, "addon", addon.Template.Name)
-					found = true
+			if addonTmpl.GetScope() == meta.RESTScopeNamespace {
+				defaultAddon.Template.Name = addonTmpl.GetName()
+				for _, v := range user.Spec.Addons {
+					if v.Template.Name == defaultAddon.Template.Name {
+						found = true
+					}
+				}
+			} else {
+				defaultAddon.ClusterTemplate.Name = addonTmpl.GetName()
+				for _, v := range user.Spec.Addons {
+					if v.ClusterTemplate.Name == defaultAddon.ClusterTemplate.Name {
+						found = true
+					}
 				}
 			}
+
 			if !found {
-				log.Info("appended default addon", "user", user.Name, "addon", addon.Template.Name)
+				log.Info("appended default addon", "user", user.Name, "addon", defaultAddon)
 				if len(user.Spec.Addons) == 0 {
-					user.Spec.Addons = []wsv1alpha1.UserAddon{addon}
+					user.Spec.Addons = []wsv1alpha1.UserAddon{defaultAddon}
 				} else {
-					user.Spec.Addons = append(user.Spec.Addons, addon)
+					user.Spec.Addons = append(user.Spec.Addons, defaultAddon)
 				}
+			} else {
+				log.Info("default addon is already defined", "user", user.Name, "addon", defaultAddon)
 			}
 		}
 	}
@@ -161,23 +175,36 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 	// check addon template is labeled as user-addon
 	if len(user.Spec.Addons) > 0 {
 		for _, addon := range user.Spec.Addons {
-			tmpl := &cosmov1alpha1.Template{}
-			err = h.Client.Get(ctx, types.NamespacedName{Name: addon.Template.Name}, tmpl)
-			if err != nil {
-				log.Error(err, "failed to create addon", "user", user.Name, "addon", addon.Template.Name)
-				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s :%v", addon.Template.Name, err))
+			tmpl := useraddon.EmptyTemplateObject(addon)
+			if tmpl == nil {
+				continue
 			}
 
+			err = h.Client.Get(ctx, types.NamespacedName{Name: tmpl.GetName()}, tmpl)
+			if err != nil {
+				log.Error(err, "failed to create addon", "user", user.Name, "addon", tmpl.GetName())
+				return admission.Denied(fmt.Sprintf("failed to create addon %s :%v", tmpl.GetName(), err))
+			}
+
+			// check label
 			label := tmpl.GetLabels()
 			if label == nil {
-				log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
-				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Template.Name))
+				log.Info("template is not labeled as user-addon", "user", user.Name, "addon", tmpl.GetName())
+				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as user-addon", tmpl.GetName()))
+			}
+			if t, ok := label[cosmov1alpha1.TemplateLabelKeyType]; !ok || t != wsv1alpha1.TemplateTypeUserAddon {
+				log.Info("template is not labeled as user-addon", "user", user.Name, "addon", tmpl.GetName())
+				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as user-addon", tmpl.GetName()))
 			}
 
-			if t, ok := label[cosmov1alpha1.TemplateLabelKeyType]; !ok || t != wsv1alpha1.TemplateTypeUserAddon {
-				log.Info("template is not labeled as user-addon", "user", user.Name, "addon", addon.Template.Name)
-				return admission.Errored(http.StatusBadRequest, fmt.Errorf("failed to create addon %s: template is not labeled as user-addon", addon.Template.Name))
-			}
+			// TODO
+			// // dryrun create or update addon
+			// inst := useraddon.EmptyInstanceObject(addon, user.GetName())
+			// if _, err := kubeutil.DryrunCreateOrUpdate(ctx, h.Client, inst, func() error {
+			// 	return useraddon.PatchUserAddonInstanceAsDesired(inst, addon, *user, nil)
+			// }); err != nil {
+			// 	return admission.Denied(fmt.Sprintf("failed to create or update addon %v", err))
+			// }
 		}
 	}
 

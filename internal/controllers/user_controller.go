@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
@@ -20,6 +20,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
+	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 )
 
 // UserReconciler reconciles a Template object
@@ -30,7 +31,7 @@ type UserReconciler struct {
 }
 
 func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("UserReconciler")
+	log := clog.FromContext(ctx).WithName("UserReconciler").WithValues("name", req.Name)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
@@ -41,6 +42,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	}
 	currentUser := user.DeepCopy()
 
+	// reconcile namespace
 	ns := corev1.Namespace{}
 	ns.SetName(wsv1alpha1.UserNamespace(user.Name))
 
@@ -48,8 +50,11 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return r.patchNamespaceToUserDesired(&ns, user)
 	})
 	if err != nil {
-		return ctrl.Result{}, err
+		r.Recorder.Eventf(&user, corev1.EventTypeWarning, "Sync Failed", "failed to sync namespace: %v", err)
+		return ctrl.Result{}, fmt.Errorf("failed to sync namespace: %w", err)
 	}
+
+	user.Status.Phase = ns.Status.Phase
 
 	now := metav1.Now()
 	gvk, err := apiutil.GVKForObject(&ns, r.Scheme)
@@ -69,45 +74,59 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		UpdateTimestamp:   &now,
 	}
 
+	// update user status
+	if !equality.Semantic.DeepEqual(currentUser, user) {
+		if err := r.Status().Update(ctx, &user); err != nil {
+			return ctrl.Result{}, err
+		}
+	}
 	switch op {
 	case controllerutil.OperationResultCreated:
-		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Created", "successfully namespace created")
-		user.Status.Namespace.CreationTimestamp = &now
+		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Created", "successfully created namespace")
+	case controllerutil.OperationResultUpdated:
+		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Updated", "successfully updated namespace")
+	}
 
-		log.Info("initializing password secret")
+	// generate default password if password secret is not found
+	if _, err := password.GetDefaultPassword(ctx, r.Client, user.Name); err != nil && apierrors.IsNotFound(err) {
 		if err := password.ResetPassword(ctx, r.Client, user.Name); err != nil {
 			r.Recorder.Eventf(&user, corev1.EventTypeWarning, "InitFailed", "failed to reset password: %v", err)
 			log.Error(err, "failed to reset password")
 			return ctrl.Result{}, err
 		}
+		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "PasswordSecret Initialized", "successfully reset password secret")
+	}
 
-		if addons := r.userAddonInstances(ctx, user); len(addons) > 0 {
-			errs := make([]error, 0)
+	// reconcile user addon
+	if len(user.Spec.Addons) > 0 {
+		errs := make([]error, 0)
 
-			for _, addon := range addons {
-				log.Info("creating user addon", "addon", addon.Spec.Template.Name)
+		for _, addon := range user.Spec.Addons {
+			log.Info("syncing user addon", "addon", addon)
 
-				if err := r.Create(ctx, &addon); err != nil {
-					errs = append(errs, fmt.Errorf("failed to create addon %s :%w", addon.Spec.Template.Name, err))
-				}
+			inst := useraddon.EmptyInstanceObject(addon, user.GetName())
+			if inst == nil {
+				log.Info("WARNING: addon has no Template or ClusterTemplate", "addon", addon)
+				continue
 			}
 
-			if len(errs) > 0 {
-				for _, e := range errs {
-					r.Recorder.Eventf(&user, corev1.EventTypeWarning, "AddonFailed", "failed to create user addon: %v", e)
-					log.Error(e, "failed to create user addon")
-				}
-				return ctrl.Result{}, errs[0]
+			if _, err := kubeutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
+				return useraddon.PatchUserAddonInstanceAsDesired(inst, addon, user, r.Scheme)
+			}); err != nil {
+				errs = append(errs, fmt.Errorf("failed to create or update addon %s :%w", inst.GetSpec().Template.Name, err))
 			}
 		}
 
-	case controllerutil.OperationResultUpdated:
-		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Updated", "namespace is not desired state, updated")
+		if len(errs) > 0 {
+			for _, e := range errs {
+				r.Recorder.Eventf(&user, corev1.EventTypeWarning, "AddonFailed", "failed to create or update user addon: %v", e)
+				log.Error(e, "failed to create or update user addon")
+			}
+			user.Status.Phase = "AddonFailed"
+		}
 	}
 
-	user.Status.Phase = ns.Status.Phase
-
-	// update workspace status
+	// update user status
 	if !equality.Semantic.DeepEqual(currentUser, user) {
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
@@ -115,7 +134,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	}
 
 	log.Debug().Info("finish reconcile")
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, err
 }
 
 func (r *UserReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -126,10 +145,6 @@ func (r *UserReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 
 func (r *UserReconciler) patchNamespaceToUserDesired(ns *corev1.Namespace, user wsv1alpha1.User) error {
-	if ns == nil {
-		return errors.New("namespace is nil")
-	}
-
 	label := ns.GetLabels()
 	if label == nil {
 		label = make(map[string]string)
@@ -143,61 +158,4 @@ func (r *UserReconciler) patchNamespaceToUserDesired(ns *corev1.Namespace, user 
 	}
 
 	return nil
-}
-
-func (r *UserReconciler) userAddonInstances(ctx context.Context, u wsv1alpha1.User) []cosmov1alpha1.Instance {
-	if len(u.Spec.Addons) == 0 {
-		return nil
-	}
-	log := clog.FromContext(ctx)
-
-	tmpls, err := kubeutil.ListTemplatesByType(ctx, r.Client, []string{wsv1alpha1.TemplateTypeUserAddon})
-	if err != nil {
-		log.Error(err, "failed to list templates")
-		return nil
-	}
-
-	tmplNamesInSysNs := make(map[string]string)
-	for _, v := range tmpls {
-		if ann := v.GetAnnotations(); ann != nil {
-			if sysNs, ok := ann[wsv1alpha1.TemplateAnnKeySysNsUserAddon]; ok {
-				tmplNamesInSysNs[v.Name] = sysNs
-			}
-		}
-	}
-
-	insts := make([]cosmov1alpha1.Instance, len(u.Spec.Addons))
-	for i, addon := range u.Spec.Addons {
-		inst := cosmov1alpha1.Instance{}
-
-		if addon.Vars == nil {
-			addon.Vars = make(map[string]string)
-		}
-		addon.Vars[wsv1alpha1.TemplateVarUserNamespace] = u.Status.Namespace.Name
-
-		inst.Spec = cosmov1alpha1.InstanceSpec{
-			Template: addon.Template,
-			Vars:     addon.Vars,
-		}
-
-		if sysNs, ok := tmplNamesInSysNs[addon.Template.Name]; ok {
-			// system namespace
-			inst.Name = fmt.Sprintf("useraddon-%s-%s", addon.Template.Name, u.GetName())
-			inst.SetNamespace(sysNs)
-
-		} else {
-			// user namespace
-			inst.Name = fmt.Sprintf("useraddon-%s", addon.Template.Name)
-			inst.SetNamespace(u.Status.Namespace.Name)
-		}
-
-		err := ctrl.SetControllerReference(&u, &inst, r.Scheme)
-		if err != nil {
-			log.Error(err, "failed to set controller reference")
-		}
-
-		insts[i] = inst
-	}
-
-	return insts
 }

@@ -1,8 +1,10 @@
 package v1alpha1
 
 import (
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 func init() {
@@ -13,7 +15,9 @@ func init() {
 type TemplateObject interface {
 	metav1.Object
 	runtime.Object
+	SetGroupVersionKind(gvk schema.GroupVersionKind)
 	GetSpec() *TemplateSpec
+	GetScope() meta.RESTScope
 }
 
 // +kubebuilder:object:root=true
@@ -30,6 +34,10 @@ type ClusterTemplate struct {
 
 func (t *ClusterTemplate) GetSpec() *TemplateSpec {
 	return &t.Spec
+}
+
+func (t *ClusterTemplate) GetScope() meta.RESTScope {
+	return meta.RESTScopeRoot
 }
 
 // +kubebuilder:object:root=true
