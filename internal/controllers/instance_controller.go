@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
@@ -79,7 +78,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			r.Recorder.Event(&inst, corev1.EventTypeWarning, "SyncFailed", err.Error())
 		}
 		// requeue
-		return ctrl.Result{}, errors.New("apply child objects failed")
+		return ctrl.Result{}, fmt.Errorf("apply child objects failed: %w", errs[0])
 	}
 
 	// 4. Update status

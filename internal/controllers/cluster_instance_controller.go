@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -42,7 +42,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	log.DebugAll().DumpObject(r.Scheme, before, "request object")
 
 	tmpl := &cosmov1alpha1.ClusterTemplate{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
+	err := r.Client.Get(ctx, types.NamespacedName{Name: inst.Spec.Template.Name}, tmpl)
 	if err != nil {
 		log.Error(err, "failed to get cluster template", "tmplName", inst.Spec.Template.Name)
 		return ctrl.Result{}, err
@@ -68,7 +68,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			r.Recorder.Event(&inst, corev1.EventTypeWarning, "SyncFailed", err.Error())
 		}
 		// requeue
-		return ctrl.Result{}, errors.New("apply child objects failed")
+		return ctrl.Result{}, fmt.Errorf("apply child objects failed: %w", errs[0])
 	}
 
 	// 4. Update status
