@@ -1,12 +1,12 @@
-['cosmoctl [workspace] [close-port] ✅ success in normal context: workspace close-port ws1 --user user1 --port-name nw1 1']
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net-rule ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 1']
 SnapShot = """
-\u001B[32mSuccessfully closed port 'nw1' for workspace 'ws1'
+\u001B[32mSuccessfully add network rule 'nw11' for workspace 'ws1'
 \u001B[0m"""
 
-['cosmoctl [workspace] [close-port] ✅ success in normal context: workspace close-port ws1 --user user1 --port-name nw1 2']
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net-rule ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 2']
 SnapShot = 'success'
 
-['cosmoctl [workspace] [close-port] ✅ success in normal context: workspace close-port ws1 --user user1 --port-name nw1 3']
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net-rule ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 3']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -18,12 +18,30 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"portName\": \"nw2\",
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 1111,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
         \"host\": \"default.example.com\",
         \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw11\",
+        \"portNumber\": 3000,
+        \"httpPath\": \"/abc\",
+        \"targetPortNumber\": 3000,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp11\",
         \"public\": false
       }
     ]
@@ -39,15 +57,78 @@ SnapShot = """
 }
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with an unexpected error at update: workspace close-port ws1 --user user1 --port-name nw1 1']
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net-rule ws1 --user user1 --name nw12 --port 4000 --path /def 1']
 SnapShot = """
-Error: failed to remove network rule: mock update error
+\u001B[32mSuccessfully add network rule 'nw12' for workspace 'ws1'
+\u001B[0m"""
+
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net-rule ws1 --user user1 --name nw12 --port 4000 --path /def 2']
+SnapShot = 'success'
+
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net-rule ws1 --user user1 --name nw12 --port 4000 --path /def 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-user1\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 1111,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw3\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw12\",
+        \"portNumber\": 4000,
+        \"httpPath\": \"/def\",
+        \"targetPortNumber\": 4000,
+        \"host\": \"default.example.com\",
+        \"group\": \"nw12\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['cosmoctl [workspace] [add-net-rule] ❌ fail with an unexpected error at update: workspace add-net-rule ws1 --user user1 --name nw12 --port 4000 --path /def 1']
+SnapShot = """
+Error: failed to upsert network rule: mock update error
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -59,18 +140,22 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with an unexpected error at update: workspace close-port ws1 --user user1 --port-name nw1 2']
-SnapShot = 'failed to remove network rule: mock update error'
+['cosmoctl [workspace] [add-net-rule] ❌ fail with an unexpected error at update: workspace add-net-rule ws1 --user user1 --name nw12 --port 4000 --path /def 2']
+SnapShot = 'failed to upsert network rule: mock update error'
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -82,18 +167,22 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port 2']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule 2']
 SnapShot = 'validation error: invalid args'
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --namespace xxxxx --port-name nw11 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --namespace xxxxx --name nw11 --port 3000 --path / 1']
 SnapShot = """
 Error: invalid options: namespace xxxxx is not cosmo user's namespace
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -105,19 +194,23 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --namespace xxxxx --port-name nw11 2']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --namespace xxxxx --name nw11 --port 3000 --path / 2']
 SnapShot = """
 invalid options: namespace xxxxx is not cosmo user's namespace"""
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --namespace cosmo-user-user1 --port-name nw11 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --name nw1 --port 1111 --path / --group gp1 1']
 SnapShot = """
-Error: validation error: --user and --namespace connot be used at the same time
+Error: no change
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -129,18 +222,22 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --namespace cosmo-user-user1 --port-name nw11 2']
-SnapShot = 'validation error: --user and --namespace connot be used at the same time'
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --name nw1 --port 1111 --path / --group gp1 2']
+SnapShot = 'no change'
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name main 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --name nw11 --path / 1']
 SnapShot = """
-Error: main port cannot be removed
+Error: validation error: --port is required
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -152,18 +249,49 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name main 2']
-SnapShot = 'main port cannot be removed'
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --name nw11 --path / 2']
+SnapShot = 'validation error: --port is required'
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name nw11 -A 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --name nw11 --port 1111 --path / 1']
+SnapShot = """
+Error: port 1111 is already used
+Usage:
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
+
+Flags:
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --name nw11 --port 1111 --path / 2']
+SnapShot = 'port 1111 is already used'
+
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --name nw11 --port 3000 --path / -A 1']
 SnapShot = """
 Error: validation error: --all-namespaces is not supported in this command
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -175,18 +303,22 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name nw11 -A 2']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --name nw11 --port 3000 --path / -A 2']
 SnapShot = 'validation error: --all-namespaces is not supported in this command'
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name xxxx 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --namespace cosmo-user-user1 --name nw11 --port 3000 --path / 1']
 SnapShot = """
-Error: port name xxxx is not found
+Error: validation error: --user and --namespace connot be used at the same time
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -198,18 +330,22 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 --port-name xxxx 2']
-SnapShot = 'port name xxxx is not found'
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --namespace cosmo-user-user1 --name nw11 --port 3000 --path / 2']
+SnapShot = 'validation error: --user and --namespace connot be used at the same time'
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --port 3000 --path / 1']
 SnapShot = """
-Error: validation error: port name is required
+Error: validation error: --name is required
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -221,18 +357,22 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user user1 2']
-SnapShot = 'validation error: port name is required'
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user user1 --port 3000 --path / 2']
+SnapShot = 'validation error: --name is required'
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user xxxxx --port-name nw11 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user xxxxx --name nw11 --port 3000 --path / 1']
 SnapShot = """
 Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -244,18 +384,22 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port ws1 --user xxxxx --port-name nw11 2']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule ws1 --user xxxxx --name nw11 --port 3000 --path / 2']
 SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "xxxxx" not found'
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port xxx --user user1 --port-name nw11 1']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule xxx --user user1 --name nw11 --port 3000 --path / 1']
 SnapShot = """
 Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
 Usage:
-  cosmoctl workspace close-port WORKSPACE_NAME --port-name PORT_NAME [flags]
+  cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
 Flags:
-  -h, --help               help for close-port
-      --port-name string   port name (Required)
+      --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
+  -h, --help           help for add-net-rule
+      --name string    network rule name (Required)
+      --path string    path for Ingress path when using ingress (default \"/\")
+      --port int       serivce port number (Required)
+      --public         disable authentication for this port
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -267,7 +411,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [close-port] ❌ fail with invalid args: workspace close-port xxx --user user1 --port-name nw11 2']
+['cosmoctl [workspace] [add-net-rule] ❌ fail with invalid args: workspace add-net-rule xxx --user user1 --name nw11 --port 3000 --path / 2']
 SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [workspace] [create] ✅ success in normal context: workspace create ws1 --user user1 --template template1 --vars HOGE:HOGEHOGE 1']
@@ -1361,15 +1505,15 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 1']
+['cosmoctl [workspace] [remove-net-rule] ✅ success in normal context: workspace remove-net-rule ws1 --user user1 --name nw1 1']
 SnapShot = """
-\u001B[32mSuccessfully open port 'nw11' for workspace 'ws1'
+\u001B[32mSuccessfully remove network rule 'nw1' for workspace 'ws1'
 \u001B[0m"""
 
-['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 2']
+['cosmoctl [workspace] [remove-net-rule] ✅ success in normal context: workspace remove-net-rule ws1 --user user1 --name nw1 2']
 SnapShot = 'success'
 
-['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 3']
+['cosmoctl [workspace] [remove-net-rule] ✅ success in normal context: workspace remove-net-rule ws1 --user user1 --name nw1 3']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -1381,30 +1525,12 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"portName\": \"nw1\",
-        \"portNumber\": 1111,
-        \"httpPath\": \"/\",
-        \"targetPortNumber\": 1111,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
-        \"public\": false
-      },
-      {
-        \"portName\": \"nw3\",
+        \"portName\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
         \"host\": \"default.example.com\",
         \"group\": \"gp1\",
-        \"public\": false
-      },
-      {
-        \"portName\": \"nw11\",
-        \"portNumber\": 3000,
-        \"httpPath\": \"/abc\",
-        \"targetPortNumber\": 3000,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp11\",
         \"public\": false
       }
     ]
@@ -1420,78 +1546,15 @@ SnapShot = """
 }
 """
 
-['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with an unexpected error at update: workspace remove-net-rule ws1 --user user1 --name nw1 1']
 SnapShot = """
-\u001B[32mSuccessfully open port 'nw12' for workspace 'ws1'
-\u001B[0m"""
-
-['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 2']
-SnapShot = 'success'
-
-['cosmoctl [workspace] [open-port] ✅ success in normal context: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 3']
-SnapShot = """
-{
-  \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-user1\",
-  \"Spec\": {
-    \"template\": {
-      \"name\": \"template1\"
-    },
-    \"replicas\": 1,
-    \"network\": [
-      {
-        \"portName\": \"nw1\",
-        \"portNumber\": 1111,
-        \"httpPath\": \"/\",
-        \"targetPortNumber\": 1111,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
-        \"public\": false
-      },
-      {
-        \"portName\": \"nw3\",
-        \"portNumber\": 2222,
-        \"httpPath\": \"/\",
-        \"targetPortNumber\": 2222,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
-        \"public\": false
-      },
-      {
-        \"portName\": \"nw12\",
-        \"portNumber\": 4000,
-        \"httpPath\": \"/def\",
-        \"targetPortNumber\": 4000,
-        \"host\": \"default.example.com\",
-        \"group\": \"nw12\",
-        \"public\": false
-      }
-    ]
-  },
-  \"Status\": {
-    \"instance\": {},
-    \"phase\": \"Pending\",
-    \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
-    }
-  }
-}
-"""
-
-['cosmoctl [workspace] [open-port] ❌ fail with an unexpected error at update: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 1']
-SnapShot = """
-Error: failed to upsert network rule: mock update error
+Error: failed to remove network rule: mock update error
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1503,22 +1566,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with an unexpected error at update: workspace open-port ws1 --user user1 --name nw12 --port 4000 --path /def 2']
-SnapShot = 'failed to upsert network rule: mock update error'
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with an unexpected error at update: workspace remove-net-rule ws1 --user user1 --name nw1 2']
+SnapShot = 'failed to remove network rule: mock update error'
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule 1']
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1530,22 +1589,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port 2']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule 2']
 SnapShot = 'validation error: invalid args'
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --namespace xxxxx --name nw11 --port 3000 --path / 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --namespace xxxxx --name nw11 1']
 SnapShot = """
 Error: invalid options: namespace xxxxx is not cosmo user's namespace
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1557,23 +1612,19 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --namespace xxxxx --name nw11 --port 3000 --path / 2']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --namespace xxxxx --name nw11 2']
 SnapShot = """
 invalid options: namespace xxxxx is not cosmo user's namespace"""
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw1 --port 1111 --path / --group gp1 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 --name main 1']
 SnapShot = """
-Error: no change
+Error: main port cannot be removed
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1585,76 +1636,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw1 --port 1111 --path / --group gp1 2']
-SnapShot = 'no change'
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 --name main 2']
+SnapShot = 'main port cannot be removed'
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --path / 1']
-SnapShot = """
-Error: validation error: --port-number is required
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --path / 2']
-SnapShot = 'validation error: --port-number is required'
-
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 1111 --path / 1']
-SnapShot = """
-Error: port 1111 is already used
-Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
-
-Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user ID
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 1111 --path / 2']
-SnapShot = 'port 1111 is already used'
-
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path / -A 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 --name nw11 -A 1']
 SnapShot = """
 Error: validation error: --all-namespaces is not supported in this command
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1666,22 +1659,41 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --name nw11 --port 3000 --path / -A 2']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 --name nw11 -A 2']
 SnapShot = 'validation error: --all-namespaces is not supported in this command'
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --namespace cosmo-user-user1 --name nw11 --port 3000 --path / 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 --name xxxx 1']
+SnapShot = """
+Error: port name xxxx is not found
+Usage:
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
+
+Flags:
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
+
+Global Flags:
+  -A, --all-namespaces      all namespaces
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user ID
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 --name xxxx 2']
+SnapShot = 'port name xxxx is not found'
+
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 --namespace cosmo-user-user1 --name nw11 1']
 SnapShot = """
 Error: validation error: --user and --namespace connot be used at the same time
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1693,22 +1705,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --namespace cosmo-user-user1 --name nw11 --port 3000 --path / 2']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 --namespace cosmo-user-user1 --name nw11 2']
 SnapShot = 'validation error: --user and --namespace connot be used at the same time'
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --port 3000 --path / 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 1']
 SnapShot = """
-Error: validation error: --port-name is required
+Error: validation error: network rule name is required
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1720,22 +1728,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user user1 --port 3000 --path / 2']
-SnapShot = 'validation error: --port-name is required'
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user user1 2']
+SnapShot = 'validation error: network rule name is required'
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user xxxxx --name nw11 --port 3000 --path / 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user xxxxx --name nw11 1']
 SnapShot = """
 Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1747,22 +1751,18 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port ws1 --user xxxxx --name nw11 --port 3000 --path / 2']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule ws1 --user xxxxx --name nw11 2']
 SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "xxxxx" not found'
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port xxx --user user1 --name nw11 --port 3000 --path / 1']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule xxx --user user1 --name nw11 1']
 SnapShot = """
 Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
 Usage:
-  cosmoctl workspace open-port WORKSPACE_NAME --name PORT_NAME --port PORT_NUMBER [flags]
+  cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
 Flags:
-      --group string   Group of ports for URLVar. Ports in the same group are treated as the same domain. set port-name value if empty
-  -h, --help           help for open-port
-      --name string    Serivce port name (Required)
-      --path string    Path for Ingress path when using ingress (default \"/\")
-      --port int       Serivce port number (Required)
-      --public         disable authentication for this port
+  -h, --help          help for remove-net-rule
+      --name string   network rule name (Required)
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1774,7 +1774,7 @@ Global Flags:
 
 """
 
-['cosmoctl [workspace] [open-port] ❌ fail with invalid args: workspace open-port xxx --user user1 --name nw11 --port 3000 --path / 2']
+['cosmoctl [workspace] [remove-net-rule] ❌ fail with invalid args: workspace remove-net-rule xxx --user user1 --name nw11 2']
 SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [workspace] [run-instance] ✅ success in normal context: workspace run-instance ws1 --user user1 1']
