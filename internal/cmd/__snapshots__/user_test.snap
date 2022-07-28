@@ -5,8 +5,8 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
-      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin               user admin role
   -h, --help                help for create
       --name string         user display name (default: same as USER_ID)
@@ -88,16 +88,16 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 1']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1 1']
 SnapShot = """
 \u001B[32mSuccessfully created user user-create
 \u001B[0mDefault password: xxxxxxxx
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 2']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addons user-temple1 --addon-vars Addon=user-temple1, 3']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1 3']
 SnapShot = """
 {
   \"Name\": \"user-create\",
@@ -122,16 +122,51 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 1']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 1']
 SnapShot = """
 \u001B[32mSuccessfully created user user-create
 \u001B[0mDefault password: xxxxxxxx
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 2']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 3']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-temple1\"
+        },
+        \"vars\": {
+          \"FUGA\": \"FUGAF:UGA\",
+          \"HOGE\": \" HOGE HOGE \"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-temple1,HOGE:HOGEHOGE 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-temple1,HOGE:HOGEHOGE 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-temple1,HOGE:HOGEHOGE 3']
 SnapShot = """
 {
   \"Name\": \"user-create\",
@@ -160,16 +195,16 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 1']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-temple1,HOGE:HOGEHOGE 1']
 SnapShot = """
 \u001B[32mSuccessfully created user user-create
 \u001B[0mDefault password: xxxxxxxx
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 2']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-temple1,HOGE:HOGEHOGE 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=HOGEHOGE 3']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-temple1,HOGE:HOGEHOGE 3']
 SnapShot = """
 {
   \"Name\": \"user-create\",
@@ -287,8 +322,8 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
-      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin               user admin role
   -h, --help                help for create
       --name string         user display name (default: same as USER_ID)
@@ -311,8 +346,8 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
-      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin               user admin role
   -h, --help                help for create
       --name string         user display name (default: same as USER_ID)
@@ -335,8 +370,8 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
-      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin               user admin role
   -h, --help                help for create
       --name string         user display name (default: same as USER_ID)
@@ -359,8 +394,8 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
-      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin               user admin role
   -h, --help                help for create
       --name string         user display name (default: same as USER_ID)
@@ -377,6 +412,78 @@ Global Flags:
 SnapShot = """
 failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
 
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon XXXXXXXXX,HOGE:yyy 1']
+SnapShot = """
+Error: failed to create user: admission webhook \"vuser.kb.io\" denied the request: failed to create addon XXXXXXXXX :templates.cosmo.cosmo-workspace.github.io \"XXXXXXXXX\" not found
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon XXXXXXXXX,HOGE:yyy 2']
+SnapShot = 'failed to create user: admission webhook "vuser.kb.io" denied the request: failed to create addon XXXXXXXXX :templates.cosmo.cosmo-workspace.github.io "XXXXXXXXX" not found'
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon user-template1 ,HOGE:yyy 1']
+SnapShot = """
+Error: invalid options: invalid addon vars format: user-template1 ,HOGE:yyy
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon user-template1 ,HOGE:yyy 2']
+SnapShot = 'invalid options: invalid addon vars format: user-template1 ,HOGE:yyy'
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon user-template1,HOGE :yyy 1']
+SnapShot = """
+Error: invalid options: invalid addon vars format: user-template1,HOGE :yyy
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin               user admin role
+  -h, --help                help for create
+      --name string         user display name (default: same as USER_ID)
+      --role string         user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon user-template1,HOGE :yyy 2']
+SnapShot = 'invalid options: invalid addon vars format: user-template1,HOGE :yyy'
+
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --admin --role cosmo-admin 1']
 SnapShot = """
 Error: validation error: --role and --admin is not used at the same time
@@ -384,8 +491,8 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
-      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin               user admin role
   -h, --help                help for create
       --name string         user display name (default: same as USER_ID)
@@ -408,8 +515,8 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
-      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
+      --addon stringArray   user addons, which created after UserNamespace created.
+                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin               user admin role
   -h, --help                help for create
       --name string         user display name (default: same as USER_ID)
@@ -424,30 +531,6 @@ Global Flags:
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --role xxx 2']
 SnapShot = 'validation error: role xxx is invalid'
-
-['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create user-test --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=xxx=yyy 1']
-SnapShot = """
-Error: invalid options: invalid addon vars format: user-temple1,HOGE=xxx=yyy
-Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
-
-Flags:
-      --addon-vars string   user addons template vars. format is '--addons-vars Addon=ADDON_TEMPLATE_NAME1,KEY=VAL,KEY=VAL,Addon=ADDON_TEMPLATE_NAME2,KEY=VAL ...' 
-      --addons string       user addons, which created after UserNamespace created. format is '--addons ADDON_TEMPLATE_NAME1,ADDON_TEMPLATE_NAME2 ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create user-test --addons user-temple1 --addon-vars Addon=user-temple1,HOGE=xxx=yyy 2']
-SnapShot = 'invalid options: invalid addon vars format: user-temple1,HOGE=xxx=yyy'
 
 ['cosmoctl [user] [delete] ✅ success in normal context: user delete user-delete1 1']
 SnapShot = """
