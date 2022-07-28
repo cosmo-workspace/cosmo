@@ -25,6 +25,7 @@ func removeNetRuleCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME",
 		Short:             "Remove workspace network rule",
+		Aliases:           []string{"rm-net"},
 		PersistentPreRunE: o.PreRunE,
 		RunE:              cmdutil.RunEHandler(o.RunE),
 	}

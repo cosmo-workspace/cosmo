@@ -343,6 +343,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			},
 			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/abc", "--group", "gp11"),
 			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
+			Entry(desc, "workspace", "add-net", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
@@ -403,6 +404,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				run_test(args...)
 			},
 			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "user1", "--name", "nw1"),
+			Entry(desc, "workspace", "rm-net", "ws1", "--user", "user1", "--name", "nw1"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",

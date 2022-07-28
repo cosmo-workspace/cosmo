@@ -33,6 +33,7 @@ func addNetRuleCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER",
 		Short:             "Update or insert workspace network rule",
+		Aliases:           []string{"add-net"},
 		PersistentPreRunE: o.PreRunE,
 		RunE:              cmdutil.RunEHandler(o.RunE),
 	}

@@ -1,3 +1,62 @@
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net ws1 --user user1 --name nw12 --port 4000 --path /def 1']
+SnapShot = """
+\u001B[32mSuccessfully add network rule 'nw12' for workspace 'ws1'
+\u001B[0m"""
+
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net ws1 --user user1 --name nw12 --port 4000 --path /def 2']
+SnapShot = 'success'
+
+['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net ws1 --user user1 --name nw12 --port 4000 --path /def 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-user1\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 1111,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 1111,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw3\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw12\",
+        \"portNumber\": 4000,
+        \"httpPath\": \"/def\",
+        \"targetPortNumber\": 4000,
+        \"host\": \"default.example.com\",
+        \"group\": \"nw12\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
 ['cosmoctl [workspace] [add-net-rule] ✅ success in normal context: workspace add-net-rule ws1 --user user1 --name nw11 --port 3000 --path /abc --group gp11 1']
 SnapShot = """
 \u001B[32mSuccessfully add network rule 'nw11' for workspace 'ws1'
@@ -122,6 +181,9 @@ Error: failed to upsert network rule: mock update error
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
+Aliases:
+  add-net-rule, add-net
+
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help           help for add-net-rule
@@ -149,6 +211,9 @@ Error: validation error: invalid args
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
+Aliases:
+  add-net-rule, add-net
+
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help           help for add-net-rule
@@ -175,6 +240,9 @@ SnapShot = """
 Error: invalid options: namespace xxxxx is not cosmo user's namespace
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  add-net-rule, add-net
 
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
@@ -204,6 +272,9 @@ Error: no change
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
+Aliases:
+  add-net-rule, add-net
+
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help           help for add-net-rule
@@ -230,6 +301,9 @@ SnapShot = """
 Error: validation error: --port is required
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  add-net-rule, add-net
 
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
@@ -258,6 +332,9 @@ Error: port 1111 is already used
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
+Aliases:
+  add-net-rule, add-net
+
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help           help for add-net-rule
@@ -284,6 +361,9 @@ SnapShot = """
 Error: validation error: --all-namespaces is not supported in this command
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  add-net-rule, add-net
 
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
@@ -312,6 +392,9 @@ Error: validation error: --user and --namespace connot be used at the same time
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
+Aliases:
+  add-net-rule, add-net
+
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help           help for add-net-rule
@@ -338,6 +421,9 @@ SnapShot = """
 Error: validation error: --name is required
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  add-net-rule, add-net
 
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
@@ -366,6 +452,9 @@ Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" no
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
 
+Aliases:
+  add-net-rule, add-net
+
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help           help for add-net-rule
@@ -392,6 +481,9 @@ SnapShot = """
 Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  add-net-rule, add-net
 
 Flags:
       --group string   group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
@@ -1546,11 +1638,55 @@ SnapShot = """
 }
 """
 
+['cosmoctl [workspace] [remove-net-rule] ✅ success in normal context: workspace rm-net ws1 --user user1 --name nw1 1']
+SnapShot = """
+\u001B[32mSuccessfully remove network rule 'nw1' for workspace 'ws1'
+\u001B[0m"""
+
+['cosmoctl [workspace] [remove-net-rule] ✅ success in normal context: workspace rm-net ws1 --user user1 --name nw1 2']
+SnapShot = 'success'
+
+['cosmoctl [workspace] [remove-net-rule] ✅ success in normal context: workspace rm-net ws1 --user user1 --name nw1 3']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-user1\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
 ['cosmoctl [workspace] [remove-net-rule] ❌ fail with an unexpected error at update: workspace remove-net-rule ws1 --user user1 --name nw1 1']
 SnapShot = """
 Error: failed to remove network rule: mock update error
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
+
+Aliases:
+  remove-net-rule, rm-net
 
 Flags:
   -h, --help          help for remove-net-rule
@@ -1575,6 +1711,9 @@ Error: validation error: invalid args
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
+Aliases:
+  remove-net-rule, rm-net
+
 Flags:
   -h, --help          help for remove-net-rule
       --name string   network rule name (Required)
@@ -1597,6 +1736,9 @@ SnapShot = """
 Error: invalid options: namespace xxxxx is not cosmo user's namespace
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
+
+Aliases:
+  remove-net-rule, rm-net
 
 Flags:
   -h, --help          help for remove-net-rule
@@ -1622,6 +1764,9 @@ Error: main port cannot be removed
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
+Aliases:
+  remove-net-rule, rm-net
+
 Flags:
   -h, --help          help for remove-net-rule
       --name string   network rule name (Required)
@@ -1644,6 +1789,9 @@ SnapShot = """
 Error: validation error: --all-namespaces is not supported in this command
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
+
+Aliases:
+  remove-net-rule, rm-net
 
 Flags:
   -h, --help          help for remove-net-rule
@@ -1668,6 +1816,9 @@ Error: port name xxxx is not found
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
+Aliases:
+  remove-net-rule, rm-net
+
 Flags:
   -h, --help          help for remove-net-rule
       --name string   network rule name (Required)
@@ -1690,6 +1841,9 @@ SnapShot = """
 Error: validation error: --user and --namespace connot be used at the same time
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
+
+Aliases:
+  remove-net-rule, rm-net
 
 Flags:
   -h, --help          help for remove-net-rule
@@ -1714,6 +1868,9 @@ Error: validation error: network rule name is required
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
+Aliases:
+  remove-net-rule, rm-net
+
 Flags:
   -h, --help          help for remove-net-rule
       --name string   network rule name (Required)
@@ -1737,6 +1894,9 @@ Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" no
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
 
+Aliases:
+  remove-net-rule, rm-net
+
 Flags:
   -h, --help          help for remove-net-rule
       --name string   network rule name (Required)
@@ -1759,6 +1919,9 @@ SnapShot = """
 Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME [flags]
+
+Aliases:
+  remove-net-rule, rm-net
 
 Flags:
   -h, --help          help for remove-net-rule
