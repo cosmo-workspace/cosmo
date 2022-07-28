@@ -122,11 +122,11 @@ var _ = Describe("cosmoctl [user]", func() {
 				test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-temple1")
 				run_test(args...)
 			},
-			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--addons", "user-temple1", "--addon-vars", "Addon=user-temple1,HOGE=HOGEHOGE"),
-			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--admin", "--addons", "user-temple1", "--addon-vars", "Addon=user-temple1,HOGE=HOGEHOGE"),
-			// Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--addons", "user-temple1", "--addon-vars", "Addon=user-temple1,HOGE=HOGEHOGE,FUGA=FUGAFUGA"),
+			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--addon", "user-temple1,HOGE:HOGEHOGE"),
+			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--admin", "--addon", "user-temple1,HOGE:HOGEHOGE"),
 			Entry(desc, "user", "create", "user-create"),
-			Entry(desc, "user", "create", "user-create", "--addons", "user-temple1", "--addon-vars", "Addon=user-temple1,"),
+			Entry(desc, "user", "create", "user-create", "--addon", "user-temple1"),
+			Entry(desc, "user", "create", "user-create", "--addon", "user-temple1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA"),
 		)
 
 		DescribeTable("✅ success to create password immediately:",
@@ -155,7 +155,9 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "create", "TESTuser"),
 			Entry(desc, "user", "create", "user-create", "--admin", "--role", "cosmo-admin"),
 			Entry(desc, "user", "create", "user-create", "--role", "xxx"),
-			Entry(desc, "user", "create", "user-create", "user-test", "--addons", "user-temple1", "--addon-vars", "Addon=user-temple1,HOGE=xxx=yyy"),
+			Entry(desc, "user", "create", "user-create", "--addon", "XXXXXXXXX,HOGE:yyy"),
+			Entry(desc, "user", "create", "user-create", "--addon", "user-template1 ,HOGE:yyy"),
+			Entry(desc, "user", "create", "user-create", "--addon", "user-template1,HOGE :yyy"),
 		)
 
 		DescribeTable("❌ fail to create password timeout",
