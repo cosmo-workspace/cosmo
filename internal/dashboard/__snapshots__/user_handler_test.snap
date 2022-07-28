@@ -30,12 +30,12 @@ SnapShot = """
 
 ['Dashboard server [User] [DeleteUser] ❌ fail with invalid request: Entry: usertest-admin 1']
 SnapShot = """
-403
+400
 """
 
 ['Dashboard server [User] [DeleteUser] ❌ fail with invalid request: Entry: usertest-admin 2']
 SnapShot = """
-{\"message\":\"trying to delete own user\"}
+{\"message\":\"trying to delete yourself\"}
 """
 
 ['Dashboard server [User] [DeleteUser] ❌ fail with invalid request: Entry: xxxxxx 1']

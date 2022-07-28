@@ -99,7 +99,7 @@ func (s *Server) DeleteUser(ctx context.Context, userId string) (dashv1alpha1.Im
 	}
 
 	if userId == caller.Name {
-		err := kosmo.NewForbiddenError("trying to delete own user", nil)
+		err := kosmo.NewBadRequestError("trying to delete yourself", nil)
 		return ErrorResponse(log, err)
 	}
 
