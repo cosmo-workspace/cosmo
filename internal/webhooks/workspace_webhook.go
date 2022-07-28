@@ -13,6 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -193,11 +194,11 @@ func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []wsv1alp
 
 func checkNetworkRules(netRules []wsv1alpha1.NetworkRule) error {
 	for _, netRule := range netRules {
-		if netRule.PortName == "" {
-			return errors.New("port name is empty")
+		if errs := validation.IsValidPortName(netRule.PortName); len(errs) > 0 {
+			return errors.New(errs[0])
 		}
-		if netRule.PortNumber == 0 {
-			return errors.New("port number is 0")
+		if errs := validation.IsValidPortNum(netRule.PortNumber); len(errs) > 0 {
+			return errors.New(errs[0])
 		}
 	}
 	return nil

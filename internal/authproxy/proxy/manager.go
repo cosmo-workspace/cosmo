@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"sort"
 	"sync"
 	"time"
 
@@ -41,20 +42,25 @@ type Manager struct {
 	encryptKey []byte
 }
 
-type localPortProxyStore map[string]dynamicLocalPortProxyInfo
+type localPortProxyStore map[string]localPortProxy
 
-type dynamicLocalPortProxyInfo struct {
-	targetPort int
-	localPort  int
-	shutdown   context.CancelFunc
-	errCh      chan error
+type localPortProxy struct {
+	LocalPortProxyInfo
+	shutdown context.CancelFunc
+	errCh    chan error
 }
 
-func (s localPortProxyStore) Add(name string, proxyData dynamicLocalPortProxyInfo) {
+type LocalPortProxyInfo struct {
+	Name       string
+	TargetPort int
+	LocalPort  int
+}
+
+func (s localPortProxyStore) Add(name string, proxyData localPortProxy) {
 	s[name] = proxyData
 }
 
-func (s localPortProxyStore) Get(name string) (dynamicLocalPortProxyInfo, bool) {
+func (s localPortProxyStore) Get(name string) (localPortProxy, bool) {
 	data, exist := s[name]
 
 	return data, exist
@@ -100,15 +106,16 @@ func (m *Manager) newProxyServer(name string, targetPort int) *ProxyServer {
 	return p
 }
 
-func (m *Manager) CreateNewProxy(ctx context.Context, name string, targetPort int) (int, error) {
+func (m *Manager) CreateNewProxy(ctx context.Context, name string, targetPort int) (LocalPortProxyInfo, error) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
 	log := m.Log.WithCaller()
-	_, exist := m.proxyStore[name]
-	if exist {
-		return 0, fmt.Errorf("%s already exist", name)
+
+	if existingProxy, exist := m.proxyStore[name]; exist {
+		return existingProxy.LocalPortProxyInfo, fmt.Errorf("%s already exist", name)
 	}
+	proxyInfo := LocalPortProxyInfo{Name: name, TargetPort: targetPort}
 
 	proxyCtx, shutdown := context.WithCancel(context.Background())
 
@@ -125,11 +132,11 @@ WaitStartLoop:
 		select {
 		case err := <-errCh:
 			shutdown()
-			return 0, fmt.Errorf("failed to start server: %w", err)
+			return proxyInfo, fmt.Errorf("failed to start server: %w", err)
 
 		case <-ctx.Done():
 			shutdown()
-			return 0, errors.New("canceled")
+			return proxyInfo, errors.New("canceled")
 
 		default:
 			if localPort != 0 {
@@ -139,14 +146,14 @@ WaitStartLoop:
 			time.Sleep(time.Second)
 		}
 	}
+	proxyInfo.LocalPort = localPort
 
-	proxyInfo := dynamicLocalPortProxyInfo{
-		targetPort: targetPort,
-		localPort:  localPort,
-		shutdown:   shutdown,
-		errCh:      errCh,
+	lpp := localPortProxy{
+		LocalPortProxyInfo: proxyInfo,
+		shutdown:           shutdown,
+		errCh:              errCh,
 	}
-	m.proxyStore.Add(name, proxyInfo)
+	m.proxyStore.Add(name, lpp)
 
 	proxyStartupCheckCtx, cancel := context.WithTimeout(ctx, m.ProxyStartupCheckTimeout)
 	defer cancel()
@@ -156,9 +163,9 @@ HealthCheckLoop:
 		select {
 		case <-proxyStartupCheckCtx.Done():
 			shutdown()
-			return localPort, errors.New("failed to pass healthcheck")
+			return proxyInfo, errors.New("failed to pass healthcheck")
 		default:
-			err := m.doHealthCheck(proxyStartupCheckCtx, proxyInfo)
+			err := m.doHealthCheck(proxyStartupCheckCtx, lpp)
 			if err == nil {
 				break HealthCheckLoop
 			}
@@ -167,16 +174,22 @@ HealthCheckLoop:
 		}
 	}
 
-	log.Info("successfully created new auth proxy", "targetPort", proxyInfo.targetPort, "localPort", proxyInfo.localPort)
-	return localPort, nil
+	log.Info("successfully created new auth proxy", "proxyInfo", proxyInfo)
+	return proxyInfo, nil
 }
 
-func (m *Manager) GetRunningProxy(name string) (localPort int, targetPort int, exist bool) {
-	proxy, exist := m.proxyStore.Get(name)
-	if !exist {
-		return 0, 0, false
+func (m *Manager) GetRunningProxies() []LocalPortProxyInfo {
+	proxies := make([]LocalPortProxyInfo, 0, len(m.proxyStore))
+	for _, p := range m.proxyStore {
+		proxies = append(proxies, p.LocalPortProxyInfo)
 	}
-	return proxy.localPort, proxy.targetPort, exist
+	sort.Slice(proxies, func(i, j int) bool { return proxies[i].Name < proxies[j].Name })
+	return proxies
+}
+
+func (m *Manager) GetRunningProxy(name string) (proxyInfo LocalPortProxyInfo, exist bool) {
+	p, exist := m.proxyStore.Get(name)
+	return p.LocalPortProxyInfo, exist
 }
 
 func (m *Manager) ShutdownProxy(ctx context.Context, name string) error {
@@ -235,23 +248,23 @@ func (m *Manager) GC(ctx context.Context, runningProxyNameList []string) {
 	for name, count := range proxyUseCounts {
 		if count == 0 {
 			wg.Add(1)
-			go func() {
+			go func(name string) {
 				defer wg.Done()
 				log.Info("shutdown unused proxy", "name", name)
 				m.shutdownProxy(ctx, name)
-			}()
+			}(name)
 		}
 	}
 	wg.Wait()
 }
 
-func (m *Manager) doHealthCheck(ctx context.Context, proxy dynamicLocalPortProxyInfo) error {
+func (m *Manager) doHealthCheck(ctx context.Context, proxy localPortProxy) error {
 	proto := "https"
 	if m.Insecure {
 		proto = "http"
 	}
 
-	url := fmt.Sprintf("%s://localhost:%d/", proto, proxy.localPort)
+	url := fmt.Sprintf("%s://localhost:%d/", proto, proxy.LocalPort)
 	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 
 	// ref. http.DefaultTransport

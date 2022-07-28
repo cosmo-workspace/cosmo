@@ -15,6 +15,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 )
 
 var _ = Describe("Workspace webhook", func() {
@@ -382,26 +383,129 @@ spec:
 			}
 
 			err = k8sClient.Create(ctx, &ws)
-			Expect(err).Should(HaveOccurred())
+			Expect(err).To(MatchSnapShot())
 		})
 	})
 
 	Context("when creating workspace with duplicated ports", func() {
 		It("should deny", func() {
-			// ctx := context.Background()
+			ctx := context.Background()
 
+			var err error
+
+			ws := wsv1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "testws6",
+					Namespace: "cosmo-user-testuser-ws",
+				},
+				Spec: wsv1alpha1.WorkspaceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
+					Network: []wsv1alpha1.NetworkRule{
+						{
+							PortName:   "nw1",
+							PortNumber: 1111,
+						},
+						{
+							PortName:   "nw2",
+							PortNumber: 1111,
+						},
+					},
+				},
+			}
+
+			err = k8sClient.Create(ctx, &ws)
+			Expect(err).To(MatchSnapShot())
 		})
 	})
 
 	Context("when creating workspace within non user namespace", func() {
 		It("should deny", func() {
-			// ctx := context.Background()
+			ctx := context.Background()
+
+			var err error
+
+			ws := wsv1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "testws7",
+					Namespace: "cosmo-user-xxxxxx",
+				},
+				Spec: wsv1alpha1.WorkspaceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
+					Network: []wsv1alpha1.NetworkRule{
+						{
+							PortName:   "a23456789012345",
+							PortNumber: 0,
+							HTTPPath:   "",
+							Public:     false,
+						},
+					},
+				},
+			}
+
+			err = k8sClient.Create(ctx, &ws)
+			Expect(err).To(MatchSnapShot())
 		})
 	})
 
 	Context("when creating workspace with invalid port number", func() {
 		It("should deny", func() {
-			// ctx := context.Background()
+			ctx := context.Background()
+
+			var err error
+
+			ws := wsv1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "testws8",
+					Namespace: "cosmo-user-testuser-ws",
+				},
+				Spec: wsv1alpha1.WorkspaceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
+					Network: []wsv1alpha1.NetworkRule{
+						{
+							PortName:   "a23456789012345",
+							PortNumber: 0,
+							HTTPPath:   "",
+							Public:     false,
+						},
+					},
+				},
+			}
+
+			err = k8sClient.Create(ctx, &ws)
+			Expect(err).To(MatchSnapShot())
+		})
+	})
+
+	Context("when creating workspace with invalid port name", func() {
+		It("should deny", func() {
+			ctx := context.Background()
+
+			var err error
+
+			ws := wsv1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "testws8",
+					Namespace: "cosmo-user-testuser-ws",
+				},
+				Spec: wsv1alpha1.WorkspaceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
+					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
+					Network: []wsv1alpha1.NetworkRule{
+						{
+							PortName:   "a234567890123456",
+							PortNumber: 1,
+							HTTPPath:   "",
+							Public:     false,
+						},
+					},
+				},
+			}
+
+			err = k8sClient.Create(ctx, &ws)
+			Expect(err).To(MatchSnapShot())
 		})
 	})
 })

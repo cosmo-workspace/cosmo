@@ -354,7 +354,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create TESTuser 1']
 SnapShot = """
-Error: failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
+Error: failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
 Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
@@ -375,7 +375,7 @@ Global Flags:
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create TESTuser 2']
 SnapShot = """
-failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
+failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --admin --role cosmo-admin 1']
 SnapShot = """

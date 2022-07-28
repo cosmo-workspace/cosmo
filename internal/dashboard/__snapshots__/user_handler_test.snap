@@ -28,12 +28,22 @@ SnapShot = """
 {\"message\":\"failed to get user\"}
 """
 
-['Dashboard server [User] [DeleteUser] ❌ fail with user not found: Entry: xxxxxx 1']
+['Dashboard server [User] [DeleteUser] ❌ fail with invalid request: Entry: usertest-admin 1']
+SnapShot = """
+400
+"""
+
+['Dashboard server [User] [DeleteUser] ❌ fail with invalid request: Entry: usertest-admin 2']
+SnapShot = """
+{\"message\":\"trying to delete yourself\"}
+"""
+
+['Dashboard server [User] [DeleteUser] ❌ fail with invalid request: Entry: xxxxxx 1']
 SnapShot = """
 404
 """
 
-['Dashboard server [User] [DeleteUser] ❌ fail with user not found: Entry: xxxxxx 2']
+['Dashboard server [User] [DeleteUser] ❌ fail with invalid request: Entry: xxxxxx 2']
 SnapShot = """
 {\"message\":\"user is not found\"}
 """

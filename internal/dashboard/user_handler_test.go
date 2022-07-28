@@ -61,7 +61,7 @@ var _ = Describe("Dashboard server [User]", func() {
 			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`}),
 			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user"}),
 			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin"}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin"}),
+			Entry(nil, 400, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin"}),
 			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/name", body: `{"displayName": "newname"}`}),
 			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/role", body: `{"role": ""}`}),
 			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`}),
@@ -88,7 +88,7 @@ var _ = Describe("Dashboard server [User]", func() {
 			Entry(nil, 403, request{method: http.MethodPost, path: "/api/v1alpha1/user", body: `{ "id": "user-create" }`}),
 			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user"}),
 			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest"}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest"}),
+			Entry(nil, 403, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest"}),
 			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/name", body: `{"displayName": "newname"}`}),
 			Entry(nil, 403, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/role", body: `{"role": "cosmo-admin"}`}),
 			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/password", body: `{ "currentPassword": "password", "newPassword": "newPassword"}`}),
@@ -249,9 +249,10 @@ var _ = Describe("Dashboard server [User]", func() {
 			Entry(nil, "user-delete1"),
 		)
 
-		DescribeTable("❌ fail with user not found:",
+		DescribeTable("❌ fail with invalid request:",
 			run_test,
 			Entry(nil, "xxxxxx"),
+			Entry(nil, "usertest-admin"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error to get:",
