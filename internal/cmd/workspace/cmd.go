@@ -29,8 +29,8 @@ use "kubectl describe workspace" or "kubectl describe instance" and see controll
 	workspaceCmd.AddCommand(deleteCmd(o))
 	workspaceCmd.AddCommand(runInstanceCmd(o))
 	workspaceCmd.AddCommand(stopInstanceCmd(o))
-	workspaceCmd.AddCommand(openPortCmd(o))
-	workspaceCmd.AddCommand(closePortCmd(o))
+	workspaceCmd.AddCommand(addNetRuleCmd(o))
+	workspaceCmd.AddCommand(removeNetRuleCmd(o))
 
 	cmd.AddCommand(workspaceCmd)
 }

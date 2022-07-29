@@ -318,7 +318,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 	})
 
 	//==================================================================================
-	Describe("[open-port]", func() {
+	Describe("[add-net-rule]", func() {
 
 		run_test := func(args ...string) {
 			By("---------------test start----------------")
@@ -341,8 +341,9 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_createNetworkRule("user1", "ws1", "nw3", 2222, "gp1", "/")
 				run_test(args...)
 			},
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/abc", "--group", "gp11"),
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/abc", "--group", "gp11"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
+			Entry(desc, "workspace", "add-net", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
@@ -351,16 +352,16 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
 				run_test(args...)
 			},
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/", "-A"),
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--name", "nw11", "--port", "3000", "--path", "/"),
-			Entry(desc, "workspace", "open-port", "ws1", "--namespace", "xxxxx", "--name", "nw11", "--port", "3000", "--path", "/"),
-			Entry(desc, "workspace", "open-port"),
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--port", "3000", "--path", "/"),
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--path", "/"),
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "xxxxx", "--name", "nw11", "--port", "3000", "--path", "/"),
-			Entry(desc, "workspace", "open-port", "xxx", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/"),
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw11", "--port", "1111", "--path", "/"),
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw1", "--port", "1111", "--path", "/", "--group", "gp1"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/", "-A"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--name", "nw11", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--namespace", "xxxxx", "--name", "nw11", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "add-net-rule"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw11", "--path", "/"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "xxxxx", "--name", "nw11", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "add-net-rule", "xxx", "--user", "user1", "--name", "nw11", "--port", "3000", "--path", "/"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw11", "--port", "1111", "--path", "/"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw1", "--port", "1111", "--path", "/", "--group", "gp1"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
@@ -374,12 +375,12 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				}
 				run_test(args...)
 			},
-			Entry(desc, "workspace", "open-port", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
+			Entry(desc, "workspace", "add-net-rule", "ws1", "--user", "user1", "--name", "nw12", "--port", "4000", "--path", "/def"),
 		)
 	})
 
 	//==================================================================================
-	Describe("[close-port]", func() {
+	Describe("[remove-net-rule]", func() {
 
 		run_test := func(args ...string) {
 			By("---------------test start----------------")
@@ -402,7 +403,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_createNetworkRule("user1", "ws1", "nw2", 2222, "gp1", "/")
 				run_test(args...)
 			},
-			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw1"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "user1", "--name", "nw1"),
+			Entry(desc, "workspace", "rm-net", "ws1", "--user", "user1", "--name", "nw1"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
@@ -411,15 +413,15 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
 				run_test(args...)
 			},
-			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw11", "-A"),
-			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--port-name", "nw11"),
-			Entry(desc, "workspace", "close-port", "ws1", "--namespace", "xxxxx", "--port-name", "nw11"),
-			Entry(desc, "workspace", "close-port"),
-			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1"),
-			Entry(desc, "workspace", "close-port", "ws1", "--user", "xxxxx", "--port-name", "nw11"),
-			Entry(desc, "workspace", "close-port", "xxx", "--user", "user1", "--port-name", "nw11"),
-			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "main"),
-			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "xxxx"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "user1", "--name", "nw11", "-A"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "user1", "--namespace", "cosmo-user-user1", "--name", "nw11"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--namespace", "xxxxx", "--name", "nw11"),
+			Entry(desc, "workspace", "remove-net-rule"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "user1"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "xxxxx", "--name", "nw11"),
+			Entry(desc, "workspace", "remove-net-rule", "xxx", "--user", "user1", "--name", "nw11"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "user1", "--name", "main"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "user1", "--name", "xxxx"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
@@ -429,7 +431,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
 				run_test(args...)
 			},
-			Entry(desc, "workspace", "close-port", "ws1", "--user", "user1", "--port-name", "nw1"),
+			Entry(desc, "workspace", "remove-net-rule", "ws1", "--user", "user1", "--name", "nw1"),
 		)
 	})
 
