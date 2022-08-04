@@ -5,7 +5,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -58,7 +59,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -111,7 +113,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -164,7 +167,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -217,7 +221,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -270,7 +275,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -323,7 +329,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -370,7 +377,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -423,7 +431,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
@@ -467,7 +476,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1
   },
@@ -494,7 +504,8 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-test-user\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\"
+      \"name\": \"template1\",
+      \"clusterScoped\": false
     },
     \"replicas\": 1,
     \"network\": [
