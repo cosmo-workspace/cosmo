@@ -62,6 +62,7 @@ var _ = Describe("cosmoctl [template]", func() {
 	AfterEach(func() {
 		clientMock.Clear()
 		test_DeleteTemplateAll()
+		test_DeleteClusterTemplateAll()
 	})
 
 	//==================================================================================
@@ -108,6 +109,7 @@ var _ = Describe("cosmoctl [template]", func() {
 			test_CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
 			test_CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template2")
 			test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "template3")
+			test_CreateClusterTemplate(wsv1alpha1.TemplateTypeUserAddon, "cluster-template1")
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()
@@ -122,12 +124,9 @@ var _ = Describe("cosmoctl [template]", func() {
 			Entry(desc, "template", "get", "--workspace"),
 			Entry(desc, "template", "get", "template2"),
 			Entry(desc, "template", "get", "template2", "--workspace"),
-		)
-
-		DescribeTable("❌ fail with invalid args:",
-			run_test,
-			func(args ...string) string { return strings.Join(args, " ") },
-			Entry(desc, "template", "get", "xxxxx"),
+			Entry(desc, "template", "get", "template2", "template3"),
+			Entry(desc, "template", "get", "template2", "cluster-template1", "notfound"),
+			Entry(desc, "template", "get", "notfound"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at list users:",

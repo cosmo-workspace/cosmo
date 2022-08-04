@@ -429,13 +429,22 @@ SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get 1']
 SnapShot = """
-NAME        REQUIRED-VARS       TYPE
-template1   {{HOGE}},{{FUGA}}   workspace
-template2   {{HOGE}},{{FUGA}}   workspace
-template3   {{HOGE}},{{FUGA}}   user-addon
+NAME                REQUIRED-VARS       TYPE         IsClusterScope
+template1           {{HOGE}},{{FUGA}}   workspace    false
+template2           {{HOGE}},{{FUGA}}   workspace    false
+template3           {{HOGE}},{{FUGA}}   user-addon   false
+cluster-template1   {{HOGE}},{{FUGA}}   user-addon   true
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get 2']
+SnapShot = 'success'
+
+['cosmoctl [template] [get] ✅ success in normal context: template get notfound 1']
+SnapShot = """
+NAME   REQUIRED-VARS   TYPE   IsClusterScope
+"""
+
+['cosmoctl [template] [get] ✅ success in normal context: template get notfound 2']
 SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 --workspace 1']
@@ -449,11 +458,31 @@ SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 1']
 SnapShot = """
-NAME        REQUIRED-VARS       TYPE
-template2   {{HOGE}},{{FUGA}}   workspace
+NAME        REQUIRED-VARS       TYPE        IsClusterScope
+template2   {{HOGE}},{{FUGA}}   workspace   false
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 2']
+SnapShot = 'success'
+
+['cosmoctl [template] [get] ✅ success in normal context: template get template2 cluster-template1 notfound 1']
+SnapShot = """
+NAME                REQUIRED-VARS       TYPE         IsClusterScope
+template2           {{HOGE}},{{FUGA}}   workspace    false
+cluster-template1   {{HOGE}},{{FUGA}}   user-addon   true
+"""
+
+['cosmoctl [template] [get] ✅ success in normal context: template get template2 cluster-template1 notfound 2']
+SnapShot = 'success'
+
+['cosmoctl [template] [get] ✅ success in normal context: template get template2 template3 1']
+SnapShot = """
+NAME        REQUIRED-VARS       TYPE         IsClusterScope
+template2   {{HOGE}},{{FUGA}}   workspace    false
+template3   {{HOGE}},{{FUGA}}   user-addon   false
+"""
+
+['cosmoctl [template] [get] ✅ success in normal context: template get template2 template3 2']
 SnapShot = 'success'
 
 ['cosmoctl [template] [get] ❌ fail with an unexpected error at list users: template get --workspace 1']
@@ -495,26 +524,6 @@ Global Flags:
 
 ['cosmoctl [template] [get] ❌ fail with an unexpected error at list users: template get 2']
 SnapShot = 'mock list error'
-
-['cosmoctl [template] [get] ❌ fail with invalid args: template get xxxxx 1']
-SnapShot = """
-Error: templates.cosmo.cosmo-workspace.github.io \"xxxxx\" not found
-Usage:
-  cosmoctl template get [flags]
-
-Flags:
-  -h, --help        help for get
-      --workspace   show type workspace template
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [template] [get] ❌ fail with invalid args: template get xxxxx 2']
-SnapShot = 'templates.cosmo.cosmo-workspace.github.io "xxxxx" not found'
 
 ['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - --client 1']
 SnapShot = """

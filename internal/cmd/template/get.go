@@ -97,6 +97,18 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 	}
 	o.Logr.DebugAll().Info("ListTemplates", "tmplList", tmpls)
 
+	if len(o.TemplateNames) > 0 {
+		ts := make([]cosmov1alpha1.TemplateObject, 0, len(o.TemplateNames))
+		for _, selected := range o.TemplateNames {
+			for _, t := range tmpls {
+				if selected == t.GetName() {
+					ts = append(ts, t)
+				}
+			}
+		}
+		tmpls = ts
+	}
+
 	w := printers.GetNewTabWriter(o.Out)
 	defer w.Flush()
 
