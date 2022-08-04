@@ -59,6 +59,7 @@ var _ = Describe("cosmoctl [user]", func() {
 		clientMock.Clear()
 		test_DeleteCosmoUserAll()
 		test_DeleteTemplateAll()
+		test_DeleteClusterTemplateAll()
 	})
 
 	//==================================================================================
@@ -119,14 +120,16 @@ var _ = Describe("cosmoctl [user]", func() {
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
 				test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
-				test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-temple1")
+				test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-template1")
+				test_CreateClusterTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-clustertemplate1")
 				run_test(args...)
 			},
-			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--addon", "user-temple1,HOGE:HOGEHOGE"),
-			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--admin", "--addon", "user-temple1,HOGE:HOGEHOGE"),
+			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--addon", "user-template1,HOGE:HOGEHOGE"),
+			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--admin", "--addon", "user-template1,HOGE:HOGEHOGE"),
 			Entry(desc, "user", "create", "user-create"),
-			Entry(desc, "user", "create", "user-create", "--addon", "user-temple1"),
-			Entry(desc, "user", "create", "user-create", "--addon", "user-temple1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA"),
+			Entry(desc, "user", "create", "user-create", "--addon", "user-template1"),
+			Entry(desc, "user", "create", "user-create", "--addon", "user-template1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA"),
+			Entry(desc, "user", "create", "user-create2", "--addon", "user-template1", "--cluster-addon", "user-clustertemplate1"),
 		)
 
 		DescribeTable("✅ success to create password immediately:",
@@ -158,6 +161,7 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "create", "user-create", "--addon", "XXXXXXXXX,HOGE:yyy"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1 ,HOGE:yyy"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1,HOGE :yyy"),
+			Entry(desc, "user", "create", "user-create", "--cluster-addon", "user-clustertemplate1,HOGE :"),
 		)
 
 		DescribeTable("❌ fail to create password timeout",

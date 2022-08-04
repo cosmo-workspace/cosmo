@@ -33,7 +33,7 @@ func (s *Server) PostUser(ctx context.Context, req dashv1alpha1.CreateUserReques
 
 	// create user
 	user, err := s.Klient.CreateUser(ctx, req.Id, req.DisplayName,
-		req.Role, req.AuthType, convertDashv1alpha1UserToUserAddon(req.Addons))
+		req.Role, req.AuthType, convertDashv1alpha1UserAddonToUserAddon(req.Addons))
 	if err != nil {
 		return ErrorResponse(log, err)
 	}
@@ -120,8 +120,9 @@ func convertUserToDashv1alpha1User(user wsv1alpha1.User) *dashv1alpha1.User {
 	addons := make([]dashv1alpha1.ApiV1alpha1UserAddons, len(user.Spec.Addons))
 	for i, v := range user.Spec.Addons {
 		addons[i] = dashv1alpha1.ApiV1alpha1UserAddons{
-			Template: v.Template.Name,
-			Vars:     v.Vars,
+			Template:      v.Template.Name,
+			ClusterScoped: v.Template.ClusterScoped,
+			Vars:          v.Vars,
 		}
 	}
 
@@ -135,12 +136,13 @@ func convertUserToDashv1alpha1User(user wsv1alpha1.User) *dashv1alpha1.User {
 	}
 }
 
-func convertDashv1alpha1UserToUserAddon(addons []dashv1alpha1.ApiV1alpha1UserAddons) []wsv1alpha1.UserAddon {
+func convertDashv1alpha1UserAddonToUserAddon(addons []dashv1alpha1.ApiV1alpha1UserAddons) []wsv1alpha1.UserAddon {
 	a := make([]wsv1alpha1.UserAddon, len(addons))
 	for i, v := range addons {
 		addon := wsv1alpha1.UserAddon{
 			Template: cosmov1alpha1.TemplateRef{
-				Name: v.Template,
+				Name:          v.Template,
+				ClusterScoped: v.ClusterScoped,
 			},
 			Vars: v.Vars,
 		}

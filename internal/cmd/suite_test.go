@@ -146,6 +146,31 @@ var _ = AfterSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 })
 
+func test_CreateClusterTemplate(templateType string, templateName string) {
+	ctx := context.Background()
+	tmpl := cosmov1alpha1.ClusterTemplate{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: templateName,
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: templateType,
+			},
+		},
+		Spec: cosmov1alpha1.TemplateSpec{
+			RequiredVars: []cosmov1alpha1.RequiredVarSpec{
+				{Var: "{{HOGE}}", Default: "HOGEhoge"},
+				{Var: "{{FUGA}}", Default: "FUGAfuga"},
+			},
+		},
+	}
+	err := k8sClient.Create(ctx, &tmpl)
+	Expect(err).ShouldNot(HaveOccurred())
+
+	Eventually(func() error {
+		err := k8sClient.Get(ctx, client.ObjectKey{Name: templateName}, &cosmov1alpha1.ClusterTemplate{})
+		return err
+	}, time.Second*5, time.Millisecond*100).Should(Succeed())
+}
+
 func test_CreateTemplate(templateType string, templateName string) {
 	ctx := context.Background()
 	tmpl := cosmov1alpha1.Template{
@@ -181,6 +206,17 @@ func test_DeleteTemplateAll() {
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() ([]cosmov1alpha1.Template, error) {
 		return k8sClient.ListTemplates(ctx)
+	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
+}
+
+func test_DeleteClusterTemplateAll() {
+	ctx := context.Background()
+	err := k8sClient.DeleteAllOf(ctx, &cosmov1alpha1.ClusterTemplate{})
+	Expect(err).ShouldNot(HaveOccurred())
+	Eventually(func() ([]cosmov1alpha1.ClusterTemplate, error) {
+		var l cosmov1alpha1.ClusterTemplateList
+		err := k8sClient.List(ctx, &l)
+		return l.Items, err
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 

@@ -130,10 +130,8 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-temple1\"
-        },
-        \"clusterTemplate\": {
-          \"name\": \"\"
+          \"name\": \"user-temple1\",
+          \"clusterScoped\": false
         },
         \"vars\": {
           \"HOGE\": \"FUGA\"
@@ -168,10 +166,8 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-temple1\"
-        },
-        \"clusterTemplate\": {
-          \"name\": \"\"
+          \"name\": \"user-temple1\",
+          \"clusterScoped\": false
         }
       }
     ]

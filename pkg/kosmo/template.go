@@ -28,9 +28,9 @@ func (c *Client) ListWorkspaceTemplates(ctx context.Context) ([]cosmov1alpha1.Te
 	}
 }
 
-func (c *Client) ListUserAddonTemplates(ctx context.Context) ([]cosmov1alpha1.Template, error) {
+func (c *Client) ListUserAddonTemplates(ctx context.Context) ([]cosmov1alpha1.TemplateObject, error) {
 	log := clog.FromContext(ctx).WithCaller()
-	if tmpls, err := kubeutil.ListTemplatesByType(ctx, c, []string{wsv1alpha1.TemplateTypeUserAddon}); err != nil {
+	if tmpls, err := kubeutil.ListTemplateObjectsByType(ctx, c, []string{wsv1alpha1.TemplateTypeUserAddon}); err != nil {
 		log.Error(err, "failed to list UserAddon Templates")
 		return nil, NewInternalServerError("failed to list UserAddon Templates", err)
 	} else {

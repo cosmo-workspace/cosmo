@@ -5,12 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
+	"k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/utils/pointer"
+
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/gorilla/mux"
-	"k8s.io/utils/pointer"
 )
 
 func (s *Server) useTemplateMiddleWare(router *mux.Router, routes dashv1alpha1.Routes) {
@@ -29,7 +31,7 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 
 	addonTmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
 	for _, v := range tmpls {
-		addonTmpls = append(addonTmpls, convertTemplateToDashv1alpha1Template(v))
+		addonTmpls = append(addonTmpls, convertTemplateToDashv1alpha1Template(v.DeepCopy()))
 	}
 
 	res := dashv1alpha1.ListTemplatesResponse{
@@ -73,9 +75,9 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 	return NormalResponse(http.StatusOK, res)
 }
 
-func convertTemplateToDashv1alpha1Template(tmpl cosmov1alpha1.Template) dashv1alpha1.Template {
-	requiredVars := make([]dashv1alpha1.TemplateRequiredVars, len(tmpl.Spec.RequiredVars))
-	for i, v := range tmpl.Spec.RequiredVars {
+func convertTemplateToDashv1alpha1Template(tmpl cosmov1alpha1.TemplateObject) dashv1alpha1.Template {
+	requiredVars := make([]dashv1alpha1.TemplateRequiredVars, len(tmpl.GetSpec().RequiredVars))
+	for i, v := range tmpl.GetSpec().RequiredVars {
 		requiredVars[i] = dashv1alpha1.TemplateRequiredVars{
 			VarName:      v.Var,
 			DefaultValue: v.Default,
@@ -83,8 +85,9 @@ func convertTemplateToDashv1alpha1Template(tmpl cosmov1alpha1.Template) dashv1al
 	}
 
 	return dashv1alpha1.Template{
-		Name:         tmpl.Name,
-		RequiredVars: requiredVars,
-		Description:  tmpl.Spec.Description,
+		Name:           tmpl.GetName(),
+		RequiredVars:   requiredVars,
+		Description:    tmpl.GetSpec().Description,
+		IsClusterScope: tmpl.GetScope() == meta.RESTScopeRoot,
 	}
 }
