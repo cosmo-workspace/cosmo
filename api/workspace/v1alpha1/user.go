@@ -69,9 +69,8 @@ type UserStatus struct {
 }
 
 type UserAddon struct {
-	Template        cosmov1alpha1.TemplateRef `json:"template,omitempty"`
-	ClusterTemplate cosmov1alpha1.TemplateRef `json:"clusterTemplate,omitempty"`
-	Vars            map[string]string         `json:"vars,omitempty"`
+	Template cosmov1alpha1.TemplateRef `json:"template,omitempty"`
+	Vars     map[string]string         `json:"vars,omitempty"`
 }
 
 // +kubebuilder:validation:enum=cosmo-admin
