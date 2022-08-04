@@ -59,7 +59,9 @@ func (c *TestUtil) DeleteTemplateAll() {
 	err := c.kosmoClient.DeleteAllOf(ctx, &cosmov1alpha1.Template{})
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() ([]cosmov1alpha1.Template, error) {
-		return c.kosmoClient.ListTemplates(ctx)
+		var tmplList cosmov1alpha1.TemplateList
+		err := c.kosmoClient.List(ctx, &tmplList)
+		return tmplList.Items, err
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 

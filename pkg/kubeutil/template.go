@@ -11,6 +11,26 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
 
+func ListTemplateObjects(ctx context.Context, c client.Client) ([]cosmov1alpha1.TemplateObject, error) {
+	tmpls := cosmov1alpha1.TemplateList{}
+	if err := c.List(ctx, &tmpls); err != nil {
+		return nil, err
+	}
+	ctmpls := cosmov1alpha1.ClusterTemplateList{}
+	if err := c.List(ctx, &ctmpls); err != nil {
+		return nil, err
+	}
+
+	t := make([]cosmov1alpha1.TemplateObject, 0, len(tmpls.Items)+len(ctmpls.Items))
+	for _, v := range tmpls.Items {
+		t = append(t, v.DeepCopy())
+	}
+	for _, v := range ctmpls.Items {
+		t = append(t, v.DeepCopy())
+	}
+	return t, nil
+}
+
 func ListTemplateObjectsByType(ctx context.Context, c client.Client, tmplTypes []string) ([]cosmov1alpha1.TemplateObject, error) {
 
 	tmpls, err := ListTemplatesByType(ctx, c, tmplTypes)

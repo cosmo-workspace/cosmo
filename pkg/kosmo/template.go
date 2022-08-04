@@ -11,13 +11,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
-func (c *Client) ListTemplates(ctx context.Context) ([]cosmov1alpha1.Template, error) {
-	tmplList := cosmov1alpha1.TemplateList{}
-
-	err := c.List(ctx, &tmplList)
-	return tmplList.Items, err
-}
-
 func (c *Client) ListWorkspaceTemplates(ctx context.Context) ([]cosmov1alpha1.Template, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	if tmpls, err := kubeutil.ListTemplatesByType(ctx, c, []string{wsv1alpha1.TemplateTypeWorkspace}); err != nil {
