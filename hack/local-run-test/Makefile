@@ -71,28 +71,32 @@ delete-cluster: k3d  ## Delete k3s cluster.
 ##---------------------------------------------------------------------
 ##@ Docker image build
 ##---------------------------------------------------------------------
+MANAGER_IMAGE_TAG   ?= latest
+DASHBOARD_IMAGE_TAG ?= latest
+AUTHPROXY_IMAGE_TAG ?= latest
+
 .PHONY: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-cache-clear
 
 docker-build-manager: ## build & push cosmo contoller-manager image.
 	@echo ====== $@ ======
-	cd ../.. && make docker-build-manager VERSION=latest QUICK_BUILD=yes
-	docker tag cosmo-controller-manager:latest localhost:5000/cosmo-controller-manager:latest
-	docker push localhost:5000/cosmo-controller-manager:latest
-	k3d image import localhost:5000/cosmo-controller-manager:latest -c $(CLUSTER_NAME)
+	cd ../.. && make docker-build-manager VERSION=$(MANAGER_IMAGE_TAG) QUICK_BUILD=yes
+	docker tag cosmo-controller-manager:$(MANAGER_IMAGE_TAG) localhost:5000/cosmo-controller-manager:$(MANAGER_IMAGE_TAG)
+	docker push localhost:5000/cosmo-controller-manager:$(MANAGER_IMAGE_TAG)
+	k3d image import localhost:5000/cosmo-controller-manager:$(MANAGER_IMAGE_TAG) -c $(CLUSTER_NAME)
 
 docker-build-dashboard: ## build & push cosmo dashboard image.
 	@echo ====== $@ ======
-	cd ../.. && make docker-build-dashboard VERSION=latest QUICK_BUILD=yes
-	docker tag cosmo-dashboard:latest localhost:5000/cosmo-dashboard:latest
-	docker push localhost:5000/cosmo-dashboard:latest
-	k3d image import localhost:5000/cosmo-dashboard:latest -c $(CLUSTER_NAME)
+	cd ../.. && make docker-build-dashboard VERSION=$(DASHBOARD_IMAGE_TAG) QUICK_BUILD=yes
+	docker tag cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG)
+	docker push localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG)
+	k3d image import localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) -c $(CLUSTER_NAME)
 
 docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
 	@echo ====== $@ ======
-	cd ../.. && make docker-build-auth-proxy VERSION=latest QUICK_BUILD=yes
-	docker tag cosmo-auth-proxy:latest localhost:5000/cosmo-auth-proxy:latest
-	docker push localhost:5000/cosmo-auth-proxy:latest
-	k3d image import localhost:5000/cosmo-auth-proxy:latest -c $(CLUSTER_NAME)
+	cd ../.. && make docker-build-auth-proxy VERSION=$(AUTHPROXY_IMAGE_TAG) QUICK_BUILD=yes
+	docker tag cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+	docker push localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+	k3d image import localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) -c $(CLUSTER_NAME)
 
 docker-cache-clear: ## docker cache clear.
 	docker system df
@@ -110,7 +114,7 @@ install-manager: helm kubectl create-cluster docker-build-manager ## Install cos
 		-n cosmo-system --create-namespace \
 		--wait \
 		--set image.repository=cosmo.io:5000/cosmo-controller-manager \
-		--set image.tag=latest \
+		--set image.tag=$(MANAGER_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
 		--set defaultURLBase.host="\$(DEFAULT_URLBASE_HOST)" \
 		--set defaultURLBase.domain="\$(DOMAIN)"
@@ -121,7 +125,7 @@ install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-ma
 		-n cosmo-system --create-namespace \
 		--wait \
 		--set image.repository=cosmo.io:5000/cosmo-controller-manager \
-		--set image.tag=latest \
+		--set image.tag=$(MANAGER_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
 		--set defaultURLBase.host="\$(DEFAULT_URLBASE_HOST)" \
 		--set defaultURLBase.domain="\$(DOMAIN)" \
@@ -136,7 +140,7 @@ install-dashboard: helm kubectl create-cluster docker-build-dashboard ## Install
 		-n cosmo-system \
 		--wait \
 		--set image.repository=cosmo.io:5000/cosmo-dashboard \
-		--set image.tag=latest \
+		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
 		--set ingress.enabled=true \
 		--set ingress.hosts[0].host=$(DASHBOARD_URL) \
