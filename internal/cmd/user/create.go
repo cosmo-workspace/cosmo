@@ -10,6 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
@@ -18,14 +19,14 @@ import (
 type createOption struct {
 	*cmdutil.CliOptions
 
-	UserID      string
-	DisplayName string
-	Role        string
-	Admin       bool
-	Addons      []string
-	UserAddons  []wsv1alpha1.UserAddon
+	UserID        string
+	DisplayName   string
+	Role          string
+	Admin         bool
+	Addons        []string
+	ClusterAddons []string
 
-	//user *wsv1alpha1.User
+	userAddons []wsv1alpha1.UserAddon
 }
 
 func createCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
@@ -39,7 +40,8 @@ func createCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
 	cmd.Flags().StringVar(&o.DisplayName, "name", "", "user display name (default: same as USER_ID)")
 	cmd.Flags().StringVar(&o.Role, "role", "", "user role")
 	cmd.Flags().BoolVar(&o.Admin, "admin", false, "user admin role")
-	cmd.Flags().StringArrayVar(&o.Addons, "addon", nil, "user addons, which created after UserNamespace created.\nformat is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' ")
+	cmd.Flags().StringArrayVar(&o.Addons, "addon", nil, "user addons by Template, which created in UserNamespace\nformat is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' ")
+	cmd.Flags().StringArrayVar(&o.ClusterAddons, "cluster-addon", nil, "user addons by ClusterTemplate\nformat is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' ")
 	return cmd
 }
 
@@ -82,34 +84,56 @@ func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
 		o.Role = wsv1alpha1.UserAdminRole.String()
 	}
 
+	o.userAddons = make([]wsv1alpha1.UserAddon, 0, len(o.Addons)+len(o.ClusterAddons))
 	if len(o.Addons) > 0 {
-		// format
-		//   ADDON_TEMPLATE_NAME1
-		//   ADDON_TEMPLATE_NAME1,KEY1:XXX,KEY2:YYY ZZZ,KEY3:
-		r1 := regexp.MustCompile(`^[^: ,]+(,([^: ,]+):([^,]*))*$`)
-		r2 := regexp.MustCompile(`^([^: ,]+):([^,]*)$`)
-
-		o.UserAddons = make([]wsv1alpha1.UserAddon, 0, len(o.Addons))
-
-		for _, addonParm := range o.Addons {
-			if !r1.MatchString(addonParm) {
-				return fmt.Errorf("invalid addon vars format: %s", addonParm)
-			}
-
-			addonSplits := strings.Split(addonParm, ",")
-
-			var userAddon wsv1alpha1.UserAddon
-			userAddon.Template.Name = addonSplits[0]
-			userAddon.Vars = make(map[string]string, len(addonSplits)-1)
-			for _, k_v := range addonSplits[1:] {
-				kv := r2.FindStringSubmatch(k_v)
-				userAddon.Vars[kv[1]] = kv[2]
-			}
-			o.UserAddons = append(o.UserAddons, userAddon)
+		userAddons, err := parseUserAddonOptions(o.Addons, false)
+		if err != nil {
+			return err
 		}
+		o.userAddons = append(o.userAddons, userAddons...)
+	}
+	if len(o.ClusterAddons) > 0 {
+		userAddons, err := parseUserAddonOptions(o.ClusterAddons, true)
+		if err != nil {
+			return err
+		}
+		o.userAddons = append(o.userAddons, userAddons...)
 	}
 
 	return nil
+}
+
+func parseUserAddonOptions(rawAddonOptionArray []string, isClusterScope bool) ([]wsv1alpha1.UserAddon, error) {
+	// format
+	//   TEMPLATE_NAME
+	//   TEMPLATE_NAME,KEY1:XXX,KEY2:YYY ZZZ,KEY3:
+	r1 := regexp.MustCompile(`^[^: ,]+(,([^: ,]+):([^,]*))*$`)
+	r2 := regexp.MustCompile(`^([^: ,]+):([^,]*)$`)
+
+	userAddons := make([]wsv1alpha1.UserAddon, 0, len(rawAddonOptionArray))
+
+	for _, addonParm := range rawAddonOptionArray {
+		if !r1.MatchString(addonParm) {
+			return nil, fmt.Errorf("invalid addon vars format: %s", addonParm)
+		}
+
+		addonSplits := strings.Split(addonParm, ",")
+
+		userAddon := wsv1alpha1.UserAddon{
+			Template: cosmov1alpha1.TemplateRef{
+				Name:          addonSplits[0],
+				ClusterScoped: isClusterScope,
+			},
+			Vars: make(map[string]string, len(addonSplits)-1),
+		}
+
+		for _, k_v := range addonSplits[1:] {
+			kv := r2.FindStringSubmatch(k_v)
+			userAddon.Vars[kv[1]] = kv[2]
+		}
+		userAddons = append(userAddons, userAddon)
+	}
+	return userAddons, nil
 }
 
 func (o *createOption) RunE(cmd *cobra.Command, args []string) error {
@@ -117,7 +141,7 @@ func (o *createOption) RunE(cmd *cobra.Command, args []string) error {
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)
 
-	if _, err := o.Client.CreateUser(ctx, o.UserID, o.DisplayName, o.Role, "", o.UserAddons); err != nil {
+	if _, err := o.Client.CreateUser(ctx, o.UserID, o.DisplayName, o.Role, "", o.userAddons); err != nil {
 		return err
 	}
 

@@ -2,10 +2,12 @@ package controllers
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
+	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -22,6 +24,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
@@ -233,4 +236,44 @@ func listWorkspacePods(ctx context.Context, c client.Client, ws wsv1alpha1.Works
 		return nil, err
 	}
 	return podList.Items, nil
+}
+
+func getWorkspaceServicesAndIngress(ctx context.Context, c client.Client, ws wsv1alpha1.Workspace) (svc corev1.Service, ing netv1.Ingress, err error) {
+	var svcList corev1.ServiceList
+	var ingList netv1.IngressList
+
+	ls := labels.NewSelector()
+	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstance, selection.In, []string{ws.GetName()})
+	ls = ls.Add(*req)
+
+	opts := &client.ListOptions{
+		LabelSelector: ls,
+		Namespace:     ws.GetNamespace(),
+	}
+
+	if err := c.List(ctx, &svcList, opts); err != nil {
+		return svc, ing, err
+	}
+
+	if len(svcList.Items) == 0 {
+		return svc, ing, errors.New("no services")
+	}
+
+	for _, v := range svcList.Items {
+		if instance.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.ServiceName) {
+			svc = v
+		}
+	}
+
+	if err := c.List(ctx, &ingList, opts); err != nil {
+		return svc, ing, err
+	}
+
+	for _, v := range ingList.Items {
+		if instance.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.IngressName) {
+			ing = v
+		}
+	}
+
+	return svc, ing, nil
 }

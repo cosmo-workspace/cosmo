@@ -3,11 +3,11 @@ package controllers
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
+	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -23,9 +23,9 @@ import (
 )
 
 var _ = Describe("User controller", func() {
-	testaddon := cosmov1alpha1.Template{
+	namespacedUserAddon := cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "testaddon",
+			Name: "namespaced-addon",
 			Labels: map[string]string{
 				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
 			},
@@ -40,48 +40,60 @@ metadata:
   name: '{{INSTANCE}}-job'
   namespace: '{{NAMESPACE}}'
 spec:
-template:
-metadata:
-  labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: '{{TEMPLATE}}'
-spec:
-  containers:
-    name: eksctl
-    image: weaveworks/eksctl:0.71.0
+  template:
+    metadata:
+      labels:
+        cosmo/instance: '{{INSTANCE}}'
+        cosmo/template: '{{TEMPLATE}}'
+    spec:
+      containers:
+      - name: eksctl
+        image: weaveworks/eksctl:0.71.0
+      restartPolicy: OnFailure
 `,
 		},
 	}
 
-	sysUserAddon := cosmov1alpha1.Template{
+	clusterUserAddon := cosmov1alpha1.ClusterTemplate{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "eksctl",
+			Name: "cluster-addon",
 			Labels: map[string]string{
 				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
 			},
 			Annotations: map[string]string{
-				wsv1alpha1.TemplateAnnKeySysNsUserAddon: "kube-system",
+				cosmov1alpha1.TemplateAnnKeyDisableNamePrefix: "1",
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
-			RawYaml: `apiVersion: batch/v1
-kind: Job
+			RawYaml: `apiVersion: v1
+kind: PersistentVolume
 metadata:
-  labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test
-  name: '{{INSTANCE}}-job'
-  namespace: '{{NAMESPACE}}'
+  name: pv0001
 spec:
-template:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: slow
+  hostPath:
+    path: /data/pv0001
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: '{{TEMPLATE}}'
+  name: pv-slow-claim
+  namespace: "{{NAMESPACE}}"
 spec:
-  containers:
-    name: eksctl
-    image: weaveworks/eksctl:0.71.0
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: slow
 `,
 		},
 	}
@@ -92,17 +104,17 @@ spec:
 
 			By("creating template")
 
-			err := k8sClient.Create(ctx, &testaddon)
+			err := k8sClient.Create(ctx, &namespacedUserAddon)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			err = k8sClient.Create(ctx, &sysUserAddon)
+			err = k8sClient.Create(ctx, &clusterUserAddon)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			By("creating user")
 
 			user := wsv1alpha1.User{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: "usertest",
+					Name: "ua",
 				},
 				Spec: wsv1alpha1.UserSpec{
 					DisplayName: "お名前",
@@ -110,7 +122,7 @@ spec:
 					Addons: []wsv1alpha1.UserAddon{
 						{
 							Template: cosmov1alpha1.TemplateRef{
-								Name: testaddon.Name,
+								Name: namespacedUserAddon.Name,
 							},
 							Vars: map[string]string{
 								"KEY": "VAL",
@@ -118,7 +130,8 @@ spec:
 						},
 						{
 							Template: cosmov1alpha1.TemplateRef{
-								Name: sysUserAddon.Name,
+								Name:          clusterUserAddon.Name,
+								ClusterScoped: true,
 							},
 						},
 					},
@@ -178,14 +191,14 @@ spec:
 			Eventually(func() error {
 				var addonInst cosmov1alpha1.Instance
 				key := client.ObjectKey{
-					Name:      fmt.Sprintf("useraddon-%s", testaddon.Name),
+					Name:      useraddon.InstanceName(namespacedUserAddon.Name, ""),
 					Namespace: createdNs.GetName(),
 				}
 				err := k8sClient.Get(ctx, key, &addonInst)
 				if err != nil {
 					return err
 				}
-				if addonInst.Spec.Template.Name != testaddon.Name {
+				if addonInst.Spec.Template.Name != namespacedUserAddon.Name {
 					return errors.New("invalid template name")
 				}
 				if equality.Semantic.DeepEqual(addonInst.Spec.Vars, user.Spec.Addons[0].Vars) {
@@ -195,16 +208,15 @@ spec:
 			}, time.Second*10).Should(Succeed())
 
 			Eventually(func() error {
-				var sysAddonInst cosmov1alpha1.Instance
+				var clusterAddonInst cosmov1alpha1.ClusterInstance
 				key := client.ObjectKey{
-					Name:      fmt.Sprintf("useraddon-%s-%s", sysUserAddon.Name, user.GetName()),
-					Namespace: "kube-system",
+					Name: useraddon.InstanceName(clusterUserAddon.Name, user.GetName()),
 				}
-				err := k8sClient.Get(ctx, key, &sysAddonInst)
+				err := k8sClient.Get(ctx, key, &clusterAddonInst)
 				if err != nil {
 					return err
 				}
-				if sysAddonInst.Spec.Template.Name != sysUserAddon.Name {
+				if clusterAddonInst.Spec.Template.Name != clusterUserAddon.Name {
 					return errors.New("invalid template name")
 				}
 				return nil

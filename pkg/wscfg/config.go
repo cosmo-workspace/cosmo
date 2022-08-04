@@ -11,7 +11,7 @@ var (
 	ErrNotTypeWorkspace = errors.New("not type workspace")
 )
 
-func SetConfigOnTemplateAnnotations(tmpl *cosmov1alpha1.Template, cfg wsv1alpha1.Config) {
+func SetConfigOnTemplateAnnotations(tmpl cosmov1alpha1.TemplateObject, cfg wsv1alpha1.Config) {
 	ann := tmpl.GetAnnotations()
 	if ann == nil {
 		ann = make(map[string]string)

@@ -195,7 +195,7 @@ rules:
 kind: Pod
 metadata:
   name: nginx
-  namespace: {{USER_NAMESPACE}}
+  namespace: {{NAMESPACE}}
 spec:
   containers:
   - name: nginx

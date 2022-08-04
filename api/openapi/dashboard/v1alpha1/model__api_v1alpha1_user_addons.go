@@ -11,22 +11,15 @@
 package v1alpha1
 
 type ApiV1alpha1UserAddons struct {
-	Template string `json:"template"`
+	Template string `json:"template,omitempty"`
+
+	ClusterScoped bool `json:"clusterScoped,omitempty"`
 
 	Vars map[string]string `json:"vars,omitempty"`
 }
 
 // AssertApiV1alpha1UserAddonsRequired checks if the required fields are not zero-ed
 func AssertApiV1alpha1UserAddonsRequired(obj ApiV1alpha1UserAddons) error {
-	elements := map[string]interface{}{
-		"template": obj.Template,
-	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
-		}
-	}
-
 	return nil
 }
 

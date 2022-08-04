@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -54,4 +55,8 @@ type TemplateSpec struct {
 type RequiredVarSpec struct {
 	Var     string `json:"var"`
 	Default string `json:"default,omitempty"`
+}
+
+func (t *Template) GetScope() meta.RESTScope {
+	return meta.RESTScopeNamespace
 }

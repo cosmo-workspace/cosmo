@@ -273,7 +273,9 @@ func test_DeleteTemplateAll() {
 	err := k8sClient.DeleteAllOf(ctx, &cosmov1alpha1.Template{})
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() ([]cosmov1alpha1.Template, error) {
-		return k8sClient.ListTemplates(ctx)
+		var tmplList cosmov1alpha1.TemplateList
+		err := k8sClient.List(ctx, &tmplList)
+		return tmplList.Items, err
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 

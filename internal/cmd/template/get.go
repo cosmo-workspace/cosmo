@@ -3,10 +3,12 @@ package template
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
+	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/cli-runtime/pkg/printers"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
@@ -18,7 +20,7 @@ import (
 
 type getOption struct {
 	*cmdutil.CliOptions
-	TemplateName  string
+	TemplateNames []string
 	TypeWorkspace bool
 
 	tmpltype string
@@ -67,7 +69,7 @@ func (o *getOption) Complete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if len(args) > 0 {
-		o.TemplateName = args[0]
+		o.TemplateNames = args
 	}
 	return nil
 }
@@ -76,37 +78,35 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 
-	c := o.Client
+	var tmpls []cosmov1alpha1.TemplateObject
 
-	var tmpls []cosmov1alpha1.Template
+	o.Logr.Debug().Info("options", "templateNames", o.TemplateNames)
 
-	o.Logr.Debug().Info("options", "templateName", o.TemplateName)
-
-	if o.TemplateName != "" {
-		tmpl, err := c.GetTemplate(ctx, o.TemplateName)
+	if o.tmpltype != "" {
+		ts, err := kubeutil.ListTemplateObjectsByType(ctx, o.Client, []string{wsv1alpha1.TemplateTypeWorkspace})
 		if err != nil {
 			return err
 		}
-		tmpls = []cosmov1alpha1.Template{*tmpl}
-		o.Logr.DebugAll().Info("GetTemplate", "tmpls", tmpls)
-
+		tmpls = ts
 	} else {
-		switch o.tmpltype {
-		case wsv1alpha1.TemplateTypeWorkspace:
-			ts, err := kubeutil.ListTemplatesByType(ctx, o.Client, []string{wsv1alpha1.TemplateTypeWorkspace})
-			if err != nil {
-				return err
-			}
-			tmpls = ts
-
-		default:
-			ts, err := c.ListTemplates(ctx)
-			if err != nil {
-				return err
-			}
-			tmpls = ts
+		ts, err := kubeutil.ListTemplateObjects(ctx, o.Client)
+		if err != nil {
+			return err
 		}
-		o.Logr.DebugAll().Info("ListTemplates", "tmplList", tmpls)
+		tmpls = ts
+	}
+	o.Logr.DebugAll().Info("ListTemplates", "tmplList", tmpls)
+
+	if len(o.TemplateNames) > 0 {
+		ts := make([]cosmov1alpha1.TemplateObject, 0, len(o.TemplateNames))
+		for _, selected := range o.TemplateNames {
+			for _, t := range tmpls {
+				if selected == t.GetName() {
+					ts = append(ts, t)
+				}
+			}
+		}
+		tmpls = ts
 	}
 
 	w := printers.GetNewTabWriter(o.Out)
@@ -119,36 +119,36 @@ func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, v := range tmpls {
-			cfg, err := wscfg.ConfigFromTemplateAnnotations(&v)
+			cfg, err := wscfg.ConfigFromTemplateAnnotations(v.(*cosmov1alpha1.Template))
 			if err != nil {
 				o.Logr.Error(err, "failed to get workspace config", "template", v.GetName())
 				continue
 			}
 
-			vars := make([]string, 0, len(v.Spec.RequiredVars))
-			for _, t := range v.Spec.RequiredVars {
+			vars := make([]string, 0, len(v.GetSpec().RequiredVars))
+			for _, t := range v.GetSpec().RequiredVars {
 				vars = append(vars, t.Var)
 			}
 			rawTmplVars := strings.Join(vars, ",")
 
 			resources := fmt.Sprintf("%s/%s/%s", cfg.DeploymentName, cfg.ServiceName, cfg.IngressName)
-			rowdata := []string{v.Name, rawTmplVars, resources, cfg.URLBase}
+			rowdata := []string{v.GetName(), rawTmplVars, resources, cfg.URLBase}
 			fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 		}
 
 	default:
-		columnNames := []string{"NAME", "REQUIRED-VARS", "TYPE"}
+		columnNames := []string{"NAME", "REQUIRED-VARS", "TYPE", "IsClusterScope"}
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, v := range tmpls {
-			vars := make([]string, 0, len(v.Spec.RequiredVars))
-			for _, t := range v.Spec.RequiredVars {
+			vars := make([]string, 0, len(v.GetSpec().RequiredVars))
+			for _, t := range v.GetSpec().RequiredVars {
 				vars = append(vars, t.Var)
 			}
 			rawTmplVars := strings.Join(vars, ",")
 
-			tmplType := v.Labels[cosmov1alpha1.TemplateLabelKeyType]
-			rowdata := []string{v.Name, rawTmplVars, tmplType}
+			tmplType := v.GetLabels()[cosmov1alpha1.TemplateLabelKeyType]
+			rowdata := []string{v.GetName(), rawTmplVars, tmplType, strconv.FormatBool(v.GetScope() == meta.RESTScopeRoot)}
 			fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 		}
 	}

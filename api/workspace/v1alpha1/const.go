@@ -12,7 +12,6 @@ const (
 // Template annotation keys for user addon
 const (
 	TemplateAnnKeyDefaultUserAddon = "cosmo/default-user-addon"
-	TemplateAnnKeySysNsUserAddon   = "cosmo/sysns-user-addon"
 )
 
 // Template variables key
@@ -22,8 +21,8 @@ const (
 	TemplateVarIngressName         = "{{WORKSPACE_INGRESS_NAME}}"
 	TemplateVarServiceMainPortName = "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}"
 
-	// TemplateVarUserNamespace is variable for user addon in system namespace.
-	TemplateVarUserNamespace = "{{USER_NAMESPACE}}"
+	// Var for user addon
+	TemplateVarUserID = "{{USER_ID}}"
 )
 
 // UserPasswordSecret name and keys

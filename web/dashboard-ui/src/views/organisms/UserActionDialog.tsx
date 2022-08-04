@@ -121,32 +121,34 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
       <DialogTitle>Create New User 🎉</DialogTitle>
       <form onSubmit={handleSubmit((inp: Inputs) => {
 
-        const addons = templ.templates.map((useAddon, i) => {
+        const addons = templ.templates.map((addonTmpl, i) => {
           if (!inp.enableAddons![i]) {
             setIsRequiredVarErrors(isRequiredVarErrors.set(String(i), false));
             return { template: "" }
           }
-          if (!useAddon.requiredVars) { return { template: useAddon.name } }
+          if (!addonTmpl.requiredVars) {
+            return { template: addonTmpl.name, clusterScoped: addonTmpl.isClusterScope }
+          }
 
           var vars: { [key: string]: string; } = {};
           var isErr = false;
-          for (let j = 0; j < useAddon.requiredVars!.length; j++) {
+          for (let j = 0; j < addonTmpl.requiredVars!.length; j++) {
             const isEmpty = !Boolean(inp.addonVars[i][j]);
 
             setIsRequiredVarErrors(isRequiredVarErrors.set(String(i) + String(j), isEmpty));
             if (isEmpty) { isErr = true; continue };
 
-            vars[useAddon.requiredVars[j].varName!] = inp.addonVars![i]![j]!
+            vars[addonTmpl.requiredVars[j].varName!] = inp.addonVars![i]![j]!
           }
           setIsRequiredVarErrors(isRequiredVarErrors.set(String(i), isErr));
-          return { template: useAddon.name, vars: vars }
+          return { template: addonTmpl.name, vars: vars, clusterScoped: addonTmpl.isClusterScope }
         });
         for (let i = 0; i < inp.enableAddons.length; i++) { if (isRequiredVarErrors.get(String(i))) return }
 
-        const useAddons = addons.filter((v) => { return v.template !== "" });
+        const userAddons = addons.filter((v) => { return v.template !== "" });
 
-        console.log("inp.id", inp.id, "inp.name", inp.name, "inp.role", inp.role, "useAddons", useAddons)
-        hooks.createUser(inp.id, inp.name, inp.role, useAddons)
+        console.log("inp.id", inp.id, "inp.name", inp.name, "inp.role", inp.role, "userAddons", userAddons)
+        hooks.createUser(inp.id, inp.name, inp.role, userAddons)
           .then(newUser => {
             onClose();
             passwordDialogDispatch(true, { user: newUser! });

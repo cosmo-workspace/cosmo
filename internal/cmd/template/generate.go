@@ -43,10 +43,11 @@ type generateOption struct {
 
 	TypeUserAddon       bool
 	SetDefaultUserAddon bool
-	SetSysnsUserAddon   string
 	DisableNamePrefix   bool
 
-	tmpl cosmov1alpha1.Template
+	ClusterScope bool
+
+	tmpl cosmov1alpha1.TemplateObject
 }
 
 func generateCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
@@ -96,8 +97,9 @@ Example:
 
 	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type user-addon")
 	cmd.Flags().BoolVar(&o.SetDefaultUserAddon, "set-default-user-addon", false, "set default user addon")
-	cmd.Flags().StringVar(&o.SetSysnsUserAddon, "set-sysns-user-addon", "", "user addon in system namespace")
 	cmd.Flags().BoolVar(&o.DisableNamePrefix, "disable-nameprefix", false, "disable adding instance name prefix on child resource name")
+
+	cmd.Flags().BoolVar(&o.ClusterScope, "cluster-scope", false, "generate ClusterTemplate (default generate namespaced Template)")
 
 	return cmd
 }
@@ -121,12 +123,22 @@ func (o *generateOption) Validate(cmd *cobra.Command, args []string) error {
 		return errors.New("--workspace and --user-addon cannot be specified concurrently")
 	}
 
+	if o.TypeWorkspace && o.ClusterScope {
+		return errors.New("workspace template cannot be cluster-scoped")
+	}
+
 	return nil
 }
 
 func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Complete(cmd, args); err != nil {
 		return err
+	}
+
+	if o.ClusterScope {
+		o.tmpl = &cosmov1alpha1.ClusterTemplate{}
+	} else {
+		o.tmpl = &cosmov1alpha1.Template{}
 	}
 
 	if o.Name == "" {
@@ -157,22 +169,22 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 			}
 			vars = append(vars, varSpec)
 		}
-		o.tmpl.Spec.RequiredVars = vars
+		o.tmpl.GetSpec().RequiredVars = vars
 	}
 
-	o.tmpl.Name = o.Name
-	o.tmpl.Spec.Description = o.Desc
+	o.tmpl.SetName(o.Name)
+	o.tmpl.GetSpec().Description = o.Desc
 
-	gvk, err := apiutil.GVKForObject(&o.tmpl, o.Scheme)
+	gvk, err := apiutil.GVKForObject(o.tmpl, o.Scheme)
 	if err != nil {
 		return err
 	}
 	o.tmpl.SetGroupVersionKind(gvk)
 
 	if o.TypeWorkspace {
-		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeWorkspace)
+		template.SetTemplateType(o.tmpl, wsv1alpha1.TemplateTypeWorkspace)
 	} else if o.TypeUserAddon {
-		template.SetTemplateType(&o.tmpl, wsv1alpha1.TemplateTypeUserAddon)
+		template.SetTemplateType(o.tmpl, wsv1alpha1.TemplateTypeUserAddon)
 
 		ann := o.tmpl.GetAnnotations()
 		if ann == nil {
@@ -180,9 +192,6 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 		}
 		if o.SetDefaultUserAddon {
 			ann[wsv1alpha1.TemplateAnnKeyDefaultUserAddon] = strconv.FormatBool(true)
-		}
-		if o.SetSysnsUserAddon != "" {
-			ann[wsv1alpha1.TemplateAnnKeySysNsUserAddon] = o.SetSysnsUserAddon
 		}
 		if o.DisableNamePrefix {
 			ann[cosmov1alpha1.TemplateAnnKeyDisableNamePrefix] = strconv.FormatBool(true)
@@ -236,7 +245,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 		if err := completeWorkspaceConfig(&o.wsConfig, unsts); err != nil {
 			return fmt.Errorf("type workspace validation failed: %w", err)
 		}
-		wscfg.SetConfigOnTemplateAnnotations(&o.tmpl, o.wsConfig)
+		wscfg.SetConfigOnTemplateAnnotations(o.tmpl, o.wsConfig)
 	}
 
 	kust := NewKustomize(o.DisableNamePrefix)
@@ -276,7 +285,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 	}
 	o.Logr.DebugAll().Info(string(out), "obj", "updated k8s configs")
 
-	o.tmpl.Spec.RawYaml = string(out)
+	o.tmpl.GetSpec().RawYaml = string(out)
 
 	outtmpl, _ := yaml.Marshal(&o.tmpl)
 

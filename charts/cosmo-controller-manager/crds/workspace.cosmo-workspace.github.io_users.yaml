@@ -61,6 +61,8 @@ spec:
                       description: TemplateRef defines template to use in Instance
                         creation
                       properties:
+                        clusterScoped:
+                          type: boolean
                         name:
                           type: string
                       required:

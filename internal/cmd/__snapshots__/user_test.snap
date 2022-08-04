@@ -5,12 +5,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -88,16 +90,16 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1 1']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1 1']
 SnapShot = """
 \u001B[32mSuccessfully created user user-create
 \u001B[0mDefault password: xxxxxxxx
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1 2']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1 3']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1 3']
 SnapShot = """
 {
   \"Name\": \"user-create\",
@@ -108,7 +110,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-temple1\"
+          \"name\": \"user-template1\"
         }
       }
     ]
@@ -119,16 +121,16 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 1']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 1']
 SnapShot = """
 \u001B[32mSuccessfully created user user-create
 \u001B[0mDefault password: xxxxxxxx
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 2']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-temple1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 3']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA 3']
 SnapShot = """
 {
   \"Name\": \"user-create\",
@@ -139,7 +141,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-temple1\"
+          \"name\": \"user-template1\"
         },
         \"vars\": {
           \"FUGA\": \"FUGAF:UGA\",
@@ -154,16 +156,16 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-temple1,HOGE:HOGEHOGE 1']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-template1,HOGE:HOGEHOGE 1']
 SnapShot = """
 \u001B[32mSuccessfully created user user-create
 \u001B[0mDefault password: xxxxxxxx
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-temple1,HOGE:HOGEHOGE 2']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-template1,HOGE:HOGEHOGE 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-temple1,HOGE:HOGEHOGE 3']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-template1,HOGE:HOGEHOGE 3']
 SnapShot = """
 {
   \"Name\": \"user-create\",
@@ -175,7 +177,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-temple1\"
+          \"name\": \"user-template1\"
         },
         \"vars\": {
           \"HOGE\": \"HOGEHOGE\"
@@ -189,16 +191,16 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-temple1,HOGE:HOGEHOGE 1']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-template1,HOGE:HOGEHOGE 1']
 SnapShot = """
 \u001B[32mSuccessfully created user user-create
 \u001B[0mDefault password: xxxxxxxx
 """
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-temple1,HOGE:HOGEHOGE 2']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-template1,HOGE:HOGEHOGE 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-temple1,HOGE:HOGEHOGE 3']
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --addon user-template1,HOGE:HOGEHOGE 3']
 SnapShot = """
 {
   \"Name\": \"user-create\",
@@ -210,7 +212,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-temple1\"
+          \"name\": \"user-template1\"
         },
         \"vars\": {
           \"HOGE\": \"HOGEHOGE\"
@@ -244,7 +246,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-temple1\"
+          \"name\": \"user-template1\"
         }
       }
     ]
@@ -254,6 +256,32 @@ SnapShot = """
   }
 }
 """
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create2 --addon user-template1 --cluster-addon user-clustertemplate1 1']
+SnapShot = """
+Error: reached to timeout in user creation
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create2 --addon user-template1 --cluster-addon user-clustertemplate1 2']
+SnapShot = 'reached to timeout in user creation'
 
 ['cosmoctl [user] [create] ✅ success to create password immediately: user create user-create 1']
 SnapShot = """
@@ -310,12 +338,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -334,12 +364,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -358,12 +390,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -382,12 +416,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -407,12 +443,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -431,12 +469,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -455,12 +495,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -479,12 +521,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -496,6 +540,32 @@ Global Flags:
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --admin --role cosmo-admin 2']
 SnapShot = 'validation error: --role and --admin is not used at the same time'
 
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --cluster-addon user-clustertemplate1,HOGE : 1']
+SnapShot = """
+Error: invalid options: invalid addon vars format: user-clustertemplate1,HOGE :
+Usage:
+  cosmoctl user create USER_ID --role cosmo-admin [flags]
+
+Flags:
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --cluster-addon user-clustertemplate1,HOGE : 2']
+SnapShot = 'invalid options: invalid addon vars format: user-clustertemplate1,HOGE :'
+
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --role xxx 1']
 SnapShot = """
 Error: validation error: role xxx is invalid
@@ -503,12 +573,14 @@ Usage:
   cosmoctl user create USER_ID --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray   user addons, which created after UserNamespace created.
-                            format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin               user admin role
-  -h, --help                help for create
-      --name string         user display name (default: same as USER_ID)
-      --role string         user role
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_ID)
+      --role string                 user role
 
 Global Flags:
       --context string      kube-context (default: current context)

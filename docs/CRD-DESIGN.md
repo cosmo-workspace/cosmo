@@ -353,7 +353,7 @@ spec:
             - --region={{AWS_REGION}}
             - --cluster={{CLUSTER_NAME}}
             - --name={{SERVICE_ACCOUNT}}
-            - --namespace={{USER_NAMESPACE}}
+            - --namespace={{NAMESPACE}}
             - --attach-policy-arn=arn:aws:iam::aws:policy/AWSCodeCommitPowerUser,arn:aws:iam::aws:policy/AWSCodeArtifactReadOnlyAccess
             - --override-existing-serviceaccounts
             - --approve
