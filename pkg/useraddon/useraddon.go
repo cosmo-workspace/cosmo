@@ -13,31 +13,32 @@ import (
 )
 
 func EmptyTemplateObject(addon wsv1alpha1.UserAddon) cosmov1alpha1.TemplateObject {
-	if addon.Template.Name != "" {
-		return &cosmov1alpha1.Template{ObjectMeta: v1.ObjectMeta{Name: addon.Template.Name}}
-	} else if addon.ClusterTemplate.Name != "" {
-		return &cosmov1alpha1.ClusterTemplate{ObjectMeta: v1.ObjectMeta{Name: addon.ClusterTemplate.Name}}
-	} else {
+	if addon.Template.Name == "" {
 		return nil
 	}
+	if addon.Template.ClusterScoped {
+		return &cosmov1alpha1.ClusterTemplate{ObjectMeta: v1.ObjectMeta{Name: addon.Template.Name}}
+	}
+	return &cosmov1alpha1.Template{ObjectMeta: v1.ObjectMeta{Name: addon.Template.Name}}
 }
 
 func EmptyInstanceObject(addon wsv1alpha1.UserAddon, userid string) cosmov1alpha1.InstanceObject {
-	if addon.Template.Name != "" {
-		return &cosmov1alpha1.Instance{
-			ObjectMeta: v1.ObjectMeta{
-				Name:      InstanceName(addon.Template.Name, ""),
-				Namespace: wsv1alpha1.UserNamespace(userid),
-			},
-		}
-	} else if addon.ClusterTemplate.Name != "" {
+	if addon.Template.Name == "" {
+		return nil
+	}
+
+	if addon.Template.ClusterScoped {
 		return &cosmov1alpha1.ClusterInstance{
 			ObjectMeta: v1.ObjectMeta{
-				Name: InstanceName(addon.ClusterTemplate.Name, userid),
+				Name: InstanceName(addon.Template.Name, userid),
 			},
 		}
-	} else {
-		return nil
+	}
+	return &cosmov1alpha1.Instance{
+		ObjectMeta: v1.ObjectMeta{
+			Name:      InstanceName(addon.Template.Name, ""),
+			Namespace: wsv1alpha1.UserNamespace(userid),
+		},
 	}
 }
 

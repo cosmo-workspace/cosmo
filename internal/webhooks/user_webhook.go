@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"reflect"
 	"regexp"
 	"strconv"
 
@@ -82,21 +83,13 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 
 		if isDefaultUserAddon {
 			var defaultAddon wsv1alpha1.UserAddon
+			defaultAddon.Template.Name = addonTmpl.GetName()
+			defaultAddon.Template.ClusterScoped = addonTmpl.GetScope() == meta.RESTScopeRoot
 
 			var found bool
-			if addonTmpl.GetScope() == meta.RESTScopeNamespace {
-				defaultAddon.Template.Name = addonTmpl.GetName()
-				for _, v := range user.Spec.Addons {
-					if v.Template.Name == defaultAddon.Template.Name {
-						found = true
-					}
-				}
-			} else {
-				defaultAddon.ClusterTemplate.Name = addonTmpl.GetName()
-				for _, v := range user.Spec.Addons {
-					if v.ClusterTemplate.Name == defaultAddon.ClusterTemplate.Name {
-						found = true
-					}
+			for _, v := range user.Spec.Addons {
+				if reflect.DeepEqual(v.Template, defaultAddon.Template) {
+					found = true
 				}
 			}
 

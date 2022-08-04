@@ -129,8 +129,9 @@ spec:
 							},
 						},
 						{
-							ClusterTemplate: cosmov1alpha1.TemplateRef{
-								Name: clusterUserAddon.Name,
+							Template: cosmov1alpha1.TemplateRef{
+								Name:          clusterUserAddon.Name,
+								ClusterScoped: true,
 							},
 						},
 					},

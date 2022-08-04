@@ -12,19 +12,20 @@ import (
 )
 
 func ListTemplateObjectsByType(ctx context.Context, c client.Client, tmplTypes []string) ([]cosmov1alpha1.TemplateObject, error) {
-	t := []cosmov1alpha1.TemplateObject{}
 
 	tmpls, err := ListTemplatesByType(ctx, c, tmplTypes)
 	if err != nil {
 		return nil, err
 	}
-	for _, v := range tmpls {
-		t = append(t, v.DeepCopy())
-	}
 
 	ctmpls, err := ListClusterTemplatesByType(ctx, c, tmplTypes)
 	if err != nil {
 		return nil, err
+	}
+
+	t := make([]cosmov1alpha1.TemplateObject, 0, len(tmpls)+len(ctmpls))
+	for _, v := range tmpls {
+		t = append(t, v.DeepCopy())
 	}
 	for _, v := range ctmpls {
 		t = append(t, v.DeepCopy())
