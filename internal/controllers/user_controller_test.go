@@ -85,7 +85,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pv-slow-claim
-  namespace: "{{USER_NAMESPACE}}"
+  namespace: "{{NAMESPACE}}"
 spec:
   accessModes:
     - ReadWriteOnce

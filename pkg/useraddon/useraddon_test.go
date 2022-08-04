@@ -6,6 +6,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -245,9 +246,9 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Name: "tmpl",
 					},
 					Vars: map[string]string{
-						wsv1alpha1.TemplateVarUserID:        "tom",
-						wsv1alpha1.TemplateVarUserNamespace: "cosmo-user-tom",
-						"VAR1":                              "VAL1",
+						wsv1alpha1.TemplateVarUserID:  "tom",
+						template.DefaultVarsNamespace: "cosmo-user-tom",
+						"VAR1":                        "VAL1",
 					},
 				},
 			},
@@ -297,8 +298,8 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Name: "ctmpl",
 					},
 					Vars: map[string]string{
-						wsv1alpha1.TemplateVarUserID:        "tom",
-						wsv1alpha1.TemplateVarUserNamespace: "cosmo-user-tom",
+						wsv1alpha1.TemplateVarUserID:  "tom",
+						template.DefaultVarsNamespace: "cosmo-user-tom",
 					},
 				},
 			},

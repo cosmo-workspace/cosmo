@@ -10,6 +10,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
 func EmptyTemplateObject(addon wsv1alpha1.UserAddon) cosmov1alpha1.TemplateObject {
@@ -73,7 +74,7 @@ func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon ws
 	if addon.Vars == nil {
 		addon.Vars = make(map[string]string)
 	}
-	addon.Vars[wsv1alpha1.TemplateVarUserNamespace] = wsv1alpha1.UserNamespace(user.Name)
+	addon.Vars[template.DefaultVarsNamespace] = wsv1alpha1.UserNamespace(user.Name)
 	addon.Vars[wsv1alpha1.TemplateVarUserID] = user.Name
 	inst.GetSpec().Vars = addon.Vars
 
