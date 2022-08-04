@@ -59,6 +59,8 @@ rules:
   resources:
   - instances
   - templates
+  - clusterinstances
+  - clustertemplates
   verbs:
   - create
   - delete
