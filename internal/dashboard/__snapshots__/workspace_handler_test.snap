@@ -15,8 +15,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-usertest-admin\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [
@@ -229,8 +228,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-usertest-admin\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 0
   },
@@ -262,8 +260,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-usertest-admin\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 5
   },
@@ -335,8 +332,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-usertest-admin\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"vars\": {
@@ -367,8 +363,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-usertest-admin\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1
   },
@@ -456,8 +451,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-usertest-admin\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [
@@ -509,8 +503,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-usertest-admin\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [

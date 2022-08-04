@@ -110,8 +110,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-template1\",
-          \"clusterScoped\": false
+          \"name\": \"user-template1\"
         }
       }
     ]
@@ -142,8 +141,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-template1\",
-          \"clusterScoped\": false
+          \"name\": \"user-template1\"
         },
         \"vars\": {
           \"FUGA\": \"FUGAF:UGA\",
@@ -179,8 +177,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-template1\",
-          \"clusterScoped\": false
+          \"name\": \"user-template1\"
         },
         \"vars\": {
           \"HOGE\": \"HOGEHOGE\"
@@ -215,8 +212,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-template1\",
-          \"clusterScoped\": false
+          \"name\": \"user-template1\"
         },
         \"vars\": {
           \"HOGE\": \"HOGEHOGE\"
@@ -250,8 +246,7 @@ SnapShot = """
     \"addons\": [
       {
         \"template\": {
-          \"name\": \"user-template1\",
-          \"clusterScoped\": false
+          \"name\": \"user-template1\"
         }
       }
     ]

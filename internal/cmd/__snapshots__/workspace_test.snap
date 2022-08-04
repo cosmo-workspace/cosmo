@@ -13,8 +13,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-user1\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [
@@ -283,8 +282,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-user1\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"vars\": {
@@ -310,8 +308,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-user1\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1
   },
@@ -337,7 +334,6 @@ metadata:
         .: {}
         f:template:
           .: {}
-          f:clusterScoped: {}
           f:name: {}
         f:vars:
           .: {}
@@ -351,7 +347,6 @@ metadata:
 spec:
   replicas: 1
   template:
-    clusterScoped: false
     name: template1
   vars:
     HOGE: HOGEHOGE
@@ -905,7 +900,6 @@ metadata:
         f:replicas: {}
         f:template:
           .: {}
-          f:clusterScoped: {}
           f:name: {}
       f:status:
         .: {}
@@ -925,7 +919,6 @@ metadata:
 spec:
   replicas: 1
   template:
-    clusterScoped: false
     name: template1
 status:
   config:
@@ -949,7 +942,6 @@ metadata:
         f:replicas: {}
         f:template:
           .: {}
-          f:clusterScoped: {}
           f:name: {}
       f:status:
         .: {}
@@ -984,7 +976,6 @@ spec:
     targetPortNumber: 2222
   replicas: 1
   template:
-    clusterScoped: false
     name: template1
 status:
   config:
@@ -1026,7 +1017,6 @@ metadata:
         f:replicas: {}
         f:template:
           .: {}
-          f:clusterScoped: {}
           f:name: {}
       f:status:
         .: {}
@@ -1046,7 +1036,6 @@ metadata:
 spec:
   replicas: 1
   template:
-    clusterScoped: false
     name: template1
 status:
   config:
@@ -1070,7 +1059,6 @@ metadata:
         f:replicas: {}
         f:template:
           .: {}
-          f:clusterScoped: {}
           f:name: {}
       f:status:
         .: {}
@@ -1105,7 +1093,6 @@ spec:
     targetPortNumber: 2222
   replicas: 1
   template:
-    clusterScoped: false
     name: template1
 status:
   config:
@@ -1389,8 +1376,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-user1\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [
@@ -1449,8 +1435,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-user1\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [
@@ -1807,8 +1792,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-user1\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 1
   },
@@ -2039,8 +2023,7 @@ SnapShot = """
   \"Namespace\": \"cosmo-user-user1\",
   \"Spec\": {
     \"template\": {
-      \"name\": \"template1\",
-      \"clusterScoped\": false
+      \"name\": \"template1\"
     },
     \"replicas\": 0
   },
