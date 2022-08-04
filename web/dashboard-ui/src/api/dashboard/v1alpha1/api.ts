@@ -32,7 +32,13 @@ export interface ApiV1alpha1UserAddons {
      * @type {string}
      * @memberof ApiV1alpha1UserAddons
      */
-    'template': string;
+    'template'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ApiV1alpha1UserAddons
+     */
+    'clusterScoped'?: boolean;
     /**
      * 
      * @type {{ [key: string]: string; }}
@@ -442,6 +448,12 @@ export interface Template {
      * @memberof Template
      */
     'isDefaultUserAddon'?: boolean | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Template
+     */
+    'isClusterScope'?: boolean;
 }
 /**
  * 

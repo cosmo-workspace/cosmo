@@ -239,11 +239,11 @@ paths:
                   type: array
                   items:
                     type: object
-                    required:
-                      - template
                     properties:
                       template:
                         type: string
+                      clusterScoped:
+                        type: boolean
                       vars:
                         type: object
                         additionalProperties:
@@ -939,6 +939,8 @@ components:
         isDefaultUserAddon:
           nullable: true
           type: boolean
+        isClusterScope:
+          type: boolean
 
     User:
       type: object
@@ -962,11 +964,11 @@ components:
           type: array
           items:
             type: object
-            required:
-              - template
             properties:
               template:
                 type: string
+              clusterScoped:
+                type: boolean
               vars:
                 type: object
                 additionalProperties:
