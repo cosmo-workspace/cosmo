@@ -207,12 +207,12 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
                 <Stack key={tmpl.name}>
                   <Tooltip title={tmpl.description || "No description"} placement="bottom" arrow enterDelay={1000}>
                     <FormControlLabel control={
-                      <Checkbox defaultChecked={Boolean(tmpl.isDefaultUserAddon)}
+                      <Checkbox defaultChecked={Boolean(tmpl.isDefaultUserAddon)} disabled={Boolean(tmpl.isDefaultUserAddon)}
                         {...registerMui(register(`enableAddons.${i}`))}
                       />} label={tmpl.name} />
                   </Tooltip>
 
-                  <Collapse in={tmpl.requiredVars && watch('enableAddons')[i]} timeout="auto" unmountOnExit>
+                  <Collapse in={tmpl.requiredVars && (watch('enableAddons')[i] || Boolean(tmpl.isDefaultUserAddon))} timeout="auto" unmountOnExit>
                     <Stack spacing={2} sx={{ m: 2 }}>
                       {tmpl.requiredVars?.map((required, j) =>
                         <TextField label={required.varName} fullWidth defaultValue={required.defaultValue} key={String(i) + String(j)}
