@@ -71,9 +71,10 @@ delete-cluster: k3d  ## Delete k3s cluster.
 ##---------------------------------------------------------------------
 ##@ Docker image build
 ##---------------------------------------------------------------------
-MANAGER_IMAGE_TAG   ?= latest
-DASHBOARD_IMAGE_TAG ?= latest
-AUTHPROXY_IMAGE_TAG ?= latest
+IMAGE_TAG ?= latest
+MANAGER_IMAGE_TAG   ?= $(IMAGE_TAG)
+DASHBOARD_IMAGE_TAG ?= $(IMAGE_TAG)
+AUTHPROXY_IMAGE_TAG ?= $(IMAGE_TAG)
 
 .PHONY: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-cache-clear
 
