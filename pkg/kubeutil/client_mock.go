@@ -1,4 +1,4 @@
-package kosmo
+package kubeutil
 
 import (
 	"context"
