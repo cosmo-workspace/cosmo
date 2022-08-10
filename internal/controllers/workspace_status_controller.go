@@ -44,7 +44,6 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
-	requeue := false
 
 	key := r.getWorkspaceNamespacedName(ctx, req.NamespacedName)
 
@@ -77,6 +76,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	// set workspace phase
+	requeue := false
 	pods, err := listWorkspacePods(ctx, r.Client, ws)
 	if err != nil {
 		log.Info("failed to list instance pods", "error", err, "ws", ws.Name, "logLevel", "warn")
@@ -88,7 +88,14 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 				ws.Status.Phase = "Stopping"
 				requeue = true
 			} else {
-				ws.Status.Phase = kubeutil.PodStatusReason(pods[0])
+				requeue = true
+				for _, pod := range pods {
+					ws.Status.Phase = kubeutil.PodStatusReason(pod)
+					if ws.Status.Phase == "Running" {
+						requeue = false
+						break
+					}
+				}
 			}
 
 		} else {
