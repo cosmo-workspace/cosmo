@@ -21,6 +21,7 @@ SnapShot = """
     \"override\": {}
   },
   \"status\": {
+    \"templateName\": \"test-pod-tmpl1\",
     \"lastApplied\": [
       {
         \"kind\": \"Pod\",
@@ -184,6 +185,7 @@ SnapShot = """
     \"override\": {}
   },
   \"status\": {
+    \"templateName\": \"test-pod-tmpl1\",
     \"lastApplied\": [
       {
         \"kind\": \"Pod\",

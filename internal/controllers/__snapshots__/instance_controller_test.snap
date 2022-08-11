@@ -25,6 +25,7 @@ SnapShot = """
     \"override\": {}
   },
   \"status\": {
+    \"templateName\": \"test-nginx-tmpl1\",
     \"lastApplied\": [
       {
         \"kind\": \"Deployment\",
@@ -338,6 +339,7 @@ SnapShot = """
     }
   },
   \"status\": {
+    \"templateName\": \"test-nginx-tmpl1\",
     \"lastApplied\": [
       {
         \"kind\": \"Deployment\",

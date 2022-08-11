@@ -57,6 +57,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		log.Error(err, "failed to get template", "tmplName", inst.Spec.Template.Name)
 		return ctrl.Result{}, err
 	}
+	inst.Status.TemplateName = tmpl.Name
 
 	// 1. Build Unstructured objects
 	objects, err := template.BuildObjects(tmpl.Spec, &inst)
