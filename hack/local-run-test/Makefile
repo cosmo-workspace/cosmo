@@ -166,6 +166,7 @@ docker-build-cs:
 apply-template: kubectl cosmoctl docker-build-cs
 	@echo ====== $@ ======
 	until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
+	until (kubectl apply -f ../../example/fixed-efs-pv-useraddon.yaml) do sleep 1; done
 	cd templates/code-server-01 && $(MAKE) apply
 
 BASEURL := https://$(DASHBOARD_URL)
@@ -181,7 +182,7 @@ add-workspace: kubectl cosmoctl
 	@echo ====== $@ ======
 	-cosmoctl workspace create --user=tom --template=code-server-01 ws1
 	sleep 5
-	-cosmoctl workspace open-port --user=tom ws1 --name=dash1 --port=7701
+	-cosmoctl workspace add-net-rule --user=tom ws1 --name=dash1 --port=7701
 
 ##---------------------------------------------------------------------
 ##@ Execute test
