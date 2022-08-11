@@ -3,11 +3,12 @@ import {
   Alert, Button, Checkbox, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
   Divider,
   FormControlLabel,
+  FormHelperText,
   IconButton, InputAdornment, MenuItem, Stack, TextField, Tooltip, Typography
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useForm, UseFormRegisterReturn } from "react-hook-form";
-import { User } from "../../api/dashboard/v1alpha1";
+import React, { useEffect, useState } from "react";
+import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
+import { Template, User } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { PasswordDialogContext } from "./PasswordDialog";
@@ -97,55 +98,45 @@ export const UserDeleteDialog: React.VFC<{ onClose: () => void, user: User }> = 
 /**
  * Create
  */
-interface Inputs {
+type Inputs = {
   id: string;
   name: string;
   role?: string;
-  enableAddons: boolean[];
-  addonVars: string[][];
+  addons: {
+    template: Template;
+    enable: boolean;
+    vars: string[];
+  }[];
 }
 export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }) => {
   console.log('UserCreateDialog');
   const hooks = useUserModule();
   const passwordDialogDispatch = PasswordDialogContext.useDispatch();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
-  const [isRequiredVarErrors, setIsRequiredVarErrors] = useState<Map<string, boolean>>(new Map());
+  const { register, handleSubmit, watch, control, formState: { errors } } = useForm<Inputs>();
+  const { fields, replace } = useFieldArray({ control, name: "addons" });
 
   const templ = useTemplates();
-  useEffect(() => { templ.getUserAddonTemplates() }, []);  // eslint-disable-line
+  useEffect(() => { templ.getUserAddonTemplates(); }, []);  // eslint-disable-line
+  useEffect(() => {
+    replace(templ.templates.map(t => ({ template: t })));
+  }, [templ.templates]);  // eslint-disable-line
+
 
   return (
     <Dialog open={true}
       fullWidth maxWidth={'xs'}>
       <DialogTitle>Create New User 🎉</DialogTitle>
       <form onSubmit={handleSubmit((inp: Inputs) => {
-
-        const addons = templ.templates.map((addonTmpl, i) => {
-          if (!inp.enableAddons![i]) {
-            setIsRequiredVarErrors(isRequiredVarErrors.set(String(i), false));
-            return { template: "" }
-          }
-          if (!addonTmpl.requiredVars) {
-            return { template: addonTmpl.name, clusterScoped: addonTmpl.isClusterScope }
-          }
-
-          var vars: { [key: string]: string; } = {};
-          var isErr = false;
-          for (let j = 0; j < addonTmpl.requiredVars!.length; j++) {
-            const isEmpty = !Boolean(inp.addonVars[i][j]);
-
-            setIsRequiredVarErrors(isRequiredVarErrors.set(String(i) + String(j), isEmpty));
-            if (isEmpty) { isErr = true; continue };
-
-            vars[addonTmpl.requiredVars[j].varName!] = inp.addonVars![i]![j]!
-          }
-          setIsRequiredVarErrors(isRequiredVarErrors.set(String(i), isErr));
-          return { template: addonTmpl.name, vars: vars, clusterScoped: addonTmpl.isClusterScope }
-        });
-        for (let i = 0; i < inp.enableAddons.length; i++) { if (isRequiredVarErrors.get(String(i))) return }
-
-        const userAddons = addons.filter((v) => { return v.template !== "" });
+        console.log(inp)
+        const userAddons = inp.addons.filter(v => v.enable)
+          .map((inpAddon) => {
+            const vars: { [key: string]: string; } = {};
+            inpAddon.vars.forEach((v, i) => {
+              vars[inpAddon.template.requiredVars?.[i].varName!] = v;
+            });
+            return { template: inpAddon.template.name, vars: vars, clusterScoped: inpAddon.template.isClusterScope }
+          });
 
         console.log("inp.id", inp.id, "inp.name", inp.name, "inp.role", inp.role, "userAddons", userAddons)
         hooks.createUser(inp.id, inp.name, inp.role, userAddons)
@@ -203,28 +194,39 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
               >
                 Enable User Addons
               </Typography>}
-              {templ.templates.map((tmpl, i) =>
-                <Stack key={tmpl.name}>
-                  <Tooltip title={tmpl.description || "No description"} placement="bottom" arrow enterDelay={1000}>
-                    <FormControlLabel control={
-                      <Checkbox defaultChecked={Boolean(tmpl.isDefaultUserAddon)} disabled={Boolean(tmpl.isDefaultUserAddon)}
-                        {...registerMui(register(`enableAddons.${i}`))}
-                      />} label={tmpl.name} />
+              {fields.map((field, index) =>
+                <React.Fragment key={field.id}>
+                  <Tooltip title={field.template.description || "No description"} placement="bottom" arrow enterDelay={1000}>
+                    <>
+                      <FormControlLabel label={field.template.name} control={
+                        <Checkbox defaultChecked={field.template.isDefaultUserAddon || false}
+                          {...registerMui(register(`addons.${index}.enable` as const, {
+                            required: { value: field.template.isDefaultUserAddon || false, message: "Required" },
+                          }))}
+                        />}
+                      />
+                      <FormHelperText error={Boolean(errors.addons?.[index]?.enable)}>
+                        {errors.addons?.[index]?.enable?.message}
+                      </FormHelperText>
+                    </>
                   </Tooltip>
-
-                  <Collapse in={tmpl.requiredVars && (watch('enableAddons')[i] || Boolean(tmpl.isDefaultUserAddon))} timeout="auto" unmountOnExit>
+                  <Collapse in={(watch('addons')[index].enable)} timeout="auto" unmountOnExit>
                     <Stack spacing={2} sx={{ m: 2 }}>
-                      {tmpl.requiredVars?.map((required, j) =>
-                        <TextField label={required.varName} fullWidth defaultValue={required.defaultValue} key={String(i) + String(j)}
-                          {...registerMui(register(`addonVars.${i}.${j}` as const))}
-                          error={Boolean(isRequiredVarErrors.get(String(i) + String(j)))}
-                          helperText={isRequiredVarErrors.get(String(i) + String(j)) && "Required"}
-                        >
-                        </TextField>
+                      {field.template.requiredVars?.map((required, j) =>
+                        <TextField key={field.id + j}
+                          size="small" fullWidth
+                          label={required.varName}
+                          defaultValue={required.defaultValue}
+                          {...registerMui(register(`addons.${index}.vars.${j}` as const, {
+                            required: watch('addons')[index].enable,
+                          }))}
+                          error={Boolean(errors.addons?.[index]?.vars?.[j])}
+                          helperText={errors.addons?.[index]?.vars?.[j] && "Required"}
+                        />
                       )}
                     </Stack>
                   </Collapse>
-                </Stack>
+                </React.Fragment>
               )}
             </Stack>
           </Stack>
@@ -234,7 +236,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
           <Button type="submit" variant="contained" color="primary">Create</Button>
         </DialogActions>
       </form>
-    </Dialog>
+    </Dialog >
   );
 };
 
