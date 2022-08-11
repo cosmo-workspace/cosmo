@@ -165,6 +165,9 @@ SnapShot = """
     \"name\": \"test-pod-inst1\",
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
+    \"annotations\": {
+      \"cosmo/template-updated\": \"updated\"
+    },
     \"managedFields\": [
       {
         \"manager\": \"controllers.test\",
@@ -185,13 +188,13 @@ SnapShot = """
       {
         \"kind\": \"Pod\",
         \"namespace\": \"default\",
-        \"name\": \"test-pod-inst1-alpine2\",
+        \"name\": \"test-pod-inst1-alpine\",
         \"apiVersion\": \"v1\"
       },
       {
         \"kind\": \"Pod\",
         \"namespace\": \"default\",
-        \"name\": \"test-pod-inst1-alpine\",
+        \"name\": \"test-pod-inst1-alpine2\",
         \"apiVersion\": \"v1\"
       }
     ],

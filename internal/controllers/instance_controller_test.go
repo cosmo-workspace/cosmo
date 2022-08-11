@@ -485,6 +485,13 @@ func instanceSnapshot(in cosmov1alpha1.InstanceObject) cosmov1alpha1.InstanceObj
 		return obj.GetStatus().LastApplied[i].Kind < obj.GetStatus().LastApplied[j].Kind
 	})
 
+	if ann := obj.GetAnnotations(); ann != nil {
+		if _, exist := ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated]; exist {
+			ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated] = "updated"
+			obj.SetAnnotations(ann)
+		}
+	}
+
 	return obj
 }
 
@@ -494,6 +501,12 @@ func serviceSnapshot(in *corev1.Service) *corev1.Service {
 
 	obj.Spec.ClusterIP = ""
 	obj.Spec.ClusterIPs = nil
+
+	for i, p := range obj.Spec.Ports {
+		if p.NodePort >= 30000 {
+			obj.Spec.Ports[i].NodePort = 30000
+		}
+	}
 
 	return obj
 }

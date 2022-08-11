@@ -483,13 +483,15 @@ SnapShot = """
         \"name\": \"main\",
         \"protocol\": \"TCP\",
         \"port\": 80,
-        \"targetPort\": 80
+        \"targetPort\": 80,
+        \"nodePort\": 30000
       },
       {
         \"name\": \"add\",
         \"protocol\": \"TCP\",
         \"port\": 9090,
-        \"targetPort\": 9090
+        \"targetPort\": 9090,
+        \"nodePort\": 30000
       }
     ],
     \"selector\": {
