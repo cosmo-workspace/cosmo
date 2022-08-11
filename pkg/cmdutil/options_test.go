@@ -23,7 +23,7 @@ const kubeconfigFile2 = "kubeconfig-test2"
 
 var testEnv *envtest.Environment
 
-func TestAPIs(t *testing.T) {
+func TestCmdutil(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Cmdutil Suite")
 }

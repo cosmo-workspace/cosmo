@@ -29,7 +29,7 @@ import (
 var k8sClient client.Client
 var testEnv *envtest.Environment
 
-func TestAPIs(t *testing.T) {
+func TestKubeutil(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Kubeutil Suite")
 }
