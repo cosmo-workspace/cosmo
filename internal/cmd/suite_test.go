@@ -48,7 +48,7 @@ func init() {
 	//+kubebuilder:scaffold:scheme
 }
 
-func TestAPIs(t *testing.T) {
+func TestCommandsl(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Cosmoctl cmd Suite")
 }

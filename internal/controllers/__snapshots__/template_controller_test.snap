@@ -1,0 +1,283 @@
+['Template controller when creating Instance resource should do instance reconcile and create child resources 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-pod-inst1\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"managedFields\": [
+      {
+        \"manager\": \"controllers.test\",
+        \"operation\": \"Update\",
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"test-pod-tmpl1\"
+    },
+    \"override\": {}
+  },
+  \"status\": {
+    \"templateName\": \"test-pod-tmpl1\",
+    \"lastApplied\": [
+      {
+        \"kind\": \"Pod\",
+        \"namespace\": \"default\",
+        \"name\": \"test-pod-inst1-alpine\",
+        \"apiVersion\": \"v1\"
+      },
+      {
+        \"kind\": \"Pod\",
+        \"namespace\": \"default\",
+        \"name\": \"test-pod-inst1-alpine2\",
+        \"apiVersion\": \"v1\"
+      }
+    ],
+    \"lastAppliedObjectsCount\": 2,
+    \"templateObjectsCount\": 2
+  }
+}
+"""
+
+['Template controller when creating Instance resource should do instance reconcile and create child resources 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-pod-inst1-alpine\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"test-pod-inst1\",
+      \"cosmo/template\": \"test-pod-tmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Instance\",
+        \"name\": \"test-pod-inst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"managedFields\": [
+      {
+        \"manager\": \"cosmo-instance-controller\",
+        \"operation\": \"Apply\",
+        \"apiVersion\": \"v1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"containers\": [
+      {
+        \"name\": \"alpine\",
+        \"image\": \"alpine:latest\",
+        \"command\": [
+          \"echo\",
+          \"helloworld\"
+        ],
+        \"resources\": {},
+        \"terminationMessagePath\": \"/dev/termination-log\",
+        \"terminationMessagePolicy\": \"File\",
+        \"imagePullPolicy\": \"Always\"
+      }
+    ],
+    \"restartPolicy\": \"Always\",
+    \"terminationGracePeriodSeconds\": 30,
+    \"dnsPolicy\": \"ClusterFirst\",
+    \"securityContext\": {},
+    \"schedulerName\": \"default-scheduler\",
+    \"tolerations\": [
+      {
+        \"key\": \"node.kubernetes.io/not-ready\",
+        \"operator\": \"Exists\",
+        \"effect\": \"NoExecute\",
+        \"tolerationSeconds\": 300
+      },
+      {
+        \"key\": \"node.kubernetes.io/unreachable\",
+        \"operator\": \"Exists\",
+        \"effect\": \"NoExecute\",
+        \"tolerationSeconds\": 300
+      }
+    ],
+    \"priority\": 0,
+    \"enableServiceLinks\": true,
+    \"preemptionPolicy\": \"PreemptLowerPriority\"
+  },
+  \"status\": {
+    \"phase\": \"Pending\",
+    \"qosClass\": \"BestEffort\"
+  }
+}
+"""
+
+['Template controller when creating Template resource on new cluster should do nothing 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-pod-tmpl1\",
+    \"creationTimestamp\": null,
+    \"managedFields\": [
+      {
+        \"manager\": \"controllers.test\",
+        \"operation\": \"Update\",
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"rawYaml\": \"apiVersion: v1\\nkind: Pod\\nmetadata:\\n  name: alpine\\nspec:\\n  containers:\\n  - image: 'alpine:latest'\\n    name: alpine\\n    command:\\n    - echo\\n    - helloworld\\n---\\napiVersion: v1\\nkind: Pod\\nmetadata:\\n  name: alpine2\\nspec:\\n  containers:\\n  - image: 'alpine:latest'\\n    name: alpine\\n    command:\\n    - echo\\n    - helloworld\\n\"
+  }
+}
+"""
+
+['Template controller when updating Template resource should do instance reconcile and update child resources 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-pod-tmpl1\",
+    \"creationTimestamp\": null,
+    \"managedFields\": [
+      {
+        \"manager\": \"controllers.test\",
+        \"operation\": \"Update\",
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"rawYaml\": \"apiVersion: v1\\nkind: Pod\\nmetadata:\\n  name: alpine\\nspec:\\n  containers:\\n  - image: 'alpine:latest'\\n    name: alpine\\n    command:\\n    - echo\\n    - helloworld\\n---\\napiVersion: v1\\nkind: Pod\\nmetadata:\\n  name: alpine2\\nspec:\\n  containers:\\n  - image: 'alpine:latest'\\n    name: alpine\\n    command:\\n    - echo\\n    - helloworld\\n\"
+  }
+}
+"""
+
+['Template controller when updating Template resource should do instance reconcile and update child resources 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-pod-inst1\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"annotations\": {
+      \"cosmo/template-updated\": \"updated\"
+    },
+    \"managedFields\": [
+      {
+        \"manager\": \"controllers.test\",
+        \"operation\": \"Update\",
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"test-pod-tmpl1\"
+    },
+    \"override\": {}
+  },
+  \"status\": {
+    \"templateName\": \"test-pod-tmpl1\",
+    \"lastApplied\": [
+      {
+        \"kind\": \"Pod\",
+        \"namespace\": \"default\",
+        \"name\": \"test-pod-inst1-alpine\",
+        \"apiVersion\": \"v1\"
+      },
+      {
+        \"kind\": \"Pod\",
+        \"namespace\": \"default\",
+        \"name\": \"test-pod-inst1-alpine2\",
+        \"apiVersion\": \"v1\"
+      }
+    ],
+    \"lastAppliedObjectsCount\": 2,
+    \"templateObjectsCount\": 1
+  }
+}
+"""
+
+['Template controller when updating Template resource should do instance reconcile and update child resources 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-pod-inst1-alpine\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"test-pod-inst1\",
+      \"cosmo/template\": \"test-pod-tmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Instance\",
+        \"name\": \"test-pod-inst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"managedFields\": [
+      {
+        \"manager\": \"cosmo-instance-controller\",
+        \"operation\": \"Apply\",
+        \"apiVersion\": \"v1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"containers\": [
+      {
+        \"name\": \"alpine\",
+        \"image\": \"alpine:next\",
+        \"command\": [
+          \"echo\",
+          \"helloworld\"
+        ],
+        \"resources\": {},
+        \"terminationMessagePath\": \"/dev/termination-log\",
+        \"terminationMessagePolicy\": \"File\",
+        \"imagePullPolicy\": \"Always\"
+      }
+    ],
+    \"restartPolicy\": \"Always\",
+    \"terminationGracePeriodSeconds\": 30,
+    \"dnsPolicy\": \"ClusterFirst\",
+    \"securityContext\": {},
+    \"schedulerName\": \"default-scheduler\",
+    \"tolerations\": [
+      {
+        \"key\": \"node.kubernetes.io/not-ready\",
+        \"operator\": \"Exists\",
+        \"effect\": \"NoExecute\",
+        \"tolerationSeconds\": 300
+      },
+      {
+        \"key\": \"node.kubernetes.io/unreachable\",
+        \"operator\": \"Exists\",
+        \"effect\": \"NoExecute\",
+        \"tolerationSeconds\": 300
+      }
+    ],
+    \"priority\": 0,
+    \"enableServiceLinks\": true,
+    \"preemptionPolicy\": \"PreemptLowerPriority\"
+  },
+  \"status\": {
+    \"phase\": \"Pending\",
+    \"qosClass\": \"BestEffort\"
+  }
+}
+"""
+

@@ -43,7 +43,7 @@ func init() {
 	//+kubebuilder:scaffold:scheme
 }
 
-func TestAPIs(t *testing.T) {
+func TestKosmo(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Kosmo Suite")
 }

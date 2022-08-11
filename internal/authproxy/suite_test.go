@@ -42,7 +42,7 @@ var (
 	WsMgrCancel context.CancelFunc
 )
 
-func TestAPIs(t *testing.T) {
+func TestAuthproxyController(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Authproxy Controller Suite")
 }

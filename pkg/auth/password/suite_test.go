@@ -32,7 +32,7 @@ func init() {
 	//+kubebuilder:scaffold:scheme
 }
 
-func TestAPIs(t *testing.T) {
+func TestPassword(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Password Suite")
 }

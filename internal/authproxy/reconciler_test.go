@@ -9,6 +9,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
@@ -25,7 +26,7 @@ var _ = Describe("auth-proxy controller", func() {
 	var (
 		ctx          context.Context
 		cancel       context.CancelFunc
-		clientMock   kosmo.ClientMock
+		clientMock   kubeutil.ClientMock
 		proxyManager *proxy.Manager
 	)
 
@@ -43,7 +44,7 @@ var _ = Describe("auth-proxy controller", func() {
 		})
 		Expect(err).NotTo(HaveOccurred())
 
-		clientMock = kosmo.NewClientMock(mgr.GetClient())
+		clientMock = kubeutil.NewClientMock(mgr.GetClient())
 		klient := kosmo.NewClient(&clientMock)
 
 		authorizer := auth.NewPasswordSecretAuthorizer(mgr.GetClient())

@@ -32,6 +32,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
@@ -40,7 +41,7 @@ import (
 var (
 	cfg        *rest.Config
 	k8sClient  kosmo.Client
-	clientMock kosmo.ClientMock
+	clientMock kubeutil.ClientMock
 	testEnv    *envtest.Environment
 	ctx        context.Context
 	cancel     context.CancelFunc
@@ -142,7 +143,7 @@ var _ = BeforeSuite(func() {
 
 	// Setup server
 	By("bootstrapping server")
-	clientMock = kosmo.NewClientMock(mgr.GetClient())
+	clientMock = kubeutil.NewClientMock(mgr.GetClient())
 	klient := kosmo.NewClient(&clientMock)
 
 	auths := make(map[wsv1alpha1.UserAuthType]auth.Authorizer)

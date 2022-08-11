@@ -57,6 +57,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		log.Error(err, "failed to get template", "tmplName", inst.Spec.Template.Name)
 		return ctrl.Result{}, err
 	}
+	inst.Status.TemplateName = tmpl.Name
 
 	// 1. Build Unstructured objects
 	objects, err := template.BuildObjects(tmpl.Spec, &inst)
@@ -82,8 +83,8 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	// 4. Update status
+	log.Debug().PrintObjectDiff(before, &inst)
 	if !equality.Semantic.DeepEqual(before, &inst) {
-		log.DebugAll().PrintObjectDiff(before, &inst)
 		// Update status
 		if err := r.Status().Update(ctx, &inst); err != nil {
 			log.Error(err, "failed to update InstanceStatus")
@@ -115,6 +116,8 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 	var lastApplied []cosmov1alpha1.ObjectRef
 	copy(lastApplied, inst.GetStatus().LastApplied)
+
+	lastAppliedMap := sliceToObjectMap(inst.GetStatus().LastApplied)
 
 	currApplied := make(map[types.UID]cosmov1alpha1.ObjectRef)
 	if len(inst.GetStatus().LastApplied) == 0 {
@@ -162,7 +165,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s created", built.GetKind(), built.GetName())
 
-				currApplied[created.GetUID()] = unstToObjectRef(*created, metav1.Now())
+				currApplied[created.GetUID()] = unstToObjectRef(created, metav1.Now())
 			} else {
 				errs = append(errs, fmt.Errorf("failed to get resource: kind = %s name = %s: %w", built.GetKind(), built.GetName(), err))
 				continue
@@ -190,17 +193,20 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s is not desired state, synced", built.GetKind(), built.GetName())
 
-				currApplied[desired.GetUID()] = unstToObjectRef(*desired, metav1.Now())
+				currApplied[desired.GetUID()] = unstToObjectRef(desired, metav1.Now())
 			}
 		}
 	}
-	inst.GetStatus().LastApplied = objectRefMapToSlice(currApplied)
-	inst.GetStatus().LastAppliedObjectsCount = len(inst.GetStatus().LastApplied)
+
+	for k, v := range currApplied {
+		lastAppliedMap[k] = v
+	}
 
 	// garbage collection
 	shouldDeletes := objectRefNotExistsInMap(lastApplied, currApplied)
 	for _, d := range shouldDeletes {
 		log.Debug().Info("start garbage collection", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
+		delete(lastAppliedMap, d.UID)
 
 		var obj unstructured.Unstructured
 		err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: inst.GetNamespace()}, &obj)
@@ -217,6 +223,9 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 		r.Recorder.Eventf(inst, corev1.EventTypeNormal, "GC", "deleted unmanaged object: %s %s", obj.GetKind(), obj.GetName())
 	}
 
+	inst.GetStatus().LastApplied = objectRefMapToSlice(lastAppliedMap)
+	inst.GetStatus().LastAppliedObjectsCount = len(inst.GetStatus().LastApplied)
+
 	return errs
 }
 
@@ -229,7 +238,7 @@ func (r *instanceReconciler) apply(ctx context.Context, obj *unstructured.Unstru
 }
 
 // unstToObjectRef generate ObjectRef by Unstructured object
-func unstToObjectRef(obj unstructured.Unstructured, updateTimestamp metav1.Time) cosmov1alpha1.ObjectRef {
+func unstToObjectRef(obj *unstructured.Unstructured, updateTimestamp metav1.Time) cosmov1alpha1.ObjectRef {
 	ref := cosmov1alpha1.ObjectRef{}
 	ref.SetGroupVersionKind(obj.GetObjectKind().GroupVersionKind())
 	ref.Name = obj.GetName()
@@ -241,6 +250,14 @@ func unstToObjectRef(obj unstructured.Unstructured, updateTimestamp metav1.Time)
 	ref.CreationTimestamp = &create
 	ref.UpdateTimestamp = &updateTimestamp
 	return ref
+}
+
+func sliceToObjectMap(s []cosmov1alpha1.ObjectRef) map[types.UID]cosmov1alpha1.ObjectRef {
+	m := make(map[types.UID]cosmov1alpha1.ObjectRef)
+	for _, objRef := range s {
+		m[objRef.UID] = objRef
+	}
+	return m
 }
 
 func objectRefMapToSlice(m map[types.UID]cosmov1alpha1.ObjectRef) []cosmov1alpha1.ObjectRef {

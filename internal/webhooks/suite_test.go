@@ -46,7 +46,7 @@ func init() {
 	//+kubebuilder:scaffold:scheme
 }
 
-func TestAPIs(t *testing.T) {
+func TestWebhooks(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Webhooks Suite")
 }

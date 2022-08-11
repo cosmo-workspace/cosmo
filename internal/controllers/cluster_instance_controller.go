@@ -47,6 +47,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		log.Error(err, "failed to get cluster template", "tmplName", inst.Spec.Template.Name)
 		return ctrl.Result{}, err
 	}
+	inst.Status.TemplateName = tmpl.Name
 
 	// 1. Build Unstructured objects
 	objects, err := template.BuildObjects(tmpl.Spec, &inst)
@@ -72,8 +73,8 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	// 4. Update status
+	log.Debug().PrintObjectDiff(before, &inst)
 	if !equality.Semantic.DeepEqual(before, &inst) {
-		log.DebugAll().PrintObjectDiff(before, &inst)
 		// Update status
 		if err := r.Status().Update(ctx, &inst); err != nil {
 			log.Error(err, "failed to update InstanceStatus")

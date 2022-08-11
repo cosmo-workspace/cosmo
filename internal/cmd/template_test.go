@@ -20,13 +20,14 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 )
 
 var _ = Describe("cosmoctl [template]", func() {
 
 	var (
-		clientMock kosmo.ClientMock
+		clientMock kubeutil.ClientMock
 		rootCmd    *cobra.Command
 		options    *cmdutil.CliOptions
 		outBuf     *bytes.Buffer
@@ -45,7 +46,7 @@ var _ = Describe("cosmoctl [template]", func() {
 
 		baseclient, err := kosmo.NewClientByRestConfig(cfg, scheme)
 		Expect(err).NotTo(HaveOccurred())
-		clientMock = kosmo.NewClientMock(baseclient)
+		clientMock = kubeutil.NewClientMock(baseclient)
 		klient := kosmo.NewClient(&clientMock)
 
 		options = cmdutil.NewCliOptions()
