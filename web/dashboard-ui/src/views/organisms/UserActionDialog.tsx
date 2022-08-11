@@ -119,7 +119,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
   const templ = useTemplates();
   useEffect(() => { templ.getUserAddonTemplates(); }, []);  // eslint-disable-line
   useEffect(() => {
-    replace(templ.templates.map(t => ({ template: t })));
+    replace(templ.templates.map(t => ({ template: t, enable: false, vars: [] })));
   }, [templ.templates]);  // eslint-disable-line
 
 
