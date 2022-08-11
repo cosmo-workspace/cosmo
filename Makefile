@@ -171,7 +171,7 @@ test: manifests generate fmt vet envtest go-test.env go-test ## Run tests.
 go-test:
 ifeq ($(QUICK_BUILD),no)
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" \
-	go test $(TEST_FILES) -coverprofile $(COVER_PROFILE) $(TEST_OPTS) -v
+	go test $(TEST_FILES) -coverprofile $(COVER_PROFILE) $(TEST_OPTS)
 endif
 
 .PHONY: test-all-k8s-versions
