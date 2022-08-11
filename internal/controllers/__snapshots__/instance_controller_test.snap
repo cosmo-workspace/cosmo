@@ -1,0 +1,590 @@
+['Instance controller when creating a Instance resource should do reconcile once and create child resources 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"managedFields\": [
+      {
+        \"manager\": \"controllers.test\",
+        \"operation\": \"Update\",
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"test-nginx-tmpl1\"
+    },
+    \"vars\": {
+      \"{{DOMAIN}}\": \"example.com\",
+      \"{{IMAGE_TAG}}\": \"latest\"
+    },
+    \"override\": {}
+  },
+  \"status\": {
+    \"lastApplied\": [
+      {
+        \"kind\": \"Deployment\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-deploy\",
+        \"apiVersion\": \"apps/v1\"
+      },
+      {
+        \"kind\": \"Ingress\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-ing\",
+        \"apiVersion\": \"networking.k8s.io/v1\"
+      },
+      {
+        \"kind\": \"Service\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-svc\",
+        \"apiVersion\": \"v1\"
+      }
+    ],
+    \"lastAppliedObjectsCount\": 3,
+    \"templateObjectsCount\": 3
+  }
+}
+"""
+
+['Instance controller when creating a Instance resource should do reconcile once and create child resources 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1-deploy\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"test-inst1\",
+      \"cosmo/template\": \"test-nginx-tmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Instance\",
+        \"name\": \"test-inst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"managedFields\": [
+      {
+        \"manager\": \"cosmo-instance-controller\",
+        \"operation\": \"Apply\",
+        \"apiVersion\": \"apps/v1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"replicas\": 1,
+    \"selector\": {
+      \"matchLabels\": {
+        \"cosmo/instance\": \"test-inst1\"
+      }
+    },
+    \"template\": {
+      \"metadata\": {
+        \"creationTimestamp\": null,
+        \"labels\": {
+          \"cosmo/instance\": \"test-inst1\"
+        }
+      },
+      \"spec\": {
+        \"containers\": [
+          {
+            \"name\": \"nginx\",
+            \"image\": \"nginx:latest\",
+            \"ports\": [
+              {
+                \"name\": \"main\",
+                \"containerPort\": 80,
+                \"protocol\": \"TCP\"
+              }
+            ],
+            \"resources\": {},
+            \"terminationMessagePath\": \"/dev/termination-log\",
+            \"terminationMessagePolicy\": \"File\",
+            \"imagePullPolicy\": \"Always\"
+          }
+        ],
+        \"restartPolicy\": \"Always\",
+        \"terminationGracePeriodSeconds\": 30,
+        \"dnsPolicy\": \"ClusterFirst\",
+        \"securityContext\": {},
+        \"schedulerName\": \"default-scheduler\"
+      }
+    },
+    \"strategy\": {
+      \"type\": \"RollingUpdate\",
+      \"rollingUpdate\": {
+        \"maxUnavailable\": \"25%\",
+        \"maxSurge\": \"25%\"
+      }
+    },
+    \"revisionHistoryLimit\": 10,
+    \"progressDeadlineSeconds\": 600
+  },
+  \"status\": {}
+}
+"""
+
+['Instance controller when creating a Instance resource should do reconcile once and create child resources 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1-svc\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"test-inst1\",
+      \"cosmo/template\": \"test-nginx-tmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Instance\",
+        \"name\": \"test-inst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"managedFields\": [
+      {
+        \"manager\": \"cosmo-instance-controller\",
+        \"operation\": \"Apply\",
+        \"apiVersion\": \"v1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"ports\": [
+      {
+        \"name\": \"main\",
+        \"protocol\": \"TCP\",
+        \"port\": 80,
+        \"targetPort\": 80
+      }
+    ],
+    \"selector\": {
+      \"cosmo/instance\": \"test-inst1\",
+      \"cosmo/template\": \"nginx\"
+    },
+    \"type\": \"ClusterIP\",
+    \"sessionAffinity\": \"None\",
+    \"ipFamilies\": [
+      \"IPv4\"
+    ],
+    \"ipFamilyPolicy\": \"SingleStack\"
+  },
+  \"status\": {
+    \"loadBalancer\": {}
+  }
+}
+"""
+
+['Instance controller when creating a Instance resource should do reconcile once and create child resources 4']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1-ing\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"test-inst1\",
+      \"cosmo/template\": \"test-nginx-tmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Instance\",
+        \"name\": \"test-inst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"managedFields\": [
+      {
+        \"manager\": \"cosmo-instance-controller\",
+        \"operation\": \"Apply\",
+        \"apiVersion\": \"networking.k8s.io/v1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"rules\": [
+      {
+        \"host\": \"test-inst1-default.example.com\",
+        \"http\": {
+          \"paths\": [
+            {
+              \"path\": \"/\",
+              \"pathType\": \"Prefix\",
+              \"backend\": {
+                \"service\": {
+                  \"name\": \"test-inst1-nginx\",
+                  \"port\": {
+                    \"number\": 80
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  \"status\": {
+    \"loadBalancer\": {}
+  }
+}
+"""
+
+['Instance controller when updating Instance resource should do reconcile again and update child resources 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"managedFields\": [
+      {
+        \"manager\": \"controllers.test\",
+        \"operation\": \"Update\",
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"test-nginx-tmpl1\"
+    },
+    \"vars\": {
+      \"{{DOMAIN}}\": \"example.com\",
+      \"{{IMAGE_TAG}}\": \"latest\"
+    },
+    \"override\": {
+      \"scale\": [
+        {
+          \"target\": {
+            \"kind\": \"Deployment\",
+            \"name\": \"deploy\",
+            \"apiVersion\": \"apps/v1\"
+          },
+          \"replicas\": 3
+        }
+      ],
+      \"network\": {
+        \"ingress\": [
+          {
+            \"targetName\": \"ing\",
+            \"rules\": [
+              {
+                \"host\": \"add.example.com\",
+                \"http\": {
+                  \"paths\": [
+                    {
+                      \"path\": \"/add\",
+                      \"pathType\": \"Prefix\",
+                      \"backend\": {
+                        \"service\": {
+                          \"name\": \"svc\",
+                          \"port\": {
+                            \"number\": 9090
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        \"service\": [
+          {
+            \"targetName\": \"svc\",
+            \"ports\": [
+              {
+                \"name\": \"add\",
+                \"protocol\": \"TCP\",
+                \"port\": 9090,
+                \"targetPort\": 0
+              }
+            ]
+          }
+        ]
+      },
+      \"patchesJson6902\": [
+        {
+          \"target\": {
+            \"kind\": \"Service\",
+            \"name\": \"svc\",
+            \"apiVersion\": \"v1\"
+          },
+          \"patch\": \"\\n[\\n  {\\n    \\\"op\\\": \\\"replace\\\",\\n    \\\"path\\\": \\\"/spec/type\\\",\\n    \\\"value\\\": \\\"LoadBalancer\\\"\\n  }\\n]\\n\\t\\t\\t\\t\\t\\t\"
+        }
+      ]
+    }
+  },
+  \"status\": {
+    \"lastApplied\": [
+      {
+        \"kind\": \"Deployment\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-deploy\",
+        \"apiVersion\": \"apps/v1\"
+      },
+      {
+        \"kind\": \"Ingress\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-ing\",
+        \"apiVersion\": \"networking.k8s.io/v1\"
+      },
+      {
+        \"kind\": \"Service\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-svc\",
+        \"apiVersion\": \"v1\"
+      }
+    ],
+    \"lastAppliedObjectsCount\": 3,
+    \"templateObjectsCount\": 3
+  }
+}
+"""
+
+['Instance controller when updating Instance resource should do reconcile again and update child resources 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1-deploy\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"test-inst1\",
+      \"cosmo/template\": \"test-nginx-tmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Instance\",
+        \"name\": \"test-inst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"managedFields\": [
+      {
+        \"manager\": \"cosmo-instance-controller\",
+        \"operation\": \"Apply\",
+        \"apiVersion\": \"apps/v1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"replicas\": 3,
+    \"selector\": {
+      \"matchLabels\": {
+        \"cosmo/instance\": \"test-inst1\"
+      }
+    },
+    \"template\": {
+      \"metadata\": {
+        \"creationTimestamp\": null,
+        \"labels\": {
+          \"cosmo/instance\": \"test-inst1\"
+        }
+      },
+      \"spec\": {
+        \"containers\": [
+          {
+            \"name\": \"nginx\",
+            \"image\": \"nginx:latest\",
+            \"ports\": [
+              {
+                \"name\": \"main\",
+                \"containerPort\": 80,
+                \"protocol\": \"TCP\"
+              }
+            ],
+            \"resources\": {},
+            \"terminationMessagePath\": \"/dev/termination-log\",
+            \"terminationMessagePolicy\": \"File\",
+            \"imagePullPolicy\": \"Always\"
+          }
+        ],
+        \"restartPolicy\": \"Always\",
+        \"terminationGracePeriodSeconds\": 30,
+        \"dnsPolicy\": \"ClusterFirst\",
+        \"securityContext\": {},
+        \"schedulerName\": \"default-scheduler\"
+      }
+    },
+    \"strategy\": {
+      \"type\": \"RollingUpdate\",
+      \"rollingUpdate\": {
+        \"maxUnavailable\": \"25%\",
+        \"maxSurge\": \"25%\"
+      }
+    },
+    \"revisionHistoryLimit\": 10,
+    \"progressDeadlineSeconds\": 600
+  },
+  \"status\": {}
+}
+"""
+
+['Instance controller when updating Instance resource should do reconcile again and update child resources 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1-svc\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"test-inst1\",
+      \"cosmo/template\": \"test-nginx-tmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Instance\",
+        \"name\": \"test-inst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"managedFields\": [
+      {
+        \"manager\": \"cosmo-instance-controller\",
+        \"operation\": \"Apply\",
+        \"apiVersion\": \"v1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"ports\": [
+      {
+        \"name\": \"main\",
+        \"protocol\": \"TCP\",
+        \"port\": 80,
+        \"targetPort\": 80
+      },
+      {
+        \"name\": \"add\",
+        \"protocol\": \"TCP\",
+        \"port\": 9090,
+        \"targetPort\": 9090
+      }
+    ],
+    \"selector\": {
+      \"cosmo/instance\": \"test-inst1\",
+      \"cosmo/template\": \"nginx\"
+    },
+    \"type\": \"LoadBalancer\",
+    \"sessionAffinity\": \"None\",
+    \"externalTrafficPolicy\": \"Cluster\",
+    \"ipFamilies\": [
+      \"IPv4\"
+    ],
+    \"ipFamilyPolicy\": \"SingleStack\"
+  },
+  \"status\": {
+    \"loadBalancer\": {}
+  }
+}
+"""
+
+['Instance controller when updating Instance resource should do reconcile again and update child resources 4']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1-ing\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"test-inst1\",
+      \"cosmo/template\": \"test-nginx-tmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Instance\",
+        \"name\": \"test-inst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"managedFields\": [
+      {
+        \"manager\": \"cosmo-instance-controller\",
+        \"operation\": \"Apply\",
+        \"apiVersion\": \"networking.k8s.io/v1\",
+        \"fieldsType\": \"FieldsV1\"
+      }
+    ]
+  },
+  \"spec\": {
+    \"rules\": [
+      {
+        \"host\": \"test-inst1-default.example.com\",
+        \"http\": {
+          \"paths\": [
+            {
+              \"path\": \"/\",
+              \"pathType\": \"Prefix\",
+              \"backend\": {
+                \"service\": {
+                  \"name\": \"test-inst1-nginx\",
+                  \"port\": {
+                    \"number\": 80
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        \"host\": \"add.example.com\",
+        \"http\": {
+          \"paths\": [
+            {
+              \"path\": \"/add\",
+              \"pathType\": \"Prefix\",
+              \"backend\": {
+                \"service\": {
+                  \"name\": \"svc\",
+                  \"port\": {
+                    \"number\": 9090
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  \"status\": {
+    \"loadBalancer\": {}
+  }
+}
+"""
+
