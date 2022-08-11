@@ -281,7 +281,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
     class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root emotion-0"
   >
     <label
-      class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-1"
+      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-1"
       data-shrink="true"
       for="mui-1"
       id="mui-1-label"
@@ -289,11 +289,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       label1
     </label>
     <div
-      class="MuiFilledInput-root MuiFilledInput-underline MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl emotion-2"
+      class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-readOnly emotion-2"
     >
       <input
         aria-invalid="false"
-        class="MuiFilledInput-input MuiInputBase-input emotion-3"
+        class="MuiInputBase-input MuiFilledInput-input MuiInputBase-readOnly emotion-3"
         id="mui-1"
         readonly=""
         tabindex="-1"
@@ -624,7 +624,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-5:focus::-ms-input-p
     class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root emotion-0"
   >
     <label
-      class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-root MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-1"
+      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-1"
       data-shrink="true"
       for="mui-2"
       id="mui-2-label"
@@ -632,7 +632,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-5:focus::-ms-input-p
       label1
     </label>
     <div
-      class="MuiFilledInput-root MuiFilledInput-underline MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart emotion-2"
+      class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart MuiInputBase-readOnly emotion-2"
     >
       <div
         class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-filled MuiInputAdornment-sizeMedium emotion-3"
@@ -666,7 +666,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-5:focus::-ms-input-p
       </div>
       <input
         aria-invalid="false"
-        class="MuiFilledInput-input MuiInputBase-input MuiInputBase-inputAdornedStart emotion-5"
+        class="MuiInputBase-input MuiFilledInput-input MuiInputBase-inputAdornedStart MuiInputBase-readOnly emotion-5"
         id="mui-2"
         readonly=""
         tabindex="-1"
