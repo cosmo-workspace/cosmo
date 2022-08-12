@@ -6,7 +6,7 @@ const DispatchContext = createContext<React.Dispatch<React.SetStateAction<number
 /**
  * provider
  */
-export const ProgressProvider: React.FC = ({ children }) => {
+export const ProgressProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const [count, setCount] = useState(0);
   return (<>
     <DispatchContext.Provider value={setCount}>

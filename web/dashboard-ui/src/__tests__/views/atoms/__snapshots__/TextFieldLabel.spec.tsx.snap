@@ -283,8 +283,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
     <label
       class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-1"
       data-shrink="true"
-      for="mui-1"
-      id="mui-1-label"
+      for=":r0:"
+      id=":r0:-label"
     >
       label1
     </label>
@@ -294,7 +294,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       <input
         aria-invalid="false"
         class="MuiInputBase-input MuiFilledInput-input MuiInputBase-readOnly emotion-3"
-        id="mui-1"
+        id=":r0:"
         readonly=""
         tabindex="-1"
         type="text"
@@ -626,8 +626,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-5:focus::-ms-input-p
     <label
       class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-1"
       data-shrink="true"
-      for="mui-2"
-      id="mui-2-label"
+      for=":r1:"
+      id=":r1:-label"
     >
       label1
     </label>
@@ -667,7 +667,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-5:focus::-ms-input-p
       <input
         aria-invalid="false"
         class="MuiInputBase-input MuiFilledInput-input MuiInputBase-inputAdornedStart MuiInputBase-readOnly emotion-5"
-        id="mui-2"
+        id=":r1:"
         readonly=""
         tabindex="-1"
         type="text"

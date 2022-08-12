@@ -591,7 +591,7 @@ exports[`DialogContext open/close: 2.opend 1`] = `
       tabindex="-1"
     >
       <div
-        aria-labelledby="mui-1"
+        aria-labelledby=":r0:"
         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm emotion-7"
         role="dialog"
       />

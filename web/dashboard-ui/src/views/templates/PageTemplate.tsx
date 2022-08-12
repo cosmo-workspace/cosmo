@@ -40,7 +40,7 @@ interface PageTemplateProps {
   title: string;
 }
 
-export const PageTemplate: React.FC<PageTemplateProps> = ({ children, title, }) => {
+export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> = ({ children, title, }) => {
 
   const { loginUser, logout } = useLogin();
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();

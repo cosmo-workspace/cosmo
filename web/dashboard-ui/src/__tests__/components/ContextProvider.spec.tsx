@@ -86,14 +86,14 @@ describe('ModuleContext', () => {
     const TestContext = ModuleContext(useTestHook);
     const useTest = TestContext.useContext;
 
-    const Component1: React.FC = ({ children }) => {
+    const Component1: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       const { state, setState } = useTest();
       return (<div>
         <button onClick={() => { setState("11111") }}>button1</button>
         <div id="textbox1">{state}</div>
       </div>);
     }
-    const Component2: React.FC = ({ children }) => {
+    const Component2: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       const { state, setState } = useTest();
       return (<div>
         <button onClick={() => { setState("22222") }}>button2</button>

@@ -1087,13 +1087,13 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
       tabindex="-1"
     >
       <div
-        aria-labelledby="mui-19"
+        aria-labelledby=":ri:"
         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthXs MuiDialog-paperFullWidth emotion-7"
         role="dialog"
       >
         <h2
           class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root emotion-8"
-          id="mui-19"
+          id=":ri:"
         >
           Change user name
         </h2>
@@ -1110,8 +1110,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
                 <label
                   class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-12"
                   data-shrink="true"
-                  for="mui-20"
-                  id="mui-20-label"
+                  for=":rj:"
+                  id=":rj:-label"
                 >
                   User ID
                 </label>
@@ -1151,7 +1151,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
                   <input
                     aria-invalid="false"
                     class="MuiInputBase-input MuiFilledInput-input MuiInputBase-inputAdornedStart MuiInputBase-readOnly emotion-16"
-                    id="mui-20"
+                    id=":rj:"
                     readonly=""
                     tabindex="-1"
                     type="text"
@@ -1165,8 +1165,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
                 <label
                   class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-18"
                   data-shrink="true"
-                  for="mui-21"
-                  id="mui-21-label"
+                  for=":rk:"
+                  id=":rk:-label"
                 >
                   User Name
                 </label>
@@ -1207,7 +1207,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
                     aria-invalid="false"
                     autocomplete="off"
                     class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedStart emotion-22"
-                    id="mui-21"
+                    id=":rk:"
                     name="name"
                     type="text"
                     value=""
@@ -2329,13 +2329,13 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
       tabindex="-1"
     >
       <div
-        aria-labelledby="mui-1"
+        aria-labelledby=":r0:"
         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthXs MuiDialog-paperFullWidth emotion-3"
         role="dialog"
       >
         <h2
           class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root emotion-4"
-          id="mui-1"
+          id=":r0:"
         >
           Change user name
         </h2>
@@ -2352,8 +2352,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
                 <label
                   class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-filled MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-8"
                   data-shrink="true"
-                  for="mui-2"
-                  id="mui-2-label"
+                  for=":r1:"
+                  id=":r1:-label"
                 >
                   User ID
                 </label>
@@ -2393,7 +2393,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
                   <input
                     aria-invalid="false"
                     class="MuiInputBase-input MuiFilledInput-input MuiInputBase-inputAdornedStart MuiInputBase-readOnly emotion-12"
-                    id="mui-2"
+                    id=":r1:"
                     readonly=""
                     tabindex="-1"
                     type="text"
@@ -2407,8 +2407,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
                 <label
                   class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled emotion-14"
                   data-shrink="true"
-                  for="mui-3"
-                  id="mui-3-label"
+                  for=":r2:"
+                  id=":r2:-label"
                 >
                   User Name
                 </label>
@@ -2449,7 +2449,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
                     aria-invalid="false"
                     autocomplete="off"
                     class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedStart emotion-18"
-                    id="mui-3"
+                    id=":r2:"
                     name="name"
                     type="text"
                     value=""
