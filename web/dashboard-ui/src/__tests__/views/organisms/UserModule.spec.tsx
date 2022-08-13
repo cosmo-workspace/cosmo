@@ -1,4 +1,4 @@
-import { act, renderHook, RenderResult } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useSnackbar } from "notistack";
 import { CreateUserResponse, DeleteUserResponse, ListTemplatesResponse, ListUsersResponse, Template, TemplateApiFactory, UpdateUserNameResponse, UpdateUserRoleResponse, User, UserApiFactory, UserRoleEnum } from "../../../api/dashboard/v1alpha1";
@@ -65,38 +65,42 @@ function axiosNormalResponse<T>(data: T): AxiosResponse<T> {
 //-----------------------------------------------
 describe('useUserModule', () => {
 
-  let result: RenderResult<ReturnType<typeof useUserModule>>;
-
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     RestUserMock.mockReturnValue(userMock);
-    result = renderHook(() => useUserModule(), {
-      wrapper: ({ children }) => (<UserContext.Provider>{children}</UserContext.Provider>),
-    }).result;
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
+  async function renderUseUserModule() {
+    return renderHook(() => useUserModule(), {
+      wrapper: ({ children }) => (<UserContext.Provider>{children}</UserContext.Provider>),
+    });
+  }
+
   describe('useUserModule getUsers', () => {
 
     it('normal', async () => {
+      const { result } = await renderUseUserModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user2, user1, user3] }));
       await act(async () => { result.current.getUsers() });
       expect(result.current.users).toStrictEqual([user1, user2, user3]);
       expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
     });
 
-    it('normal', async () => {
+    it('normal2', async () => {
+      const { result } = await renderUseUserModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: undefined as any }));
       await act(async () => { result.current.getUsers() });
       expect(result.current.users).toStrictEqual([]);
       expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
     });
 
-    it('normal', async () => {
+    it('normal3', async () => {
+      const { result } = await renderUseUserModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [] }));
       await act(async () => { result.current.getUsers() });
       expect(result.current.users).toStrictEqual([]);
@@ -104,6 +108,7 @@ describe('useUserModule', () => {
     });
 
     it('error', async () => {
+      const { result } = await renderUseUserModule();
       const err: AxiosError<ListUsersResponse> = {
         response: { data: { message: undefined }, status: 402 } as any,
       } as any
@@ -118,10 +123,11 @@ describe('useUserModule', () => {
   describe('useUserModule createUser', () => {
     beforeEach(async () => {
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
-      await act(async () => { result.current.getUsers() });
     });
 
     it('nomal', async () => {
+      const { result } = await renderUseUserModule();
+      await act(async () => { result.current.getUsers() });
       userMock.postUser.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2 }));
       await act(async () => { result.current.createUser('user2', 'user2 name') });
       expect(result.current.users).toStrictEqual([user1, user2, user3]);
@@ -129,6 +135,8 @@ describe('useUserModule', () => {
     });
 
     it('error', async () => {
+      const { result } = await renderUseUserModule();
+      await act(async () => { result.current.getUsers() });
       const err: AxiosError<CreateUserResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
@@ -141,6 +149,7 @@ describe('useUserModule', () => {
   describe('useUserModule updateUserName', () => {
 
     it('nomal before getUsers', async () => {
+      const { result } = await renderUseUserModule();
       const user2x = { ...user2, displayName: 'displayNameChange' }
       userMock.putUserName.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2x }));
 
@@ -150,6 +159,7 @@ describe('useUserModule', () => {
     });
 
     it('nomal after getUsers', async () => {
+      const { result } = await renderUseUserModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
 
@@ -162,6 +172,7 @@ describe('useUserModule', () => {
     });
 
     it('nomal after getUsers. return value nothing', async () => {
+      const { result } = await renderUseUserModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
 
@@ -173,6 +184,7 @@ describe('useUserModule', () => {
     });
 
     it('error', async () => {
+      const { result } = await renderUseUserModule();
       const err: AxiosError<UpdateUserNameResponse> = {
         response: { data: { message: 'data.message' }, status: 402 } as any,
       } as any
@@ -185,6 +197,7 @@ describe('useUserModule', () => {
   describe('useUserModule updateRole', () => {
 
     it('nomal before getUsers', async () => {
+      const { result } = await renderUseUserModule();
       userMock.putUserRole.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2 }));
       await act(async () => { result.current.updateRole('user2', 'user2 name') });
       expect(result.current.users).toStrictEqual([]);
@@ -192,6 +205,7 @@ describe('useUserModule', () => {
     });
 
     it('nomal after getUsers', async () => {
+      const { result } = await renderUseUserModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
 
@@ -204,6 +218,7 @@ describe('useUserModule', () => {
     });
 
     it('nomal after getUsers. return value nothing', async () => {
+      const { result } = await renderUseUserModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
 
@@ -215,6 +230,7 @@ describe('useUserModule', () => {
     });
 
     it('error', async () => {
+      const { result } = await renderUseUserModule();
       const err: AxiosError<UpdateUserRoleResponse> = {
         response: { data: { message: 'data.message' }, status: 402 } as any,
       } as any
@@ -227,10 +243,11 @@ describe('useUserModule', () => {
   describe('useUserModule deleteUser', () => {
     beforeEach(async () => {
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
-      await act(async () => { result.current.getUsers() });
     });
 
     it('nomal', async () => {
+      const { result } = await renderUseUserModule();
+      await act(async () => { result.current.getUsers() });
       userMock.deleteUser.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2 }));
       await act(async () => { result.current.deleteUser('user2') });
       expect(result.current.users).toStrictEqual([user1, user3]);
@@ -238,6 +255,8 @@ describe('useUserModule', () => {
     });
 
     it('error', async () => {
+      const { result } = await renderUseUserModule();
+      await act(async () => { result.current.getUsers() });
       const err: AxiosError<DeleteUserResponse> = {
         response: { data: { message: 'data.message' }, status: 402 } as any,
       } as any
@@ -251,20 +270,22 @@ describe('useUserModule', () => {
 
 describe('useTemplates', () => {
 
-  let result: RenderResult<ReturnType<typeof useTemplates>>;
-
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     RestTemplateMock.mockReturnValue(templateMock);
-    result = renderHook(() => useTemplates(), {
-      wrapper: ({ children }) => (<UserContext.Provider>{children}</UserContext.Provider>),
-    }).result;
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
+
+  async function renderUseTemplates() {
+    const utils = renderHook(() => useTemplates(), {
+      wrapper: ({ children }) => (<UserContext.Provider>{children}</UserContext.Provider>),
+    });
+    return utils;
+  }
 
   describe('useTemplates getUserAddonTemplates', () => {
 
@@ -278,6 +299,7 @@ describe('useTemplates', () => {
     const tmpl3: Template = { name: 'tmpl3' };
 
     it('normal', async () => {
+      const { result } = await renderUseTemplates();
       templateMock.getUserAddonTemplates.mockResolvedValue(axiosNormalResponse({
         message: "ok", items: [tmpl1, tmpl3, tmpl2]
       }));
@@ -287,7 +309,8 @@ describe('useTemplates', () => {
     });
 
 
-    it('normal', async () => {
+    it('normal template empty', async () => {
+      const { result } = await renderUseTemplates();
       templateMock.getUserAddonTemplates.mockResolvedValue(axiosNormalResponse({ items: [] }));
       await act(async () => { result.current.getUserAddonTemplates() });
       expect(result.current.templates).toStrictEqual([]);
@@ -295,6 +318,7 @@ describe('useTemplates', () => {
     });
 
     it('error', async () => {
+      const { result } = await renderUseTemplates();
       const err: AxiosError<ListTemplatesResponse> = {
         response: { data: { message: undefined }, status: 401 } as any,
       } as any

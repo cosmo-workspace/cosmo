@@ -1,7 +1,8 @@
-import { act, renderHook, RenderHookResult } from "@testing-library/react-hooks";
+import { renderHook, waitFor } from "@testing-library/react";
 import { AxiosResponse } from "axios";
 import { useSnackbar } from "notistack";
 import React from 'react';
+import { act } from "react-dom/test-utils";
 import { AuthApiFactory, UserApiFactory, UserRoleEnum } from "../../api/dashboard/v1alpha1";
 import { LoginProvider, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
@@ -75,6 +76,14 @@ describe('LoginProvider', () => {
     jest.restoreAllMocks();
   });
 
+  async function renderUseLogin() {
+    const utils = renderHook(() => useLogin(), {
+      wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
+    });
+    await waitFor(async () => { expect(utils.result.current).not.toBeNull(); });
+    return utils;
+  }
+
   describe('verify', () => {
 
     it('ok', async () => {
@@ -88,10 +97,7 @@ describe('LoginProvider', () => {
         user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
 
-      const { result, waitForNextUpdate } = renderHook(() => useLogin(), {
-        wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-      });
-      await waitForNextUpdate();
+      const { result } = await renderUseLogin();
       expect(result.current.loginUser).toMatchSnapshot();
     });
 
@@ -103,10 +109,7 @@ describe('LoginProvider', () => {
         requirePasswordUpdate: false,
       }));
 
-      const { result, waitForNextUpdate } = renderHook(() => useLogin(), {
-        wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-      });
-      await waitForNextUpdate();
+      const { result } = await renderUseLogin();
       expect(result.current.loginUser).toMatchSnapshot();
     });
 
@@ -114,10 +117,7 @@ describe('LoginProvider', () => {
     it('ng', async () => {
 
       authMock.verify.mockRejectedValue({ response: { data: { message: 'data.message' }, status: 401 } as any } as any);
-      const { result, waitForNextUpdate } = renderHook(() => useLogin(), {
-        wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-      });
-      await waitForNextUpdate();
+      const { result } = await renderUseLogin();
       expect(result.current.loginUser).toMatchSnapshot();
     });
 
@@ -131,10 +131,7 @@ describe('LoginProvider', () => {
 
       userMock.getUser.mockRejectedValue({ response: { data: { message: 'getUser error' }, status: 401 } as any } as any);
 
-      const { result, waitForNextUpdate } = renderHook(() => useLogin(), {
-        wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-      });
-      await waitForNextUpdate();
+      const { result } = await renderUseLogin();
       expect(result.current.loginUser).toMatchSnapshot();
     });
 
@@ -143,20 +140,8 @@ describe('LoginProvider', () => {
 
   describe('login', () => {
 
-    let hookResult: RenderHookResult<unknown, ReturnType<typeof useLogin>>;
-
-    beforeEach(async () => {
-      authMock.verify.mockRejectedValue({ response: { data: { message: 'verify error' }, status: 401 } as any } as any);
-      hookResult = renderHook(() => useLogin(), {
-        wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-      });
-      await hookResult.waitForNextUpdate();
-      // verify error
-    });
-
-
     it('ok', async () => {
-      const { result } = hookResult;
+      const { result } = await renderUseLogin();
 
       authMock.login.mockResolvedValue(axiosNormalResponse({
         id: 'user1',
@@ -167,21 +152,20 @@ describe('LoginProvider', () => {
         message: "ok",
         user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
-
       await act(async () => {
         await expect(result.current.login('user1', 'password1')).resolves.toMatchSnapshot();
-        expect(result.current.loginUser).toMatchSnapshot();
       });
-
+      await waitFor(async () => { expect(result.current.loginUser).not.toBeUndefined(); });
+      expect(result.current.loginUser).toMatchSnapshot();
       await act(async () => {
         await expect(result.current.login('user1', 'password1')).resolves.toMatchSnapshot();
-        expect(result.current.loginUser).toMatchSnapshot();
       });
+      expect(result.current.loginUser).toMatchSnapshot();
     });
 
 
     it('ng', async () => {
-      const { result } = hookResult;
+      const { result } = await renderUseLogin();
 
       authMock.login.mockResolvedValue(axiosNormalResponse({
         id: 'user1',
@@ -194,16 +178,16 @@ describe('LoginProvider', () => {
       }));
 
       authMock.login.mockRejectedValue({ response: { data: { message: 'login error' }, status: 401 } as any } as any);
-
       await act(async () => {
         await expect(result.current.login('user1', 'password1')).rejects.toMatchSnapshot();
-        expect(result.current.loginUser).toMatchSnapshot();
       });
+      await waitFor(async () => { expect(result.current).not.toBeNull(); });
+      expect(result.current.loginUser).toMatchSnapshot();
     });
 
 
     it('getUser error', async () => {
-      const { result } = hookResult;
+      const { result } = await renderUseLogin();
 
       authMock.login.mockResolvedValue(axiosNormalResponse({
         id: 'user1',
@@ -215,8 +199,8 @@ describe('LoginProvider', () => {
 
       await act(async () => {
         await expect(result.current.login('user1', 'password1')).rejects.toMatchSnapshot();
-        expect(result.current.loginUser).toMatchSnapshot();
       });
+      expect(result.current.loginUser).toMatchSnapshot();
     });
 
   });
@@ -224,24 +208,12 @@ describe('LoginProvider', () => {
 
   describe('refreshUserInfo', () => {
 
-    let hookResult: RenderHookResult<unknown, ReturnType<typeof useLogin>>;
-
     describe('not login', () => {
 
-      beforeEach(async () => {
-        hookResult = renderHook(() => useLogin(), {
-          wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-        });
-        await hookResult.waitForNextUpdate();
-      });
-
-
       it('ok', async () => {
-        const { result } = hookResult;
-        await act(async () => {
-          await expect(result.current.refreshUserInfo()).resolves.toMatchSnapshot();
-          expect(result.current.loginUser).toMatchSnapshot();
-        });
+        const { result } = await renderUseLogin();
+        await expect(result.current.refreshUserInfo()).resolves.toMatchSnapshot();
+        expect(result.current.loginUser).toMatchSnapshot();
       });
 
     });
@@ -258,18 +230,14 @@ describe('LoginProvider', () => {
           message: "ok",
           user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
         }));
-        hookResult = renderHook(() => useLogin(), {
-          wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-        });
-        await hookResult.waitForNextUpdate();
       });
 
       it('ok', async () => {
-        const { result } = hookResult;
+        const { result } = await renderUseLogin();
         await act(async () => {
           await expect(result.current.refreshUserInfo()).resolves.toMatchSnapshot();
-          expect(result.current.loginUser).toMatchSnapshot();
         });
+        expect(result.current.loginUser).toMatchSnapshot();
       });
 
     });
@@ -278,8 +246,6 @@ describe('LoginProvider', () => {
 
   describe('logout', () => {
 
-    let hookResult: RenderHookResult<unknown, ReturnType<typeof useLogin>>;
-
     beforeEach(async () => {
       authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
         id: 'user1',
@@ -290,38 +256,31 @@ describe('LoginProvider', () => {
         message: "ok",
         user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
-      hookResult = renderHook(() => useLogin(), {
-        wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-      });
-      await hookResult.waitForNextUpdate();
     });
 
-
     it('ok', async () => {
-      const { result } = hookResult;
+      const { result } = await renderUseLogin();
       await act(async () => {
         await expect(result.current.logout()).resolves.toMatchSnapshot();
-        expect(result.current.loginUser).toMatchSnapshot();
-        expect(authMock.logout.mock.calls).toMatchSnapshot('logout calls');
       });
+      await waitFor(async () => { expect(result.current.loginUser).toBeUndefined(); });
+      expect(authMock.logout.mock.calls).toMatchSnapshot('logout calls');
     });
 
     it('error', async () => {
-      const { result } = hookResult;
+      const { result } = await renderUseLogin();
       authMock.logout.mockRejectedValue({ response: { data: { message: 'logout error' }, status: 500 } as any } as any);
       await act(async () => {
         await expect(result.current.logout()).rejects.toMatchSnapshot();
-        expect(result.current.loginUser).toMatchSnapshot();
-        expect(authMock.logout.mock.calls).toMatchSnapshot('logout calls');
       });
+      await waitFor(async () => { expect(result.current.loginUser).toBeUndefined(); });
+      expect(authMock.logout.mock.calls).toMatchSnapshot('logout calls');
     });
 
   });
 
 
-  describe('updataPassword', () => {
-
-    let hookResult: RenderHookResult<unknown, ReturnType<typeof useLogin>>;
+  describe('updatePassword', () => {
 
     beforeEach(async () => {
       authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
@@ -333,31 +292,23 @@ describe('LoginProvider', () => {
         message: "ok",
         user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
       }));
-      hookResult = renderHook(() => useLogin(), {
-        wrapper: ({ children }) => (<LoginProvider>{children}</LoginProvider >),
-      });
-      await hookResult.waitForNextUpdate();
     });
 
     it('ok', async () => {
-      const { result } = hookResult;
+      const { result } = await renderUseLogin();
       userMock.putUserPassword.mockResolvedValue(axiosNormalResponse({
         message: "ok",
         user: { id: 'user1', role: 'cosmo-admin', displayName: 'user1 name' },
       }));
-      await act(async () => {
-        await expect(result.current.updataPassword('oldpw', 'newpw')).resolves.toMatchSnapshot();
-        expect(userMock.putUserPassword.mock.calls).toMatchSnapshot('putUserPassword calls');
-      });
+      await expect(result.current.updataPassword('oldpw', 'newpw')).resolves.toMatchSnapshot();
+      expect(userMock.putUserPassword.mock.calls).toMatchSnapshot('putUserPassword calls');
     });
 
     it('error', async () => {
-      const { result } = hookResult;
+      const { result } = await renderUseLogin();
       userMock.putUserPassword.mockRejectedValue({ message: 'updataPassword error' } as any);
-      await act(async () => {
-        await expect(result.current.updataPassword('oldpw', 'newpw')).rejects.toMatchSnapshot();
-        expect(userMock.putUserPassword.mock.calls).toMatchSnapshot('putUserPassword calls');
-      });
+      await expect(result.current.updataPassword('oldpw', 'newpw')).rejects.toMatchSnapshot();
+      expect(userMock.putUserPassword.mock.calls).toMatchSnapshot('putUserPassword calls');
     });
 
   });
