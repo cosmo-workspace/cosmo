@@ -160,12 +160,16 @@ TEST_FILES ?= ./...
 COVER_PROFILE ?= cover.out
 #TEST_OPTS ?= --ginkgo.focus 'Dashboard server \[User\]' -ginkgo.v -ginkgo.progress -test.v > test.out 2>&1
 
+.PHONY: clear-snapshots
+clear-snapshots:
+	find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
+
 .PHONY: go-test.env
 go-test.env: 
 	@echo KUBEBUILDER_ASSETS=$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path) > ./.vscode/go-test.env
 
 .PHONY: test
-test: manifests generate fmt vet envtest go-test.env go-test ## Run tests.
+test: clear-snapshots manifests generate fmt vet envtest go-test.env go-test ## Run tests.
 
 .PHONY: go-test
 go-test:
