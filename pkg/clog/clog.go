@@ -35,7 +35,7 @@ func FromContext(ctx context.Context) *Logger {
 		logger := log.FromContext(ctx)
 		return NewLogger(logger)
 	}
-	return NewLogger(log.NullLogger{})
+	return NewLogger(logr.Discard())
 }
 
 func NewLogger(log logr.Logger) *Logger {

@@ -375,7 +375,7 @@ func TestLooseDeepEqualMatcher_FailureMessage(t *testing.T) {
             Annotations: nil,
             OwnerReferences: nil,
             Finalizers: nil,
-            ClusterName: "",
+            ZZZ_DeprecatedClusterName: "",
             ManagedFields: nil,
         },
         Spec: {
@@ -463,6 +463,7 @@ func TestLooseDeepEqualMatcher_FailureMessage(t *testing.T) {
             Overhead: nil,
             TopologySpreadConstraints: nil,
             SetHostnameAsFQDN: nil,
+            OS: nil,
         },
         Status: {
             Phase: "",
@@ -500,7 +501,7 @@ shouled be equal to
             Annotations: nil,
             OwnerReferences: nil,
             Finalizers: nil,
-            ClusterName: "",
+            ZZZ_DeprecatedClusterName: "",
             ManagedFields: nil,
         },
         Spec: {
@@ -588,6 +589,7 @@ shouled be equal to
             Overhead: nil,
             TopologySpreadConstraints: nil,
             SetHostnameAsFQDN: nil,
+            OS: nil,
         },
         Status: {
             Phase: "",
@@ -623,7 +625,7 @@ diff:     <string>:   &v1.Pod{
       		},
       		EphemeralContainers: nil,
       		RestartPolicy:       "",
-      		... // 30 identical fields
+      		... // 31 identical fields
       	},
       	Status: {},
       }
@@ -728,7 +730,7 @@ func TestLooseDeepEqualMatcher_NegatedFailureMessage(t *testing.T) {
             Annotations: nil,
             OwnerReferences: nil,
             Finalizers: nil,
-            ClusterName: "",
+            ZZZ_DeprecatedClusterName: "",
             ManagedFields: nil,
         },
         Spec: {
@@ -816,6 +818,7 @@ func TestLooseDeepEqualMatcher_NegatedFailureMessage(t *testing.T) {
             Overhead: nil,
             TopologySpreadConstraints: nil,
             SetHostnameAsFQDN: nil,
+            OS: nil,
         },
         Status: {
             Phase: "",
@@ -853,7 +856,7 @@ not to equal
             Annotations: nil,
             OwnerReferences: nil,
             Finalizers: nil,
-            ClusterName: "",
+            ZZZ_DeprecatedClusterName: "",
             ManagedFields: nil,
         },
         Spec: {
@@ -941,6 +944,7 @@ not to equal
             Overhead: nil,
             TopologySpreadConstraints: nil,
             SetHostnameAsFQDN: nil,
+            OS: nil,
         },
         Status: {
             Phase: "",

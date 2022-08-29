@@ -482,7 +482,8 @@ func instanceSnapshot(in cosmov1alpha1.InstanceObject) cosmov1alpha1.InstanceObj
 		obj.GetStatus().LastApplied[i] = v
 	}
 	sort.SliceStable(obj.GetStatus().LastApplied, func(i, j int) bool {
-		return obj.GetStatus().LastApplied[i].Kind < obj.GetStatus().LastApplied[j].Kind
+		return obj.GetStatus().LastApplied[i].Kind < obj.GetStatus().LastApplied[j].Kind &&
+			obj.GetStatus().LastApplied[i].Name < obj.GetStatus().LastApplied[j].Name
 	})
 
 	if ann := obj.GetAnnotations(); ann != nil {
@@ -523,15 +524,7 @@ func removeDynamicFields(o client.Object) {
 	o.SetResourceVersion("")
 	o.SetGeneration(0)
 	o.SetUID(types.UID(""))
-
-	managedFields := make([]metav1.ManagedFieldsEntry, len(o.GetManagedFields()))
-	for i, v := range o.GetManagedFields() {
-		v.Time = nil
-		v.FieldsV1 = nil
-
-		managedFields[i] = v
-	}
-	o.SetManagedFields(managedFields)
+	o.SetManagedFields(nil)
 
 	ownerRefs := make([]metav1.OwnerReference, len(o.GetOwnerReferences()))
 	for i, v := range o.GetOwnerReferences() {

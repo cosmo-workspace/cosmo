@@ -739,4 +739,3 @@ Global Flags:
 
 ['cosmoctl [template] [validate] ❌ fail with invalid args: template validate 2']
 SnapShot = 'validation error: --file is required'
-

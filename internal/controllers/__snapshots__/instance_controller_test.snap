@@ -4,15 +4,7 @@ SnapShot = """
   \"metadata\": {
     \"name\": \"test-inst1\",
     \"namespace\": \"default\",
-    \"creationTimestamp\": null,
-    \"managedFields\": [
-      {
-        \"manager\": \"controllers.test\",
-        \"operation\": \"Update\",
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
-    ]
+    \"creationTimestamp\": null
   },
   \"spec\": {
     \"template\": {
@@ -71,14 +63,6 @@ SnapShot = """
         \"uid\": \"\",
         \"controller\": true,
         \"blockOwnerDeletion\": true
-      }
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"apps/v1\",
-        \"fieldsType\": \"FieldsV1\"
       }
     ]
   },
@@ -155,14 +139,6 @@ SnapShot = """
         \"controller\": true,
         \"blockOwnerDeletion\": true
       }
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"v1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
     ]
   },
   \"spec\": {
@@ -183,7 +159,8 @@ SnapShot = """
     \"ipFamilies\": [
       \"IPv4\"
     ],
-    \"ipFamilyPolicy\": \"SingleStack\"
+    \"ipFamilyPolicy\": \"SingleStack\",
+    \"internalTrafficPolicy\": \"Cluster\"
   },
   \"status\": {
     \"loadBalancer\": {}
@@ -210,14 +187,6 @@ SnapShot = """
         \"uid\": \"\",
         \"controller\": true,
         \"blockOwnerDeletion\": true
-      }
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"networking.k8s.io/v1\",
-        \"fieldsType\": \"FieldsV1\"
       }
     ]
   },
@@ -256,15 +225,7 @@ SnapShot = """
   \"metadata\": {
     \"name\": \"test-inst1\",
     \"namespace\": \"default\",
-    \"creationTimestamp\": null,
-    \"managedFields\": [
-      {
-        \"manager\": \"controllers.test\",
-        \"operation\": \"Update\",
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
-    ]
+    \"creationTimestamp\": null
   },
   \"spec\": {
     \"template\": {
@@ -386,14 +347,6 @@ SnapShot = """
         \"controller\": true,
         \"blockOwnerDeletion\": true
       }
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"apps/v1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
     ]
   },
   \"spec\": {
@@ -469,14 +422,6 @@ SnapShot = """
         \"controller\": true,
         \"blockOwnerDeletion\": true
       }
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"v1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
     ]
   },
   \"spec\": {
@@ -506,7 +451,9 @@ SnapShot = """
     \"ipFamilies\": [
       \"IPv4\"
     ],
-    \"ipFamilyPolicy\": \"SingleStack\"
+    \"ipFamilyPolicy\": \"SingleStack\",
+    \"allocateLoadBalancerNodePorts\": true,
+    \"internalTrafficPolicy\": \"Cluster\"
   },
   \"status\": {
     \"loadBalancer\": {}
@@ -533,14 +480,6 @@ SnapShot = """
         \"uid\": \"\",
         \"controller\": true,
         \"blockOwnerDeletion\": true
-      }
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"networking.k8s.io/v1\",
-        \"fieldsType\": \"FieldsV1\"
       }
     ]
   },
@@ -591,4 +530,3 @@ SnapShot = """
   }
 }
 """
-
