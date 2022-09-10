@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import { act, cleanup, render, RenderResult, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, RenderResult, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { useSnackbar } from "notistack";
 import { useLogin } from "../../../components/LoginProvider";
@@ -22,6 +22,7 @@ const loginMock: MockedMemberFunction<typeof useLogin> = {
   login: jest.fn(),
   logout: jest.fn(),
   updataPassword: jest.fn(),
+  refreshUserInfo: jest.fn(),
 };
 
 const useSnackbarMock = useSnackbar as jest.MockedFunction<typeof useSnackbar>;
@@ -51,11 +52,10 @@ describe("PasswordChangeDialog", () => {
   describe("render", () => {
 
     it("render", async () => {
-      const target = render(
+      render(
         <PasswordChangeDialog onClose={() => closeHandlerMock()} />
       );
-      const { baseElement } = target;
-      expect(baseElement).toMatchSnapshot();
+      expect(document.body).toMatchSnapshot();
     });
 
   });
@@ -63,110 +63,104 @@ describe("PasswordChangeDialog", () => {
 
   describe("behavior", () => {
 
-    let target: RenderResult;
-
-    beforeEach(async () => {
-      target = render(
-        <PasswordChangeDialog onClose={() => closeHandlerMock()} />
-      );
-    });
-
     it("ok", async () => {
-      const baseElement = target.baseElement;
-      userEvent.type(baseElement.querySelector('[name="currentPassword"]')!, 'oldPassword');
-      userEvent.type(baseElement.querySelector('[name="newPassword1"]')!, 'newPassword');
-      userEvent.type(baseElement.querySelector('[name="newPassword2"]')!, 'newPassword');
-      //expect(newPassword2).toHaveValue('newPassword');
-
-      await act(async () => {
-        loginMock.updataPassword.mockResolvedValue({} as any);
-        userEvent.click(screen.getByText('Change Password'));
-      });
+      const user = userEvent.setup();
+      const { baseElement } = render(<PasswordChangeDialog onClose={() => closeHandlerMock()} />);
+      await user.type(baseElement.querySelector('[name="currentPassword"]')!, 'oldPassword');
+      await user.type(baseElement.querySelector('[name="newPassword1"]')!, 'newPassword');
+      await user.type(baseElement.querySelector('[name="newPassword2"]')!, 'newPassword');
+      loginMock.updataPassword.mockResolvedValue({} as any);
+      await user.click(screen.getByText('Change Password'));
       expect(loginMock.updataPassword.mock.calls).toMatchObject([["oldPassword", "newPassword"]]);
       expect(closeHandlerMock.mock.calls.length).toEqual(1);
     });
 
     it("ng required", async () => {
-      expect(target.getAllByText('Current password')[0].parentElement!
+      const user = userEvent.setup();
+      render(<PasswordChangeDialog onClose={() => closeHandlerMock()} />);
+      expect(screen.getAllByText('Current password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-      expect(target.getAllByText('New password')[0].parentElement!
+      expect(screen.getAllByText('New password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-      expect(target.getAllByText('Confirm password')[0].parentElement!
+      expect(screen.getAllByText('Confirm password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-
       await act(async () => {
-        userEvent.click(screen.getByText('Change Password'));
+        await user.click(screen.getByText('Change Password'));
       });
-      expect(target.getAllByText('Current password')[0].parentElement!
+      expect(screen.getAllByText('Current password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Required');
-      expect(target.getAllByText('New password')[0].parentElement!
+      expect(screen.getAllByText('New password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Required');
-      expect(target.getAllByText('Confirm password')[0].parentElement!
+      expect(screen.getAllByText('Confirm password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Required');
       expect(loginMock.updataPassword.mock.calls.length).toEqual(0);
       expect(closeHandlerMock.mock.calls.length).toEqual(0);
     });
 
     it("ng Contains spaces", async () => {
-      const baseElement = target.baseElement;
-      userEvent.type(baseElement.querySelector('[name="currentPassword"]')!, ' 12345 ');
-      userEvent.type(baseElement.querySelector('[name="newPassword1"]')!, '54 3 21');
-      userEvent.type(baseElement.querySelector('[name="newPassword2"]')!, '54 3 21');
+      const user = userEvent.setup();
+      const { baseElement } = render(<PasswordChangeDialog onClose={() => closeHandlerMock()} />);
+      await user.type(baseElement.querySelector('[name="currentPassword"]')!, ' 12345 ');
+      await user.type(baseElement.querySelector('[name="newPassword1"]')!, '54 3 21');
+      await user.type(baseElement.querySelector('[name="newPassword2"]')!, '54 3 21');
 
-      expect(target.getAllByText('Current password')[0].parentElement!
+      expect(screen.getAllByText('Current password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-      expect(target.getAllByText('New password')[0].parentElement!
+      expect(screen.getAllByText('New password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-      expect(target.getAllByText('Confirm password')[0].parentElement!
+      expect(screen.getAllByText('Confirm password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-
       await act(async () => {
-        userEvent.click(screen.getByText('Change Password'));
+        await user.click(screen.getByText('Change Password'));
       });
-      expect(target.getAllByText('Current password')[0].parentElement!
+      expect(screen.getAllByText('Current password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Contains spaces');
-      expect(target.getAllByText('New password')[0].parentElement!
+      expect(screen.getAllByText('New password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Contains spaces');
-      expect(target.getAllByText('Confirm password')[0].parentElement!
+      expect(screen.getAllByText('Confirm password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Contains spaces');
       expect(loginMock.updataPassword.mock.calls.length).toEqual(0);
       expect(closeHandlerMock.mock.calls.length).toEqual(0);
     });
 
     it("ng Contains spaces", async () => {
-      const baseElement = target.baseElement;
-      userEvent.type(baseElement.querySelector('[name="currentPassword"]')!, 'oldPassword');
-      userEvent.type(baseElement.querySelector('[name="newPassword1"]')!, 'newPassword');
-      userEvent.type(baseElement.querySelector('[name="newPassword2"]')!, 'XXXXXXXX');
+      const user = userEvent.setup();
+      const { baseElement } = render(<PasswordChangeDialog onClose={() => closeHandlerMock()} />);
+      await user.type(baseElement.querySelector('[name="currentPassword"]')!, 'oldPassword');
+      await user.type(baseElement.querySelector('[name="newPassword1"]')!, 'newPassword');
+      await user.type(baseElement.querySelector('[name="newPassword2"]')!, 'XXXXXXXX');
 
-      expect(target.getAllByText('Current password')[0].parentElement!
+      expect(screen.getAllByText('Current password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-      expect(target.getAllByText('New password')[0].parentElement!
+      expect(screen.getAllByText('New password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-      expect(target.getAllByText('Confirm password')[0].parentElement!
+      expect(screen.getAllByText('Confirm password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Passwords do not match');
-
       await act(async () => {
-        userEvent.click(screen.getByText('Change Password'));
+        await user.click(screen.getByText('Change Password'));
       });
-      expect(target.getAllByText('Current password')[0].parentElement!
+      expect(screen.getAllByText('Current password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-      expect(target.getAllByText('New password')[0].parentElement!
+      expect(screen.getAllByText('New password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
-      expect(target.getAllByText('Confirm password')[0].parentElement!
+      expect(screen.getAllByText('Confirm password')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Passwords do not match');
       expect(loginMock.updataPassword.mock.calls.length).toEqual(0);
       expect(closeHandlerMock.mock.calls.length).toEqual(0);
     });
 
     it("cancel", async () => {
-      userEvent.click(screen.getByText('Cancel'));
+      const user = userEvent.setup();
+      render(<PasswordChangeDialog onClose={() => closeHandlerMock()} />);
+      await user.click(screen.getByText('Cancel'));
       expect(loginMock.updataPassword.mock.calls.length).toEqual(0);
       expect(closeHandlerMock.mock.calls.length).toEqual(1);
     });
 
     it("close <- click outside", async () => {
-      userEvent.click(target.baseElement.getElementsByClassName('MuiDialog-container')[0]);
+      const user = userEvent.setup();
+      const { baseElement } = render(<PasswordChangeDialog onClose={() => closeHandlerMock()} />);
+      await user.click(baseElement.getElementsByClassName('MuiDialog-container')[0]);
       expect(loginMock.updataPassword.mock.calls.length).toEqual(0);
       expect(closeHandlerMock.mock.calls.length).toEqual(1);
     });
@@ -185,20 +179,14 @@ describe("PasswordChangeDialog", () => {
           <Button onClick={() => dispatch(false)}>close</Button>
         </>);
       }
-
-      let target: RenderResult;
-      await act(async () => {
-        target = render(
-          <PasswordChangeDialogContext.Provider><Stub /></PasswordChangeDialogContext.Provider>
-        );
-      });
-      await act(async () => { expect(target.baseElement).toMatchSnapshot('1.initial render'); });
-      await act(async () => { userEvent.click(target.getByText('open')); });
-      await act(async () => { expect(target.baseElement).toMatchSnapshot('2.opend'); });
-      await act(async () => { userEvent.click(screen.getByText('close')); });
-      await act(async () => { expect(target.baseElement).toMatchSnapshot('3.closed'); });
+      const user = userEvent.setup();
+      render(<PasswordChangeDialogContext.Provider><Stub /></PasswordChangeDialogContext.Provider>);
+      await act(async () => { expect(document.body).toMatchSnapshot('1.initial render'); });
+      await act(async () => { await user.click(screen.getByText('open')); });
+      await act(async () => { expect(document.body).toMatchSnapshot('2.opend'); });
+      await act(async () => { await user.click(screen.getByText('close')); });
+      await act(async () => { expect(document.body).toMatchSnapshot('3.closed'); });
     });
-
   });
 
 });

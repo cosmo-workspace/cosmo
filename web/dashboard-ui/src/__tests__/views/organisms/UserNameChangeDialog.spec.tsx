@@ -66,11 +66,10 @@ describe("UserNameChangeDialog", () => {
 
     it("render", async () => {
       const user1: User = { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' };
-      const target = render(
+      render(
         <UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />
       );
-      const { baseElement } = target;
-      expect(baseElement).toMatchSnapshot();
+      expect(document.body).toMatchSnapshot();
     });
 
   });
@@ -78,44 +77,36 @@ describe("UserNameChangeDialog", () => {
 
   describe("behavior", () => {
 
-    let target: RenderResult;
-
-    beforeEach(async () => {
-      const user1: User = { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' };
-      target = render(
-        <UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />
-      );
-    });
+    const user1: User = { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' };
 
     it("ok", async () => {
-      const baseElement = target.baseElement;
-      const nameElement = baseElement.querySelector('[name="name"]')!;
-      (nameElement as HTMLInputElement).setSelectionRange(0, 99);
-      userEvent.type(baseElement.querySelector('[name="name"]')!, 'New Name');
+      const user = userEvent.setup();
+      const { baseElement } = render(<UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />);
 
-      await act(async () => {
-        userModuleMock.updateName.mockResolvedValue({} as any);
-        loginMock.refreshUserInfo.mockResolvedValue({} as any);
-        userEvent.click(screen.getByText('Update'));
-      });
+      const nameElement = baseElement.querySelector('[name="name"]')!;
+      await user.type(nameElement, 'New Name', { initialSelectionStart: 0, initialSelectionEnd: 99 });
+
+      userModuleMock.updateName.mockResolvedValue({} as any);
+      loginMock.refreshUserInfo.mockResolvedValue({} as any);
+      await user.click(screen.getByText('Update'));
       expect(userModuleMock.updateName.mock.calls).toMatchObject([["user1", "New Name"]]);
       expect(loginMock.refreshUserInfo.mock.calls).toMatchObject([[]]);
       expect(closeHandlerMock.mock.calls.length).toEqual(1);
     });
 
     it("ng required", async () => {
-      expect(target.getAllByText('User Name')[0].parentElement!
+      const user = userEvent.setup();
+      const { baseElement } = render(<UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />);
+
+      expect(screen.getAllByText('User Name')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
 
-      const baseElement = target.baseElement;
       const nameElement = baseElement.querySelector('[name="name"]')!;
-      (nameElement as HTMLInputElement).setSelectionRange(0, 99);
-      userEvent.type(nameElement, '{backspace}');
-
+      await user.type(nameElement, '{backspace}', { initialSelectionStart: 0, initialSelectionEnd: 99 });
       await act(async () => {
-        userEvent.click(screen.getByText('Update'));
+        await user.click(screen.getByText('Update'));
       });
-      expect(target.getAllByText('User Name')[0].parentElement!
+      expect(screen.getAllByText('User Name')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Required');
       expect(userModuleMock.updateName.mock.calls.length).toEqual(0);
       expect(loginMock.refreshUserInfo.mock.calls.length).toEqual(0);
@@ -123,40 +114,44 @@ describe("UserNameChangeDialog", () => {
     });
 
     it("ng over 32", async () => {
-      expect(target.getAllByText('User Name')[0].parentElement!
+      const user = userEvent.setup();
+      const { baseElement } = render(<UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />);
+
+      expect(screen.getAllByText('User Name')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
 
-      const baseElement = target.baseElement;
       const nameElement = baseElement.querySelector('[name="name"]')!;
-      (nameElement as HTMLInputElement).setSelectionRange(0, 99);
-      userEvent.type(nameElement, '----+----1----+----2----+----3--x');
-
+      await user.type(nameElement, '----+----1----+----2----+----3--x', { initialSelectionStart: 0, initialSelectionEnd: 99 });
       await act(async () => {
-        userEvent.click(screen.getByText('Update'));
+        await user.click(screen.getByText('Update'));
       });
-      expect(target.getAllByText('User Name')[0].parentElement!
+
+      expect(screen.getAllByText('User Name')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toHaveTextContent('Max 32 characters');
       expect(userModuleMock.updateName.mock.calls.length).toEqual(0);
       expect(loginMock.refreshUserInfo.mock.calls.length).toEqual(0);
       expect(closeHandlerMock.mock.calls.length).toEqual(0);
 
       await act(async () => {
-        (nameElement as HTMLInputElement).setSelectionRange(0, 99);
-        userEvent.type(nameElement, '----+----1----+----2----+----3--');
+        await user.type(nameElement, '----+----1----+----2----+----3--', { initialSelectionStart: 0, initialSelectionEnd: 99 });
       });
-      expect(target.getAllByText('User Name')[0].parentElement!
+      expect(screen.getAllByText('User Name')[0].parentElement!
         .getElementsByClassName('MuiFormHelperText-root')[0]).toBeUndefined();
     });
 
     it("cancel", async () => {
-      userEvent.click(screen.getByText('Cancel'));
+      const user = userEvent.setup();
+      render(<UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />);
+      await user.click(screen.getByText('Cancel'));
       expect(userModuleMock.updateName.mock.calls.length).toEqual(0);
       expect(loginMock.refreshUserInfo.mock.calls.length).toEqual(0);
       expect(closeHandlerMock.mock.calls.length).toEqual(1);
     });
 
     it("not close <- click outside", async () => {
-      userEvent.click(target.baseElement.getElementsByClassName('MuiDialog-container')[0]);
+      const user = userEvent.setup();
+      const { baseElement } = render(<UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />);
+      await user.click(baseElement.getElementsByClassName('MuiDialog-container')[0]);
       expect(userModuleMock.updateName.mock.calls.length).toEqual(0);
       expect(loginMock.refreshUserInfo.mock.calls.length).toEqual(0);
       expect(closeHandlerMock.mock.calls.length).toEqual(0);
@@ -177,18 +172,13 @@ describe("UserNameChangeDialog", () => {
           <Button onClick={() => dispatch(false)}>close</Button>
         </>);
       }
-
-      let target: RenderResult;
-      await act(async () => {
-        target = render(
-          <UserNameChangeDialogContext.Provider><Stub /></UserNameChangeDialogContext.Provider>
-        );
-      });
-      await act(async () => { expect(target.baseElement).toMatchSnapshot('1.initial render'); });
-      await act(async () => { userEvent.click(target.getByText('open')); });
-      await act(async () => { expect(target.baseElement).toMatchSnapshot('2.opend'); });
-      await act(async () => { userEvent.click(screen.getByText('close')); });
-      await act(async () => { expect(target.baseElement).toMatchSnapshot('3.closed'); });
+      const user = userEvent.setup();
+      render(<UserNameChangeDialogContext.Provider><Stub /></UserNameChangeDialogContext.Provider>);
+      await act(async () => { expect(document.body).toMatchSnapshot('1.initial render'); });
+      await act(async () => { await user.click(screen.getByText('open')); });
+      await act(async () => { expect(document.body).toMatchSnapshot('2.opend'); });
+      await act(async () => { await user.click(screen.getByText('close')); });
+      await act(async () => { expect(document.body).toMatchSnapshot('3.closed'); });
     });
 
   });
