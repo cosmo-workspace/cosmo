@@ -160,7 +160,7 @@ const useLoginModule = () => {
 /**
  * Provider
  */
-export const LoginProvider: React.FC = ({ children }) => {
+export const LoginProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   console.log('LoginProvider');
   const loginModule = useLoginModule();
   const [isVerified, setIsVerified] = useState(false);

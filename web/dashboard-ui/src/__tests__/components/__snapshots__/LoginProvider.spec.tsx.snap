@@ -99,8 +99,6 @@ Object {
 }
 `;
 
-exports[`LoginProvider logout error 2`] = `undefined`;
-
 exports[`LoginProvider logout error: enqueueSnackbar calls 1`] = `
 Array [
   Array [
@@ -119,8 +117,6 @@ Array [
 `;
 
 exports[`LoginProvider logout ok 1`] = `undefined`;
-
-exports[`LoginProvider logout ok 2`] = `undefined`;
 
 exports[`LoginProvider logout ok: enqueueSnackbar calls 1`] = `Array []`;
 
@@ -148,13 +144,13 @@ exports[`LoginProvider refreshUserInfo not login ok 2`] = `undefined`;
 
 exports[`LoginProvider refreshUserInfo not login ok: enqueueSnackbar calls 1`] = `Array []`;
 
-exports[`LoginProvider updataPassword error 1`] = `
+exports[`LoginProvider updatePassword error 1`] = `
 Object {
   "message": "updataPassword error",
 }
 `;
 
-exports[`LoginProvider updataPassword error: enqueueSnackbar calls 1`] = `
+exports[`LoginProvider updatePassword error: enqueueSnackbar calls 1`] = `
 Array [
   Array [
     "updataPassword error",
@@ -165,7 +161,7 @@ Array [
 ]
 `;
 
-exports[`LoginProvider updataPassword error: putUserPassword calls 1`] = `
+exports[`LoginProvider updatePassword error: putUserPassword calls 1`] = `
 Array [
   Array [
     "user1",
@@ -177,7 +173,7 @@ Array [
 ]
 `;
 
-exports[`LoginProvider updataPassword ok 1`] = `
+exports[`LoginProvider updatePassword ok 1`] = `
 Object {
   "config": Object {},
   "data": Object {
@@ -195,9 +191,9 @@ Object {
 }
 `;
 
-exports[`LoginProvider updataPassword ok: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider updatePassword ok: enqueueSnackbar calls 1`] = `Array []`;
 
-exports[`LoginProvider updataPassword ok: putUserPassword calls 1`] = `
+exports[`LoginProvider updatePassword ok: putUserPassword calls 1`] = `
 Array [
   Array [
     "user1",

@@ -36,18 +36,13 @@ describe("DialogContext", () => {
         <Button onClick={() => dispatch(false)}>close</Button>
       </>);
     }
-
-    let target: RenderResult;
-    await act(async () => {
-      target = render(
-        <testDialogContext.Provider><Stub /></testDialogContext.Provider>
-      );
-    });
-    await act(async () => { expect(target.baseElement).toMatchSnapshot('1.initial render'); });
-    await act(async () => { userEvent.click(target.getByText('open')); });
-    await act(async () => { expect(target.baseElement).toMatchSnapshot('2.opend'); });
-    await act(async () => { userEvent.click(screen.getByText('close')); });
-    await act(async () => { expect(target.baseElement).toMatchSnapshot('3.closed'); });
+    const user = userEvent.setup();
+    render(<testDialogContext.Provider><Stub /></testDialogContext.Provider>);
+    await act(async () => { expect(document.body).toMatchSnapshot('1.initial render'); });
+    await act(async () => { await user.click(screen.getByText('open')); });
+    await act(async () => { expect(document.body).toMatchSnapshot('2.opend'); });
+    await act(async () => { await user.click(screen.getByText('close')); });
+    await act(async () => { expect(document.body).toMatchSnapshot('3.closed'); });
   });
 
   it("close esc", async () => {
@@ -59,16 +54,11 @@ describe("DialogContext", () => {
         <Button onClick={() => dispatch(false)}>close</Button>
       </>);
     }
-
-    let target: RenderResult;
-    await act(async () => {
-      target = render(
-        <testDialogContext.Provider><Stub /></testDialogContext.Provider>
-      );
-    });
-    await act(async () => { userEvent.click(target.getByText('open')); });
-    await act(async () => { userEvent.type(screen.getByText('open'), '{esc}'); });
-    await act(async () => { expect(target.baseElement).toMatchSnapshot('closed'); });
+    const user = userEvent.setup();
+    render(<testDialogContext.Provider><Stub /></testDialogContext.Provider>);
+    await act(async () => { await user.click(screen.getByText('open')); });
+    await act(async () => { await user.keyboard('{Esc}'); });
+    await act(async () => { expect(document.body).toMatchSnapshot('closed'); });
   });
 
 });
@@ -86,38 +76,34 @@ describe('ModuleContext', () => {
     const TestContext = ModuleContext(useTestHook);
     const useTest = TestContext.useContext;
 
-    const Component1: React.FC = ({ children }) => {
+    const Component1: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       const { state, setState } = useTest();
       return (<div>
         <button onClick={() => { setState("11111") }}>button1</button>
-        <div id="textbox1">{state}</div>
+        <div data-testid="textbox1">{state}</div>
       </div>);
     }
-    const Component2: React.FC = ({ children }) => {
+    const Component2: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       const { state, setState } = useTest();
       return (<div>
         <button onClick={() => { setState("22222") }}>button2</button>
-        <div id="textbox2">{state}</div>
+        <div data-testid="textbox2">{state}</div>
       </div>);
     }
-
-    const target = render(
+    const user = userEvent.setup();
+    render(
       <TestContext.Provider>
         <Component1 />
         <Component2 />
       </TestContext.Provider>
     );
 
-    await act(async () => {
-      userEvent.click(target.getByText('button1'));
-    });
-    expect(target.container.ownerDocument.getElementById('textbox1')).toHaveTextContent('11111');
-    expect(target.container.ownerDocument.getElementById('textbox2')).toHaveTextContent('11111');
-    await act(async () => {
-      userEvent.click(target.getByText('button2'));
-    });
-    expect(target.container.ownerDocument.getElementById('textbox1')).toHaveTextContent('22222');
-    expect(target.container.ownerDocument.getElementById('textbox2')).toHaveTextContent('22222');
+    await user.click(screen.getByText('button1'));
+    expect(screen.getByTestId('textbox1')).toHaveTextContent('11111');
+    expect(screen.getByTestId('textbox2')).toHaveTextContent('11111');
+    await user.click(screen.getByText('button2'));
+    expect(screen.getByTestId('textbox1')).toHaveTextContent('22222');
+    expect(screen.getByTestId('textbox2')).toHaveTextContent('22222');
   });
 
 });

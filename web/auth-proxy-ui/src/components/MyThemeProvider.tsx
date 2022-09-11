@@ -26,7 +26,7 @@ const MyTheme = () => {
   })
 }
 
-export const MyThemeProvider: React.FC = ({ children }) => {
+export const MyThemeProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
 
   const myTheme = MyTheme();
 

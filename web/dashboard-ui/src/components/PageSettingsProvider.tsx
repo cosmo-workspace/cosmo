@@ -33,7 +33,7 @@ function reducer(state: PageSettings, action: Action) {
   }
 }
 
-export const PageSettingsProvider: React.FC = ({ children }) => {
+export const PageSettingsProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const persistKey = 'csm_PageSettings';
   const persistPageSettings = JSON.parse(localStorage.getItem('csm_PageSettings') || "{}");
   const [pageSettings, dispatch] = useReducer(reducer, persistPageSettings || {})

@@ -1,8 +1,8 @@
-import { act, renderHook, RenderResult } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useSnackbar } from "notistack";
 import React from 'react';
-import { NetworkRule, Template, TemplateApiFactory, User, UserApiFactory, UserRoleEnum, Workspace, WorkspaceApiFactory, UpsertNetworkRuleResponse, RemoveNetworkRuleResponse, GetUserResponse, ListTemplatesResponse, DeleteWorkspaceResponse, PatchWorkspaceResponse, CreateWorkspaceResponse, GetWorkspaceResponse } from "../../../api/dashboard/v1alpha1";
+import { CreateWorkspaceResponse, DeleteWorkspaceResponse, GetUserResponse, GetWorkspaceResponse, ListTemplatesResponse, NetworkRule, PatchWorkspaceResponse, RemoveNetworkRuleResponse, Template, TemplateApiFactory, UpsertNetworkRuleResponse, User, UserApiFactory, UserRoleEnum, Workspace, WorkspaceApiFactory } from "../../../api/dashboard/v1alpha1";
 import { useLogin } from "../../../components/LoginProvider";
 import { useProgress } from '../../../components/ProgressProvider';
 import { computeStatus, useNetworkRule, useTemplates, useWorkspaceModule, useWorkspaceUsersModule, WorkspaceContext, WorkspaceUsersContext } from '../../../views/organisms/WorkspaceModule';
@@ -100,15 +100,10 @@ describe('computeStatus', () => {
 
 describe('useWorkspace', () => {
 
-  let result: RenderResult<ReturnType<typeof useWorkspaceModule>>;
-
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     RestWorkspaceMock.mockReturnValue(wsMock);
-    result = renderHook(() => useWorkspaceModule(), {
-      wrapper: ({ children }) => (<WorkspaceContext.Provider>{children}</WorkspaceContext.Provider>),
-    }).result;
     wsMock.getWorkspaces.mockResolvedValue(axiosNormalResponse({ message: "", items: [ws11, ws13, ws12] }));
   });
 
@@ -117,15 +112,22 @@ describe('useWorkspace', () => {
     jest.useRealTimers();
   });
 
+  function renderUseWorkspaceModule() {
+    return renderHook(() => useWorkspaceModule(), {
+      wrapper: ({ children }) => (<WorkspaceContext.Provider>{children}</WorkspaceContext.Provider>),
+    });
+  }
 
   describe('useWorkspace getWorkspaces', () => {
 
     it('normal', async () => {
+      const { result } = renderUseWorkspaceModule();
       await act(async () => { result.current.getWorkspaces(user1.id) });
       expect(result.current.workspaces).toStrictEqual([ws11, ws12, ws13]);
     });
 
     it('normal empty', async () => {
+      const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValue(axiosNormalResponse({ message: "", items: [] }));
       await act(async () => { result.current.getWorkspaces(user1.id) });
       expect(result.current.workspaces).toStrictEqual([]);
@@ -133,6 +135,7 @@ describe('useWorkspace', () => {
 
 
     it('get error', async () => {
+      const { result } = renderUseWorkspaceModule();
       const err: AxiosError<GetWorkspaceResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
@@ -147,6 +150,7 @@ describe('useWorkspace', () => {
   describe('useWorkspace refreshWorkspaces', () => {
 
     it('normal', async () => {
+      const { result } = renderUseWorkspaceModule();
       await act(async () => { result.current.refreshWorkspaces(user1.id) });
       expect(result.current.workspaces).toStrictEqual([ws11, ws12, ws13]);
     });
@@ -164,6 +168,8 @@ describe('useWorkspace', () => {
 
       jest.useFakeTimers();
       jest.spyOn(global, 'setTimeout');
+
+      const { result } = renderUseWorkspaceModule();
 
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, wsCreateing, ws13] }));
@@ -203,6 +209,8 @@ describe('useWorkspace', () => {
       const wsStoping = wsStat(ws12, 0, 'Running');
       const wsStopped = wsStat(ws12, 0, 'NotRunning');
 
+      const { result } = renderUseWorkspaceModule();
+
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, wsStoping, ws13] }));
       await act(async () => { result.current.getWorkspaces(user1.id) });
@@ -232,17 +240,19 @@ describe('useWorkspace', () => {
 
       const wsRunning1 = wsStat(ws12, 1, 'Running');
       wsRunning1.spec!.additionalNetwork = [
-        { portName: 'portname1', portNumber: 3000, url: 'url1' },
-        { portName: 'portname2', portNumber: 3000 },
+        { portName: 'portname1', portNumber: 3000, url: 'url1', public: false },
+        { portName: 'portname2', portNumber: 3000, public: false },
       ];
       const wsRunning2 = wsStat(ws12, 1, 'Running');
       wsRunning1.spec!.additionalNetwork = [
-        { portName: 'portname1', portNumber: 3000, url: 'url1' },
-        { portName: 'portname2', portNumber: 3000, url: 'url2' },
+        { portName: 'portname1', portNumber: 3000, url: 'url1', public: false },
+        { portName: 'portname2', portNumber: 3000, url: 'url2', public: false },
       ];
 
       jest.useFakeTimers();
       jest.spyOn(global, 'setTimeout');
+
+      const { result } = renderUseWorkspaceModule();
 
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, wsRunning1, ws13] }));
@@ -268,6 +278,8 @@ describe('useWorkspace', () => {
     it('normal timeout', async () => {
 
       const wsStoping = wsStat(ws12, 0, 'Running');
+
+      const { result } = renderUseWorkspaceModule();
 
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, wsStoping, ws13] }));
@@ -306,6 +318,7 @@ describe('useWorkspace', () => {
     jest.useFakeTimers();
     jest.spyOn(global, 'setTimeout');
 
+    const { result } = renderUseWorkspaceModule();
     await act(async () => { result.current.refreshWorkspace(wsStoping) });
 
     wsMock.getWorkspace.mockRejectedValueOnce(err);
@@ -317,6 +330,7 @@ describe('useWorkspace', () => {
   describe('useWorkspace createWorkspace', () => {
 
     it('normal', async () => {
+      const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, ws12, ws13, ws15] }));
       await act(async () => { result.current.getWorkspaces(user1.id) });
       expect(result.current.workspaces).toStrictEqual([ws11, ws12, ws13, ws15]);
@@ -328,6 +342,7 @@ describe('useWorkspace', () => {
     });
 
     it('get error', async () => {
+      const { result } = renderUseWorkspaceModule();
       const err: AxiosError<CreateWorkspaceResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
@@ -343,6 +358,7 @@ describe('useWorkspace', () => {
   describe('useWorkspace runWorkspace', () => {
 
     it('normal', async () => {
+      const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, ws12, ws13] }));
       await act(async () => { result.current.getWorkspaces(user1.id) });
       expect(result.current.workspaces).toStrictEqual([ws11, ws12, ws13]);
@@ -355,6 +371,7 @@ describe('useWorkspace', () => {
     });
 
     it('error', async () => {
+      const { result } = renderUseWorkspaceModule();
       const err: AxiosError<PatchWorkspaceResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
@@ -369,6 +386,7 @@ describe('useWorkspace', () => {
   describe('useWorkspace stopWorkspace', () => {
 
     it('normal', async () => {
+      const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, ws12, ws13] }));
       await act(async () => { result.current.getWorkspaces(user1.id) });
       expect(result.current.workspaces).toStrictEqual([ws11, ws12, ws13]);
@@ -381,6 +399,7 @@ describe('useWorkspace', () => {
     });
 
     it('error', async () => {
+      const { result } = renderUseWorkspaceModule();
       const err: AxiosError<PatchWorkspaceResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
@@ -394,6 +413,7 @@ describe('useWorkspace', () => {
   describe('useWorkspace deleteWorkspace', () => {
 
     it('normal', async () => {
+      const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValueOnce(axiosNormalResponse({ message: "", items: [ws11, ws12, ws13] }));
       await act(async () => { result.current.getWorkspaces(user1.id) });
       expect(result.current.workspaces).toStrictEqual([ws11, ws12, ws13]);
@@ -406,6 +426,7 @@ describe('useWorkspace', () => {
     });
 
     it('error', async () => {
+      const { result } = renderUseWorkspaceModule();
       const err: AxiosError<DeleteWorkspaceResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
@@ -421,30 +442,30 @@ describe('useWorkspace', () => {
 
 describe('useTemplates', () => {
 
-  let result: RenderResult<ReturnType<typeof useTemplates>>;
-
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     restTemplateMock.mockReturnValue(templateMock);
-    result = renderHook(() => useTemplates()).result;
   });
 
   afterEach(() => { jest.restoreAllMocks(); });
 
   it('normal', async () => {
+    const { result } = renderHook(() => useTemplates());
     templateMock.getWorkspaceTemplates.mockResolvedValue(axiosNormalResponse({ message: "", items: [tmpl1, tmpl3, tmpl2] }));
     await act(async () => { result.current.getTemplates() });
     expect(result.current.templates).toStrictEqual([tmpl1, tmpl2, tmpl3]);
   });
 
   it('normal empty', async () => {
+    const { result } = renderHook(() => useTemplates());
     templateMock.getWorkspaceTemplates.mockResolvedValue(axiosNormalResponse({ message: "", items: [] }));
     await act(async () => { result.current.getTemplates() });
     expect(result.current.templates).toStrictEqual([]);
   });
 
   it('get error', async () => {
+    const { result } = renderHook(() => useTemplates());
     const err: AxiosError<ListTemplatesResponse> = {
       response: { data: { message: 'data.message' }, status: 401 } as any,
     } as any
@@ -458,36 +479,33 @@ describe('useTemplates', () => {
 
 describe('useNetworkRule', () => {
 
-  // const restNetworkMock = RestNetwork as jest.MockedFunction<typeof RestNetwork>;
-  // const nwMock: MockedMemberFunction<typeof RestNetwork> = {
-  //   getNetwork: jest.fn(),
-  //   putNetwork: jest.fn(),
-  //   deleteNetwork: jest.fn(),
-  // }
-  const nw111: NetworkRule = { portName: 'nw1', httpPath: '/path1', portNumber: 1111 };
-
-  let result: RenderResult<ReturnType<typeof useNetworkRule>>;
+  const nw111: NetworkRule = { portName: 'nw1', httpPath: '/path1', portNumber: 1111, public: false };
 
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     RestWorkspaceMock.mockReturnValue(wsMock);
-    result = renderHook(() => useNetworkRule(), {
-      wrapper: ({ children }) => (<WorkspaceContext.Provider>{children}</WorkspaceContext.Provider>),
-    }).result;
   });
 
   afterEach(() => { jest.restoreAllMocks(); });
 
+  function renderUseNetworkRule() {
+    return renderHook(() => useNetworkRule(), {
+      wrapper: ({ children }) => (<WorkspaceContext.Provider>{children}</WorkspaceContext.Provider>),
+    });
+  }
+
   describe('useNetworkRule upsertNetwork', () => {
 
     it('normal', async () => {
+      const { result } = renderUseNetworkRule();
       wsMock.putNetworkRule.mockResolvedValue(axiosNormalResponse({ message: "ok", networkRule: nw111 }));
       await act(async () => { result.current.upsertNetwork(ws11, nw111) });
       expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
     });
 
     it('error', async () => {
+      const { result } = renderUseNetworkRule();
       const err: AxiosError<UpsertNetworkRuleResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
@@ -501,12 +519,14 @@ describe('useNetworkRule', () => {
   describe('useNetworkRule removeNetwork', () => {
 
     it('normal', async () => {
+      const { result } = renderUseNetworkRule();
       wsMock.deleteNetworkRule.mockResolvedValue(axiosNormalResponse({ message: "ok", networkRule: nw111 }));
       await act(async () => { result.current.removeNetwork(ws11, nw111.portName) });
       expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
     });
 
     it('error', async () => {
+      const { result } = renderUseNetworkRule();
       const err: AxiosError<RemoveNetworkRuleResponse> = {
         response: { data: { message: 'data.message' }, status: 401 } as any,
       } as any
@@ -542,8 +562,6 @@ describe('useWorkspaceUsers', () => {
     putUserName: jest.fn(),
   }
 
-  let result: RenderResult<ReturnType<typeof useWorkspaceUsersModule>>;
-
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
@@ -562,7 +580,7 @@ describe('useWorkspaceUsers', () => {
         updataPassword: jest.fn(),
         refreshUserInfo: jest.fn(),
       });
-      result = renderHook(() => useWorkspaceUsersModule(), {
+      const result = renderHook(() => useWorkspaceUsersModule(), {
         wrapper: ({ children }) => (<WorkspaceUsersContext.Provider>{children}</WorkspaceUsersContext.Provider>),
       }).result;
 
@@ -572,17 +590,22 @@ describe('useWorkspaceUsers', () => {
     });
   });
 
+
   describe('useWorkspaceUsers getUsers', () => {
 
     beforeEach(async () => {
       useLoginMock.mockReturnValue(loginMock);
       RestUserMock.mockReturnValue(userMock);
-      result = renderHook(() => useWorkspaceUsersModule(), {
-        wrapper: ({ children }) => (<WorkspaceUsersContext.Provider>{children}</WorkspaceUsersContext.Provider>),
-      }).result;
     });
 
+    function renderUseWorkspaceUsersModule() {
+      return renderHook(() => useWorkspaceUsersModule(), {
+        wrapper: ({ children }) => (<WorkspaceUsersContext.Provider>{children}</WorkspaceUsersContext.Provider>),
+      });
+    }
+
     it('normal', async () => {
+      const { result } = renderUseWorkspaceUsersModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user2, user1, user3] }));
       await act(async () => { result.current.getUsers() });
       expect(result.current.users).toStrictEqual([user1, user2, user3]);
@@ -590,6 +613,7 @@ describe('useWorkspaceUsers', () => {
     });
 
     it('normal empty', async () => {
+      const { result } = renderUseWorkspaceUsersModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [] }));
       await act(async () => { result.current.getUsers() });
       expect(result.current.users).toStrictEqual([]);
@@ -597,6 +621,7 @@ describe('useWorkspaceUsers', () => {
     });
 
     it('normal no change', async () => {
+      const { result } = renderUseWorkspaceUsersModule();
       userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user2, user1, user3] }));
       await act(async () => { result.current.getUsers() });
       await act(async () => { result.current.getUsers() });
@@ -605,6 +630,7 @@ describe('useWorkspaceUsers', () => {
     });
 
     it('error', async () => {
+      const { result } = renderUseWorkspaceUsersModule();
       const err: AxiosError<GetUserResponse> = {
         response: { data: { message: undefined }, status: 402 } as any,
       } as any
