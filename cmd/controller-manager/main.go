@@ -222,5 +222,5 @@ func printOptions() {
 }
 
 func printVersion() {
-	fmt.Println("cosmo-controller-manager - cosmo v0.5.2 cosmo-workspace 2021")
+	fmt.Println("cosmo-controller-manager - cosmo v0.6.0 cosmo-workspace 2021")
 }
