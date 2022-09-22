@@ -169,7 +169,7 @@ HealthCheckLoop:
 			if err == nil {
 				break HealthCheckLoop
 			}
-			log.DebugAll().Info("healthcheck failed", "error", err)
+			log.DebugAll().Info("proxy creation healthcheck will retry after a second", "reason", err)
 			time.Sleep(time.Second)
 		}
 	}

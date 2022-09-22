@@ -57,7 +57,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 	before := ws.DeepCopy()
-	log.DebugAll().DumpObject(h.Client.Scheme(), before, "request workspace")
+	log.DumpObject(h.Client.Scheme(), before, "request workspace")
 
 	tmpl := &cosmov1alpha1.Template{}
 	err = h.Client.Get(ctx, types.NamespacedName{Name: ws.Spec.Template.Name}, tmpl)
@@ -132,7 +132,7 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	log.DebugAll().DumpObject(h.Client.Scheme(), ws, "request workspace")
+	log.DumpObject(h.Client.Scheme(), ws, "request workspace")
 
 	// check namespace for Workspace
 	userid := wsv1alpha1.UserIDByNamespace(ws.GetNamespace())

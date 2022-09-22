@@ -112,14 +112,14 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	// Update Workspace
 	if !equality.Semantic.DeepEqual(*before, ws) {
+		log.PrintObjectDiff(before, &ws)
+
 		err := r.Update(ctx, &ws)
 		if err != nil {
 			log.Error(err, "failed to apply Instance")
 			return ctrl.Result{}, err
 		}
-
-		log.Info("updated")
-		log.PrintObjectDiff(*before, ws)
+		log.Debug().Info("updated", "workspace", ws)
 	}
 
 	// Shutdown unused proxy

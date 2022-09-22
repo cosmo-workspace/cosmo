@@ -57,7 +57,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
+		log.DumpObject(h.Client.Scheme(), inst, "request instance")
 
 		instSpec = inst.GetSpec()
 
@@ -76,7 +76,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+		log.DumpObject(h.Client.Scheme(), inst, "request cluster instance")
 
 		instSpec = inst.GetSpec()
 
@@ -208,7 +208,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
+		log.DumpObject(h.Client.Scheme(), inst, "request instance")
 
 		// whether template exist
 		tmpl = &cosmov1alpha1.Template{}
@@ -224,7 +224,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+		log.DumpObject(h.Client.Scheme(), inst, "request cluster instance")
 
 		// whether template exist
 		tmpl = &cosmov1alpha1.ClusterTemplate{}

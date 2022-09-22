@@ -48,7 +48,7 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
+		log.DumpObject(h.Client.Scheme(), tmpl, "request template")
 
 	case "ClusterTemplate":
 		tmpl = &cosmov1alpha1.ClusterTemplate{}
@@ -56,7 +56,7 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
+		log.DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
 
 	default:
 		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
@@ -133,7 +133,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
+		log.DumpObject(h.Client.Scheme(), tmpl, "request template")
 
 		dummyInst = &cosmov1alpha1.Instance{}
 		dummyInst.SetName("dummy")
@@ -145,7 +145,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
+		log.DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
 
 		dummyInst = &cosmov1alpha1.ClusterInstance{}
 		dummyInst.SetName("dummy")

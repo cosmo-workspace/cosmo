@@ -22,7 +22,7 @@ type ClusterTemplateReconciler struct {
 }
 
 func (r *ClusterTemplateReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("ClusterTemplateReconciler")
+	log := clog.FromContext(ctx).WithName("ClusterTemplateReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")

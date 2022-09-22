@@ -2,7 +2,6 @@ package kubeutil
 
 import (
 	"context"
-	"os"
 	"strconv"
 	"time"
 
@@ -23,7 +22,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
@@ -172,7 +170,6 @@ spec:
 				Expect(podApplyCfg).Should(Equal(expectedPodApplyCfg))
 
 				By("checking resourceVersion is next one")
-				clog.PrintObjectDiff(os.Stderr, currentPod, appliedPod)
 
 				befVer, err := strconv.Atoi(currentPod.ResourceVersion)
 				Expect(err).ShouldNot(HaveOccurred())

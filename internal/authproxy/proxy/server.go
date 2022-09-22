@@ -179,7 +179,7 @@ func (p *ProxyServer) auth(next http.Handler) http.Handler {
 		}
 
 		sesInfo := session.Get(ses)
-		log.DebugAll().Info("get session", "userID", sesInfo.UserID, "deadline", sesInfo.Deadline)
+		log.Debug().Info("get session", "userID", sesInfo.UserID, "deadline", sesInfo.Deadline)
 
 		// check user ID is owner's
 		if sesInfo.UserID != p.User {

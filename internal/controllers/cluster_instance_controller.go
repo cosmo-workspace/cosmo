@@ -28,7 +28,7 @@ type ClusterInstanceReconciler struct {
 }
 
 func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("ClusterInstanceReconciler")
+	log := clog.FromContext(ctx).WithName("ClusterInstanceReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
@@ -39,7 +39,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	before := inst.DeepCopy()
-	log.DebugAll().DumpObject(r.Scheme, before, "request object")
+	log.DumpObject(r.Scheme, before, "request object")
 
 	tmpl := &cosmov1alpha1.ClusterTemplate{}
 	err := r.Client.Get(ctx, types.NamespacedName{Name: inst.Spec.Template.Name}, tmpl)

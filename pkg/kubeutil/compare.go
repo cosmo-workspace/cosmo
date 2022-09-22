@@ -4,7 +4,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/google/go-cmp/cmp"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -41,7 +41,7 @@ type printDiff struct {
 }
 
 func (o printDiff) Apply(x, y Comparable) {
-	clog.PrintObjectDiff(o.out, x, y)
+	o.out.Write([]byte(cmp.Diff(x, y)))
 }
 
 func WithPrintDiff(w io.Writer) DeepEqualOption {

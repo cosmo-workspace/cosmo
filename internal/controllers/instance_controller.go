@@ -38,7 +38,7 @@ type InstanceReconciler struct {
 //+kubebuilder:rbac:groups=cosmo.cosmo-workspace.github.io,resources=instances/finalizers,verbs=update
 
 func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("InstanceReconciler")
+	log := clog.FromContext(ctx).WithName("InstanceReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
@@ -49,7 +49,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	before := inst.DeepCopy()
-	log.DebugAll().DumpObject(r.Scheme, before, "request object")
+	log.DumpObject(r.Scheme, before, "request object")
 
 	tmpl := &cosmov1alpha1.Template{}
 	err := r.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
@@ -155,7 +155,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 			// if not found, create resource
 			if apierrs.IsNotFound(err) {
 				log.Info("creating new built resource", "kind", built.GetKind(), "name", built.GetName())
-				log.DebugAll().DumpObject(r.Scheme, &built, "built object")
+				log.DumpObject(r.Scheme, &built, "built object")
 
 				created, err := r.apply(ctx, &built, r.FieldManager)
 				if err != nil {
@@ -185,7 +185,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 				log.PrintObjectDiff(current, desired)
 
 				// apply
-				log.DebugAll().DumpObject(r.Scheme, &built, "applying object")
+				log.DumpObject(r.Scheme, &built, "applying object")
 				if _, err := r.apply(ctx, &built, r.FieldManager); err != nil {
 					errs = append(errs, fmt.Errorf("failed to apply resource %s %s: %w", built.GetKind(), built.GetName(), err))
 					continue

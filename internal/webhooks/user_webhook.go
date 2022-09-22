@@ -49,7 +49,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 	before := user.DeepCopy()
-	log.DebugAll().DumpObject(h.Client.Scheme(), before, "request user")
+	log.DumpObject(h.Client.Scheme(), before, "request user")
 
 	addonTmpls, err := kubeutil.ListTemplateObjectsByType(ctx, h.Client, []string{wsv1alpha1.TemplateTypeUserAddon})
 	if err != nil {
@@ -64,8 +64,6 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 
 	// add default user addon
 	for _, addonTmpl := range addonTmpls {
-		log.DebugAll().Info("user addon template", "name", addonTmpl.GetName())
-
 		ann := addonTmpl.GetAnnotations()
 		if ann == nil {
 			continue
@@ -146,7 +144,7 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	log.DebugAll().DumpObject(h.Client.Scheme(), user, "request user")
+	log.DumpObject(h.Client.Scheme(), user, "request user")
 
 	// check user name is valid for namespace
 	if !validName(user.Name) {

@@ -33,7 +33,7 @@ type WorkspaceReconciler struct {
 //+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("WorkspaceReconciler")
+	log := clog.FromContext(ctx).WithName("WorkspaceReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
@@ -47,7 +47,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 	currentWs := ws.DeepCopy()
 
-	log.DebugAll().DumpObject(r.Scheme, currentWs, "request object")
+	log.DumpObject(r.Scheme, currentWs, "request object")
 
 	// sync workspace config with template
 	cfg, err := getWorkspaceConfig(ctx, r.Client, ws.Spec.Template.Name)
