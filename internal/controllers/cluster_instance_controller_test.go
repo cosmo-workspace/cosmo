@@ -12,6 +12,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -112,17 +113,18 @@ parameters:
 			err := k8sClient.Create(ctx, &inst)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			time.Sleep(3 * time.Second)
-
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
 			var createdInst cosmov1alpha1.ClusterInstance
-			Eventually(func() error {
+			Eventually(func() int {
 				key := client.ObjectKey{
 					Name: inst.Name,
 				}
-				return k8sClient.Get(ctx, key, &createdInst)
-			}, time.Second*60).Should(Succeed())
+				err := k8sClient.Get(ctx, key, &createdInst)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return createdInst.Status.LastAppliedObjectsCount
+			}, time.Second*10).ShouldNot(BeZero())
 			Ω(instanceSnapshot(&createdInst)).To(MatchSnapShot())
 
 			By("checking PersistentVolume is as expected in template")
@@ -164,22 +166,21 @@ parameters:
 				key := types.NamespacedName{
 					Name: inst.Name,
 				}
-				return k8sClient.Get(ctx, key, &curInst)
-			}, time.Second*10).Should(Succeed())
-			Ω(instanceSnapshot(&curInst)).To(MatchSnapShot())
+				err := k8sClient.Get(ctx, key, &curInst)
+				Expect(err).NotTo(HaveOccurred())
 
-			// update instance override spec
-			curInst.Spec.Override = cosmov1alpha1.OverrideSpec{
-				PatchesJson6902: []cosmov1alpha1.Json6902{
-					{
-						Target: cosmov1alpha1.ObjectRef{
-							ObjectReference: corev1.ObjectReference{
-								APIVersion: "v1",
-								Kind:       "PersistentVolume",
-								Name:       pvSufix,
+				// update instance override spec
+				curInst.Spec.Override = cosmov1alpha1.OverrideSpec{
+					PatchesJson6902: []cosmov1alpha1.Json6902{
+						{
+							Target: cosmov1alpha1.ObjectRef{
+								ObjectReference: corev1.ObjectReference{
+									APIVersion: "v1",
+									Kind:       "PersistentVolume",
+									Name:       pvSufix,
+								},
 							},
-						},
-						Patch: `
+							Patch: `
 [
   {
     "op": "replace",
@@ -188,28 +189,29 @@ parameters:
   }
 ]
 						`,
+						},
 					},
-				},
-			}
-
-			time.Sleep(3 * time.Second)
-
-			Eventually(func() error {
+				}
 				return k8sClient.Update(ctx, &curInst)
 			}, time.Second*60).Should(Succeed())
-			Ω(instanceSnapshot(&curInst)).To(MatchSnapShot())
+
+			expectedQuantity, _ := resource.ParseQuantity("10Gi")
 
 			By("checking if PersistentVolume updated")
 			var pv corev1.PersistentVolume
-			Eventually(func() error {
+			Eventually(func() resource.Quantity {
 				key := client.ObjectKey{
 					Name: instance.InstanceResourceName(inst.Name, pvSufix),
 				}
-				return k8sClient.Get(ctx, key, &pv)
-			}, time.Second*10).Should(Succeed())
+				err := k8sClient.Get(ctx, key, &pv)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return *pv.Spec.Capacity.Storage()
+
+			}, time.Second*30).Should(Equal(expectedQuantity))
 			Ω(objectSnapshot(&pv)).To(MatchSnapShot())
 
-			By("checking if StorageClass updated")
+			By("checking if StorageClass not updated")
 			var sc storagev1.StorageClass
 			Eventually(func() error {
 				key := client.ObjectKey{
@@ -221,8 +223,8 @@ parameters:
 		})
 	})
 
-	Context("when creating pod", func() {
-		It("create namespaced-scope resource even though namespace is not found", func() {
+	Context("when creating pod without metadata.namespace", func() {
+		It("success to create instance but child resources are not created", func() {
 			ctx := context.Background()
 
 			t := cosmov1alpha1.ClusterTemplate{

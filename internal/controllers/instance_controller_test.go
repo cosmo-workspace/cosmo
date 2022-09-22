@@ -24,7 +24,6 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 var _ = Describe("Instance controller", func() {
@@ -143,22 +142,6 @@ spec:
 			err := k8sClient.Create(ctx, &inst)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			By("fetching instance resource and checking if last applied resources added in instance status")
-
-			var createdInst cosmov1alpha1.Instance
-			Eventually(func() int {
-				key := client.ObjectKey{
-					Name:      inst.Name,
-					Namespace: inst.Namespace,
-				}
-				err := k8sClient.Get(ctx, key, &createdInst)
-				Expect(err).ShouldNot(HaveOccurred())
-
-				return createdInst.Status.LastAppliedObjectsCount
-			}, time.Second*10).ShouldNot(BeEquivalentTo(0))
-			kubeutil.RemoveDynamicFields(&createdInst)
-			Ω(instanceSnapshot(&createdInst)).To(MatchSnapShot())
-
 			By("checking if child deployment is as expected")
 			var deploy appsv1.Deployment
 			Eventually(func() error {
@@ -191,6 +174,18 @@ spec:
 				return k8sClient.Get(ctx, key, &ing)
 			}, time.Second*10).Should(Succeed())
 			Ω(objectSnapshot(&ing)).To(MatchSnapShot())
+
+			By("fetching instance resource and checking if last applied resources added in instance status")
+
+			var createdInst cosmov1alpha1.Instance
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name:      inst.Name,
+					Namespace: inst.Namespace,
+				}
+				return k8sClient.Get(ctx, key, &createdInst)
+			}, time.Second*10).Should(Succeed())
+			Ω(instanceSnapshot(&createdInst)).To(MatchSnapShot())
 		})
 	})
 
@@ -205,59 +200,58 @@ spec:
 					Name:      inst.Name,
 					Namespace: inst.Namespace,
 				}
-				return k8sClient.Get(ctx, key, &curInst)
-			}, time.Second*10).Should(Succeed())
+				err := k8sClient.Get(ctx, key, &curInst)
+				Expect(err).NotTo(HaveOccurred())
 
-			rev := curInst.GetResourceVersion()
-
-			// update instance override spec
-			prefix := netv1.PathTypePrefix
-			curInst.Spec.Override = cosmov1alpha1.OverrideSpec{
-				Scale: []cosmov1alpha1.ScalingOverrideSpec{
-					{
-						Target: cosmov1alpha1.ObjectRef{
-							ObjectReference: corev1.ObjectReference{
-								APIVersion: metav1.GroupVersion{
-									Group:   "apps",
-									Version: "v1",
-								}.String(),
-								Kind: "Deployment",
-								Name: "deploy",
-							},
-						},
-						Replicas: 3,
-					},
-				},
-				Network: &cosmov1alpha1.NetworkOverrideSpec{
-					Service: []cosmov1alpha1.ServiceOverrideSpec{
+				// update instance override spec
+				prefix := netv1.PathTypePrefix
+				curInst.Spec.Override = cosmov1alpha1.OverrideSpec{
+					Scale: []cosmov1alpha1.ScalingOverrideSpec{
 						{
-							TargetName: "svc",
-							Ports: []corev1.ServicePort{
-								{
-									Name:     "add",
-									Port:     9090,
-									Protocol: corev1.ProtocolTCP,
+							Target: cosmov1alpha1.ObjectRef{
+								ObjectReference: corev1.ObjectReference{
+									APIVersion: metav1.GroupVersion{
+										Group:   "apps",
+										Version: "v1",
+									}.String(),
+									Kind: "Deployment",
+									Name: "deploy",
+								},
+							},
+							Replicas: 3,
+						},
+					},
+					Network: &cosmov1alpha1.NetworkOverrideSpec{
+						Service: []cosmov1alpha1.ServiceOverrideSpec{
+							{
+								TargetName: "svc",
+								Ports: []corev1.ServicePort{
+									{
+										Name:     "add",
+										Port:     9090,
+										Protocol: corev1.ProtocolTCP,
+									},
 								},
 							},
 						},
-					},
-					Ingress: []cosmov1alpha1.IngressOverrideSpec{
-						{
-							TargetName: "ing",
-							Rules: []netv1.IngressRule{
-								{
-									Host: "add.example.com",
-									IngressRuleValue: netv1.IngressRuleValue{
-										HTTP: &netv1.HTTPIngressRuleValue{
-											Paths: []netv1.HTTPIngressPath{
-												{
-													Path:     "/add",
-													PathType: &prefix,
-													Backend: netv1.IngressBackend{
-														Service: &netv1.IngressServiceBackend{
-															Name: "svc",
-															Port: netv1.ServiceBackendPort{
-																Number: 9090,
+						Ingress: []cosmov1alpha1.IngressOverrideSpec{
+							{
+								TargetName: "ing",
+								Rules: []netv1.IngressRule{
+									{
+										Host: "add.example.com",
+										IngressRuleValue: netv1.IngressRuleValue{
+											HTTP: &netv1.HTTPIngressRuleValue{
+												Paths: []netv1.HTTPIngressPath{
+													{
+														Path:     "/add",
+														PathType: &prefix,
+														Backend: netv1.IngressBackend{
+															Service: &netv1.IngressServiceBackend{
+																Name: "svc",
+																Port: netv1.ServiceBackendPort{
+																	Number: 9090,
+																},
 															},
 														},
 													},
@@ -269,20 +263,19 @@ spec:
 							},
 						},
 					},
-				},
-				PatchesJson6902: []cosmov1alpha1.Json6902{
-					{
-						Target: cosmov1alpha1.ObjectRef{
-							ObjectReference: corev1.ObjectReference{
-								APIVersion: metav1.GroupVersion{
-									Group:   "",
-									Version: "v1",
-								}.String(),
-								Kind: "Service",
-								Name: "svc",
+					PatchesJson6902: []cosmov1alpha1.Json6902{
+						{
+							Target: cosmov1alpha1.ObjectRef{
+								ObjectReference: corev1.ObjectReference{
+									APIVersion: metav1.GroupVersion{
+										Group:   "",
+										Version: "v1",
+									}.String(),
+									Kind: "Service",
+									Name: "svc",
+								},
 							},
-						},
-						Patch: `
+							Patch: `
 [
   {
     "op": "replace",
@@ -291,48 +284,39 @@ spec:
   }
 ]
 						`,
+						},
 					},
-				},
-			}
-
-			Eventually(func() error {
+				}
 				return k8sClient.Update(ctx, &curInst)
 			}, time.Second*60).Should(Succeed())
-
-			var updatedInst cosmov1alpha1.Instance
-			Eventually(func() string {
-				key := client.ObjectKey{
-					Name:      inst.Name,
-					Namespace: inst.Namespace,
-				}
-				err := k8sClient.Get(ctx, key, &updatedInst)
-				Expect(err).ShouldNot(HaveOccurred())
-				return updatedInst.GetResourceVersion()
-			}, time.Second*10).ShouldNot(BeEquivalentTo(rev))
-			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
-
-			time.Sleep(3 * time.Second)
+			Ω(instanceSnapshot(&curInst)).To(MatchSnapShot())
 
 			By("checking if child deployment is as expected")
 			var deploy appsv1.Deployment
-			Eventually(func() error {
+			Eventually(func() int32 {
 				key := client.ObjectKey{
 					Name:      instance.InstanceResourceName(inst.Name, "deploy"),
 					Namespace: inst.Namespace,
 				}
-				return k8sClient.Get(ctx, key, &deploy)
-			}, time.Second*10).Should(Succeed())
+				err := k8sClient.Get(ctx, key, &deploy)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return *deploy.Spec.Replicas
+			}, time.Second*10).Should(Equal(int32(3)))
 			Ω(objectSnapshot(&deploy)).To(MatchSnapShot())
 
 			By("checking if child service is as expected")
 			var svc corev1.Service
-			Eventually(func() error {
+			Eventually(func() corev1.ServiceType {
 				key := client.ObjectKey{
 					Name:      instance.InstanceResourceName(inst.Name, "svc"),
 					Namespace: inst.Namespace,
 				}
-				return k8sClient.Get(ctx, key, &svc)
-			}, time.Second*10).Should(Succeed())
+				err := k8sClient.Get(ctx, key, &svc)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return svc.Spec.Type
+			}, time.Second*10).Should(Equal(corev1.ServiceTypeLoadBalancer))
 			Ω(serviceSnapshot(&svc)).To(MatchSnapShot())
 
 			By("checking if child ingress is as expected")
@@ -345,6 +329,16 @@ spec:
 				return k8sClient.Get(ctx, key, &ing)
 			}, time.Second*10).Should(Succeed())
 			Ω(objectSnapshot(&ing)).To(MatchSnapShot())
+
+			var updatedInst cosmov1alpha1.Instance
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name:      inst.Name,
+					Namespace: inst.Namespace,
+				}
+				return k8sClient.Get(ctx, key, &updatedInst)
+			}, time.Second*10).Should(Succeed())
+			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 
@@ -462,7 +456,7 @@ func Test_unstToObjectRef(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := unstToObjectRef(tt.args.obj, tt.args.updateTimestamp); !reflect.DeepEqual(got, tt.want) {
+			if got := unstToObjectRef(tt.args.obj, &tt.args.updateTimestamp); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("unstToObjectRef() = %v, want %v", got, tt.want)
 			}
 		})
@@ -481,11 +475,12 @@ func instanceSnapshot(in cosmov1alpha1.InstanceObject) cosmov1alpha1.InstanceObj
 		v.ResourceVersion = ""
 		obj.GetStatus().LastApplied[i] = v
 	}
-	sort.SliceStable(obj.GetStatus().LastApplied, func(i, j int) bool {
-		return obj.GetStatus().LastApplied[i].Kind < obj.GetStatus().LastApplied[j].Kind &&
-			obj.GetStatus().LastApplied[i].Name < obj.GetStatus().LastApplied[j].Name
+	sort.Slice(obj.GetStatus().LastApplied, func(i, j int) bool {
+		return obj.GetStatus().LastApplied[i].Kind < obj.GetStatus().LastApplied[j].Kind
 	})
-
+	sort.Slice(obj.GetStatus().LastApplied, func(i, j int) bool {
+		return obj.GetStatus().LastApplied[i].Name < obj.GetStatus().LastApplied[j].Name
+	})
 	if ann := obj.GetAnnotations(); ann != nil {
 		if _, exist := ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated]; exist {
 			ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated] = "updated"

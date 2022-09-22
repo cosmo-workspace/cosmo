@@ -100,6 +100,27 @@ spec:
 			err := k8sClient.Create(ctx, &inst)
 			Expect(err).ShouldNot(HaveOccurred())
 
+			By("checking if child resources is as expected in template")
+			var pod corev1.Pod
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name:      instance.InstanceResourceName(inst.Name, "alpine"),
+					Namespace: nsName,
+				}
+				return k8sClient.Get(ctx, key, &pod)
+			}, time.Second*30).Should(Succeed())
+			Ω(objectSnapshot(&pod)).To(MatchSnapShot())
+
+			var pod2 corev1.Pod
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name:      instance.InstanceResourceName(inst.Name, "alpine2"),
+					Namespace: nsName,
+				}
+				return k8sClient.Get(ctx, key, &pod2)
+			}, time.Second*30).Should(Succeed())
+			Ω(objectSnapshot(&pod2)).To(MatchSnapShot())
+
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
 			var createdInst cosmov1alpha1.Instance
@@ -111,19 +132,8 @@ spec:
 				err := k8sClient.Get(ctx, key, &createdInst)
 				Expect(err).ShouldNot(HaveOccurred())
 				return createdInst.Status.LastAppliedObjectsCount
-			}, time.Second*90).Should(BeEquivalentTo(2))
+			}, time.Second*60).Should(BeEquivalentTo(2))
 			Ω(instanceSnapshot(&createdInst)).To(MatchSnapShot())
-
-			By("checking if child resources is as expected in template")
-			var pod corev1.Pod
-			Eventually(func() error {
-				key := client.ObjectKey{
-					Name:      instance.InstanceResourceName(inst.Name, "alpine"),
-					Namespace: nsName,
-				}
-				return k8sClient.Get(ctx, key, &pod)
-			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&pod)).To(MatchSnapShot())
 		})
 	})
 
@@ -146,11 +156,10 @@ spec:
 				key := types.NamespacedName{
 					Name: tmpl.Name,
 				}
-				return k8sClient.Get(ctx, key, &updatedTmpl)
-			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&updatedTmpl)).To(MatchSnapShot())
+				err := k8sClient.Get(ctx, key, &updatedTmpl)
+				Expect(err).ShouldNot(HaveOccurred())
 
-			updatedTmpl.Spec.RawYaml = `apiVersion: v1
+				updatedTmpl.Spec.RawYaml = `apiVersion: v1
 kind: Pod
 metadata:
   name: alpine
@@ -163,34 +172,52 @@ spec:
     - helloworld
 `
 
-			// update template
-			err := k8sClient.Update(ctx, &updatedTmpl)
-			Expect(err).ShouldNot(HaveOccurred())
+				return k8sClient.Update(ctx, &updatedTmpl)
+			}, time.Second*30).Should(Succeed())
 
-			time.Sleep(3 * time.Second)
+			By("checking if pod updated")
+			var pod corev1.Pod
+			Eventually(func() string {
+				key := client.ObjectKey{
+					Name:      instance.InstanceResourceName(inst.Name, "alpine"),
+					Namespace: nsName,
+				}
+				err := k8sClient.Get(ctx, key, &pod)
+				Expect(err).NotTo(HaveOccurred())
+				return pod.Spec.Containers[0].Image
+			}, time.Second*30).Should(BeEquivalentTo("alpine:next"))
+			Ω(objectSnapshot(&pod)).To(MatchSnapShot())
+
+			By("checking if pod2 is deleted")
+			var pod2 corev1.Pod
+			Eventually(func() bool {
+				key := client.ObjectKey{
+					Name:      instance.InstanceResourceName(inst.Name, "alpine2"),
+					Namespace: nsName,
+				}
+				err := k8sClient.Get(ctx, key, &pod2)
+				if err != nil {
+					return apierrs.IsNotFound(err)
+				}
+				return pod2.DeletionTimestamp != nil
+			}, time.Second*60).Should(BeTrue())
 
 			var updatedInst cosmov1alpha1.Instance
-			Eventually(func() int {
+			Eventually(func() bool {
 				key := client.ObjectKey{
 					Name:      inst.Name,
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &updatedInst)
 				Expect(err).ShouldNot(HaveOccurred())
-				return updatedInst.Status.LastAppliedObjectsCount
-			}, time.Second*90).Should(BeEquivalentTo(2))
-			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
 
-			By("checking if pod updated")
-			var pod corev1.Pod
-			Eventually(func() error {
-				key := client.ObjectKey{
-					Name:      instance.InstanceResourceName(inst.Name, "alpine"),
-					Namespace: nsName,
+				if ann := updatedInst.GetAnnotations(); ann != nil {
+					_, ok := ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated]
+					return ok
 				}
-				return k8sClient.Get(ctx, key, &pod)
-			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&pod)).To(MatchSnapShot())
+				return false
+			}, time.Second*60).Should(BeTrue())
+			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 })

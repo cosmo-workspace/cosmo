@@ -1,0 +1,109 @@
+['ClusterTemplate controller when creating ClusterInstance resource should do clusterinstance reconcile and create child resources 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"pod-list-cr\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"cluster-tmpl-test\",
+      \"cosmo/template\": \"cluster-tmpl-test\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"ClusterInstance\",
+        \"name\": \"cluster-tmpl-test\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ]
+  },
+  \"rules\": [
+    {
+      \"verbs\": [
+        \"get\",
+        \"list\",
+        \"watch\"
+      ],
+      \"apiGroups\": [
+        \"\"
+      ],
+      \"resources\": [
+        \"pods\"
+      ]
+    }
+  ]
+}
+"""
+
+['ClusterTemplate controller when updating ClusterTemplate resource should do instance reconcile and update child resources 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"pod-list-cr\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo/instance\": \"cluster-tmpl-test\",
+      \"cosmo/template\": \"cluster-tmpl-test\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"ClusterInstance\",
+        \"name\": \"cluster-tmpl-test\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ]
+  },
+  \"rules\": [
+    {
+      \"verbs\": [
+        \"get\",
+        \"list\",
+        \"watch\",
+        \"update\"
+      ],
+      \"apiGroups\": [
+        \"\"
+      ],
+      \"resources\": [
+        \"pods\"
+      ]
+    }
+  ]
+}
+"""
+
+['ClusterTemplate controller when updating ClusterTemplate resource should do instance reconcile and update child resources 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"cluster-tmpl-test\",
+    \"creationTimestamp\": null,
+    \"annotations\": {
+      \"cosmo/template-updated\": \"updated\"
+    }
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"cluster-tmpl-test\"
+    },
+    \"override\": {}
+  },
+  \"status\": {
+    \"templateName\": \"cluster-tmpl-test\",
+    \"lastApplied\": [
+      {
+        \"kind\": \"ClusterRole\",
+        \"name\": \"pod-list-cr\",
+        \"apiVersion\": \"rbac.authorization.k8s.io/v1\"
+      }
+    ],
+    \"lastAppliedObjectsCount\": 1,
+    \"templateObjectsCount\": 1
+  }
+}
+"""

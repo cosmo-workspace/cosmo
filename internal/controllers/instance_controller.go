@@ -114,12 +114,13 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 	log := clog.FromContext(ctx).WithCaller()
 	errs := make([]error, 0)
 
-	var lastApplied []cosmov1alpha1.ObjectRef
-	copy(lastApplied, inst.GetStatus().LastApplied)
-
+	now := metav1.Now()
 	lastAppliedMap := sliceToObjectMap(inst.GetStatus().LastApplied)
 
-	currApplied := make(map[types.UID]cosmov1alpha1.ObjectRef)
+	lastApplied := make([]cosmov1alpha1.ObjectRef, len(inst.GetStatus().LastApplied))
+	copy(lastApplied, inst.GetStatus().LastApplied)
+
+	currAppliedMap := make(map[types.UID]cosmov1alpha1.ObjectRef)
 	if len(inst.GetStatus().LastApplied) == 0 {
 		// first reconcile
 		for _, built := range objects {
@@ -165,7 +166,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s created", built.GetKind(), built.GetName())
 
-				currApplied[created.GetUID()] = unstToObjectRef(created, metav1.Now())
+				currAppliedMap[created.GetUID()] = unstToObjectRef(created, &now)
 			} else {
 				errs = append(errs, fmt.Errorf("failed to get resource: kind = %s name = %s: %w", built.GetKind(), built.GetName(), err))
 				continue
@@ -177,6 +178,11 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 			if err != nil {
 				errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
 				continue
+			}
+			if l, ok := lastAppliedMap[desired.GetUID()]; !ok {
+				currAppliedMap[desired.GetUID()] = l
+			} else {
+				currAppliedMap[desired.GetUID()] = unstToObjectRef(desired, nil)
 			}
 
 			// compare current with the desired state
@@ -193,22 +199,24 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s is not desired state, synced", built.GetKind(), built.GetName())
 
-				currApplied[desired.GetUID()] = unstToObjectRef(desired, metav1.Now())
+				currAppliedMap[desired.GetUID()] = unstToObjectRef(desired, &now)
 			}
 		}
 	}
 
-	for k, v := range currApplied {
+	for k, v := range currAppliedMap {
 		lastAppliedMap[k] = v
 	}
 
 	// garbage collection
-	shouldDeletes := objectRefNotExistsInMap(lastApplied, currApplied)
+	shouldDeletes := objectRefNotExistsInMap(lastApplied, currAppliedMap)
 	for _, d := range shouldDeletes {
-		log.Debug().Info("start garbage collection", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
+		log.Info("start garbage collection", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
 		delete(lastAppliedMap, d.UID)
 
 		var obj unstructured.Unstructured
+		obj.SetAPIVersion(d.APIVersion)
+		obj.SetKind(d.Kind)
 		err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: inst.GetNamespace()}, &obj)
 		if err != nil {
 			if !apierrs.IsNotFound(err) {
@@ -238,7 +246,7 @@ func (r *instanceReconciler) apply(ctx context.Context, obj *unstructured.Unstru
 }
 
 // unstToObjectRef generate ObjectRef by Unstructured object
-func unstToObjectRef(obj *unstructured.Unstructured, updateTimestamp metav1.Time) cosmov1alpha1.ObjectRef {
+func unstToObjectRef(obj *unstructured.Unstructured, updateTimestamp *metav1.Time) cosmov1alpha1.ObjectRef {
 	ref := cosmov1alpha1.ObjectRef{}
 	ref.SetGroupVersionKind(obj.GetObjectKind().GroupVersionKind())
 	ref.Name = obj.GetName()
@@ -248,7 +256,7 @@ func unstToObjectRef(obj *unstructured.Unstructured, updateTimestamp metav1.Time
 
 	create := obj.GetCreationTimestamp()
 	ref.CreationTimestamp = &create
-	ref.UpdateTimestamp = &updateTimestamp
+	ref.UpdateTimestamp = updateTimestamp
 	return ref
 }
 
