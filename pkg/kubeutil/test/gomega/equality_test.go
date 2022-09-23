@@ -368,7 +368,6 @@ func TestEqualityDeepEqualMatcher_FailureMessage(t *testing.T) {
             Annotations: nil,
             OwnerReferences: nil,
             Finalizers: nil,
-            ZZZ_DeprecatedClusterName: "",
             ManagedFields: nil,
         },
         Spec: {
@@ -457,6 +456,7 @@ func TestEqualityDeepEqualMatcher_FailureMessage(t *testing.T) {
             TopologySpreadConstraints: nil,
             SetHostnameAsFQDN: nil,
             OS: nil,
+            HostUsers: nil,
         },
         Status: {
             Phase: "",
@@ -494,7 +494,6 @@ shouled be equal to
             Annotations: nil,
             OwnerReferences: nil,
             Finalizers: nil,
-            ZZZ_DeprecatedClusterName: "",
             ManagedFields: nil,
         },
         Spec: {
@@ -583,6 +582,7 @@ shouled be equal to
             TopologySpreadConstraints: nil,
             SetHostnameAsFQDN: nil,
             OS: nil,
+            HostUsers: nil,
         },
         Status: {
             Phase: "",
@@ -618,7 +618,7 @@ diff:     <string>:   v1.Pod{
       		},
       		EphemeralContainers: nil,
       		RestartPolicy:       "",
-      		... // 31 identical fields
+      		... // 32 identical fields
       	},
       	Status: {},
       }
@@ -712,7 +712,6 @@ func TestEqualityDeepEqualMatcher_NegatedFailureMessage(t *testing.T) {
             Annotations: nil,
             OwnerReferences: nil,
             Finalizers: nil,
-            ZZZ_DeprecatedClusterName: "",
             ManagedFields: nil,
         },
         Spec: {
@@ -801,6 +800,7 @@ func TestEqualityDeepEqualMatcher_NegatedFailureMessage(t *testing.T) {
             TopologySpreadConstraints: nil,
             SetHostnameAsFQDN: nil,
             OS: nil,
+            HostUsers: nil,
         },
         Status: {
             Phase: "",
@@ -838,7 +838,6 @@ not to equal
             Annotations: nil,
             OwnerReferences: nil,
             Finalizers: nil,
-            ZZZ_DeprecatedClusterName: "",
             ManagedFields: nil,
         },
         Spec: {
@@ -927,6 +926,7 @@ not to equal
             TopologySpreadConstraints: nil,
             SetHostnameAsFQDN: nil,
             OS: nil,
+            HostUsers: nil,
         },
         Status: {
             Phase: "",

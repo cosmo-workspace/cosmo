@@ -203,7 +203,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 
 		DescribeTable("❌ fail with an unexpected error at list:",
 			func(userId, wsName string) {
-				clientMock.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object) (mocked bool, err error) {
+				clientMock.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption) (mocked bool, err error) {
 					if key.Name == wsName {
 						return true, errors.New("mock get workspace error")
 					}

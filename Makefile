@@ -19,9 +19,9 @@ IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
 CRD_OPTIONS ?= "crd:trivialVersions=true,generateEmbeddedObjectMeta=true,preserveUnknownFields=false"
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION ?= 1.24.x
+ENVTEST_K8S_VERSION ?= 1.25.x
 
-GO ?= go1.18
+GO ?= go1.19
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell $(GO) env GOBIN))

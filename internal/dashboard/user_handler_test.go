@@ -383,7 +383,7 @@ var _ = Describe("Dashboard server [User]", func() {
 
 		DescribeTable("❌ fail to verify password:",
 			func(userId, requestBody string) {
-				clientMock.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object) (mocked bool, err error) {
+				clientMock.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption) (mocked bool, err error) {
 					if key.Name == wsv1alpha1.UserPasswordSecretName {
 						return true, apierrs.NewNotFound(schema.GroupResource{}, "secret")
 					}
