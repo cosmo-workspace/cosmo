@@ -503,6 +503,8 @@ spec:
                 type: string
               templateObjectsCount:
                 type: integer
+              templateResourceVersion:
+                type: string
             type: object
         type: object
     served: true

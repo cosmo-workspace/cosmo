@@ -82,10 +82,7 @@ SnapShot = """
 {
   \"metadata\": {
     \"name\": \"cluster-tmpl-test\",
-    \"creationTimestamp\": null,
-    \"annotations\": {
-      \"cosmo/template-updated\": \"updated\"
-    }
+    \"creationTimestamp\": null
   },
   \"spec\": {
     \"template\": {

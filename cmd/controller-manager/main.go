@@ -101,8 +101,9 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&controllers.TemplateReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:       mgr.GetClient(),
+		Scheme:       mgr.GetScheme(),
+		FieldManager: controllerFieldManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", tmplController)
 		os.Exit(1)
@@ -116,8 +117,9 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&controllers.ClusterTemplateReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:       mgr.GetClient(),
+		Scheme:       mgr.GetScheme(),
+		FieldManager: controllerFieldManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", clusterTmplController)
 		os.Exit(1)

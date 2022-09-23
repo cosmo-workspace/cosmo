@@ -481,12 +481,7 @@ func instanceSnapshot(in cosmov1alpha1.InstanceObject) cosmov1alpha1.InstanceObj
 	sort.Slice(obj.GetStatus().LastApplied, func(i, j int) bool {
 		return obj.GetStatus().LastApplied[i].Name < obj.GetStatus().LastApplied[j].Name
 	})
-	if ann := obj.GetAnnotations(); ann != nil {
-		if _, exist := ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated]; exist {
-			ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated] = "updated"
-			obj.SetAnnotations(ann)
-		}
-	}
+	obj.GetStatus().TemplateResourceVersion = ""
 
 	return obj
 }

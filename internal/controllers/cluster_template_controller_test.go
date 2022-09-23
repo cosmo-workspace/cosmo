@@ -120,6 +120,14 @@ rules:
 		It("should do instance reconcile and update child resources", func() {
 			ctx := context.Background()
 
+			var curInst cosmov1alpha1.ClusterInstance
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name: name,
+				}
+				return k8sClient.Get(ctx, key, &curInst)
+			}, time.Second*10).Should(Succeed())
+
 			// fetch current clustertemplate
 			var tmpl cosmov1alpha1.ClusterTemplate
 			Eventually(func() error {
@@ -163,21 +171,16 @@ rules:
 			Ω(objectSnapshot(&cr)).To(MatchSnapShot())
 
 			// fetch current clusterinstance
-			var inst cosmov1alpha1.ClusterInstance
-			Eventually(func() bool {
+			var updatedInst cosmov1alpha1.ClusterInstance
+			Eventually(func() string {
 				key := client.ObjectKey{
 					Name: name,
 				}
-				err := k8sClient.Get(ctx, key, &inst)
+				err := k8sClient.Get(ctx, key, &updatedInst)
 				Expect(err).ShouldNot(HaveOccurred())
-
-				if ann := inst.GetAnnotations(); ann != nil {
-					_, ok := ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated]
-					return ok
-				}
-				return false
-			}, time.Second*60).Should(BeTrue())
-			Ω(instanceSnapshot(&inst)).To(MatchSnapShot())
+				return updatedInst.Status.TemplateResourceVersion
+			}, time.Second*60).ShouldNot(Equal(curInst.Status.TemplateResourceVersion))
+			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 })

@@ -203,20 +203,15 @@ spec:
 			}, time.Second*60).Should(BeTrue())
 
 			var updatedInst cosmov1alpha1.Instance
-			Eventually(func() bool {
+			Eventually(func() int {
 				key := client.ObjectKey{
 					Name:      inst.Name,
 					Namespace: nsName,
 				}
 				err := k8sClient.Get(ctx, key, &updatedInst)
 				Expect(err).ShouldNot(HaveOccurred())
-
-				if ann := updatedInst.GetAnnotations(); ann != nil {
-					_, ok := ann[cosmov1alpha1.InstanceAnnKeyTemplateUpdated]
-					return ok
-				}
-				return false
-			}, time.Second*60).Should(BeTrue())
+				return updatedInst.Status.LastAppliedObjectsCount
+			}, time.Second*60).Should(Equal(1))
 			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})

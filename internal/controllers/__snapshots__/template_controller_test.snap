@@ -254,10 +254,7 @@ SnapShot = """
   \"metadata\": {
     \"name\": \"test-pod-inst1\",
     \"namespace\": \"default\",
-    \"creationTimestamp\": null,
-    \"annotations\": {
-      \"cosmo/template-updated\": \"updated\"
-    }
+    \"creationTimestamp\": null
   },
   \"spec\": {
     \"template\": {

@@ -48,6 +48,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		return ctrl.Result{}, err
 	}
 	inst.Status.TemplateName = tmpl.Name
+	inst.Status.TemplateResourceVersion = tmpl.ResourceVersion
 
 	// 1. Build Unstructured objects
 	objects, err := template.BuildObjects(tmpl.Spec, &inst)
