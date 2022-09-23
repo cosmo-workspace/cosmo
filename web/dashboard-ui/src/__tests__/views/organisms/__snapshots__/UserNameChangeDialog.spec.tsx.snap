@@ -904,9 +904,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
 
 .emotion-24 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
@@ -2076,9 +2076,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
 
 .emotion-20 {
   float: unset;
+  width: auto;
   overflow: hidden;
   display: block;
-  width: auto;
   padding: 0;
   height: 11px;
   font-size: 0.75em;
