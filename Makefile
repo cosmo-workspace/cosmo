@@ -18,18 +18,6 @@ IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true,generateEmbeddedObjectMeta=true,preserveUnknownFields=false"
 
-# ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION ?= 1.25.x
-
-GO ?= go1.19
-
-# Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
-ifeq (,$(shell $(GO) env GOBIN))
-GOBIN=$(shell $(GO) env GOPATH)/bin
-else
-GOBIN=$(shell $(GO) env GOBIN)
-endif
-
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # This is a requirement for 'setup-envtest.sh' in the test target.
 # Options are set to exit when a recipe line exits non-zero or a piped command fails.
@@ -204,22 +192,22 @@ swaggerui:
 ##---------------------------------------------------------------------
 .PHONY: manager
 manager: generate fmt vet ## Build manager binary.
-	CGO_ENABLED=0 $(GO) build -o bin/manager ./cmd/controller-manager/main.$(GO)
+	CGO_ENABLED=0 $(GO) build -o bin/manager ./cmd/controller-manager/main.go
 
 .PHONY: cosmoctl
 cosmoctl: generate fmt vet ## Build cosmoctl binary.
-	CGO_ENABLED=0 $(GO) build -o bin/cosmoctl ./cmd/cosmoctl/main.$(GO)
+	CGO_ENABLED=0 $(GO) build -o bin/cosmoctl ./cmd/cosmoctl/main.go
 
 .PHONY: dashboard
 dashboard: generate fmt vet ## Build dashboard binary.
-	CGO_ENABLED=0 $(GO) build -o bin/dashboard ./cmd/dashboard/main.$(GO)
+	CGO_ENABLED=0 $(GO) build -o bin/dashboard ./cmd/dashboard/main.go
 
 .PHONY: auth-proxy
 auth-proxy: generate fmt vet ## Build auth-proxy binary.
-	CGO_ENABLED=0 $(GO) build -o bin/auth-proxy ./cmd/auth-proxy/main.$(GO)
+	CGO_ENABLED=0 $(GO) build -o bin/auth-proxy ./cmd/auth-proxy/main.go
 
 .PHONY: update-version
-update-version: ## Update version in version.$(GO).
+update-version: ## Update version in version.go.
 ifndef VERSION
 	@echo "Usage: make update-version VERSION=v9.9.9"
 	@exit 9
@@ -249,11 +237,14 @@ endif
 ##---------------------------------------------------------------------
 ##@ Run
 ##---------------------------------------------------------------------
+
+LOG_LEVEL ?= 3
+
 # Run against the configured Kubernetes cluster in ~/.kube/config
 .PHONY: run-dashboard
 run-dashboard: generate fmt vet manifests ## Run dashboard against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/dashboard/main.go \
-		--zap-log-level 3 \
+		--zap-log-level $(LOG_LEVEL) \
 		--insecure
 
 .PHONY: run-dashboard-ui
@@ -263,7 +254,7 @@ run-dashboard-ui: ## Run dashboard-ui.
 .PHONY: run-auth-proxy
 run-auth-proxy: generate fmt vet manifests ## Run auth-proxy against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/auth-proxy/main.go \
-		--zap-log-level 3 \
+		--zap-log-level $(LOG_LEVEL) \
 		--insecure
 
 .PHONY: run-auth-proxy-ui
@@ -272,7 +263,10 @@ run-auth-proxy-ui: ## Run auth-proxy-ui.
 
 .PHONY: run
 run: generate fmt vet manifests ## Run controller-manager against the configured Kubernetes cluster in ~/.kube/config.
-	$(GO) run ./cmd/controller-manager/main.go --metrics-bind-address :8085 --cert-dir .
+	$(GO) run ./cmd/controller-manager/main.go \
+		--zap-log-level $(LOG_LEVEL) \
+		--metrics-bind-address :8085 \
+		--cert-dir .
 
 ##---------------------------------------------------------------------
 ##@ Docker build
@@ -318,19 +312,32 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 ##---------------------------------------------------------------------
 ##@ Build Dependencies
 ##---------------------------------------------------------------------
+
+## Tool Versions
+GO_VERSION ?= 1.19
+KUSTOMIZE_VERSION ?= v4.5.7
+CONTROLLER_TOOLS_VERSION ?= v0.10.0
+
+# ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
+ENVTEST_K8S_VERSION ?= 1.25.x
+
 ## Location to install dependencies to
 LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
 
+# Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
+ifeq (,$(shell go env GOBIN))
+GOBIN=$(shell go env GOPATH)/bin
+else
+GOBIN=$(shell go env GOBIN)
+endif
+GO ?= $(GOBIN)/go$(GO_VERSION)
+
 ## Tool Binaries
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
-
-## Tool Versions
-KUSTOMIZE_VERSION ?= v3.8.7
-CONTROLLER_TOOLS_VERSION ?= v0.6.0
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
@@ -347,3 +354,12 @@ $(CONTROLLER_GEN): $(LOCALBIN)
 envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
 $(ENVTEST): $(LOCALBIN)
 	GOBIN=$(LOCALBIN) $(GO) install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+
+.PHONY: go
+go: $(GO)
+$(GO): 
+	go install golang.org/dl/go$(GO_VERSION)@latest
+	$(GO) download
+
+.PHONY: configure
+configure: go kustomize controller-gen envtest
