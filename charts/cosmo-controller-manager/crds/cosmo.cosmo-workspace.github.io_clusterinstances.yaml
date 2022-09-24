@@ -1,10 +1,9 @@
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.6.0
+    controller-gen.kubebuilder.io/version: v0.10.0
   creationTimestamp: null
   name: clusterinstances.cosmo.cosmo-workspace.github.io
 spec:
@@ -75,13 +74,13 @@ spec:
                                       Note the following deviations from the \"host\"
                                       part of the URI as defined in RFC 3986: 1. IPs
                                       are not allowed. Currently an IngressRuleValue
-                                      can only apply to    the IP in the Spec of the
+                                      can only apply to the IP in the Spec of the
                                       parent Ingress. 2. The `:` delimiter is not
-                                      respected because ports are not allowed. \t
-                                      \ Currently the port of an Ingress is implicitly
-                                      :80 for http and \t  :443 for https. Both these
-                                      may change in the future. Incoming requests
-                                      are matched against the host before the IngressRuleValue.
+                                      respected because ports are not allowed. Currently
+                                      the port of an Ingress is implicitly :80 for
+                                      http and :443 for https. Both these may change
+                                      in the future. Incoming requests are matched
+                                      against the host before the IngressRuleValue.
                                       If the host is unspecified, the Ingress routes
                                       all traffic based on the specified IngressRuleValue.
                                       \n Host can be \"precise\" which is a domain
@@ -154,6 +153,7 @@ spec:
                                                   - kind
                                                   - name
                                                   type: object
+                                                  x-kubernetes-map-type: atomic
                                                 service:
                                                   description: Service references
                                                     a Service as a Backend. This is
@@ -208,23 +208,23 @@ spec:
                                                 values: * Exact: Matches the URL path
                                                 exactly. * Prefix: Matches based on
                                                 a URL path prefix split by ''/''.
-                                                Matching is   done on a path element
+                                                Matching is done on a path element
                                                 by element basis. A path element refers
-                                                is the   list of labels in the path
+                                                is the list of labels in the path
                                                 split by the ''/'' separator. A request
-                                                is a   match for path p if every p
-                                                is an element-wise prefix of p of
-                                                the   request path. Note that if the
-                                                last element of the path is a substring   of
-                                                the last element in request path,
-                                                it is not a match (e.g. /foo/bar   matches
+                                                is a match for path p if every p is
+                                                an element-wise prefix of p of the
+                                                request path. Note that if the last
+                                                element of the path is a substring
+                                                of the last element in request path,
+                                                it is not a match (e.g. /foo/bar matches
                                                 /foo/bar/baz, but does not match /foo/barbaz).
                                                 * ImplementationSpecific: Interpretation
-                                                of the Path matching is up to   the
+                                                of the Path matching is up to the
                                                 IngressClass. Implementations can
-                                                treat this as a separate PathType   or
-                                                treat it identically to Prefix or
-                                                Exact path types. Implementations
+                                                treat this as a separate PathType
+                                                or treat it identically to Prefix
+                                                or Exact path types. Implementations
                                                 are required to support all path types.'
                                               type: string
                                           required:
@@ -370,6 +370,7 @@ spec:
                               format: date-time
                               type: string
                           type: object
+                          x-kubernetes-map-type: atomic
                       required:
                       - target
                       type: object
@@ -426,6 +427,7 @@ spec:
                               format: date-time
                               type: string
                           type: object
+                          x-kubernetes-map-type: atomic
                       required:
                       - replicas
                       - target
@@ -496,6 +498,7 @@ spec:
                       format: date-time
                       type: string
                   type: object
+                  x-kubernetes-map-type: atomic
                 type: array
               lastAppliedObjectsCount:
                 type: integer
@@ -511,9 +514,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
