@@ -34,7 +34,6 @@ type WorkspaceReconciler struct {
 // +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := clog.FromContext(ctx).WithName("WorkspaceReconciler").WithValues("req", req)
-	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
 
@@ -45,6 +44,9 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		// on deleted requests.
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+	log = log.WithValues("UID", ws.UID, "Template", ws.Spec.Template.Name)
+	ctx = clog.IntoContext(ctx, log)
+
 	currentWs := ws.DeepCopy()
 
 	log.DumpObject(r.Scheme, currentWs, "request object")
@@ -98,7 +100,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		}
 	}
 
-	log.Info("finish reconcile")
+	log.Debug().Info("finish reconcile")
 	return ctrl.Result{}, nil
 }
 

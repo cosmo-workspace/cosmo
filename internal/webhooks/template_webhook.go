@@ -38,6 +38,7 @@ func (h *TemplateMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manage
 
 func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
 
 	var tmpl cosmov1alpha1.TemplateObject
 
@@ -122,6 +123,7 @@ func (h *TemplateValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Mana
 // Handle validates the fields in Template
 func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
 
 	var tmpl cosmov1alpha1.TemplateObject
 	var dummyInst cosmov1alpha1.InstanceObject
@@ -165,7 +167,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 			}
 		}
 	} else {
-		h.Log.Info("skip dryrun validation")
+		log.Info("skip dryrun validation")
 	}
 
 	res := admission.Allowed("Validation OK")

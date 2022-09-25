@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -41,7 +42,6 @@ type WorkspaceStatusReconciler struct {
 // +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := clog.FromContext(ctx).WithName("WorkspaceStatusReconciler").WithValues("req", req)
-	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
 
@@ -51,6 +51,8 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	if err := r.Get(ctx, key, &ws); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+	log = log.WithValues("UID", ws.UID, "Template", ws.Spec.Template.Name)
+	ctx = clog.IntoContext(ctx, log)
 
 	current := ws.DeepCopy()
 
@@ -68,7 +70,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	// fetch child pod status
 	if urlMap, err := r.GenWorkspaceURLMap(ctx, ws); err == nil {
-		log.Debug().Info("workspace urlmap", "urlmap", urlMap)
+		log.Debug().Info(fmt.Sprintf("workspace urlmap: %s", urlMap))
 		ws.Status.URLs = urlMap
 
 	} else {
@@ -119,7 +121,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		log.Info("workspace status updated", "ws", ws.Name)
 	}
 
-	log.Info("finish reconcile")
+	log.Debug().Info("finish reconcile")
 	if requeue {
 		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	}

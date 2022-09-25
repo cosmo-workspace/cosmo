@@ -98,7 +98,11 @@ func (l *Logger) DumpObject(scheme *apiruntime.Scheme, obj NamedObject, msg stri
 
 func (l *Logger) PrintObjectDiff(x, y NamedObject) {
 	if l.Logger.Enabled() {
-		l.Info(cmp.Diff(x, y), "x", x.GetName(), "y", y.GetName())
+		diff := cmp.Diff(x, y)
+		if diff == "" {
+			diff = "no difference"
+		}
+		l.Info(fmt.Sprintf("Object diff: %s", diff), "x", x.GetName(), "y", y.GetName())
 	}
 }
 

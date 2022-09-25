@@ -41,6 +41,7 @@ func (h *UserMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 // Handle mutates the fields in user
 func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
 
 	user := &wsv1alpha1.User{}
 	err := h.decoder.Decode(req, user)
@@ -137,6 +138,7 @@ func (h *UserValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager)
 // Handle validates the fields in User
 func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
 
 	user := &wsv1alpha1.User{}
 	err := h.decoder.Decode(req, user)

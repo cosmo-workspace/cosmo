@@ -24,11 +24,17 @@ type TemplateReconciler struct {
 
 func (r *TemplateReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := clog.FromContext(ctx).WithName("TemplateReconciler").WithValues("req", req)
-	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
 
-	if err := r.reconcile(ctx, req); err != nil {
+	var tmpl cosmov1alpha1.Template
+	if err := r.Get(ctx, req.NamespacedName, &tmpl); err != nil {
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+	log = log.WithValues("UID", tmpl.UID)
+	ctx = clog.IntoContext(ctx, log)
+
+	if err := r.reconcile(ctx, &tmpl); err != nil {
 		return ctrl.Result{}, err
 	}
 
@@ -36,13 +42,8 @@ func (r *TemplateReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	return ctrl.Result{}, nil
 }
 
-func (r *TemplateReconciler) reconcile(ctx context.Context, req ctrl.Request) error {
+func (r *TemplateReconciler) reconcile(ctx context.Context, tmpl *cosmov1alpha1.Template) error {
 	log := clog.FromContext(ctx)
-
-	var tmpl cosmov1alpha1.Template
-	if err := r.Get(ctx, req.NamespacedName, &tmpl); err != nil {
-		return client.IgnoreNotFound(err)
-	}
 
 	var insts cosmov1alpha1.InstanceList
 	err := r.List(ctx, &insts)
@@ -50,7 +51,7 @@ func (r *TemplateReconciler) reconcile(ctx context.Context, req ctrl.Request) er
 		return fmt.Errorf("failed to list instances for template %s: %w", tmpl.Name, err)
 	}
 
-	if errs := notifyUpdateToInstances(ctx, r.Client, &tmpl, insts.InstanceObjects()); len(errs) > 0 {
+	if errs := notifyUpdateToInstances(ctx, r.Client, tmpl, insts.InstanceObjects()); len(errs) > 0 {
 		for _, e := range errs {
 			log.Error(e, "failed to notify the update of template")
 		}
