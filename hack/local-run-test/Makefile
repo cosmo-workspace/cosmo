@@ -201,6 +201,7 @@ run-manager:
 		--metrics-bind-address :8085 \
 		--cert-dir . \
 		--zap-log-level=$(LOGLEVEL) \
+		--zap-devel=false \
 		--workspace-default-urlbase=https://$(DEFAULT_URLBASE_HOST).$(DOMAIN)
 
 run-local: kubectl ## Run test.

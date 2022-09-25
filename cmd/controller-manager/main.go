@@ -68,9 +68,7 @@ func main() {
 	flag.BoolVar(&o.EnableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
-	opts := zap.Options{
-		Development: true,
-	}
+	opts := zap.Options{}
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
