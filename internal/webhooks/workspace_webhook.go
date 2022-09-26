@@ -57,7 +57,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 	before := ws.DeepCopy()
-	log.DebugAll().DumpObject(h.Client.Scheme(), before, "request workspace")
+	log.DumpObject(h.Client.Scheme(), before, "request workspace")
 
 	tmpl := &cosmov1alpha1.Template{}
 	err = h.Client.Get(ctx, types.NamespacedName{Name: ws.Spec.Template.Name}, tmpl)
@@ -71,7 +71,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		log.Error(err, "failed to get config")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	log.Debug().Info("workspace config in template", "cfg", cfg)
+	log.Debug().Info(fmt.Sprintf("workspace config in template %s", cfg))
 
 	// default replica 1
 	if ws.Spec.Replicas == nil {
@@ -132,7 +132,7 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	log.DebugAll().DumpObject(h.Client.Scheme(), ws, "request workspace")
+	log.DumpObject(h.Client.Scheme(), ws, "request workspace")
 
 	// check namespace for Workspace
 	userid := wsv1alpha1.UserIDByNamespace(ws.GetNamespace())
@@ -216,7 +216,7 @@ func duplicatedPort(netRules []wsv1alpha1.NetworkRule) int {
 }
 
 func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkRule(ctx context.Context, ws *wsv1alpha1.Workspace, rawTmpl string, cfg wsv1alpha1.Config) error {
-	log := clog.FromContext(ctx)
+	log := clog.FromContext(ctx).WithCaller()
 
 	unst, err := preTemplateBuild(*ws, rawTmpl)
 	if err != nil {
@@ -226,9 +226,9 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 	var svc corev1.Service
 	var ing netv1.Ingress
 	for _, u := range unst {
-		log.Debug().Info("template resources", "gvk", u.GroupVersionKind(), "name", u.GetName(), "unstructured", u)
+		log.Debug().Info(fmt.Sprintf("template resources: %v", u), "resourceGVK", u.GroupVersionKind(), "resourceName", u.GetName())
 
-		log.DebugAll().Info("workspace config in template",
+		log.DebugAll().Info(fmt.Sprintf("workspace config in template: %v", cfg),
 			"gvk", u.GroupVersionKind(),
 			"cfgServiceName", cfg.ServiceName, "cfgIngressName", cfg.IngressName,
 			"instFixedName", instance.InstanceResourceName(template.DefaultVarsInstance, u.GetName()),

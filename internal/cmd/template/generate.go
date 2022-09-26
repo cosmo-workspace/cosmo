@@ -261,7 +261,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		o.Logr.DebugAll().Info(string(rawDeploy), "obj", "cosmo-auth-proxy deployment patch", "file", AuthProxyPatchFile)
+		o.Logr.Debug().Info(string(rawDeploy), "obj", "cosmo-auth-proxy deployment patch", "file", AuthProxyPatchFile)
 
 		addPatchesStrategicMerges(kust, AuthProxyPatchFile)
 
@@ -272,7 +272,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 			if err := cmdutil.CreateFile(tmpDir, AuthProxyRoleBFile, rawRoleb); err != nil {
 				return err
 			}
-			o.Logr.DebugAll().Info(string(rawRoleb), "obj", "cosmo-auth-proxy rolebinding", "file", AuthProxyRoleBFile)
+			o.Logr.Debug().Info(string(rawRoleb), "obj", "cosmo-auth-proxy rolebinding", "file", AuthProxyRoleBFile)
 
 			kust.Resources = append(kust.Resources, AuthProxyRoleBFile)
 		}
@@ -283,7 +283,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	o.Logr.DebugAll().Info(string(out), "obj", "updated k8s configs")
+	o.Logr.Debug().Info(string(out), "obj", "updated k8s configs")
 
 	o.tmpl.GetSpec().RawYaml = string(out)
 

@@ -3,15 +3,7 @@ SnapShot = """
 {
   \"metadata\": {
     \"name\": \"test-pv-clusterinst1\",
-    \"creationTimestamp\": null,
-    \"managedFields\": [
-      {
-        \"manager\": \"controllers.test\",
-        \"operation\": \"Update\",
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
-    ]
+    \"creationTimestamp\": null
   },
   \"spec\": {
     \"template\": {
@@ -64,14 +56,6 @@ SnapShot = """
     ],
     \"finalizers\": [
       \"kubernetes.io/pv-protection\"
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"v1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
     ]
   },
   \"spec\": {
@@ -118,14 +102,6 @@ SnapShot = """
         \"controller\": true,
         \"blockOwnerDeletion\": true
       }
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"storage.k8s.io/v1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
     ]
   },
   \"provisioner\": \"example.com/external-nfs\",
@@ -139,105 +115,6 @@ SnapShot = """
 """
 
 ['ClusterInstance controller when updating ClusterInstance resource should do reconcile again and update child resources 1']
-SnapShot = """
-{
-  \"metadata\": {
-    \"name\": \"test-pv-clusterinst1\",
-    \"creationTimestamp\": null,
-    \"managedFields\": [
-      {
-        \"manager\": \"controllers.test\",
-        \"operation\": \"Update\",
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
-    ]
-  },
-  \"spec\": {
-    \"template\": {
-      \"name\": \"test-storage-clustertmpl1\"
-    },
-    \"vars\": {
-      \"MOUNT_PATH\": \"/tmp\"
-    },
-    \"override\": {}
-  },
-  \"status\": {
-    \"templateName\": \"test-storage-clustertmpl1\",
-    \"lastApplied\": [
-      {
-        \"kind\": \"PersistentVolume\",
-        \"name\": \"test-pv-clusterinst1-pv\",
-        \"apiVersion\": \"v1\"
-      },
-      {
-        \"kind\": \"StorageClass\",
-        \"name\": \"test-pv-clusterinst1-sc\",
-        \"apiVersion\": \"storage.k8s.io/v1\"
-      }
-    ],
-    \"lastAppliedObjectsCount\": 2,
-    \"templateObjectsCount\": 2
-  }
-}
-"""
-
-['ClusterInstance controller when updating ClusterInstance resource should do reconcile again and update child resources 2']
-SnapShot = """
-{
-  \"metadata\": {
-    \"name\": \"test-pv-clusterinst1\",
-    \"creationTimestamp\": null,
-    \"managedFields\": [
-      {
-        \"manager\": \"controllers.test\",
-        \"operation\": \"Update\",
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
-    ]
-  },
-  \"spec\": {
-    \"template\": {
-      \"name\": \"test-storage-clustertmpl1\"
-    },
-    \"vars\": {
-      \"MOUNT_PATH\": \"/tmp\"
-    },
-    \"override\": {
-      \"patchesJson6902\": [
-        {
-          \"target\": {
-            \"kind\": \"PersistentVolume\",
-            \"name\": \"pv\",
-            \"apiVersion\": \"v1\"
-          },
-          \"patch\": \"\\n[\\n  {\\n    \\\"op\\\": \\\"replace\\\",\\n    \\\"path\\\": \\\"/spec/capacity/storage\\\",\\n    \\\"value\\\": \\\"10Gi\\\"\\n  }\\n]\\n\\t\\t\\t\\t\\t\\t\"
-        }
-      ]
-    }
-  },
-  \"status\": {
-    \"templateName\": \"test-storage-clustertmpl1\",
-    \"lastApplied\": [
-      {
-        \"kind\": \"PersistentVolume\",
-        \"name\": \"test-pv-clusterinst1-pv\",
-        \"apiVersion\": \"v1\"
-      },
-      {
-        \"kind\": \"StorageClass\",
-        \"name\": \"test-pv-clusterinst1-sc\",
-        \"apiVersion\": \"storage.k8s.io/v1\"
-      }
-    ],
-    \"lastAppliedObjectsCount\": 2,
-    \"templateObjectsCount\": 2
-  }
-}
-"""
-
-['ClusterInstance controller when updating ClusterInstance resource should do reconcile again and update child resources 3']
 SnapShot = """
 {
   \"metadata\": {
@@ -259,19 +136,11 @@ SnapShot = """
     ],
     \"finalizers\": [
       \"kubernetes.io/pv-protection\"
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"v1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
     ]
   },
   \"spec\": {
     \"capacity\": {
-      \"storage\": \"5Gi\"
+      \"storage\": \"10Gi\"
     },
     \"nfs\": {
       \"server\": \"nfs-server.example.com\",
@@ -294,7 +163,7 @@ SnapShot = """
 }
 """
 
-['ClusterInstance controller when updating ClusterInstance resource should do reconcile again and update child resources 4']
+['ClusterInstance controller when updating ClusterInstance resource should do reconcile again and update child resources 2']
 SnapShot = """
 {
   \"metadata\": {
@@ -313,14 +182,6 @@ SnapShot = """
         \"controller\": true,
         \"blockOwnerDeletion\": true
       }
-    ],
-    \"managedFields\": [
-      {
-        \"manager\": \"cosmo-instance-controller\",
-        \"operation\": \"Apply\",
-        \"apiVersion\": \"storage.k8s.io/v1\",
-        \"fieldsType\": \"FieldsV1\"
-      }
     ]
   },
   \"provisioner\": \"example.com/external-nfs\",
@@ -332,4 +193,3 @@ SnapShot = """
   \"volumeBindingMode\": \"Immediate\"
 }
 """
-

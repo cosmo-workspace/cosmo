@@ -651,8 +651,6 @@ spec:
 			err := k8sClient.Create(ctx, &t)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			time.Sleep(3 * time.Second)
-
 			inst := cosmov1alpha1.ClusterInstance{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "testcinst2",

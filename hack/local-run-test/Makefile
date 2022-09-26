@@ -44,7 +44,7 @@ CLUSTER_NAME := cosmo
 create-cluster: k3d helm kubectl  ## Create k3s cluster with cert-manager.
 	@echo ====== $@ ======
 	@k3d cluster list $(CLUSTER_NAME) > /dev/null 2>&1 && echo "This cluster has already been created" || { \
-		echo ====== create cluser ======= && \
+		echo ====== create cluster ======= && \
 		k3d cluster create $(CLUSTER_NAME) \
 			--api-port 43000 \
 			-p "15000:80@loadbalancer" \
@@ -109,6 +109,8 @@ docker-cache-clear: ## docker cache clear.
 .PHONY: install-manager install-dashboard
 .PHONY: uninstall-manager uninstall-dashboard
 
+LOGLEVEL ?= info
+
 install-manager: helm kubectl create-cluster docker-build-manager ## Install cosmo contoller-manager resources.
 	@echo ====== $@ ======
 	helm upgrade --install cosmo-controller-manager ../../charts/cosmo-controller-manager \
@@ -118,7 +120,8 @@ install-manager: helm kubectl create-cluster docker-build-manager ## Install cos
 		--set image.tag=$(MANAGER_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
 		--set defaultURLBase.host="\$(DEFAULT_URLBASE_HOST)" \
-		--set defaultURLBase.domain="\$(DOMAIN)"
+		--set defaultURLBase.domain="\$(DOMAIN)" \
+		--set logLevel=$(LOGLEVEL)
 
 install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-manager resources.
 	@echo ====== $@ ======
@@ -133,7 +136,8 @@ install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-ma
 		--set replicaCount=0 \
 		--set localRunTest.enabled=true \
 		--set localRunTest.webhookEndpoint.ip=$(shell hostname -i) \
-		--set localRunTest.webhookEndpoint.port=9443
+		--set localRunTest.webhookEndpoint.port=9443 \
+		--set logLevel=$(LOGLEVEL)
 
 install-dashboard: helm kubectl create-cluster docker-build-dashboard ## Install cosmo contoller-manager resources.
 	@echo ====== $@ ======
@@ -149,7 +153,7 @@ install-dashboard: helm kubectl create-cluster docker-build-dashboard ## Install
 		--set ingress.hosts[0].paths[0].pathType=Prefix \
 		--set cert.dnsName=$(DASHBOARD_URL) \
 		--set insecure=true \
-		--set logLevel=debug
+		--set logLevel=$(LOGLEVEL)
 
 uninstall-manager: helm  ## Uninstall cosmo contoller-manager resources.
 	@echo ====== $@ ======
@@ -196,7 +200,8 @@ run-manager:
 		go run ./cmd/controller-manager/main.go \
 		--metrics-bind-address :8085 \
 		--cert-dir . \
-		--zap-log-level=debug \
+		--zap-log-level=$(LOGLEVEL) \
+		--zap-devel=false \
 		--workspace-default-urlbase=https://$(DEFAULT_URLBASE_HOST).$(DOMAIN)
 
 run-local: kubectl ## Run test.
@@ -221,11 +226,11 @@ run-local: kubectl ## Run test.
 			\; splitw -h -t 1 \
 			\; resizep -t 1 -x 20% \; resizep -t 3 -x 20% && \
 		# ======== run controller-manager ======== \
-		tmux send-keys -t 0 'make run-manager 2>&1 | tee -a $${BIN_DIR}/local-manager.log' Enter && \
+		tmux send-keys -t 0 'make run-manager LOGLEVEL=$(LOGLEVEL) 2>&1 | tee -a $${BIN_DIR}/local-manager.log' Enter && \
 		# ======== run dashboard-ui ======== \
-		tmux send-keys -t 1 '(cd ../.. && make run-dashboard-ui 2>&1 | tee -a $${BIN_DIR}/local-dashboard-ui.log)' Enter && \
+		tmux send-keys -t 1 '(cd ../.. && make run-dashboard-ui LOGLEVEL=$(LOGLEVEL) 2>&1 | tee -a $${BIN_DIR}/local-dashboard-ui.log)' Enter && \
 		# ======== run dashboard ======== \
-		tmux send-keys -t 2 '(cd ../.. && make run-dashboard QUICK_BUILD=yes 2>&1 | tee -a $${BIN_DIR}/local-dashboard.log)' Enter && \
+		tmux send-keys -t 2 '(cd ../.. && make run-dashboard QUICK_BUILD=yes LOGLEVEL=$(LOGLEVEL) 2>&1 | tee -a $${BIN_DIR}/local-dashboard.log)' Enter && \
 		# ======== move to pane 3 ======== \
 		tmux select-pane -t 3 && \
 		# ======== attach ======== \
@@ -245,7 +250,8 @@ GO_SRC := $(shell find ../../internal ../../pkg -type f -regex ".*\.go")
 cosmoctl: bin bin/cosmoctl ## cosmoctl
 bin/cosmoctl: ../../cmd/cosmoctl/main.go $(GO_SRC)
 	@echo ====== $@ ======
-	CGO_ENABLED=0 go build -o bin/cosmoctl ../../cmd/cosmoctl/main.go
+	make -C ../../ cosmoctl
+	mv ../../bin/cosmoctl bin/cosmoctl
 
 ##---------------------------------------------------------------------
 ##@ Download Binary

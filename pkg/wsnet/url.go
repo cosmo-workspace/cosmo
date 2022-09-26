@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
 
 const (
@@ -141,7 +140,7 @@ func (v *URLVars) setDefault() {
 	}
 }
 
-func (v *URLVars) Dump(log *clog.Logger) {
+func (v *URLVars) Dump() []interface{} {
 	rv := reflect.ValueOf(*v)
 	rt := rv.Type()
 	keyAndVals := make([]interface{}, rt.NumField()*2)
@@ -151,5 +150,5 @@ func (v *URLVars) Dump(log *clog.Logger) {
 		keyAndVals[i*2+1] = rv.Field(i).Interface()
 	}
 
-	log.Info("urlvars info", keyAndVals...)
+	return keyAndVals
 }

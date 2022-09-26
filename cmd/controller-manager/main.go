@@ -68,9 +68,7 @@ func main() {
 	flag.BoolVar(&o.EnableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
-	opts := zap.Options{
-		Development: true,
-	}
+	opts := zap.Options{}
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
@@ -101,8 +99,9 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&controllers.TemplateReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:       mgr.GetClient(),
+		Scheme:       mgr.GetScheme(),
+		FieldManager: controllerFieldManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", tmplController)
 		os.Exit(1)
@@ -116,8 +115,9 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&controllers.ClusterTemplateReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:       mgr.GetClient(),
+		Scheme:       mgr.GetScheme(),
+		FieldManager: controllerFieldManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", clusterTmplController)
 		os.Exit(1)
@@ -152,41 +152,41 @@ func main() {
 	// Webhook
 	(&webhooks.InstanceMutationWebhookHandler{
 		Client: mgr.GetClient(),
-		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler")),
+		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhook")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.InstanceValidationWebhookHandler{
 		Client:       mgr.GetClient(),
-		Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhook")),
 		FieldManager: controllerFieldManager,
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.TemplateMutationWebhookHandler{
 		Client:         mgr.GetClient(),
-		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
+		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhook")),
 		DefaultURLBase: o.WorkspaceDefaultURLBase,
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.TemplateValidationWebhookHandler{
 		Client:       mgr.GetClient(),
-		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
+		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhook")),
 		FieldManager: controllerFieldManager,
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.WorkspaceMutationWebhookHandler{
 		Client: mgr.GetClient(),
-		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhook")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.WorkspaceValidationWebhookHandler{
 		Client: mgr.GetClient(),
-		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler")),
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhook")),
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.UserMutationWebhookHandler{
 		Client: mgr.GetClient(),
-		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhook")),
 	}).SetupWebhookWithManager(mgr)
 	(&webhooks.UserValidationWebhookHandler{
 		Client: mgr.GetClient(),
-		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhook")),
 	}).SetupWebhookWithManager(mgr)
 
 	ctx := ctrl.SetupSignalHandler()

@@ -1137,6 +1137,12 @@ metadata:
         f:template:
           .: {}
           f:name: {}
+    manager: cmd.test
+    operation: Update
+    time: xxxxxxxx
+  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
       f:status:
         .: {}
         f:config:
@@ -1147,6 +1153,7 @@ metadata:
         f:phase: {}
     manager: cmd.test
     operation: Update
+    subresource: status
     time: xxxxxxxx
   name: ws1
   namespace: cosmo-user-user1
@@ -1179,6 +1186,12 @@ metadata:
         f:template:
           .: {}
           f:name: {}
+    manager: cmd.test
+    operation: Update
+    time: xxxxxxxx
+  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
       f:status:
         .: {}
         f:config:
@@ -1189,6 +1202,7 @@ metadata:
         f:phase: {}
     manager: cmd.test
     operation: Update
+    subresource: status
     time: xxxxxxxx
   name: ws2
   namespace: cosmo-user-user1
@@ -1254,6 +1268,12 @@ metadata:
         f:template:
           .: {}
           f:name: {}
+    manager: cmd.test
+    operation: Update
+    time: xxxxxxxx
+  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
       f:status:
         .: {}
         f:config:
@@ -1264,6 +1284,7 @@ metadata:
         f:phase: {}
     manager: cmd.test
     operation: Update
+    subresource: status
     time: xxxxxxxx
   name: ws1
   namespace: cosmo-user-user1
@@ -1296,6 +1317,12 @@ metadata:
         f:template:
           .: {}
           f:name: {}
+    manager: cmd.test
+    operation: Update
+    time: xxxxxxxx
+  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
       f:status:
         .: {}
         f:config:
@@ -1306,6 +1333,7 @@ metadata:
         f:phase: {}
     manager: cmd.test
     operation: Update
+    subresource: status
     time: xxxxxxxx
   name: ws2
   namespace: cosmo-user-user1
@@ -2401,4 +2429,3 @@ Global Flags:
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance xxx --user user1 2']
 SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
-

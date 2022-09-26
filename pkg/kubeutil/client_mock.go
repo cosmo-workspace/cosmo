@@ -13,7 +13,7 @@ import (
 type ClientMock struct {
 	client.Client
 
-	GetMock         func(ctx context.Context, key client.ObjectKey, obj client.Object) (mocked bool, err error)
+	GetMock         func(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption) (mocked bool, err error)
 	ListMock        func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error)
 	CreateMock      func(ctx context.Context, obj client.Object, opts ...client.CreateOption) (mocked bool, err error)
 	DeleteMock      func(ctx context.Context, obj client.Object, opts ...client.DeleteOption) (mocked bool, err error)
@@ -39,7 +39,7 @@ func (c *ClientMock) Clear() {
 	c.DeleteAllOfMock = nil
 }
 
-func (c *ClientMock) Get(ctx context.Context, key client.ObjectKey, obj client.Object) error {
+func (c *ClientMock) Get(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption) error {
 	if c.GetMock != nil {
 		mocked, err := c.GetMock(ctx, key, obj)
 		if mocked {
@@ -48,11 +48,11 @@ func (c *ClientMock) Get(ctx context.Context, key client.ObjectKey, obj client.O
 			return err
 		}
 	}
-	return c.Client.Get(ctx, key, obj)
+	return c.Client.Get(ctx, key, obj, opts...)
 }
 
 func (c *ClientMock) SetGetError(caller interface{}, retErr error) {
-	c.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object) (mocked bool, err error) {
+	c.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption) (mocked bool, err error) {
 		if c.IsCallingFrom(caller) {
 			return true, retErr
 		}

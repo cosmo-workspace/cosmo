@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -18,30 +17,32 @@ import (
 // ClusterTemplateReconciler reconciles a ClusterTemplate object
 type ClusterTemplateReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme       *runtime.Scheme
+	FieldManager string
 }
 
 func (r *ClusterTemplateReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("ClusterTemplateReconciler")
-	ctx = clog.IntoContext(ctx, log)
+	log := clog.FromContext(ctx).WithName("ClusterTemplateReconciler").WithValues("req", req)
 
 	log.Debug().Info("start reconcile")
 
-	if err := r.reconcile(ctx, req); err != nil {
-		log.Error(err, "reconcile end with warn", "clustertemplate", req.Name)
+	var tmpl cosmov1alpha1.ClusterTemplate
+	if err := r.Get(ctx, req.NamespacedName, &tmpl); err != nil {
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+	log = log.WithValues("UID", tmpl.UID)
+	ctx = clog.IntoContext(ctx, log)
+
+	if err := r.reconcile(ctx, &tmpl); err != nil {
+		return ctrl.Result{}, err
 	}
 
 	log.Debug().Info("finish reconcile")
 	return ctrl.Result{}, nil
 }
 
-func (r *ClusterTemplateReconciler) reconcile(ctx context.Context, req ctrl.Request) error {
+func (r *ClusterTemplateReconciler) reconcile(ctx context.Context, tmpl *cosmov1alpha1.ClusterTemplate) error {
 	log := clog.FromContext(ctx)
-
-	var tmpl cosmov1alpha1.ClusterTemplate
-	if err := r.Get(ctx, req.NamespacedName, &tmpl); err != nil {
-		return client.IgnoreNotFound(err)
-	}
 
 	var insts cosmov1alpha1.ClusterInstanceList
 	err := r.List(ctx, &insts)
@@ -49,15 +50,11 @@ func (r *ClusterTemplateReconciler) reconcile(ctx context.Context, req ctrl.Requ
 		return fmt.Errorf("failed to list clusterinstances for clustertemplate %s: %w", tmpl.Name, err)
 	}
 
-	// update instance annotations to notify template updates
-	now := time.Now()
-	for _, inst := range insts.Items {
-		if tmpl.Name != inst.GetSpec().Template.Name {
-			continue
+	if errs := notifyUpdateToInstances(ctx, r.Client, tmpl, insts.InstanceObjects()); len(errs) > 0 {
+		for _, e := range errs {
+			log.Error(e, "failed to notify the update of template")
 		}
-		if err := notifyUpdateToInstance(ctx, r.Client, now, &inst); err != nil {
-			log.Error(err, "failed to notify template updates", "tmplName", tmpl.Name, "instName", inst.GetName())
-		}
+		return fmt.Errorf("failed to notify the update of template %s", tmpl.Name)
 	}
 	return nil
 }

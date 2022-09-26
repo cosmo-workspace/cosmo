@@ -3,8 +3,6 @@ package clog
 import (
 	"context"
 	"fmt"
-	"io"
-	"os"
 	"runtime"
 	"strings"
 
@@ -17,17 +15,14 @@ import (
 )
 
 const (
-	LEVEL_INFO      = 0
-	LEVEL_DEBUG     = 1
-	LEVEL_DEBUG_ALL = 2
+	LEVEL_INFO        = 0
+	LEVEL_DEBUG       = 1
+	LEVEL_DEBUG_ALL   = 2
+	LEVEL_OBJECT_DUMP = 5
 )
 
-func LogrIntoContext(ctx context.Context, logger logr.Logger) context.Context {
-	return log.IntoContext(ctx, logger)
-}
-
 func IntoContext(ctx context.Context, logger *Logger) context.Context {
-	return LogrIntoContext(ctx, logger.logger)
+	return log.IntoContext(ctx, logger.Logger)
 }
 
 func FromContext(ctx context.Context) *Logger {
@@ -35,28 +30,27 @@ func FromContext(ctx context.Context) *Logger {
 		logger := log.FromContext(ctx)
 		return NewLogger(logger)
 	}
-	return NewLogger(log.NullLogger{})
+	return NewLogger(logr.Discard())
 }
 
 func NewLogger(log logr.Logger) *Logger {
-	return &Logger{logger: log, out: os.Stdout}
+	return &Logger{Logger: log}
 }
 
 type Logger struct {
-	logger logr.Logger
-	out    io.Writer
+	logr.Logger
 }
 
 func (l *Logger) Enabled() bool {
-	return l.logger.Enabled()
+	return l.Logger.Enabled()
 }
 
 func (l *Logger) WithName(name string) *Logger {
-	return NewLogger(l.logger.WithName(name))
+	return NewLogger(l.Logger.WithName(name))
 }
 
 func (l *Logger) WithValues(keysAndValues ...interface{}) *Logger {
-	return NewLogger(l.logger.WithValues(keysAndValues...))
+	return NewLogger(l.Logger.WithValues(keysAndValues...))
 }
 
 func (l *Logger) WithCaller() *Logger {
@@ -64,21 +58,19 @@ func (l *Logger) WithCaller() *Logger {
 }
 
 func (l *Logger) Debug() *Logger {
-	return NewLogger(l.logger.V(LEVEL_DEBUG))
+	return NewLogger(l.Logger.V(LEVEL_DEBUG))
 }
 
 func (l *Logger) DebugAll() *Logger {
-	return NewLogger(l.logger.V(LEVEL_DEBUG_ALL))
+	return NewLogger(l.Logger.V(LEVEL_DEBUG_ALL))
 }
 
 func (l *Logger) Error(err error, msg string, keysAndValues ...interface{}) {
-	if l.logger.Enabled() {
-		l.logger.Error(err, msg, keysAndValues...)
-	}
+	l.Logger.Error(err, msg, keysAndValues...)
 }
 
 func (l *Logger) Info(msg string, keysAndValues ...interface{}) {
-	l.logger.Info(msg, keysAndValues...)
+	l.Logger.Info(msg, keysAndValues...)
 }
 
 type NamedObject interface {
@@ -87,7 +79,7 @@ type NamedObject interface {
 }
 
 func (l *Logger) DumpObject(scheme *apiruntime.Scheme, obj NamedObject, msg string) {
-	if l.logger.Enabled() {
+	if l.Logger.V(LEVEL_OBJECT_DUMP).Enabled() {
 		debugObj := obj.DeepCopyObject()
 		gvk, _ := apiutil.GVKForObject(debugObj, scheme)
 		apiVersion := gvk.GroupVersion()
@@ -95,30 +87,23 @@ func (l *Logger) DumpObject(scheme *apiruntime.Scheme, obj NamedObject, msg stri
 		name := obj.GetName()
 
 		b, _ := yaml.Marshal(obj)
-		// if err == nil {
-		fmt.Fprintf(l.out, `--- dump object: %s
---- %s
---- APIVersion: %s, Kind: %s, Name: %s
+		l.Logger.V(LEVEL_OBJECT_DUMP).Info(fmt.Sprintf(`dump object: %s
+------ %s
+------ APIVersion: %s, Kind: %s, Name: %s
 %s
-`, msg, fileLine(), apiVersion, kind, name, b)
-		// }
+------
+`, msg, fileLine(), apiVersion, kind, name, b))
 	}
 }
 
-func (l *Logger) PrintObjectDiff(x, y interface{}) {
-	if l.logger.Enabled() {
-		diff := Diff(x, y)
-		l.Info(diff)
+func (l *Logger) PrintObjectDiff(x, y NamedObject) {
+	if l.Logger.Enabled() {
+		diff := cmp.Diff(x, y)
+		if diff == "" {
+			diff = "no difference"
+		}
+		l.Info(fmt.Sprintf("Object diff: %s", diff), "x", x.GetName(), "y", y.GetName())
 	}
-}
-
-func Diff(x, y interface{}) string {
-	return cmp.Diff(x, y)
-}
-
-func PrintObjectDiff(out io.Writer, x, y interface{}) {
-	diff := Diff(x, y)
-	fmt.Fprintln(out, diff)
 }
 
 func caller() string {

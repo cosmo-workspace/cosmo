@@ -38,6 +38,7 @@ func (h *TemplateMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manage
 
 func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
 
 	var tmpl cosmov1alpha1.TemplateObject
 
@@ -48,7 +49,7 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
+		log.DumpObject(h.Client.Scheme(), tmpl, "request template")
 
 	case "ClusterTemplate":
 		tmpl = &cosmov1alpha1.ClusterTemplate{}
@@ -56,7 +57,7 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
+		log.DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
 
 	default:
 		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
@@ -122,6 +123,7 @@ func (h *TemplateValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Mana
 // Handle validates the fields in Template
 func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
 
 	var tmpl cosmov1alpha1.TemplateObject
 	var dummyInst cosmov1alpha1.InstanceObject
@@ -133,7 +135,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request template")
+		log.DumpObject(h.Client.Scheme(), tmpl, "request template")
 
 		dummyInst = &cosmov1alpha1.Instance{}
 		dummyInst.SetName("dummy")
@@ -145,7 +147,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
+		log.DumpObject(h.Client.Scheme(), tmpl, "request cluster template")
 
 		dummyInst = &cosmov1alpha1.ClusterInstance{}
 		dummyInst.SetName("dummy")
@@ -165,7 +167,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 			}
 		}
 	} else {
-		h.Log.Info("skip dryrun validation")
+		log.Info("skip dryrun validation")
 	}
 
 	res := admission.Allowed("Validation OK")

@@ -10,7 +10,7 @@
 
 package v1alpha1
 
-//Implementation response defines an error code with the associated body
+// Implementation response defines an error code with the associated body
 type ImplResponse struct {
 	Code int
 	Body interface{}

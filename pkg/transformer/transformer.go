@@ -29,7 +29,6 @@ func ApplyTransformers(ctx context.Context, transformers []Transformer, objects 
 		// Perform each transformers
 		for _, trans := range transformers {
 			transName := Name(trans)
-			log.DebugAll().Info(fmt.Sprintf("transforming %s", transName), "transformer", transName, "kind", applied[i].GetKind(), "name", applied[i].GetName())
 			before := applied[i].DeepCopy()
 
 			transformed, err := trans.Transform(&applied[i])
@@ -38,8 +37,8 @@ func ApplyTransformers(ctx context.Context, transformers []Transformer, objects 
 			}
 
 			if !equality.Semantic.DeepEqual(before, transformed) {
-				log.DebugAll().PrintObjectDiff(before, transformed)
 				log.DebugAll().Info("transformed", "transformer", transName, "kind", applied[i].GetKind(), "name", applied[i].GetName())
+				log.DebugAll().PrintObjectDiff(before, transformed)
 
 				applied[i] = *transformed
 			} else {

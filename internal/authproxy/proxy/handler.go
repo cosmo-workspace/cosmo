@@ -52,7 +52,7 @@ func (p *ProxyServer) handleLogin(w http.ResponseWriter, r *http.Request) {
 		UserID:   req.Id,
 		Deadline: time.Now().Add(time.Duration(p.MaxAgeSeconds) * time.Second).Unix(),
 	}
-	log.DebugAll().Info("save session", "userID", sesInfo.UserID, "deadline", sesInfo.Deadline)
+	log.Debug().Info("save session", "userID", sesInfo.UserID, "deadline", sesInfo.Deadline)
 	ses = session.Set(ses, sesInfo)
 
 	err = p.sessionStore.Save(r, w, ses)

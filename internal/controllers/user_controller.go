@@ -31,8 +31,7 @@ type UserReconciler struct {
 }
 
 func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("UserReconciler").WithValues("name", req.Name)
-	ctx = clog.IntoContext(ctx, log)
+	log := clog.FromContext(ctx).WithName("UserReconciler").WithValues("req", req)
 
 	log.Debug().Info("start reconcile")
 
@@ -40,6 +39,8 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	if err := r.Get(ctx, req.NamespacedName, &user); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+	log = log.WithValues("UID", user.UID)
+	ctx = clog.IntoContext(ctx, log)
 	currentUser := user.DeepCopy()
 
 	// reconcile namespace

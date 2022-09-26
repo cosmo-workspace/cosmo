@@ -53,3 +53,11 @@ type ClusterInstanceList struct {
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []ClusterInstance `json:"items"`
 }
+
+func (l *ClusterInstanceList) InstanceObjects() []InstanceObject {
+	i := make([]InstanceObject, 0, len(l.Items))
+	for _, v := range l.Items {
+		i = append(i, v.DeepCopy())
+	}
+	return i
+}

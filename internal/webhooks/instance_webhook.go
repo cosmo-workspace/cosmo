@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	netv1 "k8s.io/api/networking/v1"
@@ -43,6 +42,7 @@ func (h *InstanceMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manage
 
 func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
 
 	var inst cosmov1alpha1.InstanceObject
 	var instSpec *cosmov1alpha1.InstanceSpec
@@ -57,7 +57,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
+		log.DumpObject(h.Client.Scheme(), inst, "request instance")
 
 		instSpec = inst.GetSpec()
 
@@ -76,7 +76,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+		log.DumpObject(h.Client.Scheme(), inst, "request cluster instance")
 
 		instSpec = inst.GetSpec()
 
@@ -197,6 +197,7 @@ func (h *InstanceValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Mana
 
 func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
+	ctx = clog.IntoContext(ctx, log)
 
 	var inst cosmov1alpha1.InstanceObject
 	var tmpl cosmov1alpha1.TemplateObject
@@ -208,7 +209,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
+		log.DumpObject(h.Client.Scheme(), inst, "request instance")
 
 		// whether template exist
 		tmpl = &cosmov1alpha1.Template{}
@@ -224,7 +225,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+		log.DumpObject(h.Client.Scheme(), inst, "request cluster instance")
 
 		// whether template exist
 		tmpl = &cosmov1alpha1.ClusterTemplate{}
@@ -306,10 +307,9 @@ func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, 
 		// err -> metadata.ownerReferences.uid: Invalid value: "": uid must not be empty
 		built.SetOwnerReferences(nil)
 
-		fmt.Fprintf(os.Stderr, "DRYRUN Applying %v\n", built)
-		log.Debug().Info(fmt.Sprintf("DRYRUN Applying %v\n", built))
+		log.Debug().Info(fmt.Sprintf("Validate instance's object by dry-run applying... %v\n", built))
 		out, err := kubeutil.Apply(ctx, c, &built, fieldManager, true, true)
-		log.Debug().Info(fmt.Sprintf("DRYRUN Applyed %v\n", out))
+		log.DebugAll().Info(fmt.Sprintf("Applied object dump %v\n", out))
 
 		if err != nil {
 			// ignore NotFound in case the template contains a dependency resource that was not found.

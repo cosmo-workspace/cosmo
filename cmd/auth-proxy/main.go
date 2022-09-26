@@ -77,9 +77,7 @@ func main() {
 	flag.Int64Var(&o.GracefulShutdownSeconds, "graceful-shutdown-seconds", 10, "proxy graceful shutdown seconds")
 	flag.IntVar(&o.MaxAgeMinutes, "maxage-minutes", 720, "session maxage minutes. if 0, session will be never expired")
 
-	opts := zap.Options{
-		Development: true,
-	}
+	opts := zap.Options{}
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 

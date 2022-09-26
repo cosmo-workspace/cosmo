@@ -16,17 +16,7 @@ IMG_MANAGER ?= cosmo-controller-manager:$(MANAGER_VERSION)
 IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
 IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true,generateEmbeddedObjectMeta=true,preserveUnknownFields=false"
-
-# ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION ?= 1.21.x
-
-# Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
-ifeq (,$(shell go env GOBIN))
-GOBIN=$(shell go env GOPATH)/bin
-else
-GOBIN=$(shell go env GOBIN)
-endif
+CRD_OPTIONS ?= "crd:generateEmbeddedObjectMeta=true"
 
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # This is a requirement for 'setup-envtest.sh' in the test target.
@@ -142,15 +132,15 @@ chart-check: chart-crd
 	./hack/diff-chart-kust.sh dashboard
 
 .PHONY: fmt
-fmt: ## Run go fmt against code.
+fmt: go ## Run go fmt against code.
 ifeq ($(QUICK_BUILD),no)
-	go fmt ./...
+	$(GO) fmt ./...
 endif
 
 .PHONY: vet
-vet: ## Run go vet against code.
+vet: go ## Run go vet against code.
 ifeq ($(QUICK_BUILD),no)
-	go vet ./...
+	$(GO) vet ./...
 endif
 
 ##---------------------------------------------------------------------
@@ -160,6 +150,10 @@ TEST_FILES ?= ./...
 COVER_PROFILE ?= cover.out
 #TEST_OPTS ?= --ginkgo.focus 'Dashboard server \[User\]' -ginkgo.v -ginkgo.progress -test.v > test.out 2>&1
 
+.PHONY: clear-snapshots
+clear-snapshots:
+	find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
+
 .PHONY: go-test.env
 go-test.env: 
 	@echo KUBEBUILDER_ASSETS=$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path) > ./.vscode/go-test.env
@@ -168,20 +162,20 @@ go-test.env:
 test: manifests generate fmt vet envtest go-test.env go-test ## Run tests.
 
 .PHONY: go-test
-go-test:
+go-test: go
 ifeq ($(QUICK_BUILD),no)
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" \
-	go test $(TEST_FILES) -coverprofile $(COVER_PROFILE) $(TEST_OPTS)
+	$(GO) test $(TEST_FILES) -coverprofile $(COVER_PROFILE) $(TEST_OPTS)
 endif
 
 .PHONY: test-all-k8s-versions
-test-all-k8s-versions: manifests generate fmt vet envtest ## Run tests on targeting k8s versions.
+test-all-k8s-versions: go manifests generate fmt vet envtest ## Run tests on targeting k8s versions.
 ifeq ($(QUICK_BUILD),no)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.19.x -p path)" go test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.20.x -p path)" go test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.21.x -p path)" go test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.22.x -p path)" go test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.23.x -p path)" go test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.19.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.20.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.21.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.22.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.23.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
 endif
 
 .PHONY: ui-test
@@ -197,20 +191,20 @@ swaggerui:
 ##@ Build
 ##---------------------------------------------------------------------
 .PHONY: manager
-manager: generate fmt vet ## Build manager binary.
-	CGO_ENABLED=0 go build -o bin/manager ./cmd/controller-manager/main.go
+manager: go generate fmt vet ## Build manager binary.
+	CGO_ENABLED=0 $(GO) build -o bin/manager ./cmd/controller-manager/main.go
 
 .PHONY: cosmoctl
-cosmoctl: generate fmt vet ## Build cosmoctl binary.
-	CGO_ENABLED=0 go build -o bin/cosmoctl ./cmd/cosmoctl/main.go
+cosmoctl: go generate fmt vet ## Build cosmoctl binary.
+	CGO_ENABLED=0 $(GO) build -o bin/cosmoctl ./cmd/cosmoctl/main.go
 
 .PHONY: dashboard
-dashboard: generate fmt vet ## Build dashboard binary.
-	CGO_ENABLED=0 go build -o bin/dashboard ./cmd/dashboard/main.go
+dashboard: go generate fmt vet ## Build dashboard binary.
+	CGO_ENABLED=0 $(GO) build -o bin/dashboard ./cmd/dashboard/main.go
 
 .PHONY: auth-proxy
-auth-proxy: generate fmt vet ## Build auth-proxy binary.
-	CGO_ENABLED=0 go build -o bin/auth-proxy ./cmd/auth-proxy/main.go
+auth-proxy: go generate fmt vet ## Build auth-proxy binary.
+	CGO_ENABLED=0 $(GO) build -o bin/auth-proxy ./cmd/auth-proxy/main.go
 
 .PHONY: update-version
 update-version: ## Update version in version.go.
@@ -243,11 +237,14 @@ endif
 ##---------------------------------------------------------------------
 ##@ Run
 ##---------------------------------------------------------------------
+
+LOG_LEVEL ?= 3
+
 # Run against the configured Kubernetes cluster in ~/.kube/config
 .PHONY: run-dashboard
-run-dashboard: generate fmt vet manifests ## Run dashboard against the configured Kubernetes cluster in ~/.kube/config.
-	go run ./cmd/dashboard/main.go \
-		--zap-log-level 3 \
+run-dashboard: go generate fmt vet manifests ## Run dashboard against the configured Kubernetes cluster in ~/.kube/config.
+	$(GO) run ./cmd/dashboard/main.go \
+		--zap-log-level $(LOG_LEVEL) \
 		--insecure
 
 .PHONY: run-dashboard-ui
@@ -255,9 +252,9 @@ run-dashboard-ui: ## Run dashboard-ui.
 	cd web/dashboard-ui && yarn install && yarn start
 
 .PHONY: run-auth-proxy
-run-auth-proxy: generate fmt vet manifests ## Run auth-proxy against the configured Kubernetes cluster in ~/.kube/config.
-	go run ./cmd/auth-proxy/main.go \
-		--zap-log-level 3 \
+run-auth-proxy: go generate fmt vet manifests ## Run auth-proxy against the configured Kubernetes cluster in ~/.kube/config.
+	$(GO) run ./cmd/auth-proxy/main.go \
+		--zap-log-level $(LOG_LEVEL) \
 		--insecure
 
 .PHONY: run-auth-proxy-ui
@@ -265,8 +262,11 @@ run-auth-proxy-ui: ## Run auth-proxy-ui.
 	cd web/auth-proxy-ui && yarn install && PORT=3010 yarn start
 
 .PHONY: run
-run: generate fmt vet manifests ## Run controller-manager against the configured Kubernetes cluster in ~/.kube/config.
-	go run ./cmd/controller-manager/main.go --metrics-bind-address :8085 --cert-dir .
+run: go generate fmt vet manifests ## Run controller-manager against the configured Kubernetes cluster in ~/.kube/config.
+	$(GO) run ./cmd/controller-manager/main.go \
+		--zap-log-level $(LOG_LEVEL) \
+		--metrics-bind-address :8085 \
+		--cert-dir .
 
 ##---------------------------------------------------------------------
 ##@ Docker build
@@ -312,19 +312,32 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 ##---------------------------------------------------------------------
 ##@ Build Dependencies
 ##---------------------------------------------------------------------
+
+## Tool Versions
+GO_VERSION ?= 1.19
+KUSTOMIZE_VERSION ?= v4.5.7
+CONTROLLER_TOOLS_VERSION ?= v0.10.0
+
+# ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
+ENVTEST_K8S_VERSION ?= 1.25.x
+
 ## Location to install dependencies to
 LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
 
+# Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
+ifeq (,$(shell go env GOBIN))
+GOBIN=$(shell go env GOPATH)/bin
+else
+GOBIN=$(shell go env GOBIN)
+endif
+GO ?= $(GOBIN)/go$(GO_VERSION)
+
 ## Tool Binaries
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
-
-## Tool Versions
-KUSTOMIZE_VERSION ?= v3.8.7
-CONTROLLER_TOOLS_VERSION ?= v0.6.0
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
@@ -333,11 +346,20 @@ $(KUSTOMIZE): $(LOCALBIN)
 	curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN)
 
 .PHONY: controller-gen
-controller-gen: $(CONTROLLER_GEN) ## Download controller-gen locally if necessary.
+controller-gen: go $(CONTROLLER_GEN) ## Download controller-gen locally if necessary.
 $(CONTROLLER_GEN): $(LOCALBIN)
-	GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
+	GOBIN=$(LOCALBIN) $(GO) install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
 
 .PHONY: envtest
-envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
+envtest: go $(ENVTEST) ## Download envtest-setup locally if necessary.
 $(ENVTEST): $(LOCALBIN)
-	GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+	GOBIN=$(LOCALBIN) $(GO) install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+
+.PHONY: go
+go: $(GO)
+$(GO): 
+	go install golang.org/dl/go$(GO_VERSION)@latest
+	$(GO) download
+
+.PHONY: configure
+configure: kustomize controller-gen envtest

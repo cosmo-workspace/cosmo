@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -37,11 +38,10 @@ type WorkspaceStatusReconciler struct {
 	DefaultURLBase string
 }
 
-//+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
-//+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
+// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("WorkspaceStatusReconciler")
-	ctx = clog.IntoContext(ctx, log)
+	log := clog.FromContext(ctx).WithName("WorkspaceStatusReconciler").WithValues("req", req)
 
 	log.Debug().Info("start reconcile")
 
@@ -51,10 +51,12 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	if err := r.Get(ctx, key, &ws); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+	log = log.WithValues("UID", ws.UID, "Template", ws.Spec.Template.Name)
+	ctx = clog.IntoContext(ctx, log)
 
 	current := ws.DeepCopy()
 
-	log.DebugAll().DumpObject(r.Scheme, &ws, "before workspace")
+	log.DumpObject(r.Scheme, &ws, "before workspace")
 
 	// sync workspace config with template
 	cfg, err := getWorkspaceConfig(ctx, r.Client, ws.Spec.Template.Name)
@@ -68,7 +70,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	// fetch child pod status
 	if urlMap, err := r.GenWorkspaceURLMap(ctx, ws); err == nil {
-		log.Debug().Info("workspace urlmap", "urlmap", urlMap)
+		log.Debug().Info(fmt.Sprintf("workspace urlmap: %s", urlMap))
 		ws.Status.URLs = urlMap
 
 	} else {
@@ -109,8 +111,8 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	// update workspace status
-	if !equality.Semantic.DeepEqual(*current, ws) {
-		log.Debug().PrintObjectDiff(*current, ws)
+	if !equality.Semantic.DeepEqual(current, &ws) {
+		log.Debug().PrintObjectDiff(current, &ws)
 
 		if err := r.Status().Update(ctx, &ws); err != nil {
 			return ctrl.Result{}, err
@@ -119,7 +121,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		log.Info("workspace status updated", "ws", ws.Name)
 	}
 
-	log.Info("finish reconcile")
+	log.Debug().Info("finish reconcile")
 	if requeue {
 		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	}
@@ -219,9 +221,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 
 	urlMap := make(map[string]string)
 	for name, urlvars := range urlvarsMap {
-		if log.DebugAll().Enabled() {
-			urlvars.Dump(log)
-		}
+		log.DebugAll().Info("urlvar map", urlvars.Dump()...)
 		urlMap[name] = urlbase.GenURL(urlvars)
 	}
 

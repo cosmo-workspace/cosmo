@@ -5,22 +5,17 @@ import (
 	"fmt"
 	"time"
 
-	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
-	metav1apply "k8s.io/client-go/applyconfigurations/meta/v1"
-	rbacv1apply "k8s.io/client-go/applyconfigurations/rbac/v1"
-	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
 var _ = Describe("ClusterTemplate controller", func() {
@@ -51,30 +46,6 @@ rules:
   - watch
 `, crName),
 		},
-	}
-
-	expectedClusterRoleApply := func(ownerRef metav1.OwnerReference) *rbacv1apply.ClusterRoleApplyConfiguration {
-		return rbacv1apply.ClusterRole(crName).
-			WithAPIVersion("rbac.authorization.k8s.io/v1").
-			WithKind("ClusterRole").
-			WithLabels(map[string]string{
-				cosmov1alpha1.LabelKeyInstance: name,
-				cosmov1alpha1.LabelKeyTemplate: name,
-			}).
-			WithOwnerReferences(
-				metav1apply.OwnerReference().
-					WithAPIVersion(ownerRef.APIVersion).
-					WithBlockOwnerDeletion(*ownerRef.BlockOwnerDeletion).
-					WithController(*ownerRef.Controller).
-					WithKind(ownerRef.Kind).
-					WithName(ownerRef.Name).
-					WithUID(ownerRef.UID),
-			).
-			WithRules(
-				rbacv1apply.PolicyRule().
-					WithResources("pods").
-					WithVerbs("get", "list", "watch").
-					WithAPIGroups(""))
 	}
 
 	Context("when creating ClusterTemplate resource on new cluster", func() {
@@ -118,6 +89,18 @@ rules:
 			err := k8sClient.Create(ctx, &inst)
 			Expect(err).ShouldNot(HaveOccurred())
 
+			By("checking if child resources is as expected in template")
+
+			// ClusterRole
+			var cr rbacv1.ClusterRole
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name: crName,
+				}
+				return k8sClient.Get(ctx, key, &cr)
+			}, time.Second*10).Should(Succeed())
+			Ω(objectSnapshot(&cr)).To(MatchSnapShot())
+
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
 			var createdInst cosmov1alpha1.ClusterInstance
@@ -130,28 +113,6 @@ rules:
 
 				return createdInst.Status.LastAppliedObjectsCount
 			}, time.Second*60).Should(BeEquivalentTo(1))
-
-			By("checking if child resources is as expected in template")
-
-			instOwnerRef := ownerRef(&inst, scheme.Scheme)
-
-			// ClusterRole
-			var cr rbacv1.ClusterRole
-			Eventually(func() error {
-				key := client.ObjectKey{
-					Name: crName,
-				}
-				return k8sClient.Get(ctx, key, &cr)
-			}, time.Second*10).Should(Succeed())
-
-			crApplyCfg, err := rbacv1apply.ExtractClusterRole(&cr, controllerFieldManager)
-			Expect(err).ShouldNot(HaveOccurred())
-
-			expectedCRApplyCfg := expectedClusterRoleApply(instOwnerRef)
-			Expect(crApplyCfg).Should(BeEqualityDeepEqual(expectedCRApplyCfg))
-
-			cr.SetGroupVersionKind(schema.FromAPIVersionAndKind(*crApplyCfg.APIVersion, *crApplyCfg.Kind))
-			Expect(instance.ExistInLastApplyed(&createdInst, &cr)).Should(BeTrue())
 		})
 	})
 
@@ -159,13 +120,12 @@ rules:
 		It("should do instance reconcile and update child resources", func() {
 			ctx := context.Background()
 
-			// fetch current clusterinstance
-			var inst cosmov1alpha1.ClusterInstance
+			var curInst cosmov1alpha1.ClusterInstance
 			Eventually(func() error {
 				key := client.ObjectKey{
 					Name: name,
 				}
-				return k8sClient.Get(ctx, key, &inst)
+				return k8sClient.Get(ctx, key, &curInst)
 			}, time.Second*10).Should(Succeed())
 
 			// fetch current clustertemplate
@@ -174,52 +134,53 @@ rules:
 				key := types.NamespacedName{
 					Name: name,
 				}
-				return k8sClient.Get(ctx, key, &tmpl)
-			}, time.Second*10).Should(Succeed())
+				err := k8sClient.Get(ctx, key, &tmpl)
+				Expect(err).ShouldNot(HaveOccurred())
 
-			tmpl.Spec.RawYaml = fmt.Sprintf(`
+				tmpl.Spec.RawYaml = fmt.Sprintf(`
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: %s
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
-  - update
+  - apiGroups:
+    - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+      - update # Add
 `, crName)
-
-			// update template
-			err := k8sClient.Update(ctx, &tmpl)
-			Expect(err).ShouldNot(HaveOccurred())
-
-			By("checking if child resources updated")
-
-			instOwnerRef := ownerRef(&inst, scheme.Scheme)
-
-			expectedClusterRoleApply := expectedClusterRoleApply(instOwnerRef)
-			expectedClusterRoleApply.Rules[0].Verbs = append(expectedClusterRoleApply.Rules[0].Verbs, "update")
+				return k8sClient.Update(ctx, &tmpl)
+			}, time.Second*60).Should(Succeed())
 
 			By("checking if clusterrole updated")
 
 			var cr rbacv1.ClusterRole
-			Eventually(func() *rbacv1apply.ClusterRoleApplyConfiguration {
+			Eventually(func() []string {
 				key := client.ObjectKey{
 					Name: crName,
 				}
 				err := k8sClient.Get(ctx, key, &cr)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				crApplyCfg, err := rbacv1apply.ExtractClusterRole(&cr, controllerFieldManager)
-				Expect(err).ShouldNot(HaveOccurred())
+				return cr.Rules[0].Verbs
+			}, time.Second*60).Should(Equal([]string{"get", "list", "watch", "update"}))
+			Ω(objectSnapshot(&cr)).To(MatchSnapShot())
 
-				return crApplyCfg
-			}, time.Second*10).Should(BeEqualityDeepEqual(expectedClusterRoleApply))
+			// fetch current clusterinstance
+			var updatedInst cosmov1alpha1.ClusterInstance
+			Eventually(func() string {
+				key := client.ObjectKey{
+					Name: name,
+				}
+				err := k8sClient.Get(ctx, key, &updatedInst)
+				Expect(err).ShouldNot(HaveOccurred())
+				return updatedInst.Status.TemplateResourceVersion
+			}, time.Second*60).ShouldNot(Equal(curInst.Status.TemplateResourceVersion))
+			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 })

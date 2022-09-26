@@ -96,6 +96,9 @@ spec:
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
         - --zap-log-level={{ .Values.logLevel }}
+        {{- if ne .Values.logLevel "info" }}
+        - --zap-devel=true
+        {{- end }}
         - --workspace-default-urlbase={{ .Values.defaultURLBase.protocol }}://{{ .Values.defaultURLBase.host }}.{{ .Values.defaultURLBase.domain }}
         command:
         - /manager

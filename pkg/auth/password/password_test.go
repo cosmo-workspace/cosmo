@@ -7,12 +7,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	corev1 "k8s.io/api/core/v1"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
 
 var _ = Describe("password", func() {
@@ -22,7 +20,7 @@ var _ = Describe("password", func() {
 
 	Context("when reset password for existing user", func() {
 		It("should create password secret", func() {
-			ctx := clog.LogrIntoContext(context.Background(), log.NullLogger{})
+			ctx := context.Background()
 
 			ns := corev1.Namespace{}
 			ns.SetName(wsv1alpha1.UserNamespace(user1.Name))
@@ -60,7 +58,7 @@ var _ = Describe("password", func() {
 	Context("when getting password from default password secret", func() {
 		newPassword := "New Password"
 		It("should return default password with correct password", func() {
-			ctx := clog.LogrIntoContext(context.Background(), log.NullLogger{})
+			ctx := context.Background()
 
 			// fiest get default password
 			defaultPassword, err := GetDefaultPassword(ctx, k8sClient, user1.Name)

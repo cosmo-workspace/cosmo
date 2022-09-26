@@ -986,4 +986,3 @@ Global Flags:
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 2']
 SnapShot = 'no change'
-

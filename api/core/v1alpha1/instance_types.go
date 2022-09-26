@@ -11,8 +11,6 @@ import (
 const (
 	// LabelKeyInstance is a instance name label on the each child resources associated with the instance
 	LabelKeyInstance = "cosmo/instance"
-	// InstanceAnnKeyTemplateUpdated is a annotation on instance to notify template updates to reconcile
-	InstanceAnnKeyTemplateUpdated = "cosmo/template-updated"
 )
 
 func init() {
@@ -52,6 +50,14 @@ type InstanceList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Instance `json:"items"`
+}
+
+func (l *InstanceList) InstanceObjects() []InstanceObject {
+	i := make([]InstanceObject, 0, len(l.Items))
+	for _, v := range l.Items {
+		i = append(i, v.DeepCopy())
+	}
+	return i
 }
 
 // InstanceSpec defines the desired state of Instance
@@ -110,6 +116,7 @@ type Json6902 struct {
 // InstanceStatus has status of Instance
 type InstanceStatus struct {
 	TemplateName            string      `json:"templateName,omitempty"`
+	TemplateResourceVersion string      `json:"templateResourceVersion,omitempty"`
 	LastApplied             []ObjectRef `json:"lastApplied,omitempty"`
 	LastAppliedObjectsCount int         `json:"lastAppliedObjectsCount,omitempty"`
 	TemplateObjectsCount    int         `json:"templateObjectsCount,omitempty"`

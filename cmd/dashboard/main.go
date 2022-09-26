@@ -59,9 +59,7 @@ func main() {
 	flag.IntVar(&o.ServerPort, "port", 8443, "Port for dashboard server")
 	flag.IntVar(&o.MaxAgeMinutes, "maxage-minutes", 720, "session maxage minutes")
 
-	opts := zap.Options{
-		Development: true,
-	}
+	opts := zap.Options{}
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
