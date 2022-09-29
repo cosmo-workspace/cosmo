@@ -10,11 +10,6 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
-imageK8sRbacProxy:
-  repository: gcr.io/kubebuilder/kube-rbac-proxy
-  pullPolicy: IfNotPresent
-  tag: "v0.8.0"
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -59,7 +54,32 @@ affinity: {}
 
 logLevel: info
 
+# if false, generate webhook certificate by helm function
 enableCertManager: true
+
+# Specifies if cosmo-controller-manager should be started in hostNetwork mode.
+# set true when using custom CNI and kubeapiserver cannot reach to the webhook endpoint
+hostNetwork: false
+
+# This may need to be used to be changed given certain conditions. For instance, if one uses the cilium CNI
+# with certain settings, one may need to set `hostNetwork: true` and webhooks won't work unless `dnsPolicy`
+# is set to `ClusterFirstWithHostNet`. See https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+dnsPolicy:
+
+# if `hostNetwork: true` set available host ports
+webhookPort: 9443
+healthzPort: 8081
+
+metrics:
+  enabled: true
+  port: 8080
+  kubeRbacProxy:
+    enabled: true
+    port: 8443
+    image:
+      repository: gcr.io/kubebuilder/kube-rbac-proxy
+      pullPolicy: IfNotPresent
+      tag: "v0.8.0"
 
 defaultURLBase:
   # this values are passed to the entrypoint args as follows
