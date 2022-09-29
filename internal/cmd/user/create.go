@@ -10,7 +10,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
@@ -120,7 +119,7 @@ func parseUserAddonOptions(rawAddonOptionArray []string, isClusterScope bool) ([
 		addonSplits := strings.Split(addonParm, ",")
 
 		userAddon := wsv1alpha1.UserAddon{
-			Template: cosmov1alpha1.TemplateRef{
+			Template: wsv1alpha1.UserAddonTemplateRef{
 				Name:          addonSplits[0],
 				ClusterScoped: isClusterScope,
 			},

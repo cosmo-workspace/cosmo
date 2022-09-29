@@ -121,7 +121,7 @@ spec:
 					AuthType:    wsv1alpha1.UserAuthTypePasswordSecert,
 					Addons: []wsv1alpha1.UserAddon{
 						{
-							Template: cosmov1alpha1.TemplateRef{
+							Template: wsv1alpha1.UserAddonTemplateRef{
 								Name: namespacedUserAddon.Name,
 							},
 							Vars: map[string]string{
@@ -129,7 +129,7 @@ spec:
 							},
 						},
 						{
-							Template: cosmov1alpha1.TemplateRef{
+							Template: wsv1alpha1.UserAddonTemplateRef{
 								Name:          clusterUserAddon.Name,
 								ClusterScoped: true,
 							},

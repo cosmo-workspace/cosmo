@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -140,7 +139,7 @@ func convertDashv1alpha1UserAddonToUserAddon(addons []dashv1alpha1.ApiV1alpha1Us
 	a := make([]wsv1alpha1.UserAddon, len(addons))
 	for i, v := range addons {
 		addon := wsv1alpha1.UserAddon{
-			Template: cosmov1alpha1.TemplateRef{
+			Template: wsv1alpha1.UserAddonTemplateRef{
 				Name:          v.Template,
 				ClusterScoped: v.ClusterScoped,
 			},
