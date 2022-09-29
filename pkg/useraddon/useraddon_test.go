@@ -26,7 +26,7 @@ func TestEmptyTemplateObject(t *testing.T) {
 			name: "namespaced",
 			args: args{
 				addon: wsv1alpha1.UserAddon{
-					Template: cosmov1alpha1.TemplateRef{
+					Template: wsv1alpha1.UserAddonTemplateRef{
 						Name: "tmpl",
 					},
 				},
@@ -41,7 +41,7 @@ func TestEmptyTemplateObject(t *testing.T) {
 			name: "cluster",
 			args: args{
 				addon: wsv1alpha1.UserAddon{
-					Template: cosmov1alpha1.TemplateRef{
+					Template: wsv1alpha1.UserAddonTemplateRef{
 						Name:          "ctmpl",
 						ClusterScoped: true,
 					},
@@ -84,7 +84,7 @@ func TestEmptyInstanceObject(t *testing.T) {
 			name: "namespaced",
 			args: args{
 				addon: wsv1alpha1.UserAddon{
-					Template: cosmov1alpha1.TemplateRef{
+					Template: wsv1alpha1.UserAddonTemplateRef{
 						Name: "tmpl",
 					},
 				},
@@ -101,7 +101,7 @@ func TestEmptyInstanceObject(t *testing.T) {
 			name: "cluster",
 			args: args{
 				addon: wsv1alpha1.UserAddon{
-					Template: cosmov1alpha1.TemplateRef{
+					Template: wsv1alpha1.UserAddonTemplateRef{
 						Name:          "ctmpl",
 						ClusterScoped: true,
 					},
@@ -205,7 +205,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 					},
 				},
 				addon: wsv1alpha1.UserAddon{
-					Template: cosmov1alpha1.TemplateRef{
+					Template: wsv1alpha1.UserAddonTemplateRef{
 						Name: "tmpl",
 					},
 					Vars: map[string]string{
@@ -221,7 +221,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						// use selected addon in param not in user spec
 						// Addons: []wsv1alpha1.UserAddon{
 						// 	{
-						// 		Template: cosmov1alpha1.TemplateRef{
+						// 		Template: wsv1alpha1.UserAddonTemplateRef{
 						// 			Name: "tmpl",
 						// 		},
 						// 		Vars: map[string]string{
@@ -263,7 +263,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 					},
 				},
 				addon: wsv1alpha1.UserAddon{
-					Template: cosmov1alpha1.TemplateRef{
+					Template: wsv1alpha1.UserAddonTemplateRef{
 						Name:          "ctmpl",
 						ClusterScoped: true,
 					},
@@ -277,7 +277,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						// use selected addon in param not in user spec
 						// Addons: []wsv1alpha1.UserAddon{
 						// 	{
-						// 		Template: cosmov1alpha1.TemplateRef{
+						// 		Template: wsv1alpha1.UserAddonTemplateRef{
 						// 			Name: "ctmpl",
 						//          ClusterScoped: true,
 						// 		},
@@ -313,7 +313,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 					},
 				},
 				addon: wsv1alpha1.UserAddon{
-					Template: cosmov1alpha1.TemplateRef{
+					Template: wsv1alpha1.UserAddonTemplateRef{
 						Name:          "ctmpl",
 						ClusterScoped: true,
 					},

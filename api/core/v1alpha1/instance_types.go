@@ -71,8 +71,7 @@ type InstanceSpec struct {
 // TemplateRef defines template to use in Instance creation
 type TemplateRef struct {
 	// +kubebuilder:validation:Required
-	Name          string `json:"name"`
-	ClusterScoped bool   `json:"clusterScoped,omitempty"`
+	Name string `json:"name"`
 }
 
 // OverrideSpec defines overrides to transform built objects
