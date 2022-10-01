@@ -96,6 +96,7 @@ spec:
     spec:
       containers:
       - args:
+        - --port={{ .Values.webhookPort }}
         - --health-probe-bind-address=:{{ .Values.healthzPort }}
         {{- if and (.Values.metrics.enabled) (.Values.metrics.kubeRbacProxy.enabled) }}
         - --metrics-bind-address=127.0.0.1:{{ $.Values.metrics.port }}
