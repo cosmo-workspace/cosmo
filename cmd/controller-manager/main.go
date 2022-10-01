@@ -43,6 +43,7 @@ var (
 )
 
 type option struct {
+	Port                    int
 	MetricsAddr             string
 	ProbeAddr               string
 	EnableLeaderElection    bool
@@ -60,6 +61,7 @@ func init() {
 }
 
 func main() {
+	flag.IntVar(&o.Port, "port", 9443, "Port for webhook server")
 	flag.Int64Var(&o.StatusCheckIntervals, "statuscheck-interval-seconds", 5, "Status check interval seconds")
 	flag.StringVar(&o.MetricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&o.ProbeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
@@ -79,7 +81,7 @@ func main() {
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
 		MetricsBindAddress:     o.MetricsAddr,
-		Port:                   9443,
+		Port:                   o.Port,
 		HealthProbeBindAddress: o.ProbeAddr,
 		LeaderElection:         o.EnableLeaderElection,
 		LeaderElectionID:       "04c57811.cosmo-workspace",
