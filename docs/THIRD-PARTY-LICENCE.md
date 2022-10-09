@@ -29,6 +29,7 @@
 | react-router-dom             | MIT                | https://github.com/remix-run/react-router/blob/main/LICENSE                         |
 | react-scripts                | MIT                | https://github.com/facebook/create-react-app/blob/main/LICENSE                      |
 | typescript                   | Apache License 2.0 | https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt                       |
+| vite                         | MIT                | https://github.com/vitejs/vite/blob/main/LICENSE                                    |
 | web-vitals                   | Apache License 2.0 | https://github.com/GoogleChrome/web-vitals/blob/main/LICENSE                        |
 
 
