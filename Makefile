@@ -259,7 +259,7 @@ run-auth-proxy: go generate fmt vet manifests ## Run auth-proxy against the conf
 
 .PHONY: run-auth-proxy-ui
 run-auth-proxy-ui: ## Run auth-proxy-ui.
-	cd web/auth-proxy-ui && yarn install && PORT=3010 yarn start
+	cd web/auth-proxy-ui && yarn install && yarn dev --port 3010
 
 .PHONY: run
 run: go generate fmt vet manifests ## Run controller-manager against the configured Kubernetes cluster in ~/.kube/config.

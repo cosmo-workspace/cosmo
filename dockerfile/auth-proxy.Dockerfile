@@ -23,7 +23,7 @@ COPY internal/ internal/
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o auth-proxy ./cmd/auth-proxy/main.go
 
-FROM node:14-alpine as ui-builder
+FROM node:16-alpine as ui-builder
 
 # Create build environment
 ENV PATH web/auth-proxy-ui/node_modules/.bin:$PATH
@@ -37,14 +37,14 @@ RUN yarn install
 
 # Copy the source and build
 COPY ./web/auth-proxy-ui .
-RUN GENERATE_SOURCEMAP=false PUBLIC_URL=/cosmo-auth-proxy yarn build
+RUN yarn build --base=/cosmo-auth-proxy
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM gcr.io/distroless/static:nonroot
 WORKDIR /app
 COPY --from=builder /cosmo/auth-proxy .
-COPY --from=ui-builder /cosmo/web/auth-proxy-ui/build ./public
+COPY --from=ui-builder /cosmo/web/auth-proxy-ui/dist ./public
 
 USER 65532:65532
 
