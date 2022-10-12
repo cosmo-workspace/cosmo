@@ -15,7 +15,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
 
-type createOption struct {
+type CreateOption struct {
 	*cmdutil.CliOptions
 
 	UserID        string
@@ -28,14 +28,10 @@ type createOption struct {
 	userAddons []wsv1alpha1.UserAddon
 }
 
-func createCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
-	o := &createOption{CliOptions: cliOpt}
-	cmd := &cobra.Command{
-		Use:               "create USER_ID --role cosmo-admin",
-		Short:             "Create user",
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
+	o := &CreateOption{CliOptions: cliOpt}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVar(&o.DisplayName, "name", "", "user display name (default: same as USER_ID)")
 	cmd.Flags().StringVar(&o.Role, "role", "", "user role")
 	cmd.Flags().BoolVar(&o.Admin, "admin", false, "user admin role")
@@ -44,7 +40,7 @@ func createCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
 	return cmd
 }
 
-func (o *createOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -54,7 +50,7 @@ func (o *createOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *createOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) Validate(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Validate(cmd, args); err != nil {
 		return err
 	}
@@ -72,7 +68,7 @@ func (o *createOption) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
@@ -135,7 +131,7 @@ func parseUserAddonOptions(rawAddonOptionArray []string, isClusterScope bool) ([
 	return userAddons, nil
 }
 
-func (o *createOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)

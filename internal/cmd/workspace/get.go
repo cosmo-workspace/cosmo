@@ -18,7 +18,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
 
-type getOption struct {
+type GetOption struct {
 	*cmdutil.UserNamespacedCliOptions
 
 	WorkspaceName string
@@ -27,28 +27,17 @@ type getOption struct {
 	showNetwork  bool
 }
 
-func getCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
-	o := &getOption{UserNamespacedCliOptions: cliOpt}
-	cmd := &cobra.Command{
-		Use:   "get [WORKSPACE_NAME]",
-		Short: "Get workspaces",
-		Long: `
-Get workspaces
+func GetCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
+	o := &GetOption{UserNamespacedCliOptions: cliOpt}
 
-This command is like "kubectl get workspace" but show more information.
-
-But for Workspace detailed status or trouble shooting, 
-use "kubectl describe workspace" or "kubectl describe instance" and see controller's events.
-`,
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVarP(&o.outputFormat, "output", "o", "", "output format. available: 'wide', 'yaml'")
 	cmd.Flags().BoolVar(&o.showNetwork, "network", false, "show workspace network")
 	return cmd
 }
 
-func (o *getOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *GetOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -58,7 +47,7 @@ func (o *getOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *getOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *GetOption) Validate(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Validate(cmd, args); err != nil {
 		return err
 	}
@@ -71,7 +60,7 @@ func (o *getOption) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *getOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *GetOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
@@ -84,7 +73,7 @@ func (o *getOption) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)

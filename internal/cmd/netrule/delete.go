@@ -1,4 +1,4 @@
-package workspace
+package netrule
 
 import (
 	"context"
@@ -12,28 +12,23 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
 
-type RemoveNetRuleOption struct {
+type DeleteOption struct {
 	*cmdutil.UserNamespacedCliOptions
 
 	WorkspaceName string
 	NetRuleName   string
 }
 
-func removeNetRuleCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
-	o := &RemoveNetRuleOption{UserNamespacedCliOptions: cliOpt}
+func DeleteCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
+	o := &DeleteOption{UserNamespacedCliOptions: cliOpt}
 
-	cmd := &cobra.Command{
-		Use:               "remove-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME",
-		Short:             "Remove workspace network rule",
-		Aliases:           []string{"rm-net"},
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
-	cmd.Flags().StringVar(&o.NetRuleName, "name", "", "network rule name (Required)")
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+	cmd.Flags().StringVar(&o.WorkspaceName, "workspace", "", "workspace name (Required)")
 	return cmd
 }
 
-func (o *RemoveNetRuleOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -43,7 +38,7 @@ func (o *RemoveNetRuleOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *RemoveNetRuleOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) Validate(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace {
 		return errors.New("--all-namespaces is not supported in this command")
 	}
@@ -53,21 +48,21 @@ func (o *RemoveNetRuleOption) Validate(cmd *cobra.Command, args []string) error 
 	if len(args) < 1 {
 		return errors.New("invalid args")
 	}
-	if o.NetRuleName == "" {
-		return errors.New("network rule name is required")
+	if o.WorkspaceName == "" {
+		return errors.New("workspace name is required")
 	}
 	return nil
 }
 
-func (o *RemoveNetRuleOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
-	o.WorkspaceName = args[0]
+	o.NetRuleName = args[0]
 	return nil
 }
 
-func (o *RemoveNetRuleOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)

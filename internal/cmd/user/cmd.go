@@ -9,21 +9,38 @@ import (
 func AddCommand(cmd *cobra.Command, o *cmdutil.CliOptions) {
 	userCmd := &cobra.Command{
 		Use:   "user",
-		Short: "Manipulate User",
+		Short: "Manipulate User resource",
 		Long: `
-Manipulate Workspaces like COSMO Dashboard UI.
+Manipulate Users like COSMO Dashboard UI.
 
 User is actually a Kubernetes Namespace for running Workspaces.
-
-Password is used for the authentication of COSMO Auth Proxy and COSMO Dashboard UI
 `,
 	}
 
-	userCmd.AddCommand(resetPasswordCmd(o))
-	userCmd.AddCommand(createCmd(o))
-	userCmd.AddCommand(getCmd(o))
-	userCmd.AddCommand(deleteCmd(o))
-	userCmd.AddCommand(updateCmd(o))
+	userCmd.AddCommand(resetPasswordCmd(&cobra.Command{
+		Use:   "reset-password USER_ID",
+		Short: "Reset user password",
+	}, o))
+	userCmd.AddCommand(CreateCmd(&cobra.Command{
+		Use:   "create USER_ID --role cosmo-admin",
+		Short: "Create user",
+	}, o))
+	userCmd.AddCommand(GetCmd(&cobra.Command{
+		Use:   "get",
+		Short: "Get users",
+		Long: `
+Get Users. This command is similar to "kubectl get namespace"
+`,
+	}, o))
+	userCmd.AddCommand(DeleteCmd(&cobra.Command{
+		Use:     "delete USER_ID",
+		Aliases: []string{"del"},
+		Short:   "Delete user",
+	}, o))
+	userCmd.AddCommand(updateCmd(&cobra.Command{
+		Use:   "update USER_ID --role ROLE --name NAME",
+		Short: "Update user",
+	}, o))
 
 	cmd.AddCommand(userCmd)
 }

@@ -1,4 +1,4 @@
-package workspace
+package netrule
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
 
-type addNetRuleOption struct {
+type CreateOption struct {
 	*cmdutil.UserNamespacedCliOptions
 
 	WorkspaceName string
@@ -27,17 +27,12 @@ type addNetRuleOption struct {
 	rule wsv1alpha1.NetworkRule
 }
 
-func addNetRuleCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
-	o := &addNetRuleOption{UserNamespacedCliOptions: cliOpt}
+func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
+	o := &CreateOption{UserNamespacedCliOptions: cliOpt}
 
-	cmd := &cobra.Command{
-		Use:               "add-net-rule WORKSPACE_NAME --name NETWORK_RULE_NAME --port PORT_NUMBER",
-		Short:             "Update or insert workspace network rule",
-		Aliases:           []string{"add-net"},
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
-	cmd.Flags().StringVar(&o.NetRuleName, "name", "", "network rule name (Required)")
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+	cmd.Flags().StringVar(&o.WorkspaceName, "workspace", "", "workspace name (Required)")
 	cmd.Flags().IntVar(&o.PortNumber, "port", 0, "serivce port number (Required)")
 	cmd.Flags().StringVar(&o.Group, "group", "", "group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty")
 	cmd.Flags().StringVar(&o.HTTPPath, "path", "/", "path for Ingress path when using ingress")
@@ -46,7 +41,7 @@ func addNetRuleCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
 	return cmd
 }
 
-func (o *addNetRuleOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -56,7 +51,7 @@ func (o *addNetRuleOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *addNetRuleOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) Validate(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace {
 		return errors.New("--all-namespaces is not supported in this command")
 	}
@@ -66,8 +61,8 @@ func (o *addNetRuleOption) Validate(cmd *cobra.Command, args []string) error {
 	if len(args) < 1 {
 		return errors.New("invalid args")
 	}
-	if o.NetRuleName == "" {
-		return errors.New("--name is required")
+	if o.WorkspaceName == "" {
+		return errors.New("--workspace is required")
 	}
 	if o.PortNumber == 0 {
 		return errors.New("--port is required")
@@ -75,11 +70,11 @@ func (o *addNetRuleOption) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *addNetRuleOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
-	o.WorkspaceName = args[0]
+	o.NetRuleName = args[0]
 
 	if o.Group == "" {
 		o.Group = o.NetRuleName
@@ -95,7 +90,7 @@ func (o *addNetRuleOption) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *addNetRuleOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)

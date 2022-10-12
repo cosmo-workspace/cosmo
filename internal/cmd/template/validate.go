@@ -42,31 +42,10 @@ type validateOption struct {
 	vars  map[string]string
 }
 
-func validateCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
+func validateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &validateOption{CliOptions: cliOpt}
-	cmd := &cobra.Command{
-		Use:     "validate --file FILE",
-		Aliases: []string{"valid", "check"},
-		Short:   "Validate Template",
-		Long: `Validate Template by dry-run
-
-Usage:
-  * Dry-run on server-side
-	
-      cosmoctl template validate -f cosmo-template.yaml
-
-  * Dry-run on client-side using kubectl
-	
-      cosmoctl template validate -f cosmo-template.yaml --client
-
-  * Input from stdin not file.
-
-      cat cosmo-template.yaml | cosmoctl template validate -f -
-`,
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
-
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVarP(&o.File, "file", "f", "", "input COSMO Template file yaml path. when specified '-', input from Stdin")
 	cmd.Flags().StringVar(&o.RawVars, "vars", "", "template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)")
 	cmd.Flags().BoolVar(&o.DryrunOnClientSide, "client", false, "dry-run on client-side. kubectl is required to be executable in PATH")
