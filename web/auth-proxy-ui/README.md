@@ -17,11 +17,11 @@ cd $WEBUI
 yarn add \
   @mui/material @emotion/react @emotion/styled \
   @mui/icons-material \
-  react-error-boundary
-
-# yarn add -D \
-#  @bufbuild/protoc-gen-connect-web \
-#  @bufbuild/protoc-gen-es
+  react-error-boundary \
+  @bufbuild/connect-web @bufbuild/protobuf
+yarn add -D \
+  @bufbuild/protoc-gen-connect-web \
+  @bufbuild/protoc-gen-es
 
 ```
 
@@ -41,5 +41,12 @@ yarn build --base=/proxy-driver-test --outDir=build_test
 
 ../../hack/download-certs.sh dashboard-server-cert cosmo-system
 
-go run ../../hack/echo-server/main.go &
-go run ../../hack/proxy-driver/main.go --port=9999 --target-port=8888 --user=[COSMO_USER_ID] --auth-ui=./build_test/ --auth-url=http://cosmo-dashboard.cosmo-system.svc.cluster.local:8443
+COSMO_USER_ID=xxxxxxxx
+pkill -ef "main echo-server" ; \
+go run ../../hack/echo-server/main.go echo-server &  \
+go run ../../hack/proxy-driver/main.go --port=9999 --target-port=8888 --user=${COSMO_USER_ID} --auth-ui=./build_test/ --auth-url=http://cosmo-dashboard.cosmo-system.svc.cluster.local:8443 ; \
+pkill -ef "main echo-server"
+
+curl  -v  -H "Content-Type: application/json" -d '{"id":"xxxxxxxx","password":"yyyyyyy"}' \
+    http://localhost:9999/proxy-driver-test/authproxy.v1alpha1.AuthProxyService/Login
+```

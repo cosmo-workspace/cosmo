@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
+	authv1alpha1 "github.com/cosmo-workspace/cosmo/api/auth-proxy/v1alpha1"
 )
 
 type Authorizer interface {
-	Authorize(ctx context.Context, req dashv1alpha1.LoginRequest) (bool, error)
+	Authorize(ctx context.Context, msg *authv1alpha1.LoginRequest) (bool, error)
 }

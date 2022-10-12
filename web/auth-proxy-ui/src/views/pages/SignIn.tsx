@@ -1,7 +1,9 @@
-import { Alert, AppBar, Avatar, Backdrop, Box, Button, CircularProgress, Container, Link, Snackbar, Stack, TextField, Toolbar, Typography } from '@mui/material';
+import { createConnectTransport, createPromiseClient } from '@bufbuild/connect-web';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import React, { useState } from 'react';
+import { Alert, AppBar, Avatar, Backdrop, Box, Button, CircularProgress, Container, Link, Snackbar, Stack, TextField, Toolbar, Typography } from '@mui/material';
+import React, { useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { AuthProxyService } from '../../auth-proxy/v1alpha1/authproxy_connectweb';
 import logo from "../../logo-with-name-small.png";
 import { PasswordTextField } from '../atoms/PasswordTextField';
 
@@ -25,11 +27,21 @@ interface Inputs {
   password: string,
 };
 
+const transport = createConnectTransport({
+  baseUrl: import.meta.env.BASE_URL,
+});
+
+function useClient() {
+  return useMemo(() => createPromiseClient(AuthProxyService, transport), [AuthProxyService]);
+}
+
 export const SignIn: React.VFC = () => {
   const [values, _setValues] = useState<Inputs>({ userid: '', password: '' });
   const [errors, setErrors] = useState<Inputs>({ userid: '', password: '' });
   const [signinResult, setSigninResult] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const client = useClient();
 
   const validateInput = (inp: Partial<Inputs>) => {
     const errs = Object.entries(inp).reduce((acc, [k, v]) => ({ ...acc, [k]: v ? '' : 'Required' }), {});
@@ -49,15 +61,10 @@ export const SignIn: React.VFC = () => {
       }
       setLoading(true);
       // login
-      const loginAPI = window.location?.pathname + "/api/login";
-      const res = await fetch(loginAPI, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ "id": values.userid, "password": values.password }),
-      });
-      if (!res.ok) {
-        throw new Error(`Login failed: ${res.status} ${res.statusText}`);
-      }
+      await client.login({
+        id: values.userid,
+        password: values.password,
+      })
       // redirect
       const urlParams = new URLSearchParams(window.location.search);
       const redirectURL = urlParams.get('redirect_to') || '/';
@@ -130,7 +137,7 @@ export const SignIn: React.VFC = () => {
           </Container>
         </Stack>
         <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={Boolean(signinResult)} autoHideDuration={1000} onClose={() => { setSigninResult("") }} >
+          open={Boolean(signinResult)} autoHideDuration={3000} onClose={() => { setSigninResult("") }} >
           <Alert elevation={1} severity="error" variant="filled">{signinResult}</Alert>
         </Snackbar>
         <Backdrop sx={{ zIndex: (theme) => theme.zIndex.drawer + 1000 }} open={loading}>

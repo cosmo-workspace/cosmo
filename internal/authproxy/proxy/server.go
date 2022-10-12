@@ -12,15 +12,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmo-workspace/cosmo/api/auth-proxy/v1alpha1/authproxyconnect"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-)
-
-const (
-	pathLoginAPI = "/api/login"
 )
 
 // ProxyServer is a http(s) server that serve login UI and reverse-proxy to the backend with authentication
@@ -63,16 +59,15 @@ func (p *ProxyServer) SetupSessionStore(hashKey, blockKey []byte) {
 }
 
 func (p *ProxyServer) SetupReverseProxy(addr string, targetURL *url.URL) *ProxyServer {
-	router := mux.NewRouter()
-	router.Use(p.log)
-	router.NotFoundHandler = p.log(p.auth(httputil.NewSingleHostReverseProxy(targetURL)))
-
-	router.Path(p.RedirectPath + pathLoginAPI).Methods(http.MethodPost).HandlerFunc(p.handleLogin)
-	router.PathPrefix(p.RedirectPath).Methods(http.MethodGet).Handler(p.serveLoginPage())
+	mux := http.NewServeMux()
+	path, authProxyHandler := authproxyconnect.NewAuthProxyServiceHandler(p)
+	mux.Handle(p.RedirectPath+path, p.loginCookie(http.StripPrefix(p.RedirectPath, authProxyHandler)))
+	mux.Handle(p.RedirectPath+"/", p.serveLoginPage())
+	mux.Handle("/", p.log(p.auth(httputil.NewSingleHostReverseProxy(targetURL))))
 
 	p.http = &http.Server{
 		Addr:    addr,
-		Handler: router,
+		Handler: mux,
 	}
 	return p
 }
