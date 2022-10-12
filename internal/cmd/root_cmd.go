@@ -24,7 +24,7 @@ func NewRootCmd(o *cmdutil.CliOptions) *cobra.Command {
 Command line tool to manipulate comso
 Complete documentation is available at http://github.com/cosmo-workspace/cosmo
 
-MIT 2021 cosmo-workspace/cosmo
+MIT 2022 cosmo-workspace/cosmo
 `,
 	}
 
@@ -39,7 +39,7 @@ MIT 2021 cosmo-workspace/cosmo
 		Use:   "version",
 		Short: "Print the version number",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Fprintln(o.Out, "cosmoctl - cosmo v0.7.0 cosmo-workspace 2021")
+			fmt.Fprintln(o.Out, "cosmoctl - cosmo v0.7.0 cosmo-workspace 2022")
 		},
 	}
 
