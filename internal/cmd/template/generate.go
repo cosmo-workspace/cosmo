@@ -50,33 +50,10 @@ type generateOption struct {
 	tmpl cosmov1alpha1.TemplateObject
 }
 
-func generateCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
+func generateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &generateOption{CliOptions: cliOpt}
-	cmd := &cobra.Command{
-		Use:     "generate --name TEMPLATE_NAME [< Input via Stdin or pipe]",
-		Aliases: []string{"gen"},
-		Short:   "Generate Template",
-		Long: `Generate Template
-
-For create generated template, just do "kubectl create -f cosmo-template.yaml"
-
-Example:
-  * Pipe from kustomize build and apply to your cluster in a single line 
-	
-      kustomize build ./kubernetes/ | cosmoctl template generate --name TEMPLATE_NAME | kubectl apply -f -
-
-  * Pipe from helm template and generate Workspace Template with cosmo-auth-proxy injection
-	
-  	  helm template code-server ci/helm-chart \
-		| cosmoctl template generate --name TEMPLATE_NAME --workspace
-
-  * Input merged config file (kustomize build ... or helm template ... etc.) and save it to file
-
-      cosmoctl template generate --name TEMPLATE_NAME -o cosmo-template.yaml < merged.yaml
-`,
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "template name (use directory name if not specified)")
 	cmd.Flags().StringVarP(&o.OutputFile, "output", "o", "", "write output into file (default: Stdout)")

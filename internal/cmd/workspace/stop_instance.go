@@ -15,26 +15,21 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
-type stopInstanceOption struct {
+type StopInstanceOption struct {
 	*cmdutil.UserNamespacedCliOptions
 
 	InstanceName string
 }
 
-func stopInstanceCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
-	o := &stopInstanceOption{UserNamespacedCliOptions: cliOpt}
+func StopInstanceCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
+	o := &StopInstanceOption{UserNamespacedCliOptions: cliOpt}
 
-	cmd := &cobra.Command{
-		Use:               "stop-instance WORKSPACE_NAME",
-		Aliases:           []string{"stop"},
-		Short:             "Stop workspace instance",
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	return cmd
 }
 
-func (o *stopInstanceOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *StopInstanceOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -44,7 +39,7 @@ func (o *stopInstanceOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *stopInstanceOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *StopInstanceOption) Validate(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Validate(cmd, args); err != nil {
 		return err
 	}
@@ -54,7 +49,7 @@ func (o *stopInstanceOption) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *stopInstanceOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *StopInstanceOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
@@ -62,7 +57,7 @@ func (o *stopInstanceOption) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *stopInstanceOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *StopInstanceOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)

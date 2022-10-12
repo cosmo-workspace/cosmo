@@ -12,25 +12,20 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
 
-type deleteOption struct {
+type DeleteOption struct {
 	*cmdutil.CliOptions
 
 	UserID string
 }
 
-func deleteCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
-	o := &deleteOption{CliOptions: cliOpt}
-	cmd := &cobra.Command{
-		Use:               "delete USER_ID",
-		Aliases:           []string{"del"},
-		Short:             "Delete user",
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+func DeleteCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
+	o := &DeleteOption{CliOptions: cliOpt}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	return cmd
 }
 
-func (o *deleteOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -40,7 +35,7 @@ func (o *deleteOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *deleteOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) Validate(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Validate(cmd, args); err != nil {
 		return err
 	}
@@ -50,7 +45,7 @@ func (o *deleteOption) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *deleteOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
@@ -58,7 +53,7 @@ func (o *deleteOption) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *deleteOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)

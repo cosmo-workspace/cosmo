@@ -18,14 +18,10 @@ type resetPasswordOption struct {
 	UserID string
 }
 
-func resetPasswordCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
+func resetPasswordCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &resetPasswordOption{CliOptions: cliOpt}
-	cmd := &cobra.Command{
-		Use:               "reset-password USER_ID",
-		Short:             "Reset user password",
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	return cmd
 }
 

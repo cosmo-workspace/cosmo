@@ -16,7 +16,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
 
-type createOption struct {
+type CreateOption struct {
 	*cmdutil.UserNamespacedCliOptions
 
 	WorkspaceName string
@@ -27,16 +27,11 @@ type createOption struct {
 	vars map[string]string
 }
 
-func createCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
-	o := &createOption{UserNamespacedCliOptions: cliOpt}
+func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
+	o := &CreateOption{UserNamespacedCliOptions: cliOpt}
 
-	cmd := &cobra.Command{
-		Use:               "create WORKSPACE_NAME --template TEMPLATE_NAME",
-		Short:             "Create workspace",
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-		Example:           "create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10",
-	}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVarP(&o.Template, "template", "t", "", "template name")
 	cmd.Flags().StringVar(&o.RawVars, "vars", "", "template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)")
 	cmd.Flags().BoolVar(&o.DryRun, "dry-run", false, "dry run")
@@ -44,7 +39,7 @@ func createCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
 	return cmd
 }
 
-func (o *createOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -54,7 +49,7 @@ func (o *createOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *createOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) Validate(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace {
 		return errors.New("--all-namespaces is not supported in this command")
 	}
@@ -70,7 +65,7 @@ func (o *createOption) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
@@ -92,7 +87,7 @@ func (o *createOption) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *createOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)

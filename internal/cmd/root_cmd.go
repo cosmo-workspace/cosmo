@@ -9,6 +9,12 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/cosmo-workspace/cosmo/internal/cmd/create"
+	del "github.com/cosmo-workspace/cosmo/internal/cmd/delete"
+	"github.com/cosmo-workspace/cosmo/internal/cmd/get"
+	"github.com/cosmo-workspace/cosmo/internal/cmd/netrule"
+	"github.com/cosmo-workspace/cosmo/internal/cmd/run"
+	"github.com/cosmo-workspace/cosmo/internal/cmd/stop"
 	"github.com/cosmo-workspace/cosmo/internal/cmd/template"
 	"github.com/cosmo-workspace/cosmo/internal/cmd/user"
 	"github.com/cosmo-workspace/cosmo/internal/cmd/workspace"
@@ -47,6 +53,13 @@ MIT 2021 cosmo-workspace/cosmo
 	template.AddCommand(rootCmd, o)
 	user.AddCommand(rootCmd, o)
 	workspace.AddCommand(rootCmd, o)
+	netrule.AddCommand(rootCmd, o)
+
+	create.AddCommand(rootCmd, o)
+	get.AddCommand(rootCmd, o)
+	del.AddCommand(rootCmd, o)
+	run.AddCommand(rootCmd, o)
+	stop.AddCommand(rootCmd, o)
 
 	return rootCmd
 }

@@ -23,14 +23,10 @@ type updateOption struct {
 	role   wsv1alpha1.UserRole
 }
 
-func updateCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
+func updateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &updateOption{CliOptions: cliOpt}
-	cmd := &cobra.Command{
-		Use:               "update USER_ID --role ROLE --name NAME",
-		Short:             "Update user",
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVar(&o.Name, "name", "", "user name")
 	cmd.Flags().StringVar(&o.Role, "role", "-", "user role")
 	return cmd

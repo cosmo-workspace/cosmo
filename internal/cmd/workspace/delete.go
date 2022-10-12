@@ -12,28 +12,23 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
 
-type deleteOption struct {
+type DeleteOption struct {
 	*cmdutil.UserNamespacedCliOptions
 
 	WorkspaceName string
 	DryRun        bool
 }
 
-func deleteCmd(cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
-	o := &deleteOption{UserNamespacedCliOptions: cliOpt}
+func DeleteCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
+	o := &DeleteOption{UserNamespacedCliOptions: cliOpt}
 
-	cmd := &cobra.Command{
-		Use:               "delete WORKSPACE_NAME",
-		Aliases:           []string{"del"},
-		Short:             "Delete workspace",
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().BoolVar(&o.DryRun, "dry-run", false, "dry run")
 	return cmd
 }
 
-func (o *deleteOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -43,7 +38,7 @@ func (o *deleteOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *deleteOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) Validate(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace {
 		return errors.New("--all-namespaces is not supported in this command")
 	}
@@ -56,7 +51,7 @@ func (o *deleteOption) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *deleteOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
@@ -64,7 +59,7 @@ func (o *deleteOption) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *deleteOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 

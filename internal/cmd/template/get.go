@@ -18,7 +18,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
-type getOption struct {
+type GetOption struct {
 	*cmdutil.CliOptions
 	TemplateNames []string
 	TypeWorkspace bool
@@ -26,25 +26,15 @@ type getOption struct {
 	tmpltype string
 }
 
-func getCmd(cliOpt *cmdutil.CliOptions) *cobra.Command {
-	o := &getOption{CliOptions: cliOpt}
-	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Get templates",
-		Long: `Get Templates
-
-Basically it is similar to "kubectl get template"
-
-For type workspace template, use with --workspace flag to see more information. 
-`,
-		PersistentPreRunE: o.PreRunE,
-		RunE:              cmdutil.RunEHandler(o.RunE),
-	}
+func GetCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
+	o := &GetOption{CliOptions: cliOpt}
+	cmd.PersistentPreRunE = o.PreRunE
+	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.PersistentFlags().BoolVar(&o.TypeWorkspace, "workspace", false, "show type workspace template")
 	return cmd
 }
 
-func (o *getOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *GetOption) PreRunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
@@ -54,7 +44,7 @@ func (o *getOption) PreRunE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *getOption) Validate(cmd *cobra.Command, args []string) error {
+func (o *GetOption) Validate(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Validate(cmd, args); err != nil {
 		return err
 	}
@@ -64,7 +54,7 @@ func (o *getOption) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *getOption) Complete(cmd *cobra.Command, args []string) error {
+func (o *GetOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
@@ -74,7 +64,7 @@ func (o *getOption) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (o *getOption) RunE(cmd *cobra.Command, args []string) error {
+func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 
