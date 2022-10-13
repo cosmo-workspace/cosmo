@@ -17,7 +17,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.5
 	github.com/sethvargo/go-password v0.2.0
 	github.com/spf13/afero v1.9.2
-	github.com/spf13/cobra v1.5.0
+	github.com/spf13/cobra v1.6.0
 	go.uber.org/zap v1.23.0
 	golang.org/x/crypto v0.0.0-20220919173607-35f4265a4bc0
 	google.golang.org/protobuf v1.28.1
