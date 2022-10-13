@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 
-	authv1alpha1 "github.com/cosmo-workspace/cosmo/api/auth-proxy/v1alpha1"
+	authv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1"
 )
 
 type Authorizer interface {

@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cosmo-workspace/cosmo/api/auth-proxy/v1alpha1/authproxyconnect"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1/authproxyconnect"
 	"github.com/gorilla/sessions"
 )
 

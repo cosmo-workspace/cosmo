@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/bufbuild/connect-go"
-	authv1alpha1 "github.com/cosmo-workspace/cosmo/api/auth-proxy/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
+	authv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1"
 )
 
 type sessionCtxKey int

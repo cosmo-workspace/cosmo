@@ -8,7 +8,7 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	v1alpha1 "github.com/cosmo-workspace/cosmo/api/auth-proxy/v1alpha1"
+	v1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1"
 	http "net/http"
 	strings "strings"
 )

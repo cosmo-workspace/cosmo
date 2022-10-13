@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 
-	authv1alpha1 "github.com/cosmo-workspace/cosmo/api/auth-proxy/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
+	authv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
