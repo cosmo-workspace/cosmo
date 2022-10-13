@@ -1,67 +1,77 @@
 package proxy
 
 import (
-	"encoding/json"
-	"io"
+	"context"
+	"fmt"
 	"net/http"
 	"time"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
+	"github.com/bufbuild/connect-go"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
+	authv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1"
 )
+
+type sessionCtxKey int
+
+const sesCtxKey sessionCtxKey = iota
 
 func (p *ProxyServer) serveLoginPage() http.Handler {
 	return http.StripPrefix(p.RedirectPath, http.FileServer(http.Dir(p.StaticFileDir)))
 }
 
-func (p *ProxyServer) handleLogin(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+func (p *ProxyServer) loginCookie(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log := p.Log.WithCaller()
+
+		saveSessionInfo := func(sesInfo *session.Info) {
+			ses, _ := p.sessionStore.New(r, p.SessionName)
+			ses = session.Set(ses, *sesInfo)
+			err := p.sessionStore.Save(r, w, ses)
+			if err != nil {
+				log.Error(err, "failed to save session")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
+		ctx := context.WithValue(r.Context(), sesCtxKey, saveSessionInfo)
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (p *ProxyServer) Login(ctx context.Context, req *connect.Request[authv1alpha1.LoginRequest]) (*connect.Response[authv1alpha1.Empty], error) {
 	log := p.Log.WithCaller()
+	log.Info("Login", "id", req.Msg.Id, "passExist", req.Msg.Password != "")
 
-	// get data from request body
-	req := &dashv1alpha1.LoginRequest{}
+	res := connect.NewResponse(&authv1alpha1.Empty{})
+	res.Header().Set("AuthProxy-Version", "v1alpha1")
 
-	var body io.Reader = r.Body
-	defer r.Body.Close()
-
-	err := json.NewDecoder(body).Decode(req)
-	if err != nil || req.Id == "" || req.Password == "" {
-		log.Info("invalid request", "error", err, "id", req.Id, "passExist", req.Password != "")
-		w.WriteHeader(http.StatusBadRequest)
-		return
+	// check args
+	if req.Msg.Id == "" || req.Msg.Password == "" {
+		log.Info("invalid request", "id", req.Msg.Id, "passExist", req.Msg.Password != "")
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("invalid request"))
 	}
 
 	// check request user ID is instance owner ID
-	if p.User != req.Id {
-		log.Info("forbidden request: user ID is not owner ID", "id", req.Id)
-		w.WriteHeader(http.StatusForbidden)
-		return
+	if p.User != req.Msg.Id {
+		log.Info("forbidden request: user ID is not owner ID", "id", req.Msg.Id)
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("user ID is not owner ID"))
 	}
 
 	// authorize at upstream
-	authorized, err := p.authorizer.Authorize(ctx, *req)
+	authorized, err := p.authorizer.Authorize(ctx, req.Msg)
 	if !authorized || err != nil {
-		log.Info("upstream authorization failed", "error", err, "id", req.Id)
-		w.WriteHeader(http.StatusForbidden)
-		return
+		log.Info("upstream authorization failed", "error", err, "id", req.Msg.Id)
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("upstream authorization failed"))
 	}
 
-	ses, _ := p.sessionStore.New(r, p.SessionName)
-
-	sesInfo := session.Info{
-		UserID:   req.Id,
+	saveSessionInfo := ctx.Value(sesCtxKey).(func(sesInfo *session.Info))
+	saveSessionInfo(&session.Info{
+		UserID:   req.Msg.Id,
 		Deadline: time.Now().Add(time.Duration(p.MaxAgeSeconds) * time.Second).Unix(),
-	}
-	log.Debug().Info("save session", "userID", sesInfo.UserID, "deadline", sesInfo.Deadline)
-	ses = session.Set(ses, sesInfo)
+	})
 
-	err = p.sessionStore.Save(r, w, ses)
-	if err != nil {
-		log.Error(err, "failed to save session")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	log.Info("successfully logined", "id", req.Id)
-	w.WriteHeader(http.StatusOK)
+	log.Info("successfully logined", "id", req.Msg.Id, "passExist", req.Msg.Password != "")
+	return res, nil
 }

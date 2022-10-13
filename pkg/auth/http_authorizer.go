@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"net/http"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
+	authv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1"
 )
 
 // HTTPAuthorizer authorize with cosmo-dashboard login API
@@ -36,9 +36,9 @@ func NewHTTPAuthorizer(url string, ca []byte) *HTTPAuthorizer {
 	return auth
 }
 
-func (a *HTTPAuthorizer) Authorize(ctx context.Context, req dashv1alpha1.LoginRequest) (bool, error) {
+func (a *HTTPAuthorizer) Authorize(ctx context.Context, msg *authv1alpha1.LoginRequest) (bool, error) {
 	body := new(bytes.Buffer)
-	err := json.NewEncoder(body).Encode(req)
+	err := json.NewEncoder(body).Encode(msg)
 	if err != nil {
 		return false, fmt.Errorf("failed to encode auth request: %w", err)
 	}
