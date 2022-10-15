@@ -87,7 +87,7 @@ func main() {
 
 	srv.SetupSessionStore(authKey, encryptKey)
 
-	a := auth.NewHTTPAuthorizer(authURL, caCert)
+	a := auth.NewDashboardAuthorizer(authURL, caCert)
 	srv.SetupAuthorizer(a)
 
 	errChan := make(chan error)

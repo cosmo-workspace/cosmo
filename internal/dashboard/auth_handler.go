@@ -81,7 +81,7 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 		log.Info("authrizer not found", "userid", req.Id, "authType", user.Spec.AuthType)
 		return ErrorResponse(log, kosmo.NewServiceUnavailableError("incorrect user or password", nil))
 	}
-	verified, err := authrizer.Authorize(ctx, req)
+	verified, err := authrizer.Authorize(ctx, &req)
 	if err != nil {
 		log.Error(err, "authorize failed", "userid", req.Id)
 		return ErrorResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
