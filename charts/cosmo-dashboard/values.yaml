@@ -77,6 +77,8 @@ affinity: {}
 
 logLevel: info
 
+logTimeEncoding: iso8601
+
 maxMinutes: 180
 
 cert:
