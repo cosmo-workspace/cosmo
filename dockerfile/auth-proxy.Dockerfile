@@ -18,6 +18,7 @@ FROM base as builder
 COPY cmd/ cmd/
 COPY api/ api/
 COPY pkg/ pkg/
+COPY proto/ proto/
 COPY internal/ internal/
 
 # Build
