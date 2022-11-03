@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package authproxy.v1alpha1;
 
-option go_package = "github.com/cosmo-workspace/cosmo/api/auth-proxy/v1alpha1;authproxy";
+option go_package = "github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1;authproxy";
 
 message LoginRequest {
   string id = 1;

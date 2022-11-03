@@ -186,7 +186,7 @@ add-workspace: kubectl cosmoctl
 	@echo ====== $@ ======
 	-cosmoctl workspace create --user=tom --template=code-server-01 ws1
 	sleep 5
-	-cosmoctl workspace add-net-rule --user=tom ws1 --name=dash1 --port=7701
+	-cosmoctl networkrule add dash1 --user=tom --workspace=ws1 --port=7701
 
 ##---------------------------------------------------------------------
 ##@ Execute test
