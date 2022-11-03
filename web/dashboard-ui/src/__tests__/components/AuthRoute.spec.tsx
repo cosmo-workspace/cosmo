@@ -28,6 +28,7 @@ describe('AuthRoute', () => {
     login: jest.fn(),
     logout: jest.fn(),
     updataPassword: jest.fn(),
+    refreshUserInfo: jest.fn(),
   }
 
   beforeEach(async () => {

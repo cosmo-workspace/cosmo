@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
 interface PageSettings {
   isOpen: boolean;
@@ -10,7 +10,7 @@ interface PageSettingsContext {
   updatePageSettings: (setting: PageSettings) => void;
 };
 
-const Context = React.createContext<PageSettingsContext>({
+const Context = createContext<PageSettingsContext>({
   pageSettings: {
     isOpen: true,
   },

@@ -43,7 +43,7 @@ RUN GENERATE_SOURCEMAP=false yarn build
 FROM gcr.io/distroless/static:nonroot
 WORKDIR /app
 COPY --from=builder /cosmo/dashboard .
-COPY --from=ui-builder /cosmo/web/dashboard-ui/build ./public
+COPY --from=ui-builder /cosmo/web/dashboard-ui/dist ./public
 
 USER 65532:65532
 
