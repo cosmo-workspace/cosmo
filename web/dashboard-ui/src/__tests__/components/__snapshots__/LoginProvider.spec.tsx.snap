@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LoginProvider login getUser error 1`] = `
-Object {
-  "response": Object {
-    "data": Object {
+{
+  "response": {
+    "data": {
       "message": "getUser error",
     },
     "status": 401,
@@ -14,16 +14,16 @@ Object {
 exports[`LoginProvider login getUser error 2`] = `undefined`;
 
 exports[`LoginProvider login getUser error: enqueueSnackbar calls 1`] = `
-Array [
-  Array [
+[
+  [
     "getUser error",
-    Object {
+    {
       "variant": "error",
     },
   ],
-  Array [
+  [
     "getUser error",
-    Object {
+    {
       "variant": "error",
     },
   ],
@@ -31,9 +31,9 @@ Array [
 `;
 
 exports[`LoginProvider login ng 1`] = `
-Object {
-  "response": Object {
-    "data": Object {
+{
+  "response": {
+    "data": {
       "message": "login error",
     },
     "status": 401,
@@ -44,10 +44,10 @@ Object {
 exports[`LoginProvider login ng 2`] = `undefined`;
 
 exports[`LoginProvider login ng: enqueueSnackbar calls 1`] = `
-Array [
-  Array [
+[
+  [
     "login error",
-    Object {
+    {
       "variant": "error",
     },
   ],
@@ -55,7 +55,7 @@ Array [
 `;
 
 exports[`LoginProvider login ok 1`] = `
-Object {
+{
   "expireAt": "xxxx",
   "id": "user1",
   "requirePasswordUpdate": true,
@@ -63,7 +63,7 @@ Object {
 `;
 
 exports[`LoginProvider login ok 2`] = `
-Object {
+{
   "displayName": "user1 name",
   "id": "user1",
   "role": "cosmo-admin",
@@ -71,7 +71,7 @@ Object {
 `;
 
 exports[`LoginProvider login ok 3`] = `
-Object {
+{
   "expireAt": "xxxx",
   "id": "user1",
   "requirePasswordUpdate": true,
@@ -79,19 +79,19 @@ Object {
 `;
 
 exports[`LoginProvider login ok 4`] = `
-Object {
+{
   "displayName": "user1 name",
   "id": "user1",
   "role": "cosmo-admin",
 }
 `;
 
-exports[`LoginProvider login ok: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider login ok: enqueueSnackbar calls 1`] = `[]`;
 
 exports[`LoginProvider logout error 1`] = `
-Object {
-  "response": Object {
-    "data": Object {
+{
+  "response": {
+    "data": {
       "message": "logout error",
     },
     "status": 500,
@@ -100,10 +100,10 @@ Object {
 `;
 
 exports[`LoginProvider logout error: enqueueSnackbar calls 1`] = `
-Array [
-  Array [
+[
+  [
     "logout error",
-    Object {
+    {
       "variant": "error",
     },
   ],
@@ -111,50 +111,50 @@ Array [
 `;
 
 exports[`LoginProvider logout error: logout calls 1`] = `
-Array [
-  Array [],
+[
+  [],
 ]
 `;
 
 exports[`LoginProvider logout ok 1`] = `undefined`;
 
-exports[`LoginProvider logout ok: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider logout ok: enqueueSnackbar calls 1`] = `[]`;
 
 exports[`LoginProvider logout ok: logout calls 1`] = `
-Array [
-  Array [],
+[
+  [],
 ]
 `;
 
 exports[`LoginProvider refreshUserInfo logined ok 1`] = `undefined`;
 
 exports[`LoginProvider refreshUserInfo logined ok 2`] = `
-Object {
+{
   "displayName": "user1 name",
   "id": "user1",
   "role": "cosmo-admin",
 }
 `;
 
-exports[`LoginProvider refreshUserInfo logined ok: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider refreshUserInfo logined ok: enqueueSnackbar calls 1`] = `[]`;
 
 exports[`LoginProvider refreshUserInfo not login ok 1`] = `undefined`;
 
 exports[`LoginProvider refreshUserInfo not login ok 2`] = `undefined`;
 
-exports[`LoginProvider refreshUserInfo not login ok: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider refreshUserInfo not login ok: enqueueSnackbar calls 1`] = `[]`;
 
 exports[`LoginProvider updatePassword error 1`] = `
-Object {
+{
   "message": "updataPassword error",
 }
 `;
 
 exports[`LoginProvider updatePassword error: enqueueSnackbar calls 1`] = `
-Array [
-  Array [
+[
+  [
     "updataPassword error",
-    Object {
+    {
       "variant": "error",
     },
   ],
@@ -162,10 +162,10 @@ Array [
 `;
 
 exports[`LoginProvider updatePassword error: putUserPassword calls 1`] = `
-Array [
-  Array [
+[
+  [
     "user1",
-    Object {
+    {
       "currentPassword": "oldpw",
       "newPassword": "newpw",
     },
@@ -174,30 +174,30 @@ Array [
 `;
 
 exports[`LoginProvider updatePassword ok 1`] = `
-Object {
-  "config": Object {},
-  "data": Object {
+{
+  "config": {},
+  "data": {
     "message": "ok",
-    "user": Object {
+    "user": {
       "displayName": "user1 name",
       "id": "user1",
       "role": "cosmo-admin",
     },
   },
-  "headers": Object {},
-  "request": Object {},
+  "headers": {},
+  "request": {},
   "status": 200,
   "statusText": "ok",
 }
 `;
 
-exports[`LoginProvider updatePassword ok: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider updatePassword ok: enqueueSnackbar calls 1`] = `[]`;
 
 exports[`LoginProvider updatePassword ok: putUserPassword calls 1`] = `
-Array [
-  Array [
+[
+  [
     "user1",
-    Object {
+    {
       "currentPassword": "oldpw",
       "newPassword": "newpw",
     },
@@ -208,10 +208,10 @@ Array [
 exports[`LoginProvider verify getUser error 1`] = `undefined`;
 
 exports[`LoginProvider verify getUser error: enqueueSnackbar calls 1`] = `
-Array [
-  Array [
+[
+  [
     "getUser error",
-    Object {
+    {
       "variant": "error",
     },
   ],
@@ -220,18 +220,18 @@ Array [
 
 exports[`LoginProvider verify ng / id is undefined 1`] = `undefined`;
 
-exports[`LoginProvider verify ng / id is undefined: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider verify ng / id is undefined: enqueueSnackbar calls 1`] = `[]`;
 
 exports[`LoginProvider verify ng 1`] = `undefined`;
 
-exports[`LoginProvider verify ng: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider verify ng: enqueueSnackbar calls 1`] = `[]`;
 
 exports[`LoginProvider verify ok 1`] = `
-Object {
+{
   "displayName": "user1 name",
   "id": "user1",
   "role": "cosmo-admin",
 }
 `;
 
-exports[`LoginProvider verify ok: enqueueSnackbar calls 1`] = `Array []`;
+exports[`LoginProvider verify ok: enqueueSnackbar calls 1`] = `[]`;

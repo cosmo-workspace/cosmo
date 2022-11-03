@@ -1,5 +1,5 @@
 import { useSnackbar } from 'notistack';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AuthApiFactory, User, UserApiFactory } from '../api/dashboard/v1alpha1';
 import { useProgress } from './ProgressProvider';
 
@@ -7,7 +7,7 @@ import { useProgress } from './ProgressProvider';
  * context
  * ref: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/24509#issuecomment-774430643
  */
-const Context = React.createContext<ReturnType<typeof useLoginModule>>(undefined as any);
+const Context = createContext<ReturnType<typeof useLoginModule>>(undefined as any);
 
 /**
  * hooks

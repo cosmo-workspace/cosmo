@@ -19,4 +19,4 @@ import { createSerializer } from '@emotion/jest';
 
 expect.addSnapshotSerializer(createSerializer())
 
-globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+//globalThis.IS_REACT_ACT_ENVIRONMENT = true;
