@@ -107,14 +107,16 @@ func (m *Manager) newProxyServer(name string, targetPort int) *ProxyServer {
 }
 
 func (m *Manager) CreateNewProxy(ctx context.Context, name string, targetPort int) (LocalPortProxyInfo, error) {
-	m.lock.Lock()
-	defer m.lock.Unlock()
-
 	log := m.Log.WithCaller()
 
 	if existingProxy, exist := m.proxyStore[name]; exist {
 		return existingProxy.LocalPortProxyInfo, fmt.Errorf("%s already exist", name)
 	}
+	if ok := m.lock.TryLock(); !ok {
+		return LocalPortProxyInfo{}, errors.New("failed to try lock")
+	}
+	defer m.lock.Unlock()
+
 	proxyInfo := LocalPortProxyInfo{Name: name, TargetPort: targetPort}
 
 	proxyCtx, shutdown := context.WithCancel(context.Background())

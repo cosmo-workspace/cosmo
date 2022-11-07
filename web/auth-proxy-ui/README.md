@@ -44,7 +44,7 @@ yarn build --base=/proxy-driver-test --outDir=build_test
 COSMO_USER_ID=xxxxxxxx
 pkill -ef "main echo-server" ; \
 go run ../../hack/echo-server/main.go echo-server &  \
-go run ../../hack/proxy-driver/main.go --port=9999 --target-port=8888 --user=${COSMO_USER_ID} --auth-ui=./build_test/ --auth-url=http://cosmo-dashboard.cosmo-system.svc.cluster.local:8443 ; \
+go run ../../hack/proxy-driver/main.go --port=9999 --target-port=8888 --user=${COSMO_USER_ID} --auth-ui=./build_test/ --auth-url=https://cosmo-dashboard.cosmo-system.svc.cluster.local:8443 ; \
 pkill -ef "main echo-server"
 
 curl  -v  -H "Content-Type: application/json" -d '{"id":"xxxxxxxx","password":"yyyyyyy"}' \

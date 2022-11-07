@@ -17,6 +17,8 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1/authproxyconnect"
 	"github.com/gorilla/sessions"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // ProxyServer is a http(s) server that serve login UI and reverse-proxy to the backend with authentication
@@ -36,6 +38,10 @@ type ProxyServer struct {
 	listener     net.Listener
 	sessionStore sessions.Store
 	authorizer   auth.Authorizer
+
+	registry      *prometheus.Registry
+	activeConns   prometheus.Gauge
+	totalRequests *prometheus.CounterVec
 }
 
 func (p *ProxyServer) sessionCookieKey() *http.Cookie {
@@ -59,11 +65,16 @@ func (p *ProxyServer) SetupSessionStore(hashKey, blockKey []byte) {
 }
 
 func (p *ProxyServer) SetupReverseProxy(addr string, targetURL *url.URL) *ProxyServer {
+	p.setupMetrics()
+
 	mux := http.NewServeMux()
 	path, authProxyHandler := authproxyconnect.NewAuthProxyServiceHandler(p)
 	mux.Handle(p.RedirectPath+path, p.loginCookie(http.StripPrefix(p.RedirectPath, authProxyHandler)))
 	mux.Handle(p.RedirectPath+"/", p.serveLoginPage())
-	mux.Handle("/", p.log(p.auth(httputil.NewSingleHostReverseProxy(targetURL))))
+	mux.Handle("/metrics", promhttp.InstrumentMetricHandler(
+		p.registry, promhttp.HandlerFor(p.registry, promhttp.HandlerOpts{}),
+	))
+	mux.Handle("/", p.log(p.auth(p.metrics(httputil.NewSingleHostReverseProxy(targetURL)))))
 
 	p.http = &http.Server{
 		Addr:    addr,
@@ -74,6 +85,21 @@ func (p *ProxyServer) SetupReverseProxy(addr string, targetURL *url.URL) *ProxyS
 
 func (p *ProxyServer) SetupAuthorizer(a auth.Authorizer) {
 	p.authorizer = a
+}
+
+func (p *ProxyServer) setupMetrics() {
+	p.registry = prometheus.NewRegistry()
+	p.activeConns = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: strings.Join([]string{"cosmo_authproxy", "proxy", "connections"}, "_"),
+		Help: "Current number of active connections.",
+	})
+	p.registry.Register(p.activeConns)
+
+	p.totalRequests = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: strings.Join([]string{"cosmo_authproxy", "proxy", "requests_total"}, "_"),
+		Help: "Total number of authenticated requests by HTTP status code.",
+	}, []string{"code"})
+	p.registry.Register(p.totalRequests)
 }
 
 func (p *ProxyServer) GetListenerPort() int {
@@ -127,6 +153,10 @@ func (p *ProxyServer) Start(ctx context.Context, gracefulShutdownDur time.Durati
 func (p *ProxyServer) shutdown(gracefulShutdownDur time.Duration) error {
 	gracefulShutdownCtx, cancel := context.WithTimeout(context.Background(), gracefulShutdownDur)
 	defer cancel()
+
+	p.registry.Unregister(p.activeConns)
+	p.registry.Unregister(p.totalRequests)
+
 	return p.http.Shutdown(gracefulShutdownCtx)
 }
 
@@ -197,6 +227,17 @@ func (p *ProxyServer) auth(next http.Handler) http.Handler {
 		log.DebugAll().Info("authorized", "path", r.URL.Path)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func (p *ProxyServer) metrics(next http.Handler) http.Handler {
+	return promhttp.InstrumentHandlerCounter(
+		p.totalRequests,
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			p.activeConns.Inc()
+			defer p.activeConns.Dec()
+			next.ServeHTTP(w, r)
+		}),
+	)
 }
 
 func (p *ProxyServer) redirectToLoginPage(w http.ResponseWriter, r *http.Request) {
