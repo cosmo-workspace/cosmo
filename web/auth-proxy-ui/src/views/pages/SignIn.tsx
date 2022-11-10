@@ -3,8 +3,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Alert, AppBar, Avatar, Backdrop, Box, Button, CircularProgress, Container, Link, Snackbar, Stack, TextField, Toolbar, Typography } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { AuthProxyService } from '../../auth-proxy/v1alpha1/authproxy_connectweb';
 import logo from "../../logo-with-name-small.png";
+import { AuthProxyService } from '../../proto/gen/auth-proxy/v1alpha1/authproxy_connectweb';
 import { PasswordTextField } from '../atoms/PasswordTextField';
 
 /**
@@ -62,7 +62,7 @@ export const SignIn: React.VFC = () => {
       setLoading(true);
       // login
       await client.login({
-        id: values.userid,
+        userName: values.userid,
         password: values.password,
       })
       // redirect

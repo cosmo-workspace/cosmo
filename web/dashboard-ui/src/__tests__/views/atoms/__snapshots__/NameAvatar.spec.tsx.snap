@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1
 
-exports[`NameAvatar NameAvatar 1`] = `
+exports[`NameAvatar > NameAvatar 1`] = `
 <DocumentFragment>
   .emotion-0 {
   position: relative;
@@ -69,7 +69,7 @@ exports[`NameAvatar NameAvatar 1`] = `
 </DocumentFragment>
 `;
 
-exports[`NameAvatar NameAvatar name 1`] = `
+exports[`NameAvatar > NameAvatar name 1`] = `
 <DocumentFragment>
   .emotion-0 {
   position: relative;
@@ -128,7 +128,7 @@ exports[`NameAvatar NameAvatar name 1`] = `
 </DocumentFragment>
 `;
 
-exports[`NameAvatar NameAvatar name dark 1`] = `
+exports[`NameAvatar > NameAvatar name dark 1`] = `
 <DocumentFragment>
   .emotion-0 {
   position: relative;

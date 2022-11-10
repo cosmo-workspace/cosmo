@@ -1,15 +1,14 @@
 package auth
 
 import (
-	"bytes"
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
-	"fmt"
 	"net/http"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
+	"github.com/bufbuild/connect-go"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 // DashboardAuthorizer authorize with cosmo-dashboard login API
@@ -37,26 +36,18 @@ func NewDashboardAuthorizer(url string, ca []byte) *DashboardAuthorizer {
 }
 
 func (a *DashboardAuthorizer) Authorize(ctx context.Context, msg AuthRequest) (bool, error) {
-	body := new(bytes.Buffer)
+
+	client := dashboardv1alpha1connect.NewAuthServiceClient(a.Client, a.URL)
 
 	req := dashv1alpha1.LoginRequest{
-		Id:       msg.GetId(),
+		UserName: msg.GetUserName(),
 		Password: msg.GetPassword(),
 	}
-	err := json.NewEncoder(body).Encode(req)
-	if err != nil {
-		return false, fmt.Errorf("failed to encode auth request: %w", err)
-	}
 
-	upstreamReq, _ := http.NewRequestWithContext(ctx, http.MethodPost, a.URL, body)
-	resp, err := a.Client.Do(upstreamReq)
+	_, err := client.Login(ctx, connect.NewRequest(&req))
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode < http.StatusOK || http.StatusMultipleChoices <= resp.StatusCode {
-		return false, fmt.Errorf("invalid status code: %d", resp.StatusCode)
-	}
 	return true, nil
 }

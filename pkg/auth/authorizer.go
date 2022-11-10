@@ -10,5 +10,5 @@ type Authorizer interface {
 
 type AuthRequest interface {
 	GetPassword() string
-	GetId() string
+	GetUserName() string
 }

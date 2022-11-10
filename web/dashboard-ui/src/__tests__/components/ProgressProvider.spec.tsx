@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import React from 'react';
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ProgressProvider, useProgress } from "../../components/ProgressProvider";
 
 //-----------------------------------------------
@@ -9,7 +10,10 @@ import { ProgressProvider, useProgress } from "../../components/ProgressProvider
 
 describe('ProgressProvider', () => {
 
-  afterEach(() => { jest.restoreAllMocks(); });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    cleanup();
+  });
 
   it('normal', async () => {
 

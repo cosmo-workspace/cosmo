@@ -1,18 +1,297 @@
-['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw1 1']
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1"  vars:{key:"HOGE"  value:"HOGEHOGE"} 1']
 SnapShot = """
-200
+{
+  \"message\": \"Successfully created\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
 """
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw1 2']
-SnapShot = """
-{\"message\":\"Successfully removed network rule\",\"networkRule\":{\"portName\":\"nw1\",\"portNumber\":9999,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false}}
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw1 3']
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1"  vars:{key:"HOGE"  value:"HOGEHOGE"} 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"vars\": {
+      \"HOGE\": \"HOGEHOGE\"
+    }
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully created\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1" 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"template1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully created\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"template1" 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"template1" vars:{key:"HOGE" value:"HOGEHOGE"} 1']
+SnapShot = """
+{
+  \"message\": \"Successfully created\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"template1" vars:{key:"HOGE" value:"HOGEHOGE"} 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"vars\": {
+      \"HOGE\": \"HOGEHOGE\"
+    }
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  template:"template1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully created\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  template:"template1" 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-normal-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" template:"template1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully created\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" template:"template1" 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-normal-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" template:"template1" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  template:"template1" 1']
+SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.WsName: value length must be at least 1 runes'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"XXXX"  template:"template1" 1']
+SnapShot = 'internal: failed to create workspace'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"existing-ws"  template:"template1" 1']
+SnapShot = 'already_exists: Workspace already exists'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"XXX" 1']
+SnapShot = 'invalid_argument: failed to get workspace config in template'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1" 1']
+SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.Template: value length must be at least 1 runes'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" template:"template1" 1']
+SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.WsName: value length must be at least 1 runes'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"XXXX" template:"template1" 1']
+SnapShot = 'internal: failed to create workspace'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"existing-ws" template:"template1" 1']
+SnapShot = 'already_exists: Workspace already exists'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" 1']
+SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.Template: value length must be at least 1 runes'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"XXX" 1']
+SnapShot = 'invalid_argument: failed to get workspace config in template'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1"  template:"template1" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" template:"template1" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"nw1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully removed network rule\",
+  \"network_rule\": {
+    \"network_rule_name\": \"nw1\",
+    \"port_number\": 9999,
+    \"group\": \"gp1\",
+    \"http_path\": \"/\"
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"nw1" 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-admin-user\",
   \"Spec\": {
     \"template\": {
       \"name\": \"template1\"
@@ -41,191 +320,512 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw1 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"nw1" 1']
 SnapShot = """
-500
+{
+  \"message\": \"Successfully removed network rule\",
+  \"network_rule\": {
+    \"network_rule_name\": \"nw1\",
+    \"port_number\": 9999,
+    \"group\": \"gp1\",
+    \"http_path\": \"/\"
+  }
+}
 """
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw1 2']
-SnapShot = """
-{\"message\":\"failed to remove network rule\"}
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, main 1']
-SnapShot = """
-400
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, main 2']
-SnapShot = """
-{\"message\":\"main port cannot be removed\"}
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, xxx 1']
-SnapShot = """
-400
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, xxx 2']
-SnapShot = """
-{\"message\":\"port name xxx is not found\"}
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, xxx, nw2 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, xxx, nw2 2']
-SnapShot = """
-{\"message\":\"workspace is not found\"}
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: xxxxx, ws1, nw2 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: xxxxx, ws1, nw2 2']
-SnapShot = """
-{\"message\":\"user is not found\"}
-"""
-
-['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: usertest, ws1 1']
-SnapShot = """
-200
-"""
-
-['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: usertest, ws1 2']
-SnapShot = """
-{\"message\":\"Successfully deleted\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
-"""
-
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: usertest, ws1 1']
-SnapShot = """
-500
-"""
-
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: usertest, ws1 2']
-SnapShot = """
-{\"message\":\"failed to delete workspace\"}
-"""
-
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: usertest-admin, xxx 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: usertest-admin, xxx 2']
-SnapShot = """
-{\"message\":\"workspace is not found\"}
-"""
-
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1 2']
-SnapShot = """
-{\"message\":\"user is not found\"}
-"""
-
-['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: usertest, ws1 1']
-SnapShot = """
-200
-"""
-
-['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: usertest, ws1 2']
-SnapShot = """
-{\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
-"""
-
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: usertest, ws1 1']
-SnapShot = """
-500
-"""
-
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: usertest, ws1 2']
-SnapShot = """
-{\"message\":\"failed to get workspace\"}
-"""
-
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: usertest-admin, xxx 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: usertest-admin, xxx 2']
-SnapShot = """
-{\"message\":\"workspace is not found\"}
-"""
-
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1 2']
-SnapShot = """
-{\"message\":\"user is not found\"}
-"""
-
-['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest 1']
-SnapShot = """
-200
-"""
-
-['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest 2']
-SnapShot = """
-{\"message\":\"No items found\",\"items\":[]}
-"""
-
-['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest-admin 1']
-SnapShot = """
-200
-"""
-
-['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: usertest-admin 2']
-SnapShot = """
-{\"items\":[{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}},{\"name\":\"ws2\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"additionalNetwork\":[{\"portName\":\"nw1\",\"portNumber\":1111,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false},{\"portName\":\"nw2\",\"portNumber\":3333,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false},{\"portName\":\"nw3\",\"portNumber\":2222,\"group\":\"gp1\",\"httpPath\":\"/\",\"public\":false}]},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}]}
-"""
-
-['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with invalid request: Entry: xxxxx 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with invalid request: Entry: xxxxx 2']
-SnapShot = """
-{\"message\":\"user is not found\"}
-"""
-
-['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with unexpected error: Entry: usertest-admin 1']
-SnapShot = """
-500
-"""
-
-['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with unexpected error: Entry: usertest-admin 2']
-SnapShot = """
-{\"message\":\"failed to list workspaces\"}
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 0} 1']
-SnapShot = """
-200
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 0} 2']
-SnapShot = """
-{\"message\":\"Successfully updated\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":0},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 0} 3']
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"nw1" 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"main\",
+        \"portNumber\": 18080,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 18080,
+        \"host\": \"default.example.com\",
+        \"group\": \"main\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  network_rule_name:"nw1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully removed network rule\",
+  \"network_rule\": {
+    \"network_rule_name\": \"nw1\",
+    \"port_number\": 9999,
+    \"group\": \"gp1\",
+    \"http_path\": \"/\"
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  network_rule_name:"nw1" 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-normal-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" network_rule_name:"nw1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully removed network rule\",
+  \"network_rule\": {
+    \"network_rule_name\": \"nw1\",
+    \"port_number\": 9999,
+    \"group\": \"gp1\",
+    \"http_path\": \"/\"
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" network_rule_name:"nw1" 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-normal-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"nw1" 1']
+SnapShot = 'internal: failed to remove network rule'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"nw1" 1']
+SnapShot = 'internal: failed to remove network rule'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"nw1" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"nw1" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"main" 1']
+SnapShot = 'invalid_argument: main port cannot be removed'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"xxx" 1']
+SnapShot = 'invalid_argument: port name xxx is not found'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"xxx"  network_rule_name:"nw2" 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"main" 1']
+SnapShot = 'invalid_argument: main port cannot be removed'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"xxx" 1']
+SnapShot = 'invalid_argument: port name xxx is not found'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" network_rule_name:"nw2" 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1"  network_rule_name:"nw2" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" network_rule_name:"nw2" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"normal-user"  ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully deleted\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"normal-user" ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully deleted\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully deleted\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully deleted\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: admin-user, user_name:"normal-user"  ws_name:"ws1" 1']
+SnapShot = 'internal: failed to delete workspace'
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: admin-user, user_name:"normal-user" ws_name:"ws1" 1']
+SnapShot = 'internal: failed to delete workspace'
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"xxx" 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"normal-user"  ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"normal-user" ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" 1']
+SnapShot = """
+{
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1,
+      \"vars\": {
+        \"HOGE\": \"HOGEHOGE\"
+      }
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: admin-user, user_name:"normal-user"  ws_name:"ws1" 1']
+SnapShot = 'internal: failed to get user'
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: admin-user, user_name:"normal-user" ws_name:"ws1" 1']
+SnapShot = 'internal: failed to get user'
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"xxx" 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" 1']
+SnapShot = """
+{
+  \"items\": [
+    {
+      \"name\": \"ws1\",
+      \"owner_id\": \"admin-user\",
+      \"spec\": {
+        \"template\": \"template1\",
+        \"replicas\": 1
+      },
+      \"status\": {
+        \"phase\": \"Pending\",
+        \"url_base\": \"https://default.example.com\"
+      }
+    },
+    {
+      \"name\": \"ws2\",
+      \"owner_id\": \"admin-user\",
+      \"spec\": {
+        \"template\": \"template1\",
+        \"replicas\": 1,
+        \"additional_network\": [
+          {
+            \"network_rule_name\": \"nw1\",
+            \"port_number\": 1111,
+            \"group\": \"gp1\",
+            \"http_path\": \"/\"
+          },
+          {
+            \"network_rule_name\": \"nw2\",
+            \"port_number\": 3333,
+            \"group\": \"gp1\",
+            \"http_path\": \"/\"
+          },
+          {
+            \"network_rule_name\": \"nw3\",
+            \"port_number\": 2222,
+            \"group\": \"gp1\",
+            \"http_path\": \"/\"
+          }
+        ]
+      },
+      \"status\": {
+        \"phase\": \"Pending\",
+        \"url_base\": \"https://default.example.com\"
+      }
+    }
+  ]
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: admin-user, user_name:"normal-user" 1']
+SnapShot = """
+{
+  \"message\": \"No items found\"
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" 1']
+SnapShot = """
+{
+  \"message\": \"No items found\"
+}
+"""
+
+['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with unexpected error: Entry: admin-user, user_name:"admin-user" 1']
+SnapShot = 'internal: failed to list workspaces'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  replicas:0 1']
+SnapShot = """
+{
+  \"message\": \"Successfully updated\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\"
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  replicas:0 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-admin-user\",
   \"Spec\": {
     \"template\": {
       \"name\": \"template1\"
@@ -243,21 +843,76 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 5} 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1" 1']
+SnapShot = 'invalid_argument: no change'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" 1']
+SnapShot = 'invalid_argument: no change'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:0 1']
 SnapShot = """
-200
+{
+  \"message\": \"Successfully updated\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\"
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
 """
 
-['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 5} 2']
-SnapShot = """
-{\"message\":\"Successfully updated\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":5},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"replicas": 5} 3']
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:0 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 0
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  replicas:5 1']
+SnapShot = """
+{
+  \"message\": \"Successfully updated\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 5
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  replicas:5 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-normal-user\",
   \"Spec\": {
     \"template\": {
       \"name\": \"template1\"
@@ -275,180 +930,95 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, {"replicas": 0} 1']
-SnapShot = """
-500
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, {"replicas": 0} 2']
-SnapShot = """
-{\"message\":\"failed to update workspace\"}
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: usertest, xxx, {"replicas": 1} 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: usertest, xxx, {"replicas": 1} 2']
-SnapShot = """
-{\"message\":\"workspace is not found\"}
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"replicas": 1} 1']
-SnapShot = """
-400
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"replicas": 1} 2']
-SnapShot = """
-{\"message\":\"no change\"}
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1, {"replicas": 0} 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [PatchWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1, {"replicas": 0} 2']
-SnapShot = """
-{\"message\":\"user is not found\"}
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}} 1']
-SnapShot = """
-201
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}} 2']
-SnapShot = """
-{\"message\":\"Successfully created\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1,\"vars\":{\"HOGE\":\"HOGEHOGE\"}},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}} 3']
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" replicas:5 1']
 SnapShot = """
 {
-  \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-usertest-admin\",
-  \"Spec\": {
-    \"template\": {
-      \"name\": \"template1\"
+  \"message\": \"Successfully updated\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"normal-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 5
     },
-    \"replicas\": 1,
-    \"vars\": {
-      \"HOGE\": \"HOGEHOGE\"
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
     }
-  },
-  \"Status\": {
-    \"instance\": {},
-    \"config\": {}
   }
 }
 """
 
-['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1"} 1']
-SnapShot = """
-201
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1"} 2']
-SnapShot = """
-{\"message\":\"Successfully created\",\"workspace\":{\"name\":\"ws1\",\"ownerID\":\"usertest-admin\",\"spec\":{\"template\":\"template1\",\"replicas\":1},\"status\":{\"phase\":\"Pending\",\"urlBase\":\"https://default.example.com\"}}}
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ✅ success in normal context: Entry: usertest-admin, ws1, {"name": "ws1","template": "template1"} 3']
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" replicas:5 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Namespace\": \"cosmo-user-normal-user\",
   \"Spec\": {
     \"template\": {
       \"name\": \"template1\"
     },
-    \"replicas\": 1
+    \"replicas\": 5
   },
   \"Status\": {
     \"instance\": {},
-    \"config\": {}
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
   }
 }
 """
 
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, , {"name": "","template": "template1"} 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  replicas:0 1']
+SnapShot = 'internal: failed to update workspace'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:0 1']
+SnapShot = 'internal: failed to update workspace'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  replicas:0 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" replicas:0 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  replicas:1 1']
+SnapShot = 'invalid_argument: no change'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:1 1']
+SnapShot = 'invalid_argument: no change'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"normal-user"  ws_name:"xxx"  replicas:1 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"normal-user" ws_name:"xxx" replicas:1 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1"  replicas:0 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" replicas:0 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 1']
 SnapShot = """
-400
+{
+  \"message\": \"Successfully upserted network rule\",
+  \"network_rule\": {
+    \"network_rule_name\": \"nw2\",
+    \"port_number\": 3000,
+    \"group\": \"gp2\",
+    \"http_path\": \"/\"
+  }
+}
 """
 
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, , {"name": "","template": "template1"} 2']
-SnapShot = """
-{\"message\":\"required field 'name' is zero value.\"}
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, , {"name": "existing-ws","template": "template1"} 1']
-SnapShot = """
-429
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, , {"name": "existing-ws","template": "template1"} 2']
-SnapShot = """
-{\"message\":\"Workspace already exists\"}
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, XXXX, {"name": "XXXX","template": "template1"} 1']
-SnapShot = """
-500
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, XXXX, {"name": "XXXX","template": "template1"} 2']
-SnapShot = """
-{\"message\":\"failed to create workspace\"}
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"name": "ws1","template": ""} 1']
-SnapShot = """
-400
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"name": "ws1","template": ""} 2']
-SnapShot = """
-{\"message\":\"required field 'template' is zero value.\"}
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"name": "ws1","template": "XXX"} 1']
-SnapShot = """
-400
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: usertest-admin, ws1, {"name": "ws1","template": "XXX"} 2']
-SnapShot = """
-{\"message\":\"failed to get workspace config in template\"}
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1, {"name": "ws1","template": "template1"} 1']
-SnapShot = """
-404
-"""
-
-['Dashboard server [Workspace] [PostWorkspace] ❌ fail with invalid request: Entry: xxxxx, ws1, {"name": "ws1","template": "template1"} 2']
-SnapShot = """
-{\"message\":\"user is not found\"}
-"""
-
-['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 1']
-SnapShot = """
-200
-"""
-
-['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 2']
-SnapShot = """
-{\"message\":\"Successfully upserted network rule\",\"networkRule\":{\"portName\":\"nw2\",\"portNumber\":3000,\"group\":\"gp2\",\"httpPath\":\"/\",\"public\":false}}
-"""
-
-['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 3']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Namespace\": \"cosmo-user-admin-user\",
   \"Spec\": {
     \"template\": {
       \"name\": \"template1\"
@@ -486,21 +1056,23 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"public":true} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  public:true} 1']
 SnapShot = """
-200
+{
+  \"message\": \"Successfully upserted network rule\",
+  \"network_rule\": {
+    \"network_rule_name\": \"nw2\",
+    \"port_number\": 3000,
+    \"public\": true
+  }
+}
 """
 
-['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"public":true} 2']
-SnapShot = """
-{\"message\":\"Successfully upserted network rule\",\"networkRule\":{\"portName\":\"nw2\",\"portNumber\":3000,\"public\":true}}
-"""
-
-['Dashboard server [Workspace] [PutNetworkRule] ✅ success in normal context: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"public":true} 3']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  public:true} 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-usertest-admin\",
+  \"Namespace\": \"cosmo-user-admin-user\",
   \"Spec\": {
     \"template\": {
       \"name\": \"template1\"
@@ -538,52 +1110,153 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 1']
 SnapShot = """
-500
+{
+  \"message\": \"Successfully upserted network rule\",
+  \"network_rule\": {
+    \"network_rule_name\": \"nw2\",
+    \"port_number\": 3000,
+    \"group\": \"gp2\",
+    \"http_path\": \"/\"
+  }
+}
 """
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with an unexpected error at update: Entry: usertest-admin, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 2']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 2']
 SnapShot = """
-{\"message\":\"failed to upsert network rule\"}
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 9999,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 9999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 3000,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 3000,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp2\",
+        \"public\": false
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
 """
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw1, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 public:true} 1']
 SnapShot = """
-400
+{
+  \"message\": \"Successfully upserted network rule\",
+  \"network_rule\": {
+    \"network_rule_name\": \"nw2\",
+    \"port_number\": 3000,
+    \"public\": true
+  }
+}
 """
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw1, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 2']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 public:true} 2']
 SnapShot = """
-{\"message\":\"no change\"}
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"portName\": \"nw1\",
+        \"portNumber\": 9999,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 9999,
+        \"host\": \"default.example.com\",
+        \"group\": \"gp1\",
+        \"public\": false
+      },
+      {
+        \"portName\": \"nw2\",
+        \"portNumber\": 3000,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 3000,
+        \"host\": \"default.example.com\",
+        \"group\": \"nw2\",
+        \"public\": true
+      }
+    ]
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"mainServicePortName\": \"main\",
+      \"urlbase\": \"https://default.example.com\"
+    }
+  }
+}
 """
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw9, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 1']
-SnapShot = """
-400
-"""
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  public:true} 1']
+SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, ws1, nw9, {"portNumber": 9999,"group": "gp1","httpPath": "/","public":false} 2']
-SnapShot = """
-{\"message\":\"port 9999 is already used\"}
-"""
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 public:true} 1']
+SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, xxx, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 1']
-SnapShot = """
-404
-"""
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  public:true} 1']
+SnapShot = 'internal: failed to upsert network rule'
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: usertest-admin, xxx, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 2']
-SnapShot = """
-{\"message\":\"workspace is not found\"}
-"""
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 public:true} 1']
+SnapShot = 'internal: failed to upsert network rule'
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: xxxxx, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 1']
-SnapShot = """
-404
-"""
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 1']
+SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [PutNetworkRule] ❌ fail with invalid request: Entry: xxxxx, ws1, nw2, {"portNumber": 3000,"group": "gp2","httpPath": "/","public":false} 2']
-SnapShot = """
-{\"message\":\"user is not found\"}
-"""
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:9999  group:"gp1"  http_path:"/"} 1']
+SnapShot = 'invalid_argument: port 9999 is already used'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws9"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp1"  http_path:"/"} 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"xxx"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:9999 group:"gp1" http_path:"/"} 1']
+SnapShot = 'invalid_argument: port 9999 is already used'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws9" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp1" http_path:"/"} 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 1']
+SnapShot = 'not_found: workspace is not found'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 1']
+SnapShot = 'not_found: user is not found'

@@ -1,0 +1,28 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/cosmo-workspace/cosmo/proto/gen
+    except:
+      - buf.build/googleapis/googleapis
+      - buf.build/envoyproxy/protoc-gen-validate
+
+plugins:
+  - name: go
+    out: ./gen
+    opt: paths=source_relative
+
+  - name: validate
+    out: ./gen
+    opt:
+      - paths=source_relative
+      - lang=go
+
+  - name: connect-go
+    out: ./gen
+    opt: paths=source_relative
+
+  - name: doc
+    out: ./gen
+    opt: markdown,index.md
+    strategy: all

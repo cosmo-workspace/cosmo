@@ -1,6 +1,7 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
+import { afterEach, describe, expect, it } from "vitest";
 import { NameAvatar } from '../../../views/atoms/NameAvatar';
 
 afterEach(cleanup);

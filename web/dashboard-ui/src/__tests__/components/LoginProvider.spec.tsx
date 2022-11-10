@@ -1,61 +1,60 @@
-import { renderHook, waitFor } from "@testing-library/react";
-import { AxiosResponse } from "axios";
+import { Timestamp } from "@bufbuild/protobuf";
+import { cleanup, renderHook, waitFor } from "@testing-library/react";
 import { useSnackbar } from "notistack";
 import React from 'react';
 import { act } from "react-dom/test-utils";
-import { AuthApiFactory, UserApiFactory, UserRoleEnum } from "../../api/dashboard/v1alpha1";
+import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi } from "vitest";
 import { LoginProvider, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
+import { LoginResponse, VerifyResponse } from "../../proto/gen/dashboard/v1alpha1/auth_service_pb";
+import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import { GetUserResponse, UpdateUserPasswordResponse } from "../../proto/gen/dashboard/v1alpha1/user_service_pb";
+import { useAuthService, useUserService } from "../../services/DashboardServices";
 
 //--------------------------------------------------
 // mock definition
 //--------------------------------------------------
 
-jest.mock('notistack');
-jest.mock('../../api/dashboard/v1alpha1/api');
-jest.mock('../../components/ProgressProvider');
-jest.mock('react-router-dom', () => ({
-  //useHistory: jest.fn(),
-}),
-);
+vi.mock('notistack');
+vi.mock('../../services/DashboardServices');
+vi.mock('../../components/ProgressProvider');
+vi.mock('react-router-dom', () => ({
+  //useHistory: vi.fn(),
+}));
 
 
 type MockedMemberFunction<T extends (...args: any) => any> = {
-  [P in keyof ReturnType<T>]: jest.MockedFunction<ReturnType<T>[P]>;
+  [P in keyof ReturnType<T>]: MockedFunction<ReturnType<T>[P]>;
 };
 
-const useSnackbarMock = useSnackbar as jest.MockedFunction<typeof useSnackbar>;
+const useSnackbarMock = useSnackbar as MockedFunction<typeof useSnackbar>;
 const snackbarMock: MockedMemberFunction<typeof useSnackbar> = {
-  enqueueSnackbar: jest.fn(),
-  closeSnackbar: jest.fn(),
+  enqueueSnackbar: vi.fn(),
+  closeSnackbar: vi.fn(),
 }
 
-const useProgressMock = useProgress as jest.MockedFunction<typeof useProgress>;
+const useProgressMock = useProgress as MockedFunction<typeof useProgress>;
 const progressMock: MockedMemberFunction<typeof useProgress> = {
-  setMask: jest.fn(),
-  releaseMask: jest.fn(),
+  setMask: vi.fn(),
+  releaseMask: vi.fn(),
 }
 
-const restAuthMock = AuthApiFactory as jest.MockedFunction<typeof AuthApiFactory>;
-const authMock: MockedMemberFunction<typeof AuthApiFactory> = {
-  verify: jest.fn(),
-  login: jest.fn(),
-  logout: jest.fn(),
+const authService = useAuthService as MockedFunction<typeof useAuthService>;
+const authMock: MockedMemberFunction<typeof useAuthService> = {
+  verify: vi.fn(),
+  login: vi.fn(),
+  logout: vi.fn(),
 }
 
-const RestUserMock = UserApiFactory as jest.MockedFunction<typeof UserApiFactory>;
-const userMock: MockedMemberFunction<typeof UserApiFactory> = {
-  postUser: jest.fn(),
-  putUserRole: jest.fn(),
-  putUserPassword: jest.fn(),
-  getUser: jest.fn(),
-  getUsers: jest.fn(),
-  deleteUser: jest.fn(),
-  putUserName: jest.fn(),
-}
-
-function axiosNormalResponse<T>(data: T): AxiosResponse<T> {
-  return { data: data, status: 200, statusText: 'ok', headers: {}, config: {}, request: {} }
+const userService = useUserService as MockedFunction<typeof useUserService>;
+const userMock: MockedMemberFunction<typeof useUserService> = {
+  getUser: vi.fn(),
+  getUsers: vi.fn(),
+  deleteUser: vi.fn(),
+  createUser: vi.fn(),
+  updateUserDisplayName: vi.fn(),
+  updateUserPassword: vi.fn(),
+  updateUserRole: vi.fn()
 }
 
 //-----------------------------------------------
@@ -67,13 +66,15 @@ describe('LoginProvider', () => {
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
-    restAuthMock.mockReturnValue(authMock);
-    RestUserMock.mockReturnValue(userMock);
+    authService.mockReturnValue(authMock);
+    userService.mockReturnValue(userMock);
   });
 
   afterEach(() => {
-    expect(snackbarMock.enqueueSnackbar.mock.calls).toMatchSnapshot('enqueueSnackbar calls');
-    jest.restoreAllMocks();
+    // expect(snackbarMock.enqueueSnackbar.mock.calls).toMatchSnapshot('enqueueSnackbar calls');
+    expect(snackbarMock.enqueueSnackbar.mock.calls).toMatchSnapshot();
+    vi.restoreAllMocks();
+    cleanup();
   });
 
   async function renderUseLogin() {
@@ -86,15 +87,14 @@ describe('LoginProvider', () => {
 
   describe('verify', () => {
 
-    it('ok', async () => {
-      authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
-        id: 'user1',
-        expireAt: 'xxxx',
+    it('✅ ok', async () => {
+      authMock.verify.mockResolvedValueOnce(new VerifyResponse({
+        userName: 'user1',
+        expireAt: Timestamp.fromDate(new Date("2022/11/4")),
         requirePasswordUpdate: false,
       }));
-      userMock.getUser.mockResolvedValue(axiosNormalResponse({
-        message: "ok",
-        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
+      userMock.getUser.mockResolvedValue(new GetUserResponse({
+        user: new User({ userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' }),
       }));
 
       const { result } = await renderUseLogin();
@@ -102,10 +102,10 @@ describe('LoginProvider', () => {
     });
 
 
-    it('ng / id is undefined', async () => {
-      authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
-        id: undefined as any,
-        expireAt: 'xxxx',
+    it('❌ ng / id is undefined', async () => {
+      authMock.verify.mockResolvedValueOnce(new VerifyResponse({
+        userName: undefined as any,
+        expireAt: Timestamp.fromDate(new Date("2022/11/4")),
         requirePasswordUpdate: false,
       }));
 
@@ -114,22 +114,22 @@ describe('LoginProvider', () => {
     });
 
 
-    it('ng', async () => {
+    it('❌ ng', async () => {
 
-      authMock.verify.mockRejectedValue({ response: { data: { message: 'data.message' }, status: 401 } as any } as any);
+      authMock.verify.mockRejectedValue(new Error('[mock] verify error'));
       const { result } = await renderUseLogin();
       expect(result.current.loginUser).toMatchSnapshot();
     });
 
-    it('getUser error', async () => {
+    it('❌ getUser error', async () => {
 
-      authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
-        id: 'user1',
-        expireAt: 'xxxx',
+      authMock.verify.mockResolvedValueOnce(new VerifyResponse({
+        userName: 'user1',
+        expireAt: Timestamp.fromDate(new Date("2022/11/4")),
         requirePasswordUpdate: false,
       }));
 
-      userMock.getUser.mockRejectedValue({ response: { data: { message: 'getUser error' }, status: 401 } as any } as any);
+      userMock.getUser.mockRejectedValue(new Error('[mock] getUser error'));
 
       const { result } = await renderUseLogin();
       expect(result.current.loginUser).toMatchSnapshot();
@@ -140,44 +140,35 @@ describe('LoginProvider', () => {
 
   describe('login', () => {
 
-    it('ok', async () => {
-      const { result } = await renderUseLogin();
-
-      authMock.login.mockResolvedValue(axiosNormalResponse({
-        id: 'user1',
-        expireAt: 'xxxx',
+    it('✅ ok', async () => {
+      authMock.login.mockResolvedValue(new LoginResponse({
+        userName: 'user1',
+        expireAt: Timestamp.fromDate(new Date("2022/11/4")),
         requirePasswordUpdate: true,
       }));
-      userMock.getUser.mockResolvedValue(axiosNormalResponse({
-        message: "ok",
-        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
+      userMock.getUser.mockResolvedValue(new GetUserResponse({
+        user: new User({ userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' }),
       }));
-      await act(async () => {
-        await expect(result.current.login('user1', 'password1')).resolves.toMatchSnapshot();
-      });
+      const { result } = await renderUseLogin();
+      // await act(async () => {
+      await expect(result.current.login('user1', 'password1')).resolves.toMatchSnapshot();
+      // });
       await waitFor(async () => { expect(result.current.loginUser).not.toBeUndefined(); });
-      expect(result.current.loginUser).toMatchSnapshot();
-      await act(async () => {
-        await expect(result.current.login('user1', 'password1')).resolves.toMatchSnapshot();
-      });
       expect(result.current.loginUser).toMatchSnapshot();
     });
 
 
-    it('ng', async () => {
-      const { result } = await renderUseLogin();
-
-      authMock.login.mockResolvedValue(axiosNormalResponse({
-        id: 'user1',
-        expireAt: 'xxxx',
+    it('❌ ng', async () => {
+      authMock.login.mockResolvedValue(new LoginResponse({
+        userName: 'user1',
+        expireAt: Timestamp.fromDate(new Date("2022/11/4")),
         requirePasswordUpdate: true,
       }));
-      userMock.getUser.mockResolvedValue(axiosNormalResponse({
-        message: "ok",
-        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
+      userMock.getUser.mockResolvedValue(new GetUserResponse({
+        user: { userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' },
       }));
-
-      authMock.login.mockRejectedValue({ response: { data: { message: 'login error' }, status: 401 } as any } as any);
+      authMock.login.mockRejectedValue(new Error('[mock] login error'));
+      const { result } = await renderUseLogin();
       await act(async () => {
         await expect(result.current.login('user1', 'password1')).rejects.toMatchSnapshot();
       });
@@ -186,16 +177,16 @@ describe('LoginProvider', () => {
     });
 
 
-    it('getUser error', async () => {
+    it('❌ getUser error', async () => {
       const { result } = await renderUseLogin();
 
-      authMock.login.mockResolvedValue(axiosNormalResponse({
-        id: 'user1',
-        expireAt: 'xxxx',
+      authMock.login.mockResolvedValue(new LoginResponse({
+        userName: 'user1',
+        expireAt: Timestamp.fromDate(new Date("2022/11/4")),
         requirePasswordUpdate: true,
       }));
 
-      userMock.getUser.mockRejectedValue({ response: { data: { message: 'getUser error' }, status: 401 } as any } as any);
+      userMock.getUser.mockRejectedValue(new Error('[mock] getUser error'));
 
       await act(async () => {
         await expect(result.current.login('user1', 'password1')).rejects.toMatchSnapshot();
@@ -210,7 +201,7 @@ describe('LoginProvider', () => {
 
     describe('not login', () => {
 
-      it('ok', async () => {
+      it('✅ ok', async () => {
         const { result } = await renderUseLogin();
         await expect(result.current.refreshUserInfo()).resolves.toMatchSnapshot();
         expect(result.current.loginUser).toMatchSnapshot();
@@ -221,18 +212,17 @@ describe('LoginProvider', () => {
     describe('logined', () => {
 
       beforeEach(async () => {
-        authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
-          id: 'user1',
-          expireAt: 'xxxx',
+        authMock.verify.mockResolvedValueOnce(new VerifyResponse({
+          userName: 'user1',
+          expireAt: Timestamp.fromDate(new Date("2022/11/4")),
           requirePasswordUpdate: false,
         }));
-        userMock.getUser.mockResolvedValue(axiosNormalResponse({
-          message: "ok",
-          user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
+        userMock.getUser.mockResolvedValue(new GetUserResponse({
+          user: { userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' },
         }));
       });
 
-      it('ok', async () => {
+      it('✅ ok', async () => {
         const { result } = await renderUseLogin();
         await act(async () => {
           await expect(result.current.refreshUserInfo()).resolves.toMatchSnapshot();
@@ -247,18 +237,17 @@ describe('LoginProvider', () => {
   describe('logout', () => {
 
     beforeEach(async () => {
-      authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
-        id: 'user1',
-        expireAt: 'xxxx',
+      authMock.verify.mockResolvedValueOnce(new VerifyResponse({
+        userName: 'user1',
+        expireAt: Timestamp.fromDate(new Date("2022/11/4")),
         requirePasswordUpdate: false,
       }));
-      userMock.getUser.mockResolvedValue(axiosNormalResponse({
-        message: "ok",
-        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
+      userMock.getUser.mockResolvedValue(new GetUserResponse({
+        user: { userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' },
       }));
     });
 
-    it('ok', async () => {
+    it('✅ ok', async () => {
       const { result } = await renderUseLogin();
       await act(async () => {
         await expect(result.current.logout()).resolves.toMatchSnapshot();
@@ -267,9 +256,9 @@ describe('LoginProvider', () => {
       expect(authMock.logout.mock.calls).toMatchSnapshot('logout calls');
     });
 
-    it('error', async () => {
+    it('❌ error', async () => {
       const { result } = await renderUseLogin();
-      authMock.logout.mockRejectedValue({ response: { data: { message: 'logout error' }, status: 500 } as any } as any);
+      authMock.logout.mockRejectedValue(new Error('[mock] logout error'));
       await act(async () => {
         await expect(result.current.logout()).rejects.toMatchSnapshot();
       });
@@ -283,32 +272,30 @@ describe('LoginProvider', () => {
   describe('updatePassword', () => {
 
     beforeEach(async () => {
-      authMock.verify.mockResolvedValueOnce(axiosNormalResponse({
-        id: 'user1',
-        expireAt: 'xxxx',
+      authMock.verify.mockResolvedValueOnce(new VerifyResponse({
+        userName: 'user1',
+        expireAt: Timestamp.fromDate(new Date("2022/11/4")),
         requirePasswordUpdate: false,
       }));
-      userMock.getUser.mockResolvedValue(axiosNormalResponse({
-        message: "ok",
-        user: { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' },
+      userMock.getUser.mockResolvedValue(new GetUserResponse({
+        user: { userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' },
       }));
     });
 
-    it('ok', async () => {
+    it('✅ ok', async () => {
       const { result } = await renderUseLogin();
-      userMock.putUserPassword.mockResolvedValue(axiosNormalResponse({
+      userMock.updateUserPassword.mockResolvedValue(new UpdateUserPasswordResponse({
         message: "ok",
-        user: { id: 'user1', role: 'cosmo-admin', displayName: 'user1 name' },
       }));
       await expect(result.current.updataPassword('oldpw', 'newpw')).resolves.toMatchSnapshot();
-      expect(userMock.putUserPassword.mock.calls).toMatchSnapshot('putUserPassword calls');
+      expect(userMock.updateUserPassword.mock.calls).toMatchSnapshot('putUserPassword calls');
     });
 
-    it('error', async () => {
+    it('❌ error', async () => {
       const { result } = await renderUseLogin();
-      userMock.putUserPassword.mockRejectedValue({ message: 'updataPassword error' } as any);
+      userMock.updateUserPassword.mockRejectedValue(new Error('[mock] updateUserPassword error'));
       await expect(result.current.updataPassword('oldpw', 'newpw')).rejects.toMatchSnapshot();
-      expect(userMock.putUserPassword.mock.calls).toMatchSnapshot('putUserPassword calls');
+      expect(userMock.updateUserPassword.mock.calls).toMatchSnapshot('putUserPassword calls');
     });
 
   });

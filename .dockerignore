@@ -3,6 +3,7 @@
 *.key
 **/bin
 **/build
+**/dist
 **/node_modules
 **/*.log
 **/*.bk

@@ -5,8 +5,9 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm, UseFormRegisterReturn } from "react-hook-form";
-import { Template, Workspace } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
+import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
+import { Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { useTemplates, useWorkspaceModule, useWorkspaceUsersModule } from "./WorkspaceModule";
 
@@ -33,7 +34,7 @@ const WorkspaceActionDialog: React.VFC<{
       </DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          <TextFieldLabel label="Owner ID" fullWidth value={workspace.ownerID} startAdornmentIcon={<PersonOutlineTwoTone />} />
+          <TextFieldLabel label="Owner ID" fullWidth value={workspace.ownerId} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="Workspace Name" fullWidth value={workspace.name} startAdornmentIcon={<WebTwoTone />} />
         </Stack>
       </DialogContent>
@@ -108,7 +109,7 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
   console.log('WorkspaceCreateDialog');
   const hooks = useWorkspaceModule();
   const { user } = useWorkspaceUsersModule();
-  const [template, setTemplate] = useState<Template>({ name: "", requiredVars: [] });
+  const [template, setTemplate] = useState<Template>(new Template());
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
   const templ = useTemplates();
   useEffect(() => { templ.getTemplates() }, []);  // eslint-disable-line
@@ -124,11 +125,11 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
         const vars: { [key: string]: string } = {};
         console.log('inp', inp);
         template.requiredVars?.forEach((rqvar, i) => { vars[rqvar.varName] = inp.vars[i] });
-        hooks.createWorkspace(user.id, inp.wsName, inp.templateName, vars).then(() => onClose());
+        hooks.createWorkspace(user.userName, inp.wsName, inp.templateName, vars).then(() => onClose());
       })}>
         <DialogContent>
           <Stack spacing={3}>
-            <TextFieldLabel label="User ID" fullWidth value={user.id} startAdornmentIcon={<PersonOutlineTwoTone />} />
+            <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
             <TextField label="Workspace Name" fullWidth autoFocus defaultValue=""
               {...registerMui(register('wsName', {
                 required: { value: true, message: "Required" },

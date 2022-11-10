@@ -118,9 +118,9 @@ ifeq ($(QUICK_BUILD),no)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 endif
 
-.PHONY: api-generate
-api-generate:
-	make -C hack/api-generate generate
+.PHONY: proto-generate 
+proto-generate:  ## Generate code protocol buffer api.
+	make -C proto/ all
 
 .PHONY: chart-crd
 chart-crd: manifests
@@ -181,11 +181,6 @@ endif
 .PHONY: ui-test
 ui-test: ## Run UI tests.
 	cd web/dashboard-ui && yarn install && yarn test  --coverage  --ci --watchAll=false
-
-.PHONY: swaggerui
-swaggerui:
-	docker run --rm --name swagger -p 8090:8080 \
-		-e SWAGGER_JSON=/cosmo/openapi.yaml -v `pwd`/api/openapi/dashboard/openapi-v1alpha1.yaml:/cosmo swaggerapi/swagger-ui
 
 ##---------------------------------------------------------------------
 ##@ Build

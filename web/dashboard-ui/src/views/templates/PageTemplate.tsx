@@ -127,7 +127,7 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
               <Stack alignItems="center" spacing={1} sx={{ mt: 1, mb: 2 }}>
                 <NameAvatar name={loginUser?.displayName} sx={{ width: 50, height: 50 }} />
                 <Typography>{loginUser?.displayName}</Typography>
-                <Typography color={colors.grey[700]} fontSize="small">{loginUser?.id}</Typography>
+                <Typography color={colors.grey[700]} fontSize="small">{loginUser?.userName}</Typography>
                 {loginUser?.role && <Chip variant="outlined" size="small" label={loginUser?.role} />}
               </Stack>
               <Divider sx={{ mb: 1 }} />

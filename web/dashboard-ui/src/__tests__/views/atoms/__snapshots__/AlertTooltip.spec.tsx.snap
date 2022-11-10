@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1
 
-exports[`AlertTooltip AlertTooltip 1`] = `
+exports[`AlertTooltip > AlertTooltip 1`] = `
 <DocumentFragment>
   <div
     aria-label="title1"
@@ -10,7 +10,7 @@ exports[`AlertTooltip AlertTooltip 1`] = `
 </DocumentFragment>
 `;
 
-exports[`AlertTooltip AlertTooltip open 1`] = `
+exports[`AlertTooltip > AlertTooltip open 1`] = `
 <DocumentFragment>
   <div
     aria-label="title2"
@@ -20,7 +20,7 @@ exports[`AlertTooltip AlertTooltip open 1`] = `
 </DocumentFragment>
 `;
 
-exports[`AlertTooltip AlertTooltip open dark 1`] = `
+exports[`AlertTooltip > AlertTooltip open dark 1`] = `
 <DocumentFragment>
   <div
     aria-label="title3"

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1
 
-exports[`DialogContext close esc: closed 1`] = `
+exports[`DialogContext > close esc > closed 1`] = `
 @keyframes animation-0 {
   0% {
     -webkit-transform: scale(0);
@@ -239,7 +239,7 @@ exports[`DialogContext close esc: closed 1`] = `
 </body>
 `;
 
-exports[`DialogContext open/close: 1.initial render 1`] = `
+exports[`DialogContext > open/close > 1.initial render 1`] = `
 .emotion-0 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -357,7 +357,7 @@ exports[`DialogContext open/close: 1.initial render 1`] = `
 </body>
 `;
 
-exports[`DialogContext open/close: 2.opend 1`] = `
+exports[`DialogContext > open/close > 2.opend 1`] = `
 .emotion-0 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -604,7 +604,7 @@ exports[`DialogContext open/close: 2.opend 1`] = `
 </body>
 `;
 
-exports[`DialogContext open/close: 3.closed 1`] = `
+exports[`DialogContext > open/close > 3.closed 1`] = `
 .emotion-0 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;

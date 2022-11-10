@@ -1,7 +1,8 @@
-import React from 'react';
-import { cleanup, fireEvent, render } from '@testing-library/react';
-import { TextFieldLabel } from '../../../views/atoms/TextFieldLabel';
 import { PersonOutlineTwoTone } from '@mui/icons-material';
+import { cleanup, render } from '@testing-library/react';
+import React from 'react';
+import { afterEach, describe, expect, it } from "vitest";
+import { TextFieldLabel } from '../../../views/atoms/TextFieldLabel';
 
 afterEach(cleanup);
 

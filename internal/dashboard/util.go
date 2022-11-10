@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
+	connect_go "github.com/bufbuild/connect-go"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/google/uuid"
@@ -52,38 +52,35 @@ func (l HTTPRequestLogger) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-func NormalResponse(code int, body interface{}) (dashv1alpha1.ImplResponse, error) {
-	return dashv1alpha1.Response(code, body), nil
-}
+func ErrResponse(log *clog.Logger, err error) error {
 
-func ErrorResponse(log *clog.Logger, err error) (dashv1alpha1.ImplResponse, error) {
-
-	var statusCode int
-	if errors.Is(err, kosmo.ErrNotFound) {
-		statusCode = http.StatusNotFound
+	if errors.Is(err, &connect_go.Error{}) {
+		// pass
+	} else if errors.Is(err, kosmo.ErrNotFound) {
+		err = connect_go.NewError(connect_go.CodeNotFound, err)
 
 	} else if errors.Is(err, kosmo.ErrIsAlreadyExists) {
-		statusCode = http.StatusTooManyRequests
+		err = connect_go.NewError(connect_go.CodeAlreadyExists, err)
 
 	} else if errors.Is(err, kosmo.ErrBadRequest) {
-		statusCode = http.StatusBadRequest
+		err = connect_go.NewError(connect_go.CodeInvalidArgument, err)
 
 	} else if errors.Is(err, kosmo.ErrForbidden) {
-		statusCode = http.StatusForbidden
+		err = connect_go.NewError(connect_go.CodePermissionDenied, err)
 
 	} else if errors.Is(err, kosmo.ErrUnauthorized) {
-		statusCode = http.StatusUnauthorized
+		err = connect_go.NewError(connect_go.CodeUnauthenticated, err)
 
 	} else if errors.Is(err, kosmo.ErrServiceUnavailable) {
-		statusCode = http.StatusServiceUnavailable
+		err = connect_go.NewError(connect_go.CodeUnavailable, err)
 
 	} else if errors.Is(err, kosmo.ErrInternalServerError) {
-		statusCode = http.StatusInternalServerError
+		err = connect_go.NewError(connect_go.CodeInternal, err)
 
 	} else {
-		err = kosmo.NewInternalServerError("unexpected error occurred", err)
-		statusCode = http.StatusInternalServerError
+		err = connect_go.NewError(connect_go.CodeInternal, err)
+
 	}
 	log.WithCaller().Info(err.Error())
-	return dashv1alpha1.Response(statusCode, nil), err
+	return err
 }

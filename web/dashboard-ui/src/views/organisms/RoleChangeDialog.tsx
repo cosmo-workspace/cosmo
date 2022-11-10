@@ -4,8 +4,8 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useForm, UseFormRegisterReturn } from "react-hook-form";
-import { User } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
+import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { useUserModule } from "./UserModule";
 
@@ -33,13 +33,13 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
       fullWidth maxWidth={'xs'}>
       <DialogTitle>Change Role</DialogTitle>
       <form onSubmit={handleSubmit((inp: Inputs) => {
-        hooks.updateRole(user.id, inp.role)
+        hooks.updateRole(user.userName, inp.role)
           .then(() => onClose());
       })}
         autoComplete="new-password">
         <DialogContent>
           <Stack spacing={3}>
-            <TextFieldLabel label="User ID" fullWidth value={user.id} startAdornmentIcon={<PersonOutlineTwoTone />} />
+            <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
             <TextField label="Role" select fullWidth defaultValue={user.role || ''}
               {...registerMui(register('role'))}
               error={Boolean(errors.role)}

@@ -1,18 +1,18 @@
 import { Box } from '@mui/system';
-import { render } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi } from "vitest";
 import { AuthRoute } from '../../components/AuthRoute';
 import { useLogin } from '../../components/LoginProvider';
-import { UserRoleEnum } from '../../api/dashboard/v1alpha1';
 
 //--------------------------------------------------
 // mock definition
 //--------------------------------------------------
-jest.mock('../../components/LoginProvider');
+vi.mock('../../components/LoginProvider');
 
 type MockedMemberFunction<T extends (...args: any) => any> = {
-  [P in keyof ReturnType<T>]: jest.MockedFunction<ReturnType<T>[P]>;
+  [P in keyof ReturnType<T>]: MockedFunction<ReturnType<T>[P]>;
 };
 
 //-----------------------------------------------
@@ -21,21 +21,24 @@ type MockedMemberFunction<T extends (...args: any) => any> = {
 
 describe('AuthRoute', () => {
 
-  const useLoginMock = useLogin as jest.MockedFunction<typeof useLogin>;
+  const useLoginMock = useLogin as MockedFunction<typeof useLogin>;
   const loginMock: MockedMemberFunction<typeof useLogin> = {
     loginUser: undefined as any,
-    verifyLogin: jest.fn(),
-    login: jest.fn(),
-    logout: jest.fn(),
-    updataPassword: jest.fn(),
-    refreshUserInfo: jest.fn(),
+    verifyLogin: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    updataPassword: vi.fn(),
+    refreshUserInfo: vi.fn(),
   }
 
   beforeEach(async () => {
     useLoginMock.mockReturnValue(loginMock);
   });
 
-  afterEach(() => { jest.restoreAllMocks(); });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    cleanup();
+  });
 
   const routerTester = (path: string) => {
     return render(
@@ -61,25 +64,25 @@ describe('AuthRoute', () => {
   });
 
   it('normal login =>/workspace', async () => {
-    useLoginMock.mockReturnValue({ loginUser: { id: 'user1' } } as ReturnType<typeof useLogin>);
+    useLoginMock.mockReturnValue({ loginUser: { userName: 'user1' } } as ReturnType<typeof useLogin>);
     const { asFragment } = routerTester('/workspace');
     expect(asFragment()).toMatchSnapshot();
   });
 
   it('normal login admin => /user', async () => {
-    useLoginMock.mockReturnValue({ loginUser: { id: 'user1', role: UserRoleEnum.CosmoAdmin } } as ReturnType<typeof useLogin>);
+    useLoginMock.mockReturnValue({ loginUser: { userName: 'user1', role: "CosmoAdmin" } } as ReturnType<typeof useLogin>);
     const { asFragment } = routerTester('/user');
     expect(asFragment()).toMatchSnapshot();
   });
 
   it('normal login admin page not admin user page => 404', async () => {
-    useLoginMock.mockReturnValue({ loginUser: { id: 'user1' } } as ReturnType<typeof useLogin>);
+    useLoginMock.mockReturnValue({ loginUser: { userName: 'user1' } } as ReturnType<typeof useLogin>);
     const { asFragment } = routerTester('/user');
     expect(asFragment()).toMatchSnapshot();
   });
 
   it('normal login another page => 404', async () => {
-    useLoginMock.mockReturnValue({ loginUser: { id: 'user1' } } as ReturnType<typeof useLogin>);
+    useLoginMock.mockReturnValue({ loginUser: { userName: 'user1' } } as ReturnType<typeof useLogin>);
     const { asFragment } = routerTester('/xxx');
     expect(asFragment()).toMatchSnapshot();
   });

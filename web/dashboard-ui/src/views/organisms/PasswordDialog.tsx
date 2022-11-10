@@ -6,8 +6,8 @@ import {
 import copy from 'copy-to-clipboard';
 import { useSnackbar } from "notistack";
 import React from "react";
-import { User } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
+import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 
 export const PasswordDialog: React.VFC<{ onClose: () => void, user: User }> = ({ onClose, user }) => {
@@ -24,7 +24,7 @@ export const PasswordDialog: React.VFC<{ onClose: () => void, user: User }> = ({
       <DialogTitle>Here you go 🚀</DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ pt: 1 }}>
-          <TextFieldLabel label="User ID" fullWidth value={user.id} startAdornmentIcon={<PersonOutlineTwoTone />} />
+          <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="Default Password" fullWidth value={user.defaultPassword} startAdornmentIcon={<VpnKey />}
             InputProps={{
               endAdornment: (<InputAdornment position="end">

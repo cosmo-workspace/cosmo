@@ -1,30 +1,26 @@
 package dashboard
 
 import (
-	"bytes"
 	"context"
-	"fmt"
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/bufbuild/connect-go"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
-	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
-
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 
 	//+kubebuilder:scaffold:imports
 
@@ -32,6 +28,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo/test"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
@@ -42,12 +39,10 @@ var (
 	cfg        *rest.Config
 	k8sClient  kosmo.Client
 	clientMock kubeutil.ClientMock
+	testUtil   test.TestUtil
 	testEnv    *envtest.Environment
 	ctx        context.Context
 	cancel     context.CancelFunc
-
-	userSession  []*http.Cookie
-	adminSession []*http.Cookie
 )
 
 const DefaultURLBase = "https://default.example.com"
@@ -64,6 +59,8 @@ func TestAPIs(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
+	// opts := zap.Options{TimeEncoder: zapcore.ISO8601TimeEncoder}
+	// logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true), zap.UseFlagOptions(&opts)))
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
 	ctx, cancel = context.WithCancel(ctrl.SetupSignalHandler())
@@ -88,6 +85,8 @@ var _ = BeforeSuite(func() {
 
 	k8sClient = kosmo.NewClient(c)
 	Expect(k8sClient).NotTo(BeNil())
+
+	testUtil = test.NewTestUtil(k8sClient)
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:             scheme.Scheme,
@@ -179,255 +178,26 @@ var _ = AfterSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 })
 
-type request struct {
-	method string
-	path   string
-	// query  map[string]string
-	body string
-}
-type response struct {
-	statusCode int
-	body       string
-	bodyValues func() []interface{}
-}
-
-func test_HttpSend(session []*http.Cookie, reqParam request) (httpResponse *http.Response, responseBody []byte) {
-	req, err := http.NewRequest(reqParam.method, "http://localhost:8888"+reqParam.path, bytes.NewBufferString(reqParam.body))
-	Expect(err).NotTo(HaveOccurred())
-
-	for _, v := range session {
-		req.AddCookie(v)
-	}
-
-	got, err := http.DefaultClient.Do(req)
-	Expect(err).NotTo(HaveOccurred())
-	defer got.Body.Close()
-	gotBody, err := ioutil.ReadAll(got.Body)
-	Expect(err).NotTo(HaveOccurred())
-
-	return got, gotBody
-}
-
-func test_HttpSendAndVerify(session []*http.Cookie, reqParam request, expect response) (responseBody []byte, statusCode int) {
-
-	req, err := http.NewRequest(reqParam.method, "http://localhost:8888"+reqParam.path, bytes.NewBufferString(reqParam.body))
-	Expect(err).NotTo(HaveOccurred())
-
-	for _, v := range session {
-		req.AddCookie(v)
-	}
-
-	got, err := http.DefaultClient.Do(req)
-	Expect(err).NotTo(HaveOccurred())
-
-	Expect(got).Should(HaveHTTPStatus(expect.statusCode))
-
-	defer got.Body.Close()
-	gotBody, err := ioutil.ReadAll(got.Body)
-	Expect(err).NotTo(HaveOccurred())
-
-	body := expect.body
-	if expect.bodyValues != nil {
-		body = fmt.Sprintf(body, expect.bodyValues()...)
-	}
-
-	if body == "@ignore" {
-		// no assert
-	} else if body != "" && body[0:1] == "{" {
-		Expect(body).Should(MatchJSON(gotBody))
-	} else {
-		Expect(string(body)).Should(Equal(string(gotBody)))
-	}
-	return gotBody, got.StatusCode
-}
-
-func test_CreateTemplate(templateType string, templateName string) {
-	ctx := context.Background()
-	tmpl := cosmov1alpha1.Template{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: templateName,
-			Labels: map[string]string{
-				cosmov1alpha1.TemplateLabelKeyType: templateType,
-			},
-			Annotations: map[string]string{
-				wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
-				wsv1alpha1.TemplateAnnKeyDefaultUserAddon:         "true",
-			},
-		},
-		Spec: cosmov1alpha1.TemplateSpec{
-			RequiredVars: []cosmov1alpha1.RequiredVarSpec{
-				{Var: "{{HOGE}}", Default: "FUGA"},
-			},
-		},
-	}
-	err := k8sClient.Create(ctx, &tmpl)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	Eventually(func() error {
-		err := k8sClient.Get(ctx, client.ObjectKey{Name: templateName}, &cosmov1alpha1.Template{})
-		return err
-	}, time.Second*5, time.Millisecond*100).Should(Succeed())
-}
-
-func test_DeleteTemplateAll() {
-	ctx := context.Background()
-	err := k8sClient.DeleteAllOf(ctx, &cosmov1alpha1.Template{})
-	Expect(err).ShouldNot(HaveOccurred())
-	Eventually(func() ([]cosmov1alpha1.Template, error) {
-		var tmplList cosmov1alpha1.TemplateList
-		err := k8sClient.List(ctx, &tmplList)
-		return tmplList.Items, err
-	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
-}
-
-func test_CreateCosmoUser(id string, dispayName string, role wsv1alpha1.UserRole) {
-	ctx := context.Background()
-	user := wsv1alpha1.User{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: id,
-		},
-		Spec: wsv1alpha1.UserSpec{
-			DisplayName: dispayName,
-			Role:        role,
-			AuthType:    wsv1alpha1.UserAuthTypePasswordSecert,
-		},
-	}
-	err := k8sClient.Create(ctx, &user)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	Eventually(func() error {
-		_, err := k8sClient.GetUser(ctx, id)
-		return err
-	}, time.Second*5, time.Millisecond*100).Should(Succeed())
-}
-
-func test_DeleteCosmoUserAll() {
-	ctx := context.Background()
-	users, err := k8sClient.ListUsers(ctx)
-	Expect(err).ShouldNot(HaveOccurred())
-	for _, user := range users {
-		k8sClient.Delete(ctx, &user)
-	}
-	Eventually(func() ([]wsv1alpha1.User, error) {
-		return k8sClient.ListUsers(ctx)
-	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
-}
-
-func test_CreateUserNameSpaceandDefaultPasswordIfAbsent(id string) {
-	ctx := context.Background()
-	var ns v1.Namespace
-	key := client.ObjectKey{Name: wsv1alpha1.UserNamespace(id)}
-	err := k8sClient.Get(ctx, key, &ns)
-	if err != nil {
-		ns = v1.Namespace{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: wsv1alpha1.UserNamespace(id),
-			},
-		}
-		err = k8sClient.Create(ctx, &ns)
-		Expect(err).ShouldNot(HaveOccurred())
-	}
-	// create default password
-	err = k8sClient.ResetPassword(ctx, id)
-	Expect(err).ShouldNot(HaveOccurred())
-}
-
-func test_CreateLoginUserSession(id, displayName string, role wsv1alpha1.UserRole, password string) (session []*http.Cookie) {
-	ctx := context.Background()
-
-	test_CreateCosmoUser(id, displayName, role)
-	test_CreateUserNameSpaceandDefaultPasswordIfAbsent(id)
-	err := k8sClient.RegisterPassword(ctx, id, []byte(password))
-	Expect(err).ShouldNot(HaveOccurred())
-
-	Eventually(func() error {
-		_, _, err := k8sClient.VerifyPassword(ctx, id, []byte(password))
+func test_Login(userName string, password string) string {
+	var res *connect.Response[dashv1alpha1.LoginResponse]
+	client := dashboardv1alpha1connect.NewAuthServiceClient(http.DefaultClient, "http://localhost:8888")
+	Eventually(func() (err error) {
+		res, err = client.Login(ctx, connect.NewRequest(&dashv1alpha1.LoginRequest{UserName: userName, Password: password}))
 		return err
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 
-	return test_Login(id, password)
+	return res.Header().Get("Set-Cookie")
 }
 
-func test_Login(userId string, password string) []*http.Cookie {
-	var got *http.Response
-	Eventually(func() *http.Response {
-		got, _ = test_HttpSend(nil, request{
-			method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: `{"id": "` + userId + `", "password": "` + password + `"}`,
-		})
-		return got
-	}, time.Second*5, time.Millisecond*100).Should(HaveHTTPStatus(http.StatusOK))
-
-	return got.Cookies()
+func test_CreateLoginUserSession(userName, displayName string, role wsv1alpha1.UserRole, password string) string {
+	testUtil.CreateLoginUser(userName, displayName, role, password)
+	return test_Login(userName, password)
 }
 
-func test_CreateWorkspace(userId string, name string, template string, vars map[string]string) {
-	ctx := context.Background()
-
-	cfg, err := k8sClient.GetWorkspaceConfig(ctx, template)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	ws := &wsv1alpha1.Workspace{}
-	ws.SetName(name)
-	ws.SetNamespace(wsv1alpha1.UserNamespace(userId))
-	ws.Spec = wsv1alpha1.WorkspaceSpec{
-		Template: cosmov1alpha1.TemplateRef{
-			Name: template,
-		},
-		Replicas: pointer.Int64(1),
-		Vars:     vars,
+func NewRequestWithSession[T any](message *T, session string) *connect.Request[T] {
+	req := connect.NewRequest(message)
+	if session != "" {
+		req.Header().Add("Cookie", session)
 	}
-	err = k8sClient.Create(ctx, ws)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	ws.Status.Phase = "Pending"
-	ws.Status.Config = cfg
-	err = k8sClient.Status().Update(ctx, ws)
-	Expect(err).ShouldNot(HaveOccurred())
-	Eventually(func() (*wsv1alpha1.Workspace, error) {
-		return k8sClient.GetWorkspaceByUserID(ctx, name, userId)
-	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
-}
-
-// func test_StopWorkspace(userId string, name string) {
-// 	ctx := context.Background()
-// 	ws, err := k8sClient.GetWorkspaceByUserID(ctx, name, userId)
-// 	Expect(err).ShouldNot(HaveOccurred())
-// 	ws.Spec.Replicas = pointer.Int64(0)
-// 	err = k8sClient.Update(ctx, ws)
-// 	Expect(err).ShouldNot(HaveOccurred())
-// }
-
-func test_DeleteWorkspaceAllByUserId(userId string) {
-	ctx := context.Background()
-	err := k8sClient.DeleteAllOf(ctx, &wsv1alpha1.Workspace{}, client.InNamespace(wsv1alpha1.UserNamespace(userId)))
-	Expect(err).ShouldNot(HaveOccurred())
-	Eventually(func() ([]wsv1alpha1.Workspace, error) {
-		return k8sClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userId))
-	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
-}
-
-func test_DeleteWorkspaceAll() {
-	ctx := context.Background()
-	users, err := k8sClient.ListUsers(ctx)
-	Expect(err).ShouldNot(HaveOccurred())
-	for _, user := range users {
-		test_DeleteWorkspaceAllByUserId(user.Name)
-	}
-}
-
-func test_createNetworkRule(userId, workspaceName, networkRuleName string, portNumber int, group, httpPath string) {
-	ctx := context.Background()
-
-	_, err := k8sClient.AddNetworkRule(ctx, workspaceName, userId, networkRuleName, portNumber, &group, httpPath, false)
-	Expect(err).ShouldNot(HaveOccurred())
-
-	Eventually(func() bool {
-		ws, _ := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
-		for _, n := range ws.Spec.Network {
-			if n.PortName == networkRuleName {
-				return true
-			}
-		}
-		return false
-	}, time.Second*5, time.Millisecond*100).Should(BeTrue())
+	return req
 }

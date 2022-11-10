@@ -178,9 +178,18 @@ BASEURL := https://$(DASHBOARD_URL)
 add-user: kubectl cosmoctl
 	@echo ====== $@ ======
 	-cosmoctl user create tom --admin 2> /dev/null
-	export PASSWORD=`cosmoctl user reset-password tom | grep -Po "(?<=New password: ).*")` && \
-	bash -c 'until (curl -L -c bin/cookie.txt -X POST $(BASEURL)/api/v1alpha1/auth/login -d "{\"id\":\"tom\",\"password\":\"$${PASSWORD}\"}") do sleep 1; done' && \
-	curl -L -b bin/cookie.txt -X PUT $(BASEURL)/api/v1alpha1/user/tom/password -d "{\"currentPassword\":\"$${PASSWORD}\",\"newPassword\": \"vvv\"}"
+	export PASSWORD=`cosmoctl user reset-password tom | grep -Po "(?<=New password: ).*"` && \
+	bash -c 'until ( \
+		curl -L -c bin/cookie.txt -X POST -H "Content-Type: application/json" \
+		$(BASEURL)/dashboard.v1alpha1.AuthService/Login \
+		-d "{\"userName\":\"tom\",\"password\":\"$${PASSWORD}\"}" \
+	) do sleep 1; done' && \
+	bash -c ' \
+		curl -L -b bin/cookie.txt -X POST -H "Content-Type: application/json" \
+		$(BASEURL)/dashboard.v1alpha1.UserService/UpdateUserPassword \
+		-d "{\"userName\":\"tom\",\"currentPassword\":\"$${PASSWORD}\",\"newPassword\": \"vvv\"}" \
+	'
+
 
 add-workspace: kubectl cosmoctl
 	@echo ====== $@ ======

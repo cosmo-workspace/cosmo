@@ -1,7 +1,8 @@
 import { Button, Dialog } from "@mui/material";
-import { act, cleanup, render, RenderResult, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
-import { useState } from "react";
+import React, { useState } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DialogContext, ModuleContext } from "../../components/ContextProvider";
 
 //--------------------------------------------------
@@ -13,7 +14,7 @@ describe("DialogContext", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     cleanup();
   });
 

@@ -1,0 +1,26 @@
+/*
+  Cosmo Dashboard API
+  Manipulate cosmo dashboard resource API
+*/
+
+syntax = "proto3";
+
+package dashboard.v1alpha1;
+
+message User {
+  string user_name = 1;
+  string display_name = 2;
+  // {"","cosmo-admin"}
+  string role = 3;
+  // {"","kosmo-secret"}
+  string auth_type = 4;
+  repeated UserAddons addons = 5;
+  string default_password = 6;
+  string status = 7;
+}
+
+message UserAddons {
+  string template = 1;
+  bool cluster_scoped = 2;
+  map<string, string> vars = 3;
+}

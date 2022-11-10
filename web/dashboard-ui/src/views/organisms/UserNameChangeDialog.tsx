@@ -4,9 +4,9 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useForm, UseFormRegisterReturn } from "react-hook-form";
-import { User } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
 import { useLogin } from "../../components/LoginProvider";
+import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { useUserModule } from "./UserModule";
 
@@ -32,7 +32,7 @@ export const UserNameChangeDialog: React.VFC<{ onClose: () => void, user: User }
 
   const onChangeName = async (data: Inputs) => {
     console.log(hooks);
-    await hooks.updateName(user.id, data.name);
+    await hooks.updateName(user.userName, data.name);
     await login.refreshUserInfo();
     onClose();
   }
@@ -44,7 +44,7 @@ export const UserNameChangeDialog: React.VFC<{ onClose: () => void, user: User }
       <form onSubmit={handleSubmit(onChangeName)}>
         <DialogContent>
           <Stack spacing={3}>
-            <TextFieldLabel label="User ID" fullWidth value={user.id} startAdornmentIcon={<PersonOutlineTwoTone />} />
+            <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
             <TextField label="User Name" fullWidth
               {...registerMui(register('name', {
                 required: { value: true, message: "Required" },

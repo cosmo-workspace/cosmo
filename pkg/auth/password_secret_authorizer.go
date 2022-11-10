@@ -17,6 +17,6 @@ func NewPasswordSecretAuthorizer(c client.Client) *PasswordSecretAuthorizer {
 }
 
 func (a *PasswordSecretAuthorizer) Authorize(ctx context.Context, msg AuthRequest) (bool, error) {
-	verified, _, err := password.VerifyPassword(ctx, a.Client, msg.GetId(), []byte(msg.GetPassword()))
+	verified, _, err := password.VerifyPassword(ctx, a.Client, msg.GetUserName(), []byte(msg.GetPassword()))
 	return verified, err
 }

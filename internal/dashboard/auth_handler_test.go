@@ -1,57 +1,69 @@
 package dashboard
 
 import (
+	"context"
 	"net/http"
-	"regexp"
 
+	"github.com/bufbuild/connect-go"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var _ = Describe("Dashboard server [auth]", func() {
 
+	var client dashboardv1alpha1connect.AuthServiceClient
+
 	BeforeEach(func() {
-		test_CreateLoginUserSession("usertest", "user", "", "password1")
-		test_CreateLoginUserSession("usertest-admin", "admin", wsv1alpha1.UserAdminRole, "password2")
+		testUtil.CreateLoginUser("normal-user", "user", "", "password1")
+		testUtil.CreateLoginUser("admin-user", "admin", wsv1alpha1.UserAdminRole, "password2")
+		client = dashboardv1alpha1connect.NewAuthServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 
 	AfterEach(func() {
 		clientMock.Clear()
-		test_DeleteCosmoUserAll()
+		testUtil.DeleteCosmoUserAll()
 	})
 
 	//==================================================================================
-	replace := func(src, reg, repl string) string {
-		return regexp.MustCompile(reg).ReplaceAllString(src, repl)
-	}
 
 	//==================================================================================
 	Describe("[Login]", func() {
 
-		run_test := func(requestBody string) {
+		run_test := func(req *dashv1alpha1.LoginRequest) {
 			By("---------------test start----------------")
-			res, body := test_HttpSend(nil, request{method: http.MethodPost, path: "/api/v1alpha1/auth/login", body: requestBody})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(replace(string(body), `"expireAt":".*"`, `"expireAt":"9999-99-99T99:99:99.99999999+9:00"`)).To(MatchSnapShot())
-			Expect(res.Cookies()).ShouldNot(BeNil())
+			ctx := context.Background()
+			res, err := client.Login(ctx, connect.NewRequest(req))
+			if err == nil {
+				Expect(res.Msg.ExpireAt).ShouldNot(BeNil())
+				res.Msg.ExpireAt = &timestamppb.Timestamp{}
+				Ω(res.Msg).To(MatchSnapShot())
+				Expect(res.Header().Get("Set-Cookie")).ShouldNot(BeNil())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
+			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, `{"id": "usertest", "password": "password1"}`),
-			Entry(nil, `{"id": "usertest-admin", "password": "password2"}`),
+			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "normal-user", Password: "password1"}),
+			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "admin-user", Password: "password2"}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, `{"password": "password1"}`),
-			Entry(nil, `{"id": "usertest"}`),
-			Entry(nil, `{"id": "usertest", "password": "invalid"}`),
-			Entry(nil, `{"id": "xxxxxxx", "password": "password1"}`),
+			Entry(nil, &dashv1alpha1.LoginRequest{Password: "password1"}),
+			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "normal-user"}),
+			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "normal-user", Password: "invalid"}),
+			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "xxxxxxx", Password: "password1"}),
 		)
 	})
 
@@ -59,21 +71,28 @@ var _ = Describe("Dashboard server [auth]", func() {
 	Describe("[Verify]", func() {
 
 		run_test := func(sessionType string) {
-			var session []*http.Cookie = nil
+			ctx := context.Background()
+			var session string
 			switch sessionType {
+			case "nil session":
 			case "logined session":
-				session = test_Login("usertest", "password1")
+				session = test_Login("normal-user", "password1")
 			case "logouted session":
-				session = test_Login("usertest", "password1")
-				res, _ := test_HttpSend(session, request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"})
-				Expect(res).Should(HaveHTTPStatus(http.StatusOK))
-				session = res.Cookies()
+				session = test_Login("normal-user", "password1")
+				logoutResp, _ := client.Logout(ctx, NewRequestWithSession(&emptypb.Empty{}, session))
+				session = logoutResp.Header().Get("Set-Cookie")
 			}
 			By("---------------test start----------------")
-			res, body := test_HttpSend(session, request{method: http.MethodPost, path: "/api/v1alpha1/auth/verify"})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(replace(string(body), `"expireAt":".*"`, `"expireAt":"9999-99-99T99:99:99.99999999+9:00"`)).To(MatchSnapShot())
-			Expect(res.Cookies()).ShouldNot(BeNil())
+			res, err := client.Verify(ctx, NewRequestWithSession(&emptypb.Empty{}, session))
+			if err == nil {
+				Expect(res.Msg.ExpireAt).ShouldNot(BeNil())
+				res.Msg.ExpireAt = &timestamppb.Timestamp{}
+				Ω(res.Msg).To(MatchSnapShot())
+				Expect(res.Header().Get("Set-Cookie")).Should(BeEmpty())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
+			}
 			By("---------------test end---------------")
 		}
 
@@ -93,21 +112,26 @@ var _ = Describe("Dashboard server [auth]", func() {
 	Describe("[Logout]", func() {
 
 		run_test := func(sessionType string) {
-			var session []*http.Cookie = nil
+			ctx := context.Background()
+			var session string
 			switch sessionType {
+			case "nil session":
 			case "logined session":
-				session = test_Login("usertest", "password1")
+				session = test_Login("normal-user", "password1")
 			case "logouted session":
-				session = test_Login("usertest", "password1")
-				res, _ := test_HttpSend(session, request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"})
-				Expect(res).Should(HaveHTTPStatus(http.StatusOK))
-				session = res.Cookies()
+				session = test_Login("normal-user", "password1")
+				logoutResp, _ := client.Logout(ctx, NewRequestWithSession(&emptypb.Empty{}, session))
+				session = logoutResp.Header().Get("Set-Cookie")
 			}
 			By("---------------test start----------------")
-			res, body := test_HttpSend(session, request{method: http.MethodPost, path: "/api/v1alpha1/auth/logout"})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(string(body)).To(MatchSnapShot())
-			Expect(res.Cookies()).ShouldNot(BeNil())
+			res, err := client.Logout(ctx, NewRequestWithSession(&emptypb.Empty{}, session))
+			if err == nil {
+				Ω(res.Msg).To(MatchSnapShot())
+				Expect(res.Header().Get("Set-Cookie")).Should(BeEmpty())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
+			}
 			By("---------------test end---------------")
 		}
 

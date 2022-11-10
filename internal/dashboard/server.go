@@ -9,7 +9,6 @@ import (
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
@@ -38,36 +37,28 @@ type Server struct {
 	sessionStore sessions.Store
 }
 
-func (s *Server) setupRouter() error {
+func (s *Server) setupRouter() {
 
-	authRouter := dashv1alpha1.NewAuthApiController(s, dashv1alpha1.WithAuthApiErrorHandler(errorHandler))
-	workspaceRouter := dashv1alpha1.NewWorkspaceApiController(s, dashv1alpha1.WithWorkspaceApiErrorHandler(errorHandler))
-	templateRouter := dashv1alpha1.NewTemplateApiController(s, dashv1alpha1.WithTemplateApiErrorHandler(errorHandler))
-	userRouter := dashv1alpha1.NewUserApiController(s, dashv1alpha1.WithUserApiErrorHandler(errorHandler))
+	mux := http.NewServeMux()
 
-	router := dashv1alpha1.NewRouter(authRouter, workspaceRouter, templateRouter, userRouter)
+	// setup proto api
+	s.AuthServiceHandler(mux)
+	s.UserServiceHandler(mux)
+	s.TemplateServiceHandler(mux)
+	s.WorkspaceServiceHandler(mux)
 
-	s.useAuthMiddleWare(router, authRouter.Routes())
-	s.useWorkspaceMiddleWare(router, workspaceRouter.Routes())
-	s.useTemplateMiddleWare(router, templateRouter.Routes())
-	s.useUserMiddleWare(router, userRouter.Routes())
+	// setup serving static files
+	mux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir(s.StaticFileDir))))
 
 	// setup middlewares for all routers to use HTTPRequestLogger and TimeoutHandler.
 	// deadline of the Timeout handler takes precedence over any subsequent deadlines
 	reqLogr := NewHTTPRequestLogger(s.Log)
-	router.Use(reqLogr.Middleware, s.timeoutHandler)
-
-	// setup serving static files
-	router.NotFoundHandler = reqLogr.Middleware(http.StripPrefix("/", http.FileServer(http.Dir(s.StaticFileDir))))
-
-	s.http.Handler = router
-	return nil
+	s.http.Handler = reqLogr.Middleware(s.timeoutHandler(mux))
 }
 
-func (s *Server) setupSessionStore() error {
+func (s *Server) setupSessionStore() {
 	store := session.NewStore(securecookie.GenerateRandomKey(64), securecookie.GenerateRandomKey(32), s.sessionCookieKey())
 	s.sessionStore = store
-	return nil
 }
 
 func (s *Server) sessionCookieKey() *http.Cookie {
@@ -81,29 +72,8 @@ func (s *Server) sessionCookieKey() *http.Cookie {
 }
 
 func (s *Server) timeoutHandler(next http.Handler) http.Handler {
-	return http.TimeoutHandler(next, s.ResponseTimeout, `{"message": "Request timeout"}`+"\n")
-}
-
-func errorHandler(w http.ResponseWriter, r *http.Request, err error, result *dashv1alpha1.ImplResponse) {
-	// see api/openapi/dashboard/vialpha1/errors.go DefaultErrorHandler
-
-	var status int
-	if _, ok := err.(*dashv1alpha1.ParsingError); ok {
-		status = http.StatusBadRequest
-	} else if _, ok := err.(*dashv1alpha1.RequiredError); ok {
-		status = http.StatusBadRequest
-	} else {
-		status = result.Code
-	}
-
-	if err.Error() != "" {
-		errorResponse := dashv1alpha1.ErrorResponse{
-			Message: err.Error(),
-		}
-		dashv1alpha1.EncodeJSONResponse(errorResponse, &status, w)
-	} else {
-		w.WriteHeader(status)
-	}
+	//return http.TimeoutHandler(next, s.ResponseTimeout, `{"message": "Request timeout"}`+"\n")
+	return http.TimeoutHandler(next, s.ResponseTimeout, "")
 }
 
 // Start run server
@@ -112,13 +82,9 @@ func (s *Server) Start(ctx context.Context) error {
 		Addr: fmt.Sprintf(":%d", s.Port),
 	}
 
-	if err := s.setupRouter(); err != nil {
-		return err
-	}
+	s.setupRouter()
 
-	if err := s.setupSessionStore(); err != nil {
-		return err
-	}
+	s.setupSessionStore()
 
 	go func() {
 		<-ctx.Done()

@@ -15,7 +15,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1/authproxyconnect"
+	"github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1/authproxyv1alpha1connect"
 	"github.com/gorilla/sessions"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -68,7 +68,7 @@ func (p *ProxyServer) SetupReverseProxy(addr string, targetURL *url.URL) *ProxyS
 	p.setupMetrics()
 
 	mux := http.NewServeMux()
-	path, authProxyHandler := authproxyconnect.NewAuthProxyServiceHandler(p)
+	path, authProxyHandler := authproxyv1alpha1connect.NewAuthProxyServiceHandler(p)
 	mux.Handle(p.RedirectPath+path, p.loginCookie(http.StripPrefix(p.RedirectPath, authProxyHandler)))
 	mux.Handle(p.RedirectPath+"/", p.serveLoginPage())
 	mux.Handle("/metrics", promhttp.InstrumentMetricHandler(

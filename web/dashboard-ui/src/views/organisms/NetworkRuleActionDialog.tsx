@@ -4,8 +4,8 @@ import {
   IconButton, Stack, TextField, Typography
 } from "@mui/material";
 import { Controller, useForm, UseFormRegisterReturn } from "react-hook-form";
-import { NetworkRule, Workspace } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
+import { NetworkRule, Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { useNetworkRule } from "./WorkspaceModule";
 
@@ -45,10 +45,10 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
           <form onSubmit={handleSubmit((data) => { upsertRule(data); })}>
             <Stack sx={{ mt: 1 }} spacing={2}>
               {networkRule ?
-                <TextFieldLabel label="Port Name" fullWidth value={networkRule.portName} />
+                <TextFieldLabel label="Port Name" fullWidth value={networkRule.networkRuleName} />
                 :
                 <TextField label="Port Name" fullWidth autoFocus
-                  {...registerMui(register('portName', {
+                  {...registerMui(register('networkRuleName', {
                     required: { value: true, message: "Required" },
                     maxLength: { value: 128, message: "Max 128 characters" },
                     validate: {
@@ -58,8 +58,8 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
                     },
                     onChange: e => { setValue('group', e.target.value); }
                   }))}
-                  error={Boolean(errors.portName)}
-                  helperText={(errors.portName && errors.portName.message) || 'Lowercase Alphanumeric or in ["-"]'}
+                  error={Boolean(errors.networkRuleName)}
+                  helperText={(errors.networkRuleName && errors.networkRuleName.message) || 'Lowercase Alphanumeric or in ["-"]'}
                 />
               }
               <TextField label="Port Number" fullWidth type='number'
@@ -127,7 +127,7 @@ export const NetworkRuleDeleteDialog: React.VFC<{
   console.log('NetworkRuleDeleteDialog', networkRule);
   const networkRuleModule = useNetworkRule();
   const deleteRule = () => {
-    networkRuleModule.removeNetwork(workspace, networkRule.portName).then(() => onClose());
+    networkRuleModule.removeNetwork(workspace, networkRule.networkRuleName).then(() => onClose());
   }
 
   return (
@@ -142,7 +142,7 @@ export const NetworkRuleDeleteDialog: React.VFC<{
       </DialogTitle>
       <DialogContent>
         <Stack sx={{ mt: 1 }} spacing={2}>
-          <TextFieldLabel label="Port Name" fullWidth value={networkRule.portName} />
+          <TextFieldLabel label="Port Name" fullWidth value={networkRule.networkRuleName} />
           <TextFieldLabel label="Port Number" fullWidth value={networkRule.portNumber} />
           <TextFieldLabel label="HTTP Path" fullWidth value={networkRule.httpPath} />
           <TextFieldLabel label="Group" fullWidth value={networkRule.group} />

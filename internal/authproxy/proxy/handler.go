@@ -9,11 +9,10 @@ import (
 	"github.com/bufbuild/connect-go"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	authv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/auth-proxy/v1alpha1"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
-type sessionCtxKey int
-
-const sesCtxKey sessionCtxKey = iota
+type ctxKeySession struct{}
 
 func (p *ProxyServer) serveLoginPage() http.Handler {
 	return http.StripPrefix(p.RedirectPath, http.FileServer(http.Dir(p.StaticFileDir)))
@@ -33,45 +32,45 @@ func (p *ProxyServer) loginCookie(next http.Handler) http.Handler {
 				return
 			}
 		}
-		ctx := context.WithValue(r.Context(), sesCtxKey, saveSessionInfo)
+		ctx := context.WithValue(r.Context(), ctxKeySession{}, saveSessionInfo)
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
 	})
 }
 
-func (p *ProxyServer) Login(ctx context.Context, req *connect.Request[authv1alpha1.LoginRequest]) (*connect.Response[authv1alpha1.Empty], error) {
+func (p *ProxyServer) Login(ctx context.Context, req *connect.Request[authv1alpha1.LoginRequest]) (*connect.Response[emptypb.Empty], error) {
 	log := p.Log.WithCaller()
-	log.Info("Login", "id", req.Msg.Id, "passExist", req.Msg.Password != "")
+	log.Info("Login", "userName", req.Msg.UserName, "passExist", req.Msg.Password != "")
 
-	res := connect.NewResponse(&authv1alpha1.Empty{})
+	res := connect.NewResponse(&emptypb.Empty{})
 	res.Header().Set("AuthProxy-Version", "v1alpha1")
 
 	// check args
-	if req.Msg.Id == "" || req.Msg.Password == "" {
-		log.Info("invalid request", "id", req.Msg.Id, "passExist", req.Msg.Password != "")
+	if req.Msg.UserName == "" || req.Msg.Password == "" {
+		log.Info("invalid request", "id", req.Msg.UserName, "passExist", req.Msg.Password != "")
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("invalid request"))
 	}
 
 	// check request user ID is instance owner ID
-	if p.User != req.Msg.Id {
-		log.Info("forbidden request: user ID is not owner ID", "id", req.Msg.Id)
+	if p.User != req.Msg.UserName {
+		log.Info("forbidden request: user ID is not owner ID", "userName", req.Msg.UserName)
 		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("user ID is not owner ID"))
 	}
 
 	// authorize at upstream
 	authorized, err := p.authorizer.Authorize(ctx, req.Msg)
 	if !authorized || err != nil {
-		log.Info("upstream authorization failed", "error", err, "id", req.Msg.Id)
+		log.Info("upstream authorization failed", "error", err, "userName", req.Msg.UserName)
 		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("upstream authorization failed"))
 	}
 
-	saveSessionInfo := ctx.Value(sesCtxKey).(func(sesInfo *session.Info))
+	saveSessionInfo := ctx.Value(ctxKeySession{}).(func(sesInfo *session.Info))
 	saveSessionInfo(&session.Info{
-		UserID:   req.Msg.Id,
+		UserID:   req.Msg.UserName,
 		Deadline: time.Now().Add(time.Duration(p.MaxAgeSeconds) * time.Second).Unix(),
 	})
 
-	log.Info("successfully logined", "id", req.Msg.Id, "passExist", req.Msg.Password != "")
+	log.Info("successfully logined", "username", req.Msg.UserName, "passExist", req.Msg.Password != "")
 	return res, nil
 }
