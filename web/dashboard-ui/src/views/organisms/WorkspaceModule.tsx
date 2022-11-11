@@ -1,15 +1,20 @@
+import { Code, ConnectError } from "@bufbuild/connect-web";
+import { protoInt64 } from "@bufbuild/protobuf";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { NetworkRule, UpsertNetworkRuleRequest, Template, TemplateApiFactory, User, UserApiFactory, Workspace, WorkspaceApiFactory } from "../../api/dashboard/v1alpha1";
 import { ModuleContext } from "../../components/ContextProvider";
 import { useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
+import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
+import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import { NetworkRule, Workspace, WorkspaceStatus } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
+import { useTemplateService, useUserService, useWorkspaceService } from "../../services/DashboardServices";
 
 export function computeStatus(workspace: Workspace) {
   const status = workspace.status!.phase;
   const replicas = workspace.spec!.replicas;
-  if (replicas === 0) {
+  if (replicas === protoInt64.zero) {
     return status === 'Running' ? 'Stopping' : status;
   } else if (replicas > 0) {
     return status === 'Stopped' ? 'Starting' : status;
@@ -27,20 +32,24 @@ const useWorkspace = () => {
   const { setMask, releaseMask } = useProgress();
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const { handleError } = useHandleError();
-  const restWS = WorkspaceApiFactory(undefined, "");
+  const workspaceService = useWorkspaceService();
   /**
    * WorkspaceList: workspace list
    */
-  const getWorkspaces = (userId: string) => {
-    console.log('getWorkspaces', userId);
+  const getWorkspaces = async (userName: string) => {
+    console.log('getWorkspaces', userName);
     setMask();
-    return restWS.getWorkspaces(userId)
-      .then(result => {
-        const datas = result.data.items.sort((a, b) => (a.name < b.name) ? -1 : 1);
+    try {
+      try {
+        const result_1 = await workspaceService.getWorkspaces({ userName });
+        const datas = result_1.items.sort((a, b) => (a.name < b.name) ? -1 : 1);
         setWorkspaces(datas);
-      })
-      .catch(error => { handleError(error) })
-      .finally(() => { releaseMask() });
+      } catch (error) {
+        handleError(error);
+      }
+    } finally {
+      releaseMask();
+    }
   }
 
   /**
@@ -66,8 +75,8 @@ const useWorkspace = () => {
 
     let newWorkspace = workspace;
     try {
-      const result = await restWS.getWorkspace(workspace.ownerID!, workspace.name);
-      newWorkspace = result.data.workspace!;
+      const result = await workspaceService.getWorkspace({ userName: workspace.ownerId, wsName: workspace.name });
+      newWorkspace = result.workspace!;
     }
     catch (e) {
       if (computeStatus(workspace) !== 'Creating') {
@@ -82,8 +91,8 @@ const useWorkspace = () => {
     }
 
     const reducer = (wspaces: Workspace[]) => {
-      const index = wspaces.findIndex(ws => ws.ownerID === workspace.ownerID && ws.name === workspace.name);
-      if (index >= 0 && JSON.stringify(wspaces[index]) !== JSON.stringify(newWorkspace)) {
+      const index = wspaces.findIndex(ws => ws.ownerId === workspace.ownerId && ws.name === workspace.name);
+      if (index >= 0 && !wspaces[index].equals(newWorkspace)) {
         wspaces[index] = newWorkspace;
         return [...wspaces];
       }
@@ -96,49 +105,56 @@ const useWorkspace = () => {
   /**
    * CreateDialog: Create workspace 
    */
-  const createWorkspace = (userId: string, wsName: string, templateName: string, vars: { [key: string]: string }) => {
+  const createWorkspace = async (userName: string, wsName: string, templateName: string, vars: { [key: string]: string }) => {
     console.log('createWorkspace', wsName, templateName, vars);
     setMask();
-    return restWS.postWorkspace(userId, { name: wsName, template: templateName, vars: vars })
-      .then(result => {
-        const newWs: Workspace = { ...result.data.workspace!, status: { ...result.data.workspace!.status, phase: 'Creating' } };
-        workspaces.push(newWs);
-        setWorkspaces([...workspaces.sort((a, b) => (a.name < b.name) ? -1 : 1)]);
-        enqueueSnackbar(result.data.message, { variant: 'success' });
-        refreshWorkspace(newWs);
-      })
-      .catch(error => { handleError(error); })
-      .finally(() => { releaseMask() });
+    try {
+      const result_1 = await workspaceService.createWorkspace({ userName, wsName: wsName, template: templateName, vars: vars });
+      const stat = new WorkspaceStatus({ ...result_1.workspace!.status, phase: 'Creating' })
+      const newWs = new Workspace({ ...result_1.workspace!, status: stat });
+      workspaces.push(newWs);
+      setWorkspaces([...workspaces.sort((a, b) => (a.name < b.name) ? -1 : 1)]);
+      enqueueSnackbar(result_1.message, { variant: 'success' });
+      refreshWorkspace(newWs);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      releaseMask();
+    }
   }
 
   /**
    * Run workspace
    */
-  const runWorkspace = (workspace: Workspace) => {
+  const runWorkspace = async (workspace: Workspace) => {
     console.log('runWorkspace', workspace.name);
     setMask();
-    return restWS.patchWorkspace(workspace.ownerID!, workspace.name, { replicas: 1 })
-      .then(() => {
-        enqueueSnackbar('Successfully run workspace', { variant: 'success' });
-        refreshWorkspace(workspace);
-      })
-      .catch(error => { handleError(error); })
-      .finally(() => { releaseMask() });
+    try {
+      await workspaceService.updateWorkspace({ userName: workspace.ownerId!, wsName: workspace.name, replicas: protoInt64.parse(1) });
+      enqueueSnackbar('Successfully run workspace', { variant: 'success' });
+      refreshWorkspace(workspace);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      releaseMask();
+    }
   }
 
   /**
    * Stop workspace
    */
-  const stopWorkspace = (workspace: Workspace) => {
+  const stopWorkspace = async (workspace: Workspace) => {
     console.log('stopWorkspace', workspace.name);
     setMask();
-    return restWS.patchWorkspace(workspace.ownerID!, workspace.name, { replicas: 0 })
-      .then(() => {
-        enqueueSnackbar('Successfully stopped workspace', { variant: 'success' });
-        refreshWorkspace(workspace);
-      })
-      .catch(error => { handleError(error); })
-      .finally(() => { releaseMask() });
+    try {
+      await workspaceService.updateWorkspace({ userName: workspace.ownerId!, wsName: workspace.name, replicas: protoInt64.zero });
+      enqueueSnackbar('Successfully stopped workspace', { variant: 'success' });
+      refreshWorkspace(workspace);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      releaseMask();
+    }
   }
 
   /**
@@ -148,9 +164,9 @@ const useWorkspace = () => {
     console.log('deleteWorkspace', workspace);
     try {
       setMask();
-      const result = await restWS.deleteWorkspace(workspace.ownerID!, workspace.name);
-      enqueueSnackbar(result.data.message, { variant: 'success' });
-      refreshWorkspaces(workspace.ownerID!);
+      const result = await workspaceService.deleteWorkspace({ userName: workspace.ownerId!, wsName: workspace.name });
+      enqueueSnackbar(result.message, { variant: 'success' });
+      refreshWorkspaces(workspace.ownerId!);
     }
     catch (error) { handleError(error); }
     finally { releaseMask(); }
@@ -175,14 +191,17 @@ export const useTemplates = () => {
   console.log('useTemplates');
 
   const [templates, setTemplates] = useState<Template[]>([]);
-  const restTmpl = TemplateApiFactory(undefined, "");
+  const templateService = useTemplateService();
   const { handleError } = useHandleError();
 
-  const getTemplates = () => {
+  const getTemplates = async () => {
     console.log('getTemplates');
-    return restTmpl.getWorkspaceTemplates()
-      .then(result => { setTemplates(result.data.items.sort((a, b) => (a.name < b.name) ? -1 : 1)); })
-      .catch(error => { handleError(error) });
+    try {
+      const result = await templateService.getWorkspaceTemplates({});
+      setTemplates(result.items.sort((a, b) => (a.name < b.name) ? -1 : 1));
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   return ({
@@ -201,39 +220,37 @@ export const useNetworkRule = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { setMask, releaseMask } = useProgress();
   const { handleError } = useHandleError();
-  const restNetwork = WorkspaceApiFactory(undefined, "");
+  const workspaceService = useWorkspaceService();
   const workspaceModule = useWorkspaceModule();
 
-  const upsertNetwork = (workspace: Workspace, networkRule: NetworkRule) => {
+  const upsertNetwork = async (workspace: Workspace, networkRule: NetworkRule) => {
     console.log('upsertNetwork', workspace, networkRule);
     setMask();
-    const nwReq: UpsertNetworkRuleRequest = {
-      portNumber: networkRule.portNumber,
-      group: networkRule.group,
-      httpPath: networkRule.httpPath,
-      public: networkRule.public,
+    try {
+      const result = await workspaceService.upsertNetworkRule({ userName: workspace.ownerId!, wsName: workspace.name, networkRule: networkRule });
+      console.log(result);
+      enqueueSnackbar(result.message, { variant: 'success' });
+      workspaceModule.refreshWorkspace(workspace);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      releaseMask();
     }
-    return restNetwork.putNetworkRule(workspace.ownerID!, workspace.name, networkRule.portName, nwReq)
-      .then(result => {
-        console.log(result)
-        enqueueSnackbar(result.data.message, { variant: 'success' });
-        workspaceModule.refreshWorkspace(workspace);
-      })
-      .catch(error => { handleError(error); })
-      .finally(() => { releaseMask() });
   }
 
-  const removeNetwork = (workspace: Workspace, netRuleName: string) => {
+  const removeNetwork = async (workspace: Workspace, netRuleName: string) => {
     console.log('removeNetwork', workspace, netRuleName);
     setMask();
-    return restNetwork.deleteNetworkRule(workspace.ownerID!, workspace.name, netRuleName)
-      .then(result => {
-        console.log(result)
-        enqueueSnackbar(result.data.message, { variant: 'success' });
-        workspaceModule.refreshWorkspace(workspace);
-      })
-      .catch(error => { handleError(error); })
-      .finally(() => { releaseMask() });
+    try {
+      const result_1 = await workspaceService.deleteNetworkRule({ userName: workspace.ownerId!, wsName: workspace.name, networkRuleName: netRuleName });
+      console.log(result_1);
+      enqueueSnackbar(result_1.message, { variant: 'success' });
+      workspaceModule.refreshWorkspace(workspace);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      releaseMask();
+    }
   }
 
   return ({
@@ -250,17 +267,17 @@ const useWorkspaceUsers = () => {
   console.log('useWorkspaceUser');
 
   const { loginUser } = useLogin();
-  const [user, setUser] = useState<User>(loginUser || { id: '' });
-  const [users, setUsers] = useState<User[]>([loginUser || { id: '' }]);
+  const [user, setUser] = useState<User>(loginUser || new User());
+  const [users, setUsers] = useState<User[]>([loginUser || new User()]);
   const { handleError } = useHandleError();
-  const restUser = UserApiFactory(undefined, "");
+  const userService = useUserService();
 
   const getUsers = async () => {
-    console.log('getUsers');
+    console.log('useWorkspaceUsers:getUsers');
     try {
-      const result = await restUser.getUsers();
+      const result = await userService.getUsers({});
       setUsers(prev => {
-        const newUsers = result.data.items.sort((a, b) => (a.id < b.id) ? -1 : 1);
+        const newUsers = result.items.sort((a, b) => (a.userName < b.userName) ? -1 : 1);
         return JSON.stringify(prev) === JSON.stringify(newUsers) ? prev : newUsers;
       });
     }
@@ -284,11 +301,12 @@ const useHandleError = () => {
 
   const handleError = (error: any) => {
     console.log('handleError', error);
-    console.log('handleError', error.response);
-    if (error?.response?.status === 401) {
+
+    if (error instanceof ConnectError &&
+      error.code === Code.Unauthenticated) {
       navigate('/signin');
     }
-    const msg = error?.response?.data?.message || error?.message;
+    const msg = error?.message;
     msg && enqueueSnackbar(msg, { variant: 'error' });
     throw error;
   }

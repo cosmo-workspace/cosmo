@@ -8,8 +8,9 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
-import { Template, User } from "../../api/dashboard/v1alpha1";
 import { DialogContext } from "../../components/ContextProvider";
+import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
+import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { PasswordDialogContext } from "./PasswordDialog";
 import { useTemplates, useUserModule } from "./UserModule";
@@ -41,7 +42,7 @@ const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, us
       </DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          <TextFieldLabel label="User ID" fullWidth value={user.id} startAdornmentIcon={<PersonOutlineTwoTone />} />
+          <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="User Name" fullWidth value={user.displayName} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="Role" fullWidth value={user.role} startAdornmentIcon={<SupervisorAccountTwoTone />} />
           <TextFieldLabel label="AuthType" fullWidth value={user.authType} startAdornmentIcon={<SecurityOutlined />} />
@@ -87,7 +88,7 @@ export const UserDeleteDialog: React.VFC<{ onClose: () => void, user: User }> = 
           <Checkbox color="warning" onChange={e => setLock(e.target.checked)} />
           <Button variant="contained" color="secondary" disabled={!lock}
             onClick={() => {
-              hooks.deleteUser(user.id)
+              hooks.deleteUser(user.userName)
                 .then(() => onClose());
             }}>Delete</Button>
         </>}
@@ -139,7 +140,8 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
           });
 
         console.log("inp.id", inp.id, "inp.name", inp.name, "inp.role", inp.role, "userAddons", userAddons)
-        hooks.createUser(inp.id, inp.name, inp.role, userAddons)
+        const protoUserAddons = userAddons.map(ua => new UserAddons(ua));
+        hooks.createUser(inp.id, inp.name, inp.role, protoUserAddons)
           .then(newUser => {
             onClose();
             passwordDialogDispatch(true, { user: newUser! });

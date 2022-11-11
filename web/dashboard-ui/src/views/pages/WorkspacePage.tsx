@@ -1,8 +1,8 @@
 import { AddTwoTone, Check, CheckCircleOutlined, Clear, DeleteTwoTone, EditTwoTone, ErrorOutline, ExpandLessTwoTone, ExpandMoreTwoTone, MoreVertTwoTone, OpenInNewTwoTone, PlayCircleFilledWhiteTwoTone, RefreshTwoTone, SearchTwoTone, StopCircleOutlined, StopCircleTwoTone, WebTwoTone } from '@mui/icons-material';
 import { Alert, Avatar, Box, Card, CardContent, CardHeader, Chip, CircularProgress, Collapse, Divider, Fab, Grid, IconButton, InputAdornment, Link, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, { useEffect, useRef, useState } from "react";
-import { NetworkRule, Workspace } from "../../api/dashboard/v1alpha1";
 import { useLogin } from '../../components/LoginProvider';
+import { NetworkRule, Workspace } from '../../proto/gen/dashboard/v1alpha1/workspace_pb';
 import { AlertTooltip } from '../atoms/AlertTooltip';
 import { NameAvatar } from '../atoms/NameAvatar';
 import { NetworkRuleDeleteDialogContext, NetworkRuleUpsertDialogContext } from '../organisms/NetworkRuleActionDialog';
@@ -68,7 +68,7 @@ const UserSelect: React.VFC = () => {
     <>
       <Chip
         ref={chipReff}
-        label={user.id}
+        label={user.userName}
         avatar={<NameAvatar name={user.displayName} />}
         onClick={(e) => { e.stopPropagation(); getUsers().then(() => setAnchorEl(chipReff.current)); }}
         onDelete={(e) => { e.stopPropagation(); getUsers().then(() => setAnchorEl(chipReff.current)); }}
@@ -76,9 +76,9 @@ const UserSelect: React.VFC = () => {
       />
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
         {users.map((user, ind) =>
-          <MenuItem key={ind} value={user.id} onClick={() => { setAnchorEl(null); setUser(user) }}>
+          <MenuItem key={ind} value={user.userName} onClick={() => { setAnchorEl(null); setUser(user) }}>
             <Stack>
-              <Typography>{user.id}</Typography>
+              <Typography>{user.userName}</Typography>
               <Typography color="gray" fontSize="small"> {user.displayName}</Typography>
             </Stack>
           </MenuItem>
@@ -126,9 +126,9 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
     let url = workspace.status?.urlBase || ''
     url = url.replace('{{INSTANCE}}', workspace.name);
     url = url.replace('{{WORKSPACE}}', workspace.name);
-    url = url.replace('{{NAMESPACE}}', 'cosmo-user-' + workspace.ownerID);
-    url = url.replace('{{USERID}}', workspace.ownerID || '');
-    url = url.replace('{{PORT_NAME}}', networkRule.portName);
+    url = url.replace('{{NAMESPACE}}', 'cosmo-user-' + workspace.ownerId);
+    url = url.replace('{{USERID}}', workspace.ownerId || '');
+    url = url.replace('{{PORT_NAME}}', networkRule.networkRuleName);
     url = url.replace('{{PORT_NUMBER}}', networkRule.portNumber.toString());
     const urlParts = url.split('{{NETRULE_GROUP}}');
     return (<>
@@ -147,7 +147,7 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
   }
 
   return (<>
-    <Grid item xs={2} sm={2} md={1.5} sx={{ m: 'auto' }}>{Body2(networkRule.portName)}</Grid>
+    <Grid item xs={2} sm={2} md={1.5} sx={{ m: 'auto' }}>{Body2(networkRule.networkRuleName)}</Grid>
     <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{Body2(networkRule.portNumber)}</Grid>
     <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{networkRule.public && <Check />}</Grid>
     {isUpSM &&
@@ -183,7 +183,7 @@ const NetworkRuleList: React.VFC<{ workspace: Workspace }> = ({ workspace }) => 
       <NetworkRuleHeader workspace={workspace} />
       {/* network rule detail */}
       {(workspace.spec?.additionalNetwork || []).map((nwRule) => {
-        return (<NetworkRuleItem workspace={workspace} networkRule={nwRule} key={nwRule.portName} />)
+        return (<NetworkRuleItem workspace={workspace} networkRule={nwRule} key={nwRule.networkRuleName} />)
       })}
       {(workspace.spec?.additionalNetwork || []).length === 0 &&
         <Grid item xs={12} sx={{ p: 2, textAlign: 'center' }}>
@@ -247,10 +247,10 @@ const WorkspaceList: React.VFC = () => {
   const [openTutorialTooltip, setOpenTutorialTooltip] = useState<boolean | undefined>(undefined);
   const createDialogDisptch = WorkspaceCreateDialogContext.useDispatch();
 
-  useEffect(() => { hooks.getWorkspaces(user.id) }, [user]);  // eslint-disable-line
+  useEffect(() => { hooks.getWorkspaces(user.userName) }, [user]);  // eslint-disable-line
 
   useEffect(() => {
-    if (hooks.workspaces.length === 0 && loginUser!.id === user.id) {
+    if (hooks.workspaces.length === 0 && loginUser!.userName === user.userName) {
       // When it has never been opened
       if (openTutorialTooltip === undefined) {
         const t = setTimeout(() => setOpenTutorialTooltip(prev => prev === undefined), 5000);
@@ -260,7 +260,7 @@ const WorkspaceList: React.VFC = () => {
     } else if (openTutorialTooltip === true) {
       setOpenTutorialTooltip(false);
     }
-  }, [hooks.workspaces.length, user.id]);// eslint-disable-line 
+  }, [hooks.workspaces.length, user.userName]);// eslint-disable-line 
 
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
@@ -291,7 +291,7 @@ const WorkspaceList: React.VFC = () => {
         {isAdmin && (isUpSM || (!isSearchFocused && searchStr === "")) && <UserSelect />}
         <IconButton
           color="inherit"
-          onClick={() => { hooks.refreshWorkspaces(user.id) }}>
+          onClick={() => { hooks.refreshWorkspaces(user.userName) }}>
           <RefreshTwoTone />
         </IconButton>
         <AlertTooltip arrow placement="top"

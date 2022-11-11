@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1
 
-exports[`TextFieldLabel TextFieldLabel 1`] = `
+exports[`TextFieldLabel > TextFieldLabel 1`] = `
 <DocumentFragment>
   .emotion-0 {
   display: -webkit-inline-box;
@@ -305,7 +305,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
 </DocumentFragment>
 `;
 
-exports[`TextFieldLabel TextFieldLabel startAdornmentIcon 1`] = `
+exports[`TextFieldLabel > TextFieldLabel startAdornmentIcon 1`] = `
 <DocumentFragment>
   .emotion-0 {
   display: -webkit-inline-box;

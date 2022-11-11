@@ -1,0 +1,119 @@
+/*
+  Cosmo Dashboard API
+  Manipulate cosmo dashboard resource API
+*/
+
+syntax = "proto3";
+
+package dashboard.v1alpha1;
+
+import "dashboard/v1alpha1/workspace.proto";
+import "validate/validate.proto";
+
+service WorkspaceService {
+  // Create a new Workspace
+  rpc CreateWorkspace(CreateWorkspaceRequest) returns (CreateWorkspaceResponse);
+  // Delete workspace
+  rpc DeleteWorkspace(DeleteWorkspaceRequest) returns (DeleteWorkspaceResponse);
+  // Update workspace
+  rpc UpdateWorkspace(UpdateWorkspaceRequest) returns (UpdateWorkspaceResponse);
+  // Returns a single Workspace model
+  rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
+  // Returns an array of Workspace model
+  rpc GetWorkspaces(GetWorkspacesRequest) returns (GetWorkspacesResponse);
+  // Upsert workspace network rule
+  rpc UpsertNetworkRule(UpsertNetworkRuleRequest)
+      returns (UpsertNetworkRuleResponse);
+  // Remove workspace network rule
+  rpc DeleteNetworkRule(DeleteNetworkRuleRequest)
+      returns (DeleteNetworkRuleResponse);
+}
+
+message CreateWorkspaceRequest {
+  // user name
+  string user_name = 1 [(validate.rules).string = { min_len: 1 }];
+  // workspace name
+  string ws_name = 2 [(validate.rules).string = { min_len: 1 }];
+  string template = 3 [(validate.rules).string = { min_len: 1 }];
+  map<string, string> vars = 4;
+}
+
+message CreateWorkspaceResponse {
+  string message = 1;
+  Workspace workspace = 2;
+}
+
+message DeleteNetworkRuleResponse {
+  string message = 1;
+  NetworkRule network_rule = 2;
+}
+
+message DeleteWorkspaceRequest {
+  // user name
+  string user_name = 1;
+  // workspace name
+  string ws_name = 2;
+}
+
+message UpdateWorkspaceRequest {
+  // user name
+  string user_name = 1;
+  // workspace name
+  string ws_name = 2;
+  // workspace to update
+  optional int64 replicas = 3;
+}
+
+message UpdateWorkspaceResponse {
+  string message = 1;
+  Workspace workspace = 2;
+}
+
+message GetWorkspaceRequest {
+  // user name
+  string user_name = 1;
+  // workspace name
+  string ws_name = 2;
+}
+
+message GetWorkspaceResponse {
+  Workspace workspace = 1;
+}
+
+message GetWorkspacesRequest {
+  // user name
+  string user_name = 1;
+}
+
+message GetWorkspacesResponse {
+  string message = 1;
+  repeated Workspace items = 2;
+}
+
+message UpsertNetworkRuleRequest {
+  // user name
+  string user_name = 1;
+  // workspace name
+  string ws_name = 2;
+  // network rule to upsert
+  NetworkRule network_rule = 3;
+}
+
+message UpsertNetworkRuleResponse {
+  string message = 1;
+  NetworkRule network_rule = 2;
+}
+
+message DeleteNetworkRuleRequest {
+  // user name
+  string user_name = 1;
+  // workspace name
+  string ws_name = 2;
+  // network rule name
+  string network_rule_name = 3;
+}
+
+message DeleteWorkspaceResponse {
+  string message = 1;
+  Workspace workspace = 2;
+}

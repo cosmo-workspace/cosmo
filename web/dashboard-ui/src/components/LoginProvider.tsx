@@ -1,7 +1,9 @@
 import { useSnackbar } from 'notistack';
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AuthApiFactory, User, UserApiFactory } from '../api/dashboard/v1alpha1';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useProgress } from './ProgressProvider';
+import { createConnectTransport, createPromiseClient } from '@bufbuild/connect-web';
+import { User } from '../proto/gen/dashboard/v1alpha1/user_pb';
+import { useAuthService, useUserService } from '../services/DashboardServices';
 
 /**
  * context
@@ -21,7 +23,9 @@ const useLoginModule = () => {
   const [loginUser, setLoginUser] = useState<User>();
   const { enqueueSnackbar } = useSnackbar();
   const { setMask, releaseMask } = useProgress();
-  const { getUser, putUserPassword } = UserApiFactory(undefined, "");
+  const userService = useUserService();
+  const authService = useAuthService();
+
 
   /**
    * verifyLogin
@@ -29,10 +33,9 @@ const useLoginModule = () => {
   const verifyLogin = async () => {
     console.log('verify start');
     try {
-      const restAuth = AuthApiFactory(undefined, "");
-      const resp = await restAuth.verify();
-      if (resp.data.id) {
-        await getMyUserInfo(resp.data.id);
+      const resp = await authService.verify({});
+      if (resp.userName) {
+        await getMyUserInfo(resp.userName);
       }
     }
     catch (error) {
@@ -47,13 +50,13 @@ const useLoginModule = () => {
   /**
    * login: SignIn 
    */
-  const login = async (id: string, password: string) => {
+  const login = async (userName: string, password: string) => {
     console.log('login');
     try {
-      const restAuth = AuthApiFactory(undefined, "");
-      const res = await restAuth.login({ id, password });
-      await getMyUserInfo(id);
-      return res.data;
+      const res = await authService.login({ userName: userName, password: password });
+      await getMyUserInfo(userName);
+      console.log('login end');
+      return res;
     }
     catch (error) {
       setLoginUser(undefined);
@@ -61,25 +64,21 @@ const useLoginModule = () => {
       handleError(error);
       throw error;
     }
-    finally {
-      console.log('login end');
-    }
-
   }
 
 
   /**
    * login: MyUserInfo
    */
-  const getMyUserInfo = async (userId: string) => {
-    console.log('getMyUserInfo', userId);
+  const getMyUserInfo = async (userName: string) => {
+    console.log('getMyUserInfo', userName);
     // if (loginUser || !userId) {
     //   console.log('getMyUserInfo cancel', loginUser, userId);
     //   return;
     // }
     try {
-      const responseUser = await getUser(userId);
-      setLoginUser(prev => { console.log('setLoginUser', prev, responseUser.data.user); return responseUser.data.user! });
+      const responseUser = await userService.getUser({ userName: userName });
+      setLoginUser(prev => { console.log('setLoginUser', prev, responseUser.user); return responseUser.user! });
     }
     catch (error) {
       console.log('getMyUserInfo error');
@@ -94,7 +93,7 @@ const useLoginModule = () => {
   const refreshUserInfo = async () => {
     console.log('refreshUserInfo');
     if (loginUser) {
-      getMyUserInfo(loginUser.id);
+      getMyUserInfo(loginUser.userName);
     }
   }
 
@@ -104,8 +103,7 @@ const useLoginModule = () => {
   const logout = async () => {
     console.log('logout');
     try {
-      const restAuth = AuthApiFactory(undefined, "");
-      await restAuth.logout();
+      await authService.logout({});
     }
     catch (error) {
       console.log('logout error');
@@ -122,14 +120,16 @@ const useLoginModule = () => {
    * updataPassword
    */
   const updataPassword = async (currentPassword: string, newPassword: string) => {
-    console.log('updataPassword', loginUser?.id);
+    console.log('updataPassword', loginUser?.userName);
     setMask();
     try {
-      return await putUserPassword(loginUser!.id, { currentPassword, newPassword });
-    }
-    catch (error) {
-      handleError(error);
-      throw error;
+      try {
+        return await userService.updateUserPassword({ userName: loginUser!.userName, currentPassword, newPassword });
+      }
+      catch (error) {
+        handleError(error);
+        throw error;
+      }
     }
     finally {
       console.log('updataPassword end');
@@ -143,7 +143,7 @@ const useLoginModule = () => {
    */
   const handleError = (error: any) => {
     console.log(error);
-    const msg = error?.response?.data?.message || error?.message;
+    const msg = error?.message;
     msg && enqueueSnackbar(msg, { variant: 'error' });
   }
 
@@ -178,8 +178,8 @@ export const LoginProvider: React.FC<React.PropsWithChildren<unknown>> = ({ chil
 }
 
 /**
- * export private member. (for test) 
+ * export private member. (for test)
  */
-export const __local__ = {
-  useLoginModule,
-};
+// export const __local__ = {
+//   useLoginModule,
+// };

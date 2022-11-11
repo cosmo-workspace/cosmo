@@ -2,101 +2,76 @@ package dashboard
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"time"
 
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
+	connect_go "github.com/bufbuild/connect-go"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
-	"github.com/gorilla/mux"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	connect "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (s *Server) useAuthMiddleWare(router *mux.Router, routes dashv1alpha1.Routes) {
-	for _, rt := range routes {
-		router.Get(rt.Name).Handler(s.contextMiddleware(router.Get(rt.Name).GetHandler()))
-	}
-	router.Get("Verify").Handler(s.authorizationMiddleware(router.Get("Verify").GetHandler()))
+func (s *Server) AuthServiceHandler(mux *http.ServeMux) {
+	path, handler := connect.NewAuthServiceHandler(s)
+	mux.Handle(path, s.contextMiddleware(handler))
 }
 
-func (s *Server) Verify(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
+func (s *Server) Verify(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.VerifyResponse], error) {
+
 	log := clog.FromContext(ctx).WithCaller()
 
-	caller := callerFromContext(ctx)
-	if caller == nil {
-		return ErrorResponse(log, kosmo.NewUnauthorizedError("", nil))
-	}
-	deadline := deadlineFromContext(ctx)
-	if deadline.Before(time.Now()) {
-		return ErrorResponse(log, kosmo.NewUnauthorizedError("", nil))
-	}
-
-	res := &dashv1alpha1.VerifyResponse{
-		Id:       caller.Name,
-		ExpireAt: deadline,
-	}
-	return NormalResponse(http.StatusOK, res)
-}
-
-func (s *Server) Logout(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
-	log := clog.FromContext(ctx).WithCaller()
-
-	w := responseWriterFromContext(ctx)
-	r := requestFromContext(ctx)
-
-	_, _, err := s.authorizeWithSession(r)
+	loginUser, deadline, err := s.verifyAndGetLoginUser(ctx)
 	if err != nil {
-		if errors.Is(err, ErrNotAuthorized) {
-			return ErrorResponse(log, kosmo.NewUnauthorizedError("", nil))
-		} else {
-			return ErrorResponse(log, kosmo.NewInternalServerError("", nil))
-		}
+		return nil, ErrResponse(log, err)
 	}
 
-	cookie := s.sessionCookieKey()
-	cookie.MaxAge = -1
-	http.SetCookie(w, cookie)
-
-	return NormalResponse(http.StatusOK, nil)
+	return connect_go.NewResponse(&dashv1alpha1.VerifyResponse{
+		UserName:              loginUser.Name,
+		ExpireAt:              timestamppb.New(deadline),
+		RequirePasswordUpdate: false,
+	}), nil
 }
 
-func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dashv1alpha1.ImplResponse, error) {
+func (s *Server) Login(ctx context.Context, req *connect_go.Request[dashv1alpha1.LoginRequest]) (*connect_go.Response[dashv1alpha1.LoginResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
-	log.Debug().Info("request", "req", req)
+	log.Debug().Info("request", "userid", req.Msg.UserName)
 
 	w := responseWriterFromContext(ctx)
 	r := requestFromContext(ctx)
 
 	// Check ID
-	user, err := s.Klient.GetUser(ctx, req.Id)
+	user, err := s.Klient.GetUser(ctx, req.Msg.UserName)
 	if err != nil {
-		log.Info(err.Error(), "userid", req.Id)
-		return ErrorResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
+		log.Info(err.Error(), "userid", req.Msg.UserName)
+		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
 	}
 	// Check password
 	authrizer, ok := s.Authorizers[user.Spec.AuthType]
 	if !ok {
-		log.Info("authrizer not found", "userid", req.Id, "authType", user.Spec.AuthType)
-		return ErrorResponse(log, kosmo.NewServiceUnavailableError("incorrect user or password", nil))
+		log.Info("authrizer not found", "userid", req.Msg.UserName, "authType", user.Spec.AuthType)
+		return nil, ErrResponse(log, kosmo.NewServiceUnavailableError("incorrect user or password", nil))
 	}
-	verified, err := authrizer.Authorize(ctx, &req)
+	verified, err := authrizer.Authorize(ctx, req.Msg)
 	if err != nil {
-		log.Error(err, "authorize failed", "userid", req.Id)
-		return ErrorResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
+		log.Error(err, "authorize failed", "userid", req.Msg.UserName)
+		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
 
 	}
 	if !verified {
-		log.Info("login failed: password invalid", "userid", req.Id)
-		return ErrorResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
+		log.Info("login failed: password invalid", "userid", req.Msg.UserName)
+		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
 	}
 	var isDefault bool
 	if wsv1alpha1.UserAuthType(user.Spec.AuthType) == wsv1alpha1.UserAuthTypePasswordSecert {
-		isDefault, err = s.Klient.IsDefaultPassword(ctx, req.Id)
+		isDefault, err = s.Klient.IsDefaultPassword(ctx, req.Msg.UserName)
 		if err != nil {
-			log.Error(err, "failed to check is default password", "userid", req.Id)
-			return ErrorResponse(log, kosmo.NewInternalServerError("", nil))
+			log.Error(err, "failed to check is default password", "userid", req.Msg.UserName)
+			return nil, ErrResponse(log, kosmo.NewInternalServerError("", nil))
 		}
 	}
 
@@ -106,7 +81,7 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 
 	ses, _ := s.sessionStore.New(r, s.SessionName)
 	sesInfo := session.Info{
-		UserID:   req.Id,
+		UserID:   req.Msg.UserName,
 		Deadline: expireAt.Unix(),
 	}
 	log.DebugAll().Info("save session", "userID", sesInfo.UserID, "deadline", sesInfo.Deadline)
@@ -115,14 +90,30 @@ func (s *Server) Login(ctx context.Context, req dashv1alpha1.LoginRequest) (dash
 	err = s.sessionStore.Save(r, w, ses)
 	if err != nil {
 		log.Error(err, "failed to save session")
-		return ErrorResponse(log, err)
+		return nil, ErrResponse(log, err)
 	}
 
-	res := &dashv1alpha1.LoginResponse{
-		Id:                    req.Id,
-		ExpireAt:              expireAt,
+	return connect_go.NewResponse(&dashv1alpha1.LoginResponse{
+		UserName:              req.Msg.UserName,
+		ExpireAt:              timestamppb.New(expireAt),
 		RequirePasswordUpdate: isDefault,
+	}), nil
+}
+
+func (s *Server) Logout(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error) {
+
+	log := clog.FromContext(ctx).WithCaller()
+
+	_, _, err := s.verifyAndGetLoginUser(ctx)
+	if err != nil {
+		return nil, ErrResponse(log, err)
 	}
 
-	return NormalResponse(http.StatusOK, res)
+	cookie := s.sessionCookieKey()
+	cookie.MaxAge = -1
+
+	resp := connect_go.NewResponse(&emptypb.Empty{})
+	resp.Header().Set("Set-Cookie", cookie.Raw)
+
+	return resp, nil
 }

@@ -1,0 +1,424 @@
+// Vitest Snapshot v1
+
+exports[`useTemplates > useTemplates getUserAddonTemplates > error 1`] = `[Error: [mock] getUser error]`;
+
+exports[`useTemplates > useTemplates getUserAddonTemplates > error 2`] = `[]`;
+
+exports[`useTemplates > useTemplates getUserAddonTemplates > normal 1`] = `
+[
+  Template {
+    "description": "",
+    "isClusterScope": false,
+    "isDefaultUserAddon": undefined,
+    "name": "tmpl1",
+    "requiredVars": [],
+  },
+  Template {
+    "description": "hoge",
+    "isClusterScope": false,
+    "isDefaultUserAddon": true,
+    "name": "tmpl2",
+    "requiredVars": [
+      TemplateRequiredVars {
+        "defaultValue": "var1Value",
+        "varName": "var1",
+      },
+      TemplateRequiredVars {
+        "defaultValue": "",
+        "varName": "var2",
+      },
+    ],
+  },
+  Template {
+    "description": "",
+    "isClusterScope": false,
+    "isDefaultUserAddon": undefined,
+    "name": "tmpl3",
+    "requiredVars": [],
+  },
+]
+`;
+
+exports[`useTemplates > useTemplates getUserAddonTemplates > normal template empty 1`] = `[]`;
+
+exports[`useUserModule > useUserModule createUser > error 1`] = `[Error: [mock] createUser error]`;
+
+exports[`useUserModule > useUserModule createUser > error 2`] = `
+[
+  [
+    "[mock] createUser error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule createUser > nomal 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "cosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "",
+    "status": "",
+    "userName": "user2",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user3 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useUserModule > useUserModule createUser > nomal 2`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule deleteUser > error 1`] = `[Error: [mock] deleteUser error]`;
+
+exports[`useUserModule > useUserModule deleteUser > error 2`] = `
+[
+  [
+    "[mock] deleteUser error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule deleteUser > nomal 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "cosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user3 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useUserModule > useUserModule deleteUser > nomal 2`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule getUsers > error 1`] = `[ConnectError: [unauthenticated] [mock] getUsers error]`;
+
+exports[`useUserModule > useUserModule getUsers > error 2`] = `
+[
+  [
+    "[unauthenticated] [mock] getUsers error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule getUsers > normal 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "cosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "",
+    "status": "",
+    "userName": "user2",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user3 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useUserModule > useUserModule getUsers > normal 2`] = `[]`;
+
+exports[`useUserModule > useUserModule getUsers > normal2 1`] = `[]`;
+
+exports[`useUserModule > useUserModule getUsers > normal2 2`] = `[]`;
+
+exports[`useUserModule > useUserModule getUsers > normal3 1`] = `[]`;
+
+exports[`useUserModule > useUserModule getUsers > normal3 2`] = `[]`;
+
+exports[`useUserModule > useUserModule updateRole > error 1`] = `[Error: [mock] updateUserRole error]`;
+
+exports[`useUserModule > useUserModule updateRole > error 2`] = `
+[
+  [
+    "[mock] updateUserRole error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule updateRole > nomal after getUsers 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "cosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "Role2",
+    "status": "",
+    "userName": "user2",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user3 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useUserModule > useUserModule updateRole > nomal after getUsers 2`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule updateRole > nomal after getUsers. return value nothing 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "cosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "",
+    "status": "",
+    "userName": "user2",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user3 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useUserModule > useUserModule updateRole > nomal after getUsers. return value nothing 2`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule updateRole > nomal before getUsers 1`] = `[]`;
+
+exports[`useUserModule > useUserModule updateRole > nomal before getUsers 2`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule updateUserName > error 1`] = `[Error: [mock] putUserName error]`;
+
+exports[`useUserModule > useUserModule updateUserName > error 2`] = `
+[
+  [
+    "[mock] putUserName error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "cosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "displayNameChange",
+    "role": "",
+    "status": "",
+    "userName": "user2",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user3 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 2`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule updateUserName > nomal after getUsers. return value nothing 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "cosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "",
+    "status": "",
+    "userName": "user2",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user3 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useUserModule > useUserModule updateUserName > nomal after getUsers. return value nothing 2`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useUserModule > useUserModule updateUserName > nomal before getUsers 1`] = `[]`;
+
+exports[`useUserModule > useUserModule updateUserName > nomal before getUsers 2`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;

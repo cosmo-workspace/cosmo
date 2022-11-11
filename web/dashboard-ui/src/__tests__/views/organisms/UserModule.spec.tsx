@@ -1,64 +1,66 @@
-import { act, renderHook } from '@testing-library/react';
-import { AxiosError, AxiosResponse } from 'axios';
+import { Code, ConnectError } from '@bufbuild/connect-web';
+import '@testing-library/jest-dom';
+import { act, cleanup, renderHook } from '@testing-library/react';
 import { useSnackbar } from "notistack";
-import { CreateUserResponse, DeleteUserResponse, ListTemplatesResponse, ListUsersResponse, Template, TemplateApiFactory, UpdateUserNameResponse, UpdateUserRoleResponse, User, UserApiFactory, UserRoleEnum } from "../../../api/dashboard/v1alpha1";
+import React from 'react';
+import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi } from "vitest";
 import { useProgress } from '../../../components/ProgressProvider';
+import { Template } from '../../../proto/gen/dashboard/v1alpha1/template_pb';
+import { GetUserAddonTemplatesResponse } from '../../../proto/gen/dashboard/v1alpha1/template_service_pb';
+import { User } from '../../../proto/gen/dashboard/v1alpha1/user_pb';
+import { CreateUserResponse, DeleteUserResponse, GetUsersResponse, UpdateUserDisplayNameResponse, UpdateUserRoleResponse } from '../../../proto/gen/dashboard/v1alpha1/user_service_pb';
+import { useTemplateService, useUserService } from "../../../services/DashboardServices";
 import { UserContext, useTemplates, useUserModule } from '../../../views/organisms/UserModule';
 
 //--------------------------------------------------
 // mock definition
 //--------------------------------------------------
-jest.mock('notistack');
-jest.mock('../../../components/LoginProvider');
-jest.mock('.../../../api/dashboard/v1alpha1/api');
-jest.mock('../../../components/ProgressProvider');
-jest.mock('react-router-dom', () => ({
-  useNavigate: () => jest.fn(),
+vi.mock('notistack');
+vi.mock('../../../components/LoginProvider');
+vi.mock('../../../services/DashboardServices');
+vi.mock('../../../components/ProgressProvider');
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => vi.fn(),
 }));
 
 type MockedMemberFunction<T extends (...args: any) => any> = {
-  [P in keyof ReturnType<T>]: jest.MockedFunction<ReturnType<T>[P]>;
+  [P in keyof ReturnType<T>]: MockedFunction<ReturnType<T>[P]>;
 };
 
-const RestUserMock = UserApiFactory as jest.MockedFunction<typeof UserApiFactory>;
-const userMock: MockedMemberFunction<typeof UserApiFactory> = {
-  postUser: jest.fn(),
-  putUserRole: jest.fn(),
-  putUserPassword: jest.fn(),
-  getUser: jest.fn(),
-  getUsers: jest.fn(),
-  deleteUser: jest.fn(),
-  putUserName: jest.fn(),
+const useUserServiceMock = useUserService as MockedFunction<typeof useUserService>;
+const userMock: MockedMemberFunction<typeof useUserService> = {
+  getUser: vi.fn(),
+  getUsers: vi.fn(),
+  deleteUser: vi.fn(),
+  createUser: vi.fn(),
+  updateUserDisplayName: vi.fn(),
+  updateUserPassword: vi.fn(),
+  updateUserRole: vi.fn(),
 }
 
-const RestTemplateMock = TemplateApiFactory as jest.MockedFunction<typeof TemplateApiFactory>;
-const templateMock: MockedMemberFunction<typeof TemplateApiFactory> = {
-  getUserAddonTemplates: jest.fn(),
-  getWorkspaceTemplates: jest.fn(),
+const useTemplateServiceMock = useTemplateService as MockedFunction<typeof useTemplateService>;
+const templateMock: MockedMemberFunction<typeof useTemplateService> = {
+  getUserAddonTemplates: vi.fn(),
+  getWorkspaceTemplates: vi.fn(),
 }
 
-const useProgressMock = useProgress as jest.MockedFunction<typeof useProgress>;
+const useProgressMock = useProgress as MockedFunction<typeof useProgress>;
 const progressMock: MockedMemberFunction<typeof useProgress> = {
-  setMask: jest.fn(),
-  releaseMask: jest.fn(),
+  setMask: vi.fn(),
+  releaseMask: vi.fn(),
 }
-const useSnackbarMock = useSnackbar as jest.MockedFunction<typeof useSnackbar>;
+const useSnackbarMock = useSnackbar as MockedFunction<typeof useSnackbar>;
 const snackbarMock: MockedMemberFunction<typeof useSnackbar> = {
-  enqueueSnackbar: jest.fn(),
-  closeSnackbar: jest.fn(),
+  enqueueSnackbar: vi.fn(),
+  closeSnackbar: vi.fn(),
 }
 
 //--------------------------------------------------
 // mock data definition
 //--------------------------------------------------
-const user1: User = { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' };
-const user2: User = { id: 'user2', displayName: 'user2 name' };
-const user3: User = { id: 'user3', displayName: 'user3 name' };
-
-function axiosNormalResponse<T>(data: T): AxiosResponse<T> {
-  return { data: data, status: 200, statusText: 'ok', headers: {}, config: {}, request: {} }
-}
-
+const user1 = new User({ userName: 'user1', role: 'cosmoAdmin', displayName: 'user1 name' });
+const user2 = new User({ userName: 'user2', displayName: 'user2 name' });
+const user3 = new User({ userName: 'user3', displayName: 'user3 name' });
 
 //-----------------------------------------------
 // test
@@ -68,11 +70,13 @@ describe('useUserModule', () => {
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
-    RestUserMock.mockReturnValue(userMock);
+    useUserServiceMock.mockReturnValue(userMock);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    expect(snackbarMock.enqueueSnackbar.mock.calls).toMatchSnapshot();
+    vi.restoreAllMocks();
+    cleanup();
   });
 
   async function renderUseUserModule() {
@@ -85,36 +89,30 @@ describe('useUserModule', () => {
 
     it('normal', async () => {
       const { result } = await renderUseUserModule();
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user2, user1, user3] }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ items: [user2, user1, user3] }));
       await act(async () => { result.current.getUsers() });
-      expect(result.current.users).toStrictEqual([user1, user2, user3]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('normal2', async () => {
       const { result } = await renderUseUserModule();
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: undefined as any }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ items: undefined as any }));
       await act(async () => { result.current.getUsers() });
-      expect(result.current.users).toStrictEqual([]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('normal3', async () => {
       const { result } = await renderUseUserModule();
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [] }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ items: [] }));
       await act(async () => { result.current.getUsers() });
-      expect(result.current.users).toStrictEqual([]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('error', async () => {
       const { result } = await renderUseUserModule();
-      const err: AxiosError<ListUsersResponse> = {
-        response: { data: { message: undefined }, status: 402 } as any,
-      } as any
-      userMock.getUsers.mockRejectedValue(err);
-      await expect(result.current.getUsers()).rejects.toStrictEqual(err);
-      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+      //userMock.getUsers.mockRejectedValue(new Error('[mock] getUsers error'));
+      userMock.getUsers.mockRejectedValue(new ConnectError('[mock] getUsers error', Code.Unauthenticated));
+      await expect(result.current.getUsers()).rejects.toMatchSnapshot();
     });
 
   });
@@ -122,27 +120,22 @@ describe('useUserModule', () => {
 
   describe('useUserModule createUser', () => {
     beforeEach(async () => {
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ items: [user1, user2, user3] }));
     });
 
     it('nomal', async () => {
       const { result } = await renderUseUserModule();
       await act(async () => { result.current.getUsers() });
-      userMock.postUser.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2 }));
+      userMock.createUser.mockResolvedValue(new CreateUserResponse({ message: "ok", user: user2 }));
       await act(async () => { result.current.createUser('user2', 'user2 name') });
-      expect(result.current.users).toStrictEqual([user1, user2, user3]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('error', async () => {
       const { result } = await renderUseUserModule();
       await act(async () => { result.current.getUsers() });
-      const err: AxiosError<CreateUserResponse> = {
-        response: { data: { message: 'data.message' }, status: 401 } as any,
-      } as any
-      userMock.postUser.mockRejectedValue(err);
-      await expect(result.current.createUser('user2', 'user2 name')).rejects.toStrictEqual(err);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('data.message');
+      userMock.createUser.mockRejectedValue(new Error('[mock] createUser error'));
+      await expect(result.current.createUser('user2', 'user2 name')).rejects.toMatchSnapshot();
     });
   });
 
@@ -151,46 +144,34 @@ describe('useUserModule', () => {
     it('nomal before getUsers', async () => {
       const { result } = await renderUseUserModule();
       const user2x = { ...user2, displayName: 'displayNameChange' }
-      userMock.putUserName.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2x }));
-
+      userMock.updateUserDisplayName.mockResolvedValue(new UpdateUserDisplayNameResponse({ message: "ok", user: user2x }));
       await act(async () => { result.current.updateName('user2', 'displayNameChange') });
-      expect(result.current.users).toStrictEqual([]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('nomal after getUsers', async () => {
       const { result } = await renderUseUserModule();
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
-
       const user2x = { ...user2, displayName: 'displayNameChange' }
-      userMock.putUserName.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2x }));
-
+      userMock.updateUserDisplayName.mockResolvedValue(new UpdateUserDisplayNameResponse({ message: "ok", user: user2x }));
       await act(async () => { result.current.updateName('user2', 'displayNameChange') });
-      expect(result.current.users).toStrictEqual([user1, user2x, user3]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('nomal after getUsers. return value nothing', async () => {
       const { result } = await renderUseUserModule();
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
-
-      userMock.putUserName.mockResolvedValue(axiosNormalResponse({ message: "ok", user: undefined as any }));
-
+      userMock.updateUserDisplayName.mockResolvedValue(new UpdateUserDisplayNameResponse({ message: "ok", user: undefined as any }));
       await act(async () => { result.current.updateName('user2', 'displayNameChange') });
-      expect(result.current.users).toStrictEqual([user1, user2, user3]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('error', async () => {
       const { result } = await renderUseUserModule();
-      const err: AxiosError<UpdateUserNameResponse> = {
-        response: { data: { message: 'data.message' }, status: 402 } as any,
-      } as any
-      userMock.putUserName.mockRejectedValue(err);
-      await expect(result.current.updateName('user2', 'displayNameChange')).rejects.toStrictEqual(err);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('data.message');
+      userMock.updateUserDisplayName.mockRejectedValue(new Error('[mock] putUserName error'));
+      await expect(result.current.updateName('user2', 'displayNameChange')).rejects.toMatchSnapshot();
     });
   });
 
@@ -198,71 +179,59 @@ describe('useUserModule', () => {
 
     it('nomal before getUsers', async () => {
       const { result } = await renderUseUserModule();
-      userMock.putUserRole.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2 }));
+      userMock.updateUserRole.mockResolvedValue(new UpdateUserRoleResponse({ message: "ok", user: user2 }));
       await act(async () => { result.current.updateRole('user2', 'user2 name') });
-      expect(result.current.users).toStrictEqual([]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('nomal after getUsers', async () => {
       const { result } = await renderUseUserModule();
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
 
-      const user2x = { ...user2, role: 'Role2' as UserRoleEnum }
-      userMock.putUserRole.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2x }));
+      const user2x = { ...user2, role: 'Role2' }
+      userMock.updateUserRole.mockResolvedValue(new UpdateUserRoleResponse({ message: "ok", user: user2x }));
 
       await act(async () => { result.current.updateRole('user2', 'Role2') });
-      expect(result.current.users).toStrictEqual([user1, user2x, user3]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('nomal after getUsers. return value nothing', async () => {
       const { result } = await renderUseUserModule();
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
 
-      userMock.putUserRole.mockResolvedValue(axiosNormalResponse({ message: "ok", user: undefined as any }));
+      userMock.updateUserRole.mockResolvedValue(new UpdateUserRoleResponse({ message: "ok", user: undefined as any }));
 
       await act(async () => { result.current.updateRole('user2', 'Role2') });
-      expect(result.current.users).toStrictEqual([user1, user2, user3]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('error', async () => {
       const { result } = await renderUseUserModule();
-      const err: AxiosError<UpdateUserRoleResponse> = {
-        response: { data: { message: 'data.message' }, status: 402 } as any,
-      } as any
-      userMock.putUserRole.mockRejectedValue(err);
-      await expect(result.current.updateRole('user2', 'user2 name')).rejects.toStrictEqual(err);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('data.message');
+      userMock.updateUserRole.mockRejectedValue(new Error('[mock] updateUserRole error'));
+      await expect(result.current.updateRole('user2', 'user2 name')).rejects.toMatchSnapshot();
     });
   });
 
   describe('useUserModule deleteUser', () => {
     beforeEach(async () => {
-      userMock.getUsers.mockResolvedValue(axiosNormalResponse({ message: "ok", items: [user1, user2, user3] }));
+      userMock.getUsers.mockResolvedValue(new GetUsersResponse({ message: "ok", items: [user1, user2, user3] }));
     });
 
     it('nomal', async () => {
       const { result } = await renderUseUserModule();
       await act(async () => { result.current.getUsers() });
-      userMock.deleteUser.mockResolvedValue(axiosNormalResponse({ message: "ok", user: user2 }));
+      userMock.deleteUser.mockResolvedValue(new DeleteUserResponse({ message: "ok", user: user2 }));
       await act(async () => { result.current.deleteUser('user2') });
-      expect(result.current.users).toStrictEqual([user1, user3]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('ok');
+      expect(result.current.users).toMatchSnapshot();
     });
 
     it('error', async () => {
       const { result } = await renderUseUserModule();
       await act(async () => { result.current.getUsers() });
-      const err: AxiosError<DeleteUserResponse> = {
-        response: { data: { message: 'data.message' }, status: 402 } as any,
-      } as any
-      userMock.deleteUser.mockRejectedValue(err);
-      await expect(result.current.deleteUser('user2')).rejects.toStrictEqual(err);
-      expect(snackbarMock.enqueueSnackbar.mock.calls[0][0]).toEqual('data.message');
+      userMock.deleteUser.mockRejectedValue(new Error('[mock] deleteUser error'));
+      await expect(result.current.deleteUser('user2')).rejects.toMatchSnapshot();
     });
   });
 
@@ -273,11 +242,12 @@ describe('useTemplates', () => {
   beforeEach(async () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
-    RestTemplateMock.mockReturnValue(templateMock);
+    useTemplateServiceMock.mockReturnValue(templateMock);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
+    cleanup();
   });
 
   async function renderUseTemplates() {
@@ -289,43 +259,36 @@ describe('useTemplates', () => {
 
   describe('useTemplates getUserAddonTemplates', () => {
 
-    const tmpl1: Template = { name: 'tmpl1' };
-    const tmpl2: Template = {
+    const tmpl1 = new Template({ name: 'tmpl1' });
+    const tmpl2 = new Template({
       name: 'tmpl2',
       description: "hoge",
       requiredVars: [{ varName: 'var1', defaultValue: 'var1Value' }, { varName: 'var2' }],
       isDefaultUserAddon: true,
-    };
-    const tmpl3: Template = { name: 'tmpl3' };
+    });
+    const tmpl3 = new Template({ name: 'tmpl3' });
 
     it('normal', async () => {
       const { result } = await renderUseTemplates();
-      templateMock.getUserAddonTemplates.mockResolvedValue(axiosNormalResponse({
+      templateMock.getUserAddonTemplates.mockResolvedValue(new GetUserAddonTemplatesResponse({
         message: "ok", items: [tmpl1, tmpl3, tmpl2]
       }));
       await act(async () => { result.current.getUserAddonTemplates() });
-      expect(result.current.templates).toStrictEqual([tmpl1, tmpl2, tmpl3]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+      expect(result.current.templates).toMatchSnapshot();
     });
-
 
     it('normal template empty', async () => {
       const { result } = await renderUseTemplates();
-      templateMock.getUserAddonTemplates.mockResolvedValue(axiosNormalResponse({ items: [] }));
+      templateMock.getUserAddonTemplates.mockResolvedValue(new GetUserAddonTemplatesResponse({ items: [] }));
       await act(async () => { result.current.getUserAddonTemplates() });
-      expect(result.current.templates).toStrictEqual([]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+      expect(result.current.templates).toMatchSnapshot();
     });
 
     it('error', async () => {
       const { result } = await renderUseTemplates();
-      const err: AxiosError<ListTemplatesResponse> = {
-        response: { data: { message: undefined }, status: 401 } as any,
-      } as any
-      templateMock.getUserAddonTemplates.mockRejectedValue(err);
-      await expect(result.current.getUserAddonTemplates()).rejects.toStrictEqual(err);
-      expect(result.current.templates).toStrictEqual([]);
-      expect(snackbarMock.enqueueSnackbar.mock.calls.length).toEqual(0);
+      templateMock.getUserAddonTemplates.mockRejectedValue(new Error('[mock] getUser error'));
+      await expect(result.current.getUserAddonTemplates()).rejects.toMatchSnapshot();
+      expect(result.current.templates).toMatchSnapshot();
     });
 
   });

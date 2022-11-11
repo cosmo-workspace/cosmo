@@ -1,0 +1,8956 @@
+// Vitest Snapshot v1
+
+exports[`useNetworkRule > useNetworkRule removeNetwork > error 1`] = `[Error: [mock] deleteNetworkRule error]`;
+
+exports[`useNetworkRule > useNetworkRule removeNetwork > error 2`] = `
+[
+  [
+    "[mock] deleteNetworkRule error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useNetworkRule > useNetworkRule removeNetwork > normal 1`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useNetworkRule > useNetworkRule upsertNetwork > error 1`] = `[Error: [mock] upsertNetworkRule error]`;
+
+exports[`useNetworkRule > useNetworkRule upsertNetwork > error 2`] = `
+[
+  [
+    "[mock] upsertNetworkRule error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useNetworkRule > useNetworkRule upsertNetwork > normal 1`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useTemplates > get error 1`] = `[Error: [mock] getWorkspaceTemplates error]`;
+
+exports[`useTemplates > get error 2`] = `[]`;
+
+exports[`useTemplates > get error 3`] = `
+[
+  [
+    "[mock] getWorkspaceTemplates error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useTemplates > normal 1`] = `
+[
+  Template {
+    "description": "",
+    "isClusterScope": false,
+    "isDefaultUserAddon": undefined,
+    "name": "tmpl1",
+    "requiredVars": [],
+  },
+  Template {
+    "description": "",
+    "isClusterScope": false,
+    "isDefaultUserAddon": undefined,
+    "name": "tmpl2",
+    "requiredVars": [
+      TemplateRequiredVars {
+        "defaultValue": "",
+        "varName": "var1",
+      },
+      TemplateRequiredVars {
+        "defaultValue": "",
+        "varName": "var2",
+      },
+    ],
+  },
+  Template {
+    "description": "",
+    "isClusterScope": false,
+    "isDefaultUserAddon": undefined,
+    "name": "tmpl3",
+    "requiredVars": [],
+  },
+]
+`;
+
+exports[`useTemplates > normal 2`] = `[]`;
+
+exports[`useTemplates > normal empty 1`] = `[]`;
+
+exports[`useTemplates > normal empty 2`] = `[]`;
+
+exports[`useWorkspace > error 1`] = `[]`;
+
+exports[`useWorkspace > useWorkspace createWorkspace > get error 1`] = `[Error: [mock] createWorkspace error]`;
+
+exports[`useWorkspace > useWorkspace createWorkspace > get error 2`] = `[]`;
+
+exports[`useWorkspace > useWorkspace createWorkspace > get error 3`] = `
+[
+  [
+    "[mock] createWorkspace error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws15",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws14",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Creating",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws15",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace createWorkspace > normal 3`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspace > useWorkspace deleteWorkspace > error 1`] = `[Error: [mock] updateUserRole error]`;
+
+exports[`useWorkspace > useWorkspace deleteWorkspace > error 2`] = `[]`;
+
+exports[`useWorkspace > useWorkspace deleteWorkspace > error 3`] = `
+[
+  [
+    "[mock] updateUserRole error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspace > useWorkspace deleteWorkspace > normal 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace deleteWorkspace > normal 2`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace deleteWorkspace > normal 3`] = `
+[
+  [
+    "ok",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspace > useWorkspace getWorkspaces > get error 1`] = `[ConnectError: [unauthenticated] [mock] getWorkspaces error]`;
+
+exports[`useWorkspace > useWorkspace getWorkspaces > get error 2`] = `[]`;
+
+exports[`useWorkspace > useWorkspace getWorkspaces > get error 3`] = `
+[
+  [
+    "[unauthenticated] [mock] getWorkspaces error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspace > useWorkspace getWorkspaces > normal 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace getWorkspaces > normal 2`] = `[]`;
+
+exports[`useWorkspace > useWorkspace getWorkspaces > normal empty 1`] = `[]`;
+
+exports[`useWorkspace > useWorkspace getWorkspaces > normal empty 2`] = `[]`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Creating",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 2`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Creating",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 3`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "NotRunning",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 4`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "NotRunning",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 5`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Pending",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 6`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 7`] = `[]`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [
+        NetworkRule {
+          "group": "",
+          "httpPath": "",
+          "networkRuleName": "portname1",
+          "portNumber": 3000,
+          "public": false,
+          "url": "url1",
+        },
+        NetworkRule {
+          "group": "",
+          "httpPath": "",
+          "networkRuleName": "portname2",
+          "portNumber": 3000,
+          "public": false,
+          "url": "url2",
+        },
+      ],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [
+        NetworkRule {
+          "group": "",
+          "httpPath": "",
+          "networkRuleName": "portname1",
+          "portNumber": 3000,
+          "public": false,
+          "url": "url1",
+        },
+        NetworkRule {
+          "group": "",
+          "httpPath": "",
+          "networkRuleName": "portname2",
+          "portNumber": 3000,
+          "public": false,
+          "url": "url2",
+        },
+      ],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [
+        NetworkRule {
+          "group": "",
+          "httpPath": "",
+          "networkRuleName": "portname1",
+          "portNumber": 3000,
+          "public": false,
+          "url": "url1",
+        },
+        NetworkRule {
+          "group": "",
+          "httpPath": "",
+          "networkRuleName": "portname2",
+          "portNumber": 3000,
+          "public": false,
+          "url": "url2",
+        },
+      ],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 4`] = `[]`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 2`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 3`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 4`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "NotRunning",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 5`] = `[]`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 2`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 3`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 4`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 5`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 6`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 7`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 8`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 9`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 10`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 11`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 12`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 13`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 14`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 15`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 16`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 17`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 18`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 19`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 20`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 21`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 22`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 23`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 24`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 25`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 26`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 27`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 28`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 29`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 30`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 31`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 32`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 33`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 34`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 35`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 36`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 37`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 38`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 39`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 40`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 41`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 42`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 43`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 44`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 45`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 46`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 47`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 48`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 49`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 50`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 51`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 52`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 53`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 54`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 55`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 56`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 57`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 58`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 59`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 60`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 61`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 62`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 63`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 64`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 65`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 66`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 67`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 68`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 69`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 70`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 71`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 72`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 73`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 74`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 75`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 76`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 77`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 78`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 79`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 80`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 81`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 82`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 83`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 84`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 85`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 86`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 87`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 88`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 89`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 90`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 91`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 92`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 93`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 94`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 95`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 96`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 97`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 98`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 99`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 100`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 101`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 102`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 103`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 104`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 105`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 106`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 107`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 108`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 109`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 110`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 111`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 112`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 113`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 114`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 115`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 116`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 117`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 118`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 119`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 120`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 121`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 0n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 122`] = `[]`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 2`] = `[]`;
+
+exports[`useWorkspace > useWorkspace runWorkspace > error 1`] = `[Error: [mock] updateWorkspace error]`;
+
+exports[`useWorkspace > useWorkspace runWorkspace > error 2`] = `[]`;
+
+exports[`useWorkspace > useWorkspace runWorkspace > error 3`] = `
+[
+  [
+    "[mock] updateWorkspace error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspace > useWorkspace runWorkspace > normal 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace runWorkspace > normal 2`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace runWorkspace > normal 3`] = `
+[
+  [
+    "Successfully run workspace",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspace > useWorkspace stopWorkspace > error 1`] = `[Error: [mock] patchWorkspace error]`;
+
+exports[`useWorkspace > useWorkspace stopWorkspace > error 2`] = `[]`;
+
+exports[`useWorkspace > useWorkspace stopWorkspace > error 3`] = `
+[
+  [
+    "[mock] patchWorkspace error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspace > useWorkspace stopWorkspace > normal 1`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace stopWorkspace > normal 2`] = `
+[
+  Workspace {
+    "name": "ws11",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws12",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl2",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+  Workspace {
+    "name": "ws13",
+    "ownerId": "user1",
+    "spec": WorkspaceSpec {
+      "additionalNetwork": [],
+      "replicas": 1n,
+      "template": "tmpl1",
+      "vars": {
+        "xxx": "XXXX",
+        "yyy": "YYYY",
+      },
+    },
+    "status": WorkspaceStatus {
+      "mainUrl": "",
+      "phase": "Running",
+      "urlBase": "urlbasexxxx",
+    },
+  },
+]
+`;
+
+exports[`useWorkspace > useWorkspace stopWorkspace > normal 3`] = `
+[
+  [
+    "Successfully stopped workspace",
+    {
+      "variant": "success",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > error 1`] = `[Error: [mock] getUsers error]`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > error 2`] = `
+[
+  [
+    "[mock] getUsers error",
+    {
+      "variant": "error",
+    },
+  ],
+]
+`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "CosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "",
+    "status": "",
+    "userName": "user2",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal 2`] = `[]`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal empty 1`] = `[]`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal empty 2`] = `[]`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal no change 1`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user1 name",
+    "role": "CosmoAdmin",
+    "status": "",
+    "userName": "user1",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "",
+    "status": "",
+    "userName": "user2",
+  },
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "user2 name",
+    "role": "",
+    "status": "",
+    "userName": "user3",
+  },
+]
+`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal no change 2`] = `[]`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers not login > normal 1`] = `
+User {
+  "addons": [],
+  "authType": "",
+  "defaultPassword": "",
+  "displayName": "",
+  "role": "",
+  "status": "",
+  "userName": "",
+}
+`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers not login > normal 2`] = `
+[
+  User {
+    "addons": [],
+    "authType": "",
+    "defaultPassword": "",
+    "displayName": "",
+    "role": "",
+    "status": "",
+    "userName": "",
+  },
+]
+`;
+
+exports[`useWorkspaceUsers > useWorkspaceUsers not login > normal 3`] = `[]`;

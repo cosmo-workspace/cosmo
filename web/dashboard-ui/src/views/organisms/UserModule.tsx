@@ -1,29 +1,12 @@
+import { Code, ConnectError } from "@bufbuild/connect-web";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ApiV1alpha1UserAddons, Template, TemplateApiFactory, User, UserApiFactory } from "../../api/dashboard/v1alpha1";
 import { ModuleContext } from "../../components/ContextProvider";
 import { useProgress } from "../../components/ProgressProvider";
-
-/**
-   * error handler
-   */
-const useHandleError = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
-
-  const handleError = (error: any) => {
-    console.log('handleError', error);
-    console.log('handleError', error.response);
-    if (error?.response?.status === 401) {
-      navigate('/signin');
-    }
-    const msg = error?.response?.data?.message || error?.message;
-    msg && enqueueSnackbar(msg, { variant: 'error' });
-    throw error;
-  }
-  return { handleError }
-}
+import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
+import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import { useTemplateService, useUserService } from "../../services/DashboardServices";
 
 /**
  * hooks
@@ -35,84 +18,103 @@ const useUser = () => {
   const { setMask, releaseMask } = useProgress();
   const { handleError } = useHandleError();
   const [users, setUsers] = useState<User[]>([]);
-  const restUser = UserApiFactory(undefined, "");
+  const userService = useUserService();
 
   /**
    * WorkspaceList: workspace list 
    */
-  const getUsers = () => {
+  const getUsers = async () => {
     console.log('getUsers');
-    return restUser.getUsers()
-      .then(result => setUsers(result.data.items?.sort((a, b) => (a.id < b.id) ? -1 : 1) || []))
-      .catch(error => { handleError(error); })
+    try {
+      const result = await userService.getUsers({});
+      setUsers(result.items?.sort((a, b) => (a.userName < b.userName) ? -1 : 1));
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   /**
    * CreateDialog: Add user 
    */
-  const createUser = async (id: string, displayName: string, role?: string, addons?: ApiV1alpha1UserAddons[]) => {
+  const createUser = async (userName: string, displayName: string, role?: string, addons?: UserAddons[]) => {
     console.log('addUser');
+    setMask();
     try {
-      setMask();
-      const result = await restUser.postUser({ id, displayName, role, addons });
-      enqueueSnackbar(result.data.message, { variant: 'success' });
-      return result.data.user;
+      try {
+        const result = await userService.createUser({ userName, displayName, role, addons });
+        enqueueSnackbar(result.message, { variant: 'success' });
+        return result.user;
+      }
+      catch (error) {
+        handleError(error);
+      }
     }
-    catch (error) { handleError(error); }
     finally { releaseMask(); }
   }
 
   /**
    * updateNameDialog: Update user name
    */
-  const updateName = async (id: string, userName: string) => {
-    console.log('updateUserName', id, userName);
+  const updateName = async (userName: string, displayName: string) => {
+    console.log('updateUserName', userName, userName);
+    setMask();
     try {
-      setMask();
-      const result = await restUser.putUserName(id, { displayName: userName });
-      const newUser = result.data.user;
-      enqueueSnackbar(result.data.message, { variant: 'success' });
-      if (users && newUser) {
-        setUsers(prev => prev.map(us => us.id === newUser.id ? { ...newUser } : us));
+      try {
+        const result = await userService.updateUserDisplayName({ userName, displayName });
+        const newUser = result.user;
+        enqueueSnackbar(result.message, { variant: 'success' });
+        if (users && newUser) {
+          setUsers(prev => prev.map(us => us.userName === newUser.userName ? new User(newUser) : us));
+        }
+        return newUser;
       }
-      return newUser;
+      catch (error) {
+        handleError(error);
+      }
     }
-    catch (error) { handleError(error); }
     finally { releaseMask(); }
   }
 
   /**
    * updateRoleDialog: Update user 
    */
-  const updateRole = async (id: string, role: string) => {
-    console.log('updateRole', id, role);
+  const updateRole = async (userName: string, role: string) => {
+    console.log('updateRole', userName, role);
+    setMask();
     try {
-      setMask();
-      const result = await restUser.putUserRole(id, { role });
-      const newUser = result.data.user;
-      enqueueSnackbar(result.data.message, { variant: 'success' });
-      if (users && newUser) {
-        setUsers(prev => prev.map(us => us.id === newUser.id ? { ...newUser } : us));
+      try {
+        const result = await userService.updateUserRole({ userName, role });
+        const newUser = result.user;
+        enqueueSnackbar(result.message, { variant: 'success' });
+        if (users && newUser) {
+          setUsers(prev => prev.map(us => us.userName === newUser.userName ? new User(newUser) : us));
+        }
+        return newUser;
       }
-      return newUser;
+      catch (error) {
+        handleError(error);
+      }
     }
-    catch (error) { handleError(error); }
     finally { releaseMask(); }
   }
 
   /**
    * DeleteDialog: Delete user 
    */
-  const deleteUser = async (userId: string) => {
+  const deleteUser = async (userName: string) => {
     console.log('deleteUser');
+    setMask();
     try {
-      setMask();
-      const result = await restUser.deleteUser(userId);
-      enqueueSnackbar(result.data.message, { variant: 'success' });
-      setUsers(users.filter((u) => u.id !== userId));
-      return result;
+      try {
+        const result = await userService.deleteUser({ userName });
+        enqueueSnackbar(result.message, { variant: 'success' });
+        setUsers(users.filter((u) => u.userName !== userName));
+        return result;
+      }
+      catch (error) {
+        handleError(error);
+      }
     }
-    catch (error) { handleError(error); }
     finally { releaseMask(); }
   }
 
@@ -135,13 +137,13 @@ export const useTemplates = () => {
   console.log('useTemplates');
 
   const [templates, setTemplates] = useState<Template[]>([]);
-  const restTmpl = TemplateApiFactory(undefined, "");
+  const templateService = useTemplateService();
   const { handleError } = useHandleError();
 
   const getUserAddonTemplates = () => {
     console.log('getUserAddonTemplates');
-    return restTmpl.getUserAddonTemplates()
-      .then(result => { setTemplates(result.data.items.sort((a, b) => (a.name < b.name) ? -1 : 1)); })
+    return templateService.getUserAddonTemplates({})
+      .then(result => { setTemplates(result.items.sort((a, b) => (a.name < b.name) ? -1 : 1)); })
       .catch(error => { handleError(error) });
   }
 
@@ -149,6 +151,27 @@ export const useTemplates = () => {
     templates,
     getUserAddonTemplates,
   });
+}
+
+/**
+* error handler
+*/
+const useHandleError = () => {
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+
+  const handleError = (error: any) => {
+    console.log('handleError', error);
+
+    if (error instanceof ConnectError &&
+      error.code === Code.Unauthenticated) {
+      navigate('/signin');
+    }
+    const msg = error?.message;
+    msg && enqueueSnackbar(msg, { variant: 'error' });
+    throw error;
+  }
+  return { handleError }
 }
 
 /**

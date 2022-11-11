@@ -1,59 +1,95 @@
-['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: empty 1']
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: admin-user, empty 1']
 SnapShot = """
-200
+{
+  \"message\": \"No items found\"
+}
 """
 
-['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: empty 2']
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: admin-user, not empty 1']
 SnapShot = """
-{\"message\":\"No items found\",\"items\":[]}
+{
+  \"items\": [
+    {
+      \"name\": \"useraddon1\",
+      \"required_vars\": [
+        {
+          \"var_name\": \"{{HOGE}}\",
+          \"default_value\": \"HOGEhoge\"
+        },
+        {
+          \"var_name\": \"{{FUGA}}\",
+          \"default_value\": \"FUGAfuga\"
+        }
+      ],
+      \"is_default_user_addon\": true
+    },
+    {
+      \"name\": \"useraddon2\",
+      \"required_vars\": [
+        {
+          \"var_name\": \"{{HOGE}}\",
+          \"default_value\": \"HOGEhoge\"
+        },
+        {
+          \"var_name\": \"{{FUGA}}\",
+          \"default_value\": \"FUGAfuga\"
+        }
+      ],
+      \"is_default_user_addon\": true
+    }
+  ]
+}
 """
 
-['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: not empty 1']
+['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: admin-user, not empty 1']
+SnapShot = 'internal: failed to list UserAddon Templates'
+
+['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: normal-user, permission deny 1']
+SnapShot = 'permission_denied'
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: admin-user, empty 1']
 SnapShot = """
-200
+{
+  \"message\": \"No items found\"
+}
 """
 
-['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: not empty 2']
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: admin-user, not empty 1']
 SnapShot = """
-{\"items\":[{\"name\":\"useraddon1\",\"requiredVars\":[{\"varName\":\"{{HOGE}}\",\"defaultValue\":\"FUGA\"}],\"isDefaultUserAddon\":true},{\"name\":\"useraddon2\",\"requiredVars\":[{\"varName\":\"{{HOGE}}\",\"defaultValue\":\"FUGA\"}],\"isDefaultUserAddon\":true}]}
+{
+  \"items\": [
+    {
+      \"name\": \"template1\",
+      \"required_vars\": [
+        {
+          \"var_name\": \"{{HOGE}}\",
+          \"default_value\": \"HOGEhoge\"
+        },
+        {
+          \"var_name\": \"{{FUGA}}\",
+          \"default_value\": \"FUGAfuga\"
+        }
+      ]
+    },
+    {
+      \"name\": \"template2\",
+      \"required_vars\": [
+        {
+          \"var_name\": \"{{HOGE}}\",
+          \"default_value\": \"HOGEhoge\"
+        },
+        {
+          \"var_name\": \"{{FUGA}}\",
+          \"default_value\": \"FUGAfuga\"
+        }
+      ]
+    }
+  ]
+}
 """
 
-['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: not empty 1']
-SnapShot = """
-500
-"""
+['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: admin-user, not empty 1']
+SnapShot = 'internal: failed to list WorkspaceTemplates'
 
-['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: not empty 2']
-SnapShot = """
-{\"message\":\"failed to list UserAddon Templates\"}
-"""
-
-['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: empty 1']
-SnapShot = """
-200
-"""
-
-['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: empty 2']
-SnapShot = """
-{\"message\":\"No items found\",\"items\":[]}
-"""
-
-['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: not empty 1']
-SnapShot = """
-200
-"""
-
-['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: not empty 2']
-SnapShot = """
-{\"items\":[{\"name\":\"template1\",\"requiredVars\":[{\"varName\":\"{{HOGE}}\",\"defaultValue\":\"FUGA\"}]},{\"name\":\"template2\",\"requiredVars\":[{\"varName\":\"{{HOGE}}\",\"defaultValue\":\"FUGA\"}]}]}
-"""
-
-['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: not empty 1']
-SnapShot = """
-500
-"""
-
-['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: not empty 2']
-SnapShot = """
-{\"message\":\"failed to list WorkspaceTemplates\"}
-"""
+['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: normal-user, permission deny 1']
+SnapShot = 'permission_denied'

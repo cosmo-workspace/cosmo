@@ -1,0 +1,37 @@
+/*
+  Cosmo Dashboard API
+  Manipulate cosmo dashboard resource API
+*/
+
+syntax = "proto3";
+
+package dashboard.v1alpha1;
+
+message NetworkRule {
+  string network_rule_name = 1;
+  int32 port_number = 2;
+  string group = 3;
+  string http_path = 4;
+  string url = 5;
+  bool public = 6;
+}
+
+message WorkspaceSpec {
+  string template = 1;
+  int64 replicas = 2;
+  map<string, string> vars = 3;
+  repeated NetworkRule additional_network = 4;
+}
+
+message WorkspaceStatus {
+  string phase = 1;
+  string main_url = 2;
+  string url_base = 3;
+}
+
+message Workspace {
+  string name = 1;
+  string owner_id = 2;
+  WorkspaceSpec spec = 3;
+  WorkspaceStatus status = 4;
+}

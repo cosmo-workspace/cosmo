@@ -1,49 +1,52 @@
 import { Button } from "@mui/material";
-import { act, cleanup, render, RenderResult, screen } from "@testing-library/react";
+import '@testing-library/jest-dom';
+import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { useSnackbar } from "notistack";
-import { User, UserRoleEnum } from "../../../api/dashboard/v1alpha1";
+import React from "react";
+import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi } from "vitest";
 import { useLogin } from "../../../components/LoginProvider";
+import { User } from "../../../proto/gen/dashboard/v1alpha1/user_pb";
 import { useUserModule } from "../../../views/organisms/UserModule";
 import { UserNameChangeDialog, UserNameChangeDialogContext } from "../../../views/organisms/UserNameChangeDialog";
 
 //--------------------------------------------------
 // mock definition
 //--------------------------------------------------
-jest.mock("notistack");
-jest.mock("../../../components/LoginProvider");
-jest.mock("../../../views/organisms/UserModule");
+vi.mock("notistack");
+vi.mock("../../../components/LoginProvider");
+vi.mock("../../../views/organisms/UserModule");
 
 type MockedMemberFunction<T extends (...args: any) => any> = {
-  [P in keyof ReturnType<T>]: jest.MockedFunction<ReturnType<T>[P]>;
+  [P in keyof ReturnType<T>]: MockedFunction<ReturnType<T>[P]>;
 };
 
-const useUserModuleMock = useUserModule as jest.MockedFunction<typeof useUserModule>;
+const useUserModuleMock = useUserModule as MockedFunction<typeof useUserModule>;
 const userModuleMock: MockedMemberFunction<typeof useUserModule> = {
   users: [] as any,
-  getUsers: jest.fn(),
-  createUser: jest.fn(),
-  updateName: jest.fn(),
-  updateRole: jest.fn(),
-  deleteUser: jest.fn(),
+  getUsers: vi.fn(),
+  createUser: vi.fn(),
+  updateName: vi.fn(),
+  updateRole: vi.fn(),
+  deleteUser: vi.fn(),
 }
-const useLoginMock = useLogin as jest.MockedFunction<typeof useLogin>;
+const useLoginMock = useLogin as MockedFunction<typeof useLogin>;
 const loginMock: MockedMemberFunction<typeof useLogin> = {
   loginUser: {} as any,
-  verifyLogin: jest.fn(),
-  login: jest.fn(),
-  logout: jest.fn(),
-  updataPassword: jest.fn(),
-  refreshUserInfo: jest.fn(),
+  verifyLogin: vi.fn(),
+  login: vi.fn(),
+  logout: vi.fn(),
+  updataPassword: vi.fn(),
+  refreshUserInfo: vi.fn(),
 };
 
-const useSnackbarMock = useSnackbar as jest.MockedFunction<typeof useSnackbar>;
+const useSnackbarMock = useSnackbar as MockedFunction<typeof useSnackbar>;
 const snackbarMock: MockedMemberFunction<typeof useSnackbar> = {
-  enqueueSnackbar: jest.fn(),
-  closeSnackbar: jest.fn(),
+  enqueueSnackbar: vi.fn(),
+  closeSnackbar: vi.fn(),
 };
 
-const closeHandlerMock = jest.fn();
+const closeHandlerMock = vi.fn();
 
 //--------------------------------------------------
 // test
@@ -57,7 +60,7 @@ describe("UserNameChangeDialog", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     cleanup();
   });
 
@@ -65,7 +68,7 @@ describe("UserNameChangeDialog", () => {
   describe("render", () => {
 
     it("render", async () => {
-      const user1: User = { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' };
+      const user1: User = new User({ userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
       render(
         <UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />
       );
@@ -77,7 +80,7 @@ describe("UserNameChangeDialog", () => {
 
   describe("behavior", () => {
 
-    const user1: User = { id: 'user1', role: UserRoleEnum.CosmoAdmin, displayName: 'user1 name' };
+    const user1: User = new User({ userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
 
     it("ok", async () => {
       const user = userEvent.setup();
@@ -166,7 +169,7 @@ describe("UserNameChangeDialog", () => {
 
       const Stub = () => {
         const dispatch = UserNameChangeDialogContext.useDispatch();
-        const user1: User = { id: 'user1', displayName: 'user1name' }
+        const user1: User = new User({ userName: 'user1', displayName: 'user1name' });
         return (<>
           <Button onClick={() => dispatch(true, { user: user1 })}>open</Button>
           <Button onClick={() => dispatch(false)}>close</Button>

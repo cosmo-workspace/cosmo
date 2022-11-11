@@ -1,6 +1,7 @@
-import { Alert, Box, createTheme, ThemeProvider } from '@mui/material';
+import { Box, createTheme, ThemeProvider } from '@mui/material';
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
+import { afterEach, describe, expect, it } from "vitest";
 import { AlertTooltip } from '../../../views/atoms/AlertTooltip';
 
 afterEach(cleanup);

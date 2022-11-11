@@ -12,22 +12,30 @@ npm create vite@latest -- dashboard-ui --template react-ts
 
 cd $WEBUI
 
-yarn add -D \
+yarn add \
   @mui/material @mui/icons-material \
   @emotion/react @emotion/styled \
-  @types/react-router-dom react-router-dom \
+  react-router-dom \
   axios \
   notistack \
   react-error-boundary \
   react-hook-form \
   copy-to-clipboard \
   web-vitals \
+  @types/node \
+  @bufbuild/connect-web @bufbuild/protobuf
+
+yarn add  -D \
   @testing-library/react \
   @testing-library/user-event \
   @testing-library/jest-dom \
-  @testing-library/react-hooks \
   @emotion/jest \
-  jest @types/jest ts-jest jest-environment-jsdom
+  vitest \
+  @vitest/coverage-c8 \
+  happy-dom \
+  eslint-plugin-jest-dom \
+  eslint-plugin-testing-library
+
 
   "dependencies": {
     "react": "^18.2.0",

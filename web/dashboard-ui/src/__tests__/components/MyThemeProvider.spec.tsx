@@ -1,14 +1,15 @@
 import { useTheme } from "@emotion/react";
 import { useMediaQuery } from "@mui/material";
-import { renderHook } from "@testing-library/react";
+import { cleanup, renderHook } from "@testing-library/react";
 import React from 'react';
+import { afterEach, describe, expect, it, MockedFunction, vi } from "vitest";
 import { MyThemeProvider } from '../../components/MyThemeProvider';
 
 //--------------------------------------------------
 // mock definition
 //--------------------------------------------------
 
-jest.mock('@mui/material/useMediaQuery');
+vi.mock('@mui/material');
 
 //-----------------------------------------------
 // test
@@ -16,9 +17,12 @@ jest.mock('@mui/material/useMediaQuery');
 
 describe('AuthRoute', () => {
 
-  const useMediaQueryMock = useMediaQuery as jest.MockedFunction<typeof useMediaQuery>;
+  const useMediaQueryMock = useMediaQuery as MockedFunction<typeof useMediaQuery>;
 
-  afterEach(() => { jest.restoreAllMocks(); });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    cleanup();
+  });
 
 
   it('normal light', async () => {

@@ -1,0 +1,30 @@
+/*
+  Cosmo Dashboard API
+  Manipulate cosmo dashboard resource API
+*/
+
+syntax = "proto3";
+
+package dashboard.v1alpha1;
+
+import "google/protobuf/empty.proto";
+import "dashboard/v1alpha1/template.proto";
+
+service TemplateService {
+  // List templates typed useraddon
+  rpc GetUserAddonTemplates(google.protobuf.Empty)
+      returns (GetUserAddonTemplatesResponse);
+  // List templates typed workspace
+  rpc GetWorkspaceTemplates(google.protobuf.Empty)
+      returns (GetWorkspaceTemplatesResponse);
+}
+
+message GetUserAddonTemplatesResponse {
+  string message = 1;
+  repeated Template items = 2;
+}
+
+message GetWorkspaceTemplatesResponse {
+  string message = 1;
+  repeated Template items = 2;
+}

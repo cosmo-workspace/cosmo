@@ -1,8 +1,8 @@
 import { AddTwoTone, Badge, Clear, DeleteTwoTone, ManageAccountsTwoTone, MoreVert, RefreshTwoTone, SearchTwoTone } from "@mui/icons-material";
 import { Box, Card, CardHeader, Chip, Fab, Grid, IconButton, InputAdornment, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { User } from "../../api/dashboard/v1alpha1";
 import { useLogin } from "../../components/LoginProvider";
+import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { PasswordDialogContext } from "../organisms/PasswordDialog";
 import { RoleChangeDialogContext } from "../organisms/RoleChangeDialog";
@@ -25,7 +25,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
     <Box>
       <IconButton
         color="inherit"
-        disabled={loginUser?.id === us.id}
+        disabled={loginUser?.userName === us.userName}
         onClick={e => setAnchorEl(e.currentTarget)}>
         <MoreVert fontSize="small" />
       </IconButton>
@@ -96,21 +96,21 @@ const UserList: React.VFC = () => {
         </Fab>
       </Stack >
     </Paper>
-    {!hooks.users.filter((us) => searchStr === '' || Boolean(us.id.match(searchStr))).length &&
+    {!hooks.users.filter((us) => searchStr === '' || Boolean(us.userName.match(searchStr))).length &&
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
         <Typography variant='subtitle1' sx={{ color: 'text.secondary', textAlign: 'center' }}>No Users found.</Typography>
       </Paper>
     }
     <Grid container spacing={0.5}>
       {hooks.users
-        .filter((us) => searchStr === '' || Boolean(us.id.match(searchStr)))
+        .filter((us) => searchStr === '' || Boolean(us.userName.match(searchStr)))
         .filter((us) => us.status === 'Active').map((us) =>
-          <Grid item key={us.id} xs={12} sm={6} md={4}>
+          <Grid item key={us.userName} xs={12} sm={6} md={4}>
             <Card>
               <CardHeader
                 avatar={<NameAvatar name={us.displayName} onClick={() => { userInfoDialogDispatch(true, { user: us }) }} />}
                 title={<Stack direction='row' sx={{ mr: 2, maxWidth: 350 }}>
-                  <Typography variant='subtitle1'>{us.id}</Typography>
+                  <Typography variant='subtitle1'>{us.userName}</Typography>
                   <Box sx={{ flex: '1 1 auto' }} />
                   {us.role && <Chip size='small' label={us.role} />}
                 </Stack>}

@@ -3,30 +3,37 @@ package dashboard
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
-
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+	"k8s.io/utils/pointer"
 )
 
 var _ = Describe("Dashboard server [Workspace]", func() {
 
+	var (
+		userSession  string
+		adminSession string
+		client       dashboardv1alpha1connect.WorkspaceServiceClient
+	)
+
 	BeforeEach(func() {
-		userSession = test_CreateLoginUserSession("usertest", "user", "", "password")
-		adminSession = test_CreateLoginUserSession("usertest-admin", "admin", wsv1alpha1.UserAdminRole, "password")
-		test_CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
+		userSession = test_CreateLoginUserSession("normal-user", "user", "", "password")
+		adminSession = test_CreateLoginUserSession("admin-user", "admin", wsv1alpha1.UserAdminRole, "password")
+		testUtil.CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
+		client = dashboardv1alpha1connect.NewWorkspaceServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 
 	AfterEach(func() {
 		clientMock.Clear()
-		test_DeleteWorkspaceAll()
-		test_DeleteCosmoUserAll()
-		test_DeleteTemplateAll()
+		testUtil.DeleteWorkspaceAll()
+		testUtil.DeleteCosmoUserAll()
+		testUtil.DeleteTemplateAll()
 	})
 
 	//==================================================================================
@@ -38,345 +45,346 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			Status:    ws.Status,
 		}
 	}
-	//==================================================================================
-	Describe("authorization by role", func() {
 
-		DescribeTable("access API with admin user session:",
-			func(stat int, req request) {
-				test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{})
-				test_createNetworkRule("usertest", "ws1", "nw1", 9999, "gp1", "/")
-				test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-				test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
-				By("---------------test start----------------")
-				res, _ := test_HttpSend(adminSession, req)
-				Ω(res.StatusCode).Should(Equal(stat))
-				By("---------------test end---------------")
-			},
-			func(stat int, req request) string { return fmt.Sprintf("%d %+v", stat, req) },
-			// update own resource
-			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws2","template": "template1"}`}),
-			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"}),
-			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"}),
-			Entry(nil, 200, request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1", body: `{"replicas": 0}`}),
-			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw1"}),
-			// update resource of others
-			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest/workspace", body: `{"name": "ws2","template": "template1"}`}),
-			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace"}),
-			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace/ws1"}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1"}),
-			Entry(nil, 200, request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest/workspace/ws1", body: `{"replicas": 2}`}),
-			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw1"}),
-		)
-
-		DescribeTable("access API with normal user session:",
-			func(stat int, req request) {
-				test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{})
-				test_createNetworkRule("usertest", "ws1", "nw1", 9999, "gp1", "/")
-				test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-				test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
-				By("---------------test start----------------")
-				res, _ := test_HttpSend(userSession, req)
-				Ω(res.StatusCode).Should(Equal(stat))
-				By("---------------test end---------------")
-			},
-			func(stat int, req request) string { return fmt.Sprintf("%d %+v", stat, req) },
-			// update own resource
-			Entry(nil, 201, request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest/workspace", body: `{"name": "ws2","template": "template1"}`}),
-			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace"}),
-			Entry(nil, 200, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest/workspace/ws1"}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1"}),
-			Entry(nil, 200, request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest/workspace/ws1", body: `{"replicas": 0}`}),
-			Entry(nil, 200, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`}),
-			Entry(nil, 200, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest/workspace/ws1/network/nw1"}),
-			// update resource of others
-			Entry(nil, 403, request{method: http.MethodPost, path: "/api/v1alpha1/user/usertest-admin/workspace", body: `{"name": "ws2","template": "template1"}`}),
-			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace"}),
-			Entry(nil, 403, request{method: http.MethodGet, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"}),
-			Entry(nil, 403, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1"}),
-			Entry(nil, 403, request{method: http.MethodPatch, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1", body: `{"replicas": 1}`}),
-			Entry(nil, 403, request{method: http.MethodPut, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw2", body: `{"portNumber": 3000,"group": "gp2","httpPath": "/"}`}),
-			Entry(nil, 403, request{method: http.MethodDelete, path: "/api/v1alpha1/user/usertest-admin/workspace/ws1/network/nw1"}),
-		)
-	})
+	getSession := func(loginUser string) string {
+		if loginUser == "admin-user" {
+			return adminSession
+		} else {
+			return userSession
+		}
+	}
 
 	//==================================================================================
-	Describe("[PostWorkspace]", func() {
+	Describe("[CreateWorkspace]", func() {
 
-		run_test := func(userId, wsName, requestBody string) {
-			test_CreateWorkspace("usertest-admin", "existing-ws", "template1", nil)
+		run_test := func(loginUser string, req *dashv1alpha1.CreateWorkspaceRequest) {
+			testUtil.CreateWorkspace("admin-user", "existing-ws", "template1", nil)
 			By("---------------test start----------------")
-			res, body := test_HttpSend(adminSession, request{method: http.MethodPost, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace", userId), body: requestBody})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(string(body)).To(MatchSnapShot())
-
-			if wsName != "" {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), wsName, userId)
-				if res.StatusCode == http.StatusCreated {
-					Expect(err).NotTo(HaveOccurred())
-					Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
-				} else {
-					Expect(err).To(HaveOccurred())
-				}
+			ctx := context.Background()
+			res, err := client.CreateWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
+			if err == nil {
+				Ω(res.Msg).To(MatchSnapShot())
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
+				Expect(err).NotTo(HaveOccurred())
+				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
 			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "usertest-admin", "ws1", `{"name": "ws1","template": "template1","vars": { "HOGE": "HOGEHOGE"}}`),
-			Entry(nil, "usertest-admin", "ws1", `{"name": "ws1","template": "template1"}`),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Template: "template1", Vars: map[string]string{"HOGE": "HOGEHOGE"}}),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Template: "template1"}),
+			Entry(nil, "normal-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "normal-user", WsName: "ws1", Template: "template1"}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "xxxxx", "ws1", `{"name": "ws1","template": "template1"}`),
-			Entry(nil, "usertest-admin", "", `{"name": "","template": "template1"}`),
-			Entry(nil, "usertest-admin", "ws1", `{"name": "ws1","template": ""}`),
-			Entry(nil, "usertest-admin", "XXXX", `{"name": "XXXX","template": "template1"}`),
-			Entry(nil, "usertest-admin", "ws1", `{"name": "ws1","template": "XXX"}`),
-			Entry(nil, "usertest-admin", "", `{"name": "existing-ws","template": "template1"}`),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "xxxxx", WsName: "ws1", Template: "template1"}),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "admin-user", WsName: "", Template: "template1"}),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Template: ""}),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "admin-user", WsName: "XXXX", Template: "template1"}),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Template: "XXX"}),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "admin-user", WsName: "existing-ws", Template: "template1"}),
+		)
+
+		DescribeTable("❌ fail with authorization by role:",
+			run_test,
+			Entry(nil, "normal-user", &dashv1alpha1.CreateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Template: "template1"}),
 		)
 	})
 
 	//==================================================================================
 	Describe("[GetWorkspaces]", func() {
 
-		run_test := func(userId string) {
-			test_CreateWorkspace("usertest-admin", "ws1", "template1", nil)
-			test_CreateWorkspace("usertest-admin", "ws2", "template1", nil)
-			test_createNetworkRule("usertest-admin", "ws2", "nw1", 1111, "gp1", "/")
-			test_createNetworkRule("usertest-admin", "ws2", "nw3", 2222, "gp1", "/")
-			test_createNetworkRule("usertest-admin", "ws2", "nw2", 3333, "gp1", "/")
+		run_test := func(loginUser string, req *dashv1alpha1.GetWorkspacesRequest) {
+			testUtil.CreateWorkspace("admin-user", "ws1", "template1", nil)
+			testUtil.CreateWorkspace("admin-user", "ws2", "template1", nil)
+			testUtil.UpsertNetworkRule("admin-user", "ws2", "nw1", 1111, "gp1", "/", false)
+			testUtil.UpsertNetworkRule("admin-user", "ws2", "nw3", 2222, "gp1", "/", false)
+			testUtil.UpsertNetworkRule("admin-user", "ws2", "nw2", 3333, "gp1", "/", false)
 			By("---------------test start----------------")
-			res, body := test_HttpSend(adminSession, request{method: http.MethodGet, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace", userId)})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(string(body)).To(MatchSnapShot())
+			ctx := context.Background()
+			res, err := client.GetWorkspaces(ctx, NewRequestWithSession(req, getSession(loginUser)))
+			if err == nil {
+				Ω(res.Msg).To(MatchSnapShot())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
+			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "usertest-admin"),
-			Entry(nil, "usertest"),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspacesRequest{UserName: "admin-user"}),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspacesRequest{UserName: "normal-user"}),
+			Entry(nil, "normal-user", &dashv1alpha1.GetWorkspacesRequest{UserName: "normal-user"}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "xxxxx"),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspacesRequest{UserName: "xxxxx"}),
+		)
+
+		DescribeTable("❌ fail with authorization by role:",
+			run_test,
+			Entry(nil, "normal-user", &dashv1alpha1.GetWorkspacesRequest{UserName: "admin-user"}),
 		)
 
 		DescribeTable("❌ fail with unexpected error:",
-			func(userId string) {
+			func(loginUser string, req *dashv1alpha1.GetWorkspacesRequest) {
 				clientMock.SetListError((*Server).GetWorkspaces, errors.New("mock get list error"))
-				run_test(userId)
+				run_test(loginUser, req)
 			},
-			Entry(nil, "usertest-admin"),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspacesRequest{UserName: "admin-user"}),
 		)
 	})
 
 	//==================================================================================
 	Describe("[GetWorkspace]", func() {
 
-		run_test := func(userId, wsName string) {
-			test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
-			test_createNetworkRule("usertest", "ws1", "main", 18080, "mainnw", "/")
+		run_test := func(loginUser string, req *dashv1alpha1.GetWorkspaceRequest) {
+			testUtil.CreateWorkspace("admin-user", "ws1", "template1", nil)
+			testUtil.CreateWorkspace("normal-user", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
+			testUtil.UpsertNetworkRule("normal-user", "ws1", "main", 18080, "mainnw", "/", false)
 			By("---------------test start----------------")
-			res, body := test_HttpSend(adminSession, request{method: http.MethodGet, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s", userId, wsName)})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(string(body)).To(MatchSnapShot())
+			ctx := context.Background()
+			res, err := client.GetWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
+			if err == nil {
+				Ω(res.Msg).To(MatchSnapShot())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
+			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "usertest", "ws1"),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspaceRequest{UserName: "normal-user", WsName: "ws1"}),
+			Entry(nil, "normal-user", &dashv1alpha1.GetWorkspaceRequest{UserName: "normal-user", WsName: "ws1"}),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspaceRequest{UserName: "admin-user", WsName: "ws1"}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "xxxxx", "ws1"),
-			Entry(nil, "usertest-admin", "xxx"),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspaceRequest{UserName: "xxxxx", WsName: "ws1"}),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspaceRequest{UserName: "admin-user", WsName: "xxx"}),
+		)
+
+		DescribeTable("❌ fail with authorization by role:",
+			run_test,
+			Entry(nil, "normal-user", &dashv1alpha1.GetWorkspaceRequest{UserName: "admin-user", WsName: "ws1"}),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at list:",
-			func(userId, wsName string) {
-				clientMock.GetMock = func(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption) (mocked bool, err error) {
-					if key.Name == wsName {
-						return true, errors.New("mock get workspace error")
-					}
-					return false, nil
-				}
-				//clientMock.SetGetError(`\.GetWorkspace$`, errors.New("mock get workspace error"))
-				//clientMock.SetGetError((*Server).GetWorkspace, errors.New("mock get workspace error"))
-				run_test(userId, wsName)
+			func(loginUser string, req *dashv1alpha1.GetWorkspaceRequest) {
+				clientMock.SetGetError((*Server).GetWorkspace, errors.New("mock get workspace error"))
+				run_test(loginUser, req)
 			},
-			Entry(nil, "usertest", "ws1"),
+			Entry(nil, "admin-user", &dashv1alpha1.GetWorkspaceRequest{UserName: "normal-user", WsName: "ws1"}),
 		)
 	})
 
 	//==================================================================================
 	Describe("[DeleteWorkspace]", func() {
 
-		run_test := func(userId, wsName string) {
-			test_CreateWorkspace("usertest", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
+		run_test := func(loginUser string, req *dashv1alpha1.DeleteWorkspaceRequest) {
+			testUtil.CreateWorkspace("normal-user", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
+			testUtil.CreateWorkspace("admin-user", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
 			By("---------------test start----------------")
-			res, body := test_HttpSend(adminSession, request{method: http.MethodDelete, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s", userId, wsName)})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(string(body)).To(MatchSnapShot())
-
-			_, err := k8sClient.GetWorkspaceByUserID(context.Background(), "ws1", "usertest")
-			if res.StatusCode == http.StatusOK {
+			ctx := context.Background()
+			res, err := client.DeleteWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
+			if err == nil {
+				Ω(res.Msg).To(MatchSnapShot())
+				_, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
 				Expect(err).To(HaveOccurred())
 			} else {
-				Expect(err).NotTo(HaveOccurred())
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
 			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "usertest", "ws1"),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteWorkspaceRequest{UserName: "normal-user", WsName: "ws1"}),
+			Entry(nil, "normal-user", &dashv1alpha1.DeleteWorkspaceRequest{UserName: "normal-user", WsName: "ws1"}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "xxxxx", "ws1"),
-			Entry(nil, "usertest-admin", "xxx"),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteWorkspaceRequest{UserName: "xxxxx", WsName: "ws1"}),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteWorkspaceRequest{UserName: "admin-user", WsName: "xxx"}),
+		)
+
+		DescribeTable("❌ fail with authorization by role:",
+			run_test,
+			Entry(nil, "normal-user", &dashv1alpha1.DeleteWorkspaceRequest{UserName: "admin-user", WsName: "ws1"}),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at delete:",
-			func(userId, wsName string) {
+			func(loginUser string, req *dashv1alpha1.DeleteWorkspaceRequest) {
 				clientMock.SetDeleteError((*Server).DeleteWorkspace, errors.New("mock delete workspace error"))
-				run_test(userId, wsName)
+				run_test(loginUser, req)
 			},
-			Entry(nil, "usertest", "ws1"),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteWorkspaceRequest{UserName: "normal-user", WsName: "ws1"}),
 		)
 	})
 
 	//==================================================================================
-	Describe("[PatchWorkspace]", func() {
+	Describe("[UpdateWorkspace]", func() {
 
-		run_test := func(userId, wsName, requestBody string) {
-			test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
+		run_test := func(loginUser string, req *dashv1alpha1.UpdateWorkspaceRequest) {
+			testUtil.CreateWorkspace("admin-user", "ws1", "template1", map[string]string{})
+			testUtil.CreateWorkspace("normal-user", "ws1", "template1", map[string]string{})
 			By("---------------test start----------------")
-			res, body := test_HttpSend(adminSession, request{method: http.MethodPatch, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s", userId, wsName), body: requestBody})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(string(body)).To(MatchSnapShot())
-
-			if res.StatusCode == http.StatusOK {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), wsName, userId)
+			ctx := context.Background()
+			res, err := client.UpdateWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
+			if err == nil {
+				Ω(res.Msg).To(MatchSnapShot())
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
 			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "usertest-admin", "ws1", `{"replicas": 0}`),
-			Entry(nil, "usertest-admin", "ws1", `{"replicas": 5}`),
+			Entry(nil, "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: pointer.Int64(0)}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1"}),
+			Entry(nil, "normal-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "normal-user", WsName: "ws1", Replicas: pointer.Int64(5)}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "xxxxx", "ws1", `{"replicas": 0}`),
-			Entry(nil, "usertest", "xxx", `{"replicas": 1}`),
-			Entry(nil, "usertest-admin", "ws1", `{"replicas": 1}`),
+			Entry(nil, "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "xxxxx", WsName: "ws1", Replicas: pointer.Int64(0)}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "normal-user", WsName: "xxx", Replicas: pointer.Int64(1)}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: pointer.Int64(1)}),
+		)
+
+		DescribeTable("❌ fail with authorization by role:",
+			run_test,
+			Entry(nil, "normal-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: pointer.Int64(0)}),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
-			func(userId, wsName, requestBody string) {
-				clientMock.SetUpdateError((*Server).PatchWorkspace, errors.New("mock update workspace error"))
-				run_test(userId, wsName, requestBody)
+			func(loginUser string, req *dashv1alpha1.UpdateWorkspaceRequest) {
+				clientMock.SetUpdateError((*Server).UpdateWorkspace, errors.New("mock update workspace error"))
+				run_test(loginUser, req)
 			},
-			Entry(nil, "usertest-admin", "ws1", `{"replicas": 0}`),
+			Entry(nil, "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: pointer.Int64(0)}),
 		)
 	})
 
 	//==================================================================================
-	Describe("[PutNetworkRule]", func() {
+	Describe("[UpsertNetworkRule]", func() {
 
-		run_test := func(userId, wsName, nw, requestBody string) {
-			test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-			test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
+		run_test := func(loginUser string, req *dashv1alpha1.UpsertNetworkRuleRequest) {
+			testUtil.CreateWorkspace("admin-user", "ws1", "template1", map[string]string{})
+			testUtil.UpsertNetworkRule("admin-user", "ws1", "nw1", 9999, "gp1", "/", false)
+			testUtil.CreateWorkspace("normal-user", "ws1", "template1", map[string]string{})
 			By("---------------test start----------------")
-			res, body := test_HttpSend(adminSession, request{method: http.MethodPut, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s/network/%s", userId, wsName, nw), body: requestBody})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(string(body)).To(MatchSnapShot())
-
-			if res.StatusCode == http.StatusOK {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), wsName, userId)
+			ctx := context.Background()
+			res, err := client.UpsertNetworkRule(ctx, NewRequestWithSession(req, getSession(loginUser)))
+			if err == nil {
+				Ω(res.Msg).To(MatchSnapShot())
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
 			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "usertest-admin", "ws1", "nw2", `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`),
-			Entry(nil, "usertest-admin", "ws1", "nw2", `{"portNumber": 3000,"public":true}`),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Public: true}}),
+			Entry(nil, "normal-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Public: true}}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "xxxxx", "ws1", "nw2", `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`),
-			Entry(nil, "usertest-admin", "xxx", "nw2", `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`),
-			Entry(nil, "usertest-admin", "ws1", "nw1", `{"portNumber": 9999,"group": "gp1","httpPath": "/","public":false}`),
-			Entry(nil, "usertest-admin", "ws1", "nw9", `{"portNumber": 9999,"group": "gp1","httpPath": "/","public":false}`),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "xxxxx", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "xxx", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 9999, Group: "gp1", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws9", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp1", HttpPath: "/", Public: false}}),
+		)
+
+		DescribeTable("❌ fail with authorization by role:",
+			run_test,
+			Entry(nil, "normal-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
-			func(userId, wsName, nw, requestBody string) {
-				clientMock.SetUpdateError((*Server).PutNetworkRule, errors.New("mock update networkrule error"))
-				run_test(userId, wsName, nw, requestBody)
+			func(loginUser string, req *dashv1alpha1.UpsertNetworkRuleRequest) {
+				clientMock.SetUpdateError((*Server).UpsertNetworkRule, errors.New("mock update networkrule error"))
+				run_test(loginUser, req)
 			},
-			Entry(nil, "usertest-admin", "ws1", "nw2", `{"portNumber": 3000,"group": "gp2","httpPath": "/","public":false}`),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Public: true}}),
 		)
 	})
 
 	//==================================================================================
 	Describe("[DeleteNetworkRule]", func() {
 
-		run_test := func(userId, wsName, nw string) {
-			test_CreateWorkspace("usertest-admin", "ws1", "template1", map[string]string{})
-			test_createNetworkRule("usertest-admin", "ws1", "nw1", 9999, "gp1", "/")
-			test_createNetworkRule("usertest-admin", "ws1", "main", 18080, "main", "/")
+		run_test := func(loginUser string, req *dashv1alpha1.DeleteNetworkRuleRequest) {
+			testUtil.CreateWorkspace("normal-user", "ws1", "template1", map[string]string{})
+			testUtil.UpsertNetworkRule("normal-user", "ws1", "nw1", 9999, "gp1", "/", false)
+			testUtil.CreateWorkspace("admin-user", "ws1", "template1", map[string]string{})
+			testUtil.UpsertNetworkRule("admin-user", "ws1", "nw1", 9999, "gp1", "/", false)
+			testUtil.UpsertNetworkRule("admin-user", "ws1", "main", 18080, "main", "/", false)
 			By("---------------test start----------------")
-			res, body := test_HttpSend(adminSession, request{method: http.MethodDelete, path: fmt.Sprintf("/api/v1alpha1/user/%s/workspace/%s/network/%s", userId, wsName, nw)})
-			Ω(res.StatusCode).To(MatchSnapShot())
-			Ω(string(body)).To(MatchSnapShot())
-
-			if res.StatusCode == http.StatusOK {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), wsName, userId)
+			ctx := context.Background()
+			res, err := client.DeleteNetworkRule(ctx, NewRequestWithSession(req, getSession(loginUser)))
+			if err == nil {
+				Ω(res.Msg).To(MatchSnapShot())
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+			} else {
+				Ω(err.Error()).To(MatchSnapShot())
+				Expect(res).Should(BeNil())
 			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "usertest-admin", "ws1", "nw1"),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRuleName: "nw1"}),
+			Entry(nil, "normal-user", &dashv1alpha1.DeleteNetworkRuleRequest{UserName: "normal-user", WsName: "ws1", NetworkRuleName: "nw1"}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "xxxxx", "ws1", "nw2"),
-			Entry(nil, "usertest-admin", "xxx", "nw2"),
-			Entry(nil, "usertest-admin", "ws1", "xxx"),
-			Entry(nil, "usertest-admin", "ws1", "main"),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteNetworkRuleRequest{UserName: "xxxxx", WsName: "ws1", NetworkRuleName: "nw2"}),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteNetworkRuleRequest{UserName: "admin-user", WsName: "xxx", NetworkRuleName: "nw2"}),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRuleName: "xxx"}),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRuleName: "main"}),
+		)
+
+		DescribeTable("❌ fail with authorization by role:",
+			run_test,
+			Entry(nil, "normal-user", &dashv1alpha1.DeleteNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRuleName: "nw1"}),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
-			func(userId, wsName, nw string) {
+			func(loginUser string, req *dashv1alpha1.DeleteNetworkRuleRequest) {
 				clientMock.SetUpdateError((*Server).DeleteNetworkRule, errors.New("mock delete network rule error"))
-				run_test(userId, wsName, nw)
+				run_test(loginUser, req)
 			},
-			Entry(nil, "usertest-admin", "ws1", "nw1"),
+			Entry(nil, "admin-user", &dashv1alpha1.DeleteNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRuleName: "nw1"}),
 		)
 	})
 

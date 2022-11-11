@@ -2,17 +2,15 @@ package dashboard
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
-	apierrs "k8s.io/apimachinery/pkg/api/errors"
-
+	"github.com/bufbuild/connect-go"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/gorilla/mux"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 type ctxKeyCaller struct{}
@@ -27,20 +25,6 @@ func callerFromContext(ctx context.Context) *wsv1alpha1.User {
 		return caller.DeepCopy()
 	}
 	return nil
-}
-
-type ctxKeyDeadline struct{}
-
-func newContextWithDeadline(ctx context.Context, deadline time.Time) context.Context {
-	return context.WithValue(ctx, ctxKeyDeadline{}, deadline)
-}
-
-func deadlineFromContext(ctx context.Context) time.Time {
-	deadline, ok := ctx.Value(ctxKeyDeadline{}).(time.Time)
-	if ok {
-		return deadline
-	}
-	return time.Time{}
 }
 
 type ctxKeyResponseWriter struct{}
@@ -66,134 +50,96 @@ func (s *Server) contextMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-var (
-	ErrNotAuthorized = errors.New("not authroized")
-)
+func (s *Server) authorizationInterceptor() connect.UnaryInterceptorFunc {
+	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
+		return connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 
-func (s *Server) authorizationMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		log := clog.FromContext(ctx).WithName("authorization")
+			log := clog.FromContext(ctx).WithName("authorization")
 
-		userID, deadline, err := s.authorizeWithSession(r)
-		if err != nil {
-			log.Error(err, "session authorization err")
-
-			if errors.Is(err, ErrNotAuthorized) {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
+			loginUser, deadline, err := s.verifyAndGetLoginUser(ctx)
+			if err != nil {
+				return nil, ErrResponse(log, err)
 			}
-		}
 
-		caller, err := s.Klient.GetUser(ctx, userID)
-		if err != nil {
-			if apierrs.IsNotFound(err) {
-				log.Error(err, "caller not found", "callerID", userID)
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			} else {
-				log.Error(err, "failed to get caller", "callerID", userID)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-		}
+			ctx = newContextWithCaller(ctx, loginUser)
+			ctx, cancel := context.WithDeadline(ctx, deadline)
+			defer cancel()
 
-		ctx = newContextWithCaller(ctx, caller)
-		ctx = newContextWithDeadline(ctx, deadline)
-
-		ctx, cancel := context.WithDeadline(ctx, deadline)
-		defer cancel()
-
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+			return next(ctx, req)
+		})
+	}
+	return connect.UnaryInterceptorFunc(interceptor)
 }
 
-func (s *Server) authorizeWithSession(r *http.Request) (userID string, deadline time.Time, err error) {
+func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *wsv1alpha1.User, deadline time.Time, err error) {
+	r := requestFromContext(ctx)
+	if r.Header.Get("Cookie") == "" {
+		return nil, deadline, kosmo.NewUnauthorizedError("session is not found", err)
+	}
 	ses, err := s.sessionStore.Get(r, s.SessionName)
 	if ses == nil || err != nil {
-		return userID, deadline, fmt.Errorf("%w: failed to get session from store: %v", ErrNotAuthorized, err)
+		return nil, deadline, kosmo.NewUnauthorizedError("failed to get session from store", err)
 	}
 	if ses.IsNew {
-		return userID, deadline, fmt.Errorf("%w: %v", ErrNotAuthorized, err)
+		return nil, deadline, kosmo.NewUnauthorizedError("session is invarild", err)
 	}
 
 	sesInfo := session.Get(ses)
 
-	userID = sesInfo.UserID
+	userID := sesInfo.UserID
 	if userID == "" {
-		return userID, deadline, fmt.Errorf("userID is empty")
+		return nil, deadline, kosmo.NewInternalServerError("userID is empty", nil)
 	}
 
 	deadline = time.Unix(sesInfo.Deadline, 0)
 	if deadline.Before(time.Now()) {
-		return userID, deadline, fmt.Errorf("deadline is before the current time: deadline %v", deadline)
+		return nil, deadline,
+			kosmo.NewUnauthorizedError(fmt.Sprintf("deadline is before the current time: deadline %v", deadline), nil)
 	}
 
-	return userID, deadline, nil
+	loginUser, err = s.Klient.GetUser(ctx, userID)
+	if err != nil {
+		return nil, deadline, err
+	}
+
+	return loginUser, deadline, nil
 }
 
-func (s *Server) userAuthenticationMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		log := clog.FromContext(ctx).WithName("userAuthentication")
+func (s *Server) userAuthentication(ctx context.Context, userID string) error {
+	log := clog.FromContext(ctx).WithCaller()
 
-		caller := callerFromContext(ctx)
-		if caller == nil {
-			log.Info("invalid user authentication: NOT authorized")
-			w.WriteHeader(http.StatusUnauthorized)
-			return
+	caller := callerFromContext(ctx)
+	if caller == nil {
+		return kosmo.NewInternalServerError("invalid user authentication: NOT authorized", nil)
+	}
+
+	if caller.Name != userID {
+		if wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
+			// Admin user have access to all resources
+			log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "userid", caller.Name)
+		} else {
+			// General User have access only to the own resources
+			log.Info("invalid user authentication: general user trying to access other's resource", "userid", caller.Name, "target", userID)
+			return kosmo.NewForbiddenError("", nil)
 		}
-
-		// Get UserID from path
-		vars := mux.Vars(r)
-		userID, ok := vars["userid"]
-		if !ok {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		if caller.Name != userID {
-			if wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
-				// Admin user have access to all resources
-				log.WithName("audit").Info(fmt.Sprintf("admin request %s %s %s", caller.Name, r.Method, r.URL),
-					"userid", caller.Name, "method", r.Method, "path", r.URL, "host", r.Host, "X-Forwarded-For", r.Header.Get("X-Forwarded-For"), "user-agent", r.UserAgent())
-
-			} else {
-				// General User have access only to the own resources
-				log.Info("invalid user authentication: general user trying to access other's resource", "userid", caller.Name, "target", userID)
-				w.WriteHeader(http.StatusForbidden)
-				return
-			}
-		}
-
-		next.ServeHTTP(w, r)
-	})
+	}
+	return nil
 }
 
-func (s *Server) adminAuthenticationMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		log := clog.FromContext(ctx).WithName("adminAuthentication")
+func (s *Server) adminAuthentication(ctx context.Context) error {
+	log := clog.FromContext(ctx).WithCaller()
 
-		caller := callerFromContext(ctx)
-		if caller == nil {
-			log.Info("invalid user authentication: NOT authorized")
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
+	caller := callerFromContext(ctx)
+	if caller == nil {
+		return kosmo.NewInternalServerError("invalid user authentication: NOT authorized", nil)
+	}
 
-		// Check if the user role is Admin
-		if !wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
-			log.Info("invalid admin authentication: NOT cosmo-admin", "userid", caller.Name)
-			w.WriteHeader(http.StatusForbidden)
-			return
-		}
+	// Check if the user role is Admin
+	if !wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
+		log.Info("invalid admin authentication: NOT cosmo-admin", "userid", caller.Name)
+		return kosmo.NewForbiddenError("", nil)
+	}
 
-		log.WithName("audit").Info(fmt.Sprintf("admin request %s %s %s", caller.Name, r.Method, r.URL),
-			"userid", caller.Name, "method", r.Method, "path", r.URL, "host", r.Host, "X-Forwarded-For", r.Header.Get("X-Forwarded-For"), "user-agent", r.UserAgent())
-		next.ServeHTTP(w, r)
-	})
+	log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "userid", caller.Name)
+	return nil
 }

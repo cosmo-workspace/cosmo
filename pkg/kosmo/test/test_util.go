@@ -65,11 +65,11 @@ func (c *TestUtil) DeleteTemplateAll() {
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
-func (c *TestUtil) CreateCosmoUser(id string, dispayName string, role wsv1alpha1.UserRole) {
+func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role wsv1alpha1.UserRole) {
 	ctx := context.Background()
 	user := wsv1alpha1.User{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: id,
+			Name: userName,
 		},
 		Spec: wsv1alpha1.UserSpec{
 			DisplayName: dispayName,
@@ -81,7 +81,7 @@ func (c *TestUtil) CreateCosmoUser(id string, dispayName string, role wsv1alpha1
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() error {
-		_, err := c.kosmoClient.GetUser(ctx, id)
+		_, err := c.kosmoClient.GetUser(ctx, userName)
 		return err
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
@@ -98,40 +98,40 @@ func (c *TestUtil) DeleteCosmoUserAll() {
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
-func (c *TestUtil) CreateUserNameSpaceandDefaultPasswordIfAbsent(id string) {
+func (c *TestUtil) CreateUserNameSpaceandDefaultPasswordIfAbsent(userName string) {
 	ctx := context.Background()
 	var ns v1.Namespace
-	key := client.ObjectKey{Name: wsv1alpha1.UserNamespace(id)}
+	key := client.ObjectKey{Name: wsv1alpha1.UserNamespace(userName)}
 	err := c.kosmoClient.Get(ctx, key, &ns)
 	if err != nil {
 		ns = v1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: wsv1alpha1.UserNamespace(id),
+				Name: wsv1alpha1.UserNamespace(userName),
 			},
 		}
 		err = c.kosmoClient.Create(ctx, &ns)
 		Expect(err).ShouldNot(HaveOccurred())
 	}
 	// create default password
-	err = c.kosmoClient.ResetPassword(ctx, id)
+	err = c.kosmoClient.ResetPassword(ctx, userName)
 	Expect(err).ShouldNot(HaveOccurred())
 }
 
-func (c *TestUtil) CreateLoginUser(id, displayName string, role wsv1alpha1.UserRole, password string) {
+func (c *TestUtil) CreateLoginUser(userName, displayName string, role wsv1alpha1.UserRole, password string) {
 	ctx := context.Background()
 
-	c.CreateCosmoUser(id, displayName, role)
-	c.CreateUserNameSpaceandDefaultPasswordIfAbsent(id)
-	err := c.kosmoClient.RegisterPassword(ctx, id, []byte(password))
+	c.CreateCosmoUser(userName, displayName, role)
+	c.CreateUserNameSpaceandDefaultPasswordIfAbsent(userName)
+	err := c.kosmoClient.RegisterPassword(ctx, userName, []byte(password))
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() error {
-		_, _, err := c.kosmoClient.VerifyPassword(ctx, id, []byte(password))
+		_, _, err := c.kosmoClient.VerifyPassword(ctx, userName, []byte(password))
 		return err
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
 
-func (c *TestUtil) CreateWorkspace(userId string, name string, template string, vars map[string]string) {
+func (c *TestUtil) CreateWorkspace(userName string, name string, template string, vars map[string]string) {
 	ctx := context.Background()
 
 	cfg, err := c.kosmoClient.GetWorkspaceConfig(ctx, template)
@@ -139,7 +139,7 @@ func (c *TestUtil) CreateWorkspace(userId string, name string, template string, 
 
 	ws := &wsv1alpha1.Workspace{}
 	ws.SetName(name)
-	ws.SetNamespace(wsv1alpha1.UserNamespace(userId))
+	ws.SetNamespace(wsv1alpha1.UserNamespace(userName))
 	ws.Spec = wsv1alpha1.WorkspaceSpec{
 		Template: cosmov1alpha1.TemplateRef{
 			Name: template,
@@ -155,25 +155,25 @@ func (c *TestUtil) CreateWorkspace(userId string, name string, template string, 
 	err = c.kosmoClient.Status().Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() (*wsv1alpha1.Workspace, error) {
-		return c.kosmoClient.GetWorkspaceByUserID(ctx, name, userId)
+		return c.kosmoClient.GetWorkspaceByUserID(ctx, name, userName)
 	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
 }
 
-func (c *TestUtil) StopWorkspace(userId string, name string) {
+func (c *TestUtil) StopWorkspace(userName string, name string) {
 	ctx := context.Background()
-	ws, err := c.kosmoClient.GetWorkspaceByUserID(ctx, name, userId)
+	ws, err := c.kosmoClient.GetWorkspaceByUserID(ctx, name, userName)
 	Expect(err).ShouldNot(HaveOccurred())
 	ws.Spec.Replicas = pointer.Int64(0)
 	err = c.kosmoClient.Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 }
 
-func (c *TestUtil) DeleteWorkspaceAllByUserId(userId string) {
+func (c *TestUtil) DeleteWorkspaceAllByUserName(userName string) {
 	ctx := context.Background()
-	err := c.kosmoClient.DeleteAllOf(ctx, &wsv1alpha1.Workspace{}, client.InNamespace(wsv1alpha1.UserNamespace(userId)))
+	err := c.kosmoClient.DeleteAllOf(ctx, &wsv1alpha1.Workspace{}, client.InNamespace(wsv1alpha1.UserNamespace(userName)))
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() ([]wsv1alpha1.Workspace, error) {
-		return c.kosmoClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userId))
+		return c.kosmoClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userName))
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
@@ -182,18 +182,18 @@ func (c *TestUtil) DeleteWorkspaceAll() {
 	users, err := c.kosmoClient.ListUsers(ctx)
 	Expect(err).ShouldNot(HaveOccurred())
 	for _, user := range users {
-		c.DeleteWorkspaceAllByUserId(user.Name)
+		c.DeleteWorkspaceAllByUserName(user.Name)
 	}
 }
 
-func (c *TestUtil) UpsertNetworkRule(userId, workspaceName, networkRuleName string, portNumber int, group, httpPath string, public bool) {
+func (c *TestUtil) UpsertNetworkRule(userName, workspaceName, networkRuleName string, portNumber int, group, httpPath string, public bool) {
 	ctx := context.Background()
 
-	_, err := c.kosmoClient.AddNetworkRule(ctx, workspaceName, userId, networkRuleName, portNumber, &group, httpPath, public)
+	_, err := c.kosmoClient.AddNetworkRule(ctx, workspaceName, userName, networkRuleName, portNumber, &group, httpPath, public)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() bool {
-		ws, _ := c.kosmoClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
+		ws, _ := c.kosmoClient.GetWorkspaceByUserID(ctx, workspaceName, userName)
 		for _, n := range ws.Spec.Network {
 			if n.PortName == networkRuleName {
 				return true
@@ -203,14 +203,14 @@ func (c *TestUtil) UpsertNetworkRule(userId, workspaceName, networkRuleName stri
 	}, time.Second*5, time.Millisecond*100).Should(BeTrue())
 }
 
-func (c *TestUtil) DeleteNetworkRule(userId, workspaceName, networkRuleName string) {
+func (c *TestUtil) DeleteNetworkRule(userName, workspaceName, networkRuleName string) {
 	ctx := context.Background()
 
-	_, err := c.kosmoClient.DeleteNetworkRule(ctx, workspaceName, userId, networkRuleName)
+	_, err := c.kosmoClient.DeleteNetworkRule(ctx, workspaceName, userName, networkRuleName)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() bool {
-		ws, _ := c.kosmoClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
+		ws, _ := c.kosmoClient.GetWorkspaceByUserID(ctx, workspaceName, userName)
 		for _, n := range ws.Spec.Network {
 			if n.PortName == networkRuleName {
 				return true

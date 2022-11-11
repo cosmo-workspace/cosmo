@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1
 
-exports[`ProgressProvider normal 1`] = `
+exports[`ProgressProvider > normal 1`] = `
 <DocumentFragment>
   .emotion-0 {
   display: -webkit-inline-box;
@@ -307,7 +307,7 @@ exports[`ProgressProvider normal 1`] = `
 </DocumentFragment>
 `;
 
-exports[`ProgressProvider normal 2`] = `
+exports[`ProgressProvider > normal 2`] = `
 <DocumentFragment>
   .emotion-0 {
   display: -webkit-inline-box;
@@ -614,7 +614,7 @@ exports[`ProgressProvider normal 2`] = `
 </DocumentFragment>
 `;
 
-exports[`ProgressProvider normal 3`] = `
+exports[`ProgressProvider > normal 3`] = `
 <DocumentFragment>
   .emotion-0 {
   display: -webkit-inline-box;
@@ -921,7 +921,7 @@ exports[`ProgressProvider normal 3`] = `
 </DocumentFragment>
 `;
 
-exports[`ProgressProvider normal 4`] = `
+exports[`ProgressProvider > normal 4`] = `
 <DocumentFragment>
   .emotion-0 {
   display: -webkit-inline-box;

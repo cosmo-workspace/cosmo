@@ -5,53 +5,67 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/utils/pointer"
 
+	connect_go "github.com/bufbuild/connect-go"
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/api/openapi/dashboard/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	connect "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *Server) useTemplateMiddleWare(router *mux.Router, routes dashv1alpha1.Routes) {
-	for _, rt := range routes {
-		router.Get(rt.Name).Handler(s.authorizationMiddleware(router.Get(rt.Name).GetHandler()))
-	}
+func (s *Server) TemplateServiceHandler(mux *http.ServeMux) {
+	path, handler := connect.NewTemplateServiceHandler(s,
+		connect_go.WithInterceptors(s.authorizationInterceptor()),
+		connect_go.WithInterceptors(s.validatorInterceptor()),
+	)
+	mux.Handle(path, s.contextMiddleware(handler))
 }
 
-func (s *Server) GetWorkspaceTemplates(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
+func (s *Server) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.GetWorkspaceTemplatesResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
+
+	if err := s.adminAuthentication(ctx); err != nil {
+		return nil, ErrResponse(log, err)
+	}
 
 	tmpls, err := s.Klient.ListWorkspaceTemplates(ctx)
 	if err != nil {
-		return ErrorResponse(log, err)
+		return nil, ErrResponse(log, err)
 	}
 
-	addonTmpls := make([]dashv1alpha1.Template, 0, len(tmpls))
+	addonTmpls := make([]*dashv1alpha1.Template, 0, len(tmpls))
 	for _, v := range tmpls {
 		addonTmpls = append(addonTmpls, convertTemplateToDashv1alpha1Template(v.DeepCopy()))
 	}
 
-	res := dashv1alpha1.ListTemplatesResponse{
+	res := &dashv1alpha1.GetWorkspaceTemplatesResponse{
 		Items: addonTmpls,
 	}
+
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
 	}
-	return NormalResponse(http.StatusOK, res)
+
+	return connect_go.NewResponse(res), nil
 }
 
-func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplResponse, error) {
+func (s *Server) GetUserAddonTemplates(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.GetUserAddonTemplatesResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
+
+	if err := s.adminAuthentication(ctx); err != nil {
+		return nil, ErrResponse(log, err)
+	}
 
 	tmpls, err := s.Klient.ListUserAddonTemplates(ctx)
 	if err != nil {
-		return ErrorResponse(log, err)
+		return nil, ErrResponse(log, err)
 	}
 
-	addonTmpls := make([]dashv1alpha1.Template, len(tmpls))
+	addonTmpls := make([]*dashv1alpha1.Template, len(tmpls))
 	for i, v := range tmpls {
 		tmpl := convertTemplateToDashv1alpha1Template(v)
 
@@ -66,28 +80,30 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context) (dashv1alpha1.ImplRe
 		addonTmpls[i] = tmpl
 	}
 
-	res := dashv1alpha1.ListTemplatesResponse{
+	res := &dashv1alpha1.GetUserAddonTemplatesResponse{
 		Items: addonTmpls,
 	}
+
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
 	}
-	return NormalResponse(http.StatusOK, res)
+
+	return connect_go.NewResponse(res), nil
 }
 
-func convertTemplateToDashv1alpha1Template(tmpl cosmov1alpha1.TemplateObject) dashv1alpha1.Template {
-	requiredVars := make([]dashv1alpha1.TemplateRequiredVars, len(tmpl.GetSpec().RequiredVars))
+func convertTemplateToDashv1alpha1Template(tmpl cosmov1alpha1.TemplateObject) *dashv1alpha1.Template {
+	requiredVars := make([]*dashv1alpha1.TemplateRequiredVars, len(tmpl.GetSpec().RequiredVars))
 	for i, v := range tmpl.GetSpec().RequiredVars {
-		requiredVars[i] = dashv1alpha1.TemplateRequiredVars{
+		requiredVars[i] = &dashv1alpha1.TemplateRequiredVars{
 			VarName:      v.Var,
 			DefaultValue: v.Default,
 		}
 	}
 
-	return dashv1alpha1.Template{
+	return &dashv1alpha1.Template{
 		Name:           tmpl.GetName(),
-		RequiredVars:   requiredVars,
 		Description:    tmpl.GetSpec().Description,
+		RequiredVars:   requiredVars,
 		IsClusterScope: tmpl.GetScope() == meta.RESTScopeRoot,
 	}
 }

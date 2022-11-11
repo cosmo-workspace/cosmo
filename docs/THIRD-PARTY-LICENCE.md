@@ -18,7 +18,6 @@
 | @types/react                 | MIT                | https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE              |
 | @types/react-dom             | MIT                | https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE              |
 | @types/react-router-dom      | MIT                | https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE              |
-| axios                        | MIT                | https://github.com/axios/axios/blob/master/LICENSE                                  |
 | copy-to-clipboard            | MIT                | https://github.com/sudodoki/copy-to-clipboard/blob/master/LICENSE                   |
 | http-proxy-middleware        | MIT                | https://github.com/chimurai/http-proxy-middleware/blob/master/LICENSE               |
 | notistack                    | MIT                | https://github.com/iamhosseindhv/notistack/blob/master/LICENSE.md                   |
@@ -37,11 +36,12 @@
 
 |             software                |       license        |                                licence url                                |
 | :---------------------------------- | :------------------- | ------------------------------------------------------------------------- |
+| github.com/bufbuild/connect-go      | Apache License 2.0   | https://github.com/bufbuild/connect-go/blob/main/LICENSE                  |
+| github.com/envoyproxy/protoc-gen-validate | Apache License 2.0 | https://github.com/bufbuild/protoc-gen-validate/blob/main/LICENSELICENSE |
 | github.com/evanphx/json-patch/v5    | BSD 3-Clause License | https://github.com/evanphx/json-patch/blob/master/LICENSE                 |
 | github.com/go-logr/logr             | Apache License 2.0   | https://github.com/go-logr/logr/blob/master/LICENSE                       |
 | github.com/google/gofuzz            | Apache License 2.0   | https://github.com/google/gofuzz/blob/master/LICENSE                      |
 | github.com/google/uuid              | BSD 3-Clause License | https://github.com/google/uuid/blob/master/LICENSE                        |
-| github.com/gorilla/mux              | BSD 3-Clause License | https://github.com/gorilla/mux/blob/master/LICENSE                        |
 | github.com/gorilla/securecookie     | BSD 3-Clause License | https://github.com/gorilla/securecookie/blob/master/LICENSE               |
 | github.com/gorilla/sessions         | BSD 3-Clause License | https://github.com/gorilla/sessions/blob/master/LICENSE                   |
 | github.com/mattn/go-isatty          | MIT                  | https://github.com/mattn/go-isatty/blob/master/LICENSE                    |
@@ -53,6 +53,7 @@
 | github.com/spf13/afero              | Apache License 2.0   | https://github.com/spf13/afero/blob/master/LICENSE.txt                    |
 | go.uber.org/zap                     | MIT                  | https://github.com/uber-go/zap/blob/master/LICENSE.txt                    |
 | golang.org/x/crypto                 | BSD 3-Clause License | https://cs.opensource.google/go/x/crypto/+/master:LICENSE                 |
+| google.golang.org/protobuf          | BSD 3-Clause License | https://github.com/protocolbuffers/protobuf-go/blob/master/LICENSE        |
 | golang.org/x/tools                  | BSD 3-Clause License | https://cs.opensource.google/go/x/tools/+/master:LICENSE                  |
 | k8s.io/api                          | Apache License 2.0   | https://github.com/kubernetes/api/blob/master/LICENSE                     |
 | k8s.io/apiextensions-apiserver      | Apache License 2.0   | https://github.com/kubernetes/apiextensions-apiserver/blob/master/LICENSE |
@@ -78,5 +79,3 @@
 | kustomize         | Apache License 2.0             | https://github.com/kubernetes-sigs/kustomize/blob/master/LICENSE      |
 | nodejs            | MIT                            | https://github.com/nodejs/node/blob/master/LICENSE                    |
 | theia             | Eclipse Public License - v 2.0 | https://github.com/eclipse-theia/theia/blob/master/LICENSE            |
-| theia             | Eclipse Public License - v 2.0 | https://github.com/eclipse-theia/theia/blob/master/LICENSE            |
-| openapi-generator | Apache License 2.0             | https://github.com/OpenAPITools/openapi-generator/blob/master/LICENSE |

@@ -4,11 +4,11 @@ go 1.19
 
 require (
 	github.com/bufbuild/connect-go v1.0.0
+	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/evanphx/json-patch/v5 v5.6.0
 	github.com/go-logr/logr v1.2.3
 	github.com/google/go-cmp v0.5.9
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.1
 	github.com/mattn/go-isatty v0.0.16
