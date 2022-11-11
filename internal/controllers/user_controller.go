@@ -53,7 +53,6 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return ctrl.Result{}, err
 	}
 
-	now := metav1.Now()
 	gvk, err := apiutil.GVKForObject(&ns, r.Scheme)
 	if err != nil {
 		return ctrl.Result{}, err
@@ -61,19 +60,18 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	user.Status.Namespace = cosmov1alpha1.ObjectRef{
 		ObjectReference: corev1.ObjectReference{
-			APIVersion:      gvk.GroupVersion().String(),
-			Kind:            gvk.Kind,
-			Name:            ns.GetName(),
-			UID:             ns.GetUID(),
-			ResourceVersion: ns.GetResourceVersion(),
+			APIVersion: gvk.GroupVersion().String(),
+			Kind:       gvk.Kind,
+			Name:       ns.GetName(),
+			UID:        ns.GetUID(),
 		},
 		CreationTimestamp: &ns.CreationTimestamp,
-		UpdateTimestamp:   &now,
 	}
 
 	switch op {
 	case controllerutil.OperationResultCreated:
 		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Created", "successfully namespace created")
+		now := metav1.Now()
 		user.Status.Namespace.CreationTimestamp = &now
 
 		log.Info("initializing password secret")
@@ -109,11 +107,12 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	user.Status.Phase = ns.Status.Phase
 
-	// update workspace status
+	// update user status
 	if !equality.Semantic.DeepEqual(currentUser, user) {
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
 		}
+		log.Debug().Info("update user status")
 	}
 
 	log.Debug().Info("finish reconcile")

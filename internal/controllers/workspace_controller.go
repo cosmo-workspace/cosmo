@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/api/equality"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -14,7 +15,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
@@ -34,8 +34,8 @@ type WorkspaceReconciler struct {
 	Scheme   *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := clog.FromContext(ctx).WithName("WorkspaceReconciler")
 	ctx = clog.IntoContext(ctx, log)
@@ -71,24 +71,22 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, err
 	}
 
-	now := metav1.Now()
 	gvk, _ := apiutil.GVKForObject(inst, r.Scheme)
 	ws.Status.Instance = cosmov1alpha1.ObjectRef{
 		ObjectReference: corev1.ObjectReference{
-			APIVersion:      gvk.GroupVersion().String(),
-			Kind:            gvk.Kind,
-			Name:            inst.GetName(),
-			Namespace:       inst.GetNamespace(),
-			ResourceVersion: inst.GetResourceVersion(),
-			UID:             inst.GetUID(),
+			APIVersion: gvk.GroupVersion().String(),
+			Kind:       gvk.Kind,
+			Name:       inst.GetName(),
+			Namespace:  inst.GetNamespace(),
+			UID:        inst.GetUID(),
 		},
 		CreationTimestamp: &inst.CreationTimestamp,
-		UpdateTimestamp:   &now,
 	}
 
 	switch op {
 	case controllerutil.OperationResultCreated:
 		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Created", "successfully instance created")
+		now := metav1.Now()
 		ws.Status.Instance.CreationTimestamp = &now
 
 	case controllerutil.OperationResultUpdated:
@@ -100,6 +98,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		if err := r.Status().Update(ctx, &ws); err != nil {
 			return ctrl.Result{}, err
 		}
+		log.Info("update workspace status")
 	}
 
 	log.Info("finish reconcile")

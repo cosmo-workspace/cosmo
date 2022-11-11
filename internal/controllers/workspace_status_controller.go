@@ -34,8 +34,8 @@ type WorkspaceStatusReconciler struct {
 	Scheme   *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
-//+kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
+// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := clog.FromContext(ctx).WithName("WorkspaceStatusReconciler")
 	ctx = clog.IntoContext(ctx, log)
@@ -63,7 +63,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	// fetch child pod status
 	if urlMap, err := r.GenWorkspaceURLMap(ctx, ws); err == nil {
-		log.Debug().Info("workspace urlmap", "urlmap", urlMap)
+		log.DebugAll().Info("workspace urlmap", "urlmap", urlMap)
 		ws.Status.URLs = urlMap
 
 	} else {
@@ -106,7 +106,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		log.Info("workspace status updated", "ws", ws.Name)
 	}
 
-	log.Info("finish reconcile")
+	log.Info("finish reconcile", "requeue", requeue)
 	if requeue {
 		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	}
