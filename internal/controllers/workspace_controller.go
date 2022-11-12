@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/api/equality"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -37,7 +36,7 @@ type WorkspaceReconciler struct {
 // +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("WorkspaceReconciler")
+	log := clog.FromContext(ctx).WithName("WorkspaceReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
@@ -83,14 +82,8 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		CreationTimestamp: &inst.CreationTimestamp,
 	}
 
-	switch op {
-	case controllerutil.OperationResultCreated:
-		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Created", "successfully instance created")
-		now := metav1.Now()
-		ws.Status.Instance.CreationTimestamp = &now
-
-	case controllerutil.OperationResultUpdated:
-		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Updated", "instance is not desired state, updated")
+	if op != controllerutil.OperationResultNone {
+		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. instance synced")
 	}
 
 	// update workspace status
@@ -98,7 +91,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		if err := r.Status().Update(ctx, &ws); err != nil {
 			return ctrl.Result{}, err
 		}
-		log.Info("update workspace status")
+		log.Info("status updated")
 	}
 
 	log.Info("finish reconcile")

@@ -40,7 +40,7 @@ type InstanceReconciler struct {
 //+kubebuilder:rbac:groups=cosmo.cosmo-workspace.github.io,resources=instances/finalizers,verbs=update
 
 func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("InstanceReconciler")
+	log := clog.FromContext(ctx).WithName("InstanceReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
@@ -107,6 +107,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			log.Error(err, "failed to update InstanceStatus")
 			return ctrl.Result{}, err
 		}
+		log.Info("status updated")
 	}
 
 	log.Info("finish reconcile")

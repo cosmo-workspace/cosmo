@@ -37,7 +37,7 @@ type WorkspaceStatusReconciler struct {
 // +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
 // +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("WorkspaceStatusReconciler")
+	log := clog.FromContext(ctx).WithName("WorkspaceStatusReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
@@ -82,7 +82,13 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 				ws.Status.Phase = "Stopping"
 				requeue = true
 			} else {
-				ws.Status.Phase = kosmo.PodStatusReason(pods[0])
+				for _, pod := range pods {
+					ws.Status.Phase = kosmo.PodStatusReason(pod)
+					if ws.Status.Phase == "Running" {
+						requeue = false
+						break
+					}
+				}
 			}
 
 		} else {
@@ -102,8 +108,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		if err := r.Status().Update(ctx, &ws); err != nil {
 			return ctrl.Result{}, err
 		}
-
-		log.Info("workspace status updated", "ws", ws.Name)
+		log.Info("status updated")
 	}
 
 	log.Info("finish reconcile", "requeue", requeue)

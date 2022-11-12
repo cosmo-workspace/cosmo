@@ -32,7 +32,7 @@ type UserReconciler struct {
 }
 
 func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("UserReconciler")
+	log := clog.FromContext(ctx).WithName("UserReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
@@ -112,7 +112,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
 		}
-		log.Debug().Info("update user status")
+		log.Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")

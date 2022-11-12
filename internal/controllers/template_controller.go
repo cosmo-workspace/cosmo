@@ -25,7 +25,7 @@ type TemplateReconciler struct {
 }
 
 func (r *TemplateReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := clog.FromContext(ctx).WithName("TemplateReconciler")
+	log := clog.FromContext(ctx).WithName("TemplateReconciler").WithValues("req", req)
 	ctx = clog.IntoContext(ctx, log)
 
 	log.Debug().Info("start reconcile")
