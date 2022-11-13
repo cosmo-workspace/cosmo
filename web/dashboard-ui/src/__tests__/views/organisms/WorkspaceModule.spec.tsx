@@ -244,13 +244,13 @@ describe('useWorkspace', () => {
 
       const wsRunning1 = wsStat(ws12, 1, 'Running');
       wsRunning1.spec!.additionalNetwork = [
-        new NetworkRule({ networkRuleName: 'portname1', portNumber: 3000, url: 'url1', public: false }),
-        new NetworkRule({ networkRuleName: 'portname2', portNumber: 3000, public: false }),
+        new NetworkRule({ name: 'portname1', portNumber: 3000, url: 'url1', public: false }),
+        new NetworkRule({ name: 'portname2', portNumber: 3000, public: false }),
       ];
       const wsRunning2 = wsStat(ws12, 1, 'Running');
       wsRunning1.spec!.additionalNetwork = [
-        new NetworkRule({ networkRuleName: 'portname1', portNumber: 3000, url: 'url1', public: false }),
-        new NetworkRule({ networkRuleName: 'portname2', portNumber: 3000, url: 'url2', public: false }),
+        new NetworkRule({ name: 'portname1', portNumber: 3000, url: 'url1', public: false }),
+        new NetworkRule({ name: 'portname2', portNumber: 3000, url: 'url2', public: false }),
       ];
 
       vi.useFakeTimers();
@@ -463,7 +463,7 @@ describe('useTemplates', () => {
 
 describe('useNetworkRule', () => {
 
-  const nw111 = new NetworkRule({ networkRuleName: 'nw1', httpPath: '/path1', portNumber: 1111, public: false });
+  const nw111 = new NetworkRule({ name: 'nw1', httpPath: '/path1', portNumber: 1111, public: false });
 
   beforeEach(async () => {
     vi.useFakeTimers();
@@ -505,13 +505,13 @@ describe('useNetworkRule', () => {
     it('normal', async () => {
       const { result } = renderUseNetworkRule();
       wsMock.deleteNetworkRule.mockResolvedValue(new DeleteNetworkRuleResponse({ message: "ok", networkRule: nw111 }));
-      await act(async () => { result.current.removeNetwork(ws11, nw111.networkRuleName) });
+      await act(async () => { result.current.removeNetwork(ws11, nw111.name) });
     });
 
     it('error', async () => {
       const { result } = renderUseNetworkRule();
       wsMock.deleteNetworkRule.mockRejectedValue(new Error('[mock] deleteNetworkRule error'));
-      await expect(result.current.removeNetwork(ws11, nw111.networkRuleName)).rejects.toMatchSnapshot();
+      await expect(result.current.removeNetwork(ws11, nw111.name)).rejects.toMatchSnapshot();
     });
 
   });

@@ -18,7 +18,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 1111,
@@ -27,7 +27,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw3\",
+        \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
@@ -36,7 +36,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw11\",
+        \"name\": \"nw11\",
         \"portNumber\": 3000,
         \"httpPath\": \"/abc\",
         \"targetPortNumber\": 3000,
@@ -77,7 +77,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 1111,
@@ -86,7 +86,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw3\",
+        \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
@@ -95,7 +95,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw12\",
+        \"name\": \"nw12\",
         \"portNumber\": 4000,
         \"httpPath\": \"/def\",
         \"targetPortNumber\": 4000,
@@ -136,7 +136,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 1111,
@@ -145,7 +145,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw3\",
+        \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
@@ -154,7 +154,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw12\",
+        \"name\": \"nw12\",
         \"portNumber\": 4000,
         \"httpPath\": \"/def\",
         \"targetPortNumber\": 4000,

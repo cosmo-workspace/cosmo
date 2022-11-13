@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -25,6 +26,7 @@ var (
 		afero.NewMemMapFs(),
 		time.Minute,
 	)
+	trimSpace = regexp.MustCompile(` +`)
 )
 
 func MatchSnapShot(options ...Option) types.GomegaMatcher {
@@ -35,6 +37,8 @@ func MatchSnapShot(options ...Option) types.GomegaMatcher {
 	snapFile := filepath.Join(path, "__snapshots__", strings.TrimSuffix(file, ".go")+".snap")
 
 	testLabel := ginkgo.CurrentSpecReport().FullText()
+	testLabel = trimSpace.ReplaceAllString(testLabel, " ")
+
 	count := shotCountMap[testLabel]
 	count++
 	shotCountMap[testLabel] = count

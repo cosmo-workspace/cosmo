@@ -309,22 +309,22 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
-			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Public: true}}),
-			Entry(nil, "normal-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Public: true}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 3000, Public: true}}),
+			Entry(nil, "normal-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 3000, Public: true}}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "xxxxx", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
-			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "xxx", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
-			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 9999, Group: "gp1", HttpPath: "/", Public: false}}),
-			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws9", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp1", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "xxxxx", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "xxx", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 9999, Group: "gp1", HttpPath: "/", Public: false}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws9", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 3000, Group: "gp1", HttpPath: "/", Public: false}}),
 		)
 
 		DescribeTable("❌ fail with authorization by role:",
 			run_test,
-			Entry(nil, "normal-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
+			Entry(nil, "normal-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 3000, Group: "gp2", HttpPath: "/", Public: false}}),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
@@ -332,7 +332,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				clientMock.SetUpdateError((*Server).UpsertNetworkRule, errors.New("mock update networkrule error"))
 				run_test(loginUser, req)
 			},
-			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{NetworkRuleName: "nw2", PortNumber: 3000, Public: true}}),
+			Entry(nil, "admin-user", &dashv1alpha1.UpsertNetworkRuleRequest{UserName: "admin-user", WsName: "ws1", NetworkRule: &dashv1alpha1.NetworkRule{Name: "nw2", PortNumber: 3000, Public: true}}),
 		)
 	})
 

@@ -88,7 +88,7 @@ func TestNetworkRulesByServiceAndIngress(t *testing.T) {
 			},
 			want: []NetworkRule{
 				{
-					NetworkRuleName:  "main",
+					Name:             "main",
 					PortNumber:       7777,
 					TargetPortNumber: pointer.Int32(32000),
 					HTTPPath:         "/",
@@ -97,7 +97,7 @@ func TestNetworkRulesByServiceAndIngress(t *testing.T) {
 					Public:           false,
 				},
 				{
-					NetworkRuleName:  "main2",
+					Name:             "main2",
 					PortNumber:       7778,
 					TargetPortNumber: pointer.Int32(32001),
 					HTTPPath:         "/aaa",
@@ -129,7 +129,7 @@ func TestNetworkRulesByServiceAndIngress(t *testing.T) {
 			},
 			want: []NetworkRule{
 				{
-					NetworkRuleName:  "main",
+					Name:             "main",
 					PortNumber:       7777,
 					TargetPortNumber: pointer.Int32(32000),
 					HTTPPath:         "/",

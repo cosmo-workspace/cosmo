@@ -50,7 +50,7 @@ func NewURLVars(netRule wsv1alpha1.NetworkRule) URLVars {
 	netRule.Default()
 
 	v := URLVars{}
-	v.NetworkRuleName = netRule.NetworkRuleName
+	v.NetworkRuleName = netRule.Name
 	v.PortNumber = strconv.Itoa(netRule.PortNumber)
 	v.IngressPath = netRule.HTTPPath
 	v.NetRuleGroup = *netRule.Group

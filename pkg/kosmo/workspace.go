@@ -165,7 +165,7 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, userId,
 	}
 
 	for _, netRule := range ws.Spec.Network {
-		if netRule.NetworkRuleName != networkRuleName && netRule.PortNumber == portNumber {
+		if netRule.Name != networkRuleName && netRule.PortNumber == portNumber {
 			message := fmt.Sprintf("port %d is already used", portNumber)
 			log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 			return nil, NewBadRequestError(message, nil)
@@ -181,7 +181,7 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, userId,
 		ws.Spec.Network = append(ws.Spec.Network, wsv1alpha1.NetworkRule{})
 	}
 	var netRule = &ws.Spec.Network[index]
-	netRule.NetworkRuleName = networkRuleName
+	netRule.Name = networkRuleName
 	netRule.PortNumber = portNumber
 	netRule.Group = group
 	netRule.HTTPPath = httpPath
@@ -245,7 +245,7 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, userId, networkRul
 
 func getNetRuleIndex(netRules []wsv1alpha1.NetworkRule, netRuleName string) int {
 	for i, netRule := range netRules {
-		if netRule.NetworkRuleName == netRuleName {
+		if netRule.Name == netRuleName {
 			return i
 		}
 	}

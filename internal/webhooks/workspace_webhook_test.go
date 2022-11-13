@@ -263,7 +263,7 @@ spec:
 					Replicas: rep,
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							NetworkRuleName:  netRuleName,
+							Name:             netRuleName,
 							PortNumber:       int(PortNumber),
 							TargetPortNumber: &PortNumber,
 							HTTPPath:         "/",
@@ -335,7 +335,7 @@ spec:
 					Replicas: pointer.Int64(1),
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							NetworkRuleName:  netRuleName,
+							Name:             netRuleName,
 							PortNumber:       int(PortNumber),
 							TargetPortNumber: &PortNumber,
 							HTTPPath:         "/",
@@ -403,12 +403,12 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							NetworkRuleName: "nw1",
-							PortNumber:      1111,
+							Name:       "nw1",
+							PortNumber: 1111,
 						},
 						{
-							NetworkRuleName: "nw2",
-							PortNumber:      1111,
+							Name:       "nw2",
+							PortNumber: 1111,
 						},
 					},
 				},
@@ -435,10 +435,10 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							NetworkRuleName: "a23456789012345",
-							PortNumber:      0,
-							HTTPPath:        "",
-							Public:          false,
+							Name:       "a23456789012345",
+							PortNumber: 0,
+							HTTPPath:   "",
+							Public:     false,
 						},
 					},
 				},
@@ -465,10 +465,10 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							NetworkRuleName: "a23456789012345",
-							PortNumber:      0,
-							HTTPPath:        "",
-							Public:          false,
+							Name:       "a23456789012345",
+							PortNumber: 0,
+							HTTPPath:   "",
+							Public:     false,
 						},
 					},
 				},
@@ -495,10 +495,10 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							NetworkRuleName: "a234567890123456",
-							PortNumber:      1,
-							HTTPPath:        "",
-							Public:          false,
+							Name:       "a234567890123456",
+							PortNumber: 1,
+							HTTPPath:   "",
+							Public:     false,
 						},
 					},
 				},

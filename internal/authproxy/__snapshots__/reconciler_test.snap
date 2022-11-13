@@ -10,7 +10,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
@@ -19,7 +19,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
@@ -63,7 +63,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
@@ -72,7 +72,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
@@ -116,7 +116,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 3333,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
@@ -125,7 +125,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
@@ -169,7 +169,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 3333,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
@@ -178,7 +178,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 4444,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 4444,
@@ -222,7 +222,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/abc\",
         \"targetPortNumber\": 99999,
@@ -231,7 +231,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
@@ -275,7 +275,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/cdf\",
         \"targetPortNumber\": 2222,
@@ -284,7 +284,7 @@ SnapShot = """
         \"public\": true
       },
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/abc\",
         \"targetPortNumber\": 99999,
@@ -328,7 +328,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 1111,
@@ -337,7 +337,7 @@ SnapShot = """
         \"public\": true
       },
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
@@ -375,7 +375,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 1111,
@@ -384,7 +384,7 @@ SnapShot = """
         \"public\": true
       },
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
@@ -428,7 +428,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
@@ -499,7 +499,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"networkRuleName\": \"nw1\",
+        \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
@@ -508,7 +508,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"networkRuleName\": \"nw2\",
+        \"name\": \"nw2\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,

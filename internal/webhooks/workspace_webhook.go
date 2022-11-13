@@ -194,7 +194,7 @@ func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []wsv1alp
 
 func checkNetworkRules(netRules []wsv1alpha1.NetworkRule) error {
 	for _, netRule := range netRules {
-		if errs := validation.IsValidPortName(netRule.NetworkRuleName); len(errs) > 0 {
+		if errs := validation.IsValidPortName(netRule.Name); len(errs) > 0 {
 			return errors.New(errs[0])
 		}
 		if errs := validation.IsValidPortNum(netRule.PortNumber); len(errs) > 0 {
@@ -207,7 +207,7 @@ func checkNetworkRules(netRules []wsv1alpha1.NetworkRule) error {
 func duplicatedPort(netRules []wsv1alpha1.NetworkRule) int {
 	for _, netRule := range netRules {
 		for _, v := range netRules {
-			if netRule.NetworkRuleName != v.NetworkRuleName && netRule.PortNumber == v.PortNumber {
+			if netRule.Name != v.Name && netRule.PortNumber == v.PortNumber {
 				return netRule.PortNumber
 			}
 		}
@@ -262,7 +262,7 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 	for _, netRule := range netRules {
 		found := false
 		for _, r := range ws.Spec.Network {
-			if netRule.NetworkRuleName == r.NetworkRuleName {
+			if netRule.Name == r.Name {
 				found = true
 			}
 		}

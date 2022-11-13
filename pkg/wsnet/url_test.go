@@ -23,10 +23,10 @@ func TestNewURLVars(t *testing.T) {
 			name: "defaulting",
 			args: args{
 				netRule: v1alpha1.NetworkRule{
-					NetworkRuleName: "name",
-					PortNumber:      8080,
-					Group:           pointer.String("app"),
-					HTTPPath:        "/app",
+					Name:       "name",
+					PortNumber: 8080,
+					Group:      pointer.String("app"),
+					HTTPPath:   "/app",
 				},
 			},
 			want: URLVars{
@@ -40,10 +40,10 @@ func TestNewURLVars(t *testing.T) {
 			name: "not defaulting",
 			args: args{
 				netRule: v1alpha1.NetworkRule{
-					NetworkRuleName: "name",
-					PortNumber:      8080,
-					HTTPPath:        "/app",
-					Group:           pointer.String("app"),
+					Name:       "name",
+					PortNumber: 8080,
+					HTTPPath:   "/app",
+					Group:      pointer.String("app"),
 				},
 			},
 			want: URLVars{
@@ -137,7 +137,7 @@ func TestGenerateIngressHost(t *testing.T) {
 			name: "NETRULE_NAME",
 			args: args{
 				r: wsv1alpha1.NetworkRule{
-					NetworkRuleName:  "http",
+					Name:             "http",
 					PortNumber:       3000,
 					HTTPPath:         "/",
 					TargetPortNumber: pointer.Int32(3001),
@@ -154,7 +154,7 @@ func TestGenerateIngressHost(t *testing.T) {
 			name: "PORT_NAME",
 			args: args{
 				r: wsv1alpha1.NetworkRule{
-					NetworkRuleName:  "http",
+					Name:             "http",
 					PortNumber:       3000,
 					HTTPPath:         "/",
 					TargetPortNumber: pointer.Int32(3001),
@@ -171,7 +171,7 @@ func TestGenerateIngressHost(t *testing.T) {
 			name: "NETRULE_GROUP",
 			args: args{
 				r: wsv1alpha1.NetworkRule{
-					NetworkRuleName:  "nodejs",
+					Name:             "nodejs",
 					PortNumber:       3000,
 					HTTPPath:         "/",
 					TargetPortNumber: pointer.Int32(3002),

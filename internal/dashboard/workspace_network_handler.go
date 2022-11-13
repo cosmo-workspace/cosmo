@@ -20,7 +20,7 @@ func (s *Server) UpsertNetworkRule(ctx context.Context, req *connect_go.Request[
 	}
 
 	m := req.Msg
-	netRule, err := s.Klient.AddNetworkRule(ctx, m.WsName, m.UserName, m.NetworkRule.NetworkRuleName, int(m.NetworkRule.PortNumber), pointer.String(m.NetworkRule.Group), m.NetworkRule.HttpPath, m.NetworkRule.Public)
+	netRule, err := s.Klient.AddNetworkRule(ctx, m.WsName, m.UserName, m.NetworkRule.Name, int(m.NetworkRule.PortNumber), pointer.String(m.NetworkRule.Group), m.NetworkRule.HttpPath, m.NetworkRule.Public)
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -58,26 +58,26 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, req *connect_go.Request[
 func convertNetRulesTodashv1alpha1NetRules(netRules []wsv1alpha1.NetworkRule, urlMap map[string]string, serviceMainPortName string) []*dashv1alpha1.NetworkRule {
 	apirules := make([]*dashv1alpha1.NetworkRule, 0, len(netRules))
 	for _, v := range netRules {
-		if v.NetworkRuleName == serviceMainPortName {
+		if v.Name == serviceMainPortName {
 			continue
 		}
 
 		r := convertNetRuleTodashv1alpha1NetRule(v)
-		r.Url = urlMap[v.NetworkRuleName]
+		r.Url = urlMap[v.Name]
 
 		apirules = append(apirules, &r)
 	}
-	sort.Slice(apirules, func(i, j int) bool { return apirules[i].NetworkRuleName < apirules[j].NetworkRuleName })
+	sort.Slice(apirules, func(i, j int) bool { return apirules[i].Name < apirules[j].Name })
 
 	return apirules
 }
 
 func convertNetRuleTodashv1alpha1NetRule(v wsv1alpha1.NetworkRule) dashv1alpha1.NetworkRule {
 	return dashv1alpha1.NetworkRule{
-		NetworkRuleName: v.NetworkRuleName,
-		PortNumber:      int32(v.PortNumber),
-		Group:           *v.Group,
-		HttpPath:        v.HTTPPath,
-		Public:          v.Public,
+		Name:       v.Name,
+		PortNumber: int32(v.PortNumber),
+		Group:      *v.Group,
+		HttpPath:   v.HTTPPath,
+		Public:     v.Public,
 	}
 }
