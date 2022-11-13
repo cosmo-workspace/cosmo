@@ -128,8 +128,8 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
     url = url.replace('{{WORKSPACE}}', workspace.name);
     url = url.replace('{{NAMESPACE}}', 'cosmo-user-' + workspace.ownerId);
     url = url.replace('{{USERID}}', workspace.ownerId || '');
-    url = url.replace('{{NETRULE_NAME}}', networkRule.networkRuleName);
-    url = url.replace('{{PORT_NAME}}', networkRule.networkRuleName); // for compatibility
+    url = url.replace('{{NETRULE_NAME}}', networkRule.name);
+    url = url.replace('{{PORT_NAME}}', networkRule.name); // for compatibility
     url = url.replace('{{PORT_NUMBER}}', networkRule.portNumber.toString());
     const urlParts = url.split('{{NETRULE_GROUP}}');
     return (<>
@@ -148,7 +148,7 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
   }
 
   return (<>
-    <Grid item xs={2} sm={2} md={1.5} sx={{ m: 'auto' }}>{Body2(networkRule.networkRuleName)}</Grid>
+    <Grid item xs={2} sm={2} md={1.5} sx={{ m: 'auto' }}>{Body2(networkRule.name)}</Grid>
     <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{Body2(networkRule.portNumber)}</Grid>
     <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{networkRule.public && <Check />}</Grid>
     {isUpSM &&
@@ -184,7 +184,7 @@ const NetworkRuleList: React.VFC<{ workspace: Workspace }> = ({ workspace }) => 
       <NetworkRuleHeader workspace={workspace} />
       {/* network rule detail */}
       {(workspace.spec?.additionalNetwork || []).map((nwRule) => {
-        return (<NetworkRuleItem workspace={workspace} networkRule={nwRule} key={nwRule.networkRuleName} />)
+        return (<NetworkRuleItem workspace={workspace} networkRule={nwRule} key={nwRule.name} />)
       })}
       {(workspace.spec?.additionalNetwork || []).length === 0 &&
         <Grid item xs={12} sx={{ p: 2, textAlign: 'center' }}>
