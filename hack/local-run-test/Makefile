@@ -57,7 +57,7 @@ create-cluster: k3d helm kubectl  ## Create k3s cluster with cert-manager.
 		helm repo add jetstack https://charts.jetstack.io && \
 		helm repo update && \
 		helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager \
-			--create-namespace --version v1.7.1 --set installCRDs=true --wait && \
+			--create-namespace --version v1.10.0 --set installCRDs=true --wait && \
 		echo ====== wait traefik ====== && \
 		until (kubectl get po -n kube-system -l app.kubernetes.io/instance=traefik  | grep traefik) do sleep 1; done ; \
 		kubectl wait po -n kube-system -l app.kubernetes.io/instance=traefik --for condition=Ready ; \
@@ -101,6 +101,7 @@ docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
 
 docker-cache-clear: ## docker cache clear.
 	docker system df
+	docker rmi `docker images -f "dangling=true" -q`
 	docker builder prune
 
 ##---------------------------------------------------------------------
