@@ -58,12 +58,12 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, req *connect_go.Request[
 func convertNetRulesTodashv1alpha1NetRules(netRules []wsv1alpha1.NetworkRule, urlMap map[string]string, serviceMainPortName string) []*dashv1alpha1.NetworkRule {
 	apirules := make([]*dashv1alpha1.NetworkRule, 0, len(netRules))
 	for _, v := range netRules {
-		if v.PortName == serviceMainPortName {
+		if v.NetworkRuleName == serviceMainPortName {
 			continue
 		}
 
 		r := convertNetRuleTodashv1alpha1NetRule(v)
-		r.Url = urlMap[v.PortName]
+		r.Url = urlMap[v.NetworkRuleName]
 
 		apirules = append(apirules, &r)
 	}
@@ -74,7 +74,7 @@ func convertNetRulesTodashv1alpha1NetRules(netRules []wsv1alpha1.NetworkRule, ur
 
 func convertNetRuleTodashv1alpha1NetRule(v wsv1alpha1.NetworkRule) dashv1alpha1.NetworkRule {
 	return dashv1alpha1.NetworkRule{
-		NetworkRuleName: v.PortName,
+		NetworkRuleName: v.NetworkRuleName,
 		PortNumber:      int32(v.PortNumber),
 		Group:           *v.Group,
 		HttpPath:        v.HTTPPath,

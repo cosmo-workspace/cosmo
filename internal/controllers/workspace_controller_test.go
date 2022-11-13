@@ -278,7 +278,7 @@ spec:
 				ws.Spec.Replicas = pointer.Int64(0)
 				ws.Spec.Network = []wsv1alpha1.NetworkRule{
 					{
-						PortName:         "port1",
+						NetworkRuleName:  "port1",
 						PortNumber:       3000,
 						HTTPPath:         "/path",
 						TargetPortNumber: pointer.Int32(30000),

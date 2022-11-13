@@ -195,7 +195,7 @@ func (c *TestUtil) UpsertNetworkRule(userName, workspaceName, networkRuleName st
 	Eventually(func() bool {
 		ws, _ := c.kosmoClient.GetWorkspaceByUserID(ctx, workspaceName, userName)
 		for _, n := range ws.Spec.Network {
-			if n.PortName == networkRuleName {
+			if n.NetworkRuleName == networkRuleName {
 				return true
 			}
 		}
@@ -212,7 +212,7 @@ func (c *TestUtil) DeleteNetworkRule(userName, workspaceName, networkRuleName st
 	Eventually(func() bool {
 		ws, _ := c.kosmoClient.GetWorkspaceByUserID(ctx, workspaceName, userName)
 		for _, n := range ws.Spec.Network {
-			if n.PortName == networkRuleName {
+			if n.NetworkRuleName == networkRuleName {
 				return true
 			}
 		}

@@ -161,8 +161,8 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 
 		for _, ws := range wss {
 			for _, v := range ws.Spec.Network {
-				url := ws.Status.URLs[v.PortName]
-				rowdata := []string{ws.Namespace, ws.Name, v.PortName, strconv.Itoa(int(v.PortNumber)), *v.Group, v.HTTPPath, url}
+				url := ws.Status.URLs[v.NetworkRuleName]
+				rowdata := []string{ws.Namespace, ws.Name, v.NetworkRuleName, strconv.Itoa(int(v.PortNumber)), *v.Group, v.HTTPPath, url}
 				fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 			}
 		}

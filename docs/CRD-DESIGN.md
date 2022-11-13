@@ -253,9 +253,9 @@ spec:
   vars:
     COSMO_AUTH_PROXY_IMAGE: v0.17.0-beta2
   network:
-  - group: main
+  - networkRuleName: http
+    group: main
     httpPath: /
-    portName: http
     portNumber: 8080
 ```
 

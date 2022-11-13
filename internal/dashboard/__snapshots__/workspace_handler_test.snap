@@ -161,7 +161,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"portName\": \"main\",
+        \"networkRuleName\": \"main\",
         \"portNumber\": 18080,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 18080,
@@ -562,7 +562,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"portName\": \"nw1\",
+        \"networkRuleName\": \"nw1\",
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 9999,
@@ -571,7 +571,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"portName\": \"nw2\",
+        \"networkRuleName\": \"nw2\",
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 3000,
@@ -616,7 +616,7 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"portName\": \"nw1\",
+        \"networkRuleName\": \"nw1\",
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 9999,
@@ -625,7 +625,7 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"portName\": \"nw2\",
+        \"networkRuleName\": \"nw2\",
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 3000,

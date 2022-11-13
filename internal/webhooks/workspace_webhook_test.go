@@ -241,7 +241,7 @@ spec:
 			err = k8sClient.Create(ctx, &ws)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			portName := "main"
+			netRuleName := "main"
 			PortNumber := int32(8080)
 			host := "main-testws1-cosmo-user-testuser-ws.example.com"
 
@@ -263,11 +263,11 @@ spec:
 					Replicas: rep,
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							PortName:         portName,
+							NetworkRuleName:  netRuleName,
 							PortNumber:       int(PortNumber),
 							TargetPortNumber: &PortNumber,
 							HTTPPath:         "/",
-							Group:            &portName,
+							Group:            &netRuleName,
 							Host:             &host,
 						},
 					},
@@ -313,7 +313,7 @@ spec:
 			err := k8sClient.Create(ctx, &ws)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			portName := "main"
+			netRuleName := "main"
 			PortNumber := int32(8080)
 			host := "main-testws3-cosmo-user-testuser-ws.example.com"
 
@@ -335,11 +335,11 @@ spec:
 					Replicas: pointer.Int64(1),
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							PortName:         portName,
+							NetworkRuleName:  netRuleName,
 							PortNumber:       int(PortNumber),
 							TargetPortNumber: &PortNumber,
 							HTTPPath:         "/",
-							Group:            &portName,
+							Group:            &netRuleName,
 							Host:             &host,
 						},
 					},
@@ -403,12 +403,12 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							PortName:   "nw1",
-							PortNumber: 1111,
+							NetworkRuleName: "nw1",
+							PortNumber:      1111,
 						},
 						{
-							PortName:   "nw2",
-							PortNumber: 1111,
+							NetworkRuleName: "nw2",
+							PortNumber:      1111,
 						},
 					},
 				},
@@ -435,10 +435,10 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							PortName:   "a23456789012345",
-							PortNumber: 0,
-							HTTPPath:   "",
-							Public:     false,
+							NetworkRuleName: "a23456789012345",
+							PortNumber:      0,
+							HTTPPath:        "",
+							Public:          false,
 						},
 					},
 				},
@@ -465,10 +465,10 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							PortName:   "a23456789012345",
-							PortNumber: 0,
-							HTTPPath:   "",
-							Public:     false,
+							NetworkRuleName: "a23456789012345",
+							PortNumber:      0,
+							HTTPPath:        "",
+							Public:          false,
 						},
 					},
 				},
@@ -495,10 +495,10 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []wsv1alpha1.NetworkRule{
 						{
-							PortName:   "a234567890123456",
-							PortNumber: 1,
-							HTTPPath:   "",
-							Public:     false,
+							NetworkRuleName: "a234567890123456",
+							PortNumber:      1,
+							HTTPPath:        "",
+							Public:          false,
 						},
 					},
 				},

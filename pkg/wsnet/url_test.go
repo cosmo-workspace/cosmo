@@ -23,34 +23,34 @@ func TestNewURLVars(t *testing.T) {
 			name: "defaulting",
 			args: args{
 				netRule: v1alpha1.NetworkRule{
-					PortName:   "name",
-					PortNumber: 8080,
-					Group:      pointer.String("app"),
-					HTTPPath:   "/app",
+					NetworkRuleName: "name",
+					PortNumber:      8080,
+					Group:           pointer.String("app"),
+					HTTPPath:        "/app",
 				},
 			},
 			want: URLVars{
-				PortName:     "name",
-				PortNumber:   "8080",
-				NetRuleGroup: "app",
-				IngressPath:  "/app",
+				NetworkRuleName: "name",
+				PortNumber:      "8080",
+				NetRuleGroup:    "app",
+				IngressPath:     "/app",
 			},
 		},
 		{
 			name: "not defaulting",
 			args: args{
 				netRule: v1alpha1.NetworkRule{
-					PortName:   "name",
-					PortNumber: 8080,
-					HTTPPath:   "/app",
-					Group:      pointer.String("app"),
+					NetworkRuleName: "name",
+					PortNumber:      8080,
+					HTTPPath:        "/app",
+					Group:           pointer.String("app"),
 				},
 			},
 			want: URLVars{
-				PortName:     "name",
-				PortNumber:   "8080",
-				IngressPath:  "/app",
-				NetRuleGroup: "app",
+				NetworkRuleName: "name",
+				PortNumber:      "8080",
+				IngressPath:     "/app",
+				NetRuleGroup:    "app",
 			},
 		},
 	}
@@ -85,14 +85,27 @@ func TestURLBase_GenURL(t *testing.T) {
 			want: "http://localhost:8080/app",
 		},
 		{
+			name: "OK2",
+			fields: fields{
+				Base: "https://{{NETRULE_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+				Vars: URLVars{
+					NetworkRuleName: "main",
+					IngressPath:     "/",
+					InstanceName:    "inst",
+					Namespace:       "ns",
+				},
+			},
+			want: "https://main-inst-ns.domain/",
+		},
+		{
 			name: "OK3",
 			fields: fields{
 				Base: "https://{{PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 				Vars: URLVars{
-					PortName:     "main",
-					IngressPath:  "/",
-					InstanceName: "inst",
-					Namespace:    "ns",
+					NetworkRuleName: "main",
+					IngressPath:     "/",
+					InstanceName:    "inst",
+					Namespace:       "ns",
 				},
 			},
 			want: "https://main-inst-ns.domain/",
@@ -121,10 +134,27 @@ func TestGenerateIngressHost(t *testing.T) {
 		want string
 	}{
 		{
+			name: "NETRULE_NAME",
+			args: args{
+				r: wsv1alpha1.NetworkRule{
+					NetworkRuleName:  "http",
+					PortNumber:       3000,
+					HTTPPath:         "/",
+					TargetPortNumber: pointer.Int32(3001),
+					Group:            pointer.String("nodejs"),
+					Public:           false,
+				},
+				name:      "cs1",
+				namespace: wsv1alpha1.UserNamespace("tom"),
+				urlBase:   URLBase("https://{{NETRULE_NAME}}-{{INSTANCE}}-{{NAMESPACE}}"),
+			},
+			want: "http-cs1-cosmo-user-tom",
+		},
+		{
 			name: "PORT_NAME",
 			args: args{
 				r: wsv1alpha1.NetworkRule{
-					PortName:         "http",
+					NetworkRuleName:  "http",
 					PortNumber:       3000,
 					HTTPPath:         "/",
 					TargetPortNumber: pointer.Int32(3001),
@@ -141,7 +171,7 @@ func TestGenerateIngressHost(t *testing.T) {
 			name: "NETRULE_GROUP",
 			args: args{
 				r: wsv1alpha1.NetworkRule{
-					PortName:         "nodejs",
+					NetworkRuleName:  "nodejs",
 					PortNumber:       3000,
 					HTTPPath:         "/",
 					TargetPortNumber: pointer.Int32(3002),
@@ -224,28 +254,28 @@ func TestURLVars_setDefault(t *testing.T) {
 			name:   "All",
 			fields: fields{},
 			want: URLVars{
-				PortName:       "undefined",
-				PortNumber:     "0",
-				NetRuleGroup:   "undefined",
-				IngressPath:    "/",
-				InstanceName:   "undefined",
-				Namespace:      "undefined",
-				NodePortNumber: "0",
-				LoadBalancer:   "undefined",
-				WorkspaceName:  "undefined",
-				UserID:         "undefined",
+				NetworkRuleName: "undefined",
+				PortNumber:      "0",
+				NetRuleGroup:    "undefined",
+				IngressPath:     "/",
+				InstanceName:    "undefined",
+				Namespace:       "undefined",
+				NodePortNumber:  "0",
+				LoadBalancer:    "undefined",
+				WorkspaceName:   "undefined",
+				UserID:          "undefined",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			v := &URLVars{
-				PortName:     tt.fields.PortName,
-				PortNumber:   tt.fields.PortNumber,
-				NetRuleGroup: tt.fields.NetRuleGroup,
-				IngressPath:  tt.fields.IngressPath,
-				InstanceName: tt.fields.InstanceName,
-				Namespace:    tt.fields.Namespace,
+				NetworkRuleName: tt.fields.NetworkRuleName,
+				PortNumber:      tt.fields.PortNumber,
+				NetRuleGroup:    tt.fields.NetRuleGroup,
+				IngressPath:     tt.fields.IngressPath,
+				InstanceName:    tt.fields.InstanceName,
+				Namespace:       tt.fields.Namespace,
 			}
 			v.setDefault()
 

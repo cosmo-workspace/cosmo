@@ -705,14 +705,14 @@ spec:
   - group: gp1
     host: default.example.com
     httpPath: /
-    portName: nw1
+    networkRuleName: nw1
     portNumber: 1111
     public: false
     targetPortNumber: 1111
   - group: gp1
     host: default.example.com
     httpPath: /
-    portName: nw3
+    networkRuleName: nw3
     portNumber: 2222
     public: false
     targetPortNumber: 2222
@@ -836,14 +836,14 @@ spec:
   - group: gp1
     host: default.example.com
     httpPath: /
-    portName: nw1
+    networkRuleName: nw1
     portNumber: 1111
     public: false
     targetPortNumber: 1111
   - group: gp1
     host: default.example.com
     httpPath: /
-    portName: nw3
+    networkRuleName: nw3
     portNumber: 2222
     public: false
     targetPortNumber: 2222

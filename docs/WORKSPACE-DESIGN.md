@@ -467,7 +467,7 @@ Rules:
 | {{INSTANCE}}        | Instance name (same as Workspace name) |
 | {{USERID}}          | Workspace owner user ID |
 | {{NAMESPACE}}       | Namespace name |
-| {{PORT_NAME}}       | Service Port name |
+| {{NETRULE_NAME}}    | Network rule name |
 | {{PORT_NUMBER}}     | Service Port number |
 | {{NODEPORT_NUMBER}} | Service NodePort number |
 | {{LOADBALANCER}}    | Service LoadBalancer hostname or IP |
@@ -495,13 +495,13 @@ spec:
   template:
     name: code-server
   network:
-  - group: webide
+  - networkRule: webide
+    group: webide
     httpPath: /
-    portName: webide
     portNumber: 8080
-  - group: nodejs
+  - networkRule: nodejs
+    group: nodejs
     httpPath: /
-    portName: nodejs
     portNumber: 3000
 ```
 

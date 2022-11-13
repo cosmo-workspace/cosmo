@@ -128,7 +128,8 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
     url = url.replace('{{WORKSPACE}}', workspace.name);
     url = url.replace('{{NAMESPACE}}', 'cosmo-user-' + workspace.ownerId);
     url = url.replace('{{USERID}}', workspace.ownerId || '');
-    url = url.replace('{{PORT_NAME}}', networkRule.networkRuleName);
+    url = url.replace('{{NETRULE_NAME}}', networkRule.networkRuleName);
+    url = url.replace('{{PORT_NAME}}', networkRule.networkRuleName); // for compatibility
     url = url.replace('{{PORT_NUMBER}}', networkRule.portNumber.toString());
     const urlParts = url.split('{{NETRULE_GROUP}}');
     return (<>
