@@ -197,24 +197,24 @@ func (r *InstanceReconciler) applyChildObjects(ctx context.Context, inst *cosmov
 	inst.Status.LastApplied = objectRefMapToSlice(currApplied)
 
 	// garbage collection
-	shouldDeletes := objectRefNotExistsInMap(lastApplied, currApplied)
-	for _, d := range shouldDeletes {
-		log.Debug().Info("start garbage collection", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
+	// shouldDeletes := objectRefNotExistsInMap(lastApplied, currApplied)
+	// for _, d := range shouldDeletes {
+	// 	log.Debug().Info("start garbage collection", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
 
-		var obj unstructured.Unstructured
-		err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: inst.GetNamespace()}, &obj)
-		if err != nil {
-			if !apierrs.IsNotFound(err) {
-				log.Error(err, "failed to get object to be deleted", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
-			}
-			continue
-		}
+	// 	var obj unstructured.Unstructured
+	// 	err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: inst.GetNamespace()}, &obj)
+	// 	if err != nil {
+	// 		if !apierrs.IsNotFound(err) {
+	// 			log.Error(err, "failed to get object to be deleted", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
+	// 		}
+	// 		continue
+	// 	}
 
-		if err := r.Delete(ctx, &obj); err != nil {
-			r.Recorder.Eventf(inst, corev1.EventTypeWarning, "GCFailed", "failed to delete unused obj: %s %s", obj.GetKind(), obj.GetName())
-		}
-		r.Recorder.Eventf(inst, corev1.EventTypeNormal, "GC", "do garbage collection: %s %s", obj.GetKind(), obj.GetName())
-	}
+	// 	if err := r.Delete(ctx, &obj); err != nil {
+	// 		r.Recorder.Eventf(inst, corev1.EventTypeWarning, "GCFailed", "failed to delete unused obj: %s %s", obj.GetKind(), obj.GetName())
+	// 	}
+	// 	r.Recorder.Eventf(inst, corev1.EventTypeNormal, "GC", "do garbage collection: %s %s", obj.GetKind(), obj.GetName())
+	// }
 
 	return errs
 }
