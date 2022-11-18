@@ -81,7 +81,7 @@ func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	o.rule = wsv1alpha1.NetworkRule{
-		PortName:   o.NetRuleName,
+		Name:       o.NetRuleName,
 		PortNumber: o.PortNumber,
 		HTTPPath:   o.HTTPPath,
 		Group:      pointer.String(o.Group),
@@ -97,7 +97,7 @@ func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	if _, err := c.AddNetworkRule(ctx, o.WorkspaceName, o.User, o.rule.PortName,
+	if _, err := c.AddNetworkRule(ctx, o.WorkspaceName, o.User, o.rule.Name,
 		o.rule.PortNumber, o.rule.Group, o.rule.HTTPPath, o.rule.Public); err != nil {
 		return err
 	}

@@ -352,7 +352,7 @@ func test_createNetworkRule(userId, workspaceName, networkRuleName string, portN
 	Eventually(func() bool {
 		ws, _ := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
 		for _, n := range ws.Spec.Network {
-			if n.PortName == networkRuleName {
+			if n.Name == networkRuleName {
 				return true
 			}
 		}

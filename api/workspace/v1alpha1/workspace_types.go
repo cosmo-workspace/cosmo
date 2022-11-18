@@ -65,7 +65,7 @@ type Config struct {
 
 // NetworkRule is an abstract network configuration rule for workspace
 type NetworkRule struct {
-	PortName         string  `json:"portName"`
+	Name             string  `json:"name"`
 	PortNumber       int     `json:"portNumber"`
 	HTTPPath         string  `json:"httpPath"`
 	TargetPortNumber *int32  `json:"targetPortNumber,omitempty"`
@@ -75,20 +75,20 @@ type NetworkRule struct {
 }
 
 func (r *NetworkRule) Default() {
-	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 || r.Public == true {
+	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 || r.Public {
 		r.TargetPortNumber = pointer.Int32(int32(r.PortNumber))
 	}
 	if r.HTTPPath == "" {
 		r.HTTPPath = "/"
 	}
 	if r.Group == nil || *r.Group == "" {
-		r.Group = &r.PortName
+		r.Group = &r.Name
 	}
 }
 
 func (r *NetworkRule) ServicePort() corev1.ServicePort {
 	return corev1.ServicePort{
-		Name:       r.PortName,
+		Name:       r.Name,
 		Port:       int32(r.PortNumber),
 		Protocol:   corev1.ProtocolTCP,
 		TargetPort: intstr.FromInt(int(*r.TargetPortNumber)),
@@ -113,7 +113,7 @@ func (r *NetworkRule) IngressRule(backendSvcName string) netv1.IngressRule {
 							Service: &netv1.IngressServiceBackend{
 								Name: backendSvcName,
 								Port: netv1.ServiceBackendPort{
-									Name: r.PortName,
+									Name: r.Name,
 								},
 							},
 						},
@@ -128,7 +128,7 @@ func NetworkRulesByServiceAndIngress(svc corev1.Service, ing netv1.Ingress) []Ne
 	netRules := make([]NetworkRule, 0, len(svc.Spec.Ports))
 	for _, p := range svc.Spec.Ports {
 		var netRule NetworkRule
-		netRule.PortName = p.Name
+		netRule.Name = p.Name
 		netRule.PortNumber = int(p.Port)
 
 		if p.TargetPort.IntValue() != 0 {

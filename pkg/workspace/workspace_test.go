@@ -54,7 +54,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 						},
 						Network: []wsv1alpha1.NetworkRule{
 							{
-								PortName:         "port1",
+								Name:             "port1",
 								PortNumber:       8080,
 								HTTPPath:         "/",
 								TargetPortNumber: pointer.Int32(18080),

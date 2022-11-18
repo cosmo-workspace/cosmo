@@ -186,7 +186,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 	urlvarsMap := make(map[string]wsnet.URLVars)
 	for _, netRule := range ws.Spec.Network {
 		urlvars := wsnet.URLVars{}
-		urlvars.PortName = netRule.PortName
+		urlvars.NetworkRuleName = netRule.Name
 		urlvars.PortNumber = strconv.Itoa(netRule.PortNumber)
 		if netRule.Group != nil {
 			urlvars.NetRuleGroup = *netRule.Group
@@ -201,7 +201,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 
 		// node port
 		for _, p := range svc.Spec.Ports {
-			if p.Name == netRule.PortName {
+			if p.Name == netRule.Name {
 				urlvars.NodePortNumber = strconv.Itoa(int(p.NodePort))
 			}
 		}
@@ -216,7 +216,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 			}
 		}
 
-		urlvarsMap[netRule.PortName] = urlvars
+		urlvarsMap[netRule.Name] = urlvars
 	}
 
 	urlMap := make(map[string]string)

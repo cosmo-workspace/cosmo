@@ -151,7 +151,7 @@ COVER_PROFILE ?= cover.out
 #TEST_OPTS ?= --ginkgo.focus 'Dashboard server \[User\]' -ginkgo.v -ginkgo.progress -test.v > test.out 2>&1
 
 .PHONY: clear-snapshots
-clear-snapshots:
+clear-snapshots: ## Clear snapshots
 	find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
 
 .PHONY: go-test.env
@@ -178,9 +178,13 @@ ifeq ($(QUICK_BUILD),no)
 	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.23.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
 endif
 
+.PHONY: clear-snapshots-ui
+clear-snapshots-ui: ## Clear snapshots ui
+	find ./web -type f | grep __snapshots__ | xargs rm -f
+
 .PHONY: ui-test
 ui-test: ## Run UI tests.
-	cd web/dashboard-ui && yarn install && yarn test  --coverage  --ci --watchAll=false
+	cd web/dashboard-ui && yarn install && yarn test  --coverage --run
 
 ##---------------------------------------------------------------------
 ##@ Build
