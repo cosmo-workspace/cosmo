@@ -415,8 +415,6 @@ func Test_unstToObjectRef(t *testing.T) {
 	creationTime = creationTime.Local()
 	metaCreationTime := metav1.NewTime(creationTime)
 
-	now := metav1.Now()
-
 	type args struct {
 		obj             *unstructured.Unstructured
 		updateTimestamp metav1.Time
@@ -440,7 +438,6 @@ func Test_unstToObjectRef(t *testing.T) {
 						},
 					},
 				},
-				updateTimestamp: now,
 			},
 			want: cosmov1alpha1.ObjectRef{
 				ObjectReference: corev1.ObjectReference{
@@ -450,13 +447,12 @@ func Test_unstToObjectRef(t *testing.T) {
 					Namespace:  "default",
 				},
 				CreationTimestamp: &metaCreationTime,
-				UpdateTimestamp:   &now,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := unstToObjectRef(tt.args.obj, &tt.args.updateTimestamp); !reflect.DeepEqual(got, tt.want) {
+			if got := unstToObjectRef(tt.args.obj); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("unstToObjectRef() = %v, want %v", got, tt.want)
 			}
 		})
@@ -470,7 +466,6 @@ func instanceSnapshot(in cosmov1alpha1.InstanceObject) cosmov1alpha1.InstanceObj
 
 	for i, v := range obj.GetStatus().LastApplied {
 		v.CreationTimestamp = nil
-		v.UpdateTimestamp = nil
 		v.UID = ""
 		v.ResourceVersion = ""
 		obj.GetStatus().LastApplied[i] = v

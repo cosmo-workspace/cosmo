@@ -1,7 +1,23 @@
+['Dashboard server [auth] [Login] ✅ success in normal context: Entry: user_name:"admin-user"  password:"password2" 1']
+SnapShot = """
+{
+  \"user_name\": \"admin-user\",
+  \"expire_at\": {}
+}
+"""
+
 ['Dashboard server [auth] [Login] ✅ success in normal context: Entry: user_name:"admin-user" password:"password2" 1']
 SnapShot = """
 {
   \"user_name\": \"admin-user\",
+  \"expire_at\": {}
+}
+"""
+
+['Dashboard server [auth] [Login] ✅ success in normal context: Entry: user_name:"normal-user"  password:"password1" 1']
+SnapShot = """
+{
+  \"user_name\": \"normal-user\",
   \"expire_at\": {}
 }
 """
@@ -17,10 +33,16 @@ SnapShot = """
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: password:"password1" 1']
 SnapShot = 'permission_denied: incorrect user or password'
 
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"normal-user"  password:"invalid" 1']
+SnapShot = 'permission_denied: incorrect user or password'
+
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"normal-user" 1']
 SnapShot = 'permission_denied: incorrect user or password'
 
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"normal-user" password:"invalid" 1']
+SnapShot = 'permission_denied: incorrect user or password'
+
+['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"xxxxxxx"  password:"password1" 1']
 SnapShot = 'permission_denied: incorrect user or password'
 
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"xxxxxxx" password:"password1" 1']

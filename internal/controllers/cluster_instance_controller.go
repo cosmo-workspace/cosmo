@@ -75,13 +75,13 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	// 4. Update status
-	log.Debug().PrintObjectDiff(before, &inst)
 	if !equality.Semantic.DeepEqual(before, &inst) {
-		// Update status
+		log.Debug().PrintObjectDiff(before, &inst)
 		if err := r.Status().Update(ctx, &inst); err != nil {
 			log.Error(err, "failed to update InstanceStatus")
 			return ctrl.Result{}, err
 		}
+		log.Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")

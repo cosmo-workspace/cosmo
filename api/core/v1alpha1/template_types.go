@@ -23,7 +23,6 @@ func init() {
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:scope="Cluster",shortName=tmpl
 // +kubebuilder:storageversion
-// +kubebuilder:printcolumn:name="Required-Vars",type=string,JSONPath=`.spec.requiredVars`
 // Template is the Schema for the Templates API
 type Template struct {
 	metav1.TypeMeta   `json:",inline"`

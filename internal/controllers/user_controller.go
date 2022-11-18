@@ -7,7 +7,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -54,10 +53,12 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		r.Recorder.Eventf(&user, corev1.EventTypeWarning, "Sync Failed", "failed to sync namespace: %v", err)
 		return ctrl.Result{}, fmt.Errorf("failed to sync namespace: %w", err)
 	}
+	if op != controllerutil.OperationResultNone {
+		r.Recorder.Eventf(&user, corev1.EventTypeNormal, string(op), "successfully reconciled. namespace synced")
+	}
 
 	user.Status.Phase = ns.Status.Phase
 
-	now := metav1.Now()
 	gvk, err := apiutil.GVKForObject(&ns, r.Scheme)
 	if err != nil {
 		return ctrl.Result{}, err
@@ -72,20 +73,15 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 			ResourceVersion: ns.GetResourceVersion(),
 		},
 		CreationTimestamp: &ns.CreationTimestamp,
-		UpdateTimestamp:   &now,
 	}
 
 	// update user status
-	if !equality.Semantic.DeepEqual(currentUser, user) {
+	if !equality.Semantic.DeepEqual(currentUser, &user) {
+		log.Debug().PrintObjectDiff(currentUser, &user)
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
 		}
-	}
-	switch op {
-	case controllerutil.OperationResultCreated:
-		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Created", "successfully created namespace")
-	case controllerutil.OperationResultUpdated:
-		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Updated", "successfully updated namespace")
+		log.Info("status updated")
 	}
 
 	// generate default password if password secret is not found
@@ -129,9 +125,11 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	// update user status
 	if !equality.Semantic.DeepEqual(currentUser, user) {
+		log.Debug().PrintObjectDiff(currentUser, &user)
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
 		}
+		log.Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")

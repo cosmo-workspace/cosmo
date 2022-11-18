@@ -23,8 +23,8 @@ type InstanceObject interface {
 // +kubebuilder:resource:scope="Cluster",shortName=cinst
 // +kubebuilder:subresource:status
 // +kubebuilder:storageversion
-// +kubebuilder:printcolumn:name="ClusterTemplate",type=string,JSONPath=`.status.templateName`
-// +kubebuilder:printcolumn:name="Applied-Resources",type=string,JSONPath=`.status.lastApplied[*].kind`
+// +kubebuilder:printcolumn:name="ClusterTemplate",type=string,JSONPath=`.spec.template.name`
+// +kubebuilder:printcolumn:name="AppliedResources",type=string,JSONPath=`.status.lastAppliedObjectsCount`
 // ClusterInstance is the Schema for the instances API
 type ClusterInstance struct {
 	metav1.TypeMeta   `json:",inline"`

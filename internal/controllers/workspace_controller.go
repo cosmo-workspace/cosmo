@@ -13,7 +13,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
@@ -69,7 +68,6 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, err
 	}
 
-	now := metav1.Now()
 	gvk, _ := apiutil.GVKForObject(inst, r.Scheme)
 	ws.Status.Instance = cosmov1alpha1.ObjectRef{
 		ObjectReference: corev1.ObjectReference{
@@ -81,23 +79,19 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 			UID:             inst.GetUID(),
 		},
 		CreationTimestamp: &inst.CreationTimestamp,
-		UpdateTimestamp:   &now,
 	}
 
-	switch op {
-	case controllerutil.OperationResultCreated:
-		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Created", "successfully instance created")
-		ws.Status.Instance.CreationTimestamp = &now
-
-	case controllerutil.OperationResultUpdated:
-		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Updated", "instance is not desired state, updated")
+	if op != controllerutil.OperationResultNone {
+		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. instance synced")
 	}
 
 	// update workspace status
-	if !equality.Semantic.DeepEqual(currentWs, ws) {
+	if !equality.Semantic.DeepEqual(currentWs, &ws) {
+		log.Debug().PrintObjectDiff(currentWs, &ws)
 		if err := r.Status().Update(ctx, &ws); err != nil {
 			return ctrl.Result{}, err
 		}
+		log.Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")
