@@ -113,15 +113,13 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	// update workspace status
 	if !equality.Semantic.DeepEqual(current, &ws) {
 		log.Debug().PrintObjectDiff(current, &ws)
-
 		if err := r.Status().Update(ctx, &ws); err != nil {
 			return ctrl.Result{}, err
 		}
-
-		log.Info("workspace status updated", "ws", ws.Name)
+		log.Info("status updated")
 	}
 
-	log.Debug().Info("finish reconcile")
+	log.Debug().Info("finish reconcile", "requeue", requeue)
 	if requeue {
 		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	}

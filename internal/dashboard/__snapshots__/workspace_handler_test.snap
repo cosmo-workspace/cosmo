@@ -1,41 +1,4 @@
-['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"template1" 1']
-SnapShot = """
-{
-  \"message\": \"Successfully created\",
-  \"workspace\": {
-    \"name\": \"ws1\",
-    \"owner_id\": \"admin-user\",
-    \"spec\": {
-      \"template\": \"template1\",
-      \"replicas\": 1
-    },
-    \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
-    }
-  }
-}
-"""
-
-['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"template1" 2']
-SnapShot = """
-{
-  \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-admin-user\",
-  \"Spec\": {
-    \"template\": {
-      \"name\": \"template1\"
-    },
-    \"replicas\": 1
-  },
-  \"Status\": {
-    \"instance\": {},
-    \"config\": {}
-  }
-}
-"""
-
-['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"template1" vars:{key:"HOGE" value:"HOGEHOGE"} 1']
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1"  vars:{key:"HOGE"  value:"HOGEHOGE"} 1']
 SnapShot = """
 {
   \"message\": \"Successfully created\",
@@ -57,7 +20,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"template1" vars:{key:"HOGE" value:"HOGEHOGE"} 2']
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1"  vars:{key:"HOGE"  value:"HOGEHOGE"} 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -78,7 +41,44 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" template:"template1" 1']
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1" 1']
+SnapShot = """
+{
+  \"message\": \"Successfully created\",
+  \"workspace\": {
+    \"name\": \"ws1\",
+    \"owner_id\": \"admin-user\",
+    \"spec\": {
+      \"template\": \"template1\",
+      \"replicas\": 1
+    },
+    \"status\": {
+      \"phase\": \"Pending\",
+      \"url_base\": \"https://default.example.com\"
+    }
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1" 2']
+SnapShot = """
+{
+  \"Name\": \"ws1\",
+  \"Namespace\": \"cosmo-user-admin-user\",
+  \"Spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1
+  },
+  \"Status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  template:"template1" 1']
 SnapShot = """
 {
   \"message\": \"Successfully created\",
@@ -97,7 +97,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" template:"template1" 2']
+['Dashboard server [Workspace] [CreateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  template:"template1" 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -115,28 +115,28 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" template:"template1" 1']
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  template:"template1" 1']
 SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" template:"template1" 1']
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  template:"template1" 1']
 SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.WsName: value length must be at least 1 runes'
 
-['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"XXXX" template:"template1" 1']
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"XXXX"  template:"template1" 1']
 SnapShot = 'internal: failed to create workspace'
 
-['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"existing-ws" template:"template1" 1']
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"existing-ws"  template:"template1" 1']
 SnapShot = 'already_exists: Workspace already exists'
 
-['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" 1']
-SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.Template: value length must be at least 1 runes'
-
-['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" template:"XXX" 1']
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  template:"XXX" 1']
 SnapShot = 'invalid_argument: failed to get workspace config in template'
 
-['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" template:"template1" 1']
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1" 1']
+SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.Template: value length must be at least 1 runes'
+
+['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1"  template:"template1" 1']
 SnapShot = 'not_found: user is not found'
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"nw1" 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"nw1" 1']
 SnapShot = """
 {
   \"message\": \"Successfully removed network rule\",
@@ -149,7 +149,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"nw1" 2']
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"nw1" 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -182,7 +182,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" network_rule_name:"nw1" 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  network_rule_name:"nw1" 1']
 SnapShot = """
 {
   \"message\": \"Successfully removed network rule\",
@@ -195,7 +195,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" network_rule_name:"nw1" 2']
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  network_rule_name:"nw1" 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -217,25 +217,25 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"nw1" 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"nw1" 1']
 SnapShot = 'internal: failed to remove network rule'
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"nw1" 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"nw1" 1']
 SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"main" 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"main" 1']
 SnapShot = 'invalid_argument: main port cannot be removed'
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule_name:"xxx" 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule_name:"xxx" 1']
 SnapShot = 'invalid_argument: port name xxx is not found'
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" network_rule_name:"nw2" 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"xxx"  network_rule_name:"nw2" 1']
 SnapShot = 'not_found: workspace is not found'
 
-['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" network_rule_name:"nw2" 1']
+['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1"  network_rule_name:"nw2" 1']
 SnapShot = 'not_found: user is not found'
 
-['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"normal-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"normal-user"  ws_name:"ws1" 1']
 SnapShot = """
 {
   \"message\": \"Successfully deleted\",
@@ -257,7 +257,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1" 1']
 SnapShot = """
 {
   \"message\": \"Successfully deleted\",
@@ -279,19 +279,19 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: admin-user, user_name:"normal-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: Entry: admin-user, user_name:"normal-user"  ws_name:"ws1" 1']
 SnapShot = 'internal: failed to delete workspace'
 
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1" 1']
 SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" 1']
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"xxx" 1']
 SnapShot = 'not_found: workspace is not found'
 
-['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1" 1']
 SnapShot = 'not_found: user is not found'
 
-['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1" 1']
 SnapShot = """
 {
   \"workspace\": {
@@ -309,7 +309,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"normal-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"normal-user"  ws_name:"ws1" 1']
 SnapShot = """
 {
   \"workspace\": {
@@ -330,7 +330,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1" 1']
 SnapShot = """
 {
   \"workspace\": {
@@ -351,16 +351,16 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: admin-user, user_name:"normal-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: Entry: admin-user, user_name:"normal-user"  ws_name:"ws1" 1']
 SnapShot = 'internal: failed to get user'
 
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1" 1']
 SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" 1']
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"xxx" 1']
 SnapShot = 'not_found: workspace is not found'
 
-['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" 1']
+['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1" 1']
 SnapShot = 'not_found: user is not found'
 
 ['Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" 1']
@@ -438,10 +438,7 @@ SnapShot = 'not_found: user is not found'
 ['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with unexpected error: Entry: admin-user, user_name:"admin-user" 1']
 SnapShot = 'internal: failed to list workspaces'
 
-['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" 1']
-SnapShot = 'invalid_argument: no change'
-
-['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:0 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  replicas:0 1']
 SnapShot = """
 {
   \"message\": \"Successfully updated\",
@@ -459,7 +456,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:0 2']
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  replicas:0 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -481,7 +478,10 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" replicas:5 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1" 1']
+SnapShot = 'invalid_argument: no change'
+
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  replicas:5 1']
 SnapShot = """
 {
   \"message\": \"Successfully updated\",
@@ -500,7 +500,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" replicas:5 2']
+['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user"  ws_name:"ws1"  replicas:5 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -522,22 +522,22 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:0 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  replicas:0 1']
 SnapShot = 'internal: failed to update workspace'
 
-['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" replicas:0 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  replicas:0 1']
 SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:1 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  replicas:1 1']
 SnapShot = 'invalid_argument: no change'
 
-['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"normal-user" ws_name:"xxx" replicas:1 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"normal-user"  ws_name:"xxx"  replicas:1 1']
 SnapShot = 'not_found: workspace is not found'
 
-['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" replicas:0 1']
+['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1"  replicas:0 1']
 SnapShot = 'not_found: user is not found'
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 1']
 SnapShot = """
 {
   \"message\": \"Successfully upserted network rule\",
@@ -550,7 +550,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 2']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -592,7 +592,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 public:true} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  public:true} 1']
 SnapShot = """
 {
   \"message\": \"Successfully upserted network rule\",
@@ -604,7 +604,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 public:true} 2']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  public:true} 2']
 SnapShot = """
 {
   \"Name\": \"ws1\",
@@ -646,23 +646,23 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 public:true} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  public:true} 1']
 SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 public:true} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  public:true} 1']
 SnapShot = 'internal: failed to upsert network rule'
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 1']
 SnapShot = 'permission_denied'
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:9999 group:"gp1" http_path:"/"} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:9999  group:"gp1"  http_path:"/"} 1']
 SnapShot = 'invalid_argument: port 9999 is already used'
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws9" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp1" http_path:"/"} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"ws9"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp1"  http_path:"/"} 1']
 SnapShot = 'not_found: workspace is not found'
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user"  ws_name:"xxx"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 1']
 SnapShot = 'not_found: workspace is not found'
 
-['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" network_rule:{network_rule_name:"nw2" port_number:3000 group:"gp2" http_path:"/"} 1']
+['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx"  ws_name:"ws1"  network_rule:{network_rule_name:"nw2"  port_number:3000  group:"gp2"  http_path:"/"} 1']
 SnapShot = 'not_found: user is not found'

@@ -149,10 +149,6 @@ parameters:
 			}, time.Second*10).Should(Succeed())
 			Ω(objectSnapshot(&sc)).To(MatchSnapShot())
 
-			By("checking creation time equal to update time")
-			for _, v := range createdInst.Status.LastApplied {
-				Expect(*v.CreationTimestamp).Should(BeEquivalentTo(*v.UpdateTimestamp))
-			}
 		})
 	})
 

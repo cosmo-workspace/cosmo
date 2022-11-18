@@ -21,8 +21,8 @@ func init() {
 // +kubebuilder:resource:shortName=inst
 // +kubebuilder:subresource:status
 // +kubebuilder:storageversion
-// +kubebuilder:printcolumn:name="Template",type=string,JSONPath=`.status.templateName`
-// +kubebuilder:printcolumn:name="Applied-Resources",type=string,JSONPath=`.status.lastApplied[*].kind`
+// +kubebuilder:printcolumn:name="Template",type=string,JSONPath=`.spec.template.name`
+// +kubebuilder:printcolumn:name="AppliedResources",type=string,JSONPath=`.status.lastAppliedObjectsCount`
 // Instance is the Schema for the instances API
 type Instance struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -125,7 +125,6 @@ type InstanceStatus struct {
 type ObjectRef struct {
 	corev1.ObjectReference `json:",inline"`
 	CreationTimestamp      *metav1.Time `json:"creationTimestamp,omitempty"`
-	UpdateTimestamp        *metav1.Time `json:"updateTimestamp,omitempty"`
 }
 
 func (r *ObjectRef) SetName(name string) {

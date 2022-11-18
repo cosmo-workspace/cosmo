@@ -17,11 +17,7 @@ spec:
     singular: template
   scope: Cluster
   versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.requiredVars
-      name: Required-Vars
-      type: string
-    name: v1alpha1
+  - name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Template is the Schema for the Templates API
@@ -61,4 +57,3 @@ spec:
         type: object
     served: true
     storage: true
-    subresources: {}

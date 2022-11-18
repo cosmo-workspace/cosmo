@@ -23,7 +23,6 @@ type TemplateObject interface {
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:scope="Cluster",shortName=ctmpl
 // +kubebuilder:storageversion
-// +kubebuilder:printcolumn:name="Required-Vars",type=string,JSONPath=`.spec.requiredVars`
 // ClusterTemplate is the Schema for the Templates API
 type ClusterTemplate struct {
 	metav1.TypeMeta   `json:",inline"`

@@ -8,7 +8,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -85,13 +84,13 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	// 4. Update status
-	log.Debug().PrintObjectDiff(before, &inst)
 	if !equality.Semantic.DeepEqual(before, &inst) {
-		// Update status
+		log.Debug().PrintObjectDiff(before, &inst)
 		if err := r.Status().Update(ctx, &inst); err != nil {
 			log.Error(err, "failed to update InstanceStatus")
 			return ctrl.Result{}, err
 		}
+		log.Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")
@@ -116,7 +115,6 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 	log := clog.FromContext(ctx).WithCaller()
 	errs := make([]error, 0)
 
-	now := metav1.Now()
 	lastAppliedMap := sliceToObjectMap(inst.GetStatus().LastApplied)
 
 	lastApplied := make([]cosmov1alpha1.ObjectRef, len(inst.GetStatus().LastApplied))
@@ -168,7 +166,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s created", built.GetKind(), built.GetName())
 
-				currAppliedMap[created.GetUID()] = unstToObjectRef(created, &now)
+				currAppliedMap[created.GetUID()] = unstToObjectRef(created)
 			} else {
 				errs = append(errs, fmt.Errorf("failed to get resource: kind = %s name = %s: %w", built.GetKind(), built.GetName(), err))
 				continue
@@ -184,7 +182,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 			if l, ok := lastAppliedMap[desired.GetUID()]; !ok {
 				currAppliedMap[desired.GetUID()] = l
 			} else {
-				currAppliedMap[desired.GetUID()] = unstToObjectRef(desired, nil)
+				currAppliedMap[desired.GetUID()] = unstToObjectRef(desired)
 			}
 
 			// compare current with the desired state
@@ -201,7 +199,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s is not desired state, synced", built.GetKind(), built.GetName())
 
-				currAppliedMap[desired.GetUID()] = unstToObjectRef(desired, &now)
+				currAppliedMap[desired.GetUID()] = unstToObjectRef(desired)
 			}
 		}
 	}
@@ -248,7 +246,7 @@ func (r *instanceReconciler) apply(ctx context.Context, obj *unstructured.Unstru
 }
 
 // unstToObjectRef generate ObjectRef by Unstructured object
-func unstToObjectRef(obj *unstructured.Unstructured, updateTimestamp *metav1.Time) cosmov1alpha1.ObjectRef {
+func unstToObjectRef(obj *unstructured.Unstructured) cosmov1alpha1.ObjectRef {
 	ref := cosmov1alpha1.ObjectRef{}
 	ref.SetGroupVersionKind(obj.GetObjectKind().GroupVersionKind())
 	ref.Name = obj.GetName()
@@ -258,7 +256,6 @@ func unstToObjectRef(obj *unstructured.Unstructured, updateTimestamp *metav1.Tim
 
 	create := obj.GetCreationTimestamp()
 	ref.CreationTimestamp = &create
-	ref.UpdateTimestamp = updateTimestamp
 	return ref
 }
 

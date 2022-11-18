@@ -18,11 +18,11 @@ spec:
   scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .status.templateName
+    - jsonPath: .spec.template.name
       name: ClusterTemplate
       type: string
-    - jsonPath: .status.lastApplied[*].kind
-      name: Applied-Resources
+    - jsonPath: .status.lastAppliedObjectsCount
+      name: AppliedResources
       type: string
     name: v1alpha1
     schema:
@@ -366,9 +366,6 @@ spec:
                             uid:
                               description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                               type: string
-                            updateTimestamp:
-                              format: date-time
-                              type: string
                           type: object
                           x-kubernetes-map-type: atomic
                       required:
@@ -422,9 +419,6 @@ spec:
                               type: string
                             uid:
                               description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
-                              type: string
-                            updateTimestamp:
-                              format: date-time
                               type: string
                           type: object
                           x-kubernetes-map-type: atomic
@@ -491,9 +485,6 @@ spec:
                       type: string
                     uid:
                       description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
-                      type: string
-                    updateTimestamp:
-                      format: date-time
                       type: string
                   type: object
                   x-kubernetes-map-type: atomic
