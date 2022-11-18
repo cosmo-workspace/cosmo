@@ -55,7 +55,7 @@ spec:
                       type: string
                     httpPath:
                       type: string
-                    portName:
+                    name:
                       type: string
                     portNumber:
                       type: integer
@@ -66,7 +66,7 @@ spec:
                       type: integer
                   required:
                   - httpPath
-                  - portName
+                  - name
                   - portNumber
                   - public
                   type: object

@@ -632,7 +632,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| network_rule_name | [string](#string) |  |  |
+| name | [string](#string) |  |  |
 | port_number | [int32](#int32) |  |  |
 | group | [string](#string) |  |  |
 | http_path | [string](#string) |  |  |

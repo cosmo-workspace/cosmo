@@ -57,7 +57,7 @@ func (m *NetworkRule) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for NetworkRuleName
+	// no validation rules for Name
 
 	// no validation rules for PortNumber
 

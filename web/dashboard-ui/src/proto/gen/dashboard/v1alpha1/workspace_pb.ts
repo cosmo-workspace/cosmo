@@ -15,9 +15,9 @@ import {Message, proto3, protoInt64} from "@bufbuild/protobuf";
  */
 export class NetworkRule extends Message<NetworkRule> {
   /**
-   * @generated from field: string network_rule_name = 1;
+   * @generated from field: string name = 1;
    */
-  networkRuleName = "";
+  name = "";
 
   /**
    * @generated from field: int32 port_number = 2;
@@ -52,7 +52,7 @@ export class NetworkRule extends Message<NetworkRule> {
   static readonly runtime = proto3;
   static readonly typeName = "dashboard.v1alpha1.NetworkRule";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "network_rule_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "port_number", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 3, name: "group", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "http_path", kind: "scalar", T: 9 /* ScalarType.STRING */ },

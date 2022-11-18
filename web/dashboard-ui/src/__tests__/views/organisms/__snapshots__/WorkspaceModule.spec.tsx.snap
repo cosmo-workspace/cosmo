@@ -912,7 +912,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
         NetworkRule {
           "group": "",
           "httpPath": "",
-          "networkRuleName": "portname1",
+          "name": "portname1",
           "portNumber": 3000,
           "public": false,
           "url": "url1",
@@ -920,7 +920,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
         NetworkRule {
           "group": "",
           "httpPath": "",
-          "networkRuleName": "portname2",
+          "name": "portname2",
           "portNumber": 3000,
           "public": false,
           "url": "url2",
@@ -988,7 +988,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
         NetworkRule {
           "group": "",
           "httpPath": "",
-          "networkRuleName": "portname1",
+          "name": "portname1",
           "portNumber": 3000,
           "public": false,
           "url": "url1",
@@ -996,7 +996,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
         NetworkRule {
           "group": "",
           "httpPath": "",
-          "networkRuleName": "portname2",
+          "name": "portname2",
           "portNumber": 3000,
           "public": false,
           "url": "url2",
@@ -1064,7 +1064,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
         NetworkRule {
           "group": "",
           "httpPath": "",
-          "networkRuleName": "portname1",
+          "name": "portname1",
           "portNumber": 3000,
           "public": false,
           "url": "url1",
@@ -1072,7 +1072,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
         NetworkRule {
           "group": "",
           "httpPath": "",
-          "networkRuleName": "portname2",
+          "name": "portname2",
           "portNumber": 3000,
           "public": false,
           "url": "url2",

@@ -10,7 +10,8 @@ import (
 
 const (
 	// common
-	URLVarPortName      = "{{PORT_NAME}}"
+	URLVarPortName      = "{{PORT_NAME}}" // For compatibility
+	URLVarNetRuleName   = "{{NETRULE_NAME}}"
 	URLVarPortNumber    = "{{PORT_NUMBER}}"
 	URLVarNetRuleGroup  = "{{NETRULE_GROUP}}"
 	URLVarInstanceName  = "{{INSTANCE}}"
@@ -26,13 +27,13 @@ const (
 )
 
 // e.g. http://localhost:{{PORT_NUMBER}}
-// e.g. https://{{PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain
+// e.g. https://{{NETRULE_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain
 type URLBase string
 
 type URLVars struct {
-	PortName     string
-	PortNumber   string
-	NetRuleGroup string
+	NetworkRuleName string
+	PortNumber      string
+	NetRuleGroup    string
 
 	InstanceName  string
 	WorkspaceName string
@@ -49,7 +50,7 @@ func NewURLVars(netRule wsv1alpha1.NetworkRule) URLVars {
 	netRule.Default()
 
 	v := URLVars{}
-	v.PortName = netRule.PortName
+	v.NetworkRuleName = netRule.Name
 	v.PortNumber = strconv.Itoa(netRule.PortNumber)
 	v.IngressPath = netRule.HTTPPath
 	v.NetRuleGroup = *netRule.Group
@@ -62,7 +63,8 @@ func (u URLBase) GenURL(v URLVars) string {
 
 	url := string(u)
 
-	url = strings.ReplaceAll(url, URLVarPortName, v.PortName)
+	url = strings.ReplaceAll(url, URLVarNetRuleName, v.NetworkRuleName)
+	url = strings.ReplaceAll(url, URLVarPortName, v.NetworkRuleName)
 	url = strings.ReplaceAll(url, URLVarPortNumber, v.PortNumber)
 	url = strings.ReplaceAll(url, URLVarNetRuleGroup, v.NetRuleGroup)
 	url = strings.ReplaceAll(url, URLVarInstanceName, v.InstanceName)
@@ -128,7 +130,7 @@ func (v *URLVars) setDefault() {
 	}
 
 	if v.NetRuleGroup == "" {
-		v.NetRuleGroup = v.PortName
+		v.NetRuleGroup = v.NetworkRuleName
 	}
 
 	val := reflect.Indirect(reflect.ValueOf(v))
