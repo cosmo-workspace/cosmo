@@ -3,7 +3,7 @@ package cmd
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -34,7 +34,7 @@ var _ = Describe("cosmoctl [template]", func() {
 		inBuf      *bytes.Buffer
 	)
 	consoleOut := func() string {
-		out, _ := ioutil.ReadAll(outBuf)
+		out, _ := io.ReadAll(outBuf)
 		return string(out)
 	}
 

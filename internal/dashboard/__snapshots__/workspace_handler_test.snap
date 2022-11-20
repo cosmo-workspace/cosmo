@@ -395,13 +395,13 @@ SnapShot = """
           {
             \"name\": \"nw2\",
             \"port_number\": 3333,
-            \"group\": \"gp1\",
+            \"group\": \"gp2\",
             \"http_path\": \"/\"
           },
           {
             \"name\": \"nw3\",
             \"port_number\": 2222,
-            \"group\": \"gp1\",
+            \"group\": \"gp3\",
             \"http_path\": \"/\"
           }
         ]

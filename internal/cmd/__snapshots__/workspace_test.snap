@@ -609,7 +609,7 @@ cosmo-user-user1   ws2    template1   Pending
 SnapShot = """
 USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
 cosmo-user-user1   ws2              nw1         1111          gp1     /           
-cosmo-user-user1   ws2              nw3         2222          gp1     /           
+cosmo-user-user1   ws2              nw3         2222          gp3     /           
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o yaml 1']
@@ -709,8 +709,8 @@ spec:
     portNumber: 1111
     public: false
     targetPortNumber: 1111
-  - group: gp1
-    host: gp1-ws2-user1.domain
+  - group: gp3
+    host: gp3-ws2-user1.domain
     httpPath: /
     name: nw3
     portNumber: 2222
@@ -733,7 +733,7 @@ status:
 SnapShot = """
 USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
 cosmo-user-user1   ws2              nw1         1111          gp1     /           
-cosmo-user-user1   ws2              nw3         2222          gp1     /           
+cosmo-user-user1   ws2              nw3         2222          gp3     /           
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o wide 1']
@@ -840,8 +840,8 @@ spec:
     portNumber: 1111
     public: false
     targetPortNumber: 1111
-  - group: gp1
-    host: gp1-ws2-user1.domain
+  - group: gp3
+    host: gp3-ws2-user1.domain
     httpPath: /
     name: nw3
     portNumber: 2222

@@ -27,21 +27,21 @@ SnapShot = """
         \"public\": false
       },
       {
-        \"name\": \"nw3\",
-        \"portNumber\": 2222,
-        \"httpPath\": \"/\",
-        \"targetPortNumber\": 2222,
-        \"host\": \"gp1-ws1-user1.domain\",
-        \"group\": \"gp1\",
-        \"public\": false
-      },
-      {
         \"name\": \"nw11\",
         \"portNumber\": 3000,
         \"httpPath\": \"/abc\",
         \"targetPortNumber\": 3000,
         \"host\": \"gp11-ws1-user1.domain\",
         \"group\": \"gp11\",
+        \"public\": false
+      },
+      {
+        \"name\": \"nw3\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"gp2-ws1-user1.domain\",
+        \"group\": \"gp2\",
         \"public\": false
       }
     ]
@@ -90,8 +90,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"gp1-ws1-user1.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-ws1-user1.domain\",
+        \"group\": \"gp2\",
         \"public\": false
       },
       {
@@ -149,8 +149,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"gp1-ws1-user1.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-ws1-user1.domain\",
+        \"group\": \"gp2\",
         \"public\": false
       },
       {
@@ -379,7 +379,7 @@ Global Flags:
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --path / 2']
 SnapShot = 'validation error: --port is required'
 
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 1111 --path / 1']
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 1111 --path / --group gp1 1']
 SnapShot = """
 Error: port 1111 is already used
 Usage:
@@ -405,7 +405,7 @@ Global Flags:
 
 """
 
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 1111 --path / 2']
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 1111 --path / --group gp1 2']
 SnapShot = 'port 1111 is already used'
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 3000 --path / -A 1']

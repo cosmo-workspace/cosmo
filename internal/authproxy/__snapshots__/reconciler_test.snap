@@ -23,8 +23,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -76,8 +76,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -129,8 +129,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -182,8 +182,8 @@ SnapShot = """
         \"portNumber\": 4444,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 4444,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -235,8 +235,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -275,15 +275,6 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"name\": \"nw2\",
-        \"portNumber\": 2222,
-        \"httpPath\": \"/cdf\",
-        \"targetPortNumber\": 2222,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
-        \"public\": true
-      },
-      {
         \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/abc\",
@@ -291,6 +282,15 @@ SnapShot = """
         \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
+      },
+      {
+        \"name\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/cdf\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
+        \"public\": true
       }
     ]
   },
@@ -341,8 +341,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -388,8 +388,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": false
       }
     ]
@@ -512,8 +512,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"gp1-test-workspace-test-user.domain\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]

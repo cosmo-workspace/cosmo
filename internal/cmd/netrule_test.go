@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"io/ioutil"
+	"io"
 	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -32,7 +32,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		outBuf     *bytes.Buffer
 	)
 	consoleOut := func() string {
-		out, _ := ioutil.ReadAll(outBuf)
+		out, _ := io.ReadAll(outBuf)
 		return string(out)
 	}
 
@@ -109,7 +109,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws1", "template1", nil)
 				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws1", "nw3", 2222, "gp1", "/")
+				test_createNetworkRule("user1", "ws1", "nw3", 2222, "gp2", "/")
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "3000", "--path", "/abc", "--group", "gp11"),
@@ -131,7 +131,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--path", "/"),
 			Entry(desc, "netrule", "create", "nw11", "--user", "xxxxx", "--workspace", "ws1", "--port", "3000", "--path", "/"),
 			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "xxx", "--port", "3000", "--path", "/"),
-			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "1111", "--path", "/"),
+			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "1111", "--path", "/", "--group", "gp1"),
 			Entry(desc, "netrule", "create", "nw1", "--user", "user1", "--workspace", "ws1", "--port", "1111", "--path", "/", "--group", "gp1"),
 		)
 
@@ -171,7 +171,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws1", "template1", nil)
 				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws1", "nw2", 2222, "gp1", "/")
+				test_createNetworkRule("user1", "ws1", "nw2", 2222, "gp2", "/")
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "delete", "ws1", "--user", "user1", "--workspace", "nw1"),

@@ -161,7 +161,7 @@ var _ = Describe("auth-proxy controller", func() {
 			func() {
 				testUtil.CreateWorkspace("test-user", "test-workspace", "template1", nil)
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/", true)
 			},
 			func() {},
 		),
@@ -171,7 +171,7 @@ var _ = Describe("auth-proxy controller", func() {
 			func() {
 				testUtil.CreateWorkspace("test-user", "test-workspace", "template1", nil)
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/", true)
 			},
 		),
 
@@ -179,13 +179,13 @@ var _ = Describe("auth-proxy controller", func() {
 			func() {
 				testUtil.CreateWorkspace("test-user", "test-workspace", "template1", nil)
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/", true)
 			},
 			func() {
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 3333, "gp1", "/", false)
 			},
 			func() {
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 4444, "gp1", "/", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 4444, "gp2", "/", true)
 			},
 		),
 
@@ -193,13 +193,13 @@ var _ = Describe("auth-proxy controller", func() {
 			func() {
 				testUtil.CreateWorkspace("test-user", "test-workspace", "template1", nil)
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/", true)
 			},
 			func() {
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/abc", false)
 			},
 			func() {
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/cdf", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/cdf", true)
 			},
 		),
 
@@ -207,13 +207,13 @@ var _ = Describe("auth-proxy controller", func() {
 			func() {
 				testUtil.CreateWorkspace("test-user", "test-workspace", "template1", nil)
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/", true)
 			},
 			func() {
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/", true)
 			},
 			func() {
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/", false)
 			},
 		),
 
@@ -221,7 +221,7 @@ var _ = Describe("auth-proxy controller", func() {
 			func() {
 				testUtil.CreateWorkspace("test-user", "test-workspace", "template1", nil)
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/", true)
 			},
 			func() {
 				testUtil.DeleteNetworkRule("test-user", "test-workspace", "nw2")
@@ -236,7 +236,7 @@ var _ = Describe("auth-proxy controller", func() {
 			func() {
 				testUtil.CreateWorkspace("test-user", "test-workspace", "template1", nil)
 				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp1", "/", true)
+				testUtil.UpsertNetworkRule("test-user", "test-workspace", "nw2", 2222, "gp2", "/", true)
 			},
 			func() {
 				testUtil.DeleteWorkspaceAll()
