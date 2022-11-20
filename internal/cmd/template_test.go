@@ -184,14 +184,6 @@ var _ = Describe("cosmoctl [template]", func() {
 			Entry(desc, "template", "validate", "--file", createFile(userAddonTmplData, "test-user-addon-template.yaml")),
 		)
 
-		DescribeTable("❌ fail with an unexpected error at list users:",
-			func(args ...string) {
-				clientMock.SetListError("\\.RunE$", errors.New("mock list error"))
-				run_test(args...)
-			},
-			// Entry(desc, "template", "get"),
-			// Entry(desc, "template", "get", "--workspace"),
-		)
 	})
 
 })
