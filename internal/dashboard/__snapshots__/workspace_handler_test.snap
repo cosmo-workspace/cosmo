@@ -11,7 +11,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -51,7 +51,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -91,7 +91,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -165,7 +165,7 @@ SnapShot = """
         \"portNumber\": 18080,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 18080,
-        \"host\": \"default.example.com\",
+        \"host\": \"main-ws1-admin-user.domain\",
         \"group\": \"main\",
         \"public\": false
       }
@@ -176,7 +176,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -211,7 +211,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -251,7 +251,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -273,7 +273,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -303,7 +303,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -324,7 +324,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -345,7 +345,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -376,7 +376,7 @@ SnapShot = """
       },
       \"status\": {
         \"phase\": \"Pending\",
-        \"url_base\": \"https://default.example.com\"
+        \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
       }
     },
     {
@@ -408,7 +408,7 @@ SnapShot = """
       },
       \"status\": {
         \"phase\": \"Pending\",
-        \"url_base\": \"https://default.example.com\"
+        \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
       }
     }
   ]
@@ -453,7 +453,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -475,7 +475,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -494,7 +494,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://default.example.com\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -516,7 +516,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -566,7 +566,7 @@ SnapShot = """
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 9999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-ws1-admin-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -575,7 +575,7 @@ SnapShot = """
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 3000,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp2-ws1-admin-user.domain\",
         \"group\": \"gp2\",
         \"public\": false
       }
@@ -586,7 +586,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -620,7 +620,7 @@ SnapShot = """
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 9999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-ws1-admin-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -629,7 +629,7 @@ SnapShot = """
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 3000,
-        \"host\": \"default.example.com\",
+        \"host\": \"nw2-ws1-admin-user.domain\",
         \"group\": \"nw2\",
         \"public\": true
       }
@@ -640,7 +640,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }

@@ -45,7 +45,7 @@ var (
 	cancel     context.CancelFunc
 )
 
-const DefaultURLBase = "https://default.example.com"
+const DefaultURLBase = "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain"
 
 func init() {
 	cosmov1alpha1.AddToScheme(scheme.Scheme)

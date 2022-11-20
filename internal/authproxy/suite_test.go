@@ -123,7 +123,7 @@ var _ = BeforeSuite(func() {
 	(&webhooks.TemplateMutationWebhookHandler{
 		Client:         k8sClient,
 		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
-		DefaultURLBase: "https://default.example.com",
+		DefaultURLBase: "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain",
 	}).SetupWebhookWithManager(wsMgr)
 
 	(&webhooks.TemplateValidationWebhookHandler{
