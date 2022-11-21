@@ -387,12 +387,8 @@ spec:
 		})
 	})
 
-	Context("when creating workspace with duplicated ports", func() {
-		It("should deny", func() {
-			ctx := context.Background()
-
-			var err error
-
+	DescribeTable("when creating workspace",
+		func(netRules []wsv1alpha1.NetworkRule) {
 			ws := wsv1alpha1.Workspace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testws6",
@@ -401,23 +397,84 @@ spec:
 				Spec: wsv1alpha1.WorkspaceSpec{
 					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
-					Network: []wsv1alpha1.NetworkRule{
-						{
-							Name:       "nw1",
-							PortNumber: 1111,
-						},
-						{
-							Name:       "nw2",
-							PortNumber: 1111,
-						},
-					},
+					Network:  netRules,
 				},
 			}
-
-			err = k8sClient.Create(ctx, &ws)
+			err := k8sClient.Create(context.Background(), &ws)
 			Expect(err).To(MatchSnapShot())
-		})
-	})
+		},
+		Entry("❌ fail with invalid port number", []wsv1alpha1.NetworkRule{
+			{
+				Name:       "a23456789012345",
+				PortNumber: 0,
+				HTTPPath:   "",
+				Public:     false,
+			},
+		}),
+
+		Entry("❌ fail with invalid port name", []wsv1alpha1.NetworkRule{
+			{
+				Name:       "a234567890123456",
+				PortNumber: 1,
+				HTTPPath:   "",
+				Public:     false,
+			},
+		}),
+		Entry("❌ fail with duplicated network rule name", []wsv1alpha1.NetworkRule{
+			{
+				Name:       "nw1",
+				PortNumber: 1111,
+			},
+			{
+				Name:       "nw1",
+				PortNumber: 2222,
+			},
+		}),
+		Entry("❌ fail with duplicated network rule group and path", []wsv1alpha1.NetworkRule{
+			{
+				Name:       "nw1",
+				PortNumber: 1111,
+				HTTPPath:   "/",
+				Group:      pointer.String("gp1"),
+			},
+			{
+				Name:       "nw2",
+				PortNumber: 2222,
+				HTTPPath:   "/",
+				Group:      pointer.String("gp1"),
+			},
+		}),
+		Entry("❌ fail with duplicated network rule host and path", []wsv1alpha1.NetworkRule{
+			{
+				Name:       "nw1",
+				PortNumber: 1111,
+				HTTPPath:   "/",
+				Host:       pointer.String("host.domain"),
+				Public:     false,
+			},
+			{
+				Name:       "nw2",
+				PortNumber: 2222,
+				HTTPPath:   "/",
+				Host:       pointer.String("host.domain"),
+			},
+		}),
+		Entry("❌ fail with duplicated network rule host and path", []wsv1alpha1.NetworkRule{
+			{
+				Name:       "nw1",
+				PortNumber: 1111,
+				HTTPPath:   "/",
+				Host:       pointer.String("host.domain"),
+				Public:     false,
+			},
+			{
+				Name:       "nw2",
+				PortNumber: 2222,
+				HTTPPath:   "/",
+				Host:       pointer.String("host.domain"),
+			},
+		}),
+	)
 
 	Context("when creating workspace within non user namespace", func() {
 		It("should deny", func() {
@@ -437,66 +494,6 @@ spec:
 						{
 							Name:       "a23456789012345",
 							PortNumber: 0,
-							HTTPPath:   "",
-							Public:     false,
-						},
-					},
-				},
-			}
-
-			err = k8sClient.Create(ctx, &ws)
-			Expect(err).To(MatchSnapShot())
-		})
-	})
-
-	Context("when creating workspace with invalid port number", func() {
-		It("should deny", func() {
-			ctx := context.Background()
-
-			var err error
-
-			ws := wsv1alpha1.Workspace{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "testws8",
-					Namespace: "cosmo-user-testuser-ws",
-				},
-				Spec: wsv1alpha1.WorkspaceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
-					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
-					Network: []wsv1alpha1.NetworkRule{
-						{
-							Name:       "a23456789012345",
-							PortNumber: 0,
-							HTTPPath:   "",
-							Public:     false,
-						},
-					},
-				},
-			}
-
-			err = k8sClient.Create(ctx, &ws)
-			Expect(err).To(MatchSnapShot())
-		})
-	})
-
-	Context("when creating workspace with invalid port name", func() {
-		It("should deny", func() {
-			ctx := context.Background()
-
-			var err error
-
-			ws := wsv1alpha1.Workspace{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "testws8",
-					Namespace: "cosmo-user-testuser-ws",
-				},
-				Spec: wsv1alpha1.WorkspaceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
-					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
-					Network: []wsv1alpha1.NetworkRule{
-						{
-							Name:       "a234567890123456",
-							PortNumber: 1,
 							HTTPPath:   "",
 							Public:     false,
 						},

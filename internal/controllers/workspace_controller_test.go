@@ -325,7 +325,7 @@ spec:
 													Service: &netv1.IngressServiceBackend{
 														Name: fmt.Sprintf("%s-ws-svc", wsName),
 														Port: netv1.ServiceBackendPort{
-															Name: "port1",
+															Name: "port30000",
 														},
 													},
 												},
@@ -342,9 +342,9 @@ spec:
 						TargetName: wsConfig.ServiceName,
 						Ports: []corev1.ServicePort{
 							{
-								Name:       "port1",
+								Name:       "port30000",
 								Protocol:   corev1.ProtocolTCP,
-								Port:       3000,
+								Port:       30000,
 								TargetPort: intstr.FromInt(30000),
 							},
 						},

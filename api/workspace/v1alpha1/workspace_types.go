@@ -1,6 +1,8 @@
 package v1alpha1
 
 import (
+	"fmt"
+
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -86,10 +88,25 @@ func (r *NetworkRule) Default() {
 	}
 }
 
+func (r *NetworkRule) TargetPortNumberIsValid() bool {
+	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 {
+		return false
+	}
+	if r.Public {
+		return int32(r.PortNumber) == *r.TargetPortNumber
+	} else {
+		return int32(r.PortNumber) != *r.TargetPortNumber
+	}
+}
+
+func (r *NetworkRule) portName() string {
+	return fmt.Sprintf("port%d", *r.TargetPortNumber)
+}
+
 func (r *NetworkRule) ServicePort() corev1.ServicePort {
 	return corev1.ServicePort{
-		Name:       r.Name,
-		Port:       int32(r.PortNumber),
+		Name:       r.portName(),
+		Port:       *r.TargetPortNumber,
 		Protocol:   corev1.ProtocolTCP,
 		TargetPort: intstr.FromInt(int(*r.TargetPortNumber)),
 	}
@@ -113,7 +130,7 @@ func (r *NetworkRule) IngressRule(backendSvcName string) netv1.IngressRule {
 							Service: &netv1.IngressServiceBackend{
 								Name: backendSvcName,
 								Port: netv1.ServiceBackendPort{
-									Name: r.Name,
+									Name: r.portName(),
 								},
 							},
 						},

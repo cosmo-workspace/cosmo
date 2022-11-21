@@ -381,7 +381,7 @@ SnapShot = 'validation error: --port is required'
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 1111 --path / --group gp1 1']
 SnapShot = """
-Error: port 1111 is already used
+Error: group 'gp1' and http path '/' is already used
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -406,7 +406,8 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 1111 --path / --group gp1 2']
-SnapShot = 'port 1111 is already used'
+SnapShot = """
+group 'gp1' and http path '/' is already used"""
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 3000 --path / -A 1']
 SnapShot = """

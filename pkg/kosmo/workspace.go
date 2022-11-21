@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"sort"
 
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -165,8 +166,10 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, userId,
 	}
 
 	for _, netRule := range ws.Spec.Network {
-		if netRule.Name != networkRuleName && netRule.PortNumber == portNumber {
-			message := fmt.Sprintf("port %d is already used", portNumber)
+		if netRule.Name != networkRuleName &&
+			reflect.DeepEqual(netRule.Group, group) &&
+			netRule.HTTPPath == httpPath {
+			message := fmt.Sprintf("group '%s' and http path '%s' is already used", *group, httpPath)
 			log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
 			return nil, NewBadRequestError(message, nil)
 		}

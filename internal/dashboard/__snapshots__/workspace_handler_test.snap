@@ -656,7 +656,8 @@ SnapShot = 'internal: failed to upsert network rule'
 SnapShot = 'permission_denied'
 
 ['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{name:"nw2" port_number:9999 group:"gp1" http_path:"/"} 1']
-SnapShot = 'invalid_argument: port 9999 is already used'
+SnapShot = """
+invalid_argument: group 'gp1' and http path '/' is already used"""
 
 ['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws9" network_rule:{name:"nw2" port_number:3000 group:"gp1" http_path:"/"} 1']
 SnapShot = 'not_found: workspace is not found'
