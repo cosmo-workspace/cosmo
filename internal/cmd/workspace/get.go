@@ -87,18 +87,14 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	if o.AllNamespace {
 		users, err := c.ListUsers(ctx)
 		if err != nil {
-			// todo:
-			err = cmdutil.UnwrapKosmoError(err)
-			return fmt.Errorf("failed to list users: %v", err)
+			return err
 		}
 		o.Logr.DebugAll().Info("ListUsers", "users", users)
 
 		for _, user := range users {
 			ws, err := c.ListWorkspacesByUserID(ctx, user.Name)
 			if err != nil {
-				// todo:
-				err = cmdutil.UnwrapKosmoError(err)
-				return fmt.Errorf("failed to list workspaces: %v", err)
+				return err
 			}
 			o.Logr.DebugAll().Info("ListWorkspacesByUserID", "user", o.User, "wsCount", len(ws), "wsList", ws)
 			wss = append(wss, ws...)
@@ -107,9 +103,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	} else if o.WorkspaceName != "" {
 		ws, err := c.GetWorkspaceByUserID(ctx, o.WorkspaceName, o.User)
 		if err != nil {
-			// todo:
-			err = cmdutil.UnwrapKosmoError(err)
-			return fmt.Errorf("failed to get workspace: %v", err)
+			return err
 		}
 		wss = []wsv1alpha1.Workspace{*ws}
 		o.Logr.DebugAll().Info("GetWorkspaceByUserID", "user", o.User, "ws", ws)
@@ -117,16 +111,12 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	} else {
 		_, err := c.GetUser(ctx, o.User)
 		if err != nil {
-			// todo:
-			err = cmdutil.UnwrapKosmoError(err)
-			return fmt.Errorf("failed to get user: %v", err)
+			return err
 		}
 
 		wss, err = c.ListWorkspacesByUserID(ctx, o.User)
 		if err != nil {
-			// todo:
-			err = cmdutil.UnwrapKosmoError(err)
-			return fmt.Errorf("failed to list workspaces: %v", err)
+			return err
 		}
 		o.Logr.DebugAll().Info("ListWorkspacesByUserID", "user", o.User, "wsCount", len(wss), "wsList", wss)
 	}
