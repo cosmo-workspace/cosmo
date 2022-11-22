@@ -81,7 +81,7 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://default.example.com
+    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain
   instance: {}
   phase: Pending
 
@@ -609,7 +609,7 @@ cosmo-user-user1   ws2    template1   Pending
 SnapShot = """
 USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
 cosmo-user-user1   ws2              nw1         1111          gp1     /           
-cosmo-user-user1   ws2              nw3         2222          gp1     /           
+cosmo-user-user1   ws2              nw3         2222          gp3     /           
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o yaml 1']
@@ -658,7 +658,7 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://default.example.com
+    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain
   instance: {}
   phase: Pending
 ---
@@ -703,14 +703,14 @@ metadata:
 spec:
   network:
   - group: gp1
-    host: default.example.com
+    host: gp1-ws2-user1.domain
     httpPath: /
     name: nw1
     portNumber: 1111
     public: false
     targetPortNumber: 1111
-  - group: gp1
-    host: default.example.com
+  - group: gp3
+    host: gp3-ws2-user1.domain
     httpPath: /
     name: nw3
     portNumber: 2222
@@ -722,7 +722,7 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://default.example.com
+    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain
   instance: {}
   phase: Pending
 ---
@@ -733,7 +733,7 @@ status:
 SnapShot = """
 USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
 cosmo-user-user1   ws2              nw1         1111          gp1     /           
-cosmo-user-user1   ws2              nw3         2222          gp1     /           
+cosmo-user-user1   ws2              nw3         2222          gp3     /           
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o wide 1']
@@ -789,7 +789,7 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://default.example.com
+    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain
   instance: {}
   phase: Pending
 ---
@@ -834,14 +834,14 @@ metadata:
 spec:
   network:
   - group: gp1
-    host: default.example.com
+    host: gp1-ws2-user1.domain
     httpPath: /
     name: nw1
     portNumber: 1111
     public: false
     targetPortNumber: 1111
-  - group: gp1
-    host: default.example.com
+  - group: gp3
+    host: gp3-ws2-user1.domain
     httpPath: /
     name: nw3
     portNumber: 2222
@@ -853,7 +853,7 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://default.example.com
+    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain
   instance: {}
   phase: Pending
 ---
@@ -1141,7 +1141,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -1372,7 +1372,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }

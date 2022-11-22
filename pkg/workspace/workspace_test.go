@@ -125,7 +125,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 																Service: &netv1.IngressServiceBackend{
 																	Name: "ws1-ws-svc",
 																	Port: netv1.ServiceBackendPort{
-																		Name: "port1",
+																		Name: "port18080",
 																	},
 																},
 															},
@@ -142,8 +142,8 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 									TargetName: "ws-svc",
 									Ports: []corev1.ServicePort{
 										{
-											Name:       "port1",
-											Port:       8080,
+											Name:       "port18080",
+											Port:       18080,
 											TargetPort: intstr.FromInt(18080),
 											Protocol:   "TCP",
 										},
@@ -299,6 +299,221 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 						t.Errorf("PatchWorkspaceInstanceAsDesired() owner ref = %v, want %v", ownerRef[0], expectedRef)
 					}
 				}
+			}
+		})
+	}
+}
+
+func TestSvcPorts(t *testing.T) {
+	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int) wsv1alpha1.NetworkRule {
+		var hostp *string
+		if host != "" {
+			hostp = &host
+		}
+		var targetp *int32
+		if targetPortNumber != 0 {
+			targetp = pointer.Int32(int32(targetPortNumber))
+		}
+		return wsv1alpha1.NetworkRule{
+			Name:             ruleName,
+			PortNumber:       portNumber,
+			HTTPPath:         path,
+			TargetPortNumber: targetp,
+			Host:             hostp,
+			Group:            nil,
+			Public:           false,
+		}
+	}
+
+	type args struct {
+		netRules []wsv1alpha1.NetworkRule
+	}
+	tests := []struct {
+		name string
+		args args
+		want []corev1.ServicePort
+	}{
+		{
+			name: "OK1",
+			args: args{
+				netRules: []wsv1alpha1.NetworkRule{netRule("rule1", "host1", "/", 1111, 2222)},
+			},
+			want: []corev1.ServicePort{
+				{
+					Name:        "port2222",
+					Protocol:    "TCP",
+					AppProtocol: nil,
+					Port:        2222,
+					TargetPort:  intstr.FromInt(2222),
+					NodePort:    0,
+				},
+			},
+		},
+		{
+			name: "OK2",
+			args: args{
+				netRules: []wsv1alpha1.NetworkRule{
+					netRule("rule1", "host1", "/", 1111, 2222),
+					netRule("rule2", "host1", "/", 3333, 4444),
+				},
+			},
+			want: []corev1.ServicePort{
+				{
+					Name:        "port2222",
+					Protocol:    "TCP",
+					AppProtocol: nil,
+					Port:        2222,
+					TargetPort:  intstr.FromInt(2222),
+					NodePort:    0,
+				},
+				{
+					Name:        "port4444",
+					Protocol:    "TCP",
+					AppProtocol: nil,
+					Port:        4444,
+					TargetPort:  intstr.FromInt(4444),
+					NodePort:    0,
+				},
+			},
+		},
+		{
+			name: "OK3",
+			args: args{
+				netRules: []wsv1alpha1.NetworkRule{
+					netRule("rule1", "host1", "/", 1111, 2222),
+					netRule("rule2", "host1", "/", 3333, 2222),
+				},
+			},
+			want: []corev1.ServicePort{
+				{
+					Name:        "port2222",
+					Protocol:    "TCP",
+					AppProtocol: nil,
+					Port:        2222,
+					TargetPort:  intstr.FromInt(2222),
+					NodePort:    0,
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := svcPorts(tt.args.netRules); !equality.Semantic.DeepEqual(got, tt.want) {
+				t.Errorf(cmp.Diff(got, tt.want))
+			}
+		})
+	}
+}
+
+func TestIngressRules(t *testing.T) {
+
+	ingPath := func(path, backendSvcName, svcBackPortName string) netv1.HTTPIngressPath {
+		pathTypePrefix := netv1.PathTypePrefix
+		return netv1.HTTPIngressPath{
+			Path:     path,
+			PathType: &pathTypePrefix,
+			Backend: netv1.IngressBackend{
+				Service: &netv1.IngressServiceBackend{
+					Name: backendSvcName,
+					Port: netv1.ServiceBackendPort{
+						Name: svcBackPortName,
+					},
+				},
+			},
+		}
+	}
+	ingRule := func(host string, ingPathes ...netv1.HTTPIngressPath) netv1.IngressRule {
+		return netv1.IngressRule{
+			Host: host,
+			IngressRuleValue: netv1.IngressRuleValue{
+				HTTP: &netv1.HTTPIngressRuleValue{
+					Paths: ingPathes,
+				},
+			},
+		}
+	}
+
+	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int) wsv1alpha1.NetworkRule {
+		var hostp *string
+		if host != "" {
+			hostp = &host
+		}
+		var targetp *int32
+		if targetPortNumber != 0 {
+			targetp = pointer.Int32(int32(targetPortNumber))
+		}
+		return wsv1alpha1.NetworkRule{
+			Name:             ruleName,
+			PortNumber:       portNumber,
+			HTTPPath:         path,
+			TargetPortNumber: targetp,
+			Host:             hostp,
+			Group:            nil,
+			Public:           false,
+		}
+	}
+
+	type args struct {
+		netRules       []wsv1alpha1.NetworkRule
+		backendSvcName string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []netv1.IngressRule
+	}{
+		{
+			name: "OK",
+			args: args{
+				netRules:       []wsv1alpha1.NetworkRule{netRule("rule1", "host1", "/", 1111, 2222)},
+				backendSvcName: "bksvc",
+			},
+			want: []netv1.IngressRule{
+				ingRule("host1",
+					ingPath("/", "bksvc", "port2222"),
+				),
+			},
+		},
+		{
+			name: "OK2",
+			args: args{
+				netRules: []wsv1alpha1.NetworkRule{
+					netRule("rule1", "host1", "/", 1111, 2222),
+					netRule("rule2", "host2", "/", 3333, 4444),
+				},
+				backendSvcName: "bksvc",
+			},
+			want: []netv1.IngressRule{
+				ingRule("host1",
+					ingPath("/", "bksvc", "port2222"),
+				),
+				ingRule("host2",
+					ingPath("/", "bksvc", "port4444"),
+				),
+			},
+		},
+		{
+			name: "OK3",
+			args: args{
+
+				netRules: []wsv1alpha1.NetworkRule{
+					netRule("rule1", "host1", "/", 1111, 2222),
+					netRule("rule2", "host1", "/aaa", 3333, 4444),
+				},
+				backendSvcName: "bksvc",
+			},
+			want: []netv1.IngressRule{
+				ingRule("host1",
+					ingPath("/", "bksvc", "port2222"),
+					ingPath("/aaa", "bksvc", "port4444"),
+				),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ingressRules(tt.args.netRules, tt.args.backendSvcName); !equality.Semantic.DeepEqual(got, tt.want) {
+				t.Errorf(cmp.Diff(tt.want, got))
 			}
 		})
 	}

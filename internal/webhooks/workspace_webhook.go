@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"reflect"
 	"sort"
 
 	corev1 "k8s.io/api/core/v1"
@@ -146,12 +147,6 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	// check netrule ports duplication
-	dupPort := duplicatedPort(ws.Spec.Network)
-	if dupPort > 0 {
-		return admission.Denied(fmt.Sprintf("port '%d' is duplicated", dupPort))
-	}
-
 	// TODO
 	// // dryrun
 	// inst := &cosmov1alpha1.Instance{}
@@ -193,26 +188,31 @@ func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []wsv1alp
 }
 
 func checkNetworkRules(netRules []wsv1alpha1.NetworkRule) error {
-	for _, netRule := range netRules {
+	for i, netRule := range netRules {
 		if errs := validation.IsValidPortName(netRule.Name); len(errs) > 0 {
 			return errors.New(errs[0])
 		}
 		if errs := validation.IsValidPortNum(netRule.PortNumber); len(errs) > 0 {
 			return errors.New(errs[0])
 		}
-	}
-	return nil
-}
-
-func duplicatedPort(netRules []wsv1alpha1.NetworkRule) int {
-	for _, netRule := range netRules {
-		for _, v := range netRules {
-			if netRule.Name != v.Name && netRule.PortNumber == v.PortNumber {
-				return netRule.PortNumber
+		for j, v := range netRules {
+			if i == j {
+				continue
+			}
+			if netRule.Name == v.Name {
+				return errors.New("duplicate network rule name")
+			}
+			if reflect.DeepEqual(netRule.Group, v.Group) &&
+				netRule.HTTPPath == v.HTTPPath {
+				return fmt.Errorf("duplicate group and path. group=%s,path=%s", *v.Group, v.HTTPPath)
+			}
+			if reflect.DeepEqual(netRule.Host, v.Host) &&
+				netRule.HTTPPath == v.HTTPPath {
+				return fmt.Errorf("duplicate host and path. host=%s,path=%s", *v.Host, v.HTTPPath)
 			}
 		}
 	}
-	return 0
+	return nil
 }
 
 func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkRule(ctx context.Context, ws *wsv1alpha1.Workspace, rawTmpl string, cfg wsv1alpha1.Config) error {

@@ -14,7 +14,7 @@ SnapShot = """
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -23,8 +23,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -34,7 +34,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -67,7 +67,7 @@ SnapShot = """
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -76,8 +76,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -87,7 +87,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -120,7 +120,7 @@ SnapShot = """
         \"portNumber\": 3333,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -129,8 +129,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -140,7 +140,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -173,7 +173,7 @@ SnapShot = """
         \"portNumber\": 3333,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -182,8 +182,8 @@ SnapShot = """
         \"portNumber\": 4444,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 4444,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -193,7 +193,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -226,7 +226,7 @@ SnapShot = """
         \"portNumber\": 1111,
         \"httpPath\": \"/abc\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -235,8 +235,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -246,7 +246,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -275,22 +275,22 @@ SnapShot = """
     \"replicas\": 1,
     \"network\": [
       {
-        \"name\": \"nw2\",
-        \"portNumber\": 2222,
-        \"httpPath\": \"/cdf\",
-        \"targetPortNumber\": 2222,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
-        \"public\": true
-      },
-      {
         \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/abc\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
+      },
+      {
+        \"name\": \"nw2\",
+        \"portNumber\": 2222,
+        \"httpPath\": \"/cdf\",
+        \"targetPortNumber\": 2222,
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
+        \"public\": true
       }
     ]
   },
@@ -299,7 +299,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -332,7 +332,7 @@ SnapShot = """
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 1111,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": true
       },
@@ -341,8 +341,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -352,7 +352,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -379,7 +379,7 @@ SnapShot = """
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 1111,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": true
       },
@@ -388,8 +388,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": false
       }
     ]
@@ -399,7 +399,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -432,7 +432,7 @@ SnapShot = """
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       }
@@ -443,7 +443,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -476,7 +476,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }
@@ -503,7 +503,7 @@ SnapShot = """
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 99999,
-        \"host\": \"default.example.com\",
+        \"host\": \"gp1-test-workspace-test-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -512,8 +512,8 @@ SnapShot = """
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
         \"targetPortNumber\": 2222,
-        \"host\": \"default.example.com\",
-        \"group\": \"gp1\",
+        \"host\": \"gp2-test-workspace-test-user.domain\",
+        \"group\": \"gp2\",
         \"public\": true
       }
     ]
@@ -523,7 +523,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://default.example.com\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
     }
   }
 }

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"io/ioutil"
+	"io"
 	"regexp"
 	"strings"
 	"time"
@@ -32,7 +32,7 @@ var _ = Describe("cosmoctl [user]", func() {
 		outBuf     *bytes.Buffer
 	)
 	consoleOut := func() string {
-		out, _ := ioutil.ReadAll(outBuf)
+		out, _ := io.ReadAll(outBuf)
 		return string(out)
 	}
 

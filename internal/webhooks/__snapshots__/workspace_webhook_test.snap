@@ -64,3 +64,74 @@ SnapShot = """
 }
 """
 
+['Workspace webhook when creating workspace ❌ fail with duplicated network rule group and path 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: duplicate group and path. group=gp1,path=/\",
+    \"code\": 400
+  }
+}
+"""
+
+['Workspace webhook when creating workspace ❌ fail with duplicated network rule host and path 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: duplicate group and path. group=main,path=/\",
+    \"code\": 400
+  }
+}
+"""
+
+['Workspace webhook when creating workspace ❌ fail with duplicated network rule host and path 2']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: duplicate group and path. group=main,path=/\",
+    \"code\": 400
+  }
+}
+"""
+
+['Workspace webhook when creating workspace ❌ fail with duplicated network rule name 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: duplicate group and path. group=main,path=/\",
+    \"code\": 400
+  }
+}
+"""
+
+['Workspace webhook when creating workspace ❌ fail with invalid port name 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: must be no more than 15 characters\",
+    \"code\": 400
+  }
+}
+"""
+
+['Workspace webhook when creating workspace ❌ fail with invalid port number 1']
+SnapShot = """
+{
+  \"ErrStatus\": {
+    \"metadata\": {},
+    \"status\": \"Failure\",
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: must be between 1 and 65535, inclusive\",
+    \"code\": 400
+  }
+}
+"""

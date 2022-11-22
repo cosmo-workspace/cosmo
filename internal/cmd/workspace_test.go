@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"io/ioutil"
+	"io"
 	"regexp"
 	"strings"
 
@@ -33,7 +33,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 		outBuf     *bytes.Buffer
 	)
 	consoleOut := func() string {
-		out, _ := ioutil.ReadAll(outBuf)
+		out, _ := io.ReadAll(outBuf)
 		return string(out)
 	}
 
@@ -152,7 +152,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_CreateWorkspace("user1", "ws1", "template1", nil)
 				test_CreateWorkspace("user1", "ws2", "template1", nil)
 				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
+				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/")
 
 				rootCmd.SetArgs(args)
 				err := rootCmd.Execute()
@@ -266,7 +266,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws2", "template1", nil)
 				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
+				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/")
 
 				run_test(args...)
 
@@ -281,7 +281,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			func(args ...string) {
 				test_CreateWorkspace("user1", "ws2", "template1", nil)
 				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp1", "/")
+				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/")
 
 				run_test(args...)
 

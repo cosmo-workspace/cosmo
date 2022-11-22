@@ -3,7 +3,7 @@ package cmd
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -34,7 +34,7 @@ var _ = Describe("cosmoctl [template]", func() {
 		inBuf      *bytes.Buffer
 	)
 	consoleOut := func() string {
-		out, _ := ioutil.ReadAll(outBuf)
+		out, _ := io.ReadAll(outBuf)
 		return string(out)
 	}
 
@@ -184,14 +184,6 @@ var _ = Describe("cosmoctl [template]", func() {
 			Entry(desc, "template", "validate", "--file", createFile(userAddonTmplData, "test-user-addon-template.yaml")),
 		)
 
-		DescribeTable("❌ fail with an unexpected error at list users:",
-			func(args ...string) {
-				clientMock.SetListError("\\.RunE$", errors.New("mock list error"))
-				run_test(args...)
-			},
-			// Entry(desc, "template", "get"),
-			// Entry(desc, "template", "get", "--workspace"),
-		)
 	})
 
 })

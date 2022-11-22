@@ -10,8 +10,8 @@ template:
 		--inject-auth-proxy-image cosmo.io:5000/cosmo-auth-proxy:latest \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
 
-.PHONY: apply ## Apply template
-apply: template
+.PHONY: apply
+apply: template ## Apply template
 	kubectl apply -f cosmo-template.yaml
 
 .PHONY: docker-build

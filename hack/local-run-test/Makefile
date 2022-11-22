@@ -160,15 +160,15 @@ uninstall-manager: helm  ## Uninstall cosmo contoller-manager resources.
 	@echo ====== $@ ======
 	-helm uninstall -n cosmo-system cosmo-controller-manager
 
-uninstall-dashboard: helm  ## Uninstall cosmo contoller-manager resources.
+uninstall-dashboard: helm  ## Uninstall cosmo dashboard resources.
 	@echo ====== $@ ======
 	-helm uninstall -n cosmo-system cosmo-dashboard
 
-docker-build-cs:
+docker-build-cs:  ## Docker build code-server.
 	@echo ====== $@ ======
 	cd templates/code-server-01 && $(MAKE) docker-build
 
-apply-template: kubectl cosmoctl docker-build-cs
+apply-template: kubectl cosmoctl docker-build-cs ## Apply template.
 	@echo ====== $@ ======
 	until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
 	until (kubectl apply -f ../../example/fixed-efs-pv-useraddon.yaml) do sleep 1; done
@@ -196,7 +196,10 @@ add-workspace: kubectl cosmoctl
 	@echo ====== $@ ======
 	-cosmoctl workspace create --user=tom --template=code-server-01 ws1
 	sleep 5
-	-cosmoctl networkrule add dash1 --user=tom --workspace=ws1 --port=7701
+	-cosmoctl networkrule add proxy11 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /
+	-cosmoctl networkrule add proxy12 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /aaa
+	-cosmoctl networkrule add proxy13 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /bbb --public
+	-cosmoctl networkrule add proxy21 --user=tom --workspace=ws1 --port=7701 --group proxy2 --path /
 
 ##---------------------------------------------------------------------
 ##@ Execute test
