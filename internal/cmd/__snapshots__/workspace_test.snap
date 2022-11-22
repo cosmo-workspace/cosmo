@@ -909,7 +909,7 @@ SnapShot = """
 
 ['cosmoctl [workspace] [get] ❌ fail with an unexpected error at list users: workspace get -A 1']
 SnapShot = """
-Error: failed to list users: failed to list users: mock listUsers error
+Error: failed to list users: mock listUsers error
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -930,7 +930,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] ❌ fail with an unexpected error at list workspace: workspace get --user user1 1']
 SnapShot = """
-Error: failed to list workspaces: failed to list workspaces: mock listWorkspacesByUserID error
+Error: failed to list workspaces: mock listWorkspacesByUserID error
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -951,7 +951,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] ❌ fail with an unexpected error at list workspace: workspace get -A 1']
 SnapShot = """
-Error: failed to list workspaces: failed to list workspaces: mock listWorkspacesByUserID error
+Error: failed to list workspaces: mock listWorkspacesByUserID error
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -1014,7 +1014,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --user user1 xxx 1']
 SnapShot = """
-Error: failed to get workspace: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
+Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -1035,7 +1035,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --user xxxx 1']
 SnapShot = """
-Error: failed to get user: user is not found: users.workspace.cosmo-workspace.github.io \"xxxx\" not found
+Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxx\" not found
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
