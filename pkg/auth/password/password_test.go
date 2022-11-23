@@ -6,15 +6,15 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	corev1 "k8s.io/api/core/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 var _ = Describe("password", func() {
-	user1 := &wsv1alpha1.User{Spec: wsv1alpha1.UserSpec{}}
+	user1 := &cosmov1alpha1.User{Spec: cosmov1alpha1.UserSpec{}}
 	user1.SetName("tom")
 	user1.Spec.DisplayName = "tom the cat"
 
@@ -23,13 +23,13 @@ var _ = Describe("password", func() {
 			ctx := context.Background()
 
 			ns := corev1.Namespace{}
-			ns.SetName(wsv1alpha1.UserNamespace(user1.Name))
+			ns.SetName(cosmov1alpha1.UserNamespace(user1.Name))
 
 			err := k8sClient.Create(ctx, &ns)
 			Expect(err).ShouldNot(HaveOccurred())
 			Eventually(func() error {
 				var ns corev1.Namespace
-				key := client.ObjectKey{Name: wsv1alpha1.UserNamespace(user1.Name)}
+				key := client.ObjectKey{Name: cosmov1alpha1.UserNamespace(user1.Name)}
 				err := k8sClient.Get(ctx, key, &ns)
 				if err != nil {
 					return err
@@ -43,8 +43,8 @@ var _ = Describe("password", func() {
 			var secret corev1.Secret
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      wsv1alpha1.UserPasswordSecretName,
-					Namespace: wsv1alpha1.UserNamespace(user1.Name),
+					Name:      cosmov1alpha1.UserPasswordSecretName,
+					Namespace: cosmov1alpha1.UserNamespace(user1.Name),
 				}
 				err := k8sClient.Get(ctx, key, &secret)
 				if err != nil {
@@ -87,8 +87,8 @@ var _ = Describe("password", func() {
 			var secret corev1.Secret
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name:      wsv1alpha1.UserPasswordSecretName,
-					Namespace: wsv1alpha1.UserNamespace(user1.Name),
+					Name:      cosmov1alpha1.UserPasswordSecretName,
+					Namespace: cosmov1alpha1.UserNamespace(user1.Name),
 				}
 				err := k8sClient.Get(ctx, key, &secret)
 				if err != nil {
@@ -97,9 +97,9 @@ var _ = Describe("password", func() {
 				return nil
 			}, time.Second*10).Should(Succeed())
 
-			p, ok := secret.Data[wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSecret]
+			p, ok := secret.Data[cosmov1alpha1.UserPasswordSecretDataKeyUserPasswordSecret]
 			Expect(ok).Should(BeTrue())
-			salt, ok := secret.Data[wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSalt]
+			salt, ok := secret.Data[cosmov1alpha1.UserPasswordSecretDataKeyUserPasswordSalt]
 			Expect(ok).Should(BeTrue())
 
 			ex, _ := hash([]byte(newPassword), salt)

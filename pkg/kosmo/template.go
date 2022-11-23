@@ -5,15 +5,14 @@ import (
 
 	"k8s.io/apimachinery/pkg/types"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 func (c *Client) ListWorkspaceTemplates(ctx context.Context) ([]cosmov1alpha1.Template, error) {
 	log := clog.FromContext(ctx).WithCaller()
-	if tmpls, err := kubeutil.ListTemplatesByType(ctx, c, []string{wsv1alpha1.TemplateTypeWorkspace}); err != nil {
+	if tmpls, err := kubeutil.ListTemplatesByType(ctx, c, []string{cosmov1alpha1.TemplateLabelEnumTypeWorkspace}); err != nil {
 		log.Error(err, "failed to list WorkspaceTemplates")
 		return nil, NewInternalServerError("failed to list WorkspaceTemplates", err)
 	} else {
@@ -23,7 +22,7 @@ func (c *Client) ListWorkspaceTemplates(ctx context.Context) ([]cosmov1alpha1.Te
 
 func (c *Client) ListUserAddonTemplates(ctx context.Context) ([]cosmov1alpha1.TemplateObject, error) {
 	log := clog.FromContext(ctx).WithCaller()
-	if tmpls, err := kubeutil.ListTemplateObjectsByType(ctx, c, []string{wsv1alpha1.TemplateTypeUserAddon}); err != nil {
+	if tmpls, err := kubeutil.ListTemplateObjectsByType(ctx, c, []string{cosmov1alpha1.TemplateLabelEnumTypeUserAddon}); err != nil {
 		log.Error(err, "failed to list UserAddon Templates")
 		return nil, NewInternalServerError("failed to list UserAddon Templates", err)
 	} else {

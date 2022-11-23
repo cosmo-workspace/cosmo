@@ -411,7 +411,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create TESTuser 1']
 SnapShot = """
-Error: failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
+Error: failed to create user: User.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
 Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
@@ -434,11 +434,11 @@ Global Flags:
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create TESTuser 2']
 SnapShot = """
-failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
+failed to create user: User.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon XXXXXXXXX,HOGE:yyy 1']
 SnapShot = """
-Error: failed to create user: admission webhook \"vuser.kb.io\" denied the request: failed to create addon XXXXXXXXX :templates.cosmo.cosmo-workspace.github.io \"XXXXXXXXX\" not found
+Error: failed to create user: admission webhook \"vuser.kb.io\" denied the request: failed to create addon XXXXXXXXX :templates.cosmo-workspace.github.io \"XXXXXXXXX\" not found
 Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
@@ -460,7 +460,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon XXXXXXXXX,HOGE:yyy 2']
-SnapShot = 'failed to create user: admission webhook "vuser.kb.io" denied the request: failed to create addon XXXXXXXXX :templates.cosmo.cosmo-workspace.github.io "XXXXXXXXX" not found'
+SnapShot = 'failed to create user: admission webhook "vuser.kb.io" denied the request: failed to create addon XXXXXXXXX :templates.cosmo-workspace.github.io "XXXXXXXXX" not found'
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon user-template1 ,HOGE:yyy 1']
 SnapShot = """
@@ -646,7 +646,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"XXXXX\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"XXXXX\" not found
 Usage:
   cosmoctl user delete USER_NAME [flags]
 
@@ -664,7 +664,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 2']
-SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "XXXXX" not found'
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "XXXXX" not found'
 
 ['cosmoctl [user] [get] ✅ success in normal context: user get 1']
 SnapShot = """
@@ -884,7 +884,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"XXXXXX\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"XXXXXX\" not found
 Usage:
   cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
@@ -901,7 +901,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 2']
-SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "XXXXXX" not found'
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "XXXXXX" not found'
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name  1']
 SnapShot = """

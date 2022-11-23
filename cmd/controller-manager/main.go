@@ -17,8 +17,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -56,7 +55,6 @@ func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
 	_ = cosmov1alpha1.AddToScheme(scheme)
-	_ = wsv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 

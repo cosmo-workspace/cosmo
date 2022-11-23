@@ -177,7 +177,7 @@ SnapShot = """
 
 ['cosmoctl [netrule] [create] ❌ fail with an unexpected error at update: netrule create ws1 --user user1 --workspace nw12 --port 4000 --path /def 1']
 SnapShot = """
-Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"nw12\" not found
+Error: workspace is not found: workspaces.cosmo-workspace.github.io \"nw12\" not found
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -188,7 +188,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -202,7 +202,7 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [create] ❌ fail with an unexpected error at update: netrule create ws1 --user user1 --workspace nw12 --port 4000 --path /def 2']
-SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "nw12" not found'
+SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "nw12" not found'
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create 1']
 SnapShot = """
@@ -217,7 +217,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -246,7 +246,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -275,7 +275,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -305,7 +305,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -334,7 +334,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -363,7 +363,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -392,7 +392,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -422,7 +422,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -441,7 +441,7 @@ unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace xxx --port 3000 --path / 1']
 SnapShot = """
-Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
+Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -452,7 +452,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -466,11 +466,11 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace xxx --port 3000 --path / 2']
-SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
+SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user xxxxx --workspace ws1 --port 3000 --path / 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -481,7 +481,7 @@ Flags:
       --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
   -h, --help               help for create
       --path string        path for Ingress path when using ingress (default \"/\")
-      --port int           serivce port number (Required)
+      --port int32         serivce port number (Required)
       --public             disable authentication for this port
       --workspace string   workspace name (Required)
 
@@ -495,11 +495,11 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user xxxxx --workspace ws1 --port 3000 --path / 2']
-SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "xxxxx" not found'
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxxxx" not found'
 
 ['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete ws1 --user user1 --workspace nw1 1']
 SnapShot = """
-Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"nw1\" not found
+Error: workspace is not found: workspaces.cosmo-workspace.github.io \"nw1\" not found
 Usage:
   cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
 
@@ -520,7 +520,7 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete ws1 --user user1 --workspace nw1 2']
-SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "nw1" not found'
+SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "nw1" not found'
 
 ['cosmoctl [netrule] [delete] ✅ success in normal context: netrule rm-net ws1 --user user1 --workspace nw1 1']
 SnapShot = """
@@ -706,7 +706,7 @@ unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 --workspace xxx 1']
 SnapShot = """
-Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
+Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
 
@@ -727,7 +727,7 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 --workspace xxx 2']
-SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
+SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 1']
 SnapShot = """
@@ -756,7 +756,7 @@ SnapShot = 'validation error: workspace name is required'
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user xxxxx --workspace ws1 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
 
@@ -777,7 +777,7 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user xxxxx --workspace ws1 2']
-SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "xxxxx" not found'
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxxxx" not found'
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete xxxx --user user1 --workspace ws1 1']
 SnapShot = """

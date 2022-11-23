@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
@@ -20,7 +20,7 @@ type updateOption struct {
 	UserName string
 	Name     string
 	Role     string
-	role     wsv1alpha1.UserRole
+	role     cosmov1alpha1.UserRole
 }
 
 func updateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
@@ -50,7 +50,7 @@ func (o *updateOption) Validate(cmd *cobra.Command, args []string) error {
 		return errors.New("invalid args")
 	}
 	if o.Role != "-" {
-		if o.role = wsv1alpha1.UserRole(o.Role); !o.role.IsValid() {
+		if o.role = cosmov1alpha1.UserRole(o.Role); !o.role.IsValid() {
 			return fmt.Errorf("role %s is invalid", o.Role)
 		}
 	}

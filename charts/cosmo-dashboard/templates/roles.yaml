@@ -33,7 +33,7 @@ rules:
   - watch
   - bind
 - apiGroups:
-  - workspace.cosmo-workspace.github.io
+  - cosmo-workspace.github.io
   resources:
   - workspaces
   - users
@@ -46,7 +46,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - workspace.cosmo-workspace.github.io
+  - cosmo-workspace.github.io
   resources:
   - workspaces/status
   - users/status
@@ -55,7 +55,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - cosmo.cosmo-workspace.github.io
+  - cosmo-workspace.github.io
   resources:
   - instances
   - templates
@@ -70,7 +70,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - cosmo.cosmo-workspace.github.io
+  - cosmo-workspace.github.io
   resources:
   - instances/status
   verbs:

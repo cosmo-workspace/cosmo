@@ -13,8 +13,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/internal/dashboard"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -34,7 +33,6 @@ var (
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 	_ = cosmov1alpha1.AddToScheme(scheme)
-	_ = wsv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -84,8 +82,8 @@ func main() {
 	// Setup server
 	klient := kosmo.NewClient(mgr.GetClient())
 
-	auths := make(map[wsv1alpha1.UserAuthType]auth.Authorizer)
-	auths[wsv1alpha1.UserAuthTypePasswordSecert] = auth.NewPasswordSecretAuthorizer(klient)
+	auths := make(map[cosmov1alpha1.UserAuthType]auth.Authorizer)
+	auths[cosmov1alpha1.UserAuthTypePasswordSecert] = auth.NewPasswordSecretAuthorizer(klient)
 
 	serv := (&dashboard.Server{
 		Log:                 clog.NewLogger(ctrl.Log.WithName("dashboard")),

@@ -15,8 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -40,7 +39,7 @@ var _ = Describe("cosmoctl [user]", func() {
 		scheme := runtime.NewScheme()
 		_ = clientgoscheme.AddToScheme(scheme)
 		_ = cosmov1alpha1.AddToScheme(scheme)
-		_ = wsv1alpha1.AddToScheme(scheme)
+		_ = cosmov1alpha1.AddToScheme(scheme)
 
 		baseclient, err := kosmo.NewClientByRestConfig(cfg, scheme)
 		Expect(err).NotTo(HaveOccurred())
@@ -121,8 +120,8 @@ var _ = Describe("cosmoctl [user]", func() {
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
 				test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
-				test_CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-template1")
-				test_CreateClusterTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-clustertemplate1")
+				test_CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "user-template1")
+				test_CreateClusterTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "user-clustertemplate1")
 				run_test(args...)
 			},
 			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--addon", "user-template1,HOGE:HOGEHOGE"),
@@ -192,7 +191,7 @@ var _ = Describe("cosmoctl [user]", func() {
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
 				test_CreateLoginUser("user1", "name1", "", "password")
-				test_CreateLoginUser("user2", "name2", wsv1alpha1.UserAdminRole, "password")
+				test_CreateLoginUser("user2", "name2", cosmov1alpha1.UserAdminRole, "password")
 				run_test(args...)
 			},
 			Entry(desc, "user", "get"),
@@ -257,7 +256,7 @@ var _ = Describe("cosmoctl [user]", func() {
 
 		run_test := func(args ...string) {
 			test_CreateLoginUser("user1", "name1", "", "password")
-			test_CreateLoginUser("user2", "name2", wsv1alpha1.UserAdminRole, "password")
+			test_CreateLoginUser("user2", "name2", cosmov1alpha1.UserAdminRole, "password")
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()

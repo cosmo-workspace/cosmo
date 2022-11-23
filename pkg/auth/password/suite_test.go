@@ -14,8 +14,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -28,7 +27,7 @@ var testEnv *envtest.Environment
 
 func init() {
 	cosmov1alpha1.AddToScheme(scheme.Scheme)
-	wsv1alpha1.AddToScheme(scheme.Scheme)
+	cosmov1alpha1.AddToScheme(scheme.Scheme)
 	//+kubebuilder:scaffold:scheme
 }
 

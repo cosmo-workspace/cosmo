@@ -4,7 +4,7 @@ import (
 	"sigs.k8s.io/kustomize/api/types"
 	"sigs.k8s.io/yaml"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
@@ -18,8 +18,8 @@ var (
 
 func NewKustomize(disableNamePrefix bool) *types.Kustomization {
 	label := make(map[string]string)
-	label[cosmov1alpha1.LabelKeyInstance] = template.DefaultVarsInstance
-	label[cosmov1alpha1.LabelKeyTemplate] = template.DefaultVarsTemplate
+	label[cosmov1alpha1.LabelKeyInstanceName] = template.DefaultVarsInstance
+	label[cosmov1alpha1.LabelKeyTemplateName] = template.DefaultVarsTemplate
 
 	kust := &types.Kustomization{
 		CommonLabels: label,

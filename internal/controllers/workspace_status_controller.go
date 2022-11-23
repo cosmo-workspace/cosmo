@@ -22,8 +22,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -38,8 +37,8 @@ type WorkspaceStatusReconciler struct {
 	DefaultURLBase string
 }
 
-// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
-// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
+// +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := clog.FromContext(ctx).WithName("WorkspaceStatusReconciler").WithValues("req", req)
 
@@ -47,7 +46,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	key := r.getWorkspaceNamespacedName(ctx, req.NamespacedName)
 
-	var ws wsv1alpha1.Workspace
+	var ws cosmov1alpha1.Workspace
 	if err := r.Get(ctx, key, &ws); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
@@ -128,18 +127,18 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 func (r *WorkspaceStatusReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	c, err := ctrl.NewControllerManagedBy(mgr).
-		For(&wsv1alpha1.Workspace{}).
+		For(&cosmov1alpha1.Workspace{}).
 		Owns(&cosmov1alpha1.Instance{}).
 		Build(r)
 	if err != nil {
 		return err
 	}
 
-	// watch pods which has "cosmo/instance" label
+	// watch pods which has "cosmo-workspace.github.io/instance" label
 	predi, _ := predicate.LabelSelectorPredicate(metav1.LabelSelector{
 		MatchExpressions: []metav1.LabelSelectorRequirement{
 			{
-				Key:      cosmov1alpha1.LabelKeyInstance,
+				Key:      cosmov1alpha1.LabelKeyInstanceName,
 				Operator: metav1.LabelSelectorOpExists,
 			},
 		},
@@ -158,21 +157,21 @@ func (r *WorkspaceStatusReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func (r *WorkspaceStatusReconciler) getWorkspaceNamespacedName(ctx context.Context, req types.NamespacedName) types.NamespacedName {
 	var pod corev1.Pod
 	if err := r.Get(ctx, req, &pod); err == nil {
-		// request is Pod with "cosmo/instance" label
-		return types.NamespacedName{Name: pod.Labels[cosmov1alpha1.LabelKeyInstance], Namespace: pod.GetNamespace()}
+		// request is Pod with "cosmo-workspace.github.io/instance" label
+		return types.NamespacedName{Name: pod.Labels[cosmov1alpha1.LabelKeyInstanceName], Namespace: pod.GetNamespace()}
 	}
 
 	var svc corev1.Service
 	if err := r.Get(ctx, req, &svc); err == nil {
-		// request is Service with "cosmo/instance" label
-		return types.NamespacedName{Name: svc.Labels[cosmov1alpha1.LabelKeyInstance], Namespace: svc.GetNamespace()}
+		// request is Service with "cosmo-workspace.github.io/instance" label
+		return types.NamespacedName{Name: svc.Labels[cosmov1alpha1.LabelKeyInstanceName], Namespace: svc.GetNamespace()}
 	}
 
 	// request is Workspace
 	return req
 }
 
-func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws wsv1alpha1.Workspace) (map[string]string, error) {
+func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws cosmov1alpha1.Workspace) (map[string]string, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	urlbase := wsnet.URLBase(ws.Status.Config.URLBase)
 
@@ -185,7 +184,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 	for _, netRule := range ws.Spec.Network {
 		urlvars := wsnet.URLVars{}
 		urlvars.NetworkRuleName = netRule.Name
-		urlvars.PortNumber = strconv.Itoa(netRule.PortNumber)
+		urlvars.PortNumber = strconv.Itoa(int(netRule.PortNumber))
 		if netRule.Group != nil {
 			urlvars.NetRuleGroup = *netRule.Group
 		}
@@ -193,7 +192,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 		urlvars.InstanceName = ws.Name
 		urlvars.WorkspaceName = ws.Name
 		urlvars.Namespace = ws.Namespace
-		urlvars.UserName = wsv1alpha1.UserNameByNamespace(ws.Namespace)
+		urlvars.UserName = cosmov1alpha1.UserNameByNamespace(ws.Namespace)
 
 		urlvars.IngressPath = netRule.HTTPPath
 
@@ -226,11 +225,11 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 	return urlMap, nil
 }
 
-func listWorkspacePods(ctx context.Context, c client.Client, ws wsv1alpha1.Workspace) ([]corev1.Pod, error) {
+func listWorkspacePods(ctx context.Context, c client.Client, ws cosmov1alpha1.Workspace) ([]corev1.Pod, error) {
 	var podList corev1.PodList
 
 	ls := labels.NewSelector()
-	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstance, selection.Equals, []string{ws.GetName()})
+	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstanceName, selection.Equals, []string{ws.GetName()})
 	ls = ls.Add(*req)
 
 	opts := &client.ListOptions{
@@ -243,12 +242,12 @@ func listWorkspacePods(ctx context.Context, c client.Client, ws wsv1alpha1.Works
 	return podList.Items, nil
 }
 
-func getWorkspaceServicesAndIngress(ctx context.Context, c client.Client, ws wsv1alpha1.Workspace) (svc corev1.Service, ing netv1.Ingress, err error) {
+func getWorkspaceServicesAndIngress(ctx context.Context, c client.Client, ws cosmov1alpha1.Workspace) (svc corev1.Service, ing netv1.Ingress, err error) {
 	var svcList corev1.ServiceList
 	var ingList netv1.IngressList
 
 	ls := labels.NewSelector()
-	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstance, selection.In, []string{ws.GetName()})
+	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstanceName, selection.In, []string{ws.GetName()})
 	ls = ls.Add(*req)
 
 	opts := &client.ListOptions{

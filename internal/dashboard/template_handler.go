@@ -5,20 +5,19 @@ import (
 	"net/http"
 	"strconv"
 
+	connect_go "github.com/bufbuild/connect-go"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/utils/pointer"
 
-	connect_go "github.com/bufbuild/connect-go"
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	connect "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
-	"google.golang.org/protobuf/types/known/emptypb"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 func (s *Server) TemplateServiceHandler(mux *http.ServeMux) {
-	path, handler := connect.NewTemplateServiceHandler(s,
+	path, handler := dashboardv1alpha1connect.NewTemplateServiceHandler(s,
 		connect_go.WithInterceptors(s.authorizationInterceptor()),
 		connect_go.WithInterceptors(s.validatorInterceptor()),
 	)
@@ -70,7 +69,7 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context, req *connect_go.Requ
 		tmpl := convertTemplateToDashv1alpha1Template(v)
 
 		if ann := v.GetAnnotations(); ann != nil {
-			if b, ok := ann[wsv1alpha1.TemplateAnnKeyDefaultUserAddon]; ok {
+			if b, ok := ann[cosmov1alpha1.UserAddonTemplateAnnKeyDefaultUserAddon]; ok {
 				if defaultAddon, err := strconv.ParseBool(b); err == nil && defaultAddon {
 					tmpl.IsDefaultUserAddon = pointer.Bool(true)
 				}

@@ -13,8 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 
-	"github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
@@ -46,13 +45,13 @@ metadata:
     cosmo/ingress-patch-enable: "true"
     kubernetes.io/ingress.class: alb
   labels:
-    cosmo/instance: cs1
-    cosmo/template: code-server
+    cosmo-workspace.github.io/instance: cs1
+    cosmo-workspace.github.io/template: code-server
     key: val
   name: cs1-test
   namespace: cosmo-user-tom
   ownerReferences:
-  - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     blockOwnerDeletion: true
     controller: true
     kind: Instance
@@ -63,7 +62,7 @@ spec:
 			wantErr: false,
 			args: args{
 				transformers: AllTransformers(
-					&v1alpha1.Instance{
+					&cosmov1alpha1.Instance{
 						ObjectMeta: metav1.ObjectMeta{
 							Name:      "cs1",
 							Namespace: "cosmo-user-tom",
@@ -96,7 +95,7 @@ spec:
 						},
 					},
 					scheme,
-					&v1alpha1.Template{
+					&cosmov1alpha1.Template{
 						ObjectMeta: metav1.ObjectMeta{
 							Name: "code-server",
 						},
@@ -122,7 +121,7 @@ spec:
 			wantErr: true,
 			args: args{
 				transformers: AllTransformers(
-					&v1alpha1.Instance{
+					&cosmov1alpha1.Instance{
 						ObjectMeta: metav1.ObjectMeta{
 							Name:      "cs1",
 							Namespace: "cosmo-user-tom",
@@ -148,7 +147,7 @@ spec:
 						},
 					},
 					scheme,
-					&v1alpha1.Template{
+					&cosmov1alpha1.Template{
 						ObjectMeta: metav1.ObjectMeta{
 							Name: "code-server",
 						},

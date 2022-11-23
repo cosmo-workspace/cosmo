@@ -11,8 +11,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
@@ -26,12 +25,12 @@ type TemplateMutationWebhookHandler struct {
 	DefaultURLBase string
 }
 
-//+kubebuilder:webhook:path=/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=templates,verbs=create;update,versions=v1alpha1,name=mtemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
-//+kubebuilder:webhook:path=/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=clustertemplates,verbs=create;update,versions=v1alpha1,name=mclustertemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-template,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=templates,verbs=create;update,versions=v1alpha1,name=mtemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-template,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=clustertemplates,verbs=create;update,versions=v1alpha1,name=mclustertemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *TemplateMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
-		"/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template",
+		"/mutate-cosmo-workspace-github-io-v1alpha1-template",
 		&webhook.Admission{Handler: h},
 	)
 }
@@ -71,7 +70,7 @@ func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admissi
 	tmplType, _ := template.GetTemplateType(tmpl)
 
 	switch tmplType {
-	case wsv1alpha1.TemplateTypeWorkspace:
+	case cosmov1alpha1.TemplateLabelEnumTypeWorkspace:
 		t, ok := tmpl.(*cosmov1alpha1.Template)
 		if ok {
 			cfg, err := wscfg.ConfigFromTemplateAnnotations(t)
@@ -110,12 +109,12 @@ type TemplateValidationWebhookHandler struct {
 	FieldManager string
 }
 
-//+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=templates,verbs=create;update,versions=v1alpha1,name=vtemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
-//+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-template,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=clustertemplates,verbs=create;update,versions=v1alpha1,name=vclustertemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/validate-cosmo-workspace-github-io-v1alpha1-template,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=templates,verbs=create;update,versions=v1alpha1,name=vtemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/validate-cosmo-workspace-github-io-v1alpha1-template,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=clustertemplates,verbs=create;update,versions=v1alpha1,name=vclustertemplate.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *TemplateValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
-		"/validate-cosmo-cosmo-workspace-github-io-v1alpha1-template",
+		"/validate-cosmo-workspace-github-io-v1alpha1-template",
 		&webhook.Admission{Handler: h},
 	)
 }

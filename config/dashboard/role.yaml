@@ -1,79 +1,78 @@
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: dashboard
 rules:
-- apiGroups:
-  - ''
-  resources:
-  - namespaces
-  - secrets
-  verbs:
-  - create
-  - delete
-  - patch
-  - update
-  - get
-  - list
-  - watch
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - roles
-  - rolebindings
-  verbs:
-  - create
-  - delete
-  - patch
-  - update
-  - get
-  - list
-  - watch
-  - bind
-- apiGroups:
-  - workspace.cosmo-workspace.github.io
-  resources:
-  - workspaces
-  - users
-  verbs:
-  - create
-  - delete
-  - patch
-  - update
-  - get
-  - list
-  - watch
-- apiGroups:
-  - workspace.cosmo-workspace.github.io
-  resources:
-  - users/status
-  - workspaces/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - cosmo.cosmo-workspace.github.io
-  resources:
-  - instances
-  - templates
-  - clusterinstances
-  - clustertemplates
-  verbs:
-  - create
-  - delete
-  - patch
-  - update
-  - get
-  - list
-  - watch
-- apiGroups:
-  - cosmo.cosmo-workspace.github.io
-  resources:
-  - instances/status
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - secrets
+    verbs:
+      - create
+      - delete
+      - patch
+      - update
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - roles
+      - rolebindings
+    verbs:
+      - create
+      - delete
+      - patch
+      - update
+      - get
+      - list
+      - watch
+      - bind
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - workspaces
+      - users
+    verbs:
+      - create
+      - delete
+      - patch
+      - update
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - users/status
+      - workspaces/status
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - instances
+      - templates
+      - clusterinstances
+      - clustertemplates
+    verbs:
+      - create
+      - delete
+      - patch
+      - update
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - instances/status
+    verbs:
+      - get
+      - list
+      - watch

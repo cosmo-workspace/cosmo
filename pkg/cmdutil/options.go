@@ -15,8 +15,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
@@ -28,7 +27,7 @@ var (
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 	_ = cosmov1alpha1.AddToScheme(scheme)
-	_ = wsv1alpha1.AddToScheme(scheme)
+	_ = cosmov1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -149,7 +148,7 @@ func (o *UserNamespacedCliOptions) Validate(cmd *cobra.Command, args []string) e
 func (o *UserNamespacedCliOptions) Complete(cmd *cobra.Command, args []string) error {
 	if !o.AllNamespace {
 		if o.Namespace == "" && o.User != "" {
-			o.Namespace = wsv1alpha1.UserNamespace(o.User)
+			o.Namespace = cosmov1alpha1.UserNamespace(o.User)
 		}
 	}
 	if err := o.NamespacedCliOptions.Complete(cmd, args); err != nil {
@@ -157,7 +156,7 @@ func (o *UserNamespacedCliOptions) Complete(cmd *cobra.Command, args []string) e
 	}
 	if !o.AllNamespace {
 		if o.Namespace != "" && o.User == "" {
-			userName := wsv1alpha1.UserNameByNamespace(o.Namespace)
+			userName := cosmov1alpha1.UserNameByNamespace(o.Namespace)
 			if userName == "" {
 				return fmt.Errorf("namespace %s is not cosmo user's namespace", o.Namespace)
 			}

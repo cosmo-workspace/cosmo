@@ -52,8 +52,8 @@ type localPortProxy struct {
 
 type LocalPortProxyInfo struct {
 	Name       string
-	TargetPort int
-	LocalPort  int
+	TargetPort int32
+	LocalPort  int32
 }
 
 func (s localPortProxyStore) Add(name string, proxyData localPortProxy) {
@@ -84,7 +84,7 @@ func (m *Manager) Initialize() (*Manager, error) {
 	return m, nil
 }
 
-func (m *Manager) newProxyServer(name string, targetPort int) *ProxyServer {
+func (m *Manager) newProxyServer(name string, targetPort int32) *ProxyServer {
 	p := &ProxyServer{
 		Log:               m.Log.WithName("proxy").WithName(name),
 		User:              m.User,
@@ -106,7 +106,7 @@ func (m *Manager) newProxyServer(name string, targetPort int) *ProxyServer {
 	return p
 }
 
-func (m *Manager) CreateNewProxy(ctx context.Context, name string, targetPort int) (LocalPortProxyInfo, error) {
+func (m *Manager) CreateNewProxy(ctx context.Context, name string, targetPort int32) (LocalPortProxyInfo, error) {
 	log := m.Log.WithCaller()
 
 	if existingProxy, exist := m.proxyStore[name]; exist {

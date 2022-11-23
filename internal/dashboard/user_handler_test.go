@@ -6,16 +6,18 @@ import (
 	"net/http"
 	"time"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"google.golang.org/protobuf/types/known/emptypb"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	ctrl_client "sigs.k8s.io/controller-runtime/pkg/client"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 var _ = Describe("Dashboard server [User]", func() {
@@ -28,7 +30,7 @@ var _ = Describe("Dashboard server [User]", func() {
 
 	BeforeEach(func() {
 		userSession = test_CreateLoginUserSession("normal-user", "お名前", "", "password")
-		adminSession = test_CreateLoginUserSession("admin-user", "アドミン", wsv1alpha1.UserAdminRole, "password")
+		adminSession = test_CreateLoginUserSession("admin-user", "アドミン", cosmov1alpha1.UserAdminRole, "password")
 		client = dashboardv1alpha1connect.NewUserServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 
@@ -39,7 +41,7 @@ var _ = Describe("Dashboard server [User]", func() {
 	})
 
 	//==================================================================================
-	userSnap := func(us *wsv1alpha1.User) struct{ Name, Namespace, Spec, Status interface{} } {
+	userSnap := func(us *cosmov1alpha1.User) struct{ Name, Namespace, Spec, Status interface{} } {
 		return struct{ Name, Namespace, Spec, Status interface{} }{
 			Name:      us.Name,
 			Namespace: us.Namespace,
@@ -62,7 +64,7 @@ var _ = Describe("Dashboard server [User]", func() {
 		run_test := func(loginUser string, req *dashv1alpha1.CreateUserRequest) {
 			if req.UserName == "user-create" {
 				testUtil.CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
-				testUtil.CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "user-temple1")
+				testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "user-temple1")
 			} else if req.UserName == "user-create-later" {
 				timer := time.AfterFunc(100*time.Millisecond, func() {
 					testUtil.CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-later")
@@ -393,7 +395,7 @@ var _ = Describe("Dashboard server [User]", func() {
 		DescribeTable("❌ fail to verify password:",
 			func(loginUser string, req *dashv1alpha1.UpdateUserPasswordRequest) {
 				clientMock.GetMock = func(ctx context.Context, key ctrl_client.ObjectKey, obj ctrl_client.Object, opts ...ctrl_client.GetOption) (mocked bool, err error) {
-					if key.Name == wsv1alpha1.UserPasswordSecretName {
+					if key.Name == cosmov1alpha1.UserPasswordSecretName {
 						return true, apierrs.NewNotFound(schema.GroupResource{}, "secret")
 					}
 					return false, nil

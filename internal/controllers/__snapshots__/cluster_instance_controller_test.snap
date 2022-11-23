@@ -41,12 +41,12 @@ SnapShot = """
     \"name\": \"test-pv-clusterinst1-pv\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-pv-clusterinst1\",
-      \"cosmo/template\": \"test-storage-clustertmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-pv-clusterinst1\",
+      \"cosmo-workspace.github.io/template\": \"test-storage-clustertmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"ClusterInstance\",
         \"name\": \"test-pv-clusterinst1\",
         \"uid\": \"\",
@@ -90,12 +90,12 @@ SnapShot = """
     \"name\": \"test-pv-clusterinst1-sc\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-pv-clusterinst1\",
-      \"cosmo/template\": \"test-storage-clustertmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-pv-clusterinst1\",
+      \"cosmo-workspace.github.io/template\": \"test-storage-clustertmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"ClusterInstance\",
         \"name\": \"test-pv-clusterinst1\",
         \"uid\": \"\",
@@ -121,12 +121,12 @@ SnapShot = """
     \"name\": \"test-pv-clusterinst1-pv\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-pv-clusterinst1\",
-      \"cosmo/template\": \"test-storage-clustertmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-pv-clusterinst1\",
+      \"cosmo-workspace.github.io/template\": \"test-storage-clustertmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"ClusterInstance\",
         \"name\": \"test-pv-clusterinst1\",
         \"uid\": \"\",
@@ -170,12 +170,12 @@ SnapShot = """
     \"name\": \"test-pv-clusterinst1-sc\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-pv-clusterinst1\",
-      \"cosmo/template\": \"test-storage-clustertmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-pv-clusterinst1\",
+      \"cosmo-workspace.github.io/template\": \"test-storage-clustertmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"ClusterInstance\",
         \"name\": \"test-pv-clusterinst1\",
         \"uid\": \"\",

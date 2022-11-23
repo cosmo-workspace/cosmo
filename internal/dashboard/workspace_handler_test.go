@@ -5,13 +5,15 @@ import (
 	"errors"
 	"net/http"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"k8s.io/utils/pointer"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 var _ = Describe("Dashboard server [Workspace]", func() {
@@ -24,8 +26,8 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 
 	BeforeEach(func() {
 		userSession = test_CreateLoginUserSession("normal-user", "user", "", "password")
-		adminSession = test_CreateLoginUserSession("admin-user", "admin", wsv1alpha1.UserAdminRole, "password")
-		testUtil.CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
+		adminSession = test_CreateLoginUserSession("admin-user", "admin", cosmov1alpha1.UserAdminRole, "password")
+		testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
 		client = dashboardv1alpha1connect.NewWorkspaceServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 
@@ -37,7 +39,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 	})
 
 	//==================================================================================
-	workspaceSnap := func(ws *wsv1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
+	workspaceSnap := func(ws *cosmov1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
 		return struct{ Name, Namespace, Spec, Status interface{} }{
 			Name:      ws.Name,
 			Namespace: ws.Namespace,

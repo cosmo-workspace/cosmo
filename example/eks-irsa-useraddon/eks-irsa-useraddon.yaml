@@ -1,10 +1,10 @@
-apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Template
 metadata:
   annotations:
-    cosmo/disable-nameprefix: "true"
+    cosmo-workspace.github.io/disable-nameprefix: "true"
   labels:
-    cosmo/type: user-addon
+    cosmo-workspace.github.io/type: useraddon
   name: eks-irsa
 spec:
   rawYaml: |

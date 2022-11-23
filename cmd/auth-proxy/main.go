@@ -20,8 +20,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -64,7 +63,7 @@ func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
 	_ = cosmov1alpha1.AddToScheme(scheme)
-	_ = wsv1alpha1.AddToScheme(scheme)
+	_ = cosmov1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -103,7 +102,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	ownerName := wsv1alpha1.UserNameByNamespace(eo.Namespace)
+	ownerName := cosmov1alpha1.UserNameByNamespace(eo.Namespace)
 	if ownerName == "" {
 		setupLog.Error(fmt.Errorf("namespace %s is not cosmo user's namespace", eo.Namespace), "invalid namespace")
 		os.Exit(1)

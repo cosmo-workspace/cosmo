@@ -6,12 +6,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-pod-inst1\",
-      \"cosmo/template\": \"test-pod-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-pod-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-pod-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-pod-inst1\",
         \"uid\": \"\",
@@ -73,12 +73,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-pod-inst1\",
-      \"cosmo/template\": \"test-pod-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-pod-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-pod-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-pod-inst1\",
         \"uid\": \"\",
@@ -189,12 +189,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-pod-inst1\",
-      \"cosmo/template\": \"test-pod-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-pod-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-pod-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-pod-inst1\",
         \"uid\": \"\",

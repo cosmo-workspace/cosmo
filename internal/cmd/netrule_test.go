@@ -15,8 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -40,7 +39,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		scheme := runtime.NewScheme()
 		_ = clientgoscheme.AddToScheme(scheme)
 		_ = cosmov1alpha1.AddToScheme(scheme)
-		_ = wsv1alpha1.AddToScheme(scheme)
+		_ = cosmov1alpha1.AddToScheme(scheme)
 
 		baseclient, err := kosmo.NewClientByRestConfig(cfg, scheme)
 		Expect(err).NotTo(HaveOccurred())
@@ -56,8 +55,8 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		rootCmd = NewRootCmd(options)
 
 		test_CreateLoginUser("user2", "お名前", "", "password")
-		test_CreateLoginUser("user1", "アドミン", wsv1alpha1.UserAdminRole, "password")
-		test_CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
+		test_CreateLoginUser("user1", "アドミン", cosmov1alpha1.UserAdminRole, "password")
+		test_CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
 		By("---------------BeforeEach end----------------")
 	})
 
@@ -80,7 +79,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		}
 	}
 
-	workspaceSnap := func(ws *wsv1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
+	workspaceSnap := func(ws *cosmov1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
 		return struct{ Name, Namespace, Spec, Status interface{} }{
 			Name:      ws.Name,
 			Namespace: ws.Namespace,

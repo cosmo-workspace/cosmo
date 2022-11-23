@@ -5,16 +5,17 @@ import (
 	"net/http"
 
 	connect_go "github.com/bufbuild/connect-go"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"google.golang.org/protobuf/types/known/emptypb"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	connect "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
-	"google.golang.org/protobuf/types/known/emptypb"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 func (s *Server) UserServiceHandler(mux *http.ServeMux) {
-	path, handler := connect.NewUserServiceHandler(s,
+	path, handler := dashboardv1alpha1connect.NewUserServiceHandler(s,
 		connect_go.WithInterceptors(s.authorizationInterceptor()),
 		connect_go.WithInterceptors(s.validatorInterceptor()),
 	)
@@ -123,7 +124,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 	return connect_go.NewResponse(res), nil
 }
 
-func convertUserToDashv1alpha1User(user wsv1alpha1.User) *dashv1alpha1.User {
+func convertUserToDashv1alpha1User(user cosmov1alpha1.User) *dashv1alpha1.User {
 	addons := make([]*dashv1alpha1.UserAddons, len(user.Spec.Addons))
 	for i, v := range user.Spec.Addons {
 		addons[i] = &dashv1alpha1.UserAddons{
@@ -143,11 +144,11 @@ func convertUserToDashv1alpha1User(user wsv1alpha1.User) *dashv1alpha1.User {
 	}
 }
 
-func convertDashv1alpha1UserAddonToUserAddon(addons []*dashv1alpha1.UserAddons) []wsv1alpha1.UserAddon {
-	a := make([]wsv1alpha1.UserAddon, len(addons))
+func convertDashv1alpha1UserAddonToUserAddon(addons []*dashv1alpha1.UserAddons) []cosmov1alpha1.UserAddon {
+	a := make([]cosmov1alpha1.UserAddon, len(addons))
 	for i, v := range addons {
-		addon := wsv1alpha1.UserAddon{
-			Template: wsv1alpha1.UserAddonTemplateRef{
+		addon := cosmov1alpha1.UserAddon{
+			Template: cosmov1alpha1.UserAddonTemplateRef{
 				Name:          v.Template,
 				ClusterScoped: v.ClusterScoped,
 			},

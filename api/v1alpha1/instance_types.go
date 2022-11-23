@@ -9,8 +9,10 @@ import (
 )
 
 const (
-	// LabelKeyInstance is a instance name label on the each child resources associated with the instance
-	LabelKeyInstance = "cosmo/instance"
+	// LabelKeyInstanceName is a instance name label on the each child resources associated with the instance
+	LabelKeyInstanceName = "cosmo-workspace.github.io/instance"
+	// LabelKeyTemplateName is a template name label on the resources created by instance
+	LabelKeyTemplateName = "cosmo-workspace.github.io/template"
 )
 
 func init() {

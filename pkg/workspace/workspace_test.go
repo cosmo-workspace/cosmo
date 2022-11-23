@@ -11,22 +11,21 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/pointer"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/google/go-cmp/cmp"
 )
 
 func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 	validScheme := runtime.NewScheme()
 	cosmov1alpha1.AddToScheme(validScheme)
-	wsv1alpha1.AddToScheme(validScheme)
+	cosmov1alpha1.AddToScheme(validScheme)
 	invalidScheme := runtime.NewScheme()
 
 	prefix := netv1.PathTypePrefix
 
 	type args struct {
 		inst   *cosmov1alpha1.Instance
-		ws     wsv1alpha1.Workspace
+		ws     cosmov1alpha1.Workspace
 		scheme *runtime.Scheme
 	}
 	tests := []struct {
@@ -39,12 +38,12 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				ws: wsv1alpha1.Workspace{
+				ws: cosmov1alpha1.Workspace{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "ws1",
 						Namespace: "cosmo-user-default",
 					},
-					Spec: wsv1alpha1.WorkspaceSpec{
+					Spec: cosmov1alpha1.WorkspaceSpec{
 						Template: cosmov1alpha1.TemplateRef{
 							Name: "tmpl1",
 						},
@@ -52,7 +51,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 						Vars: map[string]string{
 							"VAR1": "VAL1",
 						},
-						Network: []wsv1alpha1.NetworkRule{
+						Network: []cosmov1alpha1.NetworkRule{
 							{
 								Name:             "port1",
 								PortNumber:       8080,
@@ -61,8 +60,8 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 							},
 						},
 					},
-					Status: wsv1alpha1.WorkspaceStatus{
-						Config: wsv1alpha1.Config{
+					Status: cosmov1alpha1.WorkspaceStatus{
+						Config: cosmov1alpha1.Config{
 							DeploymentName:      "ws-deploy",
 							IngressName:         "ws-ing",
 							ServiceName:         "ws-svc",
@@ -159,19 +158,19 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 		{
 			name: "OK with scheme",
 			args: args{
-				ws: wsv1alpha1.Workspace{
+				ws: cosmov1alpha1.Workspace{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "ws1",
 						Namespace: "cosmo-user-default",
 					},
-					Spec: wsv1alpha1.WorkspaceSpec{
+					Spec: cosmov1alpha1.WorkspaceSpec{
 						Template: cosmov1alpha1.TemplateRef{
 							Name: "tmpl1",
 						},
 						Replicas: pointer.Int64(0),
 					},
-					Status: wsv1alpha1.WorkspaceStatus{
-						Config: wsv1alpha1.Config{
+					Status: cosmov1alpha1.WorkspaceStatus{
+						Config: cosmov1alpha1.Config{
 							DeploymentName:      "ws-deploy",
 							IngressName:         "ws-ing",
 							ServiceName:         "ws-svc",
@@ -234,19 +233,19 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 		{
 			name: "Err witr invalid scheme",
 			args: args{
-				ws: wsv1alpha1.Workspace{
+				ws: cosmov1alpha1.Workspace{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "ws1",
 						Namespace: "cosmo-user-default",
 					},
-					Spec: wsv1alpha1.WorkspaceSpec{
+					Spec: cosmov1alpha1.WorkspaceSpec{
 						Template: cosmov1alpha1.TemplateRef{
 							Name: "tmpl1",
 						},
 						Replicas: pointer.Int64(0),
 					},
-					Status: wsv1alpha1.WorkspaceStatus{
-						Config: wsv1alpha1.Config{
+					Status: cosmov1alpha1.WorkspaceStatus{
+						Config: cosmov1alpha1.Config{
 							DeploymentName:      "ws-deploy",
 							IngressName:         "ws-ing",
 							ServiceName:         "ws-svc",
@@ -288,7 +287,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 						t.Errorf("PatchWorkspaceInstanceAsDesired() ownerRef should be 1 but %v", len(ownerRef))
 					}
 					expectedRef := metav1.OwnerReference{
-						APIVersion:         wsv1alpha1.GroupVersion.String(),
+						APIVersion:         cosmov1alpha1.GroupVersion.String(),
 						Kind:               "Workspace",
 						Name:               tt.args.ws.GetName(),
 						UID:                tt.args.ws.GetUID(),
@@ -305,7 +304,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 }
 
 func TestSvcPorts(t *testing.T) {
-	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int) wsv1alpha1.NetworkRule {
+	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int32) cosmov1alpha1.NetworkRule {
 		var hostp *string
 		if host != "" {
 			hostp = &host
@@ -314,7 +313,7 @@ func TestSvcPorts(t *testing.T) {
 		if targetPortNumber != 0 {
 			targetp = pointer.Int32(int32(targetPortNumber))
 		}
-		return wsv1alpha1.NetworkRule{
+		return cosmov1alpha1.NetworkRule{
 			Name:             ruleName,
 			PortNumber:       portNumber,
 			HTTPPath:         path,
@@ -326,7 +325,7 @@ func TestSvcPorts(t *testing.T) {
 	}
 
 	type args struct {
-		netRules []wsv1alpha1.NetworkRule
+		netRules []cosmov1alpha1.NetworkRule
 	}
 	tests := []struct {
 		name string
@@ -336,7 +335,7 @@ func TestSvcPorts(t *testing.T) {
 		{
 			name: "OK1",
 			args: args{
-				netRules: []wsv1alpha1.NetworkRule{netRule("rule1", "host1", "/", 1111, 2222)},
+				netRules: []cosmov1alpha1.NetworkRule{netRule("rule1", "host1", "/", 1111, 2222)},
 			},
 			want: []corev1.ServicePort{
 				{
@@ -352,7 +351,7 @@ func TestSvcPorts(t *testing.T) {
 		{
 			name: "OK2",
 			args: args{
-				netRules: []wsv1alpha1.NetworkRule{
+				netRules: []cosmov1alpha1.NetworkRule{
 					netRule("rule1", "host1", "/", 1111, 2222),
 					netRule("rule2", "host1", "/", 3333, 4444),
 				},
@@ -379,7 +378,7 @@ func TestSvcPorts(t *testing.T) {
 		{
 			name: "OK3",
 			args: args{
-				netRules: []wsv1alpha1.NetworkRule{
+				netRules: []cosmov1alpha1.NetworkRule{
 					netRule("rule1", "host1", "/", 1111, 2222),
 					netRule("rule2", "host1", "/", 3333, 2222),
 				},
@@ -433,7 +432,7 @@ func TestIngressRules(t *testing.T) {
 		}
 	}
 
-	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int) wsv1alpha1.NetworkRule {
+	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int32) cosmov1alpha1.NetworkRule {
 		var hostp *string
 		if host != "" {
 			hostp = &host
@@ -442,7 +441,7 @@ func TestIngressRules(t *testing.T) {
 		if targetPortNumber != 0 {
 			targetp = pointer.Int32(int32(targetPortNumber))
 		}
-		return wsv1alpha1.NetworkRule{
+		return cosmov1alpha1.NetworkRule{
 			Name:             ruleName,
 			PortNumber:       portNumber,
 			HTTPPath:         path,
@@ -454,7 +453,7 @@ func TestIngressRules(t *testing.T) {
 	}
 
 	type args struct {
-		netRules       []wsv1alpha1.NetworkRule
+		netRules       []cosmov1alpha1.NetworkRule
 		backendSvcName string
 	}
 	tests := []struct {
@@ -465,7 +464,7 @@ func TestIngressRules(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				netRules:       []wsv1alpha1.NetworkRule{netRule("rule1", "host1", "/", 1111, 2222)},
+				netRules:       []cosmov1alpha1.NetworkRule{netRule("rule1", "host1", "/", 1111, 2222)},
 				backendSvcName: "bksvc",
 			},
 			want: []netv1.IngressRule{
@@ -477,7 +476,7 @@ func TestIngressRules(t *testing.T) {
 		{
 			name: "OK2",
 			args: args{
-				netRules: []wsv1alpha1.NetworkRule{
+				netRules: []cosmov1alpha1.NetworkRule{
 					netRule("rule1", "host1", "/", 1111, 2222),
 					netRule("rule2", "host2", "/", 3333, 4444),
 				},
@@ -496,7 +495,7 @@ func TestIngressRules(t *testing.T) {
 			name: "OK3",
 			args: args{
 
-				netRules: []wsv1alpha1.NetworkRule{
+				netRules: []cosmov1alpha1.NetworkRule{
 					netRule("rule1", "host1", "/", 1111, 2222),
 					netRule("rule2", "host1", "/aaa", 3333, 4444),
 				},

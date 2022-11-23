@@ -19,12 +19,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /mutate-cosmo-cosmo-workspace-github-io-v1alpha1-instance
+      path: /mutate-cosmo-workspace-github-io-v1alpha1-instance
   failurePolicy: Fail
   name: minstance.kb.io
   rules:
   - apiGroups:
-    - cosmo.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -41,12 +41,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /mutate-cosmo-cosmo-workspace-github-io-v1alpha1-instance
+      path: /mutate-cosmo-workspace-github-io-v1alpha1-instance
   failurePolicy: Fail
   name: mclusterinstance.kb.io
   rules:
   - apiGroups:
-    - cosmo.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -63,12 +63,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template
+      path: /mutate-cosmo-workspace-github-io-v1alpha1-template
   failurePolicy: Fail
   name: mtemplate.kb.io
   rules:
   - apiGroups:
-    - cosmo.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -85,12 +85,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /mutate-cosmo-cosmo-workspace-github-io-v1alpha1-template
+      path: /mutate-cosmo-workspace-github-io-v1alpha1-template
   failurePolicy: Fail
   name: mclustertemplate.kb.io
   rules:
   - apiGroups:
-    - cosmo.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -107,12 +107,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /mutate-workspace-cosmo-workspace-github-io-v1alpha1-user
+      path: /mutate-cosmo-workspace-github-io-v1alpha1-user
   failurePolicy: Fail
   name: muser.kb.io
   rules:
   - apiGroups:
-    - workspace.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -129,12 +129,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /mutate-workspace-cosmo-workspace-github-io-v1alpha1-workspace
+      path: /mutate-cosmo-workspace-github-io-v1alpha1-workspace
   failurePolicy: Fail
   name: mworkspace.kb.io
   rules:
   - apiGroups:
-    - workspace.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -163,12 +163,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance
+      path: /validate-cosmo-workspace-github-io-v1alpha1-instance
   failurePolicy: Fail
   name: vclusterinstance.kb.io
   rules:
   - apiGroups:
-    - cosmo.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -185,12 +185,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance
+      path: /validate-cosmo-workspace-github-io-v1alpha1-instance
   failurePolicy: Fail
   name: vinstance.kb.io
   rules:
   - apiGroups:
-    - cosmo.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -207,12 +207,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /validate-cosmo-cosmo-workspace-github-io-v1alpha1-template
+      path: /validate-cosmo-workspace-github-io-v1alpha1-template
   failurePolicy: Fail
   name: vtemplate.kb.io
   rules:
   - apiGroups:
-    - cosmo.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -229,12 +229,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /validate-cosmo-cosmo-workspace-github-io-v1alpha1-template
+      path: /validate-cosmo-workspace-github-io-v1alpha1-template
   failurePolicy: Fail
   name: vclustertemplate.kb.io
   rules:
   - apiGroups:
-    - cosmo.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -251,12 +251,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /validate-workspace-cosmo-workspace-github-io-v1alpha1-user
+      path: /validate-cosmo-workspace-github-io-v1alpha1-user
   failurePolicy: Fail
   name: vuser.kb.io
   rules:
   - apiGroups:
-    - workspace.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:
@@ -273,12 +273,12 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: {{ .Release.Namespace }}
-      path: /validate-workspace-cosmo-workspace-github-io-v1alpha1-workspace
+      path: /validate-cosmo-workspace-github-io-v1alpha1-workspace
   failurePolicy: Fail
   name: vworkspace.kb.io
   rules:
   - apiGroups:
-    - workspace.cosmo-workspace.github.io
+    - cosmo-workspace.github.io
     apiVersions:
     - v1alpha1
     operations:

@@ -1,4 +1,4 @@
-apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Instance
 metadata:
   name: my-workspace
@@ -10,31 +10,31 @@ spec:
     SERVICE_TYPE: LoadBalancer
   override:
     scale:
-    - target:
-        apiVersion: apps/v1
-        kind: Deployment
-        name: workspace
-      replicas: 1
+      - target:
+          apiVersion: apps/v1
+          kind: Deployment
+          name: workspace
+        replicas: 1
     network:
       ingress:
-      - targetName: workspace
-        annotations:
-          cosmo/sample: sample-annotation
-        rules:
-        - host: example.com
-          http:
-            paths:
-            - path: /path
-              pathType: Exact
-              backend:
-                service:
-                  name: workspace
-                  port:
-                    number: 9090
+        - targetName: workspace
+          annotations:
+            cosmo/sample: sample-annotation
+          rules:
+            - host: example.com
+              http:
+                paths:
+                  - path: /path
+                    pathType: Exact
+                    backend:
+                      service:
+                        name: workspace
+                        port:
+                          number: 9090
       service:
-      - targetName: workspace
-        ports:
-        - name: add
-          port: 9090
-          protocol: TCP
-          targetPort: 9090
+        - targetName: workspace
+          ports:
+            - name: add
+              port: 9090
+              protocol: TCP
+              targetPort: 9090

@@ -7,12 +7,11 @@ import (
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 var _ = Describe("Template webhook", func() {
@@ -20,7 +19,7 @@ var _ = Describe("Template webhook", func() {
 		It("should pass with defaulting urlbase", func() {
 			ctx := context.Background()
 
-			wsConfig := wsv1alpha1.Config{
+			wsConfig := cosmov1alpha1.Config{
 				DeploymentName:      "ws-dep",
 				ServiceName:         "ws-svc",
 				IngressName:         "ws-ing",
@@ -32,15 +31,15 @@ var _ = Describe("Template webhook", func() {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "code-server-test-wh",
 					Labels: map[string]string{
-						cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
+						cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeWorkspace,
 					},
 					Annotations: map[string]string{
-						wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      wsConfig.DeploymentName,
-						wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         wsConfig.IngressName,
-						wsv1alpha1.TemplateAnnKeyWorkspaceService:         wsConfig.ServiceName,
-						wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: wsConfig.ServiceMainPortName,
+						cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
+						cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     wsConfig.IngressName,
+						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
+						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
 						// no urlbase
-						// wsv1alpha1.TemplateAnnKeyURLBase:                  wsConfig.URLBase,
+						// cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:                  wsConfig.URLBase,
 					},
 				},
 				Spec: cosmov1alpha1.TemplateSpec{
@@ -48,8 +47,8 @@ var _ = Describe("Template webhook", func() {
 kind: Ingress
 metadata:
   labels:
-    cosmo/template: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/template: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   name: ws-ing
   namespace: '{{NAMESPACE}}'
 spec:
@@ -69,8 +68,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    cosmo/template: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/template: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   name: ws-svc
   namespace: '{{NAMESPACE}}'
 spec:
@@ -79,29 +78,29 @@ spec:
     port: 8080
     protocol: TCP
   selector:
-    cosmo/template: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/template: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    cosmo/template: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/template: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   name: ws-dep
   namespace: '{{NAMESPACE}}'
 spec:
   replicas: 1
   selector:
     matchLabels:
-      cosmo/template: '{{INSTANCE}}'
-      cosmo/template: code-server-test
+      cosmo-workspace.github.io/template: '{{INSTANCE}}'
+      cosmo-workspace.github.io/template: code-server-test
   template:
     metadata:
       labels:
-        cosmo/template: '{{INSTANCE}}'
-        cosmo/template: code-server-test
+        cosmo-workspace.github.io/template: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: code-server-test
     spec:
       containers:
       - image: 'code-server:{{IMAGE_TAG}}'
@@ -131,7 +130,7 @@ spec:
 				Kind:       "Template",
 				APIVersion: cosmov1alpha1.GroupVersion.String(),
 			}
-			expectedTmpl.Annotations[wsv1alpha1.TemplateAnnKeyURLBase] = DefaultURLBase
+			expectedTmpl.Annotations[cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase] = DefaultURLBase
 
 			var createdTmpl cosmov1alpha1.Template
 			Eventually(func() error {

@@ -49,13 +49,13 @@ SnapShot = """
 
 ['cosmoctl [workspace] [create] ✅ success with dry-run: workspace create ws1 --user user1 --template template1 --vars HOGE:HOGEHOGE --dry-run 1']
 SnapShot = """
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 1
   managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:spec:
@@ -290,7 +290,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user xxxxx --template template1 --dry-run 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
 
@@ -315,7 +315,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user xxxxx --template template1 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
 
@@ -529,7 +529,7 @@ SnapShot = 'validation error: --all-namespaces is not supported in this command'
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 xxx 1']
 SnapShot = """
-Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"ws1\" not found
+Error: workspace is not found: workspaces.cosmo-workspace.github.io \"ws1\" not found
 Usage:
   cosmoctl workspace delete WORKSPACE_NAME [flags]
 
@@ -551,7 +551,7 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 xxx 2']
-SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "ws1" not found'
+SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "ws1" not found'
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete xxxx --user user1 -A 1']
 SnapShot = """
@@ -614,13 +614,13 @@ cosmo-user-user1   ws2              nw3         2222          gp3     /
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o yaml 1']
 SnapShot = """
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 1
   managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:spec:
@@ -632,7 +632,7 @@ metadata:
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:status:
@@ -662,13 +662,13 @@ status:
   instance: {}
   phase: Pending
 ---
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 3
   managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:spec:
@@ -681,7 +681,7 @@ metadata:
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:status:
@@ -745,13 +745,13 @@ cosmo-user-user1   ws2    template1   Pending     map[]
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o yaml 1']
 SnapShot = """
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 1
   managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:spec:
@@ -763,7 +763,7 @@ metadata:
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:status:
@@ -793,13 +793,13 @@ status:
   instance: {}
   phase: Pending
 ---
-apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 3
   managedFields:
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:spec:
@@ -812,7 +812,7 @@ metadata:
     manager: cmd.test
     operation: Update
     time: xxxxxxxx
-  - apiVersion: workspace.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     fieldsType: FieldsV1
     fieldsV1:
       f:status:
@@ -1014,7 +1014,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --user user1 xxx 1']
 SnapShot = """
-Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
+Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -1035,7 +1035,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --user xxxx 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxx\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"xxxx\" not found
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -1275,7 +1275,7 @@ SnapShot = 'validation error: --all-namespaces connot be used with --namespace o
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user xxxxx 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl workspace run-instance WORKSPACE_NAME [flags]
 
@@ -1296,7 +1296,7 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user xxxxx 2']
-SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "xxxxx" not found'
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxxxx" not found'
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws2 --user user1 1']
 SnapShot = """
@@ -1325,7 +1325,7 @@ SnapShot = 'no change'
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance xxx --user user1 1']
 SnapShot = """
-Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
+Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace run-instance WORKSPACE_NAME [flags]
 
@@ -1346,7 +1346,7 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance xxx --user user1 2']
-SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
+SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [workspace] [stop-instance] ✅ success in normal context: workspace stop-instance ws1 --user user1 1']
 SnapShot = """
@@ -1506,7 +1506,7 @@ SnapShot = 'validation error: --all-namespaces connot be used with --namespace o
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user xxxxx 1']
 SnapShot = """
-Error: user is not found: users.workspace.cosmo-workspace.github.io \"xxxxx\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl workspace stop-instance WORKSPACE_NAME [flags]
 
@@ -1527,7 +1527,7 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user xxxxx 2']
-SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "xxxxx" not found'
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxxxx" not found'
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws2 --user user1 1']
 SnapShot = """
@@ -1556,7 +1556,7 @@ SnapShot = 'no change'
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance xxx --user user1 1']
 SnapShot = """
-Error: workspace is not found: workspaces.workspace.cosmo-workspace.github.io \"xxx\" not found
+Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace stop-instance WORKSPACE_NAME [flags]
 
@@ -1577,4 +1577,4 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance xxx --user user1 2']
-SnapShot = 'workspace is not found: workspaces.workspace.cosmo-workspace.github.io "xxx" not found'
+SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'

@@ -7,20 +7,19 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 	netv1 "k8s.io/api/networking/v1"
 )
 
-func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws wsv1alpha1.Workspace, scheme *runtime.Scheme) error {
+func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws cosmov1alpha1.Workspace, scheme *runtime.Scheme) error {
 	backendSvcName := instance.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName)
 	svcPorts := svcPorts(ws.Spec.Network)
 	ingRules := ingressRules(ws.Spec.Network, backendSvcName)
 
-	scaleTargetRef := func(ws wsv1alpha1.Workspace) cosmov1alpha1.ObjectRef {
+	scaleTargetRef := func(ws cosmov1alpha1.Workspace) cosmov1alpha1.ObjectRef {
 		tgt := cosmov1alpha1.ObjectRef{}
 		tgt.SetName(ws.Status.Config.DeploymentName)
 		tgt.SetGroupVersionKind(kubeutil.DeploymentGVK)
@@ -64,7 +63,7 @@ func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws wsv1alpha1
 	return nil
 }
 
-func svcPorts(netRules []wsv1alpha1.NetworkRule) []corev1.ServicePort {
+func svcPorts(netRules []cosmov1alpha1.NetworkRule) []corev1.ServicePort {
 	ports := make([]corev1.ServicePort, 0, len(netRules))
 	portMap := make(map[int32]corev1.ServicePort, len(netRules))
 
@@ -82,7 +81,7 @@ func svcPorts(netRules []wsv1alpha1.NetworkRule) []corev1.ServicePort {
 	return ports
 }
 
-func ingressRules(netRules []wsv1alpha1.NetworkRule, backendSvcName string) []netv1.IngressRule {
+func ingressRules(netRules []cosmov1alpha1.NetworkRule, backendSvcName string) []netv1.IngressRule {
 	ingRules := make([]netv1.IngressRule, 0, len(netRules))
 	ingRuleMap := make(map[string]netv1.IngressRule, len(netRules))
 
@@ -102,8 +101,8 @@ func ingressRules(netRules []wsv1alpha1.NetworkRule, backendSvcName string) []ne
 	return ingRules
 }
 
-func addWorkspaceDefaultVars(vars map[string]string, ws wsv1alpha1.Workspace) map[string]string {
-	user := wsv1alpha1.UserNameByNamespace(ws.GetNamespace())
+func addWorkspaceDefaultVars(vars map[string]string, ws cosmov1alpha1.Workspace) map[string]string {
+	user := cosmov1alpha1.UserNameByNamespace(ws.GetNamespace())
 
 	if vars == nil {
 		vars = make(map[string]string)
@@ -113,10 +112,10 @@ func addWorkspaceDefaultVars(vars map[string]string, ws wsv1alpha1.Workspace) ma
 	vars[wsnet.URLVarUserName] = user
 
 	// workspace config
-	vars[wsv1alpha1.TemplateVarDeploymentName] = ws.Status.Config.DeploymentName
-	vars[wsv1alpha1.TemplateVarServiceName] = ws.Status.Config.ServiceName
-	vars[wsv1alpha1.TemplateVarIngressName] = ws.Status.Config.IngressName
-	vars[wsv1alpha1.TemplateVarServiceMainPortName] = ws.Status.Config.ServiceMainPortName
+	vars[cosmov1alpha1.WorkspaceTemplateVarDeploymentName] = ws.Status.Config.DeploymentName
+	vars[cosmov1alpha1.WorkspaceTemplateVarServiceName] = ws.Status.Config.ServiceName
+	vars[cosmov1alpha1.WorkspaceTemplateVarIngressName] = ws.Status.Config.IngressName
+	vars[cosmov1alpha1.WorkspaceTemplateVarServiceMainPortName] = ws.Status.Config.ServiceMainPortName
 
 	return vars
 }

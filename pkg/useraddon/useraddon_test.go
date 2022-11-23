@@ -4,8 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -15,7 +14,7 @@ import (
 
 func TestEmptyTemplateObject(t *testing.T) {
 	type args struct {
-		addon wsv1alpha1.UserAddon
+		addon cosmov1alpha1.UserAddon
 	}
 	tests := []struct {
 		name string
@@ -25,8 +24,8 @@ func TestEmptyTemplateObject(t *testing.T) {
 		{
 			name: "namespaced",
 			args: args{
-				addon: wsv1alpha1.UserAddon{
-					Template: wsv1alpha1.UserAddonTemplateRef{
+				addon: cosmov1alpha1.UserAddon{
+					Template: cosmov1alpha1.UserAddonTemplateRef{
 						Name: "tmpl",
 					},
 				},
@@ -40,8 +39,8 @@ func TestEmptyTemplateObject(t *testing.T) {
 		{
 			name: "cluster",
 			args: args{
-				addon: wsv1alpha1.UserAddon{
-					Template: wsv1alpha1.UserAddonTemplateRef{
+				addon: cosmov1alpha1.UserAddon{
+					Template: cosmov1alpha1.UserAddonTemplateRef{
 						Name:          "ctmpl",
 						ClusterScoped: true,
 					},
@@ -56,7 +55,7 @@ func TestEmptyTemplateObject(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				addon: wsv1alpha1.UserAddon{},
+				addon: cosmov1alpha1.UserAddon{},
 			},
 			want: nil,
 		},
@@ -72,7 +71,7 @@ func TestEmptyTemplateObject(t *testing.T) {
 
 func TestEmptyInstanceObject(t *testing.T) {
 	type args struct {
-		addon    wsv1alpha1.UserAddon
+		addon    cosmov1alpha1.UserAddon
 		username string
 	}
 	tests := []struct {
@@ -83,8 +82,8 @@ func TestEmptyInstanceObject(t *testing.T) {
 		{
 			name: "namespaced",
 			args: args{
-				addon: wsv1alpha1.UserAddon{
-					Template: wsv1alpha1.UserAddonTemplateRef{
+				addon: cosmov1alpha1.UserAddon{
+					Template: cosmov1alpha1.UserAddonTemplateRef{
 						Name: "tmpl",
 					},
 				},
@@ -100,8 +99,8 @@ func TestEmptyInstanceObject(t *testing.T) {
 		{
 			name: "cluster",
 			args: args{
-				addon: wsv1alpha1.UserAddon{
-					Template: wsv1alpha1.UserAddonTemplateRef{
+				addon: cosmov1alpha1.UserAddon{
+					Template: cosmov1alpha1.UserAddonTemplateRef{
 						Name:          "ctmpl",
 						ClusterScoped: true,
 					},
@@ -117,7 +116,7 @@ func TestEmptyInstanceObject(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				addon:    wsv1alpha1.UserAddon{},
+				addon:    cosmov1alpha1.UserAddon{},
 				username: "tom",
 			},
 			want: nil,
@@ -179,13 +178,13 @@ func TestInstanceName(t *testing.T) {
 func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 	validScheme := runtime.NewScheme()
 	cosmov1alpha1.AddToScheme(validScheme)
-	wsv1alpha1.AddToScheme(validScheme)
+	cosmov1alpha1.AddToScheme(validScheme)
 	invalidScheme := runtime.NewScheme()
 
 	type args struct {
 		inst   cosmov1alpha1.InstanceObject
-		addon  wsv1alpha1.UserAddon
-		user   wsv1alpha1.User
+		addon  cosmov1alpha1.UserAddon
+		user   cosmov1alpha1.User
 		scheme *runtime.Scheme
 	}
 	tests := []struct {
@@ -204,24 +203,24 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Namespace: "cosmo-user-tom",
 					},
 				},
-				addon: wsv1alpha1.UserAddon{
-					Template: wsv1alpha1.UserAddonTemplateRef{
+				addon: cosmov1alpha1.UserAddon{
+					Template: cosmov1alpha1.UserAddonTemplateRef{
 						Name: "tmpl",
 					},
 					Vars: map[string]string{
 						"VAR1": "VAL1",
 					},
 				},
-				user: wsv1alpha1.User{
+				user: cosmov1alpha1.User{
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "tom",
 						UID:  "1qaz2wsx3edc",
 					},
-					Spec: wsv1alpha1.UserSpec{
+					Spec: cosmov1alpha1.UserSpec{
 						// use selected addon in param not in user spec
-						// Addons: []wsv1alpha1.UserAddon{
+						// Addons: []cosmov1alpha1.UserAddon{
 						// 	{
-						// 		Template: wsv1alpha1.UserAddonTemplateRef{
+						// 		Template: cosmov1alpha1.UserAddonTemplateRef{
 						// 			Name: "tmpl",
 						// 		},
 						// 		Vars: map[string]string{
@@ -238,7 +237,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 					Name:      "useraddon-tmpl",
 					Namespace: "cosmo-user-tom",
 					Labels: map[string]string{
-						cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
+						cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
 					},
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
@@ -246,9 +245,9 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Name: "tmpl",
 					},
 					Vars: map[string]string{
-						wsv1alpha1.TemplateVarUserName: "tom",
-						template.DefaultVarsNamespace:  "cosmo-user-tom",
-						"VAR1":                         "VAL1",
+						cosmov1alpha1.TemplateVarUserName: "tom",
+						template.DefaultVarsNamespace:     "cosmo-user-tom",
+						"VAR1":                            "VAL1",
 					},
 				},
 			},
@@ -262,22 +261,22 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Name: "useraddon-tom-ctmpl",
 					},
 				},
-				addon: wsv1alpha1.UserAddon{
-					Template: wsv1alpha1.UserAddonTemplateRef{
+				addon: cosmov1alpha1.UserAddon{
+					Template: cosmov1alpha1.UserAddonTemplateRef{
 						Name:          "ctmpl",
 						ClusterScoped: true,
 					},
 				},
-				user: wsv1alpha1.User{
+				user: cosmov1alpha1.User{
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "tom",
 						UID:  "1qaz2wsx3edc",
 					},
-					Spec: wsv1alpha1.UserSpec{
+					Spec: cosmov1alpha1.UserSpec{
 						// use selected addon in param not in user spec
-						// Addons: []wsv1alpha1.UserAddon{
+						// Addons: []cosmov1alpha1.UserAddon{
 						// 	{
-						// 		Template: wsv1alpha1.UserAddonTemplateRef{
+						// 		Template: cosmov1alpha1.UserAddonTemplateRef{
 						// 			Name: "ctmpl",
 						//          ClusterScoped: true,
 						// 		},
@@ -290,7 +289,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "useraddon-tom-ctmpl",
 					Labels: map[string]string{
-						cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
+						cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
 					},
 				},
 				Spec: cosmov1alpha1.InstanceSpec{
@@ -298,8 +297,8 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Name: "ctmpl",
 					},
 					Vars: map[string]string{
-						wsv1alpha1.TemplateVarUserName: "tom",
-						template.DefaultVarsNamespace:  "cosmo-user-tom",
+						cosmov1alpha1.TemplateVarUserName: "tom",
+						template.DefaultVarsNamespace:     "cosmo-user-tom",
 					},
 				},
 			},
@@ -312,18 +311,18 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Name: "useraddon-tom-ctmpl",
 					},
 				},
-				addon: wsv1alpha1.UserAddon{
-					Template: wsv1alpha1.UserAddonTemplateRef{
+				addon: cosmov1alpha1.UserAddon{
+					Template: cosmov1alpha1.UserAddonTemplateRef{
 						Name:          "ctmpl",
 						ClusterScoped: true,
 					},
 				},
-				user: wsv1alpha1.User{
+				user: cosmov1alpha1.User{
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "tom",
 						UID:  "1qaz2wsx3edc",
 					},
-					Spec: wsv1alpha1.UserSpec{},
+					Spec: cosmov1alpha1.UserSpec{},
 				},
 				scheme: invalidScheme,
 			},
@@ -352,7 +351,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						t.Errorf("EmptyInstanceObject() ownerRef should be 1 but %v", len(ownerRef))
 					}
 					expectedRef := metav1.OwnerReference{
-						APIVersion:         wsv1alpha1.GroupVersion.String(),
+						APIVersion:         cosmov1alpha1.GroupVersion.String(),
 						Kind:               "User",
 						Name:               tt.args.user.GetName(),
 						UID:                tt.args.user.GetUID(),

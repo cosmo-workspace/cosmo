@@ -5,16 +5,17 @@ import (
 	"sort"
 	"time"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
 
-func (c *Client) GetUser(ctx context.Context, name string) (*wsv1alpha1.User, error) {
+func (c *Client) GetUser(ctx context.Context, name string) (*cosmov1alpha1.User, error) {
 	log := clog.FromContext(ctx).WithCaller()
-	user := wsv1alpha1.User{}
+	user := cosmov1alpha1.User{}
 
 	key := types.NamespacedName{Name: name}
 	if err := c.Get(ctx, key, &user); err != nil {
@@ -28,9 +29,9 @@ func (c *Client) GetUser(ctx context.Context, name string) (*wsv1alpha1.User, er
 	return &user, nil
 }
 
-func (c *Client) ListUsers(ctx context.Context) ([]wsv1alpha1.User, error) {
+func (c *Client) ListUsers(ctx context.Context) ([]cosmov1alpha1.User, error) {
 	log := clog.FromContext(ctx).WithCaller()
-	userList := wsv1alpha1.UserList{}
+	userList := cosmov1alpha1.UserList{}
 	if err := c.List(ctx, &userList); err != nil {
 		log.Error(err, "failed to list users")
 		return nil, NewInternalServerError("failed to list users", err)
@@ -42,7 +43,7 @@ func (c *Client) ListUsers(ctx context.Context) ([]wsv1alpha1.User, error) {
 }
 
 func (c *Client) CreateUser(ctx context.Context, username string, displayName string,
-	role string, authType string, addons []wsv1alpha1.UserAddon) (*wsv1alpha1.User, error) {
+	role string, authType string, addons []cosmov1alpha1.UserAddon) (*cosmov1alpha1.User, error) {
 
 	log := clog.FromContext(ctx).WithCaller()
 	log.Info("creating user", "username", username, "displayName", displayName, "role", role, "authType", authType, "addons", addons)
@@ -51,21 +52,21 @@ func (c *Client) CreateUser(ctx context.Context, username string, displayName st
 		displayName = username
 	}
 
-	userrole := wsv1alpha1.UserRole(role)
+	userrole := cosmov1alpha1.UserRole(role)
 	if !userrole.IsValid() {
 		log.Info("invalid request", "username", username, "role", userrole)
 		return nil, NewBadRequestError("'userrole' is invalid", nil)
 	}
 
-	authtype := wsv1alpha1.UserAuthType(authType)
+	authtype := cosmov1alpha1.UserAuthType(authType)
 	if authtype != "" && !authtype.IsValid() {
 		log.Info("invalid request", "username", username, "authtype", authtype)
 		return nil, NewBadRequestError("'authtype' is invalid", nil)
 	}
 
-	user := &wsv1alpha1.User{}
+	user := &cosmov1alpha1.User{}
 	user.SetName(username)
-	user.Spec = wsv1alpha1.UserSpec{
+	user.Spec = cosmov1alpha1.UserSpec{
 		DisplayName: displayName,
 		Role:        userrole,
 		AuthType:    authtype,
@@ -112,7 +113,7 @@ func (c *Client) GetDefaultPasswordAwait(ctx context.Context, username string) (
 	}
 }
 
-func (c *Client) DeleteUser(ctx context.Context, username string) (*wsv1alpha1.User, error) {
+func (c *Client) DeleteUser(ctx context.Context, username string) (*cosmov1alpha1.User, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	user, err := c.GetUser(ctx, username)
 	if err != nil {
@@ -132,7 +133,7 @@ type UpdateUserOpts struct {
 	UserRole    *string
 }
 
-func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUserOpts) (*wsv1alpha1.User, error) {
+func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUserOpts) (*cosmov1alpha1.User, error) {
 	logr := clog.FromContext(ctx).WithCaller()
 
 	user, err := c.GetUser(ctx, username)
@@ -146,7 +147,7 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 		user.Spec.DisplayName = *opts.DisplayName
 	}
 	if opts.UserRole != nil && *opts.UserRole != "-" {
-		user.Spec.Role = wsv1alpha1.UserRole(*opts.UserRole)
+		user.Spec.Role = cosmov1alpha1.UserRole(*opts.UserRole)
 		if !user.Spec.Role.IsValid() {
 			logr.Debug().Info("'userrole' is invalid", "user", username, "role", *opts.UserRole)
 			return nil, NewBadRequestError("'userrole' is invalid", nil)

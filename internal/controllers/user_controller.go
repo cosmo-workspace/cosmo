@@ -14,8 +14,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -34,7 +33,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	log.Debug().Info("start reconcile")
 
-	var user wsv1alpha1.User
+	var user cosmov1alpha1.User
 	if err := r.Get(ctx, req.NamespacedName, &user); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
@@ -44,7 +43,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	// reconcile namespace
 	ns := corev1.Namespace{}
-	ns.SetName(wsv1alpha1.UserNamespace(user.Name))
+	ns.SetName(cosmov1alpha1.UserNamespace(user.Name))
 
 	op, err := ctrl.CreateOrUpdate(ctx, r.Client, &ns, func() error {
 		return r.patchNamespaceToUserDesired(&ns, user)
@@ -138,17 +137,17 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 func (r *UserReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&wsv1alpha1.User{}).
+		For(&cosmov1alpha1.User{}).
 		Owns(&corev1.Namespace{}).
 		Complete(r)
 }
 
-func (r *UserReconciler) patchNamespaceToUserDesired(ns *corev1.Namespace, user wsv1alpha1.User) error {
+func (r *UserReconciler) patchNamespaceToUserDesired(ns *corev1.Namespace, user cosmov1alpha1.User) error {
 	label := ns.GetLabels()
 	if label == nil {
 		label = make(map[string]string)
 	}
-	label[wsv1alpha1.NamespaceLabelKeyUserName] = user.Name
+	label[cosmov1alpha1.NamespaceLabelKeyUserName] = user.Name
 	ns.SetLabels(label)
 
 	err := ctrl.SetControllerReference(&user, ns, r.Scheme)

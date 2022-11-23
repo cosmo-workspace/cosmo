@@ -12,7 +12,7 @@ import (
 	appsv1apply "k8s.io/client-go/applyconfigurations/apps/v1"
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/internal/authproxy"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -24,7 +24,7 @@ const (
 	AuthProxyRoleBFile = "cosmo-auth-proxy-roleb.yaml"
 )
 
-func completeWorkspaceConfig(wsConfig *wsv1alpha1.Config, unst []unstructured.Unstructured) error {
+func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured.Unstructured) error {
 	if wsConfig == nil || len(unst) == 0 {
 		return errors.New("invalid args")
 	}

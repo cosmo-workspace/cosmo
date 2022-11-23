@@ -19,8 +19,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/yaml"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	cmdutil "github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
@@ -28,7 +27,7 @@ import (
 
 type generateOption struct {
 	*cmdutil.CliOptions
-	wsConfig wsv1alpha1.Config
+	wsConfig cosmov1alpha1.Config
 
 	Name         string
 	OutputFile   string
@@ -72,7 +71,7 @@ func generateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command 
 	cmd.Flags().StringVar(&o.wsConfig.ServiceMainPortName, "workspace-main-service-port-name", "", "ServicePort name for Workspace main container port. use with --workspace (auto detected if not specified)")
 	cmd.Flags().StringVar(&o.wsConfig.URLBase, "workspace-urlbase", "", "Workspace URLBase. use with --workspace (use default urlbase in cosmo-controller-manager if not specified)")
 
-	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type user-addon")
+	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type useraddon")
 	cmd.Flags().BoolVar(&o.SetDefaultUserAddon, "set-default-user-addon", false, "set default user addon")
 	cmd.Flags().BoolVar(&o.DisableNamePrefix, "disable-nameprefix", false, "disable adding instance name prefix on child resource name")
 
@@ -159,16 +158,16 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 	o.tmpl.SetGroupVersionKind(gvk)
 
 	if o.TypeWorkspace {
-		template.SetTemplateType(o.tmpl, wsv1alpha1.TemplateTypeWorkspace)
+		template.SetTemplateType(o.tmpl, cosmov1alpha1.TemplateLabelEnumTypeWorkspace)
 	} else if o.TypeUserAddon {
-		template.SetTemplateType(o.tmpl, wsv1alpha1.TemplateTypeUserAddon)
+		template.SetTemplateType(o.tmpl, cosmov1alpha1.TemplateLabelEnumTypeUserAddon)
 
 		ann := o.tmpl.GetAnnotations()
 		if ann == nil {
 			ann = make(map[string]string)
 		}
 		if o.SetDefaultUserAddon {
-			ann[wsv1alpha1.TemplateAnnKeyDefaultUserAddon] = strconv.FormatBool(true)
+			ann[cosmov1alpha1.UserAddonTemplateAnnKeyDefaultUserAddon] = strconv.FormatBool(true)
 		}
 		if o.DisableNamePrefix {
 			ann[cosmov1alpha1.TemplateAnnKeyDisableNamePrefix] = strconv.FormatBool(true)
@@ -244,7 +243,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 
 		// add auth proxy rolebindings
 		if o.ServiceAccount != "default" {
-			roleb := wsv1alpha1.AuthProxyRoleBindingApplyConfiguration(o.ServiceAccount, template.DefaultVarsNamespace)
+			roleb := cosmov1alpha1.AuthProxyRoleBindingApplyConfiguration(o.ServiceAccount, template.DefaultVarsNamespace)
 			rawRoleb := StructToYaml(roleb)
 			if err := cmdutil.CreateFile(tmpDir, AuthProxyRoleBFile, rawRoleb); err != nil {
 				return err

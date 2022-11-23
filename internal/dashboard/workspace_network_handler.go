@@ -5,10 +5,11 @@ import (
 	"sort"
 
 	connect_go "github.com/bufbuild/connect-go"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"k8s.io/utils/pointer"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	"k8s.io/utils/pointer"
 )
 
 func (s *Server) UpsertNetworkRule(ctx context.Context, req *connect_go.Request[dashv1alpha1.UpsertNetworkRuleRequest]) (*connect_go.Response[dashv1alpha1.UpsertNetworkRuleResponse], error) {
@@ -20,7 +21,7 @@ func (s *Server) UpsertNetworkRule(ctx context.Context, req *connect_go.Request[
 	}
 
 	m := req.Msg
-	netRule, err := s.Klient.AddNetworkRule(ctx, m.WsName, m.UserName, m.NetworkRule.Name, int(m.NetworkRule.PortNumber), pointer.String(m.NetworkRule.Group), m.NetworkRule.HttpPath, m.NetworkRule.Public)
+	netRule, err := s.Klient.AddNetworkRule(ctx, m.WsName, m.UserName, m.NetworkRule.Name, m.NetworkRule.PortNumber, pointer.String(m.NetworkRule.Group), m.NetworkRule.HttpPath, m.NetworkRule.Public)
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -55,7 +56,7 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, req *connect_go.Request[
 	return connect_go.NewResponse(res), nil
 }
 
-func convertNetRulesTodashv1alpha1NetRules(netRules []wsv1alpha1.NetworkRule, urlMap map[string]string, serviceMainPortName string) []*dashv1alpha1.NetworkRule {
+func convertNetRulesTodashv1alpha1NetRules(netRules []cosmov1alpha1.NetworkRule, urlMap map[string]string, serviceMainPortName string) []*dashv1alpha1.NetworkRule {
 	apirules := make([]*dashv1alpha1.NetworkRule, 0, len(netRules))
 	for _, v := range netRules {
 		if v.Name == serviceMainPortName {
@@ -72,7 +73,7 @@ func convertNetRulesTodashv1alpha1NetRules(netRules []wsv1alpha1.NetworkRule, ur
 	return apirules
 }
 
-func convertNetRuleTodashv1alpha1NetRule(v wsv1alpha1.NetworkRule) dashv1alpha1.NetworkRule {
+func convertNetRuleTodashv1alpha1NetRule(v cosmov1alpha1.NetworkRule) dashv1alpha1.NetworkRule {
 	return dashv1alpha1.NetworkRule{
 		Name:       v.Name,
 		PortNumber: int32(v.PortNumber),

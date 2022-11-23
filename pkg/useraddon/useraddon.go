@@ -8,12 +8,11 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
-func EmptyTemplateObject(addon wsv1alpha1.UserAddon) cosmov1alpha1.TemplateObject {
+func EmptyTemplateObject(addon cosmov1alpha1.UserAddon) cosmov1alpha1.TemplateObject {
 	if addon.Template.Name == "" {
 		return nil
 	}
@@ -23,7 +22,7 @@ func EmptyTemplateObject(addon wsv1alpha1.UserAddon) cosmov1alpha1.TemplateObjec
 	return &cosmov1alpha1.Template{ObjectMeta: v1.ObjectMeta{Name: addon.Template.Name}}
 }
 
-func EmptyInstanceObject(addon wsv1alpha1.UserAddon, username string) cosmov1alpha1.InstanceObject {
+func EmptyInstanceObject(addon cosmov1alpha1.UserAddon, username string) cosmov1alpha1.InstanceObject {
 	if addon.Template.Name == "" {
 		return nil
 	}
@@ -38,7 +37,7 @@ func EmptyInstanceObject(addon wsv1alpha1.UserAddon, username string) cosmov1alp
 	return &cosmov1alpha1.Instance{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      InstanceName(addon.Template.Name, ""),
-			Namespace: wsv1alpha1.UserNamespace(username),
+			Namespace: cosmov1alpha1.UserNamespace(username),
 		},
 	}
 }
@@ -57,14 +56,14 @@ func InstanceName(addonTmplName, userName string) (name string) {
 	return name
 }
 
-func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon wsv1alpha1.UserAddon, user wsv1alpha1.User, scheme *runtime.Scheme) error {
+func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon cosmov1alpha1.UserAddon, user cosmov1alpha1.User, scheme *runtime.Scheme) error {
 
 	// set label
 	label := inst.GetLabels()
 	if label == nil {
 		label = make(map[string]string)
 	}
-	label[cosmov1alpha1.TemplateLabelKeyType] = wsv1alpha1.TemplateTypeUserAddon
+	label[cosmov1alpha1.TemplateLabelKeyType] = cosmov1alpha1.TemplateLabelEnumTypeUserAddon
 	inst.SetLabels(label)
 
 	// set template name
@@ -74,8 +73,8 @@ func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon ws
 	if addon.Vars == nil {
 		addon.Vars = make(map[string]string)
 	}
-	addon.Vars[template.DefaultVarsNamespace] = wsv1alpha1.UserNamespace(user.Name)
-	addon.Vars[wsv1alpha1.TemplateVarUserName] = user.Name
+	addon.Vars[template.DefaultVarsNamespace] = cosmov1alpha1.UserNamespace(user.Name)
+	addon.Vars[cosmov1alpha1.TemplateVarUserName] = user.Name
 	inst.GetSpec().Vars = addon.Vars
 
 	// set owner reference if scheme is not nil

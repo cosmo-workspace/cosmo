@@ -8,7 +8,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
@@ -41,8 +41,8 @@ func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstru
 	if labels == nil {
 		labels = make(map[string]string)
 	}
-	labels[cosmov1alpha1.LabelKeyInstance] = t.inst.GetName()
-	labels[cosmov1alpha1.LabelKeyTemplate] = t.tmplName
+	labels[cosmov1alpha1.LabelKeyInstanceName] = t.inst.GetName()
+	labels[cosmov1alpha1.LabelKeyTemplateName] = t.tmplName
 	obj.SetLabels(labels)
 
 	// Set owner reference

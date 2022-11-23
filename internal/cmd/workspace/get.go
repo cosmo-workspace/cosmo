@@ -13,7 +13,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/yaml"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
@@ -80,7 +80,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	var wss []wsv1alpha1.Workspace
+	var wss []cosmov1alpha1.Workspace
 
 	o.Logr.Debug().Info("options", "namespace", o.Namespace, "all-namespaces", o.AllNamespace, "workspaceName", o.WorkspaceName)
 
@@ -105,7 +105,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		wss = []wsv1alpha1.Workspace{*ws}
+		wss = []cosmov1alpha1.Workspace{*ws}
 		o.Logr.DebugAll().Info("GetWorkspaceByUserName", "user", o.User, "ws", ws)
 
 	} else {

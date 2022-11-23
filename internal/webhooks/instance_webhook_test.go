@@ -15,12 +15,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 var _ = Describe("Instance webhook", func() {
-	wsConfig := wsv1alpha1.Config{
+	wsConfig := cosmov1alpha1.Config{
 		DeploymentName:      "ws-dep",
 		ServiceName:         "ws-svc",
 		IngressName:         "ws-ing",
@@ -32,14 +31,14 @@ var _ = Describe("Instance webhook", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "code-server-test",
 			Labels: map[string]string{
-				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeWorkspace,
 			},
 			Annotations: map[string]string{
-				wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      wsConfig.DeploymentName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         wsConfig.IngressName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceService:         wsConfig.ServiceName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: wsConfig.ServiceMainPortName,
-				wsv1alpha1.TemplateAnnKeyURLBase:                  wsConfig.URLBase,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     wsConfig.IngressName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         wsConfig.URLBase,
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
@@ -47,8 +46,8 @@ var _ = Describe("Instance webhook", func() {
 kind: Ingress
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   name: ws-ing
   namespace: '{{NAMESPACE}}'
 spec:
@@ -68,8 +67,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   name: ws-svc
   namespace: '{{NAMESPACE}}'
 spec:
@@ -78,29 +77,29 @@ spec:
     port: 8080
     protocol: TCP
   selector:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   name: ws-dep
   namespace: '{{NAMESPACE}}'
 spec:
   replicas: 1
   selector:
     matchLabels:
-      cosmo/instance: '{{INSTANCE}}'
-      cosmo/template: code-server-test
+      cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+      cosmo-workspace.github.io/template: code-server-test
   template:
     metadata:
       labels:
-        cosmo/instance: '{{INSTANCE}}'
-        cosmo/template: code-server-test
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: code-server-test
     spec:
       containers:
       - image: 'code-server:{{IMAGE_TAG}}'
@@ -689,13 +688,13 @@ spec:
 kind: Role
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: '{{TEMPLATE}}'
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: '{{TEMPLATE}}'
   name: '{{INSTANCE}}-role'
   namespace: '{{NAMESPACE}}'
 rules:
 - apiGroups:
-  - workspace.cosmo-workspace.github.io
+  - cosmo-workspace.github.io
   resources:
   - workspaces
   verbs:
@@ -705,7 +704,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - workspace.cosmo-workspace.github.io
+  - cosmo-workspace.github.io
   resources:
   - workspaces/status
   verbs:
@@ -713,7 +712,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - cosmo.cosmo-workspace.github.io
+  - cosmo-workspace.github.io
   resources:
   - instances
   verbs:
@@ -723,7 +722,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - cosmo.cosmo-workspace.github.io
+  - cosmo-workspace.github.io
   resources:
   - instances/status
   verbs:
@@ -758,8 +757,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: '{{TEMPLATE}}'
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: '{{TEMPLATE}}'
   name: '{{INSTANCE}}-rolebinding'
   namespace: '{{NAMESPACE}}'
 roleRef:

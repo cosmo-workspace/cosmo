@@ -12,8 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 var _ = Describe("User webhook", func() {
@@ -21,7 +20,7 @@ var _ = Describe("User webhook", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "normal-user-addon-test",
 			Labels: map[string]string{
-				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
 			},
 		},
 	}
@@ -30,10 +29,10 @@ var _ = Describe("User webhook", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "default-user-addon-test",
 			Labels: map[string]string{
-				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
 			},
 			Annotations: map[string]string{
-				wsv1alpha1.TemplateAnnKeyDefaultUserAddon: "true",
+				cosmov1alpha1.UserAddonTemplateAnnKeyDefaultUserAddon: "true",
 			},
 		},
 	}
@@ -55,20 +54,20 @@ var _ = Describe("User webhook", func() {
 			err = k8sClient.Create(ctx, &defaultUserAddon)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			user := wsv1alpha1.User{}
+			user := cosmov1alpha1.User{}
 			user.SetName("testuser1")
-			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
-				Addons: []wsv1alpha1.UserAddon{
-					{Template: wsv1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
-					{Template: wsv1alpha1.UserAddonTemplateRef{Name: normalUserAddon.GetName()}},
+			user.Spec = cosmov1alpha1.UserSpec{
+				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: normalUserAddon.GetName()}},
 				},
 			}
 
 			err = k8sClient.Create(ctx, &user)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			var createdUser wsv1alpha1.User
+			var createdUser cosmov1alpha1.User
 			Eventually(func() error {
 				err := k8sClient.Get(ctx, client.ObjectKey{Name: user.GetName()}, &createdUser)
 				if err != nil {
@@ -83,28 +82,28 @@ var _ = Describe("User webhook", func() {
 		It("should pass with defaulting", func() {
 			ctx := context.Background()
 
-			user := wsv1alpha1.User{
+			user := cosmov1alpha1.User{
 				TypeMeta: metav1.TypeMeta{
 					Kind:       "User",
-					APIVersion: wsv1alpha1.GroupVersion.String(),
+					APIVersion: cosmov1alpha1.GroupVersion.String(),
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "testuser2",
 				},
-				Spec: wsv1alpha1.UserSpec{
-					AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
+				Spec: cosmov1alpha1.UserSpec{
+					AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
 				},
 			}
 
 			expectedUser := user.DeepCopy()
-			expectedUser.Spec.Addons = []wsv1alpha1.UserAddon{
-				{Template: wsv1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
+			expectedUser.Spec.Addons = []cosmov1alpha1.UserAddon{
+				{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
 			}
 
 			err := k8sClient.Create(ctx, &user)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			var createdUser wsv1alpha1.User
+			var createdUser cosmov1alpha1.User
 			Eventually(func() error {
 				err := k8sClient.Get(ctx, client.ObjectKey{Name: user.GetName()}, &createdUser)
 				if err != nil {
@@ -123,13 +122,13 @@ var _ = Describe("User webhook", func() {
 		It("should deny", func() {
 			ctx := context.Background()
 
-			user := wsv1alpha1.User{}
+			user := cosmov1alpha1.User{}
 			user.SetName("testuser3")
-			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
-				Addons: []wsv1alpha1.UserAddon{
-					{Template: wsv1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
-					{Template: wsv1alpha1.UserAddonTemplateRef{Name: "notfound"}},
+			user.Spec = cosmov1alpha1.UserSpec{
+				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: "notfound"}},
 				},
 			}
 			err := k8sClient.Create(ctx, &user)
@@ -141,13 +140,13 @@ var _ = Describe("User webhook", func() {
 		It("should deny", func() {
 			ctx := context.Background()
 
-			user := wsv1alpha1.User{}
+			user := cosmov1alpha1.User{}
 			user.SetName("testuser4")
-			user.Spec = wsv1alpha1.UserSpec{
-				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
-				Addons: []wsv1alpha1.UserAddon{
-					{Template: wsv1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
-					{Template: wsv1alpha1.UserAddonTemplateRef{Name: notUserAddon.GetName()}},
+			user.Spec = cosmov1alpha1.UserSpec{
+				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: notUserAddon.GetName()}},
 				},
 			}
 			err := k8sClient.Create(ctx, &user)
@@ -159,28 +158,28 @@ var _ = Describe("User webhook", func() {
 		It("should pass with defaulting", func() {
 			ctx := context.Background()
 
-			user := wsv1alpha1.User{
+			user := cosmov1alpha1.User{
 				TypeMeta: metav1.TypeMeta{
 					Kind:       "User",
-					APIVersion: wsv1alpha1.GroupVersion.String(),
+					APIVersion: cosmov1alpha1.GroupVersion.String(),
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "testuser5",
 				},
-				Spec: wsv1alpha1.UserSpec{
-					Addons: []wsv1alpha1.UserAddon{
-						{Template: wsv1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
+				Spec: cosmov1alpha1.UserSpec{
+					Addons: []cosmov1alpha1.UserAddon{
+						{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
 					},
 				},
 			}
 
 			expectedUser := user.DeepCopy()
-			expectedUser.Spec.AuthType = wsv1alpha1.UserAuthTypePasswordSecert
+			expectedUser.Spec.AuthType = cosmov1alpha1.UserAuthTypePasswordSecert
 
 			err := k8sClient.Create(ctx, &user)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			var createdUser wsv1alpha1.User
+			var createdUser cosmov1alpha1.User
 			Eventually(func() error {
 				err := k8sClient.Get(ctx, client.ObjectKey{Name: user.GetName()}, &createdUser)
 				if err != nil {
@@ -198,12 +197,12 @@ var _ = Describe("User webhook", func() {
 		It("should deny", func() {
 			ctx := context.Background()
 
-			user := wsv1alpha1.User{}
+			user := cosmov1alpha1.User{}
 			user.SetName("testuser6")
-			user.Spec = wsv1alpha1.UserSpec{
+			user.Spec = cosmov1alpha1.UserSpec{
 				AuthType: "invalid",
-				Addons: []wsv1alpha1.UserAddon{
-					{Template: wsv1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
 				},
 			}
 			err := k8sClient.Create(ctx, &user)
@@ -215,13 +214,13 @@ var _ = Describe("User webhook", func() {
 		It("should deny", func() {
 			ctx := context.Background()
 
-			user := wsv1alpha1.User{}
+			user := cosmov1alpha1.User{}
 			user.SetName("testuser7")
-			user.Spec = wsv1alpha1.UserSpec{
+			user.Spec = cosmov1alpha1.UserSpec{
 				Role:     "invalid",
-				AuthType: wsv1alpha1.UserAuthTypePasswordSecert,
-				Addons: []wsv1alpha1.UserAddon{
-					{Template: wsv1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
+				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
 				},
 			}
 			err := k8sClient.Create(ctx, &user)

@@ -12,8 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
@@ -22,18 +21,18 @@ var (
 	ErrNoItems = errors.New("no items")
 )
 
-func (c *Client) GetWorkspaceByUserName(ctx context.Context, name, username string) (*wsv1alpha1.Workspace, error) {
-	return c.GetWorkspace(ctx, name, wsv1alpha1.UserNamespace(username))
+func (c *Client) GetWorkspaceByUserName(ctx context.Context, name, username string) (*cosmov1alpha1.Workspace, error) {
+	return c.GetWorkspace(ctx, name, cosmov1alpha1.UserNamespace(username))
 }
 
-func (c *Client) GetWorkspace(ctx context.Context, name, namespace string) (*wsv1alpha1.Workspace, error) {
+func (c *Client) GetWorkspace(ctx context.Context, name, namespace string) (*cosmov1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	if _, err := c.GetUser(ctx, wsv1alpha1.UserNameByNamespace(namespace)); err != nil {
+	if _, err := c.GetUser(ctx, cosmov1alpha1.UserNameByNamespace(namespace)); err != nil {
 		return nil, err
 	}
 
-	ws := wsv1alpha1.Workspace{}
+	ws := cosmov1alpha1.Workspace{}
 	key := types.NamespacedName{
 		Namespace: namespace,
 		Name:      name,
@@ -50,18 +49,18 @@ func (c *Client) GetWorkspace(ctx context.Context, name, namespace string) (*wsv
 	return &ws, nil
 }
 
-func (c *Client) ListWorkspacesByUserName(ctx context.Context, username string) ([]wsv1alpha1.Workspace, error) {
-	return c.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(username))
+func (c *Client) ListWorkspacesByUserName(ctx context.Context, username string) ([]cosmov1alpha1.Workspace, error) {
+	return c.ListWorkspaces(ctx, cosmov1alpha1.UserNamespace(username))
 }
 
-func (c *Client) ListWorkspaces(ctx context.Context, namespace string) ([]wsv1alpha1.Workspace, error) {
+func (c *Client) ListWorkspaces(ctx context.Context, namespace string) ([]cosmov1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	if _, err := c.GetUser(ctx, wsv1alpha1.UserNameByNamespace(namespace)); err != nil {
+	if _, err := c.GetUser(ctx, cosmov1alpha1.UserNameByNamespace(namespace)); err != nil {
 		return nil, err
 	}
 
-	wsList := wsv1alpha1.WorkspaceList{}
+	wsList := cosmov1alpha1.WorkspaceList{}
 	opts := &client.ListOptions{Namespace: namespace}
 
 	if err := c.List(ctx, &wsList, opts); err != nil {
@@ -73,7 +72,7 @@ func (c *Client) ListWorkspaces(ctx context.Context, namespace string) ([]wsv1al
 	return wsList.Items, nil
 }
 
-func (c *Client) CreateWorkspace(ctx context.Context, username, wsName, tmplName string, vars map[string]string, opts ...client.CreateOption) (*wsv1alpha1.Workspace, error) {
+func (c *Client) CreateWorkspace(ctx context.Context, username, wsName, tmplName string, vars map[string]string, opts ...client.CreateOption) (*cosmov1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	if _, err := c.GetUser(ctx, username); err != nil {
@@ -86,10 +85,10 @@ func (c *Client) CreateWorkspace(ctx context.Context, username, wsName, tmplName
 		return nil, NewBadRequestError("failed to get workspace config in template", err)
 	}
 
-	ws := &wsv1alpha1.Workspace{}
+	ws := &cosmov1alpha1.Workspace{}
 	ws.SetName(wsName)
-	ws.SetNamespace(wsv1alpha1.UserNamespace(username))
-	ws.Spec = wsv1alpha1.WorkspaceSpec{
+	ws.SetNamespace(cosmov1alpha1.UserNamespace(username))
+	ws.Spec = cosmov1alpha1.WorkspaceSpec{
 		Template: cosmov1alpha1.TemplateRef{
 			Name: tmplName,
 		},
@@ -111,7 +110,7 @@ func (c *Client) CreateWorkspace(ctx context.Context, username, wsName, tmplName
 	return ws, nil
 }
 
-func (c *Client) DeleteWorkspace(ctx context.Context, name, username string, opts ...client.DeleteOption) (*wsv1alpha1.Workspace, error) {
+func (c *Client) DeleteWorkspace(ctx context.Context, name, username string, opts ...client.DeleteOption) (*cosmov1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
@@ -129,7 +128,7 @@ type UpdateWorkspaceOpts struct {
 	Replicas *int64
 }
 
-func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opts UpdateWorkspaceOpts) (*wsv1alpha1.Workspace, error) {
+func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opts UpdateWorkspaceOpts) (*cosmov1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
@@ -157,7 +156,7 @@ func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opt
 }
 
 func (c *Client) AddNetworkRule(ctx context.Context, name, username,
-	networkRuleName string, portNumber int, group *string, httpPath string, public bool) (*wsv1alpha1.NetworkRule, error) {
+	networkRuleName string, portNumber int32, group *string, httpPath string, public bool) (*cosmov1alpha1.NetworkRule, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
@@ -181,7 +180,7 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, username,
 	index := getNetRuleIndex(ws.Spec.Network, networkRuleName)
 	if index == -1 {
 		index = len(ws.Spec.Network)
-		ws.Spec.Network = append(ws.Spec.Network, wsv1alpha1.NetworkRule{})
+		ws.Spec.Network = append(ws.Spec.Network, cosmov1alpha1.NetworkRule{})
 	}
 	var netRule = &ws.Spec.Network[index]
 	netRule.Name = networkRuleName
@@ -206,7 +205,7 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, username,
 	return netRule.DeepCopy(), nil
 }
 
-func (c *Client) DeleteNetworkRule(ctx context.Context, name, username, networkRuleName string) (*wsv1alpha1.NetworkRule, error) {
+func (c *Client) DeleteNetworkRule(ctx context.Context, name, username, networkRuleName string) (*cosmov1alpha1.NetworkRule, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
@@ -246,7 +245,7 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, username, networkR
 	return delRule, nil
 }
 
-func getNetRuleIndex(netRules []wsv1alpha1.NetworkRule, netRuleName string) int {
+func getNetRuleIndex(netRules []cosmov1alpha1.NetworkRule, netRuleName string) int {
 	for i, netRule := range netRules {
 		if netRule.Name == netRuleName {
 			return i
@@ -255,7 +254,7 @@ func getNetRuleIndex(netRules []wsv1alpha1.NetworkRule, netRuleName string) int 
 	return -1
 }
 
-func (c *Client) GetWorkspaceConfig(ctx context.Context, tmplName string) (cfg wsv1alpha1.Config, err error) {
+func (c *Client) GetWorkspaceConfig(ctx context.Context, tmplName string) (cfg cosmov1alpha1.Config, err error) {
 	tmpl := &cosmov1alpha1.Template{}
 	if err := c.Get(ctx, types.NamespacedName{Name: tmplName}, tmpl); err != nil {
 		return cfg, err

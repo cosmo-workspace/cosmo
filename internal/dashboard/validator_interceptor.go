@@ -4,6 +4,7 @@ import (
 	"context"
 
 	connect_go "github.com/bufbuild/connect-go"
+
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )

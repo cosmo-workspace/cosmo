@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.10.0
   creationTimestamp: null
-  name: instances.cosmo.cosmo-workspace.github.io
+  name: instances.cosmo-workspace.github.io
 spec:
-  group: cosmo.cosmo-workspace.github.io
+  group: cosmo-workspace.github.io
   names:
     kind: Instance
     listKind: InstanceList

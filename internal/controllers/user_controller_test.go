@@ -18,8 +18,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 var _ = Describe("User controller", func() {
@@ -27,7 +26,7 @@ var _ = Describe("User controller", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "namespaced-addon",
 			Labels: map[string]string{
-				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
@@ -35,16 +34,16 @@ var _ = Describe("User controller", func() {
 kind: Job
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test
   name: '{{INSTANCE}}-job'
   namespace: '{{NAMESPACE}}'
 spec:
   template:
     metadata:
       labels:
-        cosmo/instance: '{{INSTANCE}}'
-        cosmo/template: '{{TEMPLATE}}'
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
     spec:
       containers:
       - name: eksctl
@@ -58,7 +57,7 @@ spec:
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "cluster-addon",
 			Labels: map[string]string{
-				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeUserAddon,
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
 			},
 			Annotations: map[string]string{
 				cosmov1alpha1.TemplateAnnKeyDisableNamePrefix: "1",
@@ -112,16 +111,16 @@ spec:
 
 			By("creating user")
 
-			user := wsv1alpha1.User{
+			user := cosmov1alpha1.User{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "ua",
 				},
-				Spec: wsv1alpha1.UserSpec{
+				Spec: cosmov1alpha1.UserSpec{
 					DisplayName: "お名前",
-					AuthType:    wsv1alpha1.UserAuthTypePasswordSecert,
-					Addons: []wsv1alpha1.UserAddon{
+					AuthType:    cosmov1alpha1.UserAuthTypePasswordSecert,
+					Addons: []cosmov1alpha1.UserAddon{
 						{
-							Template: wsv1alpha1.UserAddonTemplateRef{
+							Template: cosmov1alpha1.UserAddonTemplateRef{
 								Name: namespacedUserAddon.Name,
 							},
 							Vars: map[string]string{
@@ -129,7 +128,7 @@ spec:
 							},
 						},
 						{
-							Template: wsv1alpha1.UserAddonTemplateRef{
+							Template: cosmov1alpha1.UserAddonTemplateRef{
 								Name:          clusterUserAddon.Name,
 								ClusterScoped: true,
 							},
@@ -144,7 +143,7 @@ spec:
 			var createdNs corev1.Namespace
 			Eventually(func() error {
 				key := client.ObjectKey{
-					Name: wsv1alpha1.UserNamespace(user.Name),
+					Name: cosmov1alpha1.UserNamespace(user.Name),
 				}
 				return k8sClient.Get(ctx, key, &createdNs)
 			}, time.Second*10).Should(Succeed())
@@ -157,14 +156,14 @@ spec:
 				Expect(err).ShouldNot(HaveOccurred())
 
 				return user.Status.Namespace.Name
-			}, time.Second*30).Should(BeEquivalentTo(wsv1alpha1.UserNamespace(user.Name)))
+			}, time.Second*30).Should(BeEquivalentTo(cosmov1alpha1.UserNamespace(user.Name)))
 
 			By("check namespace label")
 
 			label := createdNs.GetLabels()
 			Expect(label).ShouldNot(BeNil())
 
-			username, ok := label[wsv1alpha1.NamespaceLabelKeyUserName]
+			username, ok := label[cosmov1alpha1.NamespaceLabelKeyUserName]
 			Expect(ok).Should(BeTrue())
 			Expect(username).Should(BeEquivalentTo(user.Name))
 

@@ -8,10 +8,6 @@ import (
 	"time"
 
 	"github.com/bufbuild/connect-go"
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -24,12 +20,15 @@ import (
 
 	//+kubebuilder:scaffold:imports
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo/test"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
@@ -49,7 +48,7 @@ const DefaultURLBase = "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.dom
 
 func init() {
 	cosmov1alpha1.AddToScheme(scheme.Scheme)
-	wsv1alpha1.AddToScheme(scheme.Scheme)
+	cosmov1alpha1.AddToScheme(scheme.Scheme)
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -145,8 +144,8 @@ var _ = BeforeSuite(func() {
 	clientMock = kubeutil.NewClientMock(mgr.GetClient())
 	klient := kosmo.NewClient(&clientMock)
 
-	auths := make(map[wsv1alpha1.UserAuthType]auth.Authorizer)
-	auths[wsv1alpha1.UserAuthTypePasswordSecert] = auth.NewPasswordSecretAuthorizer(klient)
+	auths := make(map[cosmov1alpha1.UserAuthType]auth.Authorizer)
+	auths[cosmov1alpha1.UserAuthTypePasswordSecert] = auth.NewPasswordSecretAuthorizer(klient)
 
 	serv := (&Server{
 		Log:                 clog.NewLogger(ctrl.Log.WithName("dashboard")),
@@ -189,7 +188,7 @@ func test_Login(userName string, password string) string {
 	return res.Header().Get("Set-Cookie")
 }
 
-func test_CreateLoginUserSession(userName, displayName string, role wsv1alpha1.UserRole, password string) string {
+func test_CreateLoginUserSession(userName, displayName string, role cosmov1alpha1.UserRole, password string) string {
 	testUtil.CreateLoginUser(userName, displayName, role, password)
 	return test_Login(userName, password)
 }

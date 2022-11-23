@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.10.0
   creationTimestamp: null
-  name: workspaces.workspace.cosmo-workspace.github.io
+  name: workspaces.cosmo-workspace.github.io
 spec:
-  group: workspace.cosmo-workspace.github.io
+  group: cosmo-workspace.github.io
   names:
     kind: Workspace
     listKind: WorkspaceList
@@ -58,6 +58,7 @@ spec:
                     name:
                       type: string
                     portNumber:
+                      format: int32
                       type: integer
                     public:
                       type: boolean

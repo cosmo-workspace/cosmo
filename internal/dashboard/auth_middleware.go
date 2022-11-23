@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/bufbuild/connect-go"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
@@ -15,12 +16,12 @@ import (
 
 type ctxKeyCaller struct{}
 
-func newContextWithCaller(ctx context.Context, caller *wsv1alpha1.User) context.Context {
+func newContextWithCaller(ctx context.Context, caller *cosmov1alpha1.User) context.Context {
 	return context.WithValue(ctx, ctxKeyCaller{}, caller)
 }
 
-func callerFromContext(ctx context.Context) *wsv1alpha1.User {
-	caller, ok := ctx.Value(ctxKeyCaller{}).(*wsv1alpha1.User)
+func callerFromContext(ctx context.Context) *cosmov1alpha1.User {
+	caller, ok := ctx.Value(ctxKeyCaller{}).(*cosmov1alpha1.User)
 	if ok && caller != nil {
 		return caller.DeepCopy()
 	}
@@ -71,7 +72,7 @@ func (s *Server) authorizationInterceptor() connect.UnaryInterceptorFunc {
 	return connect.UnaryInterceptorFunc(interceptor)
 }
 
-func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *wsv1alpha1.User, deadline time.Time, err error) {
+func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *cosmov1alpha1.User, deadline time.Time, err error) {
 	r := requestFromContext(ctx)
 	if r.Header.Get("Cookie") == "" {
 		return nil, deadline, kosmo.NewUnauthorizedError("session is not found", err)
@@ -114,7 +115,7 @@ func (s *Server) userAuthentication(ctx context.Context, userName string) error 
 	}
 
 	if caller.Name != userName {
-		if wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
+		if cosmov1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
 			// Admin user have access to all resources
 			log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "username", caller.Name)
 		} else {
@@ -135,7 +136,7 @@ func (s *Server) adminAuthentication(ctx context.Context) error {
 	}
 
 	// Check if the user role is Admin
-	if !wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
+	if !cosmov1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
 		log.Info("invalid admin authentication: NOT cosmo-admin", "username", caller.Name)
 		return kosmo.NewForbiddenError("", nil)
 	}

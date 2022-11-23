@@ -17,8 +17,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 
 	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -67,7 +66,7 @@ var _ = BeforeSuite(func() {
 
 	_ = clientgoscheme.AddToScheme(scheme)
 	_ = cosmov1alpha1.AddToScheme(scheme)
-	_ = wsv1alpha1.AddToScheme(scheme)
+	_ = cosmov1alpha1.AddToScheme(scheme)
 
 	//+kubebuilder:scaffold:scheme
 

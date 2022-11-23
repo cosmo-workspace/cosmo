@@ -6,12 +6,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-inst1\",
-      \"cosmo/template\": \"test-nginx-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-nginx-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-inst1\",
         \"uid\": \"\",
@@ -24,14 +24,14 @@ SnapShot = """
     \"replicas\": 1,
     \"selector\": {
       \"matchLabels\": {
-        \"cosmo/instance\": \"test-inst1\"
+        \"cosmo-workspace.github.io/instance\": \"test-inst1\"
       }
     },
     \"template\": {
       \"metadata\": {
         \"creationTimestamp\": null,
         \"labels\": {
-          \"cosmo/instance\": \"test-inst1\"
+          \"cosmo-workspace.github.io/instance\": \"test-inst1\"
         }
       },
       \"spec\": {
@@ -81,12 +81,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-inst1\",
-      \"cosmo/template\": \"test-nginx-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-nginx-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-inst1\",
         \"uid\": \"\",
@@ -105,8 +105,8 @@ SnapShot = """
       }
     ],
     \"selector\": {
-      \"cosmo/instance\": \"test-inst1\",
-      \"cosmo/template\": \"nginx\"
+      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
+      \"cosmo-workspace.github.io/template\": \"nginx\"
     },
     \"type\": \"ClusterIP\",
     \"sessionAffinity\": \"None\",
@@ -130,12 +130,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-inst1\",
-      \"cosmo/template\": \"test-nginx-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-nginx-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-inst1\",
         \"uid\": \"\",
@@ -335,12 +335,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-inst1\",
-      \"cosmo/template\": \"test-nginx-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-nginx-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-inst1\",
         \"uid\": \"\",
@@ -353,14 +353,14 @@ SnapShot = """
     \"replicas\": 3,
     \"selector\": {
       \"matchLabels\": {
-        \"cosmo/instance\": \"test-inst1\"
+        \"cosmo-workspace.github.io/instance\": \"test-inst1\"
       }
     },
     \"template\": {
       \"metadata\": {
         \"creationTimestamp\": null,
         \"labels\": {
-          \"cosmo/instance\": \"test-inst1\"
+          \"cosmo-workspace.github.io/instance\": \"test-inst1\"
         }
       },
       \"spec\": {
@@ -410,12 +410,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-inst1\",
-      \"cosmo/template\": \"test-nginx-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-nginx-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-inst1\",
         \"uid\": \"\",
@@ -442,8 +442,8 @@ SnapShot = """
       }
     ],
     \"selector\": {
-      \"cosmo/instance\": \"test-inst1\",
-      \"cosmo/template\": \"nginx\"
+      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
+      \"cosmo-workspace.github.io/template\": \"nginx\"
     },
     \"type\": \"LoadBalancer\",
     \"sessionAffinity\": \"None\",
@@ -469,12 +469,12 @@ SnapShot = """
     \"namespace\": \"default\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"test-inst1\",
-      \"cosmo/template\": \"test-nginx-tmpl1\"
+      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
+      \"cosmo-workspace.github.io/template\": \"test-nginx-tmpl1\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"Instance\",
         \"name\": \"test-inst1\",
         \"uid\": \"\",

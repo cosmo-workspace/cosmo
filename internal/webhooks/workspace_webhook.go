@@ -21,8 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -37,11 +36,11 @@ type WorkspaceMutationWebhookHandler struct {
 	decoder *admission.Decoder
 }
 
-//+kubebuilder:webhook:path=/mutate-workspace-cosmo-workspace-github-io-v1alpha1-workspace,mutating=true,failurePolicy=fail,sideEffects=None,groups=workspace.cosmo-workspace.github.io,resources=workspaces,verbs=create;update,versions=v1alpha1,name=mworkspace.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-workspace,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=workspaces,verbs=create;update,versions=v1alpha1,name=mworkspace.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *WorkspaceMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
-		"/mutate-workspace-cosmo-workspace-github-io-v1alpha1-workspace",
+		"/mutate-cosmo-workspace-github-io-v1alpha1-workspace",
 		&webhook.Admission{Handler: h},
 	)
 }
@@ -51,7 +50,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 	ctx = clog.IntoContext(ctx, log)
 
-	ws := &wsv1alpha1.Workspace{}
+	ws := &cosmov1alpha1.Workspace{}
 	err := h.decoder.Decode(req, ws)
 	if err != nil {
 		log.Error(err, "failed to decode request")
@@ -113,11 +112,11 @@ type WorkspaceValidationWebhookHandler struct {
 	decoder *admission.Decoder
 }
 
-//+kubebuilder:webhook:path=/validate-workspace-cosmo-workspace-github-io-v1alpha1-workspace,mutating=false,failurePolicy=fail,sideEffects=None,groups=workspace.cosmo-workspace.github.io,resources=workspaces,verbs=create;update,versions=v1alpha1,name=vworkspace.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/validate-cosmo-workspace-github-io-v1alpha1-workspace,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=workspaces,verbs=create;update,versions=v1alpha1,name=vworkspace.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *WorkspaceValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
-		"/validate-workspace-cosmo-workspace-github-io-v1alpha1-workspace",
+		"/validate-cosmo-workspace-github-io-v1alpha1-workspace",
 		&webhook.Admission{Handler: h},
 	)
 }
@@ -127,7 +126,7 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 	ctx = clog.IntoContext(ctx, log)
 
-	ws := &wsv1alpha1.Workspace{}
+	ws := &cosmov1alpha1.Workspace{}
 	err := h.decoder.Decode(req, ws)
 	if err != nil {
 		log.Error(err, "failed to decode request")
@@ -136,7 +135,7 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 	log.DumpObject(h.Client.Scheme(), ws, "request workspace")
 
 	// check namespace for Workspace
-	username := wsv1alpha1.UserNameByNamespace(ws.GetNamespace())
+	username := cosmov1alpha1.UserNameByNamespace(ws.GetNamespace())
 	if username == "" {
 		return admission.Denied(fmt.Sprintf("namespace '%s' is not cosmo user's namespace", ws.GetNamespace()))
 	}
@@ -168,7 +167,7 @@ func (h *WorkspaceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) 
 	return nil
 }
 
-func sortNetworkRule(netRules []wsv1alpha1.NetworkRule) []wsv1alpha1.NetworkRule {
+func sortNetworkRule(netRules []cosmov1alpha1.NetworkRule) []cosmov1alpha1.NetworkRule {
 	sort.SliceStable(netRules, func(i, j int) bool {
 		if *netRules[i].Group < *netRules[j].Group {
 			return true
@@ -180,19 +179,19 @@ func sortNetworkRule(netRules []wsv1alpha1.NetworkRule) []wsv1alpha1.NetworkRule
 	return netRules
 }
 
-func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []wsv1alpha1.NetworkRule, name, namespace string, urlBase wsnet.URLBase) {
+func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []cosmov1alpha1.NetworkRule, name, namespace string, urlBase wsnet.URLBase) {
 	for i := range netRules {
 		netRules[i].Default()
 		netRules[i].Host = pointer.String(wsnet.GenerateIngressHost(netRules[i], name, namespace, urlBase))
 	}
 }
 
-func checkNetworkRules(netRules []wsv1alpha1.NetworkRule) error {
+func checkNetworkRules(netRules []cosmov1alpha1.NetworkRule) error {
 	for i, netRule := range netRules {
 		if errs := validation.IsValidPortName(netRule.Name); len(errs) > 0 {
 			return errors.New(errs[0])
 		}
-		if errs := validation.IsValidPortNum(netRule.PortNumber); len(errs) > 0 {
+		if errs := validation.IsValidPortNum(int(netRule.PortNumber)); len(errs) > 0 {
 			return errors.New(errs[0])
 		}
 		for j, v := range netRules {
@@ -215,7 +214,7 @@ func checkNetworkRules(netRules []wsv1alpha1.NetworkRule) error {
 	return nil
 }
 
-func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkRule(ctx context.Context, ws *wsv1alpha1.Workspace, rawTmpl string, cfg wsv1alpha1.Config) error {
+func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkRule(ctx context.Context, ws *cosmov1alpha1.Workspace, rawTmpl string, cfg cosmov1alpha1.Config) error {
 	log := clog.FromContext(ctx).WithCaller()
 
 	unst, err := preTemplateBuild(*ws, rawTmpl)
@@ -255,7 +254,7 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 	}
 	log.Debug().Info("service and ingress in template", "service", svc, "ingress", ing)
 
-	netRules := wsv1alpha1.NetworkRulesByServiceAndIngress(svc, ing)
+	netRules := cosmov1alpha1.NetworkRulesByServiceAndIngress(svc, ing)
 	log.Info("generated netrules by service and ingress in template", "netRules", netRules)
 
 	// append network rules
@@ -273,7 +272,7 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 	return nil
 }
 
-func preTemplateBuild(ws wsv1alpha1.Workspace, rawTmpl string) ([]unstructured.Unstructured, error) {
+func preTemplateBuild(ws cosmov1alpha1.Workspace, rawTmpl string) ([]unstructured.Unstructured, error) {
 	var inst cosmov1alpha1.Instance
 	inst.SetName(ws.GetName())
 	inst.SetNamespace(ws.GetNamespace())
