@@ -168,10 +168,10 @@ var _ = Describe("Dashboard server [User]", func() {
 	//==================================================================================
 	Describe("[GetUser]", func() {
 
-		run_test := func(loginUser string, userId string) {
+		run_test := func(loginUser string, username string) {
 			By("---------------test start----------------")
 			ctx := context.Background()
-			res, err := client.GetUser(ctx, NewRequestWithSession(&dashv1alpha1.GetUserRequest{UserName: userId}, getSession(loginUser)))
+			res, err := client.GetUser(ctx, NewRequestWithSession(&dashv1alpha1.GetUserRequest{UserName: username}, getSession(loginUser)))
 			if err == nil {
 				Ω(res.Msg).To(MatchSnapShot())
 			} else {
@@ -197,9 +197,9 @@ var _ = Describe("Dashboard server [User]", func() {
 		)
 
 		DescribeTable("❌ fail with an unexpected error to get:",
-			func(loginUser string, userId string) {
+			func(loginUser string, username string) {
 				clientMock.SetGetError((*Server).GetUser, errors.New("get user error"))
-				run_test(loginUser, userId)
+				run_test(loginUser, username)
 			},
 			Entry(nil, "admin-user", "normal-user"),
 		)

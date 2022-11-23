@@ -58,9 +58,9 @@ const snackbarMock: MockedMemberFunction<typeof useSnackbar> = {
 //--------------------------------------------------
 // mock data definition
 //--------------------------------------------------
-const user1 = new User({ userName: 'user1', role: 'cosmoAdmin', displayName: 'user1 name' });
-const user2 = new User({ userName: 'user2', displayName: 'user2 name' });
-const user3 = new User({ userName: 'user3', displayName: 'user3 name' });
+const user1 = new User({ name: 'user1', role: 'cosmoAdmin', displayName: 'user1 name' });
+const user2 = new User({ name: 'user2', displayName: 'user2 name' });
+const user3 = new User({ name: 'user3', displayName: 'user3 name' });
 
 //-----------------------------------------------
 // test

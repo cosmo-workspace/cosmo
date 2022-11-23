@@ -46,7 +46,7 @@ export const PasswordChangeDialog: React.VFC<{ onClose: () => void }> = ({ onClo
       <form noValidate>
         <DialogContent>
           <Stack>
-            <TextFieldLabel label="User" fullWidth value={login.loginUser?.userName || ''} startAdornmentIcon={< PersonOutlineTwoTone />} />
+            <TextFieldLabel label="User ID" fullWidth value={login.loginUser?.name || ''} startAdornmentIcon={< PersonOutlineTwoTone />} />
 
             <PasswordTextField label="Current password" margin="normal" fullWidth autoComplete="current-password" autoFocus
               {...registerMui(register("currentPassword", {

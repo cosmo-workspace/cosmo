@@ -66,7 +66,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	w := printers.GetNewTabWriter(o.Out)
 	defer w.Flush()
 
-	columnNames := []string{"ID", "NAME", "ROLE", "NAMESPACE", "STATUS"}
+	columnNames := []string{"name", "NAME", "ROLE", "NAMESPACE", "STATUS"}
 	fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 	for _, v := range users {
 		rowdata := []string{v.Name, v.Spec.DisplayName, v.Spec.Role.String(), v.Status.Namespace.Name, string(v.Status.Phase)}

@@ -52,7 +52,7 @@ func (s *Server) GetWorkspaces(ctx context.Context, req *connect_go.Request[dash
 		return nil, ErrResponse(log, err)
 	}
 
-	wss, err := s.Klient.ListWorkspacesByUserID(ctx, req.Msg.UserName)
+	wss, err := s.Klient.ListWorkspacesByUserName(ctx, req.Msg.UserName)
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -78,7 +78,7 @@ func (s *Server) GetWorkspace(ctx context.Context, req *connect_go.Request[dashv
 		return nil, ErrResponse(log, err)
 	}
 
-	ws, err := s.Klient.GetWorkspaceByUserID(ctx, req.Msg.WsName, req.Msg.UserName)
+	ws, err := s.Klient.GetWorkspaceByUserName(ctx, req.Msg.WsName, req.Msg.UserName)
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -138,8 +138,8 @@ func convertWorkspaceTodashv1alpha1Workspace(ws wsv1alpha1.Workspace) *dashv1alp
 	}
 
 	return &dashv1alpha1.Workspace{
-		Name:    ws.Name,
-		OwnerId: wsv1alpha1.UserIDByNamespace(ws.Namespace),
+		Name:      ws.Name,
+		OwnerName: wsv1alpha1.UserNameByNamespace(ws.Namespace),
 		Spec: &dashv1alpha1.WorkspaceSpec{
 			Template:          ws.Spec.Template.Name,
 			Replicas:          *replicas,

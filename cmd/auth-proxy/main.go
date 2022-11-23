@@ -103,8 +103,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	ownerID := wsv1alpha1.UserIDByNamespace(eo.Namespace)
-	if ownerID == "" {
+	ownerName := wsv1alpha1.UserNameByNamespace(eo.Namespace)
+	if ownerName == "" {
 		setupLog.Error(fmt.Errorf("namespace %s is not cosmo user's namespace", eo.Namespace), "invalid namespace")
 		os.Exit(1)
 	}
@@ -123,7 +123,7 @@ func main() {
 		Insecure:                 o.Insecure,
 		TLSCertPath:              o.TLSCertPath,
 		TLSPrivateKeyPath:        o.TLSPrivateKeyPath,
-		User:                     ownerID,
+		User:                     ownerName,
 		MaxAgeSeconds:            60 * o.MaxAgeMinutes,
 		Authorizer:               authorizer,
 	}).Initialize()

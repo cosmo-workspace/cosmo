@@ -204,11 +204,11 @@ func (p *ProxyServer) auth(next http.Handler) http.Handler {
 		}
 
 		sesInfo := session.Get(ses)
-		log.Debug().Info("get session", "userID", sesInfo.UserID, "deadline", sesInfo.Deadline)
+		log.Debug().Info("get session", "userName", sesInfo.UserName, "deadline", sesInfo.Deadline)
 
-		// check user ID is owner's
-		if sesInfo.UserID != p.User {
-			log.Info("invalid authorization", "storedUserID", sesInfo.UserID, "ownerID", p.User)
+		// check user name is owner's
+		if sesInfo.UserName != p.User {
+			log.Info("invalid authorization", "storedUserName", sesInfo.UserName, "ownerName", p.User)
 			p.redirectToLoginPage(w, r)
 			return
 		}

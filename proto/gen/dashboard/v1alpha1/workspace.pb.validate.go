@@ -416,7 +416,7 @@ func (m *Workspace) validate(all bool) error {
 
 	// no validation rules for Name
 
-	// no validation rules for OwnerId
+	// no validation rules for OwnerName
 
 	if all {
 		switch v := interface{}(m.GetSpec()).(type) {

@@ -103,14 +103,14 @@ func ingressRules(netRules []wsv1alpha1.NetworkRule, backendSvcName string) []ne
 }
 
 func addWorkspaceDefaultVars(vars map[string]string, ws wsv1alpha1.Workspace) map[string]string {
-	user := wsv1alpha1.UserIDByNamespace(ws.GetNamespace())
+	user := wsv1alpha1.UserNameByNamespace(ws.GetNamespace())
 
 	if vars == nil {
 		vars = make(map[string]string)
 	}
 	// urlvar
 	vars[wsnet.URLVarWorkspaceName] = ws.GetName()
-	vars[wsnet.URLVarUserID] = user
+	vars[wsnet.URLVarUserName] = user
 
 	// workspace config
 	vars[wsv1alpha1.TemplateVarDeploymentName] = ws.Status.Config.DeploymentName

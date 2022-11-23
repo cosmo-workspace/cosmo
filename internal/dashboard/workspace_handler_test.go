@@ -64,7 +64,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			res, err := client.CreateWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
 			if err == nil {
 				Ω(res.Msg).To(MatchSnapShot())
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), req.WsName, req.UserName)
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			} else {
@@ -201,7 +201,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			res, err := client.DeleteWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
 			if err == nil {
 				Ω(res.Msg).To(MatchSnapShot())
-				_, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
+				_, err := k8sClient.GetWorkspaceByUserName(context.Background(), req.WsName, req.UserName)
 				Expect(err).To(HaveOccurred())
 			} else {
 				Ω(err.Error()).To(MatchSnapShot())
@@ -247,7 +247,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			res, err := client.UpdateWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
 			if err == nil {
 				Ω(res.Msg).To(MatchSnapShot())
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), req.WsName, req.UserName)
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			} else {
@@ -297,7 +297,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			res, err := client.UpsertNetworkRule(ctx, NewRequestWithSession(req, getSession(loginUser)))
 			if err == nil {
 				Ω(res.Msg).To(MatchSnapShot())
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), req.WsName, req.UserName)
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			} else {
@@ -350,7 +350,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			res, err := client.DeleteNetworkRule(ctx, NewRequestWithSession(req, getSession(loginUser)))
 			if err == nil {
 				Ω(res.Msg).To(MatchSnapShot())
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), req.WsName, req.UserName)
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), req.WsName, req.UserName)
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			} else {

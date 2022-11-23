@@ -86,9 +86,9 @@ func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *wsv1alph
 
 	sesInfo := session.Get(ses)
 
-	userID := sesInfo.UserID
-	if userID == "" {
-		return nil, deadline, kosmo.NewInternalServerError("userID is empty", nil)
+	userName := sesInfo.UserName
+	if userName == "" {
+		return nil, deadline, kosmo.NewInternalServerError("userName is empty", nil)
 	}
 
 	deadline = time.Unix(sesInfo.Deadline, 0)
@@ -97,7 +97,7 @@ func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *wsv1alph
 			kosmo.NewUnauthorizedError(fmt.Sprintf("deadline is before the current time: deadline %v", deadline), nil)
 	}
 
-	loginUser, err = s.Klient.GetUser(ctx, userID)
+	loginUser, err = s.Klient.GetUser(ctx, userName)
 	if err != nil {
 		return nil, deadline, err
 	}
@@ -105,7 +105,7 @@ func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *wsv1alph
 	return loginUser, deadline, nil
 }
 
-func (s *Server) userAuthentication(ctx context.Context, userID string) error {
+func (s *Server) userAuthentication(ctx context.Context, userName string) error {
 	log := clog.FromContext(ctx).WithCaller()
 
 	caller := callerFromContext(ctx)
@@ -113,13 +113,13 @@ func (s *Server) userAuthentication(ctx context.Context, userID string) error {
 		return kosmo.NewInternalServerError("invalid user authentication: NOT authorized", nil)
 	}
 
-	if caller.Name != userID {
+	if caller.Name != userName {
 		if wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
 			// Admin user have access to all resources
-			log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "userid", caller.Name)
+			log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "username", caller.Name)
 		} else {
 			// General User have access only to the own resources
-			log.Info("invalid user authentication: general user trying to access other's resource", "userid", caller.Name, "target", userID)
+			log.Info("invalid user authentication: general user trying to access other's resource", "username", caller.Name, "target", userName)
 			return kosmo.NewForbiddenError("", nil)
 		}
 	}
@@ -136,10 +136,10 @@ func (s *Server) adminAuthentication(ctx context.Context) error {
 
 	// Check if the user role is Admin
 	if !wsv1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
-		log.Info("invalid admin authentication: NOT cosmo-admin", "userid", caller.Name)
+		log.Info("invalid admin authentication: NOT cosmo-admin", "username", caller.Name)
 		return kosmo.NewForbiddenError("", nil)
 	}
 
-	log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "userid", caller.Name)
+	log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "username", caller.Name)
 	return nil
 }

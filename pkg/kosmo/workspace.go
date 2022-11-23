@@ -22,14 +22,14 @@ var (
 	ErrNoItems = errors.New("no items")
 )
 
-func (c *Client) GetWorkspaceByUserID(ctx context.Context, name, userid string) (*wsv1alpha1.Workspace, error) {
-	return c.GetWorkspace(ctx, name, wsv1alpha1.UserNamespace(userid))
+func (c *Client) GetWorkspaceByUserName(ctx context.Context, name, username string) (*wsv1alpha1.Workspace, error) {
+	return c.GetWorkspace(ctx, name, wsv1alpha1.UserNamespace(username))
 }
 
 func (c *Client) GetWorkspace(ctx context.Context, name, namespace string) (*wsv1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	if _, err := c.GetUser(ctx, wsv1alpha1.UserIDByNamespace(namespace)); err != nil {
+	if _, err := c.GetUser(ctx, wsv1alpha1.UserNameByNamespace(namespace)); err != nil {
 		return nil, err
 	}
 
@@ -50,14 +50,14 @@ func (c *Client) GetWorkspace(ctx context.Context, name, namespace string) (*wsv
 	return &ws, nil
 }
 
-func (c *Client) ListWorkspacesByUserID(ctx context.Context, userId string) ([]wsv1alpha1.Workspace, error) {
-	return c.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userId))
+func (c *Client) ListWorkspacesByUserName(ctx context.Context, username string) ([]wsv1alpha1.Workspace, error) {
+	return c.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(username))
 }
 
 func (c *Client) ListWorkspaces(ctx context.Context, namespace string) ([]wsv1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	if _, err := c.GetUser(ctx, wsv1alpha1.UserIDByNamespace(namespace)); err != nil {
+	if _, err := c.GetUser(ctx, wsv1alpha1.UserNameByNamespace(namespace)); err != nil {
 		return nil, err
 	}
 
@@ -73,10 +73,10 @@ func (c *Client) ListWorkspaces(ctx context.Context, namespace string) ([]wsv1al
 	return wsList.Items, nil
 }
 
-func (c *Client) CreateWorkspace(ctx context.Context, userId, wsName, tmplName string, vars map[string]string, opts ...client.CreateOption) (*wsv1alpha1.Workspace, error) {
+func (c *Client) CreateWorkspace(ctx context.Context, username, wsName, tmplName string, vars map[string]string, opts ...client.CreateOption) (*wsv1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	if _, err := c.GetUser(ctx, userId); err != nil {
+	if _, err := c.GetUser(ctx, username); err != nil {
 		return nil, err
 	}
 
@@ -88,7 +88,7 @@ func (c *Client) CreateWorkspace(ctx context.Context, userId, wsName, tmplName s
 
 	ws := &wsv1alpha1.Workspace{}
 	ws.SetName(wsName)
-	ws.SetNamespace(wsv1alpha1.UserNamespace(userId))
+	ws.SetNamespace(wsv1alpha1.UserNamespace(username))
 	ws.Spec = wsv1alpha1.WorkspaceSpec{
 		Template: cosmov1alpha1.TemplateRef{
 			Name: tmplName,
@@ -101,7 +101,7 @@ func (c *Client) CreateWorkspace(ctx context.Context, userId, wsName, tmplName s
 		if apierrs.IsAlreadyExists(err) {
 			return nil, NewIsAlreadyExistsError("Workspace already exists", err)
 		} else {
-			log.Error(err, "failed to create workspace", "userid", userId, "workspace", ws.Name, "template", tmplName, "vars", fmt.Sprintf("%v", vars))
+			log.Error(err, "failed to create workspace", "username", username, "workspace", ws.Name, "template", tmplName, "vars", fmt.Sprintf("%v", vars))
 			return nil, NewInternalServerError("failed to create workspace", err)
 		}
 	}
@@ -111,15 +111,15 @@ func (c *Client) CreateWorkspace(ctx context.Context, userId, wsName, tmplName s
 	return ws, nil
 }
 
-func (c *Client) DeleteWorkspace(ctx context.Context, name, userId string, opts ...client.DeleteOption) (*wsv1alpha1.Workspace, error) {
+func (c *Client) DeleteWorkspace(ctx context.Context, name, username string, opts ...client.DeleteOption) (*wsv1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	ws, err := c.GetWorkspaceByUserID(ctx, name, userId)
+	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
 	if err != nil {
 		return nil, err
 	}
 	if err := c.Delete(ctx, ws, opts...); err != nil {
-		log.Error(err, "failed to delete workspace", "userid", userId, "workspace", name)
+		log.Error(err, "failed to delete workspace", "username", username, "workspace", name)
 		return nil, NewInternalServerError("failed to delete workspace", err)
 	}
 	return ws, nil
@@ -129,10 +129,10 @@ type UpdateWorkspaceOpts struct {
 	Replicas *int64
 }
 
-func (c *Client) UpdateWorkspace(ctx context.Context, name, userId string, opts UpdateWorkspaceOpts) (*wsv1alpha1.Workspace, error) {
+func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opts UpdateWorkspaceOpts) (*wsv1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	ws, err := c.GetWorkspaceByUserID(ctx, name, userId)
+	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
 	if err != nil {
 		return nil, err
 	}
@@ -149,18 +149,18 @@ func (c *Client) UpdateWorkspace(ctx context.Context, name, userId string, opts 
 
 	if err := c.Update(ctx, ws); err != nil {
 		message := "failed to update workspace"
-		log.Error(err, message, "userid", userId, "workspace", ws.Name)
+		log.Error(err, message, "username", username, "workspace", ws.Name)
 		return nil, NewInternalServerError(message, err)
 	}
 
 	return ws, nil
 }
 
-func (c *Client) AddNetworkRule(ctx context.Context, name, userId,
+func (c *Client) AddNetworkRule(ctx context.Context, name, username,
 	networkRuleName string, portNumber int, group *string, httpPath string, public bool) (*wsv1alpha1.NetworkRule, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	ws, err := c.GetWorkspaceByUserID(ctx, name, userId)
+	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +170,7 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, userId,
 			reflect.DeepEqual(netRule.Group, group) &&
 			netRule.HTTPPath == httpPath {
 			message := fmt.Sprintf("group '%s' and http path '%s' is already used", *group, httpPath)
-			log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
+			log.Error(err, message, "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
 			return nil, NewBadRequestError(message, nil)
 		}
 	}
@@ -194,26 +194,26 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, userId,
 	log.DebugAll().PrintObjectDiff(before, ws)
 
 	if equality.Semantic.DeepEqual(before, ws) {
-		log.Info("no change", "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Info("no change", "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return nil, NewBadRequestError("no change", nil)
 	}
 
 	if err := c.Update(ctx, ws); err != nil {
 		message := "failed to upsert network rule"
-		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, message, "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return nil, NewInternalServerError(message, err)
 	}
 	return netRule.DeepCopy(), nil
 }
 
-func (c *Client) DeleteNetworkRule(ctx context.Context, name, userId, networkRuleName string) (*wsv1alpha1.NetworkRule, error) {
+func (c *Client) DeleteNetworkRule(ctx context.Context, name, username, networkRuleName string) (*wsv1alpha1.NetworkRule, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	ws, err := c.GetWorkspaceByUserID(ctx, name, userId)
+	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
 	if err != nil {
 		return nil, err
 	}
-	log.DebugAll().Info("GetWorkspace", "ws", ws, "userid", userId)
+	log.DebugAll().Info("GetWorkspace", "ws", ws, "username", username)
 
 	if networkRuleName == ws.Status.Config.ServiceMainPortName {
 		return nil, NewBadRequestError("main port cannot be removed", nil)
@@ -222,7 +222,7 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, userId, networkRul
 	index := getNetRuleIndex(ws.Spec.Network, networkRuleName)
 	if index == -1 {
 		message := fmt.Sprintf("port name %s is not found", networkRuleName)
-		log.Info(message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Info(message, "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return nil, NewBadRequestError(message, nil)
 	}
 
@@ -231,7 +231,7 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, userId, networkRul
 	delRule := ws.Spec.Network[index].DeepCopy()
 	ws.Spec.Network = ws.Spec.Network[:index+copy(ws.Spec.Network[index:], ws.Spec.Network[index+1:])]
 
-	log.DebugAll().Info("NetworkRule removed", "ws", ws, "userid", userId, "netRuleName", networkRuleName)
+	log.DebugAll().Info("NetworkRule removed", "ws", ws, "username", username, "netRuleName", networkRuleName)
 	log.DebugAll().PrintObjectDiff(before, ws)
 
 	if equality.Semantic.DeepEqual(before, ws) {
@@ -240,7 +240,7 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, userId, networkRul
 
 	if err := c.Update(ctx, ws); err != nil {
 		message := "failed to remove network rule"
-		log.Error(err, message, "userid", userId, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, message, "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
 		return nil, NewInternalServerError(message, err)
 	}
 	return delRule, nil

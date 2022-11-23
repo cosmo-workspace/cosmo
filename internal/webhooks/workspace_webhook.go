@@ -136,8 +136,8 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 	log.DumpObject(h.Client.Scheme(), ws, "request workspace")
 
 	// check namespace for Workspace
-	userid := wsv1alpha1.UserIDByNamespace(ws.GetNamespace())
-	if userid == "" {
+	username := wsv1alpha1.UserNameByNamespace(ws.GetNamespace())
+	if username == "" {
 		return admission.Denied(fmt.Sprintf("namespace '%s' is not cosmo user's namespace", ws.GetNamespace()))
 	}
 

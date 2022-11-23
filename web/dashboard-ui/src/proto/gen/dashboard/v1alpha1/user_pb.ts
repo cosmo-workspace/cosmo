@@ -15,9 +15,9 @@ import {Message, proto3} from "@bufbuild/protobuf";
  */
 export class User extends Message<User> {
   /**
-   * @generated from field: string user_name = 1;
+   * @generated from field: string name = 1;
    */
-  userName = "";
+  name = "";
 
   /**
    * @generated from field: string display_name = 2;
@@ -61,7 +61,7 @@ export class User extends Message<User> {
   static readonly runtime = proto3;
   static readonly typeName = "dashboard.v1alpha1.User";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "role", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "auth_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },

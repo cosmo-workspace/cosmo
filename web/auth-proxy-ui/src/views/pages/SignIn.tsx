@@ -23,7 +23,7 @@ const Copyright = () => {
 };
 
 interface Inputs {
-  userid: string,
+  username: string,
   password: string,
 };
 
@@ -36,8 +36,8 @@ function useClient() {
 }
 
 export const SignIn: React.VFC = () => {
-  const [values, _setValues] = useState<Inputs>({ userid: '', password: '' });
-  const [errors, setErrors] = useState<Inputs>({ userid: '', password: '' });
+  const [values, _setValues] = useState<Inputs>({ username: '', password: '' });
+  const [errors, setErrors] = useState<Inputs>({ username: '', password: '' });
   const [signinResult, setSigninResult] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -62,7 +62,7 @@ export const SignIn: React.VFC = () => {
       setLoading(true);
       // login
       await client.login({
-        userName: values.userid,
+        userName: values.username,
         password: values.password,
       })
       // redirect
@@ -118,9 +118,9 @@ export const SignIn: React.VFC = () => {
               <Typography color="textPrimary" variant="h5">Sign In</Typography>
               <Typography color="textPrimary" variant="body1">cosmo-auth-proxy</Typography>
               <form noValidate onKeyDown={(e) => { if (e.key === 'Enter') login() }}>
-                <TextField label="User ID" margin="normal" fullWidth autoComplete="userid" autoFocus
-                  error={Boolean(errors.userid)} helperText={errors.userid}
-                  value={values.userid} onChange={e => setValue({ userid: e.target.value })}
+                <TextField label="User ID" margin="normal" fullWidth autoComplete="username" autoFocus
+                  error={Boolean(errors.username)} helperText={errors.username}
+                  value={values.username} onChange={e => setValue({ username: e.target.value })}
                 />
                 <PasswordTextField label="Password" margin="normal" fullWidth autoComplete="current-password"
                   error={Boolean(errors.password)} helperText={errors.password}

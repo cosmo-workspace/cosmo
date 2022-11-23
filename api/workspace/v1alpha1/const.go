@@ -22,7 +22,7 @@ const (
 	TemplateVarServiceMainPortName = "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}"
 
 	// Var for user addon
-	TemplateVarUserID = "{{USER_ID}}"
+	TemplateVarUserName = "{{USER_NAME}}"
 )
 
 // UserPasswordSecret name and keys

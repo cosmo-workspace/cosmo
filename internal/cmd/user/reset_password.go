@@ -15,7 +15,7 @@ import (
 type resetPasswordOption struct {
 	*cmdutil.CliOptions
 
-	UserID string
+	UserName string
 }
 
 func resetPasswordCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
@@ -49,7 +49,7 @@ func (o *resetPasswordOption) Complete(cmd *cobra.Command, args []string) error 
 	if err := o.CliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
-	o.UserID = args[0]
+	o.UserName = args[0]
 	return nil
 }
 
@@ -60,13 +60,13 @@ func (o *resetPasswordOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	if err := c.ResetPassword(ctx, o.UserID); err != nil {
+	if err := c.ResetPassword(ctx, o.UserName); err != nil {
 		return err
 	}
 
-	cmdutil.PrintfColorInfo(o.Out, "Successfully reset password: user %s\n", o.UserID)
+	cmdutil.PrintfColorInfo(o.Out, "Successfully reset password: user %s\n", o.UserName)
 
-	pass, err := c.GetDefaultPassword(ctx, o.UserID)
+	pass, err := c.GetDefaultPassword(ctx, o.UserName)
 	if err != nil {
 		return err
 	}

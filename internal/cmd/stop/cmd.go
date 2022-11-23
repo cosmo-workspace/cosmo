@@ -17,7 +17,7 @@ Stop cosmo workload resources
 
 	o := cmdutil.NewUserNamespacedCliOptions(co)
 
-	runCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user ID")
+	runCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user name")
 	runCmd.PersistentFlags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
 
 	runCmd.AddCommand(workspace.StopInstanceCmd(&cobra.Command{

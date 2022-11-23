@@ -17,7 +17,7 @@ Workspace network rule utility command
 
 	o := cmdutil.NewUserNamespacedCliOptions(co)
 
-	netruleCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user ID")
+	netruleCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user name")
 	netruleCmd.PersistentFlags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
 
 	netruleCmd.AddCommand(CreateCmd(&cobra.Command{

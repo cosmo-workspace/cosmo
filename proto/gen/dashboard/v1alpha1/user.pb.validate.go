@@ -56,7 +56,7 @@ func (m *User) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	// no validation rules for Name
 
 	// no validation rules for DisplayName
 

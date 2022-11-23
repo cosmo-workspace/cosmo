@@ -19,7 +19,7 @@ Get cosmo resources
 
 	o := cmdutil.NewUserNamespacedCliOptions(co)
 
-	getCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user ID")
+	getCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user name")
 	getCmd.PersistentFlags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
 
 	getCmd.AddCommand(workspace.GetCmd(&cobra.Command{

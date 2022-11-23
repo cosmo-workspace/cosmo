@@ -2,7 +2,7 @@
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -11,7 +11,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -25,7 +25,7 @@ Global Flags:
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
-  cosmoctl user delete USER_ID [flags]
+  cosmoctl user delete USER_NAME [flags]
 
 Aliases:
   delete, del
@@ -60,7 +60,7 @@ Global Flags:
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
-  cosmoctl user reset-password USER_ID [flags]
+  cosmoctl user reset-password USER_NAME [flags]
 
 Flags:
   -h, --help   help for reset-password
@@ -76,7 +76,7 @@ Global Flags:
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
-  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help          help for update
@@ -261,7 +261,7 @@ SnapShot = """
 SnapShot = """
 Error: reached to timeout in user creation
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -270,7 +270,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -335,7 +335,7 @@ SnapShot = """
 SnapShot = """
 Error: reached to timeout in user creation
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -344,7 +344,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -361,7 +361,7 @@ SnapShot = 'reached to timeout in user creation'
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -370,7 +370,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -387,7 +387,7 @@ SnapShot = 'validation error: invalid args'
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -396,7 +396,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -413,7 +413,7 @@ SnapShot = 'validation error: invalid args'
 SnapShot = """
 Error: failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is invalid: metadata.name: Invalid value: \"TESTuser\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -422,7 +422,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -440,7 +440,7 @@ failed to create user: User.workspace.cosmo-workspace.github.io \"TESTuser\" is 
 SnapShot = """
 Error: failed to create user: admission webhook \"vuser.kb.io\" denied the request: failed to create addon XXXXXXXXX :templates.cosmo.cosmo-workspace.github.io \"XXXXXXXXX\" not found
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -449,7 +449,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -466,7 +466,7 @@ SnapShot = 'failed to create user: admission webhook "vuser.kb.io" denied the re
 SnapShot = """
 Error: invalid options: invalid addon vars format: user-template1 ,HOGE:yyy
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -475,7 +475,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -492,7 +492,7 @@ SnapShot = 'invalid options: invalid addon vars format: user-template1 ,HOGE:yyy
 SnapShot = """
 Error: invalid options: invalid addon vars format: user-template1,HOGE :yyy
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -501,7 +501,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -518,7 +518,7 @@ SnapShot = 'invalid options: invalid addon vars format: user-template1,HOGE :yyy
 SnapShot = """
 Error: validation error: --role and --admin is not used at the same time
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -527,7 +527,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -544,7 +544,7 @@ SnapShot = 'validation error: --role and --admin is not used at the same time'
 SnapShot = """
 Error: invalid options: invalid addon vars format: user-clustertemplate1,HOGE :
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -553,7 +553,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -570,7 +570,7 @@ SnapShot = 'invalid options: invalid addon vars format: user-clustertemplate1,HO
 SnapShot = """
 Error: validation error: role xxx is invalid
 Usage:
-  cosmoctl user create USER_ID --role cosmo-admin [flags]
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
@@ -579,7 +579,7 @@ Flags:
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_ID)
+      --name string                 user display name (default: same as USER_NAME)
       --role string                 user role
 
 Global Flags:
@@ -604,7 +604,7 @@ SnapShot = 'success'
 SnapShot = """
 Error: failed to delete user: mock delete user error
 Usage:
-  cosmoctl user delete USER_ID [flags]
+  cosmoctl user delete USER_NAME [flags]
 
 Aliases:
   delete, del
@@ -626,7 +626,7 @@ SnapShot = 'failed to delete user: mock delete user error'
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl user delete USER_ID [flags]
+  cosmoctl user delete USER_NAME [flags]
 
 Aliases:
   delete, del
@@ -648,7 +648,7 @@ SnapShot = 'validation error: invalid args'
 SnapShot = """
 Error: user is not found: users.workspace.cosmo-workspace.github.io \"XXXXX\" not found
 Usage:
-  cosmoctl user delete USER_ID [flags]
+  cosmoctl user delete USER_NAME [flags]
 
 Aliases:
   delete, del
@@ -668,7 +668,7 @@ SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "XXXXX"
 
 ['cosmoctl [user] [get] ✅ success in normal context: user get 1']
 SnapShot = """
-ID      NAME    ROLE          NAMESPACE   STATUS
+name    NAME    ROLE          NAMESPACE   STATUS
 user1   name1                             
 user2   name2   cosmo-admin               
 """
@@ -678,7 +678,7 @@ SnapShot = 'success'
 
 ['cosmoctl [user] [get] ✅ success with empty user: user get 1']
 SnapShot = """
-ID    NAME   ROLE   NAMESPACE   STATUS
+name   NAME   ROLE   NAMESPACE   STATUS
 """
 
 ['cosmoctl [user] [get] ✅ success with empty user: user get 2']
@@ -717,7 +717,7 @@ SnapShot = """
 \u001B[32mSuccessfully reset password: user user1
 \u001B[0mError: failed to get default password: failed to get password secret: mock get error
 Usage:
-  cosmoctl user reset-password USER_ID [flags]
+  cosmoctl user reset-password USER_NAME [flags]
 
 Flags:
   -h, --help   help for reset-password
@@ -736,7 +736,7 @@ SnapShot = 'failed to get default password: failed to get password secret: mock 
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl user reset-password USER_ID [flags]
+  cosmoctl user reset-password USER_NAME [flags]
 
 Flags:
   -h, --help   help for reset-password
@@ -755,7 +755,7 @@ SnapShot = 'validation error: invalid args'
 SnapShot = """
 Error: failed to reset password: namespaces \"cosmo-user-XXXXXX\" not found
 Usage:
-  cosmoctl user reset-password USER_ID [flags]
+  cosmoctl user reset-password USER_NAME [flags]
 
 Flags:
   -h, --help   help for reset-password
@@ -844,7 +844,7 @@ SnapShot = """
 SnapShot = """
 Error: failed to update user: mock update error
 Usage:
-  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help          help for update
@@ -865,7 +865,7 @@ SnapShot = 'failed to update user: mock update error'
 SnapShot = """
 Error: validation error: invalid args
 Usage:
-  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help          help for update
@@ -886,7 +886,7 @@ SnapShot = 'validation error: invalid args'
 SnapShot = """
 Error: user is not found: users.workspace.cosmo-workspace.github.io \"XXXXXX\" not found
 Usage:
-  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help          help for update
@@ -907,7 +907,7 @@ SnapShot = 'user is not found: users.workspace.cosmo-workspace.github.io "XXXXXX
 SnapShot = """
 Error: no change
 Usage:
-  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help          help for update
@@ -928,7 +928,7 @@ SnapShot = 'no change'
 SnapShot = """
 Error: no change
 Usage:
-  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help          help for update
@@ -949,7 +949,7 @@ SnapShot = 'no change'
 SnapShot = """
 Error: validation error: role xxxxx is invalid
 Usage:
-  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help          help for update
@@ -970,7 +970,7 @@ SnapShot = 'validation error: role xxxxx is invalid'
 SnapShot = """
 Error: no change
 Usage:
-  cosmoctl user update USER_ID --role ROLE --name NAME [flags]
+  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help          help for update

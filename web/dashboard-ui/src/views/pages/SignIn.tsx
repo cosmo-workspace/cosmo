@@ -13,7 +13,7 @@ const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
 });
 
 interface Inputs {
-  userid: string,
+  username: string,
   password: string,
 };
 
@@ -47,7 +47,7 @@ const SignInContent: React.VFC = () => {
    */
   const onSignIn = async (data: Inputs) => {
     console.log('onSignIn');
-    const { requirePasswordUpdate } = await login(data.userid, data.password);
+    const { requirePasswordUpdate } = await login(data.username, data.password);
     if (requirePasswordUpdate) {
       passwordChangeDialogDispach(true);
     }
@@ -68,8 +68,8 @@ const SignInContent: React.VFC = () => {
       <Typography component="h1" variant="h5">Sign in</Typography>
       <Typography color="textPrimary" variant="body1">cosmo-dashboard</Typography>
       <form noValidate onSubmit={handleSubmit(onSignIn)}>
-        <TextField label="User ID" margin="normal" fullWidth autoComplete="userid" autoFocus
-          {...registerMui(register("userid", {
+        <TextField label="User ID" margin="normal" fullWidth autoComplete="username" autoFocus
+          {...registerMui(register("username", {
             required: { value: true, message: "Required" },
             pattern: {
               value: /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/,
@@ -77,8 +77,8 @@ const SignInContent: React.VFC = () => {
             },
             maxLength: { value: 128, message: "Max 128 characters" },
           }))}
-          error={Boolean(errors.userid)}
-          helperText={(errors.userid && errors.userid.message)}
+          error={Boolean(errors.username)}
+          helperText={(errors.username && errors.username.message)}
         />
         <PasswordTextField label="Password" margin="normal" fullWidth autoComplete="current-password"
           {...registerMui(register("password", {

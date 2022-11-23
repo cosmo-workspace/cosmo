@@ -18,10 +18,10 @@ import (
 	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 )
 
-func VerifyPassword(ctx context.Context, c client.Client, userid string, pass []byte) (verified bool, isDefault bool, err error) {
+func VerifyPassword(ctx context.Context, c client.Client, username string, pass []byte) (verified bool, isDefault bool, err error) {
 	secret := corev1.Secret{}
 	key := types.NamespacedName{
-		Namespace: wsv1alpha1.UserNamespace(userid),
+		Namespace: wsv1alpha1.UserNamespace(username),
 		Name:      wsv1alpha1.UserPasswordSecretName,
 	}
 
@@ -60,10 +60,10 @@ func bytesEqual(a, b []byte) bool {
 	return subtle.ConstantTimeCompare(a, b) == 1
 }
 
-func IsDefaultPassword(ctx context.Context, c client.Client, userid string) (bool, error) {
+func IsDefaultPassword(ctx context.Context, c client.Client, username string) (bool, error) {
 	secret := corev1.Secret{}
 	key := types.NamespacedName{
-		Namespace: wsv1alpha1.UserNamespace(userid),
+		Namespace: wsv1alpha1.UserNamespace(username),
 		Name:      wsv1alpha1.UserPasswordSecretName,
 	}
 
@@ -83,10 +83,10 @@ func IsDefaultPassword(ctx context.Context, c client.Client, userid string) (boo
 
 var ErrNotDefaultPassword = errors.New("not default password")
 
-func GetDefaultPassword(ctx context.Context, c client.Client, userid string) (*string, error) {
+func GetDefaultPassword(ctx context.Context, c client.Client, username string) (*string, error) {
 	secret := corev1.Secret{}
 	key := types.NamespacedName{
-		Namespace: wsv1alpha1.UserNamespace(userid),
+		Namespace: wsv1alpha1.UserNamespace(username),
 		Name:      wsv1alpha1.UserPasswordSecretName,
 	}
 
@@ -116,7 +116,7 @@ func GetDefaultPassword(ctx context.Context, c client.Client, userid string) (*s
 	return &p, nil
 }
 
-func ResetPassword(ctx context.Context, c client.Client, userid string) error {
+func ResetPassword(ctx context.Context, c client.Client, username string) error {
 	g, err := password.NewGenerator(&password.GeneratorInput{
 		Symbols: "~!@#$%^&*()_+-={}|[]:<>?,./",
 	})
@@ -129,15 +129,15 @@ func ResetPassword(ctx context.Context, c client.Client, userid string) error {
 		return fmt.Errorf("failed to generate random password: %w", err)
 	}
 
-	return registerPassword(ctx, c, userid, []byte(pass), nil)
+	return registerPassword(ctx, c, username, []byte(pass), nil)
 }
 
-func RegisterPassword(ctx context.Context, c client.Client, userid string, password []byte) error {
+func RegisterPassword(ctx context.Context, c client.Client, username string, password []byte) error {
 	hash, salt := hash(password, nil)
-	return registerPassword(ctx, c, userid, hash, salt)
+	return registerPassword(ctx, c, username, hash, salt)
 }
 
-func registerPassword(ctx context.Context, c client.Client, userid string, password, salt []byte) error {
+func registerPassword(ctx context.Context, c client.Client, username string, password, salt []byte) error {
 	isDefault := false
 	if salt == nil {
 		isDefault = true
@@ -145,7 +145,7 @@ func registerPassword(ctx context.Context, c client.Client, userid string, passw
 
 	secret := corev1.Secret{}
 	secret.SetName(wsv1alpha1.UserPasswordSecretName)
-	secret.SetNamespace(wsv1alpha1.UserNamespace(userid))
+	secret.SetNamespace(wsv1alpha1.UserNamespace(username))
 
 	_, err := ctrl.CreateOrUpdate(ctx, c, &secret, func() error {
 		secret.Annotations = map[string]string{

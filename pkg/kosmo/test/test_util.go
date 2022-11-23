@@ -155,13 +155,13 @@ func (c *TestUtil) CreateWorkspace(userName string, name string, template string
 	err = c.kosmoClient.Status().Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() (*wsv1alpha1.Workspace, error) {
-		return c.kosmoClient.GetWorkspaceByUserID(ctx, name, userName)
+		return c.kosmoClient.GetWorkspaceByUserName(ctx, name, userName)
 	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
 }
 
 func (c *TestUtil) StopWorkspace(userName string, name string) {
 	ctx := context.Background()
-	ws, err := c.kosmoClient.GetWorkspaceByUserID(ctx, name, userName)
+	ws, err := c.kosmoClient.GetWorkspaceByUserName(ctx, name, userName)
 	Expect(err).ShouldNot(HaveOccurred())
 	ws.Spec.Replicas = pointer.Int64(0)
 	err = c.kosmoClient.Update(ctx, ws)
@@ -193,7 +193,7 @@ func (c *TestUtil) UpsertNetworkRule(userName, workspaceName, networkRuleName st
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() bool {
-		ws, _ := c.kosmoClient.GetWorkspaceByUserID(ctx, workspaceName, userName)
+		ws, _ := c.kosmoClient.GetWorkspaceByUserName(ctx, workspaceName, userName)
 		for _, n := range ws.Spec.Network {
 			if n.Name == networkRuleName {
 				return true
@@ -210,7 +210,7 @@ func (c *TestUtil) DeleteNetworkRule(userName, workspaceName, networkRuleName st
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() bool {
-		ws, _ := c.kosmoClient.GetWorkspaceByUserID(ctx, workspaceName, userName)
+		ws, _ := c.kosmoClient.GetWorkspaceByUserName(ctx, workspaceName, userName)
 		for _, n := range ws.Spec.Network {
 			if n.Name == networkRuleName {
 				return true

@@ -24,7 +24,7 @@ export const PasswordDialog: React.VFC<{ onClose: () => void, user: User }> = ({
       <DialogTitle>Here you go 🚀</DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ pt: 1 }}>
-          <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
+          <TextFieldLabel label="User ID" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="Default Password" fullWidth value={user.defaultPassword} startAdornmentIcon={<VpnKey />}
             InputProps={{
               endAdornment: (<InputAdornment position="end">

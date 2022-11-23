@@ -99,7 +99,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				Ω(err).ShouldNot(HaveOccurred())
 				Expect(consoleOut()).To(MatchSnapShot())
 
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], args[4])
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[2], args[4])
 				Expect(err).NotTo(HaveOccurred()) // created
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			},
@@ -118,7 +118,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				o = regexp.MustCompile(`uid: .+`).ReplaceAllString(o, "uid: xxxxxxxx")
 				Expect(o).To(MatchSnapShot())
 
-				_, err = k8sClient.GetWorkspaceByUserID(context.Background(), args[2], args[4])
+				_, err = k8sClient.GetWorkspaceByUserName(context.Background(), args[2], args[4])
 				Expect(err).To(HaveOccurred()) // not created
 			},
 			Entry(desc, "workspace", "create", "ws1", "--user", "user1", "--template", "template1", "--vars", "HOGE:HOGEHOGE", "--dry-run"),
@@ -235,8 +235,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				test_CreateWorkspace("user1", "ws1", "template1", nil)
 				test_CreateWorkspace("user1", "ws2", "template1", nil)
 				clientMock.ListMock = func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error) {
-					if clientMock.IsCallingFrom("\\.ListWorkspacesByUserID$") {
-						return true, errors.New("mock listWorkspacesByUserID error")
+					if clientMock.IsCallingFrom("\\.ListWorkspacesByUserName$") {
+						return true, errors.New("mock listWorkspacesByUserName error")
 					}
 					return false, nil
 				}
@@ -270,7 +270,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 				run_test(args...)
 
-				_, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				_, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[2], "user1")
 				Expect(err).To(HaveOccurred()) // deleted
 			},
 			Entry(desc, "workspace", "delete", "ws2", "--user", "user1"),
@@ -285,7 +285,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 				run_test(args...)
 
-				_, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				_, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[2], "user1")
 				Expect(err).NotTo(HaveOccurred()) // undeleted
 			},
 			Entry(desc, "workspace", "delete", "ws2", "--dry-run", "--user", "user1"),
@@ -327,7 +327,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
 			if err == nil {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[2], "user1")
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			}
@@ -380,7 +380,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
 			if err == nil {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[2], "user1")
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			}

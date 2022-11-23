@@ -30,7 +30,7 @@ var _ = Describe("auth-proxy controller", func() {
 		proxyManager *proxy.Manager
 	)
 
-	startManager := func(userId, workspaceName string) {
+	startManager := func(username, workspaceName string) {
 		By("---- Manager setting start ----")
 		logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
@@ -38,7 +38,7 @@ var _ = Describe("auth-proxy controller", func() {
 			Scheme:             scheme,
 			MetricsBindAddress: "0",
 			LeaderElection:     false,
-			Namespace:          "cosmo-user-" + userId,
+			Namespace:          "cosmo-user-" + username,
 			//		CertDir:            testEnv.WebhookInstallOptions.LocalServingCertDir,
 			Port: testEnv.WebhookInstallOptions.LocalServingPort,
 		})
@@ -56,7 +56,7 @@ var _ = Describe("auth-proxy controller", func() {
 			Insecure:                 true,
 			TLSCertPath:              "",
 			TLSPrivateKeyPath:        "",
-			User:                     userId,
+			User:                     username,
 			MaxAgeSeconds:            60 * 720,
 			Authorizer:               authorizer,
 		}).Initialize()
@@ -148,7 +148,7 @@ var _ = Describe("auth-proxy controller", func() {
 				modifyFunc()
 				time.Sleep(time.Second * 3)
 
-				wsv1Workspace, _ := kosmoClient.GetWorkspaceByUserID(context.Background(), "test-workspace", "test-user")
+				wsv1Workspace, _ := kosmoClient.GetWorkspaceByUserName(context.Background(), "test-workspace", "test-user")
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 
 				proxies := proxyManager.GetRunningProxies()

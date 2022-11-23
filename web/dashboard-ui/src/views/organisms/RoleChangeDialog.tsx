@@ -33,13 +33,13 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
       fullWidth maxWidth={'xs'}>
       <DialogTitle>Change Role</DialogTitle>
       <form onSubmit={handleSubmit((inp: Inputs) => {
-        hooks.updateRole(user.userName, inp.role)
+        hooks.updateRole(user.name, inp.role)
           .then(() => onClose());
       })}
         autoComplete="new-password">
         <DialogContent>
           <Stack spacing={3}>
-            <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
+            <TextFieldLabel label="User ID" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
             <TextField label="Role" select fullWidth defaultValue={user.role || ''}
               {...registerMui(register('role'))}
               error={Boolean(errors.role)}

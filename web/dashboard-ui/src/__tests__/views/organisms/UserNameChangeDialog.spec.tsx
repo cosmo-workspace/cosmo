@@ -68,7 +68,7 @@ describe("UserNameChangeDialog", () => {
   describe("render", () => {
 
     it("render", async () => {
-      const user1: User = new User({ userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
+      const user1: User = new User({ name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
       render(
         <UserNameChangeDialog onClose={() => closeHandlerMock()} user={user1} />
       );
@@ -80,7 +80,7 @@ describe("UserNameChangeDialog", () => {
 
   describe("behavior", () => {
 
-    const user1: User = new User({ userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
+    const user1: User = new User({ name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
 
     it("ok", async () => {
       const user = userEvent.setup();
@@ -169,7 +169,7 @@ describe("UserNameChangeDialog", () => {
 
       const Stub = () => {
         const dispatch = UserNameChangeDialogContext.useDispatch();
-        const user1: User = new User({ userName: 'user1', displayName: 'user1name' });
+        const user1: User = new User({ name: 'user1', displayName: 'user1name' });
         return (<>
           <Button onClick={() => dispatch(true, { user: user1 })}>open</Button>
           <Button onClick={() => dispatch(false)}>close</Button>

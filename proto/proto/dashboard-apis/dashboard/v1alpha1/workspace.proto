@@ -31,7 +31,7 @@ message WorkspaceStatus {
 
 message Workspace {
   string name = 1;
-  string owner_id = 2;
+  string owner_name = 2;
   WorkspaceSpec spec = 3;
   WorkspaceStatus status = 4;
 }

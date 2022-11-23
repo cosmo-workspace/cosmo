@@ -48,14 +48,14 @@ func (p *ProxyServer) Login(ctx context.Context, req *connect.Request[authv1alph
 
 	// check args
 	if req.Msg.UserName == "" || req.Msg.Password == "" {
-		log.Info("invalid request", "id", req.Msg.UserName, "passExist", req.Msg.Password != "")
+		log.Info("invalid request", "username", req.Msg.UserName, "passExist", req.Msg.Password != "")
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("invalid request"))
 	}
 
-	// check request user ID is instance owner ID
+	// check request user name is instance owner name
 	if p.User != req.Msg.UserName {
-		log.Info("forbidden request: user ID is not owner ID", "userName", req.Msg.UserName)
-		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("user ID is not owner ID"))
+		log.Info("forbidden request: user name is not owner name", "userName", req.Msg.UserName)
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("user name is not owner name"))
 	}
 
 	// authorize at upstream
@@ -67,7 +67,7 @@ func (p *ProxyServer) Login(ctx context.Context, req *connect.Request[authv1alph
 
 	saveSessionInfo := ctx.Value(ctxKeySession{}).(func(sesInfo *session.Info))
 	saveSessionInfo(&session.Info{
-		UserID:   req.Msg.UserName,
+		UserName: req.Msg.UserName,
 		Deadline: time.Now().Add(time.Duration(p.MaxAgeSeconds) * time.Second).Unix(),
 	})
 

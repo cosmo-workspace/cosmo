@@ -72,8 +72,8 @@ func TestEmptyTemplateObject(t *testing.T) {
 
 func TestEmptyInstanceObject(t *testing.T) {
 	type args struct {
-		addon  wsv1alpha1.UserAddon
-		userid string
+		addon    wsv1alpha1.UserAddon
+		username string
 	}
 	tests := []struct {
 		name string
@@ -88,7 +88,7 @@ func TestEmptyInstanceObject(t *testing.T) {
 						Name: "tmpl",
 					},
 				},
-				userid: "tom",
+				username: "tom",
 			},
 			want: &cosmov1alpha1.Instance{
 				ObjectMeta: metav1.ObjectMeta{
@@ -106,7 +106,7 @@ func TestEmptyInstanceObject(t *testing.T) {
 						ClusterScoped: true,
 					},
 				},
-				userid: "tom",
+				username: "tom",
 			},
 			want: &cosmov1alpha1.ClusterInstance{
 				ObjectMeta: metav1.ObjectMeta{
@@ -117,15 +117,15 @@ func TestEmptyInstanceObject(t *testing.T) {
 		{
 			name: "empty",
 			args: args{
-				addon:  wsv1alpha1.UserAddon{},
-				userid: "tom",
+				addon:    wsv1alpha1.UserAddon{},
+				username: "tom",
 			},
 			want: nil,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := EmptyInstanceObject(tt.args.addon, tt.args.userid); !equality.Semantic.DeepEqual(got, tt.want) {
+			if got := EmptyInstanceObject(tt.args.addon, tt.args.username); !equality.Semantic.DeepEqual(got, tt.want) {
 				t.Errorf("EmptyInstanceObject() = %v, want %v", got, tt.want)
 			}
 		})
@@ -246,9 +246,9 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Name: "tmpl",
 					},
 					Vars: map[string]string{
-						wsv1alpha1.TemplateVarUserID:  "tom",
-						template.DefaultVarsNamespace: "cosmo-user-tom",
-						"VAR1":                        "VAL1",
+						wsv1alpha1.TemplateVarUserName: "tom",
+						template.DefaultVarsNamespace:  "cosmo-user-tom",
+						"VAR1":                         "VAL1",
 					},
 				},
 			},
@@ -298,8 +298,8 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Name: "ctmpl",
 					},
 					Vars: map[string]string{
-						wsv1alpha1.TemplateVarUserID:  "tom",
-						template.DefaultVarsNamespace: "cosmo-user-tom",
+						wsv1alpha1.TemplateVarUserName: "tom",
+						template.DefaultVarsNamespace:  "cosmo-user-tom",
 					},
 				},
 			},

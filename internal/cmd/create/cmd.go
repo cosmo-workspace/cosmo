@@ -26,7 +26,7 @@ Create cosmo resources
 		Aliases: []string{"ws"},
 	}, o))
 	createCmd.AddCommand(user.CreateCmd(&cobra.Command{
-		Use:   "user USER_ID --role cosmo-admin",
+		Use:   "user USER_NAME --role cosmo-admin",
 		Short: "Create user",
 	}, o.CliOptions))
 	createCmd.AddCommand(netrule.CreateCmd(&cobra.Command{

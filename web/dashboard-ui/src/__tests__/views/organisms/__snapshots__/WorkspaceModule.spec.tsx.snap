@@ -125,7 +125,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -143,7 +143,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -161,7 +161,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -179,7 +179,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws15",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -202,7 +202,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -220,7 +220,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -238,7 +238,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -256,7 +256,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws14",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -274,7 +274,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws15",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -323,7 +323,7 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -341,7 +341,7 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -359,7 +359,7 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -382,7 +382,7 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 2`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -400,7 +400,7 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -418,7 +418,7 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -467,7 +467,7 @@ exports[`useWorkspace > useWorkspace getWorkspaces > normal 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -485,7 +485,7 @@ exports[`useWorkspace > useWorkspace getWorkspaces > normal 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -503,7 +503,7 @@ exports[`useWorkspace > useWorkspace getWorkspaces > normal 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -532,7 +532,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -550,7 +550,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -568,7 +568,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -591,7 +591,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 2`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -609,7 +609,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 2`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -627,7 +627,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 2`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -650,7 +650,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 3`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -668,7 +668,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 3`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -686,7 +686,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 3`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -709,7 +709,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 4`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -727,7 +727,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 4`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -745,7 +745,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 4`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -768,7 +768,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 5`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -786,7 +786,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 5`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -804,7 +804,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 5`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -827,7 +827,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 6`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -845,7 +845,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 6`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -863,7 +863,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 6`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -888,7 +888,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -906,7 +906,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [
         NetworkRule {
@@ -941,7 +941,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -964,7 +964,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -982,7 +982,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [
         NetworkRule {
@@ -1017,7 +1017,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1040,7 +1040,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1058,7 +1058,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [
         NetworkRule {
@@ -1093,7 +1093,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1118,7 +1118,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1136,7 +1136,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1154,7 +1154,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1177,7 +1177,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 2`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1195,7 +1195,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 2`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1213,7 +1213,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 2`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1236,7 +1236,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 3`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1254,7 +1254,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 3`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1272,7 +1272,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 3`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1295,7 +1295,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 4`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1313,7 +1313,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 4`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1331,7 +1331,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 4`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1356,7 +1356,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1374,7 +1374,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1392,7 +1392,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1415,7 +1415,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 2`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1433,7 +1433,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 2`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1451,7 +1451,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 2`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1474,7 +1474,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 3`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1492,7 +1492,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 3`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1510,7 +1510,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 3`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1533,7 +1533,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 4`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1551,7 +1551,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 4`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1569,7 +1569,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 4`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1592,7 +1592,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 5`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1610,7 +1610,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 5`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1628,7 +1628,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 5`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1651,7 +1651,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 6`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1669,7 +1669,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 6`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1687,7 +1687,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 6`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1710,7 +1710,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 7`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1728,7 +1728,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 7`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1746,7 +1746,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 7`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1769,7 +1769,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 8`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1787,7 +1787,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 8`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1805,7 +1805,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 8`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1828,7 +1828,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 9`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1846,7 +1846,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 9`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1864,7 +1864,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 9`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1887,7 +1887,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 10`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1905,7 +1905,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 10`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1923,7 +1923,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 10`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1946,7 +1946,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 11`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -1964,7 +1964,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 11`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -1982,7 +1982,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 11`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2005,7 +2005,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 12`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2023,7 +2023,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 12`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2041,7 +2041,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 12`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2064,7 +2064,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 13`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2082,7 +2082,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 13`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2100,7 +2100,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 13`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2123,7 +2123,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 14`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2141,7 +2141,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 14`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2159,7 +2159,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 14`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2182,7 +2182,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 15`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2200,7 +2200,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 15`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2218,7 +2218,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 15`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2241,7 +2241,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 16`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2259,7 +2259,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 16`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2277,7 +2277,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 16`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2300,7 +2300,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 17`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2318,7 +2318,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 17`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2336,7 +2336,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 17`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2359,7 +2359,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 18`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2377,7 +2377,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 18`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2395,7 +2395,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 18`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2418,7 +2418,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 19`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2436,7 +2436,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 19`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2454,7 +2454,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 19`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2477,7 +2477,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 20`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2495,7 +2495,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 20`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2513,7 +2513,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 20`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2536,7 +2536,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 21`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2554,7 +2554,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 21`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2572,7 +2572,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 21`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2595,7 +2595,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 22`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2613,7 +2613,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 22`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2631,7 +2631,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 22`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2654,7 +2654,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 23`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2672,7 +2672,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 23`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2690,7 +2690,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 23`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2713,7 +2713,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 24`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2731,7 +2731,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 24`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2749,7 +2749,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 24`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2772,7 +2772,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 25`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2790,7 +2790,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 25`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2808,7 +2808,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 25`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2831,7 +2831,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 26`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2849,7 +2849,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 26`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2867,7 +2867,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 26`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2890,7 +2890,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 27`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2908,7 +2908,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 27`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2926,7 +2926,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 27`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2949,7 +2949,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 28`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -2967,7 +2967,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 28`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -2985,7 +2985,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 28`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3008,7 +3008,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 29`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3026,7 +3026,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 29`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3044,7 +3044,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 29`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3067,7 +3067,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 30`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3085,7 +3085,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 30`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3103,7 +3103,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 30`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3126,7 +3126,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 31`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3144,7 +3144,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 31`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3162,7 +3162,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 31`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3185,7 +3185,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 32`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3203,7 +3203,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 32`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3221,7 +3221,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 32`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3244,7 +3244,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 33`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3262,7 +3262,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 33`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3280,7 +3280,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 33`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3303,7 +3303,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 34`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3321,7 +3321,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 34`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3339,7 +3339,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 34`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3362,7 +3362,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 35`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3380,7 +3380,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 35`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3398,7 +3398,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 35`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3421,7 +3421,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 36`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3439,7 +3439,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 36`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3457,7 +3457,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 36`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3480,7 +3480,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 37`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3498,7 +3498,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 37`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3516,7 +3516,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 37`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3539,7 +3539,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 38`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3557,7 +3557,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 38`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3575,7 +3575,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 38`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3598,7 +3598,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 39`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3616,7 +3616,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 39`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3634,7 +3634,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 39`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3657,7 +3657,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 40`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3675,7 +3675,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 40`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3693,7 +3693,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 40`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3716,7 +3716,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 41`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3734,7 +3734,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 41`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3752,7 +3752,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 41`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3775,7 +3775,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 42`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3793,7 +3793,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 42`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3811,7 +3811,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 42`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3834,7 +3834,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 43`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3852,7 +3852,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 43`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3870,7 +3870,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 43`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3893,7 +3893,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 44`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3911,7 +3911,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 44`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3929,7 +3929,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 44`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3952,7 +3952,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 45`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -3970,7 +3970,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 45`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -3988,7 +3988,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 45`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4011,7 +4011,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 46`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4029,7 +4029,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 46`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4047,7 +4047,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 46`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4070,7 +4070,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 47`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4088,7 +4088,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 47`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4106,7 +4106,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 47`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4129,7 +4129,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 48`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4147,7 +4147,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 48`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4165,7 +4165,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 48`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4188,7 +4188,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 49`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4206,7 +4206,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 49`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4224,7 +4224,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 49`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4247,7 +4247,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 50`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4265,7 +4265,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 50`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4283,7 +4283,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 50`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4306,7 +4306,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 51`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4324,7 +4324,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 51`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4342,7 +4342,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 51`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4365,7 +4365,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 52`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4383,7 +4383,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 52`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4401,7 +4401,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 52`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4424,7 +4424,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 53`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4442,7 +4442,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 53`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4460,7 +4460,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 53`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4483,7 +4483,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 54`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4501,7 +4501,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 54`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4519,7 +4519,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 54`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4542,7 +4542,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 55`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4560,7 +4560,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 55`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4578,7 +4578,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 55`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4601,7 +4601,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 56`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4619,7 +4619,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 56`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4637,7 +4637,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 56`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4660,7 +4660,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 57`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4678,7 +4678,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 57`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4696,7 +4696,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 57`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4719,7 +4719,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 58`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4737,7 +4737,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 58`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4755,7 +4755,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 58`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4778,7 +4778,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 59`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4796,7 +4796,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 59`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4814,7 +4814,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 59`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4837,7 +4837,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 60`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4855,7 +4855,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 60`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4873,7 +4873,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 60`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4896,7 +4896,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 61`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4914,7 +4914,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 61`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4932,7 +4932,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 61`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4955,7 +4955,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 62`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -4973,7 +4973,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 62`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -4991,7 +4991,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 62`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5014,7 +5014,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 63`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5032,7 +5032,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 63`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5050,7 +5050,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 63`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5073,7 +5073,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 64`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5091,7 +5091,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 64`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5109,7 +5109,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 64`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5132,7 +5132,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 65`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5150,7 +5150,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 65`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5168,7 +5168,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 65`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5191,7 +5191,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 66`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5209,7 +5209,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 66`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5227,7 +5227,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 66`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5250,7 +5250,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 67`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5268,7 +5268,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 67`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5286,7 +5286,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 67`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5309,7 +5309,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 68`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5327,7 +5327,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 68`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5345,7 +5345,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 68`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5368,7 +5368,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 69`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5386,7 +5386,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 69`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5404,7 +5404,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 69`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5427,7 +5427,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 70`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5445,7 +5445,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 70`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5463,7 +5463,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 70`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5486,7 +5486,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 71`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5504,7 +5504,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 71`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5522,7 +5522,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 71`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5545,7 +5545,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 72`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5563,7 +5563,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 72`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5581,7 +5581,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 72`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5604,7 +5604,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 73`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5622,7 +5622,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 73`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5640,7 +5640,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 73`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5663,7 +5663,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 74`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5681,7 +5681,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 74`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5699,7 +5699,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 74`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5722,7 +5722,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 75`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5740,7 +5740,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 75`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5758,7 +5758,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 75`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5781,7 +5781,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 76`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5799,7 +5799,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 76`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5817,7 +5817,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 76`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5840,7 +5840,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 77`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5858,7 +5858,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 77`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5876,7 +5876,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 77`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5899,7 +5899,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 78`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5917,7 +5917,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 78`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5935,7 +5935,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 78`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5958,7 +5958,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 79`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -5976,7 +5976,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 79`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -5994,7 +5994,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 79`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6017,7 +6017,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 80`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6035,7 +6035,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 80`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6053,7 +6053,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 80`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6076,7 +6076,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 81`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6094,7 +6094,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 81`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6112,7 +6112,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 81`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6135,7 +6135,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 82`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6153,7 +6153,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 82`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6171,7 +6171,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 82`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6194,7 +6194,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 83`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6212,7 +6212,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 83`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6230,7 +6230,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 83`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6253,7 +6253,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 84`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6271,7 +6271,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 84`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6289,7 +6289,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 84`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6312,7 +6312,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 85`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6330,7 +6330,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 85`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6348,7 +6348,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 85`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6371,7 +6371,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 86`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6389,7 +6389,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 86`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6407,7 +6407,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 86`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6430,7 +6430,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 87`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6448,7 +6448,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 87`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6466,7 +6466,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 87`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6489,7 +6489,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 88`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6507,7 +6507,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 88`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6525,7 +6525,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 88`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6548,7 +6548,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 89`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6566,7 +6566,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 89`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6584,7 +6584,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 89`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6607,7 +6607,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 90`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6625,7 +6625,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 90`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6643,7 +6643,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 90`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6666,7 +6666,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 91`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6684,7 +6684,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 91`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6702,7 +6702,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 91`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6725,7 +6725,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 92`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6743,7 +6743,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 92`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6761,7 +6761,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 92`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6784,7 +6784,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 93`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6802,7 +6802,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 93`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6820,7 +6820,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 93`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6843,7 +6843,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 94`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6861,7 +6861,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 94`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6879,7 +6879,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 94`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6902,7 +6902,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 95`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6920,7 +6920,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 95`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6938,7 +6938,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 95`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6961,7 +6961,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 96`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -6979,7 +6979,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 96`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -6997,7 +6997,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 96`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7020,7 +7020,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 97`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7038,7 +7038,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 97`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7056,7 +7056,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 97`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7079,7 +7079,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 98`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7097,7 +7097,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 98`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7115,7 +7115,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 98`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7138,7 +7138,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 99`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7156,7 +7156,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 99`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7174,7 +7174,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 99`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7197,7 +7197,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 100`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7215,7 +7215,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 100`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7233,7 +7233,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 100`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7256,7 +7256,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 101`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7274,7 +7274,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 101`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7292,7 +7292,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 101`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7315,7 +7315,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 102`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7333,7 +7333,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 102`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7351,7 +7351,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 102`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7374,7 +7374,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 103`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7392,7 +7392,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 103`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7410,7 +7410,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 103`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7433,7 +7433,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 104`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7451,7 +7451,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 104`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7469,7 +7469,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 104`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7492,7 +7492,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 105`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7510,7 +7510,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 105`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7528,7 +7528,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 105`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7551,7 +7551,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 106`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7569,7 +7569,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 106`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7587,7 +7587,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 106`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7610,7 +7610,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 107`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7628,7 +7628,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 107`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7646,7 +7646,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 107`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7669,7 +7669,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 108`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7687,7 +7687,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 108`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7705,7 +7705,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 108`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7728,7 +7728,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 109`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7746,7 +7746,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 109`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7764,7 +7764,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 109`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7787,7 +7787,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 110`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7805,7 +7805,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 110`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7823,7 +7823,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 110`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7846,7 +7846,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 111`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7864,7 +7864,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 111`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7882,7 +7882,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 111`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7905,7 +7905,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 112`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7923,7 +7923,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 112`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -7941,7 +7941,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 112`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7964,7 +7964,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 113`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -7982,7 +7982,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 113`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8000,7 +8000,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 113`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8023,7 +8023,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 114`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8041,7 +8041,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 114`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8059,7 +8059,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 114`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8082,7 +8082,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 115`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8100,7 +8100,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 115`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8118,7 +8118,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 115`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8141,7 +8141,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 116`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8159,7 +8159,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 116`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8177,7 +8177,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 116`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8200,7 +8200,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 117`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8218,7 +8218,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 117`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8236,7 +8236,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 117`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8259,7 +8259,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 118`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8277,7 +8277,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 118`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8295,7 +8295,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 118`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8318,7 +8318,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 119`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8336,7 +8336,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 119`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8354,7 +8354,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 119`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8377,7 +8377,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 120`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8395,7 +8395,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 120`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8413,7 +8413,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 120`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8436,7 +8436,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 121`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8454,7 +8454,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 121`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 0n,
@@ -8472,7 +8472,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 121`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8497,7 +8497,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8515,7 +8515,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8533,7 +8533,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8573,7 +8573,7 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8591,7 +8591,7 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8609,7 +8609,7 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8632,7 +8632,7 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 2`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8650,7 +8650,7 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8668,7 +8668,7 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8717,7 +8717,7 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 1`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8735,7 +8735,7 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8753,7 +8753,7 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 1`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8776,7 +8776,7 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 2`] = `
 [
   Workspace {
     "name": "ws11",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8794,7 +8794,7 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws12",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8812,7 +8812,7 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 2`] = `
   },
   Workspace {
     "name": "ws13",
-    "ownerId": "user1",
+    "ownerName": "user1",
     "spec": WorkspaceSpec {
       "additionalNetwork": [],
       "replicas": 1n,
@@ -8862,27 +8862,27 @@ exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal 1`] = `
     "authType": "",
     "defaultPassword": "",
     "displayName": "user1 name",
+    "name": "user1",
     "role": "CosmoAdmin",
     "status": "",
-    "userName": "user1",
   },
   User {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
     "displayName": "user2 name",
+    "name": "user2",
     "role": "",
     "status": "",
-    "userName": "user2",
   },
   User {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
     "displayName": "user2 name",
+    "name": "user3",
     "role": "",
     "status": "",
-    "userName": "user3",
   },
 ]
 `;
@@ -8900,27 +8900,27 @@ exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal no change 1`] =
     "authType": "",
     "defaultPassword": "",
     "displayName": "user1 name",
+    "name": "user1",
     "role": "CosmoAdmin",
     "status": "",
-    "userName": "user1",
   },
   User {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
     "displayName": "user2 name",
+    "name": "user2",
     "role": "",
     "status": "",
-    "userName": "user2",
   },
   User {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
     "displayName": "user2 name",
+    "name": "user3",
     "role": "",
     "status": "",
-    "userName": "user3",
   },
 ]
 `;
@@ -8933,9 +8933,9 @@ User {
   "authType": "",
   "defaultPassword": "",
   "displayName": "",
+  "name": "",
   "role": "",
   "status": "",
-  "userName": "",
 }
 `;
 
@@ -8946,9 +8946,9 @@ exports[`useWorkspaceUsers > useWorkspaceUsers not login > normal 2`] = `
     "authType": "",
     "defaultPassword": "",
     "displayName": "",
+    "name": "",
     "role": "",
     "status": "",
-    "userName": "",
   },
 ]
 `;
