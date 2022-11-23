@@ -445,7 +445,7 @@ We recommend the following `URLBase`
 
 - For using custom domain: 
 
-  `https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USERID}}.cosmo.example.com`
+  `https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}.cosmo.example.com`
 
 - For using auto-generated LoadBalancer name without custom domain: 
 
@@ -465,7 +465,7 @@ Rules:
 | {{NETRULE_GROUP}}   | Name of each Network rule |
 | {{WORKSPACE}}       | Workspace name |
 | {{INSTANCE}}        | Instance name (same as Workspace name) |
-| {{USERID}}          | Workspace owner user ID |
+| {{USER_NAME}}          | Workspace owner user ID |
 | {{NAMESPACE}}       | Namespace name |
 | {{NETRULE_NAME}}    | Network rule name |
 | {{PORT_NUMBER}}     | Service Port number |
@@ -548,7 +548,7 @@ Status:
     Ingress Name:            code-server
     Main Service Port Name:  webide
     Service Name:            code-server
-    Urlbase:                 https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USERID}}.cosmo.exmaple.com/
+    Urlbase:                 https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}.cosmo.exmaple.com/
   Instance:
     API Version: cosmo.cosmo-workspace.github.io/v1alpha1
     Kind: Instance

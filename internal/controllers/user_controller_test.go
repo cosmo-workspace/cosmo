@@ -164,9 +164,9 @@ spec:
 			label := createdNs.GetLabels()
 			Expect(label).ShouldNot(BeNil())
 
-			userid, ok := label[wsv1alpha1.NamespaceLabelKeyUserID]
+			username, ok := label[wsv1alpha1.NamespaceLabelKeyUserName]
 			Expect(ok).Should(BeTrue())
-			Expect(userid).Should(BeEquivalentTo(user.Name))
+			Expect(username).Should(BeEquivalentTo(user.Name))
 
 			By("check namespace owner reference")
 

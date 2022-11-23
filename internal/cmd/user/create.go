@@ -18,7 +18,7 @@ import (
 type CreateOption struct {
 	*cmdutil.CliOptions
 
-	UserID        string
+	UserName      string
 	DisplayName   string
 	Role          string
 	Admin         bool
@@ -32,7 +32,7 @@ func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &CreateOption{CliOptions: cliOpt}
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-	cmd.Flags().StringVar(&o.DisplayName, "name", "", "user display name (default: same as USER_ID)")
+	cmd.Flags().StringVar(&o.DisplayName, "name", "", "user display name (default: same as USER_NAME)")
 	cmd.Flags().StringVar(&o.Role, "role", "", "user role")
 	cmd.Flags().BoolVar(&o.Admin, "admin", false, "user admin role")
 	cmd.Flags().StringArrayVar(&o.Addons, "addon", nil, "user addons by Template, which created in UserNamespace\nformat is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' ")
@@ -73,7 +73,7 @@ func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	o.UserID = args[0]
+	o.UserName = args[0]
 
 	if o.Admin {
 		o.Role = wsv1alpha1.UserAdminRole.String()
@@ -136,16 +136,16 @@ func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)
 
-	if _, err := o.Client.CreateUser(ctx, o.UserID, o.DisplayName, o.Role, "", o.userAddons); err != nil {
+	if _, err := o.Client.CreateUser(ctx, o.UserName, o.DisplayName, o.Role, "", o.userAddons); err != nil {
 		return err
 	}
 
-	defaultPassword, err := o.Client.GetDefaultPasswordAwait(ctx, o.UserID)
+	defaultPassword, err := o.Client.GetDefaultPasswordAwait(ctx, o.UserName)
 	if err != nil {
 		return err
 	}
 
-	cmdutil.PrintfColorInfo(o.Out, "Successfully created user %s\n", o.UserID)
+	cmdutil.PrintfColorInfo(o.Out, "Successfully created user %s\n", o.UserName)
 	fmt.Fprintln(o.Out, "Default password:", *defaultPassword)
 	return nil
 }

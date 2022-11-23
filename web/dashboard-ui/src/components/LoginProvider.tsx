@@ -1,9 +1,8 @@
 import { useSnackbar } from 'notistack';
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { useProgress } from './ProgressProvider';
-import { createConnectTransport, createPromiseClient } from '@bufbuild/connect-web';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '../proto/gen/dashboard/v1alpha1/user_pb';
 import { useAuthService, useUserService } from '../services/DashboardServices';
+import { useProgress } from './ProgressProvider';
 
 /**
  * context
@@ -72,8 +71,8 @@ const useLoginModule = () => {
    */
   const getMyUserInfo = async (userName: string) => {
     console.log('getMyUserInfo', userName);
-    // if (loginUser || !userId) {
-    //   console.log('getMyUserInfo cancel', loginUser, userId);
+    // if (loginUser || !username) {
+    //   console.log('getMyUserInfo cancel', loginUser, username);
     //   return;
     // }
     try {
@@ -93,7 +92,7 @@ const useLoginModule = () => {
   const refreshUserInfo = async () => {
     console.log('refreshUserInfo');
     if (loginUser) {
-      getMyUserInfo(loginUser.userName);
+      getMyUserInfo(loginUser.name);
     }
   }
 
@@ -120,11 +119,11 @@ const useLoginModule = () => {
    * updataPassword
    */
   const updataPassword = async (currentPassword: string, newPassword: string) => {
-    console.log('updataPassword', loginUser?.userName);
+    console.log('updataPassword', loginUser?.name);
     setMask();
     try {
       try {
-        return await userService.updateUserPassword({ userName: loginUser!.userName, currentPassword, newPassword });
+        return await userService.updateUserPassword({ userName: loginUser!.name, currentPassword, newPassword });
       }
       catch (error) {
         handleError(error);

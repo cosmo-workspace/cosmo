@@ -92,21 +92,21 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 		o.Logr.DebugAll().Info("ListUsers", "users", users)
 
 		for _, user := range users {
-			ws, err := c.ListWorkspacesByUserID(ctx, user.Name)
+			ws, err := c.ListWorkspacesByUserName(ctx, user.Name)
 			if err != nil {
 				return err
 			}
-			o.Logr.DebugAll().Info("ListWorkspacesByUserID", "user", o.User, "wsCount", len(ws), "wsList", ws)
+			o.Logr.DebugAll().Info("ListWorkspacesByUserName", "user", o.User, "wsCount", len(ws), "wsList", ws)
 			wss = append(wss, ws...)
 		}
 
 	} else if o.WorkspaceName != "" {
-		ws, err := c.GetWorkspaceByUserID(ctx, o.WorkspaceName, o.User)
+		ws, err := c.GetWorkspaceByUserName(ctx, o.WorkspaceName, o.User)
 		if err != nil {
 			return err
 		}
 		wss = []wsv1alpha1.Workspace{*ws}
-		o.Logr.DebugAll().Info("GetWorkspaceByUserID", "user", o.User, "ws", ws)
+		o.Logr.DebugAll().Info("GetWorkspaceByUserName", "user", o.User, "ws", ws)
 
 	} else {
 		_, err := c.GetUser(ctx, o.User)
@@ -114,11 +114,11 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		wss, err = c.ListWorkspacesByUserID(ctx, o.User)
+		wss, err = c.ListWorkspacesByUserName(ctx, o.User)
 		if err != nil {
 			return err
 		}
-		o.Logr.DebugAll().Info("ListWorkspacesByUserID", "user", o.User, "wsCount", len(wss), "wsList", wss)
+		o.Logr.DebugAll().Info("ListWorkspacesByUserName", "user", o.User, "wsCount", len(wss), "wsList", wss)
 	}
 
 	if o.outputFormat == "yaml" {

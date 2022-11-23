@@ -17,9 +17,9 @@ User {
   "authType": "",
   "defaultPassword": "",
   "displayName": "user1 name",
+  "name": "user1",
   "role": "CosmoAdmin",
   "status": "",
-  "userName": "user1",
 }
 `;
 
@@ -102,9 +102,9 @@ User {
   "authType": "",
   "defaultPassword": "",
   "displayName": "user1 name",
+  "name": "user1",
   "role": "CosmoAdmin",
   "status": "",
-  "userName": "user1",
 }
 `;
 
@@ -167,9 +167,9 @@ User {
   "authType": "",
   "defaultPassword": "",
   "displayName": "user1 name",
+  "name": "user1",
   "role": "CosmoAdmin",
   "status": "",
-  "userName": "user1",
 }
 `;
 

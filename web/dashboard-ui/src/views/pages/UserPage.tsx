@@ -25,7 +25,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
     <Box>
       <IconButton
         color="inherit"
-        disabled={loginUser?.userName === us.userName}
+        disabled={loginUser?.name === us.name}
         onClick={e => setAnchorEl(e.currentTarget)}>
         <MoreVert fontSize="small" />
       </IconButton>
@@ -39,7 +39,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
           setAnchorEl(null);
         }}>
           <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
-          <ListItemText>Change user name...</ListItemText>
+          <ListItemText>Change Name...</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => {
           roleChangeDialogDispatch(true, { user: us });
@@ -96,21 +96,21 @@ const UserList: React.VFC = () => {
         </Fab>
       </Stack >
     </Paper>
-    {!hooks.users.filter((us) => searchStr === '' || Boolean(us.userName.match(searchStr))).length &&
+    {!hooks.users.filter((us) => searchStr === '' || Boolean(us.name.match(searchStr))).length &&
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
         <Typography variant='subtitle1' sx={{ color: 'text.secondary', textAlign: 'center' }}>No Users found.</Typography>
       </Paper>
     }
     <Grid container spacing={0.5}>
       {hooks.users
-        .filter((us) => searchStr === '' || Boolean(us.userName.match(searchStr)))
+        .filter((us) => searchStr === '' || Boolean(us.name.match(searchStr)))
         .filter((us) => us.status === 'Active').map((us) =>
-          <Grid item key={us.userName} xs={12} sm={6} md={4}>
+          <Grid item key={us.name} xs={12} sm={6} md={4}>
             <Card>
               <CardHeader
                 avatar={<NameAvatar name={us.displayName} onClick={() => { userInfoDialogDispatch(true, { user: us }) }} />}
                 title={<Stack direction='row' sx={{ mr: 2, maxWidth: 350 }}>
-                  <Typography variant='subtitle1'>{us.userName}</Typography>
+                  <Typography variant='subtitle1'>{us.name}</Typography>
                   <Box sx={{ flex: '1 1 auto' }} />
                   {us.role && <Chip size='small' label={us.role} />}
                 </Stack>}

@@ -23,7 +23,7 @@ func EmptyTemplateObject(addon wsv1alpha1.UserAddon) cosmov1alpha1.TemplateObjec
 	return &cosmov1alpha1.Template{ObjectMeta: v1.ObjectMeta{Name: addon.Template.Name}}
 }
 
-func EmptyInstanceObject(addon wsv1alpha1.UserAddon, userid string) cosmov1alpha1.InstanceObject {
+func EmptyInstanceObject(addon wsv1alpha1.UserAddon, username string) cosmov1alpha1.InstanceObject {
 	if addon.Template.Name == "" {
 		return nil
 	}
@@ -31,14 +31,14 @@ func EmptyInstanceObject(addon wsv1alpha1.UserAddon, userid string) cosmov1alpha
 	if addon.Template.ClusterScoped {
 		return &cosmov1alpha1.ClusterInstance{
 			ObjectMeta: v1.ObjectMeta{
-				Name: InstanceName(addon.Template.Name, userid),
+				Name: InstanceName(addon.Template.Name, username),
 			},
 		}
 	}
 	return &cosmov1alpha1.Instance{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      InstanceName(addon.Template.Name, ""),
-			Namespace: wsv1alpha1.UserNamespace(userid),
+			Namespace: wsv1alpha1.UserNamespace(username),
 		},
 	}
 }
@@ -75,7 +75,7 @@ func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon ws
 		addon.Vars = make(map[string]string)
 	}
 	addon.Vars[template.DefaultVarsNamespace] = wsv1alpha1.UserNamespace(user.Name)
-	addon.Vars[wsv1alpha1.TemplateVarUserID] = user.Name
+	addon.Vars[wsv1alpha1.TemplateVarUserName] = user.Name
 	inst.GetSpec().Vars = addon.Vars
 
 	// set owner reference if scheme is not nil

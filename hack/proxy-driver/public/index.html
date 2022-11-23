@@ -11,7 +11,7 @@
 
   <div>
     <div>
-      <p>User ID<input type="text" id="userid"></p>
+      <p>User ID<input type="text" id="username"></p>
     </div>
     <div>
       <p>Password<input type="password" id="password"></p>
@@ -24,7 +24,7 @@
 
 function onLogin() {
 
-  const id = document.querySelector('input[id=userid]');
+  const id = document.querySelector('input[id=username]');
   const pass = document.querySelector('input[id=password]');
 
   const urlParams = new URLSearchParams(window.location.search);

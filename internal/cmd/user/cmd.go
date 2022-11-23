@@ -18,11 +18,11 @@ User is actually a Kubernetes Namespace for running Workspaces.
 	}
 
 	userCmd.AddCommand(resetPasswordCmd(&cobra.Command{
-		Use:   "reset-password USER_ID",
+		Use:   "reset-password USER_NAME",
 		Short: "Reset user password",
 	}, o))
 	userCmd.AddCommand(CreateCmd(&cobra.Command{
-		Use:   "create USER_ID --role cosmo-admin",
+		Use:   "create USER_NAME --role cosmo-admin",
 		Short: "Create user",
 	}, o))
 	userCmd.AddCommand(GetCmd(&cobra.Command{
@@ -33,12 +33,12 @@ Get Users. This command is similar to "kubectl get namespace"
 `,
 	}, o))
 	userCmd.AddCommand(DeleteCmd(&cobra.Command{
-		Use:     "delete USER_ID",
+		Use:     "delete USER_NAME",
 		Aliases: []string{"del"},
 		Short:   "Delete user",
 	}, o))
 	userCmd.AddCommand(updateCmd(&cobra.Command{
-		Use:   "update USER_ID --role ROLE --name NAME",
+		Use:   "update USER_NAME --role ROLE --name NAME",
 		Short: "Update user",
 	}, o))
 

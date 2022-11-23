@@ -40,7 +40,7 @@ var (
 	cancel    context.CancelFunc
 )
 
-const DefaultURLBase = "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain"
+const DefaultURLBase = "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain"
 
 func init() {
 	cosmov1alpha1.AddToScheme(scheme.Scheme)
@@ -222,11 +222,11 @@ func test_DeleteClusterTemplateAll() {
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
-func test_CreateCosmoUser(id string, dispayName string, role wsv1alpha1.UserRole) {
+func test_CreateCosmoUser(username string, dispayName string, role wsv1alpha1.UserRole) {
 	ctx := context.Background()
 	user := wsv1alpha1.User{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: id,
+			Name: username,
 		},
 		Spec: wsv1alpha1.UserSpec{
 			DisplayName: dispayName,
@@ -238,7 +238,7 @@ func test_CreateCosmoUser(id string, dispayName string, role wsv1alpha1.UserRole
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() error {
-		_, err := k8sClient.GetUser(ctx, id)
+		_, err := k8sClient.GetUser(ctx, username)
 		return err
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
@@ -255,40 +255,40 @@ func test_DeleteCosmoUserAll() {
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
-func test_CreateUserNameSpaceandDefaultPasswordIfAbsent(id string) {
+func test_CreateUserNameSpaceandDefaultPasswordIfAbsent(username string) {
 	ctx := context.Background()
 	var ns v1.Namespace
-	key := client.ObjectKey{Name: wsv1alpha1.UserNamespace(id)}
+	key := client.ObjectKey{Name: wsv1alpha1.UserNamespace(username)}
 	err := k8sClient.Get(ctx, key, &ns)
 	if err != nil {
 		ns = v1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: wsv1alpha1.UserNamespace(id),
+				Name: wsv1alpha1.UserNamespace(username),
 			},
 		}
 		err = k8sClient.Create(ctx, &ns)
 		Expect(err).ShouldNot(HaveOccurred())
 	}
 	// create default password
-	err = k8sClient.ResetPassword(ctx, id)
+	err = k8sClient.ResetPassword(ctx, username)
 	Expect(err).ShouldNot(HaveOccurred())
 }
 
-func test_CreateLoginUser(id, displayName string, role wsv1alpha1.UserRole, password string) {
+func test_CreateLoginUser(username, displayName string, role wsv1alpha1.UserRole, password string) {
 	ctx := context.Background()
 
-	test_CreateCosmoUser(id, displayName, role)
-	test_CreateUserNameSpaceandDefaultPasswordIfAbsent(id)
-	err := k8sClient.RegisterPassword(ctx, id, []byte(password))
+	test_CreateCosmoUser(username, displayName, role)
+	test_CreateUserNameSpaceandDefaultPasswordIfAbsent(username)
+	err := k8sClient.RegisterPassword(ctx, username, []byte(password))
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() error {
-		_, _, err := k8sClient.VerifyPassword(ctx, id, []byte(password))
+		_, _, err := k8sClient.VerifyPassword(ctx, username, []byte(password))
 		return err
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
 
-func test_CreateWorkspace(userId string, name string, template string, vars map[string]string) {
+func test_CreateWorkspace(username string, name string, template string, vars map[string]string) {
 	ctx := context.Background()
 
 	cfg, err := k8sClient.GetWorkspaceConfig(ctx, template)
@@ -296,7 +296,7 @@ func test_CreateWorkspace(userId string, name string, template string, vars map[
 
 	ws := &wsv1alpha1.Workspace{}
 	ws.SetName(name)
-	ws.SetNamespace(wsv1alpha1.UserNamespace(userId))
+	ws.SetNamespace(wsv1alpha1.UserNamespace(username))
 	ws.Spec = wsv1alpha1.WorkspaceSpec{
 		Template: cosmov1alpha1.TemplateRef{
 			Name: template,
@@ -312,25 +312,25 @@ func test_CreateWorkspace(userId string, name string, template string, vars map[
 	err = k8sClient.Status().Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() (*wsv1alpha1.Workspace, error) {
-		return k8sClient.GetWorkspaceByUserID(ctx, name, userId)
+		return k8sClient.GetWorkspaceByUserName(ctx, name, username)
 	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
 }
 
-func test_StopWorkspace(userId string, name string) {
+func test_StopWorkspace(username string, name string) {
 	ctx := context.Background()
-	ws, err := k8sClient.GetWorkspaceByUserID(ctx, name, userId)
+	ws, err := k8sClient.GetWorkspaceByUserName(ctx, name, username)
 	Expect(err).ShouldNot(HaveOccurred())
 	ws.Spec.Replicas = pointer.Int64(0)
 	err = k8sClient.Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 }
 
-func test_DeleteWorkspaceAllByUserId(userId string) {
+func test_DeleteWorkspaceAllByusername(username string) {
 	ctx := context.Background()
-	err := k8sClient.DeleteAllOf(ctx, &wsv1alpha1.Workspace{}, client.InNamespace(wsv1alpha1.UserNamespace(userId)))
+	err := k8sClient.DeleteAllOf(ctx, &wsv1alpha1.Workspace{}, client.InNamespace(wsv1alpha1.UserNamespace(username)))
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() ([]wsv1alpha1.Workspace, error) {
-		return k8sClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(userId))
+		return k8sClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(username))
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
@@ -339,18 +339,18 @@ func test_DeleteWorkspaceAll() {
 	users, err := k8sClient.ListUsers(ctx)
 	Expect(err).ShouldNot(HaveOccurred())
 	for _, user := range users {
-		test_DeleteWorkspaceAllByUserId(user.Name)
+		test_DeleteWorkspaceAllByusername(user.Name)
 	}
 }
 
-func test_createNetworkRule(userId, workspaceName, networkRuleName string, portNumber int, group, httpPath string) {
+func test_createNetworkRule(username, workspaceName, networkRuleName string, portNumber int, group, httpPath string) {
 	ctx := context.Background()
 
-	_, err := k8sClient.AddNetworkRule(ctx, workspaceName, userId, networkRuleName, portNumber, &group, httpPath, false)
+	_, err := k8sClient.AddNetworkRule(ctx, workspaceName, username, networkRuleName, portNumber, &group, httpPath, false)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() bool {
-		ws, _ := k8sClient.GetWorkspaceByUserID(ctx, workspaceName, userId)
+		ws, _ := k8sClient.GetWorkspaceByUserName(ctx, workspaceName, username)
 		for _, n := range ws.Spec.Network {
 			if n.Name == networkRuleName {
 				return true

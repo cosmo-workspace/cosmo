@@ -191,9 +191,9 @@ export class Workspace extends Message<Workspace> {
   name = "";
 
   /**
-   * @generated from field: string owner_id = 2;
+   * @generated from field: string owner_name = 2;
    */
-  ownerId = "";
+  ownerName = "";
 
   /**
    * @generated from field: dashboard.v1alpha1.WorkspaceSpec spec = 3;
@@ -214,7 +214,7 @@ export class Workspace extends Message<Workspace> {
   static readonly typeName = "dashboard.v1alpha1.Workspace";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "owner_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "owner_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "spec", kind: "message", T: WorkspaceSpec },
     { no: 4, name: "status", kind: "message", T: WorkspaceStatus },
   ]);

@@ -134,7 +134,7 @@ func convertUserToDashv1alpha1User(user wsv1alpha1.User) *dashv1alpha1.User {
 	}
 
 	return &dashv1alpha1.User{
-		UserName:    user.Name,
+		Name:        user.Name,
 		DisplayName: user.Spec.DisplayName,
 		Role:        user.Spec.Role.String(),
 		AuthType:    user.Spec.AuthType.String(),

@@ -38,15 +38,15 @@ yarn build --base=/proxy-driver-test --outDir=build_test
 
 ../../hack/download-certs.sh dashboard-server-cert cosmo-system
 
-COSMO_USER_ID=xxxxxxxx
+COSMO_USER_NAME=xxxxxxxx
 {
 pkill -ef "main echo-server" ; \
 go run ../../hack/echo-server/main.go echo-server &  \
-go run ../../hack/proxy-driver/main.go --port=9999 --target-port=8888 --user=${COSMO_USER_ID} --auth-ui=./build_test/ --auth-url=https://cosmo-dashboard.cosmo-system.svc.cluster.local:8443 ; \
+go run ../../hack/proxy-driver/main.go --port=9999 --target-port=8888 --user=${COSMO_USER_NAME} --auth-ui=./build_test/ --auth-url=https://cosmo-dashboard.cosmo-system.svc.cluster.local:8443 ; \
 pkill -ef "main echo-server"
 }
 
-COSMO_USER_ID=xxxxxxxx
-curl  -v  -H "Content-Type: application/json" -d '{"userName":"'${COSMO_USER_ID}'","password":"yyyyyyy"}' \
+COSMO_USER_NAME=xxxxxxxx
+curl  -v  -H "Content-Type: application/json" -d '{"userName":"'${COSMO_USER_NAME}'","password":"yyyyyyy"}' \
     http://localhost:9999/proxy-driver-test/authproxy.v1alpha1.AuthProxyService/Login
 ```

@@ -180,7 +180,7 @@ func TestGenerateIngressHost(t *testing.T) {
 				},
 				name:      "cs1",
 				namespace: wsv1alpha1.UserNamespace("tom"),
-				urlBase:   URLBase("https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USERID}}"),
+				urlBase:   URLBase("https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}"),
 			},
 			want: "myapp-cs1-tom",
 		},
@@ -263,7 +263,7 @@ func TestURLVars_setDefault(t *testing.T) {
 				NodePortNumber:  "0",
 				LoadBalancer:    "undefined",
 				WorkspaceName:   "undefined",
-				UserID:          "undefined",
+				UserName:        "undefined",
 			},
 		},
 	}

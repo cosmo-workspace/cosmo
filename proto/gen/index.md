@@ -322,7 +322,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  |  |
+| name | [string](#string) |  |  |
 | display_name | [string](#string) |  |  |
 | role | [string](#string) |  | {&#34;&#34;,&#34;cosmo-admin&#34;} |
 | auth_type | [string](#string) |  | {&#34;&#34;,&#34;kosmo-secret&#34;} |
@@ -653,7 +653,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  |  |
-| owner_id | [string](#string) |  |  |
+| owner_name | [string](#string) |  |  |
 | spec | [WorkspaceSpec](#dashboard-v1alpha1-WorkspaceSpec) |  |  |
 | status | [WorkspaceStatus](#dashboard-v1alpha1-WorkspaceStatus) |  |  |
 

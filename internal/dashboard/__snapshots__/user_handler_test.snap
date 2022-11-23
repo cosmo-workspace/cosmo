@@ -3,7 +3,7 @@ SnapShot = """
 {
   \"message\": \"Successfully created\",
   \"user\": {
-    \"user_name\": \"user-create\",
+    \"name\": \"user-create\",
     \"display_name\": \"user-create\",
     \"auth_type\": \"kosmo-secret\",
     \"addons\": [
@@ -43,7 +43,7 @@ SnapShot = """
 {
   \"message\": \"Successfully created\",
   \"user\": {
-    \"user_name\": \"user-create\",
+    \"name\": \"user-create\",
     \"display_name\": \"create 1\",
     \"role\": \"cosmo-admin\",
     \"auth_type\": \"kosmo-secret\",
@@ -91,7 +91,7 @@ SnapShot = """
 {
   \"message\": \"Successfully created\",
   \"user\": {
-    \"user_name\": \"user-create-later\",
+    \"name\": \"user-create-later\",
     \"display_name\": \"user-create-later\",
     \"auth_type\": \"kosmo-secret\",
     \"default_password\": \"xxxxxxxx\"
@@ -142,7 +142,7 @@ SnapShot = """
 {
   \"message\": \"Successfully deleted\",
   \"user\": {
-    \"user_name\": \"user-delete1\",
+    \"name\": \"user-delete1\",
     \"display_name\": \"delete\",
     \"auth_type\": \"kosmo-secret\"
   }
@@ -168,7 +168,7 @@ SnapShot = 'not_found: user is not found'
 SnapShot = """
 {
   \"user\": {
-    \"user_name\": \"normal-user\",
+    \"name\": \"normal-user\",
     \"display_name\": \"お名前\",
     \"auth_type\": \"kosmo-secret\"
   }
@@ -189,13 +189,13 @@ SnapShot = """
 {
   \"items\": [
     {
-      \"user_name\": \"admin-user\",
+      \"name\": \"admin-user\",
       \"display_name\": \"アドミン\",
       \"role\": \"cosmo-admin\",
       \"auth_type\": \"kosmo-secret\"
     },
     {
-      \"user_name\": \"normal-user\",
+      \"name\": \"normal-user\",
       \"display_name\": \"お名前\",
       \"auth_type\": \"kosmo-secret\"
     }
@@ -221,7 +221,7 @@ SnapShot = """
 {
   \"message\": \"Successfully updated\",
   \"user\": {
-    \"user_name\": \"normal-user\",
+    \"name\": \"normal-user\",
     \"display_name\": \"namechanged\",
     \"auth_type\": \"kosmo-secret\"
   }
@@ -248,7 +248,7 @@ SnapShot = """
 {
   \"message\": \"Successfully updated\",
   \"user\": {
-    \"user_name\": \"normal-user\",
+    \"name\": \"normal-user\",
     \"display_name\": \"namechanged\",
     \"auth_type\": \"kosmo-secret\"
   }
@@ -328,7 +328,7 @@ SnapShot = """
 {
   \"message\": \"Successfully updated\",
   \"user\": {
-    \"user_name\": \"admin-user\",
+    \"name\": \"admin-user\",
     \"display_name\": \"アドミン\",
     \"auth_type\": \"kosmo-secret\"
   }
@@ -355,7 +355,7 @@ SnapShot = """
 {
   \"message\": \"Successfully updated\",
   \"user\": {
-    \"user_name\": \"normal-user\",
+    \"name\": \"normal-user\",
     \"display_name\": \"お名前\",
     \"role\": \"cosmo-admin\",
     \"auth_type\": \"kosmo-secret\"

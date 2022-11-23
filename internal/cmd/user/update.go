@@ -17,10 +17,10 @@ import (
 type updateOption struct {
 	*cmdutil.CliOptions
 
-	UserID string
-	Name   string
-	Role   string
-	role   wsv1alpha1.UserRole
+	UserName string
+	Name     string
+	Role     string
+	role     wsv1alpha1.UserRole
 }
 
 func updateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
@@ -61,7 +61,7 @@ func (o *updateOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
-	o.UserID = args[0]
+	o.UserName = args[0]
 	return nil
 }
 
@@ -70,7 +70,7 @@ func (o *updateOption) RunE(cmd *cobra.Command, args []string) error {
 	defer cancel()
 
 	ctx = clog.IntoContext(ctx, o.Logr)
-	_, err := o.Client.UpdateUser(ctx, o.UserID, kosmo.UpdateUserOpts{
+	_, err := o.Client.UpdateUser(ctx, o.UserName, kosmo.UpdateUserOpts{
 		DisplayName: &o.Name,
 		UserRole:    &o.Role,
 	})
@@ -78,6 +78,6 @@ func (o *updateOption) RunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cmdutil.PrintfColorInfo(o.Out, "Successfully updated user %s\n", o.UserID)
+	cmdutil.PrintfColorInfo(o.Out, "Successfully updated user %s\n", o.UserName)
 	return nil
 }

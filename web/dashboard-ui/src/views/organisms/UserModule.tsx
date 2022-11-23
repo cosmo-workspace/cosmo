@@ -27,7 +27,7 @@ const useUser = () => {
     console.log('getUsers');
     try {
       const result = await userService.getUsers({});
-      setUsers(result.items?.sort((a, b) => (a.userName < b.userName) ? -1 : 1));
+      setUsers(result.items?.sort((a, b) => (a.name < b.name) ? -1 : 1));
     } catch (error) {
       handleError(error);
     }
@@ -56,7 +56,7 @@ const useUser = () => {
    * updateNameDialog: Update user name
    */
   const updateName = async (userName: string, displayName: string) => {
-    console.log('updateUserName', userName, userName);
+    console.log('updateUserName', userName, displayName);
     setMask();
     try {
       try {
@@ -64,7 +64,7 @@ const useUser = () => {
         const newUser = result.user;
         enqueueSnackbar(result.message, { variant: 'success' });
         if (users && newUser) {
-          setUsers(prev => prev.map(us => us.userName === newUser.userName ? new User(newUser) : us));
+          setUsers(prev => prev.map(us => us.name === newUser.name ? new User(newUser) : us));
         }
         return newUser;
       }
@@ -87,7 +87,7 @@ const useUser = () => {
         const newUser = result.user;
         enqueueSnackbar(result.message, { variant: 'success' });
         if (users && newUser) {
-          setUsers(prev => prev.map(us => us.userName === newUser.userName ? new User(newUser) : us));
+          setUsers(prev => prev.map(us => us.name === newUser.name ? new User(newUser) : us));
         }
         return newUser;
       }
@@ -108,7 +108,7 @@ const useUser = () => {
       try {
         const result = await userService.deleteUser({ userName });
         enqueueSnackbar(result.message, { variant: 'success' });
-        setUsers(users.filter((u) => u.userName !== userName));
+        setUsers(users.filter((u) => u.name !== userName));
         return result;
       }
       catch (error) {

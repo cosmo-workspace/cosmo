@@ -98,7 +98,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
 			if err == nil {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[6], "user1")
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[6], "user1")
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			}
@@ -160,7 +160,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
 			if err == nil {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserID(context.Background(), args[2], "user1")
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[2], "user1")
 				Expect(err).NotTo(HaveOccurred())
 				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
 			}

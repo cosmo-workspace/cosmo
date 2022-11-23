@@ -21,7 +21,7 @@ func (c *Client) GetUser(ctx context.Context, name string) (*wsv1alpha1.User, er
 		if apierrs.IsNotFound(err) {
 			return nil, NewNotFoundError("user is not found", err)
 		} else {
-			log.Error(err, "failed to get user", "id", name)
+			log.Error(err, "failed to get user", "username", name)
 			return nil, NewInternalServerError("failed to get user", err)
 		}
 	}
@@ -41,30 +41,30 @@ func (c *Client) ListUsers(ctx context.Context) ([]wsv1alpha1.User, error) {
 	return users, nil
 }
 
-func (c *Client) CreateUser(ctx context.Context, userId string, displayName string,
+func (c *Client) CreateUser(ctx context.Context, username string, displayName string,
 	role string, authType string, addons []wsv1alpha1.UserAddon) (*wsv1alpha1.User, error) {
 
 	log := clog.FromContext(ctx).WithCaller()
-	log.Info("creating user", "id", userId, "displayName", displayName, "role", role, "authType", authType, "addons", addons)
+	log.Info("creating user", "username", username, "displayName", displayName, "role", role, "authType", authType, "addons", addons)
 
 	if displayName == "" {
-		displayName = userId
+		displayName = username
 	}
 
 	userrole := wsv1alpha1.UserRole(role)
 	if !userrole.IsValid() {
-		log.Info("invalid request", "id", userId, "role", userrole)
+		log.Info("invalid request", "username", username, "role", userrole)
 		return nil, NewBadRequestError("'userrole' is invalid", nil)
 	}
 
 	authtype := wsv1alpha1.UserAuthType(authType)
 	if authtype != "" && !authtype.IsValid() {
-		log.Info("invalid request", "id", userId, "authtype", authtype)
+		log.Info("invalid request", "username", username, "authtype", authtype)
 		return nil, NewBadRequestError("'authtype' is invalid", nil)
 	}
 
 	user := &wsv1alpha1.User{}
-	user.SetName(userId)
+	user.SetName(username)
 	user.Spec = wsv1alpha1.UserSpec{
 		DisplayName: displayName,
 		Role:        userrole,
@@ -79,7 +79,7 @@ func (c *Client) CreateUser(ctx context.Context, userId string, displayName stri
 		if apierrs.IsAlreadyExists(err) {
 			return nil, NewIsAlreadyExistsError("user already exists", err)
 		} else {
-			log.Error(err, "failed to create user", "user", userId)
+			log.Error(err, "failed to create user", "user", username)
 			return nil, NewServiceUnavailableError("failed to create user", err)
 		}
 	}
@@ -87,15 +87,15 @@ func (c *Client) CreateUser(ctx context.Context, userId string, displayName stri
 	return user, nil
 }
 
-func (c *Client) GetDefaultPasswordAwait(ctx context.Context, userId string) (*string, error) {
+func (c *Client) GetDefaultPasswordAwait(ctx context.Context, username string) (*string, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	tk := time.NewTicker(time.Second)
 	defer tk.Stop()
-	log.Debug().Info("wait for default password creation", "user", userId)
+	log.Debug().Info("wait for default password creation", "user", username)
 
 	for {
-		defaultPassword, err := c.GetDefaultPassword(ctx, userId)
+		defaultPassword, err := c.GetDefaultPassword(ctx, username)
 		if err == nil {
 			tk.Stop()
 			return defaultPassword, nil
@@ -104,7 +104,7 @@ func (c *Client) GetDefaultPasswordAwait(ctx context.Context, userId string) (*s
 		select {
 		case <-ctx.Done():
 			tk.Stop()
-			log.Error(err, "reached to timeout in user creation", "user", userId)
+			log.Error(err, "reached to timeout in user creation", "user", username)
 			return nil, NewInternalServerError("reached to timeout in user creation", nil)
 		default:
 			<-tk.C
@@ -112,9 +112,9 @@ func (c *Client) GetDefaultPasswordAwait(ctx context.Context, userId string) (*s
 	}
 }
 
-func (c *Client) DeleteUser(ctx context.Context, userId string) (*wsv1alpha1.User, error) {
+func (c *Client) DeleteUser(ctx context.Context, username string) (*wsv1alpha1.User, error) {
 	log := clog.FromContext(ctx).WithCaller()
-	user, err := c.GetUser(ctx, userId)
+	user, err := c.GetUser(ctx, username)
 	if err != nil {
 		return nil, err
 	}
@@ -132,10 +132,10 @@ type UpdateUserOpts struct {
 	UserRole    *string
 }
 
-func (c *Client) UpdateUser(ctx context.Context, userId string, opts UpdateUserOpts) (*wsv1alpha1.User, error) {
+func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUserOpts) (*wsv1alpha1.User, error) {
 	logr := clog.FromContext(ctx).WithCaller()
 
-	user, err := c.GetUser(ctx, userId)
+	user, err := c.GetUser(ctx, username)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func (c *Client) UpdateUser(ctx context.Context, userId string, opts UpdateUserO
 	if opts.UserRole != nil && *opts.UserRole != "-" {
 		user.Spec.Role = wsv1alpha1.UserRole(*opts.UserRole)
 		if !user.Spec.Role.IsValid() {
-			logr.Debug().Info("'userrole' is invalid", "user", userId, "role", *opts.UserRole)
+			logr.Debug().Info("'userrole' is invalid", "user", username, "role", *opts.UserRole)
 			return nil, NewBadRequestError("'userrole' is invalid", nil)
 		}
 	}

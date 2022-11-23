@@ -42,7 +42,7 @@ const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, us
       </DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
+          <TextFieldLabel label="User ID" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="User Name" fullWidth value={user.displayName} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="Role" fullWidth value={user.role} startAdornmentIcon={<SupervisorAccountTwoTone />} />
           <TextFieldLabel label="AuthType" fullWidth value={user.authType} startAdornmentIcon={<SecurityOutlined />} />
@@ -88,7 +88,7 @@ export const UserDeleteDialog: React.VFC<{ onClose: () => void, user: User }> = 
           <Checkbox color="warning" onChange={e => setLock(e.target.checked)} />
           <Button variant="contained" color="secondary" disabled={!lock}
             onClick={() => {
-              hooks.deleteUser(user.userName)
+              hooks.deleteUser(user.name)
                 .then(() => onClose());
             }}>Delete</Button>
         </>}

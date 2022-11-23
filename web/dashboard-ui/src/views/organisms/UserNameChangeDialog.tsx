@@ -32,7 +32,7 @@ export const UserNameChangeDialog: React.VFC<{ onClose: () => void, user: User }
 
   const onChangeName = async (data: Inputs) => {
     console.log(hooks);
-    await hooks.updateName(user.userName, data.name);
+    await hooks.updateName(user.name, data.name);
     await login.refreshUserInfo();
     onClose();
   }
@@ -40,11 +40,11 @@ export const UserNameChangeDialog: React.VFC<{ onClose: () => void, user: User }
   return (
     <Dialog open={true}
       fullWidth maxWidth={'xs'}>
-      <DialogTitle>Change user name</DialogTitle>
+      <DialogTitle>Change Name</DialogTitle>
       <form onSubmit={handleSubmit(onChangeName)}>
         <DialogContent>
           <Stack spacing={3}>
-            <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
+            <TextFieldLabel label="User ID" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
             <TextField label="User Name" fullWidth
               {...registerMui(register('name', {
                 required: { value: true, message: "Required" },

@@ -64,7 +64,7 @@ const snackbarMock: MockedMemberFunction<typeof useSnackbar> = {
 function newWorkspace(name: string, user: User, tmpl: Template, replicas = 1, phase = 'Running'): Workspace {
   return (new Workspace({
     name: name,
-    ownerId: user.userName,
+    ownerName: user.name,
     spec: { template: tmpl.name, replicas: protoInt64.parse(1), vars: { xxx: 'XXXX', yyy: 'YYYY' }, additionalNetwork: [] },
     status: { phase: phase, mainUrl: "", urlBase: 'urlbasexxxx' }
   }));
@@ -73,9 +73,9 @@ function wsStat(ws: Workspace, replicas: number, phase: string): Workspace {
   return new Workspace({ ...ws, spec: { ...ws.spec!, replicas: protoInt64.parse(replicas) }, status: { ...ws.status, phase } });
 }
 
-const user1: User = new User({ userName: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
-const user2: User = new User({ userName: 'user2', displayName: 'user2 name' });
-const user3: User = new User({ userName: 'user3', displayName: 'user2 name' });
+const user1: User = new User({ name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
+const user2: User = new User({ name: 'user2', displayName: 'user2 name' });
+const user3: User = new User({ name: 'user3', displayName: 'user2 name' });
 const tmpl1: Template = new Template({ name: 'tmpl1' });
 const tmpl2: Template = new Template({ name: 'tmpl2', requiredVars: [{ varName: 'var1' }, { varName: 'var2' }] });
 const tmpl3: Template = new Template({ name: 'tmpl3' });
@@ -89,11 +89,11 @@ const ws15 = newWorkspace('ws15', user1, tmpl1);
 // test
 //-----------------------------------------------
 describe('computeStatus', () => {
-  const wsStarting = new Workspace({ name: '', ownerId: '', spec: { template: '', replicas: protoInt64.parse(1) }, status: { phase: 'Stopped' } });
-  const wsPending = new Workspace({ name: '', ownerId: '', spec: { template: '', replicas: protoInt64.parse(-1) }, status: { phase: 'Pending' } });
-  const wsStoping = new Workspace({ name: '', ownerId: '', spec: { template: '', replicas: protoInt64.parse(0) }, status: { phase: 'Running' } });
-  const wsStopped = new Workspace({ name: '', ownerId: '', spec: { template: '', replicas: protoInt64.parse(0) }, status: { phase: 'Stopped' } });
-  const wsRunning = new Workspace({ name: '', ownerId: '', spec: { template: '', replicas: protoInt64.parse(1) }, status: { phase: 'Running' } });
+  const wsStarting = new Workspace({ name: '', ownerName: '', spec: { template: '', replicas: protoInt64.parse(1) }, status: { phase: 'Stopped' } });
+  const wsPending = new Workspace({ name: '', ownerName: '', spec: { template: '', replicas: protoInt64.parse(-1) }, status: { phase: 'Pending' } });
+  const wsStoping = new Workspace({ name: '', ownerName: '', spec: { template: '', replicas: protoInt64.parse(0) }, status: { phase: 'Running' } });
+  const wsStopped = new Workspace({ name: '', ownerName: '', spec: { template: '', replicas: protoInt64.parse(0) }, status: { phase: 'Stopped' } });
+  const wsRunning = new Workspace({ name: '', ownerName: '', spec: { template: '', replicas: protoInt64.parse(1) }, status: { phase: 'Running' } });
 
   it('Stopping', () => { expect(computeStatus(wsStoping)).toEqual('Stopping') });
   it('Stopped', () => { expect(computeStatus(wsStopped)).toEqual('Stopped') });
@@ -129,14 +129,14 @@ describe('useWorkspace', () => {
 
     it('normal', async () => {
       const { result } = renderUseWorkspaceModule();
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
     });
 
     it('normal empty', async () => {
       const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValue(new GetWorkspacesResponse({ message: "", items: [] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
     });
 
@@ -145,7 +145,7 @@ describe('useWorkspace', () => {
       const { result } = renderUseWorkspaceModule();
       // wsMock.getWorkspaces.mockRejectedValue(new Error('[mock] getWorkspaces error'));
       wsMock.getWorkspaces.mockRejectedValue(new ConnectError('[mock] getWorkspaces error', Code.Unauthenticated));
-      await expect(result.current.getWorkspaces(user1.userName)).rejects.toMatchSnapshot();
+      await expect(result.current.getWorkspaces(user1.name)).rejects.toMatchSnapshot();
       expect(result.current.workspaces).toMatchSnapshot();
     });
   });
@@ -155,7 +155,7 @@ describe('useWorkspace', () => {
 
     it('normal', async () => {
       const { result } = renderUseWorkspaceModule();
-      await act(async () => { result.current.refreshWorkspaces(user1.userName) });
+      await act(async () => { result.current.refreshWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
     });
 
@@ -177,7 +177,7 @@ describe('useWorkspace', () => {
 
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(new GetWorkspacesResponse({ message: "", items: [ws11, wsCreateing, ws13] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
 
       // refReshWorkspace
@@ -217,7 +217,7 @@ describe('useWorkspace', () => {
 
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(new GetWorkspacesResponse({ message: "", items: [ws11, wsStoping, ws13] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
 
       vi.useFakeTimers();
@@ -260,7 +260,7 @@ describe('useWorkspace', () => {
 
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(new GetWorkspacesResponse({ message: "", items: [ws11, wsRunning1, ws13] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
 
       // refReshWorkspace
@@ -287,7 +287,7 @@ describe('useWorkspace', () => {
 
       // getWorkspaces then setWorkspaces
       wsMock.getWorkspaces.mockResolvedValueOnce(new GetWorkspacesResponse({ message: "", items: [ws11, wsStoping, ws13] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
 
       vi.useFakeTimers();
@@ -333,18 +333,18 @@ describe('useWorkspace', () => {
       vi.useFakeTimers();
       const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValueOnce(new GetWorkspacesResponse({ message: "", items: [ws11, ws12, ws13, ws15] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
 
       wsMock.createWorkspace.mockResolvedValueOnce(new CreateWorkspaceResponse({ message: "ok", workspace: ws14 }));
-      await act(async () => { result.current.createWorkspace(ws14.ownerId, ws14.name, ws14.spec!.template, {}) });
+      await act(async () => { result.current.createWorkspace(ws14.ownerName, ws14.name, ws14.spec!.template, {}) });
       expect(result.current.workspaces).toMatchSnapshot();
     });
 
     it('get error', async () => {
       const { result } = renderUseWorkspaceModule();
       wsMock.createWorkspace.mockRejectedValue(new Error('[mock] createWorkspace error'));
-      await expect(result.current.createWorkspace(ws14.ownerId, ws14.name, ws14.spec!.template, {}))
+      await expect(result.current.createWorkspace(ws14.ownerName, ws14.name, ws14.spec!.template, {}))
         .rejects.toMatchSnapshot();
       expect(result.current.workspaces).toMatchSnapshot();
     });
@@ -357,7 +357,7 @@ describe('useWorkspace', () => {
       vi.useFakeTimers();
       const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValueOnce(new GetWorkspacesResponse({ message: "", items: [ws11, ws12, ws13] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
 
       wsMock.updateWorkspace.mockResolvedValueOnce(new UpdateWorkspaceResponse({ message: "ok", workspace: ws11 }));
@@ -381,7 +381,7 @@ describe('useWorkspace', () => {
       vi.useFakeTimers();
       const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValueOnce(new GetWorkspacesResponse({ message: "", items: [ws11, ws12, ws13] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
 
       wsMock.updateWorkspace.mockResolvedValueOnce(new UpdateWorkspaceResponse({ message: "ok", workspace: ws11 }));
@@ -404,7 +404,7 @@ describe('useWorkspace', () => {
       vi.useFakeTimers();
       const { result } = renderUseWorkspaceModule();
       wsMock.getWorkspaces.mockResolvedValueOnce(new GetWorkspacesResponse({ message: "", items: [ws11, ws12, ws13] }));
-      await act(async () => { result.current.getWorkspaces(user1.userName) });
+      await act(async () => { result.current.getWorkspaces(user1.name) });
       expect(result.current.workspaces).toMatchSnapshot();
 
       wsMock.deleteWorkspace.mockResolvedValueOnce(new DeleteWorkspaceResponse({ message: "ok", workspace: ws11 }));

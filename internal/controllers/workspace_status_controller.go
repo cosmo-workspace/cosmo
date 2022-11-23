@@ -193,7 +193,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws w
 		urlvars.InstanceName = ws.Name
 		urlvars.WorkspaceName = ws.Name
 		urlvars.Namespace = ws.Namespace
-		urlvars.UserID = wsv1alpha1.UserIDByNamespace(ws.Namespace)
+		urlvars.UserName = wsv1alpha1.UserNameByNamespace(ws.Namespace)
 
 		urlvars.IngressPath = netRule.HTTPPath
 

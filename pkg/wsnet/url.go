@@ -17,7 +17,7 @@ const (
 	URLVarInstanceName  = "{{INSTANCE}}"
 	URLVarWorkspaceName = "{{WORKSPACE}}"
 	URLVarNamespace     = "{{NAMESPACE}}"
-	URLVarUserID        = "{{USERID}}"
+	URLVarUserName      = "{{USER_NAME}}"
 
 	// for network type LoadBalancer service
 	URLVarLoadBalancer = "{{LOAD_BALANCER}}"
@@ -37,7 +37,7 @@ type URLVars struct {
 
 	InstanceName  string
 	WorkspaceName string
-	UserID        string
+	UserName      string
 	Namespace     string
 
 	NodePortNumber string
@@ -70,7 +70,7 @@ func (u URLBase) GenURL(v URLVars) string {
 	url = strings.ReplaceAll(url, URLVarInstanceName, v.InstanceName)
 	url = strings.ReplaceAll(url, URLVarWorkspaceName, v.WorkspaceName)
 	url = strings.ReplaceAll(url, URLVarNamespace, v.Namespace)
-	url = strings.ReplaceAll(url, URLVarUserID, v.UserID)
+	url = strings.ReplaceAll(url, URLVarUserName, v.UserName)
 	url = strings.ReplaceAll(url, URLVarNodePortNumber, v.NodePortNumber)
 	url = strings.ReplaceAll(url, URLVarLoadBalancer, v.LoadBalancer)
 
@@ -84,7 +84,7 @@ func GenerateIngressHost(r wsv1alpha1.NetworkRule, name, namespace string, urlBa
 	urlvar.InstanceName = name
 	urlvar.WorkspaceName = name
 	urlvar.Namespace = namespace
-	urlvar.UserID = wsv1alpha1.UserIDByNamespace(namespace)
+	urlvar.UserName = wsv1alpha1.UserNameByNamespace(namespace)
 
 	ingUrl := urlBase.GenURL(urlvar)
 

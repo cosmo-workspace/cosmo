@@ -34,7 +34,7 @@ const WorkspaceActionDialog: React.VFC<{
       </DialogTitle>
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          <TextFieldLabel label="Owner ID" fullWidth value={workspace.ownerId} startAdornmentIcon={<PersonOutlineTwoTone />} />
+          <TextFieldLabel label="Owner ID" fullWidth value={workspace.ownerName} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="Workspace Name" fullWidth value={workspace.name} startAdornmentIcon={<WebTwoTone />} />
         </Stack>
       </DialogContent>
@@ -125,11 +125,11 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
         const vars: { [key: string]: string } = {};
         console.log('inp', inp);
         template.requiredVars?.forEach((rqvar, i) => { vars[rqvar.varName] = inp.vars[i] });
-        hooks.createWorkspace(user.userName, inp.wsName, inp.templateName, vars).then(() => onClose());
+        hooks.createWorkspace(user.name, inp.wsName, inp.templateName, vars).then(() => onClose());
       })}>
         <DialogContent>
           <Stack spacing={3}>
-            <TextFieldLabel label="User ID" fullWidth value={user.userName} startAdornmentIcon={<PersonOutlineTwoTone />} />
+            <TextFieldLabel label="User ID" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
             <TextField label="Workspace Name" fullWidth autoFocus defaultValue=""
               {...registerMui(register('wsName', {
                 required: { value: true, message: "Required" },

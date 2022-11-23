@@ -68,7 +68,7 @@ const UserSelect: React.VFC = () => {
     <>
       <Chip
         ref={chipReff}
-        label={user.userName}
+        label={user.name}
         avatar={<NameAvatar name={user.displayName} />}
         onClick={(e) => { e.stopPropagation(); getUsers().then(() => setAnchorEl(chipReff.current)); }}
         onDelete={(e) => { e.stopPropagation(); getUsers().then(() => setAnchorEl(chipReff.current)); }}
@@ -76,9 +76,9 @@ const UserSelect: React.VFC = () => {
       />
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
         {users.map((user, ind) =>
-          <MenuItem key={ind} value={user.userName} onClick={() => { setAnchorEl(null); setUser(user) }}>
+          <MenuItem key={ind} value={user.name} onClick={() => { setAnchorEl(null); setUser(user) }}>
             <Stack>
-              <Typography>{user.userName}</Typography>
+              <Typography>{user.name}</Typography>
               <Typography color="gray" fontSize="small"> {user.displayName}</Typography>
             </Stack>
           </MenuItem>
@@ -126,8 +126,8 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
     let url = workspace.status?.urlBase || ''
     url = url.replace('{{INSTANCE}}', workspace.name);
     url = url.replace('{{WORKSPACE}}', workspace.name);
-    url = url.replace('{{NAMESPACE}}', 'cosmo-user-' + workspace.ownerId);
-    url = url.replace('{{USERID}}', workspace.ownerId || '');
+    url = url.replace('{{NAMESPACE}}', 'cosmo-user-' + workspace.ownerName);
+    url = url.replace('{{USER_NAME}}', workspace.ownerName || '');
     url = url.replace('{{NETRULE_NAME}}', networkRule.name);
     url = url.replace('{{PORT_NAME}}', networkRule.name); // for compatibility
     url = url.replace('{{PORT_NUMBER}}', networkRule.portNumber.toString());
@@ -248,10 +248,10 @@ const WorkspaceList: React.VFC = () => {
   const [openTutorialTooltip, setOpenTutorialTooltip] = useState<boolean | undefined>(undefined);
   const createDialogDisptch = WorkspaceCreateDialogContext.useDispatch();
 
-  useEffect(() => { hooks.getWorkspaces(user.userName) }, [user]);  // eslint-disable-line
+  useEffect(() => { hooks.getWorkspaces(user.name) }, [user]);  // eslint-disable-line
 
   useEffect(() => {
-    if (hooks.workspaces.length === 0 && loginUser!.userName === user.userName) {
+    if (hooks.workspaces.length === 0 && loginUser!.name === user.name) {
       // When it has never been opened
       if (openTutorialTooltip === undefined) {
         const t = setTimeout(() => setOpenTutorialTooltip(prev => prev === undefined), 5000);
@@ -261,7 +261,7 @@ const WorkspaceList: React.VFC = () => {
     } else if (openTutorialTooltip === true) {
       setOpenTutorialTooltip(false);
     }
-  }, [hooks.workspaces.length, user.userName]);// eslint-disable-line 
+  }, [hooks.workspaces.length, user.name]);// eslint-disable-line 
 
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
@@ -292,7 +292,7 @@ const WorkspaceList: React.VFC = () => {
         {isAdmin && (isUpSM || (!isSearchFocused && searchStr === "")) && <UserSelect />}
         <IconButton
           color="inherit"
-          onClick={() => { hooks.refreshWorkspaces(user.userName) }}>
+          onClick={() => { hooks.refreshWorkspaces(user.name) }}>
           <RefreshTwoTone />
         </IconButton>
         <AlertTooltip arrow placement="top"

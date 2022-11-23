@@ -39,38 +39,38 @@ func (s *Server) Verify(ctx context.Context, req *connect_go.Request[emptypb.Emp
 
 func (s *Server) Login(ctx context.Context, req *connect_go.Request[dashv1alpha1.LoginRequest]) (*connect_go.Response[dashv1alpha1.LoginResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
-	log.Debug().Info("request", "userid", req.Msg.UserName)
+	log.Debug().Info("request", "username", req.Msg.UserName)
 
 	w := responseWriterFromContext(ctx)
 	r := requestFromContext(ctx)
 
-	// Check ID
+	// Check name
 	user, err := s.Klient.GetUser(ctx, req.Msg.UserName)
 	if err != nil {
-		log.Info(err.Error(), "userid", req.Msg.UserName)
+		log.Info(err.Error(), "username", req.Msg.UserName)
 		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
 	}
 	// Check password
 	authrizer, ok := s.Authorizers[user.Spec.AuthType]
 	if !ok {
-		log.Info("authrizer not found", "userid", req.Msg.UserName, "authType", user.Spec.AuthType)
+		log.Info("authrizer not found", "username", req.Msg.UserName, "authType", user.Spec.AuthType)
 		return nil, ErrResponse(log, kosmo.NewServiceUnavailableError("incorrect user or password", nil))
 	}
 	verified, err := authrizer.Authorize(ctx, req.Msg)
 	if err != nil {
-		log.Error(err, "authorize failed", "userid", req.Msg.UserName)
+		log.Error(err, "authorize failed", "username", req.Msg.UserName)
 		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
 
 	}
 	if !verified {
-		log.Info("login failed: password invalid", "userid", req.Msg.UserName)
+		log.Info("login failed: password invalid", "username", req.Msg.UserName)
 		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
 	}
 	var isDefault bool
 	if wsv1alpha1.UserAuthType(user.Spec.AuthType) == wsv1alpha1.UserAuthTypePasswordSecert {
 		isDefault, err = s.Klient.IsDefaultPassword(ctx, req.Msg.UserName)
 		if err != nil {
-			log.Error(err, "failed to check is default password", "userid", req.Msg.UserName)
+			log.Error(err, "failed to check is default password", "username", req.Msg.UserName)
 			return nil, ErrResponse(log, kosmo.NewInternalServerError("", nil))
 		}
 	}
@@ -81,10 +81,10 @@ func (s *Server) Login(ctx context.Context, req *connect_go.Request[dashv1alpha1
 
 	ses, _ := s.sessionStore.New(r, s.SessionName)
 	sesInfo := session.Info{
-		UserID:   req.Msg.UserName,
+		UserName: req.Msg.UserName,
 		Deadline: expireAt.Unix(),
 	}
-	log.DebugAll().Info("save session", "userID", sesInfo.UserID, "deadline", sesInfo.Deadline)
+	log.DebugAll().Info("save session", "userName", sesInfo.UserName, "deadline", sesInfo.Deadline)
 	ses = session.Set(ses, sesInfo)
 
 	err = s.sessionStore.Save(r, w, ses)

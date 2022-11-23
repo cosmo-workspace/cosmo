@@ -90,7 +90,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 					Vars: map[string]string{
 						"VAR1":                                 "VAL1",
 						"{{WORKSPACE}}":                        "ws1",
-						"{{USERID}}":                           "default",
+						"{{USER_NAME}}":                        "default",
 						"{{WORKSPACE_DEPLOYMENT_NAME}}":        "ws-deploy",
 						"{{WORKSPACE_INGRESS_NAME}}":           "ws-ing",
 						"{{WORKSPACE_SERVICE_NAME}}":           "ws-svc",
@@ -198,7 +198,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 					},
 					Vars: map[string]string{
 						"{{WORKSPACE}}":                        "ws1",
-						"{{USERID}}":                           "default",
+						"{{USER_NAME}}":                        "default",
 						"{{WORKSPACE_DEPLOYMENT_NAME}}":        "ws-deploy",
 						"{{WORKSPACE_INGRESS_NAME}}":           "ws-ing",
 						"{{WORKSPACE_SERVICE_NAME}}":           "ws-svc",

@@ -157,11 +157,11 @@ func (o *UserNamespacedCliOptions) Complete(cmd *cobra.Command, args []string) e
 	}
 	if !o.AllNamespace {
 		if o.Namespace != "" && o.User == "" {
-			userID := wsv1alpha1.UserIDByNamespace(o.Namespace)
-			if userID == "" {
+			userName := wsv1alpha1.UserNameByNamespace(o.Namespace)
+			if userName == "" {
 				return fmt.Errorf("namespace %s is not cosmo user's namespace", o.Namespace)
 			}
-			o.User = userID
+			o.User = userName
 		}
 	}
 	return nil

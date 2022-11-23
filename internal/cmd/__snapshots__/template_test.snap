@@ -420,8 +420,8 @@ SnapShot = 'validation error: --workspace and --user-addon cannot be specified c
 ['cosmoctl [template] [get] ✅ success in normal context: template get --workspace 1']
 SnapShot = """
 NAME        REQUIRED-VARS       DEPLOYMENT/SERVICE/INGRESS   URLBASE
-template1   {{HOGE}},{{FUGA}}   //                           https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain
-template2   {{HOGE}},{{FUGA}}   //                           https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain
+template1   {{HOGE}},{{FUGA}}   //                           https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
+template2   {{HOGE}},{{FUGA}}   //                           https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get --workspace 2']
@@ -450,7 +450,7 @@ SnapShot = 'success'
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 --workspace 1']
 SnapShot = """
 NAME        REQUIRED-VARS       DEPLOYMENT/SERVICE/INGRESS   URLBASE
-template2   {{HOGE}},{{FUGA}}   //                           https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain
+template2   {{HOGE}},{{FUGA}}   //                           https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 --workspace 2']

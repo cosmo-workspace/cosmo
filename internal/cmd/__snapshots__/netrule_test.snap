@@ -51,7 +51,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -110,7 +110,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -169,7 +169,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -196,7 +196,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -225,7 +225,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -254,7 +254,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -283,7 +283,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -313,7 +313,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -342,7 +342,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -371,7 +371,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -400,7 +400,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -430,7 +430,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -460,7 +460,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -489,7 +489,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -514,7 +514,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -538,7 +538,7 @@ Available Commands:
 Flags:
   -h, --help               help for networkrule
   -n, --namespace string   namespace
-  -u, --user string        user ID
+  -u, --user string        user name
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -569,7 +569,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -594,7 +594,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -619,7 +619,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -644,7 +644,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -670,7 +670,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -695,7 +695,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -721,7 +721,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -746,7 +746,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -771,7 +771,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -796,7 +796,7 @@ Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -n, --namespace string    namespace
-  -u, --user string         user ID
+  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """

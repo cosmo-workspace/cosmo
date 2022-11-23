@@ -148,7 +148,7 @@ func (r *UserReconciler) patchNamespaceToUserDesired(ns *corev1.Namespace, user 
 	if label == nil {
 		label = make(map[string]string)
 	}
-	label[wsv1alpha1.NamespaceLabelKeyUserID] = user.Name
+	label[wsv1alpha1.NamespaceLabelKeyUserName] = user.Name
 	ns.SetLabels(label)
 
 	err := ctrl.SetControllerReference(&user, ns, r.Scheme)

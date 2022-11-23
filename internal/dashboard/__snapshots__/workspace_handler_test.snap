@@ -4,14 +4,14 @@ SnapShot = """
   \"message\": \"Successfully created\",
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"admin-user\",
+    \"owner_name\": \"admin-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 1
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -41,7 +41,7 @@ SnapShot = """
   \"message\": \"Successfully created\",
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"admin-user\",
+    \"owner_name\": \"admin-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 1,
@@ -51,7 +51,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -84,14 +84,14 @@ SnapShot = """
   \"message\": \"Successfully created\",
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"normal-user\",
+    \"owner_name\": \"normal-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 1
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -176,7 +176,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -211,7 +211,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -241,7 +241,7 @@ SnapShot = """
   \"message\": \"Successfully deleted\",
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"normal-user\",
+    \"owner_name\": \"normal-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 1,
@@ -251,7 +251,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -263,7 +263,7 @@ SnapShot = """
   \"message\": \"Successfully deleted\",
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"normal-user\",
+    \"owner_name\": \"normal-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 1,
@@ -273,7 +273,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -296,14 +296,14 @@ SnapShot = """
 {
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"admin-user\",
+    \"owner_name\": \"admin-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 1
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -314,7 +314,7 @@ SnapShot = """
 {
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"normal-user\",
+    \"owner_name\": \"normal-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 1,
@@ -324,7 +324,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -335,7 +335,7 @@ SnapShot = """
 {
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"normal-user\",
+    \"owner_name\": \"normal-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 1,
@@ -345,7 +345,7 @@ SnapShot = """
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -369,19 +369,19 @@ SnapShot = """
   \"items\": [
     {
       \"name\": \"ws1\",
-      \"owner_id\": \"admin-user\",
+      \"owner_name\": \"admin-user\",
       \"spec\": {
         \"template\": \"template1\",
         \"replicas\": 1
       },
       \"status\": {
         \"phase\": \"Pending\",
-        \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+        \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
       }
     },
     {
       \"name\": \"ws2\",
-      \"owner_id\": \"admin-user\",
+      \"owner_name\": \"admin-user\",
       \"spec\": {
         \"template\": \"template1\",
         \"replicas\": 1,
@@ -408,7 +408,7 @@ SnapShot = """
       },
       \"status\": {
         \"phase\": \"Pending\",
-        \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+        \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
       }
     }
   ]
@@ -447,13 +447,13 @@ SnapShot = """
   \"message\": \"Successfully updated\",
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"admin-user\",
+    \"owner_name\": \"admin-user\",
     \"spec\": {
       \"template\": \"template1\"
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -475,7 +475,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -487,14 +487,14 @@ SnapShot = """
   \"message\": \"Successfully updated\",
   \"workspace\": {
     \"name\": \"ws1\",
-    \"owner_id\": \"normal-user\",
+    \"owner_name\": \"normal-user\",
     \"spec\": {
       \"template\": \"template1\",
       \"replicas\": 5
     },
     \"status\": {
       \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -516,7 +516,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -586,7 +586,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }
@@ -640,7 +640,7 @@ SnapShot = """
     \"phase\": \"Pending\",
     \"config\": {
       \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}.domain\"
+      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
     }
   }
 }

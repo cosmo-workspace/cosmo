@@ -1095,7 +1095,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
           class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root emotion-8"
           id=":ri:"
         >
-          Change user name
+          Change Name
         </h2>
         <form>
           <div
@@ -2337,7 +2337,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
           class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root emotion-4"
           id=":r0:"
         >
-          Change user name
+          Change Name
         </h2>
         <form>
           <div

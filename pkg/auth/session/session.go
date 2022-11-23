@@ -7,26 +7,26 @@ import (
 )
 
 const (
-	keyUserID   = "userid"
+	keyUserName = "username"
 	keyDeadline = "deadline"
 )
 
 type Info struct {
-	UserID   string
+	UserName string
 	Deadline int64
 }
 
 func Set(sess *sessions.Session, i Info) *sessions.Session {
-	sess.Values[keyUserID] = i.UserID
+	sess.Values[keyUserName] = i.UserName
 	sess.Values[keyDeadline] = i.Deadline
 	return sess
 }
 
 func Get(sess *sessions.Session) Info {
 	i := Info{}
-	if val, ok := sess.Values[keyUserID]; ok {
-		if userID, ok := val.(string); ok {
-			i.UserID = userID
+	if val, ok := sess.Values[keyUserName]; ok {
+		if userName, ok := val.(string); ok {
+			i.UserName = userName
 		}
 	}
 	if val, ok := sess.Values[keyDeadline]; ok {

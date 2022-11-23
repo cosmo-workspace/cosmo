@@ -10,7 +10,7 @@ unexport KUBERNETES_PORT
 #                                   |-----PARENT_URLBASE-----| |--DOMAIN-|
 PARENT_URLBASE ?= $(shell echo $$VSCODE_PROXY_URI | grep -Po "(?<=://main-)[^\.]*")
 DOMAIN ?= $(shell echo $$VSCODE_PROXY_URI | grep -Po "(?<=\.)[^/]*")
-DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{INSTANCE}}-{{USERID}}-k3d-$(PARENT_URLBASE)
+DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
 DASHBOARD_URL := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
 
 ##---------------------------------------------------------------------

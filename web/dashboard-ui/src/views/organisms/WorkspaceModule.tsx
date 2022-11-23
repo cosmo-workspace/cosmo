@@ -55,9 +55,9 @@ const useWorkspace = () => {
   /**
    * WorkspaceList: refresh
    */
-  const refreshWorkspaces = (userId: string) => {
+  const refreshWorkspaces = (username: string) => {
     console.log('refreshWorkspace');
-    getWorkspaces(userId);
+    getWorkspaces(username);
   }
 
   /**
@@ -75,7 +75,7 @@ const useWorkspace = () => {
 
     let newWorkspace = workspace;
     try {
-      const result = await workspaceService.getWorkspace({ userName: workspace.ownerId, wsName: workspace.name });
+      const result = await workspaceService.getWorkspace({ userName: workspace.ownerName, wsName: workspace.name });
       newWorkspace = result.workspace!;
     }
     catch (e) {
@@ -91,7 +91,7 @@ const useWorkspace = () => {
     }
 
     const reducer = (wspaces: Workspace[]) => {
-      const index = wspaces.findIndex(ws => ws.ownerId === workspace.ownerId && ws.name === workspace.name);
+      const index = wspaces.findIndex(ws => ws.ownerName === workspace.ownerName && ws.name === workspace.name);
       if (index >= 0 && !wspaces[index].equals(newWorkspace)) {
         wspaces[index] = newWorkspace;
         return [...wspaces];
@@ -130,7 +130,7 @@ const useWorkspace = () => {
     console.log('runWorkspace', workspace.name);
     setMask();
     try {
-      await workspaceService.updateWorkspace({ userName: workspace.ownerId!, wsName: workspace.name, replicas: protoInt64.parse(1) });
+      await workspaceService.updateWorkspace({ userName: workspace.ownerName!, wsName: workspace.name, replicas: protoInt64.parse(1) });
       enqueueSnackbar('Successfully run workspace', { variant: 'success' });
       refreshWorkspace(workspace);
     } catch (error) {
@@ -147,7 +147,7 @@ const useWorkspace = () => {
     console.log('stopWorkspace', workspace.name);
     setMask();
     try {
-      await workspaceService.updateWorkspace({ userName: workspace.ownerId!, wsName: workspace.name, replicas: protoInt64.zero });
+      await workspaceService.updateWorkspace({ userName: workspace.ownerName!, wsName: workspace.name, replicas: protoInt64.zero });
       enqueueSnackbar('Successfully stopped workspace', { variant: 'success' });
       refreshWorkspace(workspace);
     } catch (error) {
@@ -164,9 +164,9 @@ const useWorkspace = () => {
     console.log('deleteWorkspace', workspace);
     try {
       setMask();
-      const result = await workspaceService.deleteWorkspace({ userName: workspace.ownerId!, wsName: workspace.name });
+      const result = await workspaceService.deleteWorkspace({ userName: workspace.ownerName!, wsName: workspace.name });
       enqueueSnackbar(result.message, { variant: 'success' });
-      refreshWorkspaces(workspace.ownerId!);
+      refreshWorkspaces(workspace.ownerName!);
     }
     catch (error) { handleError(error); }
     finally { releaseMask(); }
@@ -227,7 +227,7 @@ export const useNetworkRule = () => {
     console.log('upsertNetwork', workspace, networkRule);
     setMask();
     try {
-      const result = await workspaceService.upsertNetworkRule({ userName: workspace.ownerId!, wsName: workspace.name, networkRule: networkRule });
+      const result = await workspaceService.upsertNetworkRule({ userName: workspace.ownerName!, wsName: workspace.name, networkRule: networkRule });
       console.log(result);
       enqueueSnackbar(result.message, { variant: 'success' });
       workspaceModule.refreshWorkspace(workspace);
@@ -242,7 +242,7 @@ export const useNetworkRule = () => {
     console.log('removeNetwork', workspace, netRuleName);
     setMask();
     try {
-      const result_1 = await workspaceService.deleteNetworkRule({ userName: workspace.ownerId!, wsName: workspace.name, networkRuleName: netRuleName });
+      const result_1 = await workspaceService.deleteNetworkRule({ userName: workspace.ownerName!, wsName: workspace.name, networkRuleName: netRuleName });
       console.log(result_1);
       enqueueSnackbar(result_1.message, { variant: 'success' });
       workspaceModule.refreshWorkspace(workspace);
@@ -277,7 +277,7 @@ const useWorkspaceUsers = () => {
     try {
       const result = await userService.getUsers({});
       setUsers(prev => {
-        const newUsers = result.items.sort((a, b) => (a.userName < b.userName) ? -1 : 1);
+        const newUsers = result.items.sort((a, b) => (a.name < b.name) ? -1 : 1);
         return JSON.stringify(prev) === JSON.stringify(newUsers) ? prev : newUsers;
       });
     }

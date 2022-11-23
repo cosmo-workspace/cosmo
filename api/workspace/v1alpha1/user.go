@@ -14,15 +14,15 @@ func init() {
 }
 
 const (
-	UserNamespacePrefix     = "cosmo-user-"
-	NamespaceLabelKeyUserID = "cosmo/user-id"
+	UserNamespacePrefix       = "cosmo-user-"
+	NamespaceLabelKeyUserName = "cosmo/user-name"
 )
 
-func UserNamespace(userid string) string {
-	return UserNamespacePrefix + userid
+func UserNamespace(username string) string {
+	return UserNamespacePrefix + username
 }
 
-func UserIDByNamespace(namespace string) string {
+func UserNameByNamespace(namespace string) string {
 	if !strings.HasPrefix(namespace, UserNamespacePrefix) {
 		return ""
 	}
