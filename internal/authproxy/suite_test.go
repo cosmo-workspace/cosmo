@@ -7,18 +7,18 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
-
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 
 	"github.com/cosmo-workspace/cosmo/internal/webhooks"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -65,9 +65,8 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 
-	_ = clientgoscheme.AddToScheme(scheme)
-	_ = cosmov1alpha1.AddToScheme(scheme)
-	_ = wsv1alpha1.AddToScheme(scheme)
+	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme))
 
 	//+kubebuilder:scaffold:scheme
 

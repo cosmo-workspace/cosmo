@@ -5,12 +5,13 @@ import (
 	"errors"
 	"net/http"
 
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	. "github.com/cosmo-workspace/cosmo/pkg/snap"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
@@ -24,7 +25,7 @@ var _ = Describe("Dashboard server [Template]", func() {
 
 	BeforeEach(func() {
 		userSession = test_CreateLoginUserSession("normal-user", "お名前", "", "password")
-		adminSession = test_CreateLoginUserSession("admin-user", "アドミン", wsv1alpha1.UserAdminRole, "password")
+		adminSession = test_CreateLoginUserSession("admin-user", "アドミン", cosmov1alpha1.UserAdminRole, "password")
 		client = dashboardv1alpha1connect.NewTemplateServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 
@@ -38,8 +39,8 @@ var _ = Describe("Dashboard server [Template]", func() {
 
 		run_test := func(loginUser string, testCase string) {
 			if testCase == "not empty" {
-				testUtil.CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
-				testUtil.CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template2")
+				testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
+				testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template2")
 			}
 			session := userSession
 			if loginUser == "admin-user" {
@@ -77,8 +78,8 @@ var _ = Describe("Dashboard server [Template]", func() {
 
 		run_test := func(loginUser string, testCase string) {
 			if testCase == "not empty" {
-				testUtil.CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "useraddon1")
-				testUtil.CreateTemplate(wsv1alpha1.TemplateTypeUserAddon, "useraddon2")
+				testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "useraddon1")
+				testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "useraddon2")
 			}
 			session := userSession
 			if loginUser == "admin-user" {

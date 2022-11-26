@@ -16,8 +16,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
@@ -29,11 +28,11 @@ type UserMutationWebhookHandler struct {
 	decoder *admission.Decoder
 }
 
-//+kubebuilder:webhook:path=/mutate-workspace-cosmo-workspace-github-io-v1alpha1-user,mutating=true,failurePolicy=fail,sideEffects=None,groups=workspace.cosmo-workspace.github.io,resources=users,verbs=create;update,versions=v1alpha1,name=muser.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-user,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=users,verbs=create;update,versions=v1alpha1,name=muser.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *UserMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
-		"/mutate-workspace-cosmo-workspace-github-io-v1alpha1-user",
+		"/mutate-cosmo-workspace-github-io-v1alpha1-user",
 		&webhook.Admission{Handler: h},
 	)
 }
@@ -43,7 +42,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 	ctx = clog.IntoContext(ctx, log)
 
-	user := &wsv1alpha1.User{}
+	user := &cosmov1alpha1.User{}
 	err := h.decoder.Decode(req, user)
 	if err != nil {
 		log.Error(err, "failed to decode request")
@@ -52,7 +51,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 	before := user.DeepCopy()
 	log.DumpObject(h.Client.Scheme(), before, "request user")
 
-	addonTmpls, err := kubeutil.ListTemplateObjectsByType(ctx, h.Client, []string{wsv1alpha1.TemplateTypeUserAddon})
+	addonTmpls, err := kubeutil.ListTemplateObjectsByType(ctx, h.Client, []string{cosmov1alpha1.TemplateLabelEnumTypeUserAddon})
 	if err != nil {
 		log.Error(err, "failed to list templates")
 		return admission.Errored(http.StatusInternalServerError, err)
@@ -60,7 +59,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 
 	// defaulting auth type
 	if user.Spec.AuthType == "" {
-		user.Spec.AuthType = wsv1alpha1.UserAuthTypePasswordSecert
+		user.Spec.AuthType = cosmov1alpha1.UserAuthTypePasswordSecert
 	}
 
 	// add default user addon
@@ -69,7 +68,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 		if ann == nil {
 			continue
 		}
-		val, ok := ann[wsv1alpha1.TemplateAnnKeyDefaultUserAddon]
+		val, ok := ann[cosmov1alpha1.UserAddonTemplateAnnKeyDefaultUserAddon]
 		if !ok {
 			continue
 		}
@@ -81,7 +80,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 		log.Debug().Info("defaulting user addon", "name", addonTmpl.GetName())
 
 		if isDefaultUserAddon {
-			var defaultAddon wsv1alpha1.UserAddon
+			var defaultAddon cosmov1alpha1.UserAddon
 			defaultAddon.Template.Name = addonTmpl.GetName()
 			defaultAddon.Template.ClusterScoped = addonTmpl.GetScope() == meta.RESTScopeRoot
 
@@ -95,7 +94,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 			if !found {
 				log.Info("appended default addon", "user", user.Name, "addon", defaultAddon)
 				if len(user.Spec.Addons) == 0 {
-					user.Spec.Addons = []wsv1alpha1.UserAddon{defaultAddon}
+					user.Spec.Addons = []cosmov1alpha1.UserAddon{defaultAddon}
 				} else {
 					user.Spec.Addons = append(user.Spec.Addons, defaultAddon)
 				}
@@ -126,11 +125,11 @@ type UserValidationWebhookHandler struct {
 	decoder *admission.Decoder
 }
 
-//+kubebuilder:webhook:path=/validate-workspace-cosmo-workspace-github-io-v1alpha1-user,mutating=false,failurePolicy=fail,sideEffects=None,groups=workspace.cosmo-workspace.github.io,resources=users,verbs=create;update,versions=v1alpha1,name=vuser.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/validate-cosmo-workspace-github-io-v1alpha1-user,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=users,verbs=create;update,versions=v1alpha1,name=vuser.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *UserValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
-		"/validate-workspace-cosmo-workspace-github-io-v1alpha1-user",
+		"/validate-cosmo-workspace-github-io-v1alpha1-user",
 		&webhook.Admission{Handler: h},
 	)
 }
@@ -140,7 +139,7 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 	ctx = clog.IntoContext(ctx, log)
 
-	user := &wsv1alpha1.User{}
+	user := &cosmov1alpha1.User{}
 	err := h.decoder.Decode(req, user)
 	if err != nil {
 		log.Error(err, "failed to decode request")
@@ -165,7 +164,7 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 		return admission.Denied("invalid auth type")
 	}
 
-	// check addon template is labeled as user-addon
+	// check addon template is labeled as useraddon
 	if len(user.Spec.Addons) > 0 {
 		for _, addon := range user.Spec.Addons {
 			tmpl := useraddon.EmptyTemplateObject(addon)
@@ -182,12 +181,12 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 			// check label
 			label := tmpl.GetLabels()
 			if label == nil {
-				log.Info("template is not labeled as user-addon", "user", user.Name, "addon", tmpl.GetName())
-				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as user-addon", tmpl.GetName()))
+				log.Info("template is not labeled as useraddon", "user", user.Name, "addon", tmpl.GetName())
+				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as useraddon", tmpl.GetName()))
 			}
-			if t, ok := label[cosmov1alpha1.TemplateLabelKeyType]; !ok || t != wsv1alpha1.TemplateTypeUserAddon {
-				log.Info("template is not labeled as user-addon", "user", user.Name, "addon", tmpl.GetName())
-				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as user-addon", tmpl.GetName()))
+			if t, ok := label[cosmov1alpha1.TemplateLabelKeyType]; !ok || t != cosmov1alpha1.TemplateLabelEnumTypeUserAddon {
+				log.Info("template is not labeled as useraddon", "user", user.Name, "addon", tmpl.GetName())
+				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as useraddon", tmpl.GetName()))
 			}
 
 			// TODO

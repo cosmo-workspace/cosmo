@@ -4,16 +4,17 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/bufbuild/connect-go"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	. "github.com/cosmo-workspace/cosmo/pkg/snap"
-	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
+	"github.com/bufbuild/connect-go"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 var _ = Describe("Dashboard server [auth]", func() {
@@ -22,7 +23,7 @@ var _ = Describe("Dashboard server [auth]", func() {
 
 	BeforeEach(func() {
 		testUtil.CreateLoginUser("normal-user", "user", "", "password1")
-		testUtil.CreateLoginUser("admin-user", "admin", wsv1alpha1.UserAdminRole, "password2")
+		testUtil.CreateLoginUser("admin-user", "admin", cosmov1alpha1.UserAdminRole, "password2")
 		client = dashboardv1alpha1connect.NewAuthServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 

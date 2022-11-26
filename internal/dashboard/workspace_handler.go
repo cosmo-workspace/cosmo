@@ -4,18 +4,18 @@ import (
 	"context"
 	"net/http"
 
+	connect_go "github.com/bufbuild/connect-go"
 	"k8s.io/utils/pointer"
 
-	connect_go "github.com/bufbuild/connect-go"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	connect "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 func (s *Server) WorkspaceServiceHandler(mux *http.ServeMux) {
-	path, handler := connect.NewWorkspaceServiceHandler(s,
+	path, handler := dashboardv1alpha1connect.NewWorkspaceServiceHandler(s,
 		connect_go.WithInterceptors(s.authorizationInterceptor()),
 		connect_go.WithInterceptors(s.validatorInterceptor()),
 	)
@@ -131,7 +131,7 @@ func (s *Server) UpdateWorkspace(ctx context.Context, req *connect_go.Request[da
 	return connect_go.NewResponse(res), nil
 }
 
-func convertWorkspaceTodashv1alpha1Workspace(ws wsv1alpha1.Workspace) *dashv1alpha1.Workspace {
+func convertWorkspaceTodashv1alpha1Workspace(ws cosmov1alpha1.Workspace) *dashv1alpha1.Workspace {
 	replicas := ws.Spec.Replicas
 	if replicas == nil {
 		replicas = pointer.Int64(1)
@@ -139,7 +139,7 @@ func convertWorkspaceTodashv1alpha1Workspace(ws wsv1alpha1.Workspace) *dashv1alp
 
 	return &dashv1alpha1.Workspace{
 		Name:      ws.Name,
-		OwnerName: wsv1alpha1.UserNameByNamespace(ws.Namespace),
+		OwnerName: cosmov1alpha1.UserNameByNamespace(ws.Namespace),
 		Spec: &dashv1alpha1.WorkspaceSpec{
 			Template:          ws.Spec.Template.Name,
 			Replicas:          *replicas,

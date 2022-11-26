@@ -4,8 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -13,7 +12,7 @@ import (
 
 func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 	type args struct {
-		cfg wsv1alpha1.Config
+		cfg cosmov1alpha1.Config
 		obj *cosmov1alpha1.Template
 	}
 	tests := []struct {
@@ -24,7 +23,7 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				cfg: wsv1alpha1.Config{
+				cfg: cosmov1alpha1.Config{
 					DeploymentName:      "workspace1",
 					ServiceName:         "workspace2",
 					IngressName:         "workspace3",
@@ -34,8 +33,8 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Name: "tmpl",
 						Annotations: map[string]string{
-							wsv1alpha1.TemplateAnnKeyWorkspaceService: "workspace",
-							wsv1alpha1.TemplateAnnKeyURLBase:          "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName: "workspace",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:     "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
 					},
 				},
@@ -44,11 +43,11 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "tmpl",
 					Annotations: map[string]string{
-						wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      "workspace1",
-						wsv1alpha1.TemplateAnnKeyWorkspaceService:         "workspace2",
-						wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         "workspace3",
-						wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
-						wsv1alpha1.TemplateAnnKeyURLBase:                  "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 					},
 				},
 			},
@@ -56,7 +55,7 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 		{
 			name: "no annotations",
 			args: args{
-				cfg: wsv1alpha1.Config{
+				cfg: cosmov1alpha1.Config{
 					DeploymentName:      "workspace1",
 					ServiceName:         "workspace2",
 					IngressName:         "workspace3",
@@ -72,11 +71,11 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "tmpl",
 					Annotations: map[string]string{
-						wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      "workspace1",
-						wsv1alpha1.TemplateAnnKeyWorkspaceService:         "workspace2",
-						wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         "workspace3",
-						wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
-						wsv1alpha1.TemplateAnnKeyURLBase:                  "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
+						cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 					},
 				},
 			},
@@ -96,7 +95,7 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    wsv1alpha1.Config
+		want    cosmov1alpha1.Config
 		wantErr error
 	}{
 		{
@@ -105,21 +104,21 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 				obj: &cosmov1alpha1.Template{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "tmpl1",
-						Namespace: wsv1alpha1.UserNamespace("tom"),
+						Namespace: cosmov1alpha1.UserNamespace("tom"),
 						Labels: map[string]string{
-							cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
+							cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeWorkspace,
 						},
 						Annotations: map[string]string{
-							wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      "workspace1",
-							wsv1alpha1.TemplateAnnKeyWorkspaceService:         "workspace2",
-							wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         "workspace3",
-							wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
-							wsv1alpha1.TemplateAnnKeyURLBase:                  "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
 					},
 				},
 			},
-			want: wsv1alpha1.Config{
+			want: cosmov1alpha1.Config{
 				DeploymentName:      "workspace1",
 				ServiceName:         "workspace2",
 				IngressName:         "workspace3",
@@ -133,13 +132,13 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 				obj: &cosmov1alpha1.Template{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "tmpl1",
-						Namespace: wsv1alpha1.UserNamespace("tom"),
+						Namespace: cosmov1alpha1.UserNamespace("tom"),
 						Annotations: map[string]string{
-							wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      "workspace1",
-							wsv1alpha1.TemplateAnnKeyWorkspaceService:         "workspace2",
-							wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         "workspace3",
-							wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
-							wsv1alpha1.TemplateAnnKeyURLBase:                  "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
 					},
 				},
@@ -152,16 +151,16 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 				obj: &cosmov1alpha1.Template{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "tmpl1",
-						Namespace: wsv1alpha1.UserNamespace("tom"),
+						Namespace: cosmov1alpha1.UserNamespace("tom"),
 						Labels: map[string]string{
 							cosmov1alpha1.TemplateLabelKeyType: "invalid",
 						},
 						Annotations: map[string]string{
-							wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      "workspace1",
-							wsv1alpha1.TemplateAnnKeyWorkspaceService:         "workspace2",
-							wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         "workspace3",
-							wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
-							wsv1alpha1.TemplateAnnKeyURLBase:                  "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
+							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
 					},
 				},
@@ -174,14 +173,14 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 				obj: &cosmov1alpha1.Template{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "tmpl1",
-						Namespace: wsv1alpha1.UserNamespace("tom"),
+						Namespace: cosmov1alpha1.UserNamespace("tom"),
 						Labels: map[string]string{
-							cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
+							cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeWorkspace,
 						},
 					},
 				},
 			},
-			want: wsv1alpha1.Config{},
+			want: cosmov1alpha1.Config{},
 		},
 	}
 	for _, tt := range tests {

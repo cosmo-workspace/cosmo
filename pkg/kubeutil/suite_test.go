@@ -11,14 +11,14 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	//+kubebuilder:scaffold:imports
 )
@@ -35,8 +35,7 @@ func TestKubeutil(t *testing.T) {
 }
 
 func init() {
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
-	wsv1alpha1.AddToScheme(scheme.Scheme)
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme.Scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -80,8 +79,8 @@ func createInitObjects(ctx context.Context) {
 kind: Ingress
 metadata:
   labels:
-	cosmo/instance: '{{INSTANCE}}'
-	cosmo/template: nginx
+	cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+	cosmo-workspace.github.io/template: nginx
   name: nginx
 spec:
   rules:
@@ -100,8 +99,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-	cosmo/instance: '{{INSTANCE}}'
-	cosmo/template: nginx
+	cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+	cosmo-workspace.github.io/template: nginx
   name: nginx
   namespace: '{{NAMESPACE}}'
 spec:
@@ -110,29 +109,29 @@ spec:
 	port: 80
 	protocol: TCP
   selector:
-	cosmo/instance: '{{INSTANCE}}'
-	cosmo/template: nginx
+	cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+	cosmo-workspace.github.io/template: nginx
   type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-	cosmo/instance: '{{INSTANCE}}'
-	cosmo/template: nginx
+	cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+	cosmo-workspace.github.io/template: nginx
   name: nginx
   namespace: '{{NAMESPACE}}'
 spec:
   replicas: 1
   selector:
 	matchLabels:
-	  cosmo/instance: '{{INSTANCE}}'
-	  cosmo/template: nginx
+	  cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+	  cosmo-workspace.github.io/template: nginx
   template:
 	metadata:
 	  labels:
-		cosmo/instance: '{{INSTANCE}}'
-		cosmo/template: nginx
+		cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+		cosmo-workspace.github.io/template: nginx
 	spec:
 	  containers:
 	  - image: 'nginx:{{IMAGE_TAG}}'
@@ -212,8 +211,8 @@ spec:
 			Name:      instance.InstanceResourceName(inst2.Name, "alpine"),
 			Namespace: inst2.Namespace,
 			Labels: map[string]string{
-				cosmov1alpha1.LabelKeyInstance: "inst2",
-				cosmov1alpha1.LabelKeyTemplate: "tmpl2",
+				cosmov1alpha1.LabelKeyInstanceName: "inst2",
+				cosmov1alpha1.LabelKeyTemplateName: "tmpl2",
 			},
 		},
 		Spec: corev1.PodSpec{

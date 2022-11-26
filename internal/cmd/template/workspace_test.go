@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"sigs.k8s.io/yaml"
 
@@ -14,19 +14,19 @@ import (
 
 func Test_completeWorkspaceConfig(t *testing.T) {
 	type args struct {
-		wsConfig *wsv1alpha1.Config
+		wsConfig *cosmov1alpha1.Config
 		tmpl     string
 	}
 	tests := []struct {
 		name    string
 		args    args
 		wantErr bool
-		want    *wsv1alpha1.Config
+		want    *cosmov1alpha1.Config
 	}{
 		{
 			name: "validate",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{
+				wsConfig: &cosmov1alpha1.Config{
 					DeploymentName:      "workspace",
 					ServiceName:         "workspace",
 					IngressName:         "workspace",
@@ -101,7 +101,7 @@ spec:
 `,
 			},
 			wantErr: false,
-			want: &wsv1alpha1.Config{
+			want: &cosmov1alpha1.Config{
 				DeploymentName:      "workspace",
 				ServiceName:         "workspace",
 				IngressName:         "workspace",
@@ -111,7 +111,7 @@ spec:
 		{
 			name: "complete",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{},
+				wsConfig: &cosmov1alpha1.Config{},
 				tmpl: `
 apiVersion: v1
 kind: Service
@@ -178,7 +178,7 @@ spec:
 `,
 			},
 			wantErr: false,
-			want: &wsv1alpha1.Config{
+			want: &cosmov1alpha1.Config{
 				DeploymentName:      "workspace",
 				ServiceName:         "workspace",
 				IngressName:         "workspace",
@@ -188,7 +188,7 @@ spec:
 		{
 			name: "complete error",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{},
+				wsConfig: &cosmov1alpha1.Config{},
 				tmpl: `
 apiVersion: v1
 kind: Service
@@ -270,7 +270,7 @@ spec:
 		{
 			name: "NG service name",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{
+				wsConfig: &cosmov1alpha1.Config{
 					DeploymentName:      "workspace",
 					ServiceName:         "workspace",
 					IngressName:         "workspace",
@@ -335,7 +335,7 @@ spec:
 		{
 			name: "NG deploy name",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{
+				wsConfig: &cosmov1alpha1.Config{
 					DeploymentName:      "workspace",
 					ServiceName:         "workspace",
 					IngressName:         "workspace",
@@ -411,7 +411,7 @@ spec:
 		{
 			name: "NG ingress name",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{
+				wsConfig: &cosmov1alpha1.Config{
 					DeploymentName:      "workspace",
 					ServiceName:         "workspace",
 					IngressName:         "workspace",
@@ -487,7 +487,7 @@ spec:
 		{
 			name: "NG ingress backend service",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{
+				wsConfig: &cosmov1alpha1.Config{
 					DeploymentName:      "workspace",
 					ServiceName:         "workspace",
 					IngressName:         "workspace",
@@ -563,7 +563,7 @@ spec:
 		{
 			name: "no service",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{
+				wsConfig: &cosmov1alpha1.Config{
 					DeploymentName:      "workspace",
 					ServiceName:         "workspace",
 					IngressName:         "workspace-ing",
@@ -628,7 +628,7 @@ spec:
 		{
 			name: "no ingress, service LoadBalancer",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{},
+				wsConfig: &cosmov1alpha1.Config{},
 				tmpl: `
 apiVersion: v1
 kind: Service
@@ -667,7 +667,7 @@ spec:
 `,
 			},
 			wantErr: false,
-			want: &wsv1alpha1.Config{
+			want: &cosmov1alpha1.Config{
 				DeploymentName:      "workspace",
 				ServiceName:         "workspace",
 				IngressName:         "",
@@ -677,7 +677,7 @@ spec:
 		{
 			name: "no ingress, service NodePort",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{},
+				wsConfig: &cosmov1alpha1.Config{},
 				tmpl: `
 apiVersion: v1
 kind: Service
@@ -716,7 +716,7 @@ spec:
 `,
 			},
 			wantErr: false,
-			want: &wsv1alpha1.Config{
+			want: &cosmov1alpha1.Config{
 				DeploymentName:      "workspace",
 				ServiceName:         "workspace",
 				IngressName:         "",
@@ -726,7 +726,7 @@ spec:
 		{
 			name: "no deployment",
 			args: args{
-				wsConfig: &wsv1alpha1.Config{
+				wsConfig: &cosmov1alpha1.Config{
 					DeploymentName:      "workspace",
 					ServiceName:         "workspace",
 					IngressName:         "",

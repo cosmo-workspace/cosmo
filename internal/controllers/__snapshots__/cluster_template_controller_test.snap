@@ -5,12 +5,12 @@ SnapShot = """
     \"name\": \"pod-list-cr\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"cluster-tmpl-test\",
-      \"cosmo/template\": \"cluster-tmpl-test\"
+      \"cosmo-workspace.github.io/instance\": \"cluster-tmpl-test\",
+      \"cosmo-workspace.github.io/template\": \"cluster-tmpl-test\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"ClusterInstance\",
         \"name\": \"cluster-tmpl-test\",
         \"uid\": \"\",
@@ -44,12 +44,12 @@ SnapShot = """
     \"name\": \"pod-list-cr\",
     \"creationTimestamp\": null,
     \"labels\": {
-      \"cosmo/instance\": \"cluster-tmpl-test\",
-      \"cosmo/template\": \"cluster-tmpl-test\"
+      \"cosmo-workspace.github.io/instance\": \"cluster-tmpl-test\",
+      \"cosmo-workspace.github.io/template\": \"cluster-tmpl-test\"
     },
     \"ownerReferences\": [
       {
-        \"apiVersion\": \"cosmo.cosmo-workspace.github.io/v1alpha1\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
         \"kind\": \"ClusterInstance\",
         \"name\": \"cluster-tmpl-test\",
         \"uid\": \"\",

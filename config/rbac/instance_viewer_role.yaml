@@ -4,17 +4,17 @@ kind: ClusterRole
 metadata:
   name: instance-viewer-role
 rules:
-- apiGroups:
-  - cosmo.cosmo-workspace.github.io
-  resources:
-  - instances
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - cosmo.cosmo-workspace.github.io
-  resources:
-  - instances/status
-  verbs:
-  - get
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - instances
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - instances/status
+    verbs:
+      - get

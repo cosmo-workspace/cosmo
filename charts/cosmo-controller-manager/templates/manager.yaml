@@ -107,6 +107,7 @@ spec:
         {{- end }}
         - --leader-elect
         - --zap-log-level={{ .Values.logLevel }}
+        - --zap-time-encoding={{ .Values.logTimeEncoding }}
         {{- if ne .Values.logLevel "info" }}
         - --zap-devel=true
         {{- end }}

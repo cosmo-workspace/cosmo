@@ -5,6 +5,7 @@ import (
 	"time"
 
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -13,13 +14,11 @@ import (
 	"k8s.io/utils/pointer"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	. "github.com/cosmo-workspace/cosmo/pkg/snap"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 var _ = Describe("Workspace webhook", func() {
-	wsConfig := wsv1alpha1.Config{
+	wsConfig := cosmov1alpha1.Config{
 		DeploymentName:      "ws-dep",
 		ServiceName:         "ws-svc",
 		IngressName:         "ws-ing",
@@ -31,14 +30,14 @@ var _ = Describe("Workspace webhook", func() {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "code-server-test2",
 			Labels: map[string]string{
-				cosmov1alpha1.TemplateLabelKeyType: wsv1alpha1.TemplateTypeWorkspace,
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeWorkspace,
 			},
 			Annotations: map[string]string{
-				wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      wsConfig.DeploymentName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         wsConfig.IngressName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceService:         wsConfig.ServiceName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: wsConfig.ServiceMainPortName,
-				wsv1alpha1.TemplateAnnKeyURLBase:                  wsConfig.URLBase,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     wsConfig.IngressName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         wsConfig.URLBase,
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
@@ -46,8 +45,8 @@ var _ = Describe("Workspace webhook", func() {
 kind: Ingress
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test2
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test2
   name: ws-ing
   namespace: '{{NAMESPACE}}'
 spec:
@@ -67,8 +66,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test2
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test2
   name: ws-svc
   namespace: '{{NAMESPACE}}'
 spec:
@@ -77,29 +76,29 @@ spec:
     port: 8080
     protocol: TCP
   selector:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test2
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test2
   type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-test2
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-test2
   name: ws-dep
   namespace: '{{NAMESPACE}}'
 spec:
   replicas: 1
   selector:
     matchLabels:
-      cosmo/instance: '{{INSTANCE}}'
-      cosmo/template: code-server-test2
+      cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+      cosmo-workspace.github.io/template: code-server-test2
   template:
     metadata:
       labels:
-        cosmo/instance: '{{INSTANCE}}'
-        cosmo/template: code-server-test2
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: code-server-test2
     spec:
       containers:
       - image: 'code-server:{{IMAGE_TAG}}'
@@ -128,11 +127,11 @@ spec:
 				cosmov1alpha1.TemplateLabelKeyType: "nowslabel",
 			},
 			Annotations: map[string]string{
-				wsv1alpha1.TemplateAnnKeyWorkspaceDeployment:      wsConfig.DeploymentName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceIngress:         wsConfig.IngressName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceService:         wsConfig.ServiceName,
-				wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: wsConfig.ServiceMainPortName,
-				wsv1alpha1.TemplateAnnKeyURLBase:                  wsConfig.URLBase,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     wsConfig.IngressName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
+				cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         wsConfig.URLBase,
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
@@ -140,8 +139,8 @@ spec:
 kind: Ingress
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-nowslabel
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-nowslabel
   name: ws-ing
   namespace: '{{NAMESPACE}}'
 spec:
@@ -161,8 +160,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-nowslabel
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-nowslabel
   name: ws-svc
   namespace: '{{NAMESPACE}}'
 spec:
@@ -171,29 +170,29 @@ spec:
     port: 8080
     protocol: TCP
   selector:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-nowslabel
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-nowslabel
   type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: code-server-nowslabel
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: code-server-nowslabel
   name: ws-dep
   namespace: '{{NAMESPACE}}'
 spec:
   replicas: 1
   selector:
     matchLabels:
-      cosmo/instance: '{{INSTANCE}}'
-      cosmo/template: code-server-nowslabel
+      cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+      cosmo-workspace.github.io/template: code-server-nowslabel
   template:
     metadata:
       labels:
-        cosmo/instance: '{{INSTANCE}}'
-        cosmo/template: code-server-nowslabel
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: code-server-nowslabel
     spec:
       containers:
       - image: 'code-server:{{IMAGE_TAG}}'
@@ -219,16 +218,16 @@ spec:
 			Expect(err).ShouldNot(HaveOccurred())
 
 			rep := pointer.Int64(1)
-			ws := wsv1alpha1.Workspace{
+			ws := cosmov1alpha1.Workspace{
 				TypeMeta: metav1.TypeMeta{
 					Kind:       "Workspace",
-					APIVersion: wsv1alpha1.GroupVersion.String(),
+					APIVersion: cosmov1alpha1.GroupVersion.String(),
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testws1",
 					Namespace: "cosmo-user-testuser-ws",
 				},
-				Spec: wsv1alpha1.WorkspaceSpec{
+				Spec: cosmov1alpha1.WorkspaceSpec{
 					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN":    "example.com",
@@ -245,26 +244,26 @@ spec:
 			PortNumber := int32(8080)
 			host := "main-testws1-cosmo-user-testuser-ws.example.com"
 
-			expectedWs := wsv1alpha1.Workspace{
+			expectedWs := cosmov1alpha1.Workspace{
 				TypeMeta: metav1.TypeMeta{
 					Kind:       "Workspace",
-					APIVersion: wsv1alpha1.GroupVersion.String(),
+					APIVersion: cosmov1alpha1.GroupVersion.String(),
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testws1",
 					Namespace: "cosmo-user-testuser-ws",
 				},
-				Spec: wsv1alpha1.WorkspaceSpec{
+				Spec: cosmov1alpha1.WorkspaceSpec{
 					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN":    "example.com",
 						"IMAGE_TAG": "latest",
 					},
 					Replicas: rep,
-					Network: []wsv1alpha1.NetworkRule{
+					Network: []cosmov1alpha1.NetworkRule{
 						{
 							Name:             netRuleName,
-							PortNumber:       int(PortNumber),
+							PortNumber:       PortNumber,
 							TargetPortNumber: &PortNumber,
 							HTTPPath:         "/",
 							Group:            &netRuleName,
@@ -274,7 +273,7 @@ spec:
 				},
 			}
 
-			var createdWs wsv1alpha1.Workspace
+			var createdWs cosmov1alpha1.Workspace
 			Eventually(func() error {
 				err := k8sClient.Get(ctx, client.ObjectKey{Name: ws.GetName(), Namespace: ws.GetNamespace()}, &createdWs)
 				if err != nil {
@@ -292,16 +291,16 @@ spec:
 		It("should pass and defaulting replica", func() {
 			ctx := context.Background()
 
-			ws := wsv1alpha1.Workspace{
+			ws := cosmov1alpha1.Workspace{
 				TypeMeta: metav1.TypeMeta{
 					Kind:       "Workspace",
-					APIVersion: wsv1alpha1.GroupVersion.String(),
+					APIVersion: cosmov1alpha1.GroupVersion.String(),
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testws3",
 					Namespace: "cosmo-user-testuser-ws",
 				},
-				Spec: wsv1alpha1.WorkspaceSpec{
+				Spec: cosmov1alpha1.WorkspaceSpec{
 					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN":    "example.com",
@@ -317,26 +316,26 @@ spec:
 			PortNumber := int32(8080)
 			host := "main-testws3-cosmo-user-testuser-ws.example.com"
 
-			expectedWs := wsv1alpha1.Workspace{
+			expectedWs := cosmov1alpha1.Workspace{
 				TypeMeta: metav1.TypeMeta{
 					Kind:       "Workspace",
-					APIVersion: wsv1alpha1.GroupVersion.String(),
+					APIVersion: cosmov1alpha1.GroupVersion.String(),
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testws3",
 					Namespace: "cosmo-user-testuser-ws",
 				},
-				Spec: wsv1alpha1.WorkspaceSpec{
+				Spec: cosmov1alpha1.WorkspaceSpec{
 					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN":    "example.com",
 						"IMAGE_TAG": "latest",
 					},
 					Replicas: pointer.Int64(1),
-					Network: []wsv1alpha1.NetworkRule{
+					Network: []cosmov1alpha1.NetworkRule{
 						{
 							Name:             netRuleName,
-							PortNumber:       int(PortNumber),
+							PortNumber:       PortNumber,
 							TargetPortNumber: &PortNumber,
 							HTTPPath:         "/",
 							Group:            &netRuleName,
@@ -346,7 +345,7 @@ spec:
 				},
 			}
 
-			var createdWs wsv1alpha1.Workspace
+			var createdWs cosmov1alpha1.Workspace
 			Eventually(func() error {
 				err := k8sClient.Get(ctx, client.ObjectKey{Name: ws.GetName(), Namespace: ws.GetNamespace()}, &createdWs)
 				if err != nil {
@@ -368,12 +367,12 @@ spec:
 			err = k8sClient.Create(ctx, &noWsLabelTmpl)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			ws := wsv1alpha1.Workspace{
+			ws := cosmov1alpha1.Workspace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testws5",
 					Namespace: "cosmo-user-testuser-ws",
 				},
-				Spec: wsv1alpha1.WorkspaceSpec{
+				Spec: cosmov1alpha1.WorkspaceSpec{
 					Template: cosmov1alpha1.TemplateRef{Name: noWsLabelTmpl.GetName()},
 					Vars: map[string]string{
 						"DOMAIN":    "example.com",
@@ -388,13 +387,13 @@ spec:
 	})
 
 	DescribeTable("when creating workspace",
-		func(netRules []wsv1alpha1.NetworkRule) {
-			ws := wsv1alpha1.Workspace{
+		func(netRules []cosmov1alpha1.NetworkRule) {
+			ws := cosmov1alpha1.Workspace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testws6",
 					Namespace: "cosmo-user-testuser-ws",
 				},
-				Spec: wsv1alpha1.WorkspaceSpec{
+				Spec: cosmov1alpha1.WorkspaceSpec{
 					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network:  netRules,
@@ -403,7 +402,7 @@ spec:
 			err := k8sClient.Create(context.Background(), &ws)
 			Expect(err).To(MatchSnapShot())
 		},
-		Entry("❌ fail with invalid port number", []wsv1alpha1.NetworkRule{
+		Entry("❌ fail with invalid port number", []cosmov1alpha1.NetworkRule{
 			{
 				Name:       "a23456789012345",
 				PortNumber: 0,
@@ -412,7 +411,7 @@ spec:
 			},
 		}),
 
-		Entry("❌ fail with invalid port name", []wsv1alpha1.NetworkRule{
+		Entry("❌ fail with invalid port name", []cosmov1alpha1.NetworkRule{
 			{
 				Name:       "a234567890123456",
 				PortNumber: 1,
@@ -420,7 +419,7 @@ spec:
 				Public:     false,
 			},
 		}),
-		Entry("❌ fail with duplicated network rule name", []wsv1alpha1.NetworkRule{
+		Entry("❌ fail with duplicated network rule name", []cosmov1alpha1.NetworkRule{
 			{
 				Name:       "nw1",
 				PortNumber: 1111,
@@ -430,7 +429,7 @@ spec:
 				PortNumber: 2222,
 			},
 		}),
-		Entry("❌ fail with duplicated network rule group and path", []wsv1alpha1.NetworkRule{
+		Entry("❌ fail with duplicated network rule group and path", []cosmov1alpha1.NetworkRule{
 			{
 				Name:       "nw1",
 				PortNumber: 1111,
@@ -444,7 +443,7 @@ spec:
 				Group:      pointer.String("gp1"),
 			},
 		}),
-		Entry("❌ fail with duplicated network rule host and path", []wsv1alpha1.NetworkRule{
+		Entry("❌ fail with duplicated network rule host and path", []cosmov1alpha1.NetworkRule{
 			{
 				Name:       "nw1",
 				PortNumber: 1111,
@@ -459,7 +458,7 @@ spec:
 				Host:       pointer.String("host.domain"),
 			},
 		}),
-		Entry("❌ fail with duplicated network rule host and path", []wsv1alpha1.NetworkRule{
+		Entry("❌ fail with duplicated network rule host and path", []cosmov1alpha1.NetworkRule{
 			{
 				Name:       "nw1",
 				PortNumber: 1111,
@@ -482,15 +481,15 @@ spec:
 
 			var err error
 
-			ws := wsv1alpha1.Workspace{
+			ws := cosmov1alpha1.Workspace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testws7",
 					Namespace: "cosmo-user-xxxxxx",
 				},
-				Spec: wsv1alpha1.WorkspaceSpec{
+				Spec: cosmov1alpha1.WorkspaceSpec{
 					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
-					Network: []wsv1alpha1.NetworkRule{
+					Network: []cosmov1alpha1.NetworkRule{
 						{
 							Name:       "a23456789012345",
 							PortNumber: 0,

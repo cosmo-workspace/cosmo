@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -31,7 +31,7 @@ type Server struct {
 	TLSCertPath         string
 	Insecure            bool
 
-	Authorizers map[wsv1alpha1.UserAuthType]auth.Authorizer
+	Authorizers map[cosmov1alpha1.UserAuthType]auth.Authorizer
 
 	http         *http.Server
 	sessionStore sessions.Store

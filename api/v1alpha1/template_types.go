@@ -6,14 +6,15 @@ import (
 )
 
 const (
-	// LabelKeyTemplate is a template name label on the resources created by instance
-	LabelKeyTemplate = "cosmo/template"
-	// TemplateLabelKeyType is a additional type infomartion on template
-	TemplateLabelKeyType = "cosmo/type"
-	// TemplateAnnKeyDisableNamePrefix is a annotation on template to notify controller not to add name prefix
-	TemplateAnnKeyDisableNamePrefix = "cosmo/disable-nameprefix"
-	// TemplateAnnKeySkipValidation is a annotation on template to notify webhook not to validate
-	TemplateAnnKeySkipValidation = "cosmo/skip-validation"
+	// TemplateLabelKeyType is a label key of additional type infomartion on Template
+	TemplateLabelKeyType           = "cosmo-workspace.github.io/type"
+	TemplateLabelEnumTypeWorkspace = "workspace"
+	TemplateLabelEnumTypeUserAddon = "useraddon"
+
+	// TemplateAnnKeyDisableNamePrefix is an annotation key on Template to notify controller not to add name prefix
+	TemplateAnnKeyDisableNamePrefix = "cosmo-workspace.github.io/disable-nameprefix"
+	// TemplateAnnKeySkipValidation is anannotation key on Template to notify webhook not to validate
+	TemplateAnnKeySkipValidation = "cosmo-workspace.github.io/skip-validation"
 )
 
 func init() {

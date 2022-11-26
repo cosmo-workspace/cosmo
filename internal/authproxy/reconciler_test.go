@@ -4,21 +4,22 @@ import (
 	"context"
 	"time"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/internal/authproxy/proxy"
-	"github.com/cosmo-workspace/cosmo/pkg/auth"
-	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
 	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	. "github.com/cosmo-workspace/cosmo/pkg/snap"
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/internal/authproxy/proxy"
+	"github.com/cosmo-workspace/cosmo/pkg/auth"
+	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 var _ = Describe("auth-proxy controller", func() {
@@ -93,7 +94,7 @@ var _ = Describe("auth-proxy controller", func() {
 		time.Sleep(100 * time.Millisecond)
 	}
 
-	workspaceSnap := func(ws *wsv1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
+	workspaceSnap := func(ws *cosmov1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
 		if ws == nil {
 			return struct{ Name, Namespace, Spec, Status interface{} }{}
 		}
@@ -136,7 +137,7 @@ var _ = Describe("auth-proxy controller", func() {
 	DescribeTable("✅ success in normal context:",
 
 		func(initialFunc func(), modifyFuncs ...func()) {
-			testUtil.CreateTemplate(wsv1alpha1.TemplateTypeWorkspace, "template1")
+			testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
 			testUtil.CreateLoginUser("test-user", "", "", "password")
 			initialFunc()
 			By("---------------test start----------------")

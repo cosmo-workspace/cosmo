@@ -15,7 +15,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
@@ -31,10 +31,10 @@ type InstanceReconciler struct {
 	impl instanceReconciler
 }
 
-//+kubebuilder:rbac:groups=cosmo.cosmo-workspace.github.io,resources=instances,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=cosmo.cosmo-workspace.github.io,resources=instances/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=instances,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=instances/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=*,resources=*,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=cosmo.cosmo-workspace.github.io,resources=instances/finalizers,verbs=update
+//+kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=instances/finalizers,verbs=update
 
 func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := clog.FromContext(ctx).WithName("InstanceReconciler").WithValues("req", req)

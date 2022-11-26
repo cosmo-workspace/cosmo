@@ -3,28 +3,27 @@ package wscfg
 import (
 	"errors"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 var (
 	ErrNotTypeWorkspace = errors.New("not type workspace")
 )
 
-func SetConfigOnTemplateAnnotations(tmpl cosmov1alpha1.TemplateObject, cfg wsv1alpha1.Config) {
+func SetConfigOnTemplateAnnotations(tmpl cosmov1alpha1.TemplateObject, cfg cosmov1alpha1.Config) {
 	ann := tmpl.GetAnnotations()
 	if ann == nil {
 		ann = make(map[string]string)
 	}
-	ann[wsv1alpha1.TemplateAnnKeyWorkspaceDeployment] = cfg.DeploymentName
-	ann[wsv1alpha1.TemplateAnnKeyWorkspaceService] = cfg.ServiceName
-	ann[wsv1alpha1.TemplateAnnKeyWorkspaceIngress] = cfg.IngressName
-	ann[wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort] = cfg.ServiceMainPortName
-	ann[wsv1alpha1.TemplateAnnKeyURLBase] = cfg.URLBase
+	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName] = cfg.DeploymentName
+	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName] = cfg.ServiceName
+	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName] = cfg.IngressName
+	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort] = cfg.ServiceMainPortName
+	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase] = cfg.URLBase
 	tmpl.SetAnnotations(ann)
 }
 
-func ConfigFromTemplateAnnotations(tmpl *cosmov1alpha1.Template) (cfg wsv1alpha1.Config, err error) {
+func ConfigFromTemplateAnnotations(tmpl *cosmov1alpha1.Template) (cfg cosmov1alpha1.Config, err error) {
 	// check TemplateType label is for Workspace
 	labels := tmpl.GetLabels()
 	if labels == nil {
@@ -32,7 +31,7 @@ func ConfigFromTemplateAnnotations(tmpl *cosmov1alpha1.Template) (cfg wsv1alpha1
 	}
 
 	tmplType, ok := labels[cosmov1alpha1.TemplateLabelKeyType]
-	if !ok || tmplType != wsv1alpha1.TemplateTypeWorkspace {
+	if !ok || tmplType != cosmov1alpha1.TemplateLabelEnumTypeWorkspace {
 		return cfg, ErrNotTypeWorkspace
 	}
 
@@ -41,12 +40,12 @@ func ConfigFromTemplateAnnotations(tmpl *cosmov1alpha1.Template) (cfg wsv1alpha1
 		return cfg, nil
 	}
 
-	cfg = wsv1alpha1.Config{
-		DeploymentName:      ann[wsv1alpha1.TemplateAnnKeyWorkspaceDeployment],
-		ServiceName:         ann[wsv1alpha1.TemplateAnnKeyWorkspaceService],
-		IngressName:         ann[wsv1alpha1.TemplateAnnKeyWorkspaceIngress],
-		ServiceMainPortName: ann[wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort],
-		URLBase:             ann[wsv1alpha1.TemplateAnnKeyURLBase],
+	cfg = cosmov1alpha1.Config{
+		DeploymentName:      ann[cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName],
+		ServiceName:         ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName],
+		IngressName:         ann[cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName],
+		ServiceMainPortName: ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort],
+		URLBase:             ann[cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase],
 	}
 	return cfg, nil
 }

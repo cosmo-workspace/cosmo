@@ -22,7 +22,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/types"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 )
 
@@ -61,8 +61,8 @@ spec:
     port: 80
     protocol: TCP
   selector:
-    cosmo/instance: '{{INSTANCE}}'
-    cosmo/template: nginx
+    cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+    cosmo-workspace.github.io/template: nginx
   type: ClusterIP
 ---
 apiVersion: apps/v1
@@ -74,11 +74,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      cosmo/instance: '{{INSTANCE}}'
+      cosmo-workspace.github.io/instance: '{{INSTANCE}}'
   template:
     metadata:
       labels:
-        cosmo/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
     spec:
       containers:
       - image: 'nginx:{{IMAGE_TAG}}'
@@ -416,8 +416,7 @@ func Test_unstToObjectRef(t *testing.T) {
 	metaCreationTime := metav1.NewTime(creationTime)
 
 	type args struct {
-		obj             *unstructured.Unstructured
-		updateTimestamp metav1.Time
+		obj *unstructured.Unstructured
 	}
 	tests := []struct {
 		name string

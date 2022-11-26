@@ -5,8 +5,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
 
 func init() {
@@ -14,9 +12,26 @@ func init() {
 }
 
 const (
-	UserNamespacePrefix       = "cosmo-user-"
-	NamespaceLabelKeyUserName = "cosmo/user-name"
+	// UserPasswordSecretName is a secret name for password secret
+	UserPasswordSecretName = "password"
+	// UserPasswordSecretDataKeyUserPasswordSecret is a secret data key for hashed password value
+	UserPasswordSecretDataKeyUserPasswordSecret = "password"
+	// UserPasswordSecretDataKeyUserPasswordSalt is a secret data key for hashed password salt
+	UserPasswordSecretDataKeyUserPasswordSalt = "salt"
+	// UserPasswordSecretAnnKeyUserPasswordIfDefault is a secret annotation key to notify if password is default
+	UserPasswordSecretAnnKeyUserPasswordIfDefault = "cosmo-workspace.github.io/default-password"
 )
+
+// NamespaceLabelKeyUserName is a label key on namespace created b User
+const NamespaceLabelKeyUserName = "cosmo-workspace.github.io/user"
+
+// UserAddonTemplateAnnKeyDefault is an annotation key on UserAddon Template to notify controller to create the UserAddon for all Users
+const UserAddonTemplateAnnKeyDefaultUserAddon = "useraddon.cosmo-workspace.github.io/default"
+
+// Var for user addon
+const TemplateVarUserName = "{{USER_NAME}}"
+
+const UserNamespacePrefix = "cosmo-user-"
 
 func UserNamespace(username string) string {
 	return UserNamespacePrefix + username
@@ -63,8 +78,9 @@ type UserSpec struct {
 }
 
 type UserStatus struct {
-	Phase     corev1.NamespacePhase   `json:"phase,omitempty"`
-	Namespace cosmov1alpha1.ObjectRef `json:"namespace,omitempty"`
+	Phase     corev1.NamespacePhase `json:"phase,omitempty"`
+	Namespace ObjectRef             `json:"namespace,omitempty"`
+	Addons    []ObjectRef           `json:"addons,omitempty"`
 }
 
 type UserAddon struct {

@@ -3,62 +3,62 @@ kind: Role
 metadata:
   name: role
 rules:
-- apiGroups:
-  - workspace.cosmo-workspace.github.io
-  resources:
-  - workspaces
-  verbs:
-  - patch
-  - update
-  - get
-  - list
-  - watch
-- apiGroups:
-  - workspace.cosmo-workspace.github.io
-  resources:
-  - workspaces/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - cosmo.cosmo-workspace.github.io
-  resources:
-  - instances
-  verbs:
-  - patch
-  - update
-  - get
-  - list
-  - watch
-- apiGroups:
-  - cosmo.cosmo-workspace.github.io
-  resources:
-  - instances/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ''
-  resources:
-  - events
-  verbs:
-  - create
-- apiGroups:
-  - ''
-  resources:
-  - services
-  - secrets
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - networking.k8s.io
-  resources:
-  - ingresses
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - workspaces
+    verbs:
+      - patch
+      - update
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - workspaces/status
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - instances
+    verbs:
+      - patch
+      - update
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cosmo-workspace.github.io
+    resources:
+      - instances/status
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch

@@ -14,7 +14,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/internal/authproxy/proxy"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 )
@@ -45,7 +45,7 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	log := clog.FromContext(ctx).WithName("NetworkRuleReconciler")
 	log.Debug().Info("start reconcile")
 
-	var ws wsv1alpha1.Workspace
+	var ws cosmov1alpha1.Workspace
 	if err := r.Get(ctx, req.NamespacedName, &ws); err != nil {
 		// we'll ignore not-found errors, since they can't be fixed by an immediate
 		// requeue (we'll need to wait for a new notification), and we can get them
@@ -135,7 +135,7 @@ func (r *NetworkRuleReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	})
 
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&wsv1alpha1.Workspace{}).
+		For(&cosmov1alpha1.Workspace{}).
 		WithEventFilter(predi).
 		Complete(r)
 }

@@ -102,7 +102,7 @@ func (p *ProxyServer) setupMetrics() {
 	p.registry.Register(p.totalRequests)
 }
 
-func (p *ProxyServer) GetListenerPort() int {
+func (p *ProxyServer) GetListenerPort() int32 {
 	if p.listener == nil {
 		return 0
 	}
@@ -110,7 +110,7 @@ func (p *ProxyServer) GetListenerPort() int {
 	if !ok {
 		return 0
 	}
-	return tcpAddr.Port
+	return int32(tcpAddr.Port)
 }
 
 func (p *ProxyServer) Start(ctx context.Context, gracefulShutdownDur time.Duration) error {

@@ -15,28 +15,28 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 func VerifyPassword(ctx context.Context, c client.Client, username string, pass []byte) (verified bool, isDefault bool, err error) {
 	secret := corev1.Secret{}
 	key := types.NamespacedName{
-		Namespace: wsv1alpha1.UserNamespace(username),
-		Name:      wsv1alpha1.UserPasswordSecretName,
+		Namespace: cosmov1alpha1.UserNamespace(username),
+		Name:      cosmov1alpha1.UserPasswordSecretName,
 	}
 
 	if err := c.Get(ctx, key, &secret); err != nil {
 		return false, isDefault, fmt.Errorf("failed to get password secret: %w", err)
 	}
 
-	storedPass, ok := secret.Data[wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSecret]
+	storedPass, ok := secret.Data[cosmov1alpha1.UserPasswordSecretDataKeyUserPasswordSecret]
 	if !ok {
 		return false, isDefault, fmt.Errorf("password not found")
 	}
 
 	// check is default from annotation
 	if ann := secret.GetAnnotations(); ann != nil {
-		if val, ok := ann[wsv1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault]; ok {
+		if val, ok := ann[cosmov1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault]; ok {
 			if parsedVal, err := strconv.ParseBool(val); err == nil {
 				isDefault = parsedVal
 			}
@@ -47,7 +47,7 @@ func VerifyPassword(ctx context.Context, c client.Client, username string, pass 
 		return bytesEqual(pass, storedPass), isDefault, nil
 
 	} else {
-		salt, ok := secret.Data[wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSalt]
+		salt, ok := secret.Data[cosmov1alpha1.UserPasswordSecretDataKeyUserPasswordSalt]
 		if !ok {
 			return false, isDefault, fmt.Errorf("salt not found")
 		}
@@ -63,8 +63,8 @@ func bytesEqual(a, b []byte) bool {
 func IsDefaultPassword(ctx context.Context, c client.Client, username string) (bool, error) {
 	secret := corev1.Secret{}
 	key := types.NamespacedName{
-		Namespace: wsv1alpha1.UserNamespace(username),
-		Name:      wsv1alpha1.UserPasswordSecretName,
+		Namespace: cosmov1alpha1.UserNamespace(username),
+		Name:      cosmov1alpha1.UserPasswordSecretName,
 	}
 
 	if err := c.Get(ctx, key, &secret); err != nil {
@@ -72,7 +72,7 @@ func IsDefaultPassword(ctx context.Context, c client.Client, username string) (b
 	}
 
 	if ann := secret.GetAnnotations(); ann != nil {
-		if val, ok := ann[wsv1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault]; ok {
+		if val, ok := ann[cosmov1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault]; ok {
 			if parsedVal, err := strconv.ParseBool(val); err == nil {
 				return parsedVal, nil
 			}
@@ -86,22 +86,22 @@ var ErrNotDefaultPassword = errors.New("not default password")
 func GetDefaultPassword(ctx context.Context, c client.Client, username string) (*string, error) {
 	secret := corev1.Secret{}
 	key := types.NamespacedName{
-		Namespace: wsv1alpha1.UserNamespace(username),
-		Name:      wsv1alpha1.UserPasswordSecretName,
+		Namespace: cosmov1alpha1.UserNamespace(username),
+		Name:      cosmov1alpha1.UserPasswordSecretName,
 	}
 
 	if err := c.Get(ctx, key, &secret); err != nil {
 		return nil, fmt.Errorf("failed to get password secret: %w", err)
 	}
 
-	pass, ok := secret.Data[wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSecret]
+	pass, ok := secret.Data[cosmov1alpha1.UserPasswordSecretDataKeyUserPasswordSecret]
 	if !ok {
 		return nil, fmt.Errorf("password not found")
 	}
 
 	var isDefault bool
 	if ann := secret.GetAnnotations(); ann != nil {
-		if val, ok := ann[wsv1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault]; ok {
+		if val, ok := ann[cosmov1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault]; ok {
 			if parsedVal, err := strconv.ParseBool(val); err == nil {
 				isDefault = parsedVal
 			}
@@ -144,16 +144,16 @@ func registerPassword(ctx context.Context, c client.Client, username string, pas
 	}
 
 	secret := corev1.Secret{}
-	secret.SetName(wsv1alpha1.UserPasswordSecretName)
-	secret.SetNamespace(wsv1alpha1.UserNamespace(username))
+	secret.SetName(cosmov1alpha1.UserPasswordSecretName)
+	secret.SetNamespace(cosmov1alpha1.UserNamespace(username))
 
 	_, err := ctrl.CreateOrUpdate(ctx, c, &secret, func() error {
 		secret.Annotations = map[string]string{
-			wsv1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault: strconv.FormatBool(isDefault)}
+			cosmov1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault: strconv.FormatBool(isDefault)}
 
 		secret.Data = map[string][]byte{
-			wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSecret: password,
-			wsv1alpha1.UserPasswordSecretDataKeyUserPasswordSalt:   salt,
+			cosmov1alpha1.UserPasswordSecretDataKeyUserPasswordSecret: password,
+			cosmov1alpha1.UserPasswordSecretDataKeyUserPasswordSalt:   salt,
 		}
 		return nil
 	})

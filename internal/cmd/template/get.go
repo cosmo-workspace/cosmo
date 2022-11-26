@@ -11,8 +11,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/cli-runtime/pkg/printers"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
@@ -49,7 +48,7 @@ func (o *GetOption) Validate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if o.TypeWorkspace {
-		o.tmpltype = wsv1alpha1.TemplateTypeWorkspace
+		o.tmpltype = cosmov1alpha1.TemplateLabelEnumTypeWorkspace
 	}
 	return nil
 }
@@ -73,7 +72,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	o.Logr.Debug().Info("options", "templateNames", o.TemplateNames)
 
 	if o.tmpltype != "" {
-		ts, err := kubeutil.ListTemplateObjectsByType(ctx, o.Client, []string{wsv1alpha1.TemplateTypeWorkspace})
+		ts, err := kubeutil.ListTemplateObjectsByType(ctx, o.Client, []string{cosmov1alpha1.TemplateLabelEnumTypeWorkspace})
 		if err != nil {
 			return err
 		}
@@ -103,7 +102,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	defer w.Flush()
 
 	switch o.tmpltype {
-	case wsv1alpha1.TemplateTypeWorkspace:
+	case cosmov1alpha1.TemplateLabelEnumTypeWorkspace:
 
 		columnNames := []string{"NAME", "REQUIRED-VARS", "DEPLOYMENT/SERVICE/INGRESS", "URLBASE"}
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))

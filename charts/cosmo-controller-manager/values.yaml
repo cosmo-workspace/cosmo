@@ -54,6 +54,8 @@ affinity: {}
 
 logLevel: info
 
+logTimeEncoding: iso8601
+
 # if false, generate webhook certificate by helm function
 enableCertManager: true
 

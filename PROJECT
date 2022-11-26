@@ -9,9 +9,8 @@ resources:
     namespaced: true
   controller: true
   domain: cosmo-workspace.github.io
-  group: cosmo
   kind: Instance
-  path: github.com/cosmo-workspace/cosmo/api/core/v1alpha1
+  path: github.com/cosmo-workspace/cosmo/api/v1alpha1
   version: v1alpha1
   webhooks:
     defaulting: true
@@ -20,18 +19,16 @@ resources:
 - api:
     crdVersion: v1
   domain: cosmo-workspace.github.io
-  group: cosmo
   kind: Template
-  path: github.com/cosmo-workspace/cosmo/api/core/v1alpha1
+  path: github.com/cosmo-workspace/cosmo/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
   controller: true
   domain: cosmo-workspace.github.io
-  group: workspace
   kind: Workspace
-  path: github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1
+  path: github.com/cosmo-workspace/cosmo/api/v1alpha1
   version: v1alpha1
   webhooks:
     defaulting: true
@@ -41,9 +38,8 @@ resources:
     crdVersion: v1
   controller: true
   domain: cosmo-workspace.github.io
-  group: workspace
   kind: User
-  path: github.com/cosmo-workspace/cosmo/api/user/v1alpha1
+  path: github.com/cosmo-workspace/cosmo/api/v1alpha1
   version: v1alpha1
   webhooks:
     defaulting: true

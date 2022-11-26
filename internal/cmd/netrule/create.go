@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/utils/pointer"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
@@ -19,12 +19,12 @@ type CreateOption struct {
 
 	WorkspaceName string
 	NetRuleName   string
-	PortNumber    int
+	PortNumber    int32
 	Group         string
 	HTTPPath      string
 	Public        bool
 
-	rule wsv1alpha1.NetworkRule
+	rule cosmov1alpha1.NetworkRule
 }
 
 func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
@@ -33,7 +33,7 @@ func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *co
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVar(&o.WorkspaceName, "workspace", "", "workspace name (Required)")
-	cmd.Flags().IntVar(&o.PortNumber, "port", 0, "serivce port number (Required)")
+	cmd.Flags().Int32Var(&o.PortNumber, "port", 0, "serivce port number (Required)")
 	cmd.Flags().StringVar(&o.Group, "group", "", "group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty")
 	cmd.Flags().StringVar(&o.HTTPPath, "path", "/", "path for Ingress path when using ingress")
 	cmd.Flags().BoolVar(&o.Public, "public", false, "disable authentication for this port")
@@ -80,7 +80,7 @@ func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 		o.Group = o.NetRuleName
 	}
 
-	o.rule = wsv1alpha1.NetworkRule{
+	o.rule = cosmov1alpha1.NetworkRule{
 		Name:       o.NetRuleName,
 		PortNumber: o.PortNumber,
 		HTTPPath:   o.HTTPPath,

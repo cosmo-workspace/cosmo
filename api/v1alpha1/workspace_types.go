@@ -8,8 +8,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/pointer"
-
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
 )
 
 func init() {
@@ -42,18 +40,18 @@ type WorkspaceList struct {
 // WorkspaceSpec defines the desired state of Workspace
 type WorkspaceSpec struct {
 	// +kubebuilder:validation:Required
-	Template cosmov1alpha1.TemplateRef `json:"template"`
-	Replicas *int64                    `json:"replicas,omitempty"`
-	Vars     map[string]string         `json:"vars,omitempty"`
-	Network  []NetworkRule             `json:"network,omitempty"`
+	Template TemplateRef       `json:"template"`
+	Replicas *int64            `json:"replicas,omitempty"`
+	Vars     map[string]string `json:"vars,omitempty"`
+	Network  []NetworkRule     `json:"network,omitempty"`
 }
 
 // WorkspaceStatus has status of Workspace
 type WorkspaceStatus struct {
-	Instance cosmov1alpha1.ObjectRef `json:"instance,omitempty"`
-	Phase    string                  `json:"phase,omitempty"`
-	URLs     map[string]string       `json:"urls,omitempty"`
-	Config   Config                  `json:"config,omitempty"`
+	Instance ObjectRef         `json:"instance,omitempty"`
+	Phase    string            `json:"phase,omitempty"`
+	URLs     map[string]string `json:"urls,omitempty"`
+	Config   Config            `json:"config,omitempty"`
 }
 
 // Config defines workspace-dependent configuration
@@ -65,10 +63,27 @@ type Config struct {
 	URLBase             string `json:"urlbase,omitempty"`
 }
 
+const (
+	// WorkspaceTemplateAnnKeys are annotation keys for WorkspaceConfig
+	WorkspaceTemplateAnnKeyURLBase         = "workspace.cosmo-workspace.github.io/urlbase"
+	WorkspaceTemplateAnnKeyDeploymentName  = "workspace.cosmo-workspace.github.io/deployment"
+	WorkspaceTemplateAnnKeyServiceName     = "workspace.cosmo-workspace.github.io/service"
+	WorkspaceTemplateAnnKeyIngressName     = "workspace.cosmo-workspace.github.io/ingress"
+	WorkspaceTemplateAnnKeyServiceMainPort = "workspace.cosmo-workspace.github.io/service-main-port"
+)
+
+const (
+	// TemplateVars are Template variables to set WorkspaceConfig info on resources in the Template
+	WorkspaceTemplateVarDeploymentName      = "{{WORKSPACE_DEPLOYMENT_NAME}}"
+	WorkspaceTemplateVarServiceName         = "{{WORKSPACE_SERVICE_NAME}}"
+	WorkspaceTemplateVarIngressName         = "{{WORKSPACE_INGRESS_NAME}}"
+	WorkspaceTemplateVarServiceMainPortName = "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}"
+)
+
 // NetworkRule is an abstract network configuration rule for workspace
 type NetworkRule struct {
 	Name             string  `json:"name"`
-	PortNumber       int     `json:"portNumber"`
+	PortNumber       int32   `json:"portNumber"`
 	HTTPPath         string  `json:"httpPath"`
 	TargetPortNumber *int32  `json:"targetPortNumber,omitempty"`
 	Host             *string `json:"host,omitempty"`
@@ -146,7 +161,7 @@ func NetworkRulesByServiceAndIngress(svc corev1.Service, ing netv1.Ingress) []Ne
 	for _, p := range svc.Spec.Ports {
 		var netRule NetworkRule
 		netRule.Name = p.Name
-		netRule.PortNumber = int(p.Port)
+		netRule.PortNumber = p.Port
 
 		if p.TargetPort.IntValue() != 0 {
 			netRule.TargetPortNumber = pointer.Int32(int32(p.TargetPort.IntValue()))

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 const (
@@ -46,12 +46,12 @@ type URLVars struct {
 	IngressPath string
 }
 
-func NewURLVars(netRule wsv1alpha1.NetworkRule) URLVars {
+func NewURLVars(netRule cosmov1alpha1.NetworkRule) URLVars {
 	netRule.Default()
 
 	v := URLVars{}
 	v.NetworkRuleName = netRule.Name
-	v.PortNumber = strconv.Itoa(netRule.PortNumber)
+	v.PortNumber = strconv.Itoa(int(netRule.PortNumber))
 	v.IngressPath = netRule.HTTPPath
 	v.NetRuleGroup = *netRule.Group
 
@@ -79,12 +79,12 @@ func (u URLBase) GenURL(v URLVars) string {
 	return url
 }
 
-func GenerateIngressHost(r wsv1alpha1.NetworkRule, name, namespace string, urlBase URLBase) string {
+func GenerateIngressHost(r cosmov1alpha1.NetworkRule, name, namespace string, urlBase URLBase) string {
 	urlvar := NewURLVars(r)
 	urlvar.InstanceName = name
 	urlvar.WorkspaceName = name
 	urlvar.Namespace = namespace
-	urlvar.UserName = wsv1alpha1.UserNameByNamespace(namespace)
+	urlvar.UserName = cosmov1alpha1.UserNameByNamespace(namespace)
 
 	ingUrl := urlBase.GenURL(urlvar)
 

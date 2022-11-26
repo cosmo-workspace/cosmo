@@ -7,17 +7,16 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"sigs.k8s.io/yaml"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
 func TestMetadataTransformer_Transform(t *testing.T) {
 	scheme := runtime.NewScheme()
-	if err := cosmov1alpha1.AddToScheme(scheme); err != nil {
-		t.Errorf("Failed to AddToScheme %v", err)
-	}
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme))
 	type fields struct {
 		inst              *cosmov1alpha1.Instance
 		disableNamePrefix bool
@@ -72,12 +71,12 @@ metadata:
     cosmo/ingress-patch-enable: "true"
     kubernetes.io/ingress.class: alb
   labels:
-    cosmo/instance: cs1
-    cosmo/template: code-server
+    cosmo-workspace.github.io/instance: cs1
+    cosmo-workspace.github.io/template: code-server
   name: cs1-test
   namespace: cosmo-user-tom
   ownerReferences:
-  - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     blockOwnerDeletion: true
     controller: true
     kind: Instance
@@ -128,13 +127,13 @@ metadata:
     cosmo/ingress-patch-enable: "true"
     kubernetes.io/ingress.class: alb
   labels:
-    cosmo/instance: cs1
-    cosmo/template: code-server
+    cosmo-workspace.github.io/instance: cs1
+    cosmo-workspace.github.io/template: code-server
     key: val
   name: cs1-test
   namespace: cosmo-user-tom
   ownerReferences:
-  - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     blockOwnerDeletion: true
     controller: true
     kind: Instance
@@ -177,12 +176,12 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
   labels:
-    cosmo/instance: useraddon-eks-irsa
-    cosmo/template: eks-irsa
+    cosmo-workspace.github.io/instance: useraddon-eks-irsa
+    cosmo-workspace.github.io/template: eks-irsa
   name: default
   namespace: cosmo-user-tom
   ownerReferences:
-  - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     blockOwnerDeletion: true
     controller: true
     kind: Instance
@@ -223,12 +222,12 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
   labels:
-    cosmo/instance: useraddon-eks-irsa
-    cosmo/template: eks-irsa
+    cosmo-workspace.github.io/instance: useraddon-eks-irsa
+    cosmo-workspace.github.io/template: eks-irsa
   name: useraddon-eks-irsa-default
   namespace: cosmo-user-tom
   ownerReferences:
-  - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
     blockOwnerDeletion: true
     controller: true
     kind: Instance
@@ -260,7 +259,7 @@ kind: PersistentVolume
 metadata:
   name: default
   ownerReferences:
-    - apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+    - apiVersion: cosmo-workspace.github.io/v1alpha1
       blockOwnerDeletion: true
       controller: true
       kind: Instance

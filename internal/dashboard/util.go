@@ -6,9 +6,10 @@ import (
 	"net/http"
 
 	connect_go "github.com/bufbuild/connect-go"
+	"github.com/google/uuid"
+
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
-	"github.com/google/uuid"
 )
 
 type StoreStatusResponseWriter struct {

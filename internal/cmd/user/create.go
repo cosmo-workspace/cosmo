@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
@@ -25,7 +25,7 @@ type CreateOption struct {
 	Addons        []string
 	ClusterAddons []string
 
-	userAddons []wsv1alpha1.UserAddon
+	userAddons []cosmov1alpha1.UserAddon
 }
 
 func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
@@ -61,7 +61,7 @@ func (o *CreateOption) Validate(cmd *cobra.Command, args []string) error {
 		if o.Admin {
 			return errors.New("--role and --admin is not used at the same time")
 		}
-		if !wsv1alpha1.UserRole(o.Role).IsValid() {
+		if !cosmov1alpha1.UserRole(o.Role).IsValid() {
 			return fmt.Errorf("role %s is invalid", o.Role)
 		}
 	}
@@ -76,10 +76,10 @@ func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	o.UserName = args[0]
 
 	if o.Admin {
-		o.Role = wsv1alpha1.UserAdminRole.String()
+		o.Role = cosmov1alpha1.UserAdminRole.String()
 	}
 
-	o.userAddons = make([]wsv1alpha1.UserAddon, 0, len(o.Addons)+len(o.ClusterAddons))
+	o.userAddons = make([]cosmov1alpha1.UserAddon, 0, len(o.Addons)+len(o.ClusterAddons))
 	if len(o.Addons) > 0 {
 		userAddons, err := parseUserAddonOptions(o.Addons, false)
 		if err != nil {
@@ -98,14 +98,14 @@ func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func parseUserAddonOptions(rawAddonOptionArray []string, isClusterScope bool) ([]wsv1alpha1.UserAddon, error) {
+func parseUserAddonOptions(rawAddonOptionArray []string, isClusterScope bool) ([]cosmov1alpha1.UserAddon, error) {
 	// format
 	//   TEMPLATE_NAME
 	//   TEMPLATE_NAME,KEY1:XXX,KEY2:YYY ZZZ,KEY3:
 	r1 := regexp.MustCompile(`^[^: ,]+(,([^: ,]+):([^,]*))*$`)
 	r2 := regexp.MustCompile(`^([^: ,]+):([^,]*)$`)
 
-	userAddons := make([]wsv1alpha1.UserAddon, 0, len(rawAddonOptionArray))
+	userAddons := make([]cosmov1alpha1.UserAddon, 0, len(rawAddonOptionArray))
 
 	for _, addonParm := range rawAddonOptionArray {
 		if !r1.MatchString(addonParm) {
@@ -114,8 +114,8 @@ func parseUserAddonOptions(rawAddonOptionArray []string, isClusterScope bool) ([
 
 		addonSplits := strings.Split(addonParm, ",")
 
-		userAddon := wsv1alpha1.UserAddon{
-			Template: wsv1alpha1.UserAddonTemplateRef{
+		userAddon := cosmov1alpha1.UserAddon{
+			Template: cosmov1alpha1.UserAddonTemplateRef{
 				Name:          addonSplits[0],
 				ClusterScoped: isClusterScope,
 			},

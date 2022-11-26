@@ -4,15 +4,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/utils/pointer"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
 func TestNewURLVars(t *testing.T) {
 	type args struct {
-		netRule v1alpha1.NetworkRule
+		netRule cosmov1alpha1.NetworkRule
 	}
 	tests := []struct {
 		name string
@@ -22,7 +22,7 @@ func TestNewURLVars(t *testing.T) {
 		{
 			name: "defaulting",
 			args: args{
-				netRule: v1alpha1.NetworkRule{
+				netRule: cosmov1alpha1.NetworkRule{
 					Name:       "name",
 					PortNumber: 8080,
 					Group:      pointer.String("app"),
@@ -39,7 +39,7 @@ func TestNewURLVars(t *testing.T) {
 		{
 			name: "not defaulting",
 			args: args{
-				netRule: v1alpha1.NetworkRule{
+				netRule: cosmov1alpha1.NetworkRule{
 					Name:       "name",
 					PortNumber: 8080,
 					HTTPPath:   "/app",
@@ -123,7 +123,7 @@ func TestURLBase_GenURL(t *testing.T) {
 
 func TestGenerateIngressHost(t *testing.T) {
 	type args struct {
-		r         wsv1alpha1.NetworkRule
+		r         cosmov1alpha1.NetworkRule
 		name      string
 		namespace string
 		urlBase   URLBase
@@ -136,7 +136,7 @@ func TestGenerateIngressHost(t *testing.T) {
 		{
 			name: "NETRULE_NAME",
 			args: args{
-				r: wsv1alpha1.NetworkRule{
+				r: cosmov1alpha1.NetworkRule{
 					Name:             "http",
 					PortNumber:       3000,
 					HTTPPath:         "/",
@@ -145,7 +145,7 @@ func TestGenerateIngressHost(t *testing.T) {
 					Public:           false,
 				},
 				name:      "cs1",
-				namespace: wsv1alpha1.UserNamespace("tom"),
+				namespace: cosmov1alpha1.UserNamespace("tom"),
 				urlBase:   URLBase("https://{{NETRULE_NAME}}-{{INSTANCE}}-{{NAMESPACE}}"),
 			},
 			want: "http-cs1-cosmo-user-tom",
@@ -153,7 +153,7 @@ func TestGenerateIngressHost(t *testing.T) {
 		{
 			name: "PORT_NAME",
 			args: args{
-				r: wsv1alpha1.NetworkRule{
+				r: cosmov1alpha1.NetworkRule{
 					Name:             "http",
 					PortNumber:       3000,
 					HTTPPath:         "/",
@@ -162,7 +162,7 @@ func TestGenerateIngressHost(t *testing.T) {
 					Public:           false,
 				},
 				name:      "cs1",
-				namespace: wsv1alpha1.UserNamespace("tom"),
+				namespace: cosmov1alpha1.UserNamespace("tom"),
 				urlBase:   URLBase("https://{{PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}"),
 			},
 			want: "http-cs1-cosmo-user-tom",
@@ -170,7 +170,7 @@ func TestGenerateIngressHost(t *testing.T) {
 		{
 			name: "NETRULE_GROUP",
 			args: args{
-				r: wsv1alpha1.NetworkRule{
+				r: cosmov1alpha1.NetworkRule{
 					Name:             "nodejs",
 					PortNumber:       3000,
 					HTTPPath:         "/",
@@ -179,7 +179,7 @@ func TestGenerateIngressHost(t *testing.T) {
 					Public:           false,
 				},
 				name:      "cs1",
-				namespace: wsv1alpha1.UserNamespace("tom"),
+				namespace: cosmov1alpha1.UserNamespace("tom"),
 				urlBase:   URLBase("https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}"),
 			},
 			want: "myapp-cs1-tom",
@@ -213,21 +213,21 @@ func Test_extractHost(t *testing.T) {
 		{
 			name: "with proto and path",
 			args: args{
-				url: "https://cosmo.cosmo-workspace.github.io/hello",
+				url: "https://cosmo-workspace.github.io/hello",
 			},
-			want: "cosmo.cosmo-workspace.github.io",
+			want: "cosmo-workspace.github.io",
 		},
 		{
 			name: "with proto and port",
 			args: args{
-				url: "https://cosmo.cosmo-workspace.github.io:8080",
+				url: "https://cosmo-workspace.github.io:8080",
 			},
-			want: "cosmo.cosmo-workspace.github.io",
+			want: "cosmo-workspace.github.io",
 		},
 		{
 			name: "with nothing",
 			args: args{
-				url: "cosmo.cosmo-workspace.github.io",
+				url: "cosmo-workspace.github.io",
 			},
 			want: "",
 		},

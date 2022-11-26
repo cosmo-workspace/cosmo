@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -20,8 +21,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -61,10 +61,8 @@ func (eo *envOption) Validate() error {
 }
 
 func init() {
-	_ = clientgoscheme.AddToScheme(scheme)
-
-	_ = cosmov1alpha1.AddToScheme(scheme)
-	_ = wsv1alpha1.AddToScheme(scheme)
+	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -103,7 +101,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	ownerName := wsv1alpha1.UserNameByNamespace(eo.Namespace)
+	ownerName := cosmov1alpha1.UserNameByNamespace(eo.Namespace)
 	if ownerName == "" {
 		setupLog.Error(fmt.Errorf("namespace %s is not cosmo user's namespace", eo.Namespace), "invalid namespace")
 		os.Exit(1)

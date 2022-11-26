@@ -5,22 +5,22 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.10.0
   creationTimestamp: null
-  name: templates.cosmo.cosmo-workspace.github.io
+  name: clustertemplates.cosmo-workspace.github.io
 spec:
-  group: cosmo.cosmo-workspace.github.io
+  group: cosmo-workspace.github.io
   names:
-    kind: Template
-    listKind: TemplateList
-    plural: templates
+    kind: ClusterTemplate
+    listKind: ClusterTemplateList
+    plural: clustertemplates
     shortNames:
-    - tmpl
-    singular: template
+    - ctmpl
+    singular: clustertemplate
   scope: Cluster
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Template is the Schema for the Templates API
+        description: ClusterTemplate is the Schema for the Templates API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation

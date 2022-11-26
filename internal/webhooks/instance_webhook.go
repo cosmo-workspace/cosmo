@@ -16,7 +16,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -30,12 +30,12 @@ type InstanceMutationWebhookHandler struct {
 	decoder *admission.Decoder
 }
 
-//+kubebuilder:webhook:path=/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-instance,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=instances,verbs=create;update,versions=v1alpha1,name=minstance.kb.io,admissionReviewVersions={v1,v1alpha1}
-//+kubebuilder:webhook:path=/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-instance,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=clusterinstances,verbs=create;update,versions=v1alpha1,name=mclusterinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-instance,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=instances,verbs=create;update,versions=v1alpha1,name=minstance.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-instance,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=clusterinstances,verbs=create;update,versions=v1alpha1,name=mclusterinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *InstanceMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
-		"/mutate-cosmo-cosmo-workspace-github-io-v1alpha1-instance",
+		"/mutate-cosmo-workspace-github-io-v1alpha1-instance",
 		&webhook.Admission{Handler: h},
 	)
 }
@@ -185,12 +185,12 @@ type InstanceValidationWebhookHandler struct {
 	FieldManager string
 }
 
-//+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=clusterinstances,verbs=create;update,versions=v1alpha1,name=vclusterinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
-//+kubebuilder:webhook:path=/validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo.cosmo-workspace.github.io,resources=instances,verbs=create;update,versions=v1alpha1,name=vinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/validate-cosmo-workspace-github-io-v1alpha1-instance,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=clusterinstances,verbs=create;update,versions=v1alpha1,name=vclusterinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
+//+kubebuilder:webhook:path=/validate-cosmo-workspace-github-io-v1alpha1-instance,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=instances,verbs=create;update,versions=v1alpha1,name=vinstance.kb.io,admissionReviewVersions={v1,v1alpha1}
 
 func (h *InstanceValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manager) {
 	mgr.GetWebhookServer().Register(
-		"/validate-cosmo-cosmo-workspace-github-io-v1alpha1-instance",
+		"/validate-cosmo-workspace-github-io-v1alpha1-instance",
 		&webhook.Admission{Handler: h},
 	)
 }

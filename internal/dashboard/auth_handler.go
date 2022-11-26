@@ -6,18 +6,19 @@ import (
 	"time"
 
 	connect_go "github.com/bufbuild/connect-go"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	connect "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
-	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
 
 func (s *Server) AuthServiceHandler(mux *http.ServeMux) {
-	path, handler := connect.NewAuthServiceHandler(s)
+	path, handler := dashboardv1alpha1connect.NewAuthServiceHandler(s)
 	mux.Handle(path, s.contextMiddleware(handler))
 }
 
@@ -67,7 +68,7 @@ func (s *Server) Login(ctx context.Context, req *connect_go.Request[dashv1alpha1
 		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
 	}
 	var isDefault bool
-	if wsv1alpha1.UserAuthType(user.Spec.AuthType) == wsv1alpha1.UserAuthTypePasswordSecert {
+	if cosmov1alpha1.UserAuthType(user.Spec.AuthType) == cosmov1alpha1.UserAuthTypePasswordSecert {
 		isDefault, err = s.Klient.IsDefaultPassword(ctx, req.Msg.UserName)
 		if err != nil {
 			log.Error(err, "failed to check is default password", "username", req.Msg.UserName)

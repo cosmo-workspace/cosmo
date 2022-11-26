@@ -1,17 +1,17 @@
-apiVersion: cosmo.cosmo-workspace.github.io/v1alpha1
+apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Template
 metadata:
   name: code-server
 spec:
   requiredVars:
-  - SERVICE_TYPE
+    - SERVICE_TYPE
   rawYaml: |
     apiVersion: v1
     kind: Service
     metadata:
       labels:
-        cosmo/instance: '{{INSTANCE}}'
-        cosmo/template: '{{TEMPLATE}}'
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
       name: '{{INSTANCE}}-workspace'
       namespace: '{{NAMESPACE}}'
     spec:
@@ -20,31 +20,31 @@ spec:
         port: 8080
         protocol: TCP
       selector:
-        cosmo/instance: '{{INSTANCE}}'
-        cosmo/template: '{{TEMPLATE}}'
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
       type: '{{SERVICE_TYPE}}'
     ---
     apiVersion: apps/v1
     kind: Deployment
     metadata:
       labels:
-        cosmo/instance: '{{INSTANCE}}'
-        cosmo/template: '{{TEMPLATE}}'
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
       name: '{{INSTANCE}}-workspace'
       namespace: '{{NAMESPACE}}'
     spec:
       replicas: 1
       selector:
         matchLabels:
-          cosmo/instance: '{{INSTANCE}}'
-          cosmo/template: '{{TEMPLATE}}'
+          cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+          cosmo-workspace.github.io/template: '{{TEMPLATE}}'
       strategy:
         type: Recreate
       template:
         metadata:
           labels:
-            cosmo/instance: '{{INSTANCE}}'
-            cosmo/template: '{{TEMPLATE}}'
+            cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+            cosmo-workspace.github.io/template: '{{TEMPLATE}}'
         spec:
           containers:
           - image: codercom/code-server:3.8.0

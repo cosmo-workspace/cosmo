@@ -5,8 +5,11 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rbacv1apply "k8s.io/client-go/applyconfigurations/rbac/v1"
+)
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
+const (
+	AuthProxyRoleName               = "cosmo-auth-proxy-role"
+	AuthProxyClusterRoleBindingName = "cosmo-auth-proxy-rolebinding"
 )
 
 var authProxyPolicyRoles = []rbacv1.PolicyRule{
@@ -21,7 +24,7 @@ var authProxyPolicyRoles = []rbacv1.PolicyRule{
 		Verbs:     []string{"get", "list", "watch"},
 	},
 	{
-		APIGroups: []string{cosmov1alpha1.GroupVersion.Group},
+		APIGroups: []string{GroupVersion.Group},
 		Resources: []string{"instances", "instances/status"},
 		Verbs:     []string{"get", "list", "watch"},
 	},

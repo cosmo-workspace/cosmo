@@ -7,9 +7,11 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/utils/pointer"
@@ -20,8 +22,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo/test"
 	//+kubebuilder:scaffold:imports
 )
@@ -53,8 +54,7 @@ var (
 )
 
 func init() {
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
-	wsv1alpha1.AddToScheme(scheme.Scheme)
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme.Scheme))
 	//+kubebuilder:scaffold:scheme
 }
 

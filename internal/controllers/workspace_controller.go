@@ -14,8 +14,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/workspace"
@@ -29,14 +28,14 @@ type WorkspaceReconciler struct {
 	Scheme   *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=workspace.cosmo.cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces/status,verbs=get;update;patch
 func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := clog.FromContext(ctx).WithName("WorkspaceReconciler").WithValues("req", req)
 
 	log.Debug().Info("start reconcile")
 
-	var ws wsv1alpha1.Workspace
+	var ws cosmov1alpha1.Workspace
 	if err := r.Get(ctx, req.NamespacedName, &ws); err != nil {
 		// we'll ignore not-found errors, since they can't be fixed by an immediate
 		// requeue (we'll need to wait for a new notification), and we can get them
@@ -100,12 +99,12 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 func (r *WorkspaceReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&wsv1alpha1.Workspace{}).
+		For(&cosmov1alpha1.Workspace{}).
 		Owns(&cosmov1alpha1.Instance{}).
 		Complete(r)
 }
 
-func getWorkspaceConfig(ctx context.Context, c client.Client, tmplName string) (cfg wsv1alpha1.Config, err error) {
+func getWorkspaceConfig(ctx context.Context, c client.Client, tmplName string) (cfg cosmov1alpha1.Config, err error) {
 	tmpl := &cosmov1alpha1.Template{}
 	if err := c.Get(ctx, types.NamespacedName{Name: tmplName}, tmpl); err != nil {
 		return cfg, err

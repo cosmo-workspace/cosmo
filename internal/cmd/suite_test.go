@@ -8,9 +8,12 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -19,14 +22,11 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/core/v1alpha1"
-	wsv1alpha1 "github.com/cosmo-workspace/cosmo/api/workspace/v1alpha1"
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/internal/webhooks"
-
-	//+kubebuilder:scaffold:imports
-
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	//+kubebuilder:scaffold:imports
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
@@ -43,8 +43,8 @@ var (
 const DefaultURLBase = "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain"
 
 func init() {
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
-	wsv1alpha1.AddToScheme(scheme.Scheme)
+	utilruntime.Must(clientgoscheme.AddToScheme(scheme.Scheme))
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme.Scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -180,8 +180,8 @@ func test_CreateTemplate(templateType string, templateName string) {
 				cosmov1alpha1.TemplateLabelKeyType: templateType,
 			},
 			Annotations: map[string]string{
-				wsv1alpha1.TemplateAnnKeyWorkspaceServiceMainPort: "main",
-				wsv1alpha1.TemplateAnnKeyDefaultUserAddon:         "true",
+				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort:  "main",
+				cosmov1alpha1.UserAddonTemplateAnnKeyDefaultUserAddon: "true",
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{
@@ -222,16 +222,16 @@ func test_DeleteClusterTemplateAll() {
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
-func test_CreateCosmoUser(username string, dispayName string, role wsv1alpha1.UserRole) {
+func test_CreateCosmoUser(username string, dispayName string, role cosmov1alpha1.UserRole) {
 	ctx := context.Background()
-	user := wsv1alpha1.User{
+	user := cosmov1alpha1.User{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: username,
 		},
-		Spec: wsv1alpha1.UserSpec{
+		Spec: cosmov1alpha1.UserSpec{
 			DisplayName: dispayName,
 			Role:        role,
-			AuthType:    wsv1alpha1.UserAuthTypePasswordSecert,
+			AuthType:    cosmov1alpha1.UserAuthTypePasswordSecert,
 		},
 	}
 	err := k8sClient.Create(ctx, &user)
@@ -250,7 +250,7 @@ func test_DeleteCosmoUserAll() {
 	for _, user := range users {
 		k8sClient.Delete(ctx, &user)
 	}
-	Eventually(func() ([]wsv1alpha1.User, error) {
+	Eventually(func() ([]cosmov1alpha1.User, error) {
 		return k8sClient.ListUsers(ctx)
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
@@ -258,12 +258,12 @@ func test_DeleteCosmoUserAll() {
 func test_CreateUserNameSpaceandDefaultPasswordIfAbsent(username string) {
 	ctx := context.Background()
 	var ns v1.Namespace
-	key := client.ObjectKey{Name: wsv1alpha1.UserNamespace(username)}
+	key := client.ObjectKey{Name: cosmov1alpha1.UserNamespace(username)}
 	err := k8sClient.Get(ctx, key, &ns)
 	if err != nil {
 		ns = v1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: wsv1alpha1.UserNamespace(username),
+				Name: cosmov1alpha1.UserNamespace(username),
 			},
 		}
 		err = k8sClient.Create(ctx, &ns)
@@ -274,7 +274,7 @@ func test_CreateUserNameSpaceandDefaultPasswordIfAbsent(username string) {
 	Expect(err).ShouldNot(HaveOccurred())
 }
 
-func test_CreateLoginUser(username, displayName string, role wsv1alpha1.UserRole, password string) {
+func test_CreateLoginUser(username, displayName string, role cosmov1alpha1.UserRole, password string) {
 	ctx := context.Background()
 
 	test_CreateCosmoUser(username, displayName, role)
@@ -294,10 +294,10 @@ func test_CreateWorkspace(username string, name string, template string, vars ma
 	cfg, err := k8sClient.GetWorkspaceConfig(ctx, template)
 	Expect(err).ShouldNot(HaveOccurred())
 
-	ws := &wsv1alpha1.Workspace{}
+	ws := &cosmov1alpha1.Workspace{}
 	ws.SetName(name)
-	ws.SetNamespace(wsv1alpha1.UserNamespace(username))
-	ws.Spec = wsv1alpha1.WorkspaceSpec{
+	ws.SetNamespace(cosmov1alpha1.UserNamespace(username))
+	ws.Spec = cosmov1alpha1.WorkspaceSpec{
 		Template: cosmov1alpha1.TemplateRef{
 			Name: template,
 		},
@@ -311,7 +311,7 @@ func test_CreateWorkspace(username string, name string, template string, vars ma
 	ws.Status.Config = cfg
 	err = k8sClient.Status().Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
-	Eventually(func() (*wsv1alpha1.Workspace, error) {
+	Eventually(func() (*cosmov1alpha1.Workspace, error) {
 		return k8sClient.GetWorkspaceByUserName(ctx, name, username)
 	}, time.Second*5, time.Millisecond*100).ShouldNot(BeNil())
 }
@@ -327,10 +327,10 @@ func test_StopWorkspace(username string, name string) {
 
 func test_DeleteWorkspaceAllByusername(username string) {
 	ctx := context.Background()
-	err := k8sClient.DeleteAllOf(ctx, &wsv1alpha1.Workspace{}, client.InNamespace(wsv1alpha1.UserNamespace(username)))
+	err := k8sClient.DeleteAllOf(ctx, &cosmov1alpha1.Workspace{}, client.InNamespace(cosmov1alpha1.UserNamespace(username)))
 	Expect(err).ShouldNot(HaveOccurred())
-	Eventually(func() ([]wsv1alpha1.Workspace, error) {
-		return k8sClient.ListWorkspaces(ctx, wsv1alpha1.UserNamespace(username))
+	Eventually(func() ([]cosmov1alpha1.Workspace, error) {
+		return k8sClient.ListWorkspaces(ctx, cosmov1alpha1.UserNamespace(username))
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
@@ -343,7 +343,7 @@ func test_DeleteWorkspaceAll() {
 	}
 }
 
-func test_createNetworkRule(username, workspaceName, networkRuleName string, portNumber int, group, httpPath string) {
+func test_createNetworkRule(username, workspaceName, networkRuleName string, portNumber int32, group, httpPath string) {
 	ctx := context.Background()
 
 	_, err := k8sClient.AddNetworkRule(ctx, workspaceName, username, networkRuleName, portNumber, &group, httpPath, false)
