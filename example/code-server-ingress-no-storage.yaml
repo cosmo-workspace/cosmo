@@ -13,7 +13,9 @@ metadata:
 spec:
   requiredVars:
     - var: COSMO_AUTH_PROXY_IMAGE
-      default: cosmo.io:5000/cosmo-auth-proxy:latest
+      default: ghcr.io/cosmo-workspace/cosmo-auth-proxy:latest
+    - var: INGRESS_CLASS
+      default: nginx
   rawYaml: |
     apiVersion: v1
     kind: Service
@@ -138,6 +140,7 @@ spec:
       name: '{{INSTANCE}}-code-server'
       namespace: '{{NAMESPACE}}'
     spec:
+      ingressClassName: '{{INGRESS_CLASS}}'
       rules:
       - host: main-{{INSTANCE}}-{{NAMESPACE}}.cosmo.example.com
         http:
