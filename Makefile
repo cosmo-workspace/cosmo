@@ -152,7 +152,7 @@ COVER_PROFILE ?= cover.out
 
 .PHONY: clear-snapshots
 clear-snapshots: ## Clear snapshots
-	find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
+	-find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
 
 .PHONY: go-test.env
 go-test.env: 
@@ -180,7 +180,7 @@ endif
 
 .PHONY: clear-snapshots-ui
 clear-snapshots-ui: ## Clear snapshots ui
-	find ./web -type f | grep __snapshots__ | xargs rm -f
+	-find ./web -type f | grep __snapshots__ | xargs rm -f
 
 .PHONY: ui-test
 ui-test: ## Run UI tests.
@@ -244,6 +244,7 @@ LOG_LEVEL ?= 3
 run-dashboard: go generate fmt vet manifests ## Run dashboard against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/dashboard/main.go \
 		--zap-log-level $(LOG_LEVEL) \
+		--zap-time-encoding=iso8601 \
 		--insecure
 
 .PHONY: run-dashboard-ui
@@ -254,6 +255,7 @@ run-dashboard-ui: ## Run dashboard-ui.
 run-auth-proxy: go generate fmt vet manifests ## Run auth-proxy against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/auth-proxy/main.go \
 		--zap-log-level $(LOG_LEVEL) \
+		--zap-time-encoding=iso8601 \
 		--insecure
 
 .PHONY: run-auth-proxy-ui
@@ -264,6 +266,7 @@ run-auth-proxy-ui: ## Run auth-proxy-ui.
 run: go generate fmt vet manifests ## Run controller-manager against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/controller-manager/main.go \
 		--zap-log-level $(LOG_LEVEL) \
+		--zap-time-encoding=iso8601 \
 		--metrics-bind-address :8085 \
 		--cert-dir .
 

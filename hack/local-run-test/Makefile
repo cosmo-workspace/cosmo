@@ -101,8 +101,8 @@ docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
 
 docker-cache-clear: ## docker cache clear.
 	docker system df
-	docker rmi `docker images -f "dangling=true" -q`
-	docker builder prune
+	-docker rmi `docker images -f "dangling=true" -q`
+	-docker builder prune
 
 ##---------------------------------------------------------------------
 ##@ Install to k8s
@@ -122,7 +122,8 @@ install-manager: helm kubectl create-cluster docker-build-manager ## Install cos
 		--set image.pullPolicy=Always \
 		--set defaultURLBase.host="\$(DEFAULT_URLBASE_HOST)" \
 		--set defaultURLBase.domain="\$(DOMAIN)" \
-		--set logLevel=$(LOGLEVEL)
+		--set logLevel=$(LOGLEVEL) \
+		--set logTimeEncoding=iso8601
 
 install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-manager resources.
 	@echo ====== $@ ======
@@ -138,7 +139,8 @@ install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-ma
 		--set localRunTest.enabled=true \
 		--set localRunTest.webhookEndpoint.ip=$(shell hostname -i) \
 		--set localRunTest.webhookEndpoint.port=9443 \
-		--set logLevel=$(LOGLEVEL)
+		--set logLevel=$(LOGLEVEL) \
+		--set logTimeEncoding=iso8601
 
 install-dashboard: helm kubectl create-cluster docker-build-dashboard ## Install cosmo contoller-manager resources.
 	@echo ====== $@ ======
@@ -154,7 +156,8 @@ install-dashboard: helm kubectl create-cluster docker-build-dashboard ## Install
 		--set ingress.hosts[0].paths[0].pathType=Prefix \
 		--set cert.dnsName=$(DASHBOARD_URL) \
 		--set insecure=true \
-		--set logLevel=$(LOGLEVEL)
+		--set logLevel=$(LOGLEVEL) \
+		--set logTimeEncoding=iso8601
 
 uninstall-manager: helm  ## Uninstall cosmo contoller-manager resources.
 	@echo ====== $@ ======
@@ -215,6 +218,7 @@ run-manager:
 		--cert-dir . \
 		--zap-log-level=$(LOGLEVEL) \
 		--zap-devel=false \
+		--zap-time-encoding=iso8601 \
 		--workspace-default-urlbase=https://$(DEFAULT_URLBASE_HOST).$(DOMAIN)
 
 run-local: kubectl ## Run test.
