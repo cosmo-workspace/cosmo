@@ -7,6 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"sigs.k8s.io/yaml"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -15,9 +16,7 @@ import (
 
 func TestMetadataTransformer_Transform(t *testing.T) {
 	scheme := runtime.NewScheme()
-	if err := cosmov1alpha1.AddToScheme(scheme); err != nil {
-		t.Errorf("Failed to AddToScheme %v", err)
-	}
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme))
 	type fields struct {
 		inst              *cosmov1alpha1.Instance
 		disableNamePrefix bool

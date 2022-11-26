@@ -4,12 +4,14 @@ import (
 	"reflect"
 	"testing"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/utils/pointer"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
 func TestEmptyTemplateObject(t *testing.T) {
@@ -177,8 +179,7 @@ func TestInstanceName(t *testing.T) {
 
 func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 	validScheme := runtime.NewScheme()
-	cosmov1alpha1.AddToScheme(validScheme)
-	cosmov1alpha1.AddToScheme(validScheme)
+	utilruntime.Must(cosmov1alpha1.AddToScheme(validScheme))
 	invalidScheme := runtime.NewScheme()
 
 	type args struct {

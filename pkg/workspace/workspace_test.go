@@ -3,22 +3,22 @@ package workspace
 import (
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/utils/pointer"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 	validScheme := runtime.NewScheme()
-	cosmov1alpha1.AddToScheme(validScheme)
-	cosmov1alpha1.AddToScheme(validScheme)
+	utilruntime.Must(cosmov1alpha1.AddToScheme(validScheme))
 	invalidScheme := runtime.NewScheme()
 
 	prefix := netv1.PathTypePrefix

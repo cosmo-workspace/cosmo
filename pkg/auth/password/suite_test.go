@@ -7,6 +7,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -26,8 +27,7 @@ var k8sClient client.Client
 var testEnv *envtest.Environment
 
 func init() {
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme.Scheme))
 	//+kubebuilder:scaffold:scheme
 }
 

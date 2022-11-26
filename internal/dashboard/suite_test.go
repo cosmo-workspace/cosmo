@@ -7,9 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bufbuild/connect-go"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
+	"github.com/bufbuild/connect-go"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -47,8 +49,7 @@ var (
 const DefaultURLBase = "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain"
 
 func init() {
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme.Scheme))
 	//+kubebuilder:scaffold:scheme
 }
 

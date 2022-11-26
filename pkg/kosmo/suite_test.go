@@ -9,6 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	corev1 "k8s.io/api/core/v1"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -37,8 +38,7 @@ var ectmpl1 *cosmov1alpha1.ClusterTemplate
 var ecinst1 *cosmov1alpha1.ClusterInstance
 
 func init() {
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
-	cosmov1alpha1.AddToScheme(scheme.Scheme)
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme.Scheme))
 	//+kubebuilder:scaffold:scheme
 }
 

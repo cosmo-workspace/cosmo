@@ -7,6 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
@@ -29,8 +30,8 @@ var cinst1 *cosmov1alpha1.ClusterInstance
 
 func init() {
 	scheme := runtime.NewScheme()
-	clientgoscheme.AddToScheme(scheme)
-	cosmov1alpha1.AddToScheme(scheme)
+	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme))
 
 	tmpl1 = &cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
