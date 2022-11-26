@@ -65,17 +65,17 @@ func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws cosmov1alp
 
 func svcPorts(netRules []cosmov1alpha1.NetworkRule) []corev1.ServicePort {
 	ports := make([]corev1.ServicePort, 0, len(netRules))
-	portMap := make(map[int32]corev1.ServicePort, len(netRules))
+	portMap := make(map[string]corev1.ServicePort, len(netRules))
 
 	for _, netRule := range netRules {
 		if !netRule.TargetPortNumberIsValid() {
 			continue
 		}
 		port := netRule.ServicePort()
-		if _, ok := portMap[port.Port]; ok {
+		if _, ok := portMap[port.Name]; ok {
 			continue
 		}
-		portMap[port.Port] = port
+		portMap[port.Name] = port
 		ports = append(ports, port)
 	}
 	return ports

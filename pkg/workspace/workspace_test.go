@@ -124,7 +124,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 																Service: &netv1.IngressServiceBackend{
 																	Name: "ws1-ws-svc",
 																	Port: netv1.ServiceBackendPort{
-																		Name: "port18080",
+																		Name: "proxy8080",
 																	},
 																},
 															},
@@ -141,7 +141,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 									TargetName: "ws-svc",
 									Ports: []corev1.ServicePort{
 										{
-											Name:       "port18080",
+											Name:       "proxy8080",
 											Port:       18080,
 											TargetPort: intstr.FromInt(18080),
 											Protocol:   "TCP",
@@ -339,7 +339,7 @@ func TestSvcPorts(t *testing.T) {
 			},
 			want: []corev1.ServicePort{
 				{
-					Name:        "port2222",
+					Name:        "proxy1111",
 					Protocol:    "TCP",
 					AppProtocol: nil,
 					Port:        2222,
@@ -358,7 +358,7 @@ func TestSvcPorts(t *testing.T) {
 			},
 			want: []corev1.ServicePort{
 				{
-					Name:        "port2222",
+					Name:        "proxy1111",
 					Protocol:    "TCP",
 					AppProtocol: nil,
 					Port:        2222,
@@ -366,7 +366,7 @@ func TestSvcPorts(t *testing.T) {
 					NodePort:    0,
 				},
 				{
-					Name:        "port4444",
+					Name:        "proxy3333",
 					Protocol:    "TCP",
 					AppProtocol: nil,
 					Port:        4444,
@@ -380,12 +380,12 @@ func TestSvcPorts(t *testing.T) {
 			args: args{
 				netRules: []cosmov1alpha1.NetworkRule{
 					netRule("rule1", "host1", "/", 1111, 2222),
-					netRule("rule2", "host1", "/", 3333, 2222),
+					netRule("rule2", "host1", "/", 1111, 2222),
 				},
 			},
 			want: []corev1.ServicePort{
 				{
-					Name:        "port2222",
+					Name:        "proxy1111",
 					Protocol:    "TCP",
 					AppProtocol: nil,
 					Port:        2222,
@@ -469,7 +469,7 @@ func TestIngressRules(t *testing.T) {
 			},
 			want: []netv1.IngressRule{
 				ingRule("host1",
-					ingPath("/", "bksvc", "port2222"),
+					ingPath("/", "bksvc", "proxy1111"),
 				),
 			},
 		},
@@ -484,10 +484,10 @@ func TestIngressRules(t *testing.T) {
 			},
 			want: []netv1.IngressRule{
 				ingRule("host1",
-					ingPath("/", "bksvc", "port2222"),
+					ingPath("/", "bksvc", "proxy1111"),
 				),
 				ingRule("host2",
-					ingPath("/", "bksvc", "port4444"),
+					ingPath("/", "bksvc", "proxy3333"),
 				),
 			},
 		},
@@ -503,8 +503,8 @@ func TestIngressRules(t *testing.T) {
 			},
 			want: []netv1.IngressRule{
 				ingRule("host1",
-					ingPath("/", "bksvc", "port2222"),
-					ingPath("/aaa", "bksvc", "port4444"),
+					ingPath("/", "bksvc", "proxy1111"),
+					ingPath("/aaa", "bksvc", "proxy3333"),
 				),
 			},
 		},

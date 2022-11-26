@@ -114,13 +114,17 @@ func (r *NetworkRule) TargetPortNumberIsValid() bool {
 	}
 }
 
-func (r *NetworkRule) portName() string {
-	return fmt.Sprintf("port%d", *r.TargetPortNumber)
+func (r *NetworkRule) PortName() string {
+	if r.Public {
+		return fmt.Sprintf("public%d", r.PortNumber)
+	} else {
+		return fmt.Sprintf("proxy%d", r.PortNumber)
+	}
 }
 
 func (r *NetworkRule) ServicePort() corev1.ServicePort {
 	return corev1.ServicePort{
-		Name:       r.portName(),
+		Name:       r.PortName(),
 		Port:       *r.TargetPortNumber,
 		Protocol:   corev1.ProtocolTCP,
 		TargetPort: intstr.FromInt(int(*r.TargetPortNumber)),
@@ -145,7 +149,7 @@ func (r *NetworkRule) IngressRule(backendSvcName string) netv1.IngressRule {
 							Service: &netv1.IngressServiceBackend{
 								Name: backendSvcName,
 								Port: netv1.ServiceBackendPort{
-									Name: r.portName(),
+									Name: r.PortName(),
 								},
 							},
 						},

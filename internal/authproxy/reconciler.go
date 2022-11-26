@@ -70,9 +70,9 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		}
 
 		// if service port == service target port, create auth proxy and update target port as proxy port
-		usingProxyList = append(usingProxyList, netRule.Name)
+		usingProxyList = append(usingProxyList, netRule.PortName())
 
-		runningProxyInfo, exist := r.ProxyManager.GetRunningProxy(netRule.Name)
+		runningProxyInfo, exist := r.ProxyManager.GetRunningProxy(netRule.PortName())
 		if exist {
 			if runningProxyInfo.TargetPort == netRule.PortNumber {
 				// if target port is expected, update netSpec properly
@@ -86,7 +86,7 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			// target port is different, recreate proxy
 			log.Debug().Info("proxy listening different port, shutdown", "netRule", netRule, "runningProxyInfo", runningProxyInfo)
 
-			err := r.ProxyManager.ShutdownProxy(ctx, netRule.Name)
+			err := r.ProxyManager.ShutdownProxy(ctx, netRule.PortName())
 			if err != nil {
 				log.Error(err, "error in shotdown proxy", "netRule", netRule, "runningProxyInfo", runningProxyInfo)
 			} else {
@@ -98,7 +98,7 @@ func (r *NetworkRuleReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		log.Info("creating new proxy", "name", netRule.Name, "targetPort", netRule.TargetPortNumber)
 
 		proxyCreateCtx, cancel := context.WithTimeout(ctx, time.Second*10)
-		proxyInfo, err := r.ProxyManager.CreateNewProxy(proxyCreateCtx, netRule.Name, netRule.PortNumber)
+		proxyInfo, err := r.ProxyManager.CreateNewProxy(proxyCreateCtx, netRule.PortName(), netRule.PortNumber)
 		cancel()
 		if err != nil {
 			r.Recorder.Eventf(&ws, corev1.EventTypeWarning, "Proxy create failed", "failed to create new proxy: %s proxyPort: %d targetPort: %d %v", netRule.Name, proxyInfo.LocalPort, netRule.PortNumber, err.Error())

@@ -44,7 +44,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw1\",
+    \"Name\": \"proxy1111\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -97,7 +97,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw1\",
+    \"Name\": \"proxy1111\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -150,7 +150,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw1\",
+    \"Name\": \"proxy3333\",
     \"TargetPort\": 3333,
     \"LocalPort\": 99999
   }
@@ -203,7 +203,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw1\",
+    \"Name\": \"proxy3333\",
     \"TargetPort\": 3333,
     \"LocalPort\": 99999
   }
@@ -256,7 +256,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw1\",
+    \"Name\": \"proxy1111\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -309,7 +309,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw1\",
+    \"Name\": \"proxy1111\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -409,7 +409,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw2\",
+    \"Name\": \"proxy2222\",
     \"TargetPort\": 2222,
     \"LocalPort\": 99999
   }
@@ -453,7 +453,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw1\",
+    \"Name\": \"proxy1111\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
@@ -533,7 +533,7 @@ SnapShot = """
 SnapShot = """
 [
   {
-    \"Name\": \"nw1\",
+    \"Name\": \"proxy1111\",
     \"TargetPort\": 1111,
     \"LocalPort\": 99999
   }
