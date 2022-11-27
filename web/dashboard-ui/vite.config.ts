@@ -24,6 +24,7 @@ export default defineConfig({
       exclude: [
         'src/__tests__/**',
         'src/proto/**',
+        'src/services/DashboardServices.ts'
       ],
       //reporter: ['text', 'json', 'html'],
     },

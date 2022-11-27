@@ -1,18 +1,15 @@
 // Vitest Snapshot v1
 
 exports[`LoginProvider > login > ✅ ok 1`] = `
-LoginResponse {
-  "expireAt": Timestamp {
-    "nanos": 0,
-    "seconds": 1667487600n,
-  },
+{
+  "expireAt": "2022-11-03T15:00:00Z",
   "requirePasswordUpdate": true,
   "userName": "user1",
 }
 `;
 
 exports[`LoginProvider > login > ✅ ok 2`] = `
-User {
+{
   "addons": [],
   "authType": "",
   "defaultPassword": "",
@@ -97,7 +94,7 @@ exports[`LoginProvider > logout > ❌ error 2`] = `
 exports[`LoginProvider > refreshUserInfo > logined > ✅ ok 1`] = `undefined`;
 
 exports[`LoginProvider > refreshUserInfo > logined > ✅ ok 2`] = `
-User {
+{
   "addons": [],
   "authType": "",
   "defaultPassword": "",
@@ -129,7 +126,7 @@ exports[`LoginProvider > updatePassword > ✅ ok > putUserPassword calls 1`] = `
 `;
 
 exports[`LoginProvider > updatePassword > ✅ ok 1`] = `
-UpdateUserPasswordResponse {
+{
   "message": "ok",
 }
 `;
@@ -162,7 +159,7 @@ exports[`LoginProvider > updatePassword > ❌ error 2`] = `
 `;
 
 exports[`LoginProvider > verify > ✅ ok 1`] = `
-User {
+{
   "addons": [],
   "authType": "",
   "defaultPassword": "",

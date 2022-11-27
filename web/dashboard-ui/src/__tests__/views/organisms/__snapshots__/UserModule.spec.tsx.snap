@@ -6,33 +6,31 @@ exports[`useTemplates > useTemplates getUserAddonTemplates > error 2`] = `[]`;
 
 exports[`useTemplates > useTemplates getUserAddonTemplates > normal 1`] = `
 [
-  Template {
+  {
     "description": "",
     "isClusterScope": false,
-    "isDefaultUserAddon": undefined,
     "name": "tmpl1",
     "requiredVars": [],
   },
-  Template {
+  {
     "description": "hoge",
     "isClusterScope": false,
     "isDefaultUserAddon": true,
     "name": "tmpl2",
     "requiredVars": [
-      TemplateRequiredVars {
+      {
         "defaultValue": "var1Value",
         "varName": "var1",
       },
-      TemplateRequiredVars {
+      {
         "defaultValue": "",
         "varName": "var2",
       },
     ],
   },
-  Template {
+  {
     "description": "",
     "isClusterScope": false,
-    "isDefaultUserAddon": undefined,
     "name": "tmpl3",
     "requiredVars": [],
   },
@@ -56,7 +54,7 @@ exports[`useUserModule > useUserModule createUser > error 2`] = `
 
 exports[`useUserModule > useUserModule createUser > nomal 1`] = `
 [
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -65,7 +63,7 @@ exports[`useUserModule > useUserModule createUser > nomal 1`] = `
     "role": "cosmoAdmin",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -74,7 +72,7 @@ exports[`useUserModule > useUserModule createUser > nomal 1`] = `
     "role": "",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -112,7 +110,7 @@ exports[`useUserModule > useUserModule deleteUser > error 2`] = `
 
 exports[`useUserModule > useUserModule deleteUser > nomal 1`] = `
 [
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -121,7 +119,7 @@ exports[`useUserModule > useUserModule deleteUser > nomal 1`] = `
     "role": "cosmoAdmin",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -159,7 +157,7 @@ exports[`useUserModule > useUserModule getUsers > error 2`] = `
 
 exports[`useUserModule > useUserModule getUsers > normal 1`] = `
 [
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -168,7 +166,7 @@ exports[`useUserModule > useUserModule getUsers > normal 1`] = `
     "role": "cosmoAdmin",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -177,7 +175,7 @@ exports[`useUserModule > useUserModule getUsers > normal 1`] = `
     "role": "",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -214,7 +212,7 @@ exports[`useUserModule > useUserModule updateRole > error 2`] = `
 
 exports[`useUserModule > useUserModule updateRole > nomal after getUsers 1`] = `
 [
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -223,7 +221,7 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers 1`] = `
     "role": "cosmoAdmin",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -232,7 +230,7 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers 1`] = `
     "role": "Role2",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -257,7 +255,7 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers 2`] = `
 
 exports[`useUserModule > useUserModule updateRole > nomal after getUsers. return value nothing 1`] = `
 [
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -266,7 +264,7 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers. return
     "role": "cosmoAdmin",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -275,7 +273,7 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers. return
     "role": "",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -326,7 +324,7 @@ exports[`useUserModule > useUserModule updateUserName > error 2`] = `
 
 exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 1`] = `
 [
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -335,7 +333,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 1`]
     "role": "cosmoAdmin",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -344,7 +342,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 1`]
     "role": "",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -369,7 +367,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 2`]
 
 exports[`useUserModule > useUserModule updateUserName > nomal after getUsers. return value nothing 1`] = `
 [
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -378,7 +376,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers. re
     "role": "cosmoAdmin",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
@@ -387,7 +385,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers. re
     "role": "",
     "status": "",
   },
-  User {
+  {
     "addons": [],
     "authType": "",
     "defaultPassword": "",
