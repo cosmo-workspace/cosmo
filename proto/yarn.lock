@@ -2,31 +2,31 @@
 # yarn lockfile v1
 
 
-"@bufbuild/protobuf@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-0.2.1.tgz#24e7d04bef4d380362a6cc9e52936dc00d86af6a"
-  integrity sha512-7bsong0tlLQvkdq5K1U6qFFn35oggCwxaiOs1LHGsqkP/E1FvW4JmRHkxkjlyMNd01S5GbqCrnyHD5VW6l3Djg==
+"@bufbuild/protobuf@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-0.3.0.tgz#ef7535d4915a6fb2d96c690164d7b9c3ca761d4c"
+  integrity sha512-+s4GgUc+hW4czQVtTG8axIMNwBpaStkRoxocVgJjbn1mfIcng4csyp/arX9CP9bYZmyyCysx+S3sBqGQhMQybw==
 
-"@bufbuild/protoc-gen-connect-web@0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@bufbuild/protoc-gen-connect-web/-/protoc-gen-connect-web-0.3.1.tgz#1ae2260b1cdc4e8a67cadc213402b8c21858e199"
-  integrity sha512-p3rO9pMa1P4WU5VA7NQuPA+TbLm9xCxlusOxq3lKfF8vngUX2DpliFuAlwybDS5Osgfw+IQMskRrYPVe6g02qA==
+"@bufbuild/protoc-gen-connect-web@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@bufbuild/protoc-gen-connect-web/-/protoc-gen-connect-web-0.3.2.tgz#6463d09a91352463a4d0a65663d467867dbe908f"
+  integrity sha512-VYXSgPrKiNnRcc99qnmDd5tHXHtH/lJLAPD5KVOFENNuxg+ee4Rx2HJGEtyf9yvt2cR0SAekkIkj4ZBuxlLuTA==
   dependencies:
-    "@bufbuild/protoplugin" "0.2.1"
+    "@bufbuild/protoplugin" "0.3.0"
 
-"@bufbuild/protoc-gen-es@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@bufbuild/protoc-gen-es/-/protoc-gen-es-0.2.1.tgz#f949a09d9c421a8ce3036e45d804dc7695d44d5c"
-  integrity sha512-8rfFyKjhuaXOm1mjkIPK8dWzzqAUFOZsFlWCbEXMccc4UWFsVkt/zbw+hHsKI4SUIf4eTzuY074/KMEwVImWMA==
+"@bufbuild/protoc-gen-es@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@bufbuild/protoc-gen-es/-/protoc-gen-es-0.3.0.tgz#3f2082ce1f1d712d647c9c2daef5ba4f279b9353"
+  integrity sha512-ggM5kRfuKvl0O4WQFX+S/qHl6TrjyS6VbvpQv8voOGPb8X51MBKrK0A+oF0EPWr9UeT5KB5ExJ1lJgFRjLGsLQ==
   dependencies:
-    "@bufbuild/protoplugin" "0.2.1"
+    "@bufbuild/protoplugin" "0.3.0"
 
-"@bufbuild/protoplugin@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@bufbuild/protoplugin/-/protoplugin-0.2.1.tgz#bafc0525a9fdcf62628479b0f726a15bbb9601c8"
-  integrity sha512-R26FyR5KtU5V5osf8xGraS0/3QdhB8aVnWt990zURFWTFsy7MerHM7dc+oL7H5XT/iD38zur44Cpvp9LeXb5Pg==
+"@bufbuild/protoplugin@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@bufbuild/protoplugin/-/protoplugin-0.3.0.tgz#3ee28647f7901281672b31d572cd8f953894cb13"
+  integrity sha512-L0Queku6AjZoY12tVbd4j+utT51vq/rBfNJhqiv2z+CfIBdZ3NWeU7FP4z1U3wqAsUp+Mb17jifMWFHv5W6tLQ==
   dependencies:
-    "@bufbuild/protobuf" "0.2.1"
+    "@bufbuild/protobuf" "0.3.0"
     "@typescript/vfs" "^1.4.0"
     typescript "4.5.2"
 
