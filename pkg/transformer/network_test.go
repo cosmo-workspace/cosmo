@@ -102,9 +102,6 @@ metadata:
   namespace: default
 spec:
   ports:
-  - name: port1
-    port: 8080
-    protocol: TCP
   - name: port2
     port: 8081
     protocol: TCP
@@ -172,16 +169,6 @@ metadata:
   namespace: default
 spec:
   rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8080
-        path: /*
-        pathType: Exact
 `,
 			},
 			want: `apiVersion: networking.k8s.io/v1
@@ -193,16 +180,6 @@ metadata:
   namespace: default
 spec:
   rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8080
-        path: /*
-        pathType: Exact
   - host: example2.com
     http:
       paths:
@@ -502,16 +479,6 @@ metadata:
   namespace: default
 spec:
   rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8080
-        path: /*
-        pathType: Exact
   - host: example2.com
     http:
       paths:
@@ -962,9 +929,6 @@ metadata:
   namespace: default
 spec:
   ports:
-  - name: port1
-    port: 8080
-    protocol: TCP
   - name: port2
     port: 8081
     protocol: TCP
@@ -1013,14 +977,14 @@ metadata:
   namespace: default
 spec:
   ports:
-  - name: port1
-    port: 8082
-    protocol: UDP
-    targetPort: 8082
   - name: port2
     port: 8081
     protocol: TCP
     targetPort: 8081
+  - name: port1
+    port: 8082
+    protocol: UDP
+    targetPort: 8082
   type: ClusterIP
 `,
 		},
@@ -1096,8 +1060,8 @@ spec:
 					t.Errorf("yaml.Marshal err = %v", err)
 				}
 				if string(got) != tt.want {
-					t.Errorf("overrideServicePort() = %v, want %v", string(got), tt.want)
-					t.Errorf("overrideServicePort() = %v, want %v", got, []byte(tt.want))
+					t.Errorf("overrideServicePort() diff = %s", cmp.Diff(string(got), tt.want))
+					t.Errorf("overrideServicePort() diff bytes = %s", cmp.Diff(got, []byte(tt.want)))
 				}
 			} else {
 				if obj != nil {

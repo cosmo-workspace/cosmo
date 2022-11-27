@@ -76,9 +76,10 @@ func overrideIngressRules(ingress *unstructured.Unstructured, ingRules []netv1.I
 	}
 
 	modified := uing.DeepCopy()
+	modified.Spec.Rules = []netv1.IngressRule{}
 	for _, rule := range ingRules {
 		ruleFound := false
-		for ri, uRule := range uing.Spec.Rules {
+		for ri, uRule := range modified.Spec.Rules {
 			if uRule.Host == rule.Host {
 				ruleFound = true
 
@@ -118,24 +119,23 @@ func overrideServicePort(svc *unstructured.Unstructured, svcPorts []corev1.Servi
 	}
 
 	if spec, ok := NestedMap(svc.Object, "spec"); ok {
-		if ports, ok := NestedSlice(spec, "ports"); ok {
-			for _, v := range svcPorts {
-				obj, err := ToUnstructured(&v)
-				if err == nil {
-					found := false
-					for i, p := range ports {
-						pm, ok := p.(map[string]interface{})
-						if ok && pm["name"] == obj["name"] {
-							ports[i] = obj
-							found = true
-						}
-					}
-					if !found {
-						ports = append(ports, obj)
+		ports := []interface{}{}
+		for _, v := range svcPorts {
+			obj, err := ToUnstructured(&v)
+			if err == nil {
+				found := false
+				for i, p := range ports {
+					pm, ok := p.(map[string]interface{})
+					if ok && pm["name"] == obj["name"] {
+						ports[i] = obj
+						found = true
 					}
 				}
+				if !found {
+					ports = append(ports, obj)
+				}
 			}
-			spec["ports"] = ports
 		}
+		spec["ports"] = ports
 	}
 }

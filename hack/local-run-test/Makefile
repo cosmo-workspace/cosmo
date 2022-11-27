@@ -175,7 +175,8 @@ apply-template: kubectl cosmoctl docker-build-cs ## Apply template.
 	@echo ====== $@ ======
 	until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
 	until (kubectl apply -f ../../example/fixed-efs-pv-useraddon.yaml) do sleep 1; done
-	cd templates/code-server-01 && $(MAKE) apply
+	$(MAKE) -C templates/code-server-01 apply
+	$(MAKE) -C templates/example apply
 
 BASEURL := https://$(DASHBOARD_URL)
 

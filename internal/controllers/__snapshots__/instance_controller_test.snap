@@ -427,13 +427,6 @@ SnapShot = """
   \"spec\": {
     \"ports\": [
       {
-        \"name\": \"main\",
-        \"protocol\": \"TCP\",
-        \"port\": 80,
-        \"targetPort\": 80,
-        \"nodePort\": 30000
-      },
-      {
         \"name\": \"add\",
         \"protocol\": \"TCP\",
         \"port\": 9090,
@@ -485,25 +478,6 @@ SnapShot = """
   },
   \"spec\": {
     \"rules\": [
-      {
-        \"host\": \"test-inst1-default.example.com\",
-        \"http\": {
-          \"paths\": [
-            {
-              \"path\": \"/\",
-              \"pathType\": \"Prefix\",
-              \"backend\": {
-                \"service\": {
-                  \"name\": \"test-inst1-nginx\",
-                  \"port\": {
-                    \"number\": 80
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
       {
         \"host\": \"add.example.com\",
         \"http\": {
