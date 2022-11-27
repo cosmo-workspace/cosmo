@@ -9,21 +9,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@bufbuild/connect-web": "0.3.1",
-    "@bufbuild/protobuf": "0.2.1",
+    "@bufbuild/connect-web": "0.3.2",
+    "@bufbuild/protobuf": "0.3.0",
     "@emotion/react": "11.10.5",
     "@emotion/styled": "11.10.5",
-    "@mui/icons-material": "5.10.9",
-    "@mui/material": "5.10.12",
+    "@mui/icons-material": "5.10.15",
+    "@mui/material": "5.10.15",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-error-boundary": "3.1.4"
   },
   "devDependencies": {
     "@types/react": "18.0.25",
-    "@types/react-dom": "18.0.8",
+    "@types/react-dom": "18.0.9",
     "@vitejs/plugin-react": "2.2.0",
-    "typescript": "4.8.4",
-    "vite": "3.2.3"
+    "typescript": "4.9.3",
+    "vite": "3.2.4"
   }
 }

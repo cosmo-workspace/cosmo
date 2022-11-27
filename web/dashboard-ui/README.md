@@ -16,7 +16,6 @@ yarn add \
   @mui/material @mui/icons-material \
   @emotion/react @emotion/styled \
   react-router-dom \
-  axios \
   notistack \
   react-error-boundary \
   react-hook-form \
