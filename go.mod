@@ -19,7 +19,7 @@ require (
 	github.com/sethvargo/go-password v0.2.0
 	github.com/spf13/afero v1.9.3
 	github.com/spf13/cobra v1.6.1
-	go.uber.org/zap v1.23.0
+	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.3.0
 	google.golang.org/protobuf v1.28.1
 	k8s.io/api v0.25.4
