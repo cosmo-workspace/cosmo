@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/bufbuild/connect-go v1.2.0
-	github.com/envoyproxy/protoc-gen-validate v0.9.0
+	github.com/envoyproxy/protoc-gen-validate v0.9.1
 	github.com/evanphx/json-patch/v5 v5.6.0
 	github.com/go-logr/logr v1.2.3
 	github.com/google/go-cmp v0.5.9
