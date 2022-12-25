@@ -1,7 +1,7 @@
 {
   "private": true,
   "dependencies": {
-    "@bufbuild/protoc-gen-connect-web": "0.3.2",
-    "@bufbuild/protoc-gen-es": "0.3.0"
+    "@bufbuild/protoc-gen-connect-web": "0.5.0",
+    "@bufbuild/protoc-gen-es": "1.0.0"
   }
 }

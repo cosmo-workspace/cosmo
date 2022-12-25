@@ -136,8 +136,12 @@ exports[`TextFieldLabel > TextFieldLabel 1`] = `
   transform: scaleX(1) translateX(0);
 }
 
+.emotion-2.Mui-error:before,
 .emotion-2.Mui-error:after {
   border-bottom-color: #d32f2f;
+}
+
+.emotion-2.Mui-error:focus-within:after {
   -webkit-transform: scaleX(1);
   -moz-transform: scaleX(1);
   -ms-transform: scaleX(1);
@@ -156,7 +160,7 @@ exports[`TextFieldLabel > TextFieldLabel 1`] = `
   pointer-events: none;
 }
 
-.emotion-2:hover:not(.Mui-disabled):before {
+.emotion-2:hover:not(.Mui-disabled, .Mui-error):before {
   border-bottom: 1px solid rgba(0, 0, 0, 0.87);
 }
 
@@ -442,8 +446,12 @@ exports[`TextFieldLabel > TextFieldLabel startAdornmentIcon 1`] = `
   transform: scaleX(1) translateX(0);
 }
 
+.emotion-2.Mui-error:before,
 .emotion-2.Mui-error:after {
   border-bottom-color: #d32f2f;
+}
+
+.emotion-2.Mui-error:focus-within:after {
   -webkit-transform: scaleX(1);
   -moz-transform: scaleX(1);
   -ms-transform: scaleX(1);
@@ -462,7 +470,7 @@ exports[`TextFieldLabel > TextFieldLabel startAdornmentIcon 1`] = `
   pointer-events: none;
 }
 
-.emotion-2:hover:not(.Mui-disabled):before {
+.emotion-2:hover:not(.Mui-disabled, .Mui-error):before {
   border-bottom: 1px solid rgba(0, 0, 0, 0.87);
 }
 
