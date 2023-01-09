@@ -12,7 +12,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.1
 	github.com/mattn/go-isatty v0.0.16
-	github.com/onsi/ginkgo/v2 v2.6.1
+	github.com/onsi/ginkgo/v2 v2.7.0
 	github.com/onsi/gomega v1.24.2
 	github.com/pelletier/go-toml/v2 v2.0.6
 	github.com/prometheus/client_golang v1.14.0
