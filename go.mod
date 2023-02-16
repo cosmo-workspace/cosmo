@@ -12,8 +12,8 @@ require (
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.1
 	github.com/mattn/go-isatty v0.0.16
-	github.com/onsi/ginkgo/v2 v2.6.1
-	github.com/onsi/gomega v1.24.2
+	github.com/onsi/ginkgo/v2 v2.8.1
+	github.com/onsi/gomega v1.27.0
 	github.com/pelletier/go-toml/v2 v2.0.6
 	github.com/prometheus/client_golang v1.14.0
 	github.com/sethvargo/go-password v0.2.0
@@ -73,11 +73,11 @@ require (
 	go.starlark.net v0.0.0-20221205180719-3fd0dac74452 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/net v0.4.0 // indirect
+	golang.org/x/net v0.6.0 // indirect
 	golang.org/x/oauth2 v0.3.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/term v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/term v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
