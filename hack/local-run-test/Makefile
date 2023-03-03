@@ -50,7 +50,7 @@ create-cluster: k3d helm kubectl  ## Create k3s cluster with cert-manager.
 			-p "15000:80@loadbalancer" \
 			--registry-create cosmo.io:0.0.0.0:5000 \
 			--agents 2 \
-			--k3s-arg "--no-deploy=local-storage@server:*" \
+			--k3s-arg "--disable=local-storage@server:*" \
 			--k3s-arg "--debug@server:*" \
 		&& \
 		echo ====== deploy cert-manager ====== && \
