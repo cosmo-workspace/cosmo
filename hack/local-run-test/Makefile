@@ -50,7 +50,7 @@ create-cluster: k3d helm kubectl  ## Create k3s cluster with cert-manager.
 			-p "15000:80@loadbalancer" \
 			--registry-create cosmo.io:0.0.0.0:5000 \
 			--agents 2 \
-			--k3s-arg "--no-deploy=local-storage@server:*" \
+			--k3s-arg "--disable=local-storage@server:*" \
 			--k3s-arg "--debug@server:*" \
 		&& \
 		echo ====== deploy cert-manager ====== && \
@@ -59,8 +59,8 @@ create-cluster: k3d helm kubectl  ## Create k3s cluster with cert-manager.
 		helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager \
 			--create-namespace --version v1.10.0 --set installCRDs=true --wait && \
 		echo ====== wait traefik ====== && \
-		until (kubectl get po -n kube-system -l app.kubernetes.io/instance=traefik  | grep traefik) do sleep 1; done ; \
-		kubectl wait po -n kube-system -l app.kubernetes.io/instance=traefik --for condition=Ready ; \
+		until (kubectl get po -n kube-system -l app.kubernetes.io/name=traefik  | grep traefik) do sleep 1; done ; \
+		kubectl wait po -n kube-system -l app.kubernetes.io/name=traefik --for condition=Ready ; \
 	}
 
 delete-cluster: k3d  ## Delete k3s cluster.
