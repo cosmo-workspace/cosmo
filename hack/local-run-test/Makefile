@@ -6,12 +6,21 @@ unexport KUBERNETES_SERVICE_PORT
 unexport KUBERNETES_SERVICE_HOST
 unexport KUBERNETES_PORT
 
-# $VSCODE_PROXY_URI => https://main-wsname-cosmo-user-username.domain.name/proxy/{{port}}
-#                                   |-----PARENT_URLBASE-----| |--DOMAIN-|
-PARENT_URLBASE ?= $(shell echo $$VSCODE_PROXY_URI | grep -Po "(?<=://main-)[^\.]*")
-DOMAIN ?= $(shell echo $$VSCODE_PROXY_URI | grep -Po "(?<=\.)[^/]*")
+# To access services on k3d in code-server from outside the cluster,
+# DNS `*.domain.name` must be configured to be name-resolved to Ingress for code-server
+# and to be routed to code-sever Pod's 15000 port
+
+# In code-server, the URL can be got in the env $VSCODE_PROXY_URI (e.g. `https://example.domain.name/proxy/{{port}}`)
+# COSMO Dashboard on k3d is configured to be available at `https://dash-k3d-example.domain.name`
+VSCODE_PROXY_URI ?= $$VSCODE_PROXY_URI
+PARENT_URLBASE ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=://)[^\.]*")
+DOMAIN ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=\.)[^/]*")
 DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
 DASHBOARD_URL := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
+
+show-url:
+	@echo DEFAULT_URLBASE_HOST=$(DEFAULT_URLBASE_HOST)
+	@echo DASHBOARD_URL=$(DASHBOARD_URL)
 
 ##---------------------------------------------------------------------
 ##@ General
