@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 BIN := $(shell pwd)/bin
 export BIN_DIR := $(BIN)
 export PATH := $(BIN):$(PATH)
@@ -6,6 +7,15 @@ unexport KUBERNETES_SERVICE_PORT
 unexport KUBERNETES_SERVICE_HOST
 unexport KUBERNETES_PORT
 
+##---------------------------------------------------------------------
+##@ General
+##---------------------------------------------------------------------
+help: ## Display this help.
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+
+##---------------------------------------------------------------------
+##@ show variables
+##---------------------------------------------------------------------
 # To access services on k3d in code-server from outside the cluster,
 # DNS `*.domain.name` must be configured to be name-resolved to Ingress for code-server
 # and to be routed to code-sever Pod's 15000 port
@@ -18,16 +28,12 @@ DOMAIN ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=\.)[^/]*")
 DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
 DASHBOARD_URL := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
 
-show-url:
+show-url: ## show-url
+	@echo ----------------------------------------------------
 	@echo DEFAULT_URLBASE_HOST=$(DEFAULT_URLBASE_HOST)
 	@echo DASHBOARD_URL=$(DASHBOARD_URL)
-
-##---------------------------------------------------------------------
-##@ General
-##---------------------------------------------------------------------
-help: ## Display this help.
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
+	@echo TRAEFIK_DASHBOARD_URL=traefik-dashboard-k3d-$(PARENT_URLBASE).$(DOMAIN)/
+	@echo ----------------------------------------------------
 
 ##---------------------------------------------------------------------
 ##@ Batch processing
@@ -45,32 +51,40 @@ install-all: install-manager install-dashboard ## Install cosmo resources.
 uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resources.
 
 ##---------------------------------------------------------------------
-##@ Kubenetes environment
+##@ Kubernetes environment
 ##---------------------------------------------------------------------
 CLUSTER_NAME := cosmo
-.PHONY: create-cluster delete-cluster
+.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik
 
-create-cluster: k3d helm kubectl  ## Create k3s cluster with cert-manager.
+create-k3d-cluster: k3d kubectl  ## Create k3s cluster.
 	@echo ====== $@ ======
 	@k3d cluster list $(CLUSTER_NAME) > /dev/null 2>&1 && echo "This cluster has already been created" || { \
-		echo ====== create cluster ======= && \
 		k3d cluster create $(CLUSTER_NAME) \
+			-i rancher/k3s:v1.24.11-k3s1 \
 			--api-port 43000 \
 			-p "15000:80@loadbalancer" \
+			-p "15080:80@loadbalancer" \
+			-p "15443:443@loadbalancer" \
 			--registry-create cosmo.io:0.0.0.0:5000 \
 			--agents 2 \
+			--k3s-arg "-v=2@server:*" \
 			--k3s-arg "--disable=local-storage@server:*" \
-			--k3s-arg "--debug@server:*" \
-		&& \
-		echo ====== deploy cert-manager ====== && \
-		helm repo add jetstack https://charts.jetstack.io && \
-		helm repo update && \
-		helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager \
-			--create-namespace --version v1.10.0 --set installCRDs=true --wait && \
-		echo ====== wait traefik ====== && \
-		until (kubectl get po -n kube-system -l app.kubernetes.io/name=traefik  | grep traefik) do sleep 1; done ; \
-		kubectl wait po -n kube-system -l app.kubernetes.io/name=traefik --for condition=Ready ; \
+			--k3s-arg "--disable=traefik@server:*" ; \
 	}
+deploy-cert-manager: create-k3d-cluster helm ## Deploy cert-manager.
+	@echo ====== $@ ======
+	helm repo add jetstack https://charts.jetstack.io
+	helm repo update
+	helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager \
+		--create-namespace --version v1.10.0 --set installCRDs=true --wait
+
+deploy-traefik: create-k3d-cluster helm docker-build-traefik-plugins ## Deploy traefik.
+	@echo ====== $@ ======
+	helm upgrade --install traefik ../../charts/cosmo-traefik -n kube-system \
+		--wait \
+	 	-f ./charts/traefik.values.yaml
+
+create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik  ## Create k3s cluster.
 
 delete-cluster: k3d  ## Delete k3s cluster.
 	@echo ====== $@ ======
@@ -84,8 +98,9 @@ IMAGE_TAG ?= latest
 MANAGER_IMAGE_TAG   ?= $(IMAGE_TAG)
 DASHBOARD_IMAGE_TAG ?= $(IMAGE_TAG)
 AUTHPROXY_IMAGE_TAG ?= $(IMAGE_TAG)
+TRAEFIK_PLUGINS_IMAGE_TAG ?= $(IMAGE_TAG)
 
-.PHONY: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-cache-clear
+.PHONY: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-build-traefik-plugins docker-cache-clear
 
 docker-build-manager: ## build & push cosmo contoller-manager image.
 	@echo ====== $@ ======
@@ -108,16 +123,28 @@ docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
 	docker push localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
 	k3d image import localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) -c $(CLUSTER_NAME)
 
+docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
+	@echo ====== $@ ======
+	cd ../.. && make docker-build-traefik-plugins VERSION=$(TRAEFIK_PLUGINS_IMAGE_TAG) QUICK_BUILD=yes
+	docker tag traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
+	docker push localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
+	k3d image import localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) -c $(CLUSTER_NAME)
+	-kubectl rollout restart deploy -n kube-system traefik
+
+
 docker-cache-clear: ## docker cache clear.
-	docker system df
-	docker rmi `docker images -f "dangling=true" -q`
-	docker builder prune
+	-docker system df
+	-docker images
+	-docker rmi `docker images -f "dangling=true" -q`
+	-docker builder prune -f
+	-docker system df
+	-docker images
 
 ##---------------------------------------------------------------------
-##@ Install to k8s
+##@ Install cosmo to k8s
 ##---------------------------------------------------------------------
-.PHONY: install-manager install-dashboard
-.PHONY: uninstall-manager uninstall-dashboard
+.PHONY: install-manager   uninstall-manager
+.PHONY: install-dashboard uninstall-dashboard
 
 LOGLEVEL ?= info
 
@@ -181,7 +208,8 @@ apply-template: kubectl cosmoctl docker-build-cs ## Apply template.
 	@echo ====== $@ ======
 	until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
 	until (kubectl apply -f ../../example/fixed-efs-pv-useraddon.yaml) do sleep 1; done
-	cd templates/code-server-01 && $(MAKE) apply
+	$(MAKE) -C templates/code-server-01 apply
+	# $(MAKE) -C templates/example apply
 
 BASEURL := https://$(DASHBOARD_URL)
 
@@ -206,14 +234,17 @@ add-workspace: kubectl cosmoctl
 	-cosmoctl workspace create --user=tom --template=code-server-01 ws1
 	sleep 5
 	-cosmoctl networkrule add proxy11 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /
+	sleep 1
 	-cosmoctl networkrule add proxy12 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /aaa
+	sleep 1
 	-cosmoctl networkrule add proxy13 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /bbb --public
+	sleep 1
 	-cosmoctl networkrule add proxy21 --user=tom --workspace=ws1 --port=7701 --group proxy2 --path /
 
 ##---------------------------------------------------------------------
 ##@ Execute test
 ##---------------------------------------------------------------------
-.PHONY: run rerun stop
+.PHONY: run-manager run-local rerun stop
 
 run-manager:
 	@echo ====== $@ ======
@@ -306,15 +337,15 @@ bin/kubectl:
 ##---------------------------------------------------------------------
 ##@ Utility
 ##---------------------------------------------------------------------
-bash: ## Activate kubeconfig for local k8s. 
-	@bash --rcfile bashrc 
+console: ## Activate kubeconfig for local k8s. 
+	@bash -rcfile <(echo ". ~/.bashrc;PS1='\[\033[01;32m\]\u@test-env\[\033[00m\]:\[\033[01;35m\]\W\[\033[00m\]$$ '")
 
 helm-ls: ## helm list
-	@helm list -a -A
+	-@helm list -a -A
 
-k: ## Get k0s resources.
-	@kubectl get node
-	@kubectl get po -A
-	@kubectl get ing -A
-	@kubectl get svc -A
-	@kubectl get ep -A
+kg: ## Get k0s resources.
+	-@kubectl get node
+	-@kubectl get po -A
+	-@kubectl get ing -A
+	-@kubectl get svc -A
+	-@kubectl get ep -A

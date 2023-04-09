@@ -24,7 +24,7 @@ ENV LANG="ja_JP.UTF-8"
 ## kubectl install
 ##---------------------------------------------------
 RUN	KUBE_VER=`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt` \
- && curl -L -o /usr/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$(KUBE_VER)/bin/linux/amd64/kubectl" \
+ && curl -L -o /usr/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/$KUBE_VER/bin/linux/amd64/kubectl" \
  && chmod +x /usr/bin/kubectl
 
 ##---------------------------------------------------

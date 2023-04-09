@@ -5,6 +5,12 @@ metadata:
     {{- include "cosmo-dashboard.labels" . | nindent 4 }}
   name: cosmo-dashboard
   namespace: {{ .Release.Namespace }}
+  annotations:
+  {{- if .Values.insecure }}
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+  {{ else }}
+    traefik.ingress.kubernetes.io/service.serversscheme: https
+  {{- end }}
 spec:
   ports:
   - name: cosmo-dashboard

@@ -8,6 +8,8 @@ MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
 COSMOCTL_VERSION  ?= $(VERSION)
 AUTHPROXY_VERSION ?= $(VERSION)
+TRAEFIK_PLUGINS_VERSION ?= $(VERSION)
+
 
 CHART_MANAGER_VERSION   ?= $(MANAGER_VERSION)
 CHART_DASHBOARD_VERSION ?= $(DASHBOARD_VERSION)
@@ -15,6 +17,7 @@ CHART_DASHBOARD_VERSION ?= $(DASHBOARD_VERSION)
 IMG_MANAGER ?= cosmo-controller-manager:$(MANAGER_VERSION)
 IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
 IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
+IMG_TRAEFIK_PLUGINS ?= traefik-plugins:$(TRAEFIK_PLUGINS_VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:generateEmbeddedObjectMeta=true"
 
@@ -23,9 +26,6 @@ CRD_OPTIONS ?= "crd:generateEmbeddedObjectMeta=true"
 # Options are set to exit when a recipe line exits non-zero or a piped command fails.
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
-
-.PHONY: all
-all: manager cosmoctl dashboard auth-proxy
 
 ##---------------------------------------------------------------------
 ##@ General
@@ -45,6 +45,9 @@ all: manager cosmoctl dashboard auth-proxy
 .PHONY: help
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+
+.PHONY: all
+all: manager cosmoctl dashboard auth-proxy
 
 ##---------------------------------------------------------------------
 ##@ Development
@@ -108,26 +111,22 @@ gen-charts:
 .PHONY: manifests
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 ifeq ($(QUICK_BUILD),no)
-	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./api/..." output:crd:artifacts:config=config/crd/bases
 	make gen-charts
 endif
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 ifeq ($(QUICK_BUILD),no)
-	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
+	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./api/..."
 endif
 
 .PHONY: proto-generate 
 proto-generate:  ## Generate code protocol buffer api.
 	make -C proto/ all
 
-.PHONY: chart-crd
-chart-crd: manifests
-	kustomize build ./config/crd/ > charts/stable/cosmo-controller-manager/templates/crd/crd.yaml
-
 .PHONY: chart-check
-chart-check: chart-crd
+chart-check: helm gen-charts
 	./hack/diff-chart-kust.sh controller-manager
 	./hack/diff-chart-kust.sh dashboard
 
@@ -152,7 +151,7 @@ COVER_PROFILE ?= cover.out
 
 .PHONY: clear-snapshots
 clear-snapshots: ## Clear snapshots
-	find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
+	-find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
 
 .PHONY: go-test.env
 go-test.env: 
@@ -180,7 +179,7 @@ endif
 
 .PHONY: clear-snapshots-ui
 clear-snapshots-ui: ## Clear snapshots ui
-	find ./web -type f | grep __snapshots__ | xargs rm -f
+	-find ./web -type f | grep __snapshots__ | xargs rm -f
 
 .PHONY: ui-test
 ui-test: ## Run UI tests.
@@ -244,6 +243,7 @@ LOG_LEVEL ?= 3
 run-dashboard: go generate fmt vet manifests ## Run dashboard against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/dashboard/main.go \
 		--zap-log-level $(LOG_LEVEL) \
+		--zap-time-encoding=iso8601 \
 		--insecure
 
 .PHONY: run-dashboard-ui
@@ -254,6 +254,7 @@ run-dashboard-ui: ## Run dashboard-ui.
 run-auth-proxy: go generate fmt vet manifests ## Run auth-proxy against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/auth-proxy/main.go \
 		--zap-log-level $(LOG_LEVEL) \
+		--zap-time-encoding=iso8601 \
 		--insecure
 
 .PHONY: run-auth-proxy-ui
@@ -264,6 +265,7 @@ run-auth-proxy-ui: ## Run auth-proxy-ui.
 run: go generate fmt vet manifests ## Run controller-manager against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/controller-manager/main.go \
 		--zap-log-level $(LOG_LEVEL) \
+		--zap-time-encoding=iso8601 \
 		--metrics-bind-address :8085 \
 		--cert-dir .
 
@@ -271,7 +273,7 @@ run: go generate fmt vet manifests ## Run controller-manager against the configu
 ##@ Docker build
 ##---------------------------------------------------------------------
 .PHONY: docker-build
-docker-build: docker-build-manager docker-build-dashboard docker-build-auth-proxy ## Build the docker image.
+docker-build: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-build-traefik-plugins ## Build the docker image.
 
 .PHONY: docker-build-manager
 docker-build-manager: test ## Build the docker image for controller-manager.
@@ -284,6 +286,33 @@ docker-build-dashboard: test ## Build the docker image for dashboard.
 .PHONY: docker-build-auth-proxy
 docker-build-auth-proxy: test ## Build the docker image for auth-proxy.
 	DOCKER_BUILDKIT=1 docker build . -t ${IMG_AUTHPROXY} -f dockerfile/auth-proxy.Dockerfile
+
+.PHONY: docker-build-traefik-plugins
+docker-build-traefik-plugins: test ## Build the docker image for traefik-plugins.
+	# cd traefik/plugins/cosmo/authenticate && ${MAKE} vendor 
+	DOCKER_BUILDKIT=1 docker build . -t ${IMG_TRAEFIK_PLUGINS} -f dockerfile/traefik-plugins.Dockerfile
+
+
+.PHONY: docker-push docker-push-manager docker-push-dashboard docker-push-auth-proxy docker-push-traefik-plugins
+docker-push: docker-push-manager docker-push-dashboard docker-push-auth-proxy docker-push-traefik-plugins ## Build the docker image.
+
+REGISTORY ?= ghcr.io/cosmo-workspace
+
+docker-push-manager: docker-build-manager ## push cosmo contoller-manager image.
+	docker tag ${IMG_MANAGER} ${REGISTORY}/${IMG_MANAGER}
+	docker push ${REGISTORY}/${IMG_MANAGER}
+
+docker-push-dashboard: docker-build-dashboard ## push cosmo dashboard image.
+	docker tag ${IMG_DASHBOARD} ${REGISTORY}/${IMG_DASHBOARD}
+	docker push ${REGISTORY}/${IMG_DASHBOARD}
+
+docker-push-auth-proxy: docker-build-auth-proxy ## push cosmo auth-proxy image.
+	docker tag ${IMG_AUTHPROXY} ${REGISTORY}/${IMG_AUTHPROXY}
+	docker push ${REGISTORY}/${IMG_AUTHPROXY}
+
+docker-push-traefik-plugins: docker-build-traefik-plugins ## push cosmo traefik-plugins image.
+	docker tag ${IMG_TRAEFIK_PLUGINS} ${REGISTORY}/${IMG_TRAEFIK_PLUGINS}
+	docker push ${REGISTORY}/${IMG_TRAEFIK_PLUGINS}
 
 ##---------------------------------------------------------------------
 ##@ Deployment
@@ -313,7 +342,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 ##---------------------------------------------------------------------
 
 ## Tool Versions
-GO_VERSION ?= 1.19
+GO_VERSION ?= 1.19.4
 KUSTOMIZE_VERSION ?= v4.5.7
 CONTROLLER_TOOLS_VERSION ?= v0.10.0
 
@@ -324,6 +353,8 @@ ENVTEST_K8S_VERSION ?= 1.25.x
 LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
+
+export PATH := $(LOCALBIN):$(PATH)
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -337,6 +368,7 @@ GO ?= $(GOBIN)/go$(GO_VERSION)
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
+HELM ?= $(LOCALBIN)/helm
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
@@ -362,3 +394,9 @@ $(GO):
 
 .PHONY: configure
 configure: kustomize controller-gen envtest
+
+.PHONY: helm
+helm: $(HELM) ## Download helm locally if necessary.
+$(HELM): $(LOCALBIN)
+	export HELM_INSTALL_DIR=$(LOCALBIN) && \
+	curl -s curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash

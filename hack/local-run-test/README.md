@@ -10,6 +10,9 @@
 ```
 $ cd hack/local-run-test
 $ make create-all
+
+$ make console
+$ kubectl get po -A
 ```
 
 #### delete
@@ -35,6 +38,9 @@ For repeating programming and testing.
 $ cd hack/local-run-test
 $ make create-all
 $ make run-local
+
+$ make console
+$ kubectl get po -A
 ```
 
 #### delete
