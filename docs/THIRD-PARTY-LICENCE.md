@@ -64,7 +64,7 @@
 | sigs.k8s.io/controller-runtime      | Apache License 2.0   | https://github.com/kubernetes-sigs/controller-runtime/blob/master/LICENSE |
 | sigs.k8s.io/kustomize/api           | Apache License 2.0   | https://github.com/kubernetes-sigs/kustomize/blob/master/LICENSE          |
 | sigs.k8s.io/yaml                    | MIT                  | https://github.com/kubernetes-sigs/yaml/blob/master/LICENSE               |
-| github.com/prometheus/client_golang | Apache License 2.0   | https://github.com/prometheus/client_golang/blob/main/LICENSE              |
+| github.com/prometheus/client_golang | Apache License 2.0   | https://github.com/prometheus/client_golang/blob/main/LICENSE             |
 
 ## Others
 
@@ -73,6 +73,7 @@
 | code-server       | MIT                            | https://github.com/cdr/code-server/blob/main/LICENSE.txt              |
 | create-react-app  | MIT                            | https://github.com/facebook/create-react-app/blob/main/LICENSE        |
 | docker            | Apache License 2.0             | https://github.com/docker/docker-ce/blob/master/LICENSE               |
+| traefik proxy     | MIT                            | https://github.com/traefik/traefik/blob/master/LICENSE.md             |
 | Go                | BSD 3-Clause License           | https://github.com/golang/go/blob/master/LICENSE                      |
 | helm              | Apache License 2.0             | https://github.com/helm/helm/blob/main/LICENSE                        |
 | kubebuilder       | Apache License 2.0             | https://github.com/kubernetes-sigs/kubebuilder/blob/master/LICENSE    |

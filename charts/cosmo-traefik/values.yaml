@@ -1,0 +1,167 @@
+# Default values for cosmo-traefik.
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Definition of ingress for external Loadbalancer.
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: "*.traefik.local"
+      paths:
+        - path: /
+          pathType: Prefix
+          entryPoint: websecure
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# see https://github.com/k3s-io/k3s/blob/master/manifests/traefik.yaml
+traefik:
+  enable: true
+  fullnameOverride: traefik
+  namespaceOverride: kube-system
+  #
+  # Configure the deployment
+  #
+  deployment:
+    # Additional volumes available for use with initContainers and additionalContainers  
+    additionalVolumes:
+      - name: local-plugins
+        emptyDir: {}
+    # Additional initContainers (e.g. for setting file permission as shown below)
+    initContainers:
+      - name: copy-plugins
+        image: "ghcr.io/cosmo-workspace/traefik-plugins:xxxx"
+        imagePullPolicy: Always
+        command: ["sh", "-c", "cp -r /plugins-local/* /local-plugins/"]
+        volumeMounts:
+          - name: local-plugins
+            mountPath: /local-plugins
+  # Create a default IngressClass for Traefik
+  ingressClass:
+    enabled: true
+    isDefaultClass: false
+
+  # Enable experimental features
+  experimental:
+    plugins:
+      enabled: true
+
+  # Create an IngressRoute for the dashboard
+  ingressRoute:
+    dashboard:
+      enabled: true
+      # The router match rule used for the dashboard ingressRoute
+      matchRule: HostRegexp(`{host:^traefik-dashboard.*$}`)
+      # Specify the allowed entrypoints to use for the dashboard ingress route, (e.g. traefik, web, websecure).
+      # By default, it's using traefik entrypoint, which is not exposed.
+      # /!\ Do not expose your dashboard without any protection over the internet /!\
+      entryPoints: ["web","websecure", "traefik"]
+      # Additional ingressRoute middlewares (e.g. for authentication)
+      middlewares:
+        - name: traefik-dashboard-auth
+
+  #
+  # Configure providers
+  #
+  providers:
+    kubernetesCRD:
+      allowCrossNamespace: true
+
+    kubernetesIngress:
+      # IP used for Kubernetes Ingress endpoints
+      publishedService:
+        enabled: true
+  # Additional volumeMounts to add to the Traefik container
+  additionalVolumeMounts:
+    - name: local-plugins
+      mountPath: /plugins-local
+
+  logs:
+    ## Traefik logs concern everything that happens to Traefik itself (startup, configuration, events, shutdown, and so on).
+    general:
+      level: DEBUG
+    access:
+      # To enable access logs
+      enabled: true
+  
+  globalArguments:
+    # - "--global.checknewversion"
+    - "--global.sendanonymoususage"
+    - "--serversTransport.insecureSkipVerify=true"
+
+  #
+  # Configure Traefik static configuration
+  # Additional arguments to be passed at Traefik's binary
+  # All available options available on https://docs.traefik.io/reference/static-configuration/cli/
+  ## Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
+  additionalArguments:
+    - "--log.level=DEBUG"
+    - "--experimental.localPlugins.ldapAuth.modulename=github.com/wiltonsr/ldapAuth"
+    # - "--experimental.localPlugins.authenticate.modulename=github.com/cosmo/authenticate"
+
+  # Configure ports
+  ports:
+    web:
+      forwardedHeaders:
+        insecure: true
+    websecure:
+      forwardedHeaders:
+        insecure: true
+      ## Set TLS at the entrypoint
+      ## https://doc.traefik.io/traefik/routing/entrypoints/#tls
+      tls:
+        enabled: true
+  # Options for the main traefik service, where the entrypoints traffic comes
+  # from.
+  service:
+    enabled: true
+    type: ClusterIP
+    ipFamilyPolicy: "PreferDualStack"
+
+  # for k3d. see https://github.com/k3s-io/k3s/blob/master/manifests/traefik.yaml
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  # Pods can have priority.
+  # Priority indicates the importance of a Pod relative to other Pods.
+  priorityClassName: "system-cluster-critical"
+
+  #
+  # Extra objects to deploy (value evaluated as a template)
+  #
+  # In some cases, it can avoid the need for additional, extended or adhoc deployments.
+  # See #595 for more details and traefik/tests/values/extra.yaml for example.
+  extraObjects:
+    - apiVersion: v1
+      kind: Secret
+      metadata:
+        name: traefik-dashboard-auth-secret
+        namespace: kube-system
+      type: kubernetes.io/basic-auth
+      stringData:
+        username: admin
+        password: adminadmin
+
+    - apiVersion: traefik.containo.us/v1alpha1
+      kind: Middleware
+      metadata:
+        name: traefik-dashboard-auth
+        namespace: kube-system
+      spec:
+        #digestAuth:
+        basicAuth:
+          secret: traefik-dashboard-auth-secret
