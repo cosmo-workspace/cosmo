@@ -19,7 +19,7 @@ fi
 
 kustomize build config/$app/ > $TMP_DIR/kust.yaml
 
-helm template cosmo -n cosmo-system $HELM_OPT ./charts/stable/cosmo-$app/ > $TMP_DIR/helm.yaml
+helm template cosmo -n cosmo-system $HELM_OPT ./charts/cosmo-$app/ > $TMP_DIR/helm.yaml
 
 kDocIndex=$($YQ eval 'documentIndex' $TMP_DIR/kust.yaml | tail -1)
 hDocIndex=$($YQ eval 'documentIndex' $TMP_DIR/helm.yaml | tail -1)
