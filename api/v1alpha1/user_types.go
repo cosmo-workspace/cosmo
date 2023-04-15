@@ -72,7 +72,7 @@ type UserList struct {
 
 type UserSpec struct {
 	DisplayName string       `json:"displayName,omitempty"`
-	Role        UserRole     `json:"role,omitempty"`
+	Roles       []UserRole   `json:"roles,omitempty"`
 	AuthType    UserAuthType `json:"authType,omitempty"`
 	Addons      []UserAddon  `json:"addons,omitempty"`
 }
@@ -95,31 +95,21 @@ type UserAddonTemplateRef struct {
 	ClusterScoped bool   `json:"clusterScoped,omitempty"`
 }
 
-// +kubebuilder:validation:enum=cosmo-admin
-// UserRole enums
-type UserRole string
+type UserRole struct {
+	Name string `json:"name"`
+}
 
 const (
-	UserAdminRole UserRole = "cosmo-admin"
+	UserAdminRole string = "cosmo-admin"
 )
 
-func (r UserRole) IsAdmin() bool {
-	return r == UserAdminRole
-}
-
-func (r UserRole) IsValid() bool {
-	switch r {
-	case UserAdminRole:
-		return true
-	case UserRole(""):
-		return true
-	default:
-		return false
+func (u User) IsAdmin() bool {
+	for _, role := range u.Spec.Roles {
+		if role.Name == UserAdminRole {
+			return true
+		}
 	}
-}
-
-func (r UserRole) String() string {
-	return string(r)
+	return false
 }
 
 // +kubebuilder:validation:enum=kosmo-secret
