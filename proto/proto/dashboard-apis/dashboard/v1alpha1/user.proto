@@ -10,8 +10,7 @@ package dashboard.v1alpha1;
 message User {
   string name = 1;
   string display_name = 2;
-  // {"","cosmo-admin"}
-  string role = 3;
+  repeated string roles = 3;
   // {"","kosmo-secret"}
   string auth_type = 4;
   repeated UserAddons addons = 5;

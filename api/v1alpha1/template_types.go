@@ -13,8 +13,13 @@ const (
 
 	// TemplateAnnKeyDisableNamePrefix is an annotation key on Template to notify controller not to add name prefix
 	TemplateAnnKeyDisableNamePrefix = "cosmo-workspace.github.io/disable-nameprefix"
-	// TemplateAnnKeySkipValidation is anannotation key on Template to notify webhook not to validate
-	TemplateAnnKeySkipValidation = "cosmo-workspace.github.io/skip-validation"
+	// TemplateAnnKeySkipValidation is an annotation key on Template to notify webhook not to validate
+	TemplateAnnKeySkipValidation = "cosmo-annotation.github.io/skip-validation"
+
+	// TemplateAnnKeyUserRoles is an annotation key on Template for specific UserRoles
+	TemplateAnnKeyUserRoles = "cosmo-workspace.github.io/userroles"
+	// TemplateAnnKeyForbiddenUserRoles is an annotation key on Template which is not for specific UserRoles
+	TemplateAnnKeyForbiddenUserRoles = "cosmo-workspace.github.io/forbidden-userroles"
 )
 
 func init() {
