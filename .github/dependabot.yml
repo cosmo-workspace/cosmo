@@ -9,6 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 0
 
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/web/dashboard-ui" # Location of package manifests
