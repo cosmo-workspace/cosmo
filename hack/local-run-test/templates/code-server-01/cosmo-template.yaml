@@ -14,6 +14,7 @@ metadata:
   name: code-server-01
 spec:
   rawYaml: |
+    # Warning: 'patchesStrategicMerge' is deprecated. Please use 'patches' instead. Run 'kustomize edit fix' to update your Kustomization automatically.
     apiVersion: v1
     kind: Service
     metadata:
