@@ -26,6 +26,18 @@ const (
 	AuthProxyServiceName = "authproxy.v1alpha1.AuthProxyService"
 )
 
+// These constants are the fully-qualified names of the RPCs defined in this package. They're
+// exposed at runtime as Spec.Procedure and as the final two segments of the HTTP route.
+//
+// Note that these are different from the fully-qualified method names used by
+// google.golang.org/protobuf/reflect/protoreflect. To convert from these constants to
+// reflection-formatted method names, remove the leading slash and convert the remaining slash to a
+// period.
+const (
+	// AuthProxyServiceLoginProcedure is the fully-qualified name of the AuthProxyService's Login RPC.
+	AuthProxyServiceLoginProcedure = "/authproxy.v1alpha1.AuthProxyService/Login"
+)
+
 // AuthProxyServiceClient is a client for the authproxy.v1alpha1.AuthProxyService service.
 type AuthProxyServiceClient interface {
 	Login(context.Context, *connect_go.Request[v1alpha1.LoginRequest]) (*connect_go.Response[emptypb.Empty], error)
@@ -43,7 +55,7 @@ func NewAuthProxyServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 	return &authProxyServiceClient{
 		login: connect_go.NewClient[v1alpha1.LoginRequest, emptypb.Empty](
 			httpClient,
-			baseURL+"/authproxy.v1alpha1.AuthProxyService/Login",
+			baseURL+AuthProxyServiceLoginProcedure,
 			opts...,
 		),
 	}
@@ -71,8 +83,8 @@ type AuthProxyServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewAuthProxyServiceHandler(svc AuthProxyServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
 	mux := http.NewServeMux()
-	mux.Handle("/authproxy.v1alpha1.AuthProxyService/Login", connect_go.NewUnaryHandler(
-		"/authproxy.v1alpha1.AuthProxyService/Login",
+	mux.Handle(AuthProxyServiceLoginProcedure, connect_go.NewUnaryHandler(
+		AuthProxyServiceLoginProcedure,
 		svc.Login,
 		opts...,
 	))
