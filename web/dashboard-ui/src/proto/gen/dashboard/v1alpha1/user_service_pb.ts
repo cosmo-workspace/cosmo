@@ -223,9 +223,9 @@ export class CreateUserRequest extends Message<CreateUserRequest> {
   displayName = "";
 
   /**
-   * @generated from field: string role = 3;
+   * @generated from field: repeated string roles = 3;
    */
-  role = "";
+  roles: string[] = [];
 
   /**
    * @generated from field: string auth_type = 4;
@@ -247,7 +247,7 @@ export class CreateUserRequest extends Message<CreateUserRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "role", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "roles", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 4, name: "auth_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "addons", kind: "message", T: UserAddons, repeated: true },
   ]);
@@ -494,9 +494,9 @@ export class UpdateUserRoleRequest extends Message<UpdateUserRoleRequest> {
   userName = "";
 
   /**
-   * @generated from field: string role = 2;
+   * @generated from field: repeated string roles = 2;
    */
-  role = "";
+  roles: string[] = [];
 
   constructor(data?: PartialMessage<UpdateUserRoleRequest>) {
     super();
@@ -507,7 +507,7 @@ export class UpdateUserRoleRequest extends Message<UpdateUserRoleRequest> {
   static readonly typeName = "dashboard.v1alpha1.UpdateUserRoleRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "role", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "roles", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateUserRoleRequest {

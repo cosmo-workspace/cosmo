@@ -324,7 +324,7 @@
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  |  |
 | display_name | [string](#string) |  |  |
-| role | [string](#string) |  | {&#34;&#34;,&#34;cosmo-admin&#34;} |
+| roles | [string](#string) | repeated |  |
 | auth_type | [string](#string) |  | {&#34;&#34;,&#34;kosmo-secret&#34;} |
 | addons | [UserAddons](#dashboard-v1alpha1-UserAddons) | repeated |  |
 | default_password | [string](#string) |  |  |
@@ -394,7 +394,7 @@
 | ----- | ---- | ----- | ----------- |
 | user_name | [string](#string) |  |  |
 | display_name | [string](#string) |  |  |
-| role | [string](#string) |  |  |
+| roles | [string](#string) | repeated |  |
 | auth_type | [string](#string) |  |  |
 | addons | [UserAddons](#dashboard-v1alpha1-UserAddons) | repeated |  |
 
@@ -569,7 +569,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_name | [string](#string) |  |  |
-| role | [string](#string) |  |  |
+| roles | [string](#string) | repeated |  |
 
 
 
