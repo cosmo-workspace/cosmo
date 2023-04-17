@@ -109,10 +109,17 @@ const UserList: React.VFC = () => {
             <Card>
               <CardHeader
                 avatar={<NameAvatar name={us.displayName} onClick={() => { userInfoDialogDispatch(true, { user: us }) }} />}
-                title={<Stack direction='row' sx={{ mr: 2, maxWidth: 350 }}>
+                title={<Stack direction='row' sx={{ mr: 2, maxWidth: 350 }}
+                  onClick={() => { userInfoDialogDispatch(true, { user: us }) }}>
                   <Typography variant='subtitle1'>{us.name}</Typography>
                   <Box sx={{ flex: '1 1 auto' }} />
-                  {us.role && <Chip size='small' label={us.role} />}
+                  <div style={{ maxWidth: 150, whiteSpace: 'nowrap' }}>
+                    <Box component="div" sx={{ justifyContent: "flex-end", textOverflow: 'ellipsis', overflow: 'hidden'  }}>
+                      {us.roles && us.roles.map((v, i) => {
+                        return <Chip size='small' key={i} label={v} />
+                      })}
+                    </Box>
+                  </div>
                 </Stack>}
                 subheader={us.displayName}
                 action={<UserMenu user={us} />}

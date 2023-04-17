@@ -1,9 +1,9 @@
-import { PersonOutlineTwoTone } from "@mui/icons-material";
+import { Add, PersonOutlineTwoTone, Remove } from "@mui/icons-material";
 import {
-  Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Stack, TextField
+  Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, TextField
 } from "@mui/material";
 import React from "react";
-import { useForm, UseFormRegisterReturn } from "react-hook-form";
+import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
@@ -17,39 +17,46 @@ const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
  * view
  */
 interface Inputs {
-  role: string;
+  roles: { name: string }[];
 }
 
 export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = ({ onClose, user }) => {
   console.log('RoleChangeDialog');
   const hooks = useUserModule();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
-    defaultValues: { role: user.role || "" },
+  const currentRoles = user.roles.length > 0 ? user.roles.map((v) => { return { name: v } }) : [];
+
+  const { register, handleSubmit, control, formState: { errors } } = useForm<Inputs>({
+    defaultValues: { roles: currentRoles },
   });
+
+  const { fields: rolesFields, append: appendRoles, remove: removeRoles } = useFieldArray({ control, name: "roles" });
 
   return (
     <Dialog open={true}
       fullWidth maxWidth={'xs'}>
       <DialogTitle>Change Role</DialogTitle>
       <form onSubmit={handleSubmit((inp: Inputs) => {
-        hooks.updateRole(user.name, inp.role)
+        const protoRoles = inp.roles.filter((v) => { return v.name !== "" }).map((v) => { return v.name })
+        hooks.updateRole(user.name, protoRoles)
           .then(() => onClose());
       })}
         autoComplete="new-password">
         <DialogContent>
           <Stack spacing={3}>
-            <TextFieldLabel label="User ID" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
-            <TextField label="Role" select fullWidth defaultValue={user.role || ''}
-              {...registerMui(register('role'))}
-              error={Boolean(errors.role)}
-              helperText={errors.role && errors.role.message}
-            >
-              {[
-                (<MenuItem key="" value=""><em>none</em></MenuItem>),
-                (<MenuItem key="cosmo-admin" value="cosmo-admin"><em>cosmo-admin</em></MenuItem>),
-              ]}
-            </TextField>
+            <TextFieldLabel label="Name" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
+            {rolesFields.map((field, index) =>
+              <TextField label="Role" key={index} fullWidth
+                {...registerMui(register(`roles.${index}.name`))}
+                defaultValue={field.name}
+                InputProps={{
+                  endAdornment: <IconButton onClick={() => { removeRoles(index) }} ><Remove /></IconButton>
+                }}
+              />
+            )}
+            <Button variant="outlined" onClick={() => { appendRoles({ name: '' }) }} startIcon={<Add />}>
+              Add Role
+            </Button>
           </Stack>
         </DialogContent>
         <DialogActions>

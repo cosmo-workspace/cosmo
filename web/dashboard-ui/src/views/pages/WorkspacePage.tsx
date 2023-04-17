@@ -242,7 +242,7 @@ const WorkspaceList: React.VFC = () => {
   const hooks = useWorkspaceModule();
   const { user } = useWorkspaceUsersModule();
   const { loginUser } = useLogin();
-  const isAdmin = (loginUser?.role === 'cosmo-admin');
+  const isAdmin = (loginUser?.roles.includes('cosmo-admin'));
   const [searchStr, setSearchStr] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [openTutorialTooltip, setOpenTutorialTooltip] = useState<boolean | undefined>(undefined);

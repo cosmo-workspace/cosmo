@@ -9,7 +9,7 @@ type Props = {
 
 export const AuthRoute: React.VFC<Props> = ({ children, admin }) => {
   const { loginUser } = useLogin();
-  const isAdmin = loginUser && loginUser.role === 'cosmo-admin';
+  const isAdmin = loginUser && loginUser.roles.includes('cosmo-admin');
   let location = useLocation();
 
   if (!loginUser) {

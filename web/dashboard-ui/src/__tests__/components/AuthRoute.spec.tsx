@@ -70,7 +70,7 @@ describe('AuthRoute', () => {
   });
 
   it('normal login admin => /user', async () => {
-    useLoginMock.mockReturnValue({ loginUser: { userName: 'user1', role: "CosmoAdmin" } } as ReturnType<typeof useLogin>);
+    useLoginMock.mockReturnValue({ loginUser: { userName: 'user1', roles: ["CosmoAdmin"] } } as ReturnType<typeof useLogin>);
     const { asFragment } = routerTester('/user');
     expect(asFragment()).toMatchSnapshot();
   });

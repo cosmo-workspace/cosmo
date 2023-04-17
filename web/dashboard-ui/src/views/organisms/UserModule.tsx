@@ -36,12 +36,12 @@ const useUser = () => {
   /**
    * CreateDialog: Add user 
    */
-  const createUser = async (userName: string, displayName: string, role?: string, addons?: UserAddons[]) => {
+  const createUser = async (userName: string, displayName: string, roles?: string[], addons?: UserAddons[]) => {
     console.log('addUser');
     setMask();
     try {
       try {
-        const result = await userService.createUser({ userName, displayName, role, addons });
+        const result = await userService.createUser({ userName, displayName, roles, addons });
         enqueueSnackbar(result.message, { variant: 'success' });
         return result.user;
       }
@@ -78,12 +78,12 @@ const useUser = () => {
   /**
    * updateRoleDialog: Update user 
    */
-  const updateRole = async (userName: string, role: string) => {
-    console.log('updateRole', userName, role);
+  const updateRole = async (userName: string, roles: string[]) => {
+    console.log('updateRole', userName, roles);
     setMask();
     try {
       try {
-        const result = await userService.updateUserRole({ userName, role });
+        const result = await userService.updateUserRole({ userName, roles });
         const newUser = result.user;
         enqueueSnackbar(result.message, { variant: 'success' });
         if (users && newUser) {

@@ -1,5 +1,5 @@
 import {
-  Box, Chip, colors, Container, CssBaseline, Divider, IconButton,
+  Box, Chip, colors, Container, CssBaseline, Divider, Grid, IconButton,
   Link, ListItemIcon, ListItemText,
   Menu, MenuItem, Stack, Toolbar, Typography
 } from "@mui/material";
@@ -45,7 +45,7 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
   const { loginUser, logout } = useLogin();
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
   const userNameChangeDialogDispach = UserNameChangeDialogContext.useDispatch();
-  const isAdmin = (loginUser?.role === 'cosmo-admin');
+  const isAdmin = (loginUser?.roles.includes('cosmo-admin'));
   const isSignIn = Boolean(loginUser);
 
   const changeUserName = () => {
@@ -128,7 +128,14 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
                 <NameAvatar name={loginUser?.displayName} sx={{ width: 50, height: 50 }} />
                 <Typography>{loginUser?.displayName}</Typography>
                 <Typography color={colors.grey[700]} fontSize="small">{loginUser?.name}</Typography>
-                {loginUser?.role && <Chip variant="outlined" size="small" label={loginUser?.role} />}
+                <Grid container justifyContent="center" sx={{ width: 200 }}>
+                    {loginUser?.roles && loginUser.roles.map((v, i) => {
+                      return (
+                        <Grid item key={i} >
+                          <Chip variant="outlined" size="small" key={i} label={v} />
+                        </Grid>)
+                    })}
+                </Grid>
               </Stack>
               <Divider sx={{ mb: 1 }} />
               {isSignIn && <MenuItem onClick={() => changeUserName()}>
