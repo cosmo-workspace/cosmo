@@ -64,7 +64,7 @@ func (c *TestUtil) DeleteTemplateAll() {
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
-func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role cosmov1alpha1.UserRole) {
+func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role []cosmov1alpha1.UserRole) {
 	ctx := context.Background()
 	user := cosmov1alpha1.User{
 		ObjectMeta: metav1.ObjectMeta{
@@ -72,7 +72,7 @@ func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role cosm
 		},
 		Spec: cosmov1alpha1.UserSpec{
 			DisplayName: dispayName,
-			Role:        role,
+			Roles:       role,
 			AuthType:    cosmov1alpha1.UserAuthTypePasswordSecert,
 		},
 	}
@@ -116,7 +116,7 @@ func (c *TestUtil) CreateUserNameSpaceandDefaultPasswordIfAbsent(userName string
 	Expect(err).ShouldNot(HaveOccurred())
 }
 
-func (c *TestUtil) CreateLoginUser(userName, displayName string, role cosmov1alpha1.UserRole, password string) {
+func (c *TestUtil) CreateLoginUser(userName, displayName string, role []cosmov1alpha1.UserRole, password string) {
 	ctx := context.Background()
 
 	c.CreateCosmoUser(userName, displayName, role)

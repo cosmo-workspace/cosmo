@@ -168,9 +168,9 @@ var _ = Describe("cosmoctl [template]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(desc, "template", "validate", "--file", createFile(tmplData, "test-template.yaml"), "--vars", "HOGE:hoge,FUGA:fuga"),
+			Entry(desc, "template", "validate", "--file", createFile(tmplData, "test-template.yaml"), "--vars", "DOMAIN:example.com"),
 			Entry(desc, "template", "validate", "--file", "-"),
-			Entry(desc, "template", "validate", "--file", "-", "--client"),
+			Entry(desc, "template", "validate", "--file", "-", "--client", "-v", "10"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",

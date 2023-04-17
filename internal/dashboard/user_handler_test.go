@@ -29,8 +29,8 @@ var _ = Describe("Dashboard server [User]", func() {
 	)
 
 	BeforeEach(func() {
-		userSession = test_CreateLoginUserSession("normal-user", "お名前", "", "password")
-		adminSession = test_CreateLoginUserSession("admin-user", "アドミン", cosmov1alpha1.UserAdminRole, "password")
+		userSession = test_CreateLoginUserSession("normal-user", "お名前", nil, "password")
+		adminSession = test_CreateLoginUserSession("admin-user", "アドミン", []cosmov1alpha1.UserRole{{Name: cosmov1alpha1.UserAdminRole}}, "password")
 		client = dashboardv1alpha1connect.NewUserServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 
@@ -93,7 +93,7 @@ var _ = Describe("Dashboard server [User]", func() {
 			Entry(nil, "admin-user", &dashv1alpha1.CreateUserRequest{
 				UserName:    "user-create",
 				DisplayName: "create 1",
-				Role:        "cosmo-admin",
+				Roles:       []string{"cosmo-admin"},
 				AuthType:    "kosmo-secret",
 				Addons: []*dashv1alpha1.UserAddons{{
 					Template: "user-temple1",
@@ -102,11 +102,11 @@ var _ = Describe("Dashboard server [User]", func() {
 			}),
 			Entry(nil, "admin-user", &dashv1alpha1.CreateUserRequest{UserName: "user-create"}),
 			Entry(nil, "admin-user", &dashv1alpha1.CreateUserRequest{UserName: "user-create-later"}),
+			Entry(nil, "admin-user", &dashv1alpha1.CreateUserRequest{UserName: "user-create-custom-role", Roles: []string{"team-a", "team-b"}}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "admin-user", &dashv1alpha1.CreateUserRequest{UserName: "user-create", Role: "xxxxxx"}),
 			Entry(nil, "admin-user", &dashv1alpha1.CreateUserRequest{UserName: "user-create", AuthType: "xxxxxx"}),
 			Entry(nil, "admin-user", &dashv1alpha1.CreateUserRequest{UserName: ""}),
 			Entry(nil, "admin-user", &dashv1alpha1.CreateUserRequest{UserName: "user-createX"}),
@@ -211,7 +211,7 @@ var _ = Describe("Dashboard server [User]", func() {
 	Describe("[DeleteUser]", func() {
 
 		run_test := func(loginUser string, req *dashv1alpha1.DeleteUserRequest) {
-			testUtil.CreateCosmoUser("user-delete1", "delete", "")
+			testUtil.CreateCosmoUser("user-delete1", "delete", nil)
 			By("---------------test start----------------")
 			ctx := context.Background()
 			res, err := client.DeleteUser(ctx, NewRequestWithSession(req, getSession(loginUser)))
@@ -324,34 +324,33 @@ var _ = Describe("Dashboard server [User]", func() {
 			} else {
 				Ω(err.Error()).To(MatchSnapShot())
 				Expect(res).Should(BeNil())
+				wsv1User, err := k8sClient.GetUser(context.Background(), req.UserName)
+				if err != nil {
+					Ω(err.Error()).To(MatchSnapShot())
+				}
+				if wsv1User != nil {
+					Ω(userSnap(wsv1User)).To(MatchSnapShot())
+				}
 			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(nil, "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "normal-user", Role: "cosmo-admin"}),
-			Entry(nil, "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "admin-user", Role: ""}),
+			Entry("attach cosmo-admin to normal-user", "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "normal-user", Roles: []string{"cosmo-admin"}}),
+			Entry("attach custom-role to normal-user", "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "normal-user", Roles: []string{"xxxxx"}}),
+			Entry("detach role from admin-user", "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "admin-user", Roles: []string{""}}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry(nil, "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "XXXXXX", Role: "cosmo-admin"}),
-			Entry(nil, "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "normal-user", Role: "xxxxx"}),
-			Entry(nil, "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "admin-user", Role: "cosmo-admin"}),
+			Entry("user not found", "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "XXXXXX", Roles: []string{"cosmo-admin"}}),
+			Entry("no change", "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "admin-user", Roles: []string{"cosmo-admin"}}),
 		)
 
 		DescribeTable("❌ fail with authorization by role:",
 			run_test,
-			Entry(nil, "normal-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "normal-user", Role: "cosmo-admin"}),
-		)
-
-		DescribeTable("❌ fail with an unexpected error to update:",
-			func(loginUser string, req *dashv1alpha1.UpdateUserRoleRequest) {
-				clientMock.SetUpdateError((*Server).UpdateUserRole, errors.New("mock update user error"))
-				run_test(loginUser, req)
-			},
-			Entry(nil, "admin-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "normal-user", Role: "cosmo-admin"}),
+			Entry("permission denied", "normal-user", &dashv1alpha1.UpdateUserRoleRequest{UserName: "normal-user", Roles: []string{"cosmo-admin"}}),
 		)
 	})
 

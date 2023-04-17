@@ -12,7 +12,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -79,15 +79,52 @@ Usage:
   cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
-  -h, --help          help for update
-      --name string   user name
-      --role string   user role (default \"-\")
+  -h, --help           help for update
+      --name string    user name
+      --role strings   user role (default [-])
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1 --cluster-addon user-clustertemplate1 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1 --cluster-addon user-clustertemplate1 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1 --cluster-addon user-clustertemplate1 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-template1\"
+        }
+      },
+      {
+        \"template\": {
+          \"name\": \"user-clustertemplate1\",
+          \"clusterScoped\": true
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
 """
 
 ['cosmoctl [user] [create] ✅ success in normal context: user create user-create --addon user-template1 1']
@@ -156,6 +193,42 @@ SnapShot = """
 }
 """
 
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --admin --role cosmo-admin 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --admin --role cosmo-admin 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --admin --role cosmo-admin 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-template1\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
 ['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --admin --addon user-template1,HOGE:HOGEHOGE 1']
 SnapShot = """
 \u001B[32mSuccessfully created user user-create
@@ -172,7 +245,11 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"create 1\",
-    \"role\": \"cosmo-admin\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
     \"authType\": \"kosmo-secret\",
     \"addons\": [
       {
@@ -207,7 +284,11 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"create 1\",
-    \"role\": \"cosmo-admin\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
     \"authType\": \"kosmo-secret\",
     \"addons\": [
       {
@@ -216,6 +297,42 @@ SnapShot = """
         },
         \"vars\": {
           \"HOGE\": \"HOGEHOGE\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --role xxx 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --role xxx 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --role xxx 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"user-create\",
+    \"roles\": [
+      {
+        \"name\": \"xxx\"
+      }
+    ],
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-template1\"
         }
       }
     ]
@@ -256,32 +373,6 @@ SnapShot = """
   }
 }
 """
-
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create2 --addon user-template1 --cluster-addon user-clustertemplate1 1']
-SnapShot = """
-Error: reached to timeout in user creation
-Usage:
-  cosmoctl user create USER_NAME --role cosmo-admin [flags]
-
-Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
-                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin                       user admin role
-      --cluster-addon stringArray   user addons by ClusterTemplate
-                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
-  -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [user] [create] ✅ success in normal context: user create user-create2 --addon user-template1 --cluster-addon user-clustertemplate1 2']
-SnapShot = 'reached to timeout in user creation'
 
 ['cosmoctl [user] [create] ✅ success to create password immediately: user create user-create 1']
 SnapShot = """
@@ -345,7 +436,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -371,7 +462,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -397,7 +488,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -423,7 +514,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -450,7 +541,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -476,7 +567,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -502,7 +593,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -513,32 +604,6 @@ Global Flags:
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon user-template1,HOGE :yyy 2']
 SnapShot = 'invalid options: invalid addon vars format: user-template1,HOGE :yyy'
-
-['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --admin --role cosmo-admin 1']
-SnapShot = """
-Error: validation error: --role and --admin is not used at the same time
-Usage:
-  cosmoctl user create USER_NAME --role cosmo-admin [flags]
-
-Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
-                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin                       user admin role
-      --cluster-addon stringArray   user addons by ClusterTemplate
-                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
-  -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --admin --role cosmo-admin 2']
-SnapShot = 'validation error: --role and --admin is not used at the same time'
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --cluster-addon user-clustertemplate1,HOGE : 1']
 SnapShot = """
@@ -554,7 +619,7 @@ Flags:
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
       --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
+      --role strings                user roles
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -565,32 +630,6 @@ Global Flags:
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --cluster-addon user-clustertemplate1,HOGE : 2']
 SnapShot = 'invalid options: invalid addon vars format: user-clustertemplate1,HOGE :'
-
-['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --role xxx 1']
-SnapShot = """
-Error: validation error: role xxx is invalid
-Usage:
-  cosmoctl user create USER_NAME --role cosmo-admin [flags]
-
-Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
-                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
-      --admin                       user admin role
-      --cluster-addon stringArray   user addons by ClusterTemplate
-                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
-  -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
-      --role string                 user role
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --role xxx 2']
-SnapShot = 'validation error: role xxx is invalid'
 
 ['cosmoctl [user] [delete] ✅ success in normal context: user delete user-delete1 1']
 SnapShot = """
@@ -808,7 +847,11 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"name1\",
-    \"role\": \"cosmo-admin\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
     \"authType\": \"kosmo-secret\"
   },
   \"Status\": {
@@ -817,21 +860,49 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role  1']
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --name name1 --role  1']
 SnapShot = """
 \u001B[32mSuccessfully updated user user2
 \u001B[0m"""
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role  2']
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --name name1 --role  2']
 SnapShot = 'success'
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role  3']
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --name name1 --role  3']
+SnapShot = """
+{
+  \"Name\": \"user2\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"name1\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role xxxxx 1']
+SnapShot = """
+\u001B[32mSuccessfully updated user user2
+\u001B[0m"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role xxxxx 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role xxxxx 3']
 SnapShot = """
 {
   \"Name\": \"user2\",
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"name2\",
+    \"roles\": [
+      {
+        \"name\": \"xxxxx\"
+      }
+    ],
     \"authType\": \"kosmo-secret\"
   },
   \"Status\": {
@@ -847,9 +918,9 @@ Usage:
   cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
-  -h, --help          help for update
-      --name string   user name
-      --role string   user role (default \"-\")
+  -h, --help           help for update
+      --name string    user name
+      --role strings   user role (default [-])
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -868,9 +939,9 @@ Usage:
   cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
-  -h, --help          help for update
-      --name string   user name
-      --role string   user role (default \"-\")
+  -h, --help           help for update
+      --name string    user name
+      --role strings   user role (default [-])
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -889,9 +960,9 @@ Usage:
   cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
-  -h, --help          help for update
-      --name string   user name
-      --role string   user role (default \"-\")
+  -h, --help           help for update
+      --name string    user name
+      --role strings   user role (default [-])
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -910,9 +981,9 @@ Usage:
   cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
-  -h, --help          help for update
-      --name string   user name
-      --role string   user role (default \"-\")
+  -h, --help           help for update
+      --name string    user name
+      --role strings   user role (default [-])
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -924,48 +995,6 @@ Global Flags:
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name  2']
 SnapShot = 'no change'
 
-['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name name1 --role  1']
-SnapShot = """
-Error: no change
-Usage:
-  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
-
-Flags:
-  -h, --help          help for update
-      --name string   user name
-      --role string   user role (default \"-\")
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name name1 --role  2']
-SnapShot = 'no change'
-
-['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --role xxxxx 1']
-SnapShot = """
-Error: validation error: role xxxxx is invalid
-Usage:
-  cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
-
-Flags:
-  -h, --help          help for update
-      --name string   user name
-      --role string   user role (default \"-\")
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --role xxxxx 2']
-SnapShot = 'validation error: role xxxxx is invalid'
-
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 1']
 SnapShot = """
 Error: no change
@@ -973,9 +1002,9 @@ Usage:
   cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
-  -h, --help          help for update
-      --name string   user name
-      --role string   user role (default \"-\")
+  -h, --help           help for update
+      --name string    user name
+      --role strings   user role (default [-])
 
 Global Flags:
       --context string      kube-context (default: current context)

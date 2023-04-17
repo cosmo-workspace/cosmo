@@ -48,7 +48,7 @@ func UserNameByNamespace(namespace string) string {
 // +kubebuilder:resource:scope="Cluster"
 // +kubebuilder:subresource:status
 // +kubebuilder:storageversion
-// +kubebuilder:printcolumn:name="Role",type=string,JSONPath=`.spec.role`
+// +kubebuilder:printcolumn:name="Roles",type=string,JSONPath=`.spec.roles[*].name`
 // +kubebuilder:printcolumn:name="AuthType",type=string,JSONPath=`.spec.authType`
 // +kubebuilder:printcolumn:name="Namespace",type=string,JSONPath=`.status.namespace.name`
 // +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`

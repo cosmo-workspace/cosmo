@@ -115,7 +115,7 @@ func (s *Server) userAuthentication(ctx context.Context, userName string) error 
 	}
 
 	if caller.Name != userName {
-		if cosmov1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
+		if caller.IsAdmin() {
 			// Admin user have access to all resources
 			log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "username", caller.Name)
 		} else {
@@ -136,7 +136,7 @@ func (s *Server) adminAuthentication(ctx context.Context) error {
 	}
 
 	// Check if the user role is Admin
-	if !cosmov1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
+	if !caller.IsAdmin() {
 		log.Info("invalid admin authentication: NOT cosmo-admin", "username", caller.Name)
 		return kosmo.NewForbiddenError("", nil)
 	}

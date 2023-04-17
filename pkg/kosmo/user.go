@@ -43,19 +43,20 @@ func (c *Client) ListUsers(ctx context.Context) ([]cosmov1alpha1.User, error) {
 }
 
 func (c *Client) CreateUser(ctx context.Context, username string, displayName string,
-	role string, authType string, addons []cosmov1alpha1.UserAddon) (*cosmov1alpha1.User, error) {
+	roles []string, authType string, addons []cosmov1alpha1.UserAddon) (*cosmov1alpha1.User, error) {
 
 	log := clog.FromContext(ctx).WithCaller()
-	log.Info("creating user", "username", username, "displayName", displayName, "role", role, "authType", authType, "addons", addons)
+	log.Info("creating user", "username", username, "displayName", displayName, "role", roles, "authType", authType, "addons", addons)
 
 	if displayName == "" {
 		displayName = username
 	}
 
-	userrole := cosmov1alpha1.UserRole(role)
-	if !userrole.IsValid() {
-		log.Info("invalid request", "username", username, "role", userrole)
-		return nil, NewBadRequestError("'userrole' is invalid", nil)
+	userrole := make([]cosmov1alpha1.UserRole, 0)
+	for _, v := range roles {
+		if v != "" {
+			userrole = append(userrole, cosmov1alpha1.UserRole{Name: v})
+		}
 	}
 
 	authtype := cosmov1alpha1.UserAuthType(authType)
@@ -68,7 +69,7 @@ func (c *Client) CreateUser(ctx context.Context, username string, displayName st
 	user.SetName(username)
 	user.Spec = cosmov1alpha1.UserSpec{
 		DisplayName: displayName,
-		Role:        userrole,
+		Roles:       userrole,
 		AuthType:    authtype,
 		Addons:      addons,
 	}
@@ -130,7 +131,7 @@ func (c *Client) DeleteUser(ctx context.Context, username string) (*cosmov1alpha
 
 type UpdateUserOpts struct {
 	DisplayName *string
-	UserRole    *string
+	UserRoles   []string
 }
 
 func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUserOpts) (*cosmov1alpha1.User, error) {
@@ -146,11 +147,24 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 	if opts.DisplayName != nil && *opts.DisplayName != "" {
 		user.Spec.DisplayName = *opts.DisplayName
 	}
-	if opts.UserRole != nil && *opts.UserRole != "-" {
-		user.Spec.Role = cosmov1alpha1.UserRole(*opts.UserRole)
-		if !user.Spec.Role.IsValid() {
-			logr.Debug().Info("'userrole' is invalid", "user", username, "role", *opts.UserRole)
-			return nil, NewBadRequestError("'userrole' is invalid", nil)
+
+	// opts.UserRoles `[]string{"-"}` means caller would not like to change roles.
+	// `nil` or `[]string{}` is treated as changing to no roles,
+	// `[]string{"-", ""}` is ignored as invalid
+	if len(opts.UserRoles) == 0 {
+		// change to no roles
+		user.Spec.Roles = nil
+	} else {
+		if len(opts.UserRoles) == 1 && opts.UserRoles[0] == "-" {
+			// would not like to change roles
+		} else {
+			userrole := make([]cosmov1alpha1.UserRole, 0)
+			for _, v := range opts.UserRoles {
+				if v != "" && v != "-" {
+					userrole = append(userrole, cosmov1alpha1.UserRole{Name: v})
+				}
+			}
+			user.Spec.Roles = userrole
 		}
 	}
 
@@ -161,8 +175,8 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 	if before.Spec.DisplayName != user.Spec.DisplayName {
 		logr.Debug().Info("name changed", "name", *opts.DisplayName)
 	}
-	if before.Spec.Role != user.Spec.Role {
-		logr.Debug().Info("role changed", "role", *opts.UserRole)
+	if equality.Semantic.DeepEqual(before.Spec.Roles, user.Spec.Roles) {
+		logr.Debug().Info("role changed", "role", opts.UserRoles)
 	}
 
 	if err := c.Update(ctx, user); err != nil {

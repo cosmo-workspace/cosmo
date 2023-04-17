@@ -242,6 +242,7 @@ metadata:
   name: cmd
 spec:
   rawYaml: |
+    # Warning: 'patchesStrategicMerge' is deprecated. Please use 'patches' instead. Run 'kustomize edit fix' to update your Kustomization automatically.
     apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
     metadata:
@@ -525,6 +526,19 @@ Global Flags:
 ['cosmoctl [template] [get] ❌ fail with an unexpected error at list users: template get 2']
 SnapShot = 'mock list error'
 
+['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - --client -v 10 1']
+SnapShot = """
+APIVERSION                     KIND                    NAME                                               RESULT   MESSAGE
+rbac.authorization.k8s.io/v1   RoleBinding             cosmoctl-validate-XXXXXXXX-cosmo-auth-proxy-role   OK       
+v1                             Service                 cosmoctl-validate-XXXXXXXX-workspace               OK       
+v1                             PersistentVolumeClaim   cosmoctl-validate-XXXXXXXX-workspace               OK       
+apps/v1                        Deployment              cosmoctl-validate-XXXXXXXX-workspace               OK       
+networking.k8s.io/v1           Ingress                 cosmoctl-validate-XXXXXXXX-workspace               NG       failed to exec kubectl: signal: killed : 
+"""
+
+['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - --client -v 10 2']
+SnapShot = 'success'
+
 ['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - --client 1']
 SnapShot = """
 APIVERSION                     KIND                    NAME                                               RESULT   MESSAGE
@@ -551,17 +565,17 @@ networking.k8s.io/v1           Ingress                 cosmoctl-validate-XXXXXXX
 ['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - 2']
 SnapShot = 'success'
 
-['cosmoctl [template] [validate] ✅ success in normal context: template validate --file /tmp/test-template.yaml --vars HOGE:hoge,FUGA:fuga 1']
+['cosmoctl [template] [validate] ✅ success in normal context: template validate --file /tmp/test-template.yaml --vars DOMAIN:example.com 1']
 SnapShot = """
 APIVERSION                     KIND                    NAME                                               RESULT   MESSAGE
 rbac.authorization.k8s.io/v1   RoleBinding             cosmoctl-validate-XXXXXXXX-cosmo-auth-proxy-role   OK       
 v1                             Service                 cosmoctl-validate-XXXXXXXX-workspace               OK       
 v1                             PersistentVolumeClaim   cosmoctl-validate-XXXXXXXX-workspace               OK       
 apps/v1                        Deployment              cosmoctl-validate-XXXXXXXX-workspace               OK       
-networking.k8s.io/v1           Ingress                 cosmoctl-validate-XXXXXXXX-workspace               NG       dryrun failed: Ingress.extensions \"cosmoctl-validate-XXXXXXXX-workspace\" is invalid: spec.rules[0].host: Invalid value: \"main-cosmoctl-validate-XXXXXXXX-default.{{DOMAIN}}\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
+networking.k8s.io/v1           Ingress                 cosmoctl-validate-XXXXXXXX-workspace               OK       
 """
 
-['cosmoctl [template] [validate] ✅ success in normal context: template validate --file /tmp/test-template.yaml --vars HOGE:hoge,FUGA:fuga 2']
+['cosmoctl [template] [validate] ✅ success in normal context: template validate --file /tmp/test-template.yaml --vars DOMAIN:example.com 2']
 SnapShot = 'success'
 
 ['cosmoctl [template] [validate] ❌ fail with invalid args: template validate --file - --vars HOGE 1']

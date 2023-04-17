@@ -32,7 +32,7 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 
 	// create user
 	user, err := s.Klient.CreateUser(ctx, req.Msg.UserName, req.Msg.DisplayName,
-		req.Msg.Role, req.Msg.AuthType, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons))
+		req.Msg.Roles, req.Msg.AuthType, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons))
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -134,10 +134,15 @@ func convertUserToDashv1alpha1User(user cosmov1alpha1.User) *dashv1alpha1.User {
 		}
 	}
 
+	roles := make([]string, 0, len(user.Spec.Roles))
+	for _, v := range user.Spec.Roles {
+		roles = append(roles, v.Name)
+	}
+
 	return &dashv1alpha1.User{
 		Name:        user.Name,
 		DisplayName: user.Spec.DisplayName,
-		Role:        user.Spec.Role.String(),
+		Roles:       roles,
 		AuthType:    user.Spec.AuthType.String(),
 		Addons:      addons,
 		Status:      string(user.Status.Phase),

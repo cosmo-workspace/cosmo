@@ -131,7 +131,9 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "create", "user-create"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA"),
-			Entry(desc, "user", "create", "user-create2", "--addon", "user-template1", "--cluster-addon", "user-clustertemplate1"),
+			Entry(desc, "user", "create", "user-create", "--addon", "user-template1", "--cluster-addon", "user-clustertemplate1"),
+			Entry(desc, "user", "create", "user-create", "--admin", "--role", "cosmo-admin"),
+			Entry(desc, "user", "create", "user-create", "--role", "xxx"),
 		)
 
 		DescribeTable("✅ success to create password immediately:",
@@ -158,8 +160,6 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "create"),
 			Entry(desc, "user", "create", "--admin"),
 			Entry(desc, "user", "create", "TESTuser"),
-			Entry(desc, "user", "create", "user-create", "--admin", "--role", "cosmo-admin"),
-			Entry(desc, "user", "create", "user-create", "--role", "xxx"),
 			Entry(desc, "user", "create", "user-create", "--addon", "XXXXXXXXX,HOGE:yyy"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1 ,HOGE:yyy"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1,HOGE :yyy"),
@@ -192,8 +192,8 @@ var _ = Describe("cosmoctl [user]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateLoginUser("user1", "name1", "", "password")
-				test_CreateLoginUser("user2", "name2", cosmov1alpha1.UserAdminRole, "password")
+				test_CreateLoginUser("user1", "name1", nil, "password")
+				test_CreateLoginUser("user2", "name2", []cosmov1alpha1.UserRole{{Name: cosmov1alpha1.UserAdminRole}}, "password")
 				run_test(args...)
 			},
 			Entry(desc, "user", "get"),
@@ -217,7 +217,7 @@ var _ = Describe("cosmoctl [user]", func() {
 	Describe("[delete]", func() {
 
 		run_test := func(args ...string) {
-			test_CreateCosmoUser("user-delete1", "delete", "")
+			test_CreateCosmoUser("user-delete1", "delete", nil)
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()
@@ -257,8 +257,8 @@ var _ = Describe("cosmoctl [user]", func() {
 	Describe("[update]", func() {
 
 		run_test := func(args ...string) {
-			test_CreateLoginUser("user1", "name1", "", "password")
-			test_CreateLoginUser("user2", "name2", cosmov1alpha1.UserAdminRole, "password")
+			test_CreateLoginUser("user1", "name1", nil, "password")
+			test_CreateLoginUser("user2", "name2", []cosmov1alpha1.UserRole{{Name: cosmov1alpha1.UserAdminRole}}, "password")
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()
@@ -282,7 +282,8 @@ var _ = Describe("cosmoctl [user]", func() {
 			run_test,
 			Entry(desc, "user", "update", "user1", "--name", "namechanged"),
 			Entry(desc, "user", "update", "user1", "--role", "cosmo-admin"),
-			Entry(desc, "user", "update", "user2", "--role", ""),
+			Entry(desc, "user", "update", "user2", "--name", "name1", "--role", ""),
+			Entry(desc, "user", "update", "user2", "--role", "xxxxx"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
@@ -291,8 +292,6 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "update", "user1"),
 			Entry(desc, "user", "update", "XXXXXX", "--name", "namechanged", "--role", "cosmo-admin"),
 			Entry(desc, "user", "update", "user1", "--name", ""),
-			Entry(desc, "user", "update", "user1", "--name", "name1", "--role", ""),
-			Entry(desc, "user", "update", "user1", "--role", "xxxxx"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
@@ -308,7 +307,7 @@ var _ = Describe("cosmoctl [user]", func() {
 	Describe("[reset-password]", func() {
 
 		run_test := func(args ...string) {
-			test_CreateLoginUser("user1", "name1", "", "password")
+			test_CreateLoginUser("user1", "name1", nil, "password")
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()

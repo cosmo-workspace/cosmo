@@ -22,8 +22,8 @@ var _ = Describe("Dashboard server [auth]", func() {
 	var client dashboardv1alpha1connect.AuthServiceClient
 
 	BeforeEach(func() {
-		testUtil.CreateLoginUser("normal-user", "user", "", "password1")
-		testUtil.CreateLoginUser("admin-user", "admin", cosmov1alpha1.UserAdminRole, "password2")
+		testUtil.CreateLoginUser("normal-user", "user", nil, "password1")
+		testUtil.CreateLoginUser("admin-user", "admin", []cosmov1alpha1.UserRole{{Name: cosmov1alpha1.UserAdminRole}}, "password2")
 		client = dashboardv1alpha1connect.NewAuthServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 

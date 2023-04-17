@@ -16,8 +16,8 @@ spec:
   scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.role
-      name: Role
+    - jsonPath: .spec.roles[*].name
+      name: Roles
       type: string
     - jsonPath: .spec.authType
       name: AuthType
@@ -75,9 +75,15 @@ spec:
                 type: string
               displayName:
                 type: string
-              role:
-                description: UserRole enums
-                type: string
+              roles:
+                items:
+                  properties:
+                    name:
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
             type: object
           status:
             properties:

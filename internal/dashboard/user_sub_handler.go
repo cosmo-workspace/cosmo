@@ -39,7 +39,7 @@ func (s *Server) UpdateUserRole(ctx context.Context, req *connect_go.Request[das
 		return nil, ErrResponse(log, err)
 	}
 
-	user, err := s.Klient.UpdateUser(ctx, req.Msg.UserName, kosmo.UpdateUserOpts{UserRole: &req.Msg.Role})
+	user, err := s.Klient.UpdateUser(ctx, req.Msg.UserName, kosmo.UpdateUserOpts{UserRoles: req.Msg.Roles})
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}

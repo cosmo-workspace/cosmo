@@ -20,7 +20,7 @@ type CreateOption struct {
 
 	UserName      string
 	DisplayName   string
-	Role          string
+	Roles         []string
 	Admin         bool
 	Addons        []string
 	ClusterAddons []string
@@ -33,7 +33,7 @@ func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVar(&o.DisplayName, "name", "", "user display name (default: same as USER_NAME)")
-	cmd.Flags().StringVar(&o.Role, "role", "", "user role")
+	cmd.Flags().StringSliceVar(&o.Roles, "role", nil, "user roles")
 	cmd.Flags().BoolVar(&o.Admin, "admin", false, "user admin role")
 	cmd.Flags().StringArrayVar(&o.Addons, "addon", nil, "user addons by Template, which created in UserNamespace\nformat is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' ")
 	cmd.Flags().StringArrayVar(&o.ClusterAddons, "cluster-addon", nil, "user addons by ClusterTemplate\nformat is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' ")
@@ -57,14 +57,6 @@ func (o *CreateOption) Validate(cmd *cobra.Command, args []string) error {
 	if len(args) < 1 {
 		return errors.New("invalid args")
 	}
-	if o.Role != "" {
-		if o.Admin {
-			return errors.New("--role and --admin is not used at the same time")
-		}
-		if !cosmov1alpha1.UserRole(o.Role).IsValid() {
-			return fmt.Errorf("role %s is invalid", o.Role)
-		}
-	}
 	return nil
 }
 
@@ -76,7 +68,7 @@ func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	o.UserName = args[0]
 
 	if o.Admin {
-		o.Role = cosmov1alpha1.UserAdminRole.String()
+		o.Roles = []string{cosmov1alpha1.UserAdminRole}
 	}
 
 	o.userAddons = make([]cosmov1alpha1.UserAddon, 0, len(o.Addons)+len(o.ClusterAddons))
@@ -136,7 +128,7 @@ func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)
 
-	if _, err := o.Client.CreateUser(ctx, o.UserName, o.DisplayName, o.Role, "", o.userAddons); err != nil {
+	if _, err := o.Client.CreateUser(ctx, o.UserName, o.DisplayName, o.Roles, "", o.userAddons); err != nil {
 		return err
 	}
 

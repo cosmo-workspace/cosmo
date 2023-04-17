@@ -38,14 +38,16 @@ SnapShot = """
 }
 """
 
-['Dashboard server [User] [CreateUser] ✅ success succeed in normal context: Entry: admin-user, user_name:"user-create" display_name:"create 1" role:"cosmo-admin" auth_type:"kosmo-secret" addons:{template:"user-temple1" vars:{key:"HOGE" value:"FUGA"}} 1']
+['Dashboard server [User] [CreateUser] ✅ success succeed in normal context: Entry: admin-user, user_name:"user-create" display_name:"create 1" roles:"cosmo-admin" auth_type:"kosmo-secret" addons:{template:"user-temple1" vars:{key:"HOGE" value:"FUGA"}} 1']
 SnapShot = """
 {
   \"message\": \"Successfully created\",
   \"user\": {
     \"name\": \"user-create\",
     \"display_name\": \"create 1\",
-    \"role\": \"cosmo-admin\",
+    \"roles\": [
+      \"cosmo-admin\"
+    ],
     \"auth_type\": \"kosmo-secret\",
     \"addons\": [
       {
@@ -60,14 +62,18 @@ SnapShot = """
 }
 """
 
-['Dashboard server [User] [CreateUser] ✅ success succeed in normal context: Entry: admin-user, user_name:"user-create" display_name:"create 1" role:"cosmo-admin" auth_type:"kosmo-secret" addons:{template:"user-temple1" vars:{key:"HOGE" value:"FUGA"}} 2']
+['Dashboard server [User] [CreateUser] ✅ success succeed in normal context: Entry: admin-user, user_name:"user-create" display_name:"create 1" roles:"cosmo-admin" auth_type:"kosmo-secret" addons:{template:"user-temple1" vars:{key:"HOGE" value:"FUGA"}} 2']
 SnapShot = """
 {
   \"Name\": \"user-create\",
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"create 1\",
-    \"role\": \"cosmo-admin\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
     \"authType\": \"kosmo-secret\",
     \"addons\": [
       {
@@ -85,6 +91,9 @@ SnapShot = """
   }
 }
 """
+
+['Dashboard server [User] [CreateUser] ✅ success succeed in normal context: Entry: admin-user, user_name:"user-create-custom-role" roles:"team-a" roles:"team-b" 1']
+SnapShot = 'unavailable: 503 Service Unavailable'
 
 ['Dashboard server [User] [CreateUser] ✅ success succeed in normal context: Entry: admin-user, user_name:"user-create-later" 1']
 SnapShot = """
@@ -129,10 +138,6 @@ SnapShot = 'already_exists: user already exists'
 ['Dashboard server [User] [CreateUser] ❌ fail with invalid request: Entry: admin-user, user_name:"user-create" auth_type:"xxxxxx" 1']
 SnapShot = """
 invalid_argument: 'authtype' is invalid"""
-
-['Dashboard server [User] [CreateUser] ❌ fail with invalid request: Entry: admin-user, user_name:"user-create" role:"xxxxxx" 1']
-SnapShot = """
-invalid_argument: 'userrole' is invalid"""
 
 ['Dashboard server [User] [CreateUser] ❌ fail with invalid request: Entry: admin-user, user_name:"user-createX" 1']
 SnapShot = 'unavailable: failed to create user'
@@ -191,7 +196,9 @@ SnapShot = """
     {
       \"name\": \"admin-user\",
       \"display_name\": \"アドミン\",
-      \"role\": \"cosmo-admin\",
+      \"roles\": [
+        \"cosmo-admin\"
+      ],
       \"auth_type\": \"kosmo-secret\"
     },
     {
@@ -323,7 +330,77 @@ SnapShot = 'permission_denied: incorrect user or password'
 ['Dashboard server [User] [UpdateUserPassword] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" new_password:"newPassword" 1']
 SnapShot = 'permission_denied: incorrect user or password'
 
-['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" 1']
+['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: attach cosmo-admin to normal-user 1']
+SnapShot = """
+{
+  \"message\": \"Successfully updated\",
+  \"user\": {
+    \"name\": \"normal-user\",
+    \"display_name\": \"お名前\",
+    \"roles\": [
+      \"cosmo-admin\"
+    ],
+    \"auth_type\": \"kosmo-secret\"
+  }
+}
+"""
+
+['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: attach cosmo-admin to normal-user 2']
+SnapShot = """
+{
+  \"Name\": \"normal-user\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"お名前\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: attach custom-role to normal-user 1']
+SnapShot = """
+{
+  \"message\": \"Successfully updated\",
+  \"user\": {
+    \"name\": \"normal-user\",
+    \"display_name\": \"お名前\",
+    \"roles\": [
+      \"xxxxx\"
+    ],
+    \"auth_type\": \"kosmo-secret\"
+  }
+}
+"""
+
+['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: attach custom-role to normal-user 2']
+SnapShot = """
+{
+  \"Name\": \"normal-user\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"お名前\",
+    \"roles\": [
+      {
+        \"name\": \"xxxxx\"
+      }
+    ],
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: detach role from admin-user 1']
 SnapShot = """
 {
   \"message\": \"Successfully updated\",
@@ -335,7 +412,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" 2']
+['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: detach role from admin-user 2']
 SnapShot = """
 {
   \"Name\": \"admin-user\",
@@ -350,27 +427,16 @@ SnapShot = """
 }
 """
 
-['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: Entry: admin-user, user_name:"normal-user" role:"cosmo-admin" 1']
-SnapShot = """
-{
-  \"message\": \"Successfully updated\",
-  \"user\": {
-    \"name\": \"normal-user\",
-    \"display_name\": \"お名前\",
-    \"role\": \"cosmo-admin\",
-    \"auth_type\": \"kosmo-secret\"
-  }
-}
-"""
+['Dashboard server [User] [UpdateUserRole] ❌ fail with authorization by role: permission denied 1']
+SnapShot = 'permission_denied'
 
-['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: Entry: admin-user, user_name:"normal-user" role:"cosmo-admin" 2']
+['Dashboard server [User] [UpdateUserRole] ❌ fail with authorization by role: permission denied 2']
 SnapShot = """
 {
   \"Name\": \"normal-user\",
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"お名前\",
-    \"role\": \"cosmo-admin\",
     \"authType\": \"kosmo-secret\"
   },
   \"Status\": {
@@ -379,18 +445,31 @@ SnapShot = """
 }
 """
 
-['Dashboard server [User] [UpdateUserRole] ❌ fail with an unexpected error to update: Entry: admin-user, user_name:"normal-user" role:"cosmo-admin" 1']
-SnapShot = 'internal: failed to update user'
-
-['Dashboard server [User] [UpdateUserRole] ❌ fail with authorization by role: Entry: normal-user, user_name:"normal-user" role:"cosmo-admin" 1']
-SnapShot = 'permission_denied'
-
-['Dashboard server [User] [UpdateUserRole] ❌ fail with invalid request: Entry: admin-user, user_name:"XXXXXX" role:"cosmo-admin" 1']
-SnapShot = 'not_found: user is not found'
-
-['Dashboard server [User] [UpdateUserRole] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" role:"cosmo-admin" 1']
+['Dashboard server [User] [UpdateUserRole] ❌ fail with invalid request: no change 1']
 SnapShot = 'invalid_argument: no change'
 
-['Dashboard server [User] [UpdateUserRole] ❌ fail with invalid request: Entry: admin-user, user_name:"normal-user" role:"xxxxx" 1']
+['Dashboard server [User] [UpdateUserRole] ❌ fail with invalid request: no change 2']
 SnapShot = """
-invalid_argument: 'userrole' is invalid"""
+{
+  \"Name\": \"admin-user\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"アドミン\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['Dashboard server [User] [UpdateUserRole] ❌ fail with invalid request: user not found 1']
+SnapShot = 'not_found: user is not found'
+
+['Dashboard server [User] [UpdateUserRole] ❌ fail with invalid request: user not found 2']
+SnapShot = 'user is not found'
