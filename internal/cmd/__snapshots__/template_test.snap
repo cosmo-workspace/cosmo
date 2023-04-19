@@ -430,11 +430,11 @@ SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get 1']
 SnapShot = """
-NAME                REQUIRED-VARS       TYPE        IsClusterScope
-template1           {{HOGE}},{{FUGA}}   workspace   false
-template2           {{HOGE}},{{FUGA}}   workspace   false
-template3           {{HOGE}},{{FUGA}}   useraddon   false
-cluster-template1   {{HOGE}},{{FUGA}}   useraddon   true
+NAME                REQUIREDVARS        TYPE        ISCLUSTERSCOPE   FORROLE   FORBIDDENROLE
+template1           {{HOGE}},{{FUGA}}   workspace   false                      
+template2           {{HOGE}},{{FUGA}}   workspace   false                      
+template3           {{HOGE}},{{FUGA}}   useraddon   false                      
+cluster-template1   {{HOGE}},{{FUGA}}   useraddon   true                       
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get 2']
@@ -442,7 +442,7 @@ SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get notfound 1']
 SnapShot = """
-NAME   REQUIRED-VARS   TYPE   IsClusterScope
+NAME   REQUIREDVARS   TYPE   ISCLUSTERSCOPE   FORROLE   FORBIDDENROLE
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get notfound 2']
@@ -459,8 +459,8 @@ SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 1']
 SnapShot = """
-NAME        REQUIRED-VARS       TYPE        IsClusterScope
-template2   {{HOGE}},{{FUGA}}   workspace   false
+NAME        REQUIREDVARS        TYPE        ISCLUSTERSCOPE   FORROLE   FORBIDDENROLE
+template2   {{HOGE}},{{FUGA}}   workspace   false                      
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 2']
@@ -468,9 +468,9 @@ SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 cluster-template1 notfound 1']
 SnapShot = """
-NAME                REQUIRED-VARS       TYPE        IsClusterScope
-template2           {{HOGE}},{{FUGA}}   workspace   false
-cluster-template1   {{HOGE}},{{FUGA}}   useraddon   true
+NAME                REQUIREDVARS        TYPE        ISCLUSTERSCOPE   FORROLE   FORBIDDENROLE
+template2           {{HOGE}},{{FUGA}}   workspace   false                      
+cluster-template1   {{HOGE}},{{FUGA}}   useraddon   true                       
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 cluster-template1 notfound 2']
@@ -478,9 +478,9 @@ SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 template3 1']
 SnapShot = """
-NAME        REQUIRED-VARS       TYPE        IsClusterScope
-template2   {{HOGE}},{{FUGA}}   workspace   false
-template3   {{HOGE}},{{FUGA}}   useraddon   false
+NAME        REQUIREDVARS        TYPE        ISCLUSTERSCOPE   FORROLE   FORBIDDENROLE
+template2   {{HOGE}},{{FUGA}}   workspace   false                      
+template3   {{HOGE}},{{FUGA}}   useraddon   false                      
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 template3 2']
@@ -533,23 +533,10 @@ rbac.authorization.k8s.io/v1   RoleBinding             cosmoctl-validate-XXXXXXX
 v1                             Service                 cosmoctl-validate-XXXXXXXX-workspace               OK       
 v1                             PersistentVolumeClaim   cosmoctl-validate-XXXXXXXX-workspace               OK       
 apps/v1                        Deployment              cosmoctl-validate-XXXXXXXX-workspace               OK       
-networking.k8s.io/v1           Ingress                 cosmoctl-validate-XXXXXXXX-workspace               NG       failed to exec kubectl: signal: killed : 
-"""
-
-['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - --client -v 10 2']
-SnapShot = 'success'
-
-['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - --client 1']
-SnapShot = """
-APIVERSION                     KIND                    NAME                                               RESULT   MESSAGE
-rbac.authorization.k8s.io/v1   RoleBinding             cosmoctl-validate-XXXXXXXX-cosmo-auth-proxy-role   OK       
-v1                             Service                 cosmoctl-validate-XXXXXXXX-workspace               OK       
-v1                             PersistentVolumeClaim   cosmoctl-validate-XXXXXXXX-workspace               OK       
-apps/v1                        Deployment              cosmoctl-validate-XXXXXXXX-workspace               OK       
 networking.k8s.io/v1           Ingress                 cosmoctl-validate-XXXXXXXX-workspace               OK       
 """
 
-['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - --client 2']
+['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - --client -v 10 2']
 SnapShot = 'success'
 
 ['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - 1']
