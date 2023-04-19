@@ -103,8 +103,8 @@ const (
 	UserAdminRole string = "cosmo-admin"
 )
 
-func (u User) IsAdmin() bool {
-	for _, role := range u.Spec.Roles {
+func HasAdminRole(roles []UserRole) bool {
+	for _, role := range roles {
 		if role.Name == UserAdminRole {
 			return true
 		}
