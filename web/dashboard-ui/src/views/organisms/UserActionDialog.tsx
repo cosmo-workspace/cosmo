@@ -12,7 +12,7 @@ import { DialogContext } from "../../components/ContextProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { NameAvatar } from "../atoms/NameAvatar";
-// import { SelectableChip } from "../atoms/SelectableChip";
+import { SelectableChip } from "../atoms/SelectableChips";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { PasswordDialogContext } from "./PasswordDialog";
 import { useTemplates, useUserModule } from "./UserModule";
@@ -166,7 +166,6 @@ type Inputs = {
   id: string;
   name: string;
   definedRoles: { enabled: boolean }[];
-  isCosmoAdmin: boolean;
   roles: { name: string }[];
   addons: {
     template: Template;
@@ -179,7 +178,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
   const hooks = useUserModule();
   const passwordDialogDispatch = PasswordDialogContext.useDispatch();
 
-  const { register, handleSubmit, watch, control, formState: { errors, dirtyFields } } = useForm<Inputs>({
+  const { register, handleSubmit, watch, control, formState: { errors } } = useForm<Inputs>({
     defaultValues: {}
   });
 
@@ -191,9 +190,21 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
     replaceAddons(templ.templates.map(t => ({ template: t, enable: false, vars: [] })));
   }, [templ.templates]);  // eslint-disable-line
 
-  const { fields: rolesFields, append: appendRoles, remove: removeRoles } = useFieldArray({ control, name: "roles" });
-
   const definedRoles = ['cosmo-admin'];
+
+  const { fields: rolesFields, append: appendRoles, remove: removeRoles } = useFieldArray({
+    control,
+    name: "roles",
+    rules: {
+      validate: (fieldArrayValues) => {
+        // check that no duplicates exist
+        let values = fieldArrayValues.map((item) => item.name).filter((v) => v !== "");
+        values.push(...definedRoles);
+        const uniqueValues = [...new Set(values)];
+        return values.length === uniqueValues.length || "No duplicates allowed";
+      }
+    }
+  });
 
   return (
     <Dialog open={true}
@@ -209,16 +220,23 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
             });
             return { template: inpAddon.template.name, vars: vars, clusterScoped: inpAddon.template.isClusterScope }
           });
-
-        console.log("inp.id", inp.id, "inp.name", inp.name, "inp.roles", inp.roles, "userAddons", userAddons)
         const protoUserAddons = userAddons.map(ua => new UserAddons(ua));
-        const protoRoles = inp.roles.filter((v) => { return v.name !== "" }).map((v) => { return v.name })
-        hooks.createUser(inp.id, inp.name, protoRoles, protoUserAddons)
-          .then(newUser => {
-            onClose();
-            passwordDialogDispatch(true, { user: newUser! });
-            hooks.getUsers();
-          });
+        console.log("protoUserAddons", protoUserAddons)
+
+        let protoRoles = inp.roles.map((v) => { return v.name })
+        inp.definedRoles.forEach((v, i) => {
+          if (v.enabled) {
+            protoRoles.push(definedRoles[i])
+          }
+        })
+        protoRoles = [...new Set(protoRoles)]; // remove duplicates
+        console.log("protoRoles", protoRoles)
+        // hooks.createUser(inp.id, inp.name, protoRoles, protoUserAddons)
+        //   .then(newUser => {
+        //     onClose();
+        //     passwordDialogDispatch(true, { user: newUser! });
+        //     hooks.getUsers();
+        //   });
       })}
         autoComplete="new-password">
         <DialogContent>
@@ -239,7 +257,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
                 startAdornment: (<InputAdornment position="start"><PersonOutlineTwoTone /></InputAdornment>),
               }}
             />
-            <TextField label="User Name" fullWidth
+            <TextField label="Display Name" fullWidth
               {...registerMui(register('name', {
                 required: { value: true, message: "Required" },
                 maxLength: { value: 32, message: "Max 32 characters" }
@@ -251,25 +269,28 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
                 startAdornment: (<InputAdornment position="start"><PersonOutlineTwoTone /></InputAdornment>),
               }}
             />
-            {/* <Typography color="text.secondary" display="block" variant="caption" >Roles</Typography>
-            <Stack alignItems="center" border="solid lightgrey 1px" borderRadius={1} p={1} >
+            <Typography color="text.secondary" display="block" variant="caption" >Roles</Typography>
+            <Grid container>
               {definedRoles.map((label, index) =>
-                <Grid container justifyContent="center" sx={{ width: 300 }} key={index} >
-                  <SelectableChip label={label} color="primary" {...registerMui(register(`isCosmoAdmin` as const))} />
-                </Grid>
+                <SelectableChip key={index} control={control} label={label} color="primary" {...registerMui(register(`definedRoles.${index}.enabled` as const))} />
               )}
-            </Stack> */}
+            </Grid>
             {rolesFields.map((field, index) =>
               <TextField label="Role" key={index} fullWidth
-                {...registerMui(register(`roles.${index}.name`))}
+                {...registerMui(register(`roles.${index}.name`, { required: { value: true, message: "Required" }, }))}
                 defaultValue={field.name}
                 InputProps={{
                   endAdornment: <IconButton onClick={() => { removeRoles(index) }} ><Remove /></IconButton>
                 }}
+                error={Boolean(errors.roles?.[index]?.name)}
+                helperText={errors.roles?.[index]?.name?.message}
               />
             )}
+            <FormHelperText error={Boolean(errors.roles?.root?.message)}>
+              {errors.roles?.root?.message}
+            </FormHelperText>
             <Button variant="outlined" onClick={() => { appendRoles({ name: '' }) }} startIcon={<Add />}>
-              Add Role
+              Add Custom Role
             </Button>
             <Divider />
             <Stack spacing={1}>
