@@ -12,10 +12,10 @@ import { DialogContext } from "../../components/ContextProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { NameAvatar } from "../atoms/NameAvatar";
-import { SelectableChip } from "../atoms/SelectableChips";
+import { FormSelectableChip } from "../atoms/SelectableChips";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { PasswordDialogContext } from "./PasswordDialog";
-import { useTemplates, useUserModule } from "./UserModule";
+import { isAdminRole, isPrivilegedRole, useTemplates, useUserModule } from "./UserModule";
 
 const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
   inputRef: ref, ...rest
@@ -29,11 +29,12 @@ interface UserActionDialogProps {
   actions: React.ReactNode
   user: User,
   onClose: () => void,
+  defaultOpenUserAddon?: boolean
 }
 
-const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, user, onClose, }) => {
+const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, user, onClose, defaultOpenUserAddon }) => {
   console.log(user)
-  const [openUserAddon, setOpenUserAddon] = useState<boolean>(false);
+  const [openUserAddon, setOpenUserAddon] = useState<boolean>(defaultOpenUserAddon || false);
 
   const handleOpenUserAddonClick = () => {
     setOpenUserAddon(!openUserAddon);
@@ -62,7 +63,7 @@ const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, us
               {user?.roles && user.roles.map((v, i) => {
                 return (
                   <Grid item key={i} >
-                    <Chip size="small" key={i} label={v} />
+                    <Chip color={isPrivilegedRole(v) ? "error" : isAdminRole(v) ? "warning" : "default"} size="small" key={i} label={v} sx={{ m: 0.05 }} />
                   </Grid>)
               })}
             </Grid>
@@ -82,32 +83,31 @@ const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, us
             <Collapse in={openUserAddon} timeout="auto" unmountOnExit>
               <List component="nav">
                 {user.addons.map((v, i) =>
-                  <React.Fragment key={i}>
-                    <ListItem>
-                      <ListItemText
-                        primary={
-                          <Typography
-                            color="text.secondary"
-                            display="block"
-                            variant="caption"
-                          >* {v.template}</Typography>}
-                        secondary={
-                          <TableContainer component={Paper}>
-                            <Table aria-label={v.template}>
-                              <TableBody>
-                                {Object.keys(v.vars).map((key, j) =>
-                                  <TableRow key={j} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
-                                    <TableCell component="th" scope="row">{key}</TableCell>
-                                    <TableCell align="right">{v.vars[key]}</TableCell>
-                                  </TableRow>
-                                )}
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                        }
-                      />
-                    </ListItem>
-                  </React.Fragment>
+                  <ListItem key={i}>
+                    <ListItemText
+                      disableTypography={true}
+                      primary={
+                        <Typography
+                          color="text.secondary"
+                          display="block"
+                          variant="caption"
+                        >* {v.template}</Typography>}
+                      secondary={
+                        <TableContainer component={Paper}>
+                          <Table aria-label={v.template}>
+                            <TableBody>
+                              {Object.keys(v.vars).map((key, j) =>
+                                <TableRow key={j} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
+                                  <TableCell component="th" scope="row">{key}</TableCell>
+                                  <TableCell align="right">{v.vars[key]}</TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      }
+                    />
+                  </ListItem>
                 )}
               </List>
             </Collapse>
@@ -159,13 +159,42 @@ export const UserDeleteDialog: React.VFC<{ onClose: () => void, user: User }> = 
   );
 };
 
+export const UserCreateConfirmDialog: React.VFC<{ onClose: () => void, onConfirm: () => void, user: User }> = ({ onClose, onConfirm, user }) => {
+  console.log('UserCreateConfirmDialog');
+
+  const hooks = useUserModule();
+  const passwordDialogDispatch = PasswordDialogContext.useDispatch();
+  return (
+    <UserActionDialog
+      title='Create?'
+      onClose={() => onClose()}
+      user={user}
+      defaultOpenUserAddon={true}
+      actions={<DialogActions>
+        <Button onClick={() => onClose()} color="primary">Back</Button>
+        <Button variant="contained" color="secondary"
+          onClick={() => {
+            hooks.createUser(user.name, user.displayName, user.roles, user.addons)
+              .then(newUser => {
+                onClose();
+                onConfirm();
+                passwordDialogDispatch(true, { user: newUser! });
+                hooks.getUsers();
+              });
+          }}
+        >Create</Button>
+      </DialogActions>
+      } />
+  );
+}
+
 /**
  * Create
  */
 type Inputs = {
   id: string;
   name: string;
-  definedRoles: { enabled: boolean }[];
+  existingRoles: { enabled: boolean }[];
   roles: { name: string }[];
   addons: {
     template: Template;
@@ -176,7 +205,7 @@ type Inputs = {
 export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }) => {
   console.log('UserCreateDialog');
   const hooks = useUserModule();
-  const passwordDialogDispatch = PasswordDialogContext.useDispatch();
+  const userCreateConfirmDialogDispatch = UserCreateConfirmDialogContext.useDispatch();
 
   const { register, handleSubmit, watch, control, formState: { errors } } = useForm<Inputs>({
     defaultValues: {}
@@ -190,8 +219,6 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
     replaceAddons(templ.templates.map(t => ({ template: t, enable: false, vars: [] })));
   }, [templ.templates]);  // eslint-disable-line
 
-  const definedRoles = ['cosmo-admin'];
-
   const { fields: rolesFields, append: appendRoles, remove: removeRoles } = useFieldArray({
     control,
     name: "roles",
@@ -199,7 +226,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
       validate: (fieldArrayValues) => {
         // check that no duplicates exist
         let values = fieldArrayValues.map((item) => item.name).filter((v) => v !== "");
-        values.push(...definedRoles);
+        values.push(...hooks.existingRoles);
         const uniqueValues = [...new Set(values)];
         return values.length === uniqueValues.length || "No duplicates allowed";
       }
@@ -224,19 +251,19 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
         console.log("protoUserAddons", protoUserAddons)
 
         let protoRoles = inp.roles.map((v) => { return v.name })
-        inp.definedRoles.forEach((v, i) => {
+        inp.existingRoles.forEach((v, i) => {
           if (v.enabled) {
-            protoRoles.push(definedRoles[i])
+            protoRoles.push(hooks.existingRoles[i])
           }
         })
         protoRoles = [...new Set(protoRoles)]; // remove duplicates
         console.log("protoRoles", protoRoles)
-        // hooks.createUser(inp.id, inp.name, protoRoles, protoUserAddons)
-        //   .then(newUser => {
-        //     onClose();
-        //     passwordDialogDispatch(true, { user: newUser! });
-        //     hooks.getUsers();
-        //   });
+
+        userCreateConfirmDialogDispatch(true, {
+          onConfirm: () => { onClose(); },
+          user:
+            new User({ name: inp.id, displayName: inp.name, roles: protoRoles, authType: "default", addons: protoUserAddons })
+        });
       })}
         autoComplete="new-password">
         <DialogContent>
@@ -271,8 +298,9 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
             />
             <Typography color="text.secondary" display="block" variant="caption" >Roles</Typography>
             <Grid container>
-              {definedRoles.map((label, index) =>
-                <SelectableChip key={index} control={control} label={label} color="primary" {...registerMui(register(`definedRoles.${index}.enabled` as const))} />
+              {hooks.existingRoles.map((label, index) =>
+                <FormSelectableChip key={index} control={control} label={label} color="primary" sx={{ m: 0.05 }}
+                  {...register(`existingRoles.${index}.enabled` as const)} />
               )}
             </Grid>
             {rolesFields.map((field, index) =>
@@ -340,7 +368,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
         </DialogContent>
         <DialogActions>
           <Button onClick={() => onClose()} color="primary">Cancel</Button>
-          <Button type="submit" variant="contained" color="primary">Create</Button>
+          <Button type="submit" variant="contained" color="primary">Confirm</Button>
         </DialogActions>
       </form>
     </Dialog >
@@ -356,3 +384,5 @@ export const UserDeleteDialogContext = DialogContext<{ user: User }>(
   props => (<UserDeleteDialog {...props} />));
 export const UserCreateDialogContext = DialogContext(
   props => (<UserCreateDialog {...props} />));
+export const UserCreateConfirmDialogContext = DialogContext<{ onConfirm: () => void, user: User }>(
+  props => (<UserCreateConfirmDialog {...props} />));

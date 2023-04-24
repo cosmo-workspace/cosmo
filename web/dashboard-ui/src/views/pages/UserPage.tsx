@@ -1,13 +1,14 @@
-import { AddTwoTone, Badge, Clear, DeleteTwoTone, ManageAccountsTwoTone, MoreVert, RefreshTwoTone, SearchTwoTone } from "@mui/icons-material";
-import { Box, Card, CardHeader, Chip, Fab, Grid, IconButton, InputAdornment, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
+import { AddTwoTone, Badge, Clear, DeleteTwoTone, ExpandLess, ExpandMore, ManageAccountsTwoTone, MoreVert, RefreshTwoTone, SearchTwoTone } from "@mui/icons-material";
+import { Box, Card, CardHeader, Chip, Collapse, Divider, Fab, Grid, IconButton, InputAdornment, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { NameAvatar } from "../atoms/NameAvatar";
+import { SelectableChip } from "../atoms/SelectableChips";
 import { PasswordDialogContext } from "../organisms/PasswordDialog";
 import { RoleChangeDialogContext } from "../organisms/RoleChangeDialog";
-import { UserCreateDialogContext, UserDeleteDialogContext, UserInfoDialogContext } from "../organisms/UserActionDialog";
-import { useUserModule } from "../organisms/UserModule";
+import { UserCreateConfirmDialogContext, UserCreateDialogContext, UserDeleteDialogContext, UserInfoDialogContext } from "../organisms/UserActionDialog";
+import { hasAdminForRole, hasPrivilegedRole, isAdminRole, isPrivilegedRole, useUserModule } from "../organisms/UserModule";
 import { UserNameChangeDialogContext } from "../organisms/UserNameChangeDialog";
 import { PageTemplate } from "../templates/PageTemplate";
 
@@ -65,6 +66,32 @@ const UserList: React.VFC = () => {
   const [searchStr, setSearchStr] = useState('');
   const userCreateDialogDispatch = UserCreateDialogContext.useDispatch();
   const userInfoDialogDispatch = UserInfoDialogContext.useDispatch();
+
+  const [showFilter, setShowFilter] = useState<boolean>(false);
+
+  const { loginUser } = useLogin();
+  const [filterRoles, setFilterRoles] = useState<string[]>(
+    // without privileged users, default filters are admin roles filters
+    !loginUser ? [] : hasPrivilegedRole(loginUser.roles) ? [] : hooks.existingRoles.filter((v) => hasAdminForRole(loginUser.roles, v)));
+
+  const pushFilterRoles = (role: string) => {
+    filterRoles && setFilterRoles([...new Set([...filterRoles, role])].sort((a, b) => a < b ? -1 : 1));
+  }
+  const popFilterRoles = (role: string) => {
+    filterRoles && setFilterRoles(filterRoles.filter(v => v !== role));
+  }
+
+  const isUserMatchedToFilterRoles = (user: User) => {
+    for (const v of user.roles) {
+      for (const f of filterRoles) {
+        if (v === f) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   useEffect(() => { hooks.getUsers() }, []); // eslint-disable-line
 
   return (<>
@@ -88,15 +115,46 @@ const UserList: React.VFC = () => {
           sx={{ flexGrow: 0.5 }}
         />
         <Box sx={{ flexGrow: 1 }} />
-        <IconButton color="inherit" onClick={() => { hooks.getUsers() }}>
-          <RefreshTwoTone />
-        </IconButton>
-        <Fab size='small' color='primary' onClick={() => userCreateDialogDispatch(true)} sx={{ flexShrink: 0 }} >
-          <AddTwoTone />
-        </Fab>
+        <Tooltip title="Refresh" placement="top">
+          <IconButton color="inherit" onClick={() => { hooks.getUsers() }}>
+            <RefreshTwoTone />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Add new user" placement="top">
+          <Fab size='small' color='primary' onClick={() => userCreateDialogDispatch(true)} sx={{ flexShrink: 0 }} >
+            <AddTwoTone />
+          </Fab>
+        </Tooltip>
       </Stack >
+      <Box component="div" sx={{ justifyContent: "flex-end", textOverflow: 'ellipsis', overflow: 'hidden' }} >
+        <IconButton size="small" color="inherit" onClick={() => { setShowFilter(!showFilter) }}>
+          {showFilter ? < ExpandLess /> : <ExpandMore />}
+        </IconButton>
+        <Typography color="text.secondary" variant="caption">Filter by Roles</Typography>
+        {filterRoles.length > 0 &&
+          <Grid container sx={{ pt: 1 }}>
+            {filterRoles.map((v, i) =>
+              <SelectableChip key={v} label={v} sx={{ m: 0.1 }}
+                color={isPrivilegedRole(v) ? "error" : isAdminRole(v) ? "warning" : "default"}
+                defaultChecked={true} onChecked={() => { popFilterRoles(v) }} />
+            )}
+          </Grid>}
+        <Collapse in={showFilter} timeout="auto" unmountOnExit sx={{ pt: 1 }}>
+          <Divider />
+          <Typography color="text.secondary" variant="caption">Existing Roles</Typography>
+          <Grid container sx={{ pt: 1 }}>
+            {hooks.existingRoles.map((v, i) =>
+              <SelectableChip key={v} label={v} sx={{ m: 0.1 }}
+                color={isPrivilegedRole(v) ? "error" : isAdminRole(v) ? "warning" : "default"}
+                checked={filterRoles?.includes(v)} onChecked={(checked) => { checked ? pushFilterRoles(v) : popFilterRoles(v) }} />
+            )}
+          </Grid>
+        </Collapse>
+      </Box>
+
     </Paper>
-    {!hooks.users.filter((us) => searchStr === '' || Boolean(us.name.match(searchStr))).length &&
+    {
+      !hooks.users.filter((us) => searchStr === '' || Boolean(us.name.match(searchStr))).length &&
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
         <Typography variant='subtitle1' sx={{ color: 'text.secondary', textAlign: 'center' }}>No Users found.</Typography>
       </Paper>
@@ -104,7 +162,9 @@ const UserList: React.VFC = () => {
     <Grid container spacing={0.5}>
       {hooks.users
         .filter((us) => searchStr === '' || Boolean(us.name.match(searchStr)))
-        .filter((us) => us.status === 'Active').map((us) =>
+        .filter((us) => us.status === 'Active')
+        .filter((us) => (filterRoles.length == 0 || isUserMatchedToFilterRoles(us)))
+        .map((us) =>
           <Grid item key={us.name} xs={12} sm={6} md={4}>
             <Card>
               <CardHeader
@@ -114,9 +174,9 @@ const UserList: React.VFC = () => {
                   <Typography variant='subtitle1'>{us.name}</Typography>
                   <Box sx={{ flex: '1 1 auto' }} />
                   <div style={{ maxWidth: 150, whiteSpace: 'nowrap' }}>
-                    <Box component="div" sx={{ justifyContent: "flex-end", textOverflow: 'ellipsis', overflow: 'hidden'  }}>
+                    <Box component="div" sx={{ justifyContent: "flex-end", textOverflow: 'ellipsis', overflow: 'hidden' }}>
                       {us.roles && us.roles.map((v, i) => {
-                        return <Chip size='small' key={i} label={v} />
+                        return <Chip color={isPrivilegedRole(v) ? "error" : isAdminRole(v) ? "warning" : "default"} size='small' key={i} label={v} />
                       })}
                     </Box>
                   </div>
@@ -137,15 +197,17 @@ export const UserPage: React.VFC = () => {
   return (
     <PageTemplate title="Users">
       <PasswordDialogContext.Provider>
-        <UserCreateDialogContext.Provider>
-          <RoleChangeDialogContext.Provider>
-            <UserDeleteDialogContext.Provider>
-              <UserInfoDialogContext.Provider>
-                <UserList />
-              </UserInfoDialogContext.Provider>
-            </UserDeleteDialogContext.Provider>
-          </RoleChangeDialogContext.Provider>
-        </UserCreateDialogContext.Provider>
+        <UserCreateConfirmDialogContext.Provider>
+          <UserCreateDialogContext.Provider>
+            <RoleChangeDialogContext.Provider>
+              <UserDeleteDialogContext.Provider>
+                <UserInfoDialogContext.Provider>
+                  <UserList />
+                </UserInfoDialogContext.Provider>
+              </UserDeleteDialogContext.Provider>
+            </RoleChangeDialogContext.Provider>
+          </UserCreateDialogContext.Provider>
+        </UserCreateConfirmDialogContext.Provider>
       </PasswordDialogContext.Provider>
     </PageTemplate>
   );

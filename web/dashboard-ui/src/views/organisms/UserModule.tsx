@@ -8,6 +8,53 @@ import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { useTemplateService, useUserService } from "../../services/DashboardServices";
 
+export const PrivilegedRole = 'cosmo-admin'
+
+const AdminRoleSufix = '-admin'
+
+export const isPrivilegedRole = (role: string) => {
+  return role === PrivilegedRole
+}
+
+export const isAdminRole = (role: string) => {
+  return role.endsWith(AdminRoleSufix)
+}
+
+export const hasPrivilegedRole = (roles: string[]) => {
+  return roles.includes(PrivilegedRole);
+}
+
+export const isAdminUser = (user?: User) => {
+  if (user) {
+    if (hasPrivilegedRole(user.roles)) {
+      return true
+    }
+    for (const role of user.roles) {
+      if (isAdminRole(role)) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+export const excludeAdminRolePrefix = (role: string): string => {
+  // given "xxx-admin" return "xxx"
+  return role.endsWith(AdminRoleSufix) ? role.slice(0, -AdminRoleSufix.length) : role
+}
+
+export const hasAdminForRole = (myRoles: string[], userrole: string) => {
+  for (const myRole of myRoles) {
+    if (myRole == userrole) {
+      return true
+    }
+    if (isAdminRole(myRole) && userrole.startsWith(excludeAdminRolePrefix(myRole))) {
+      return true
+    }
+  }
+  return false
+}
+
 /**
  * hooks
  */
@@ -19,6 +66,7 @@ const useUser = () => {
   const { handleError } = useHandleError();
   const [users, setUsers] = useState<User[]>([]);
   const userService = useUserService();
+  const [existingRoles, setExistingRoles] = useState<string[]>([]);
 
   /**
    * WorkspaceList: workspace list 
@@ -28,9 +76,14 @@ const useUser = () => {
     try {
       const result = await userService.getUsers({});
       setUsers(result.items?.sort((a, b) => (a.name < b.name) ? -1 : 1));
+      updateExistingRoles(result.items);
     } catch (error) {
       handleError(error);
     }
+  }
+
+  const updateExistingRoles = (users: User[]) => {
+    setExistingRoles([...new Set(users.map(user => user.roles).flat())].sort((a, b) => a < b ? -1 : 1));
   }
 
   /**
@@ -87,7 +140,9 @@ const useUser = () => {
         const newUser = result.user;
         enqueueSnackbar(result.message, { variant: 'success' });
         if (users && newUser) {
-          setUsers(prev => prev.map(us => us.name === newUser.name ? new User(newUser) : us));
+          const newUsers = users.map(us => us.name === newUser.name ? new User(newUser) : us);
+          setUsers(newUsers);
+          updateExistingRoles(newUsers);
         }
         return newUser;
       }
@@ -120,6 +175,7 @@ const useUser = () => {
 
   return (
     {
+      existingRoles,
       users,
       getUsers,
       createUser,

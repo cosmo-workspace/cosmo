@@ -6,7 +6,7 @@ import React from "react";
 import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
-import { SelectableChip } from "../atoms/SelectableChips";
+import { FormSelectableChip } from "../atoms/SelectableChips";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { useUserModule } from "./UserModule";
 
@@ -18,7 +18,7 @@ const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
  * view
  */
 interface Inputs {
-  currentRoles: { enabled: boolean }[];
+  existingRoles: { name: string, enabled: boolean }[];
   roles: { name: string }[];
 }
 
@@ -26,9 +26,9 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
   console.log('RoleChangeDialog');
   const hooks = useUserModule();
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<Inputs>({
+  const { register, handleSubmit, control, formState: { errors, defaultValues } } = useForm<Inputs>({
     defaultValues: {
-      currentRoles: user.roles.map(() => ({ enabled: true }))
+      existingRoles: hooks.existingRoles.map(v => ({ name: v, enabled: user.roles.includes(v) }))
     },
   });
 
@@ -39,7 +39,7 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
       validate: (fieldArrayValues) => {
         // check that no duplicates exist
         let values = fieldArrayValues.map((item) => item.name).filter((v) => v !== "");
-        values.push(...user.roles);
+        values.push(...hooks.existingRoles);
         const uniqueValues = [...new Set(values)];
         return values.length === uniqueValues.length || "No duplicates allowed";
       }
@@ -53,9 +53,10 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
       <form onSubmit={handleSubmit((inp: Inputs) => {
         console.log(inp)
         let protoRoles = inp.roles.filter((v) => { return v.name !== "" }).map((v) => { return v.name })
-        inp.currentRoles.forEach((v, i) => {
+        console.log(protoRoles)
+        inp.existingRoles.forEach((v, i) => {
           if (v.enabled) {
-            protoRoles.push(user.roles[i])
+            protoRoles.push(v.name)
           }
         })
         protoRoles = [...new Set(protoRoles)]; // remove duplicates
@@ -69,8 +70,9 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
             <TextFieldLabel label="Name" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
             <Typography color="text.secondary" display="block" variant="caption" >Roles</Typography>
             <Grid container>
-              {user.roles.map((v, index) =>
-                <SelectableChip defaultChecked key={index} control={control} label={v} color="primary" {...registerMui(register(`currentRoles.${index}.enabled` as const))} />
+              {hooks.existingRoles.map((v, index) =>
+                <FormSelectableChip defaultChecked={defaultValues?.existingRoles && defaultValues.existingRoles[index]?.enabled} key={index} control={control} label={v} color="primary" sx={{ m: 0.05 }}
+                  {...register(`existingRoles.${index}.enabled` as const)} />
               )}
             </Grid>
             {rolesFields.map((field, index) =>
@@ -94,7 +96,7 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
         </DialogContent>
         <DialogActions>
           <Button onClick={() => onClose()} color="primary">Cancel</Button>
-          <Button type="submit" variant="contained" color="primary">Update</Button>
+          <Button type="submit" variant="contained" color="secondary">Update</Button>
         </DialogActions>
       </form>
     </Dialog>

@@ -1,11 +1,12 @@
 import { AddTwoTone, Check, CheckCircleOutlined, Clear, DeleteTwoTone, EditTwoTone, ErrorOutline, ExpandLessTwoTone, ExpandMoreTwoTone, MoreVertTwoTone, OpenInNewTwoTone, PlayCircleFilledWhiteTwoTone, RefreshTwoTone, SearchTwoTone, StopCircleOutlined, StopCircleTwoTone, WebTwoTone } from '@mui/icons-material';
-import { Alert, Avatar, Box, Card, CardContent, CardHeader, Chip, CircularProgress, Collapse, Divider, Fab, Grid, IconButton, InputAdornment, Link, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Alert, Avatar, Box, Card, CardContent, CardHeader, Chip, CircularProgress, Collapse, Divider, Fab, Grid, IconButton, InputAdornment, Link, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, { useEffect, useRef, useState } from "react";
 import { useLogin } from '../../components/LoginProvider';
 import { NetworkRule, Workspace } from '../../proto/gen/dashboard/v1alpha1/workspace_pb';
 import { AlertTooltip } from '../atoms/AlertTooltip';
 import { NameAvatar } from '../atoms/NameAvatar';
 import { NetworkRuleDeleteDialogContext, NetworkRuleUpsertDialogContext } from '../organisms/NetworkRuleActionDialog';
+import { isAdminUser } from '../organisms/UserModule';
 import { WorkspaceCreateDialogContext, WorkspaceDeleteDialogContext, WorkspaceStartDialogContext, WorkspaceStopDialogContext } from '../organisms/WorkspaceActionDialog';
 import { computeStatus, useWorkspaceModule, useWorkspaceUsersModule, WorkspaceContext, WorkspaceUsersContext } from '../organisms/WorkspaceModule';
 import { PageTemplate } from '../templates/PageTemplate';
@@ -66,14 +67,16 @@ const UserSelect: React.VFC = () => {
   const chipReff = useRef(null);
   return (
     <>
-      <Chip
-        ref={chipReff}
-        label={user.name}
-        avatar={<NameAvatar name={user.displayName} />}
-        onClick={(e) => { e.stopPropagation(); getUsers().then(() => setAnchorEl(chipReff.current)); }}
-        onDelete={(e) => { e.stopPropagation(); getUsers().then(() => setAnchorEl(chipReff.current)); }}
-        deleteIcon={anchorEl ? <ExpandLessTwoTone /> : <ExpandMoreTwoTone />}
-      />
+      <Tooltip title="Change User" placement="top">
+        <Chip
+          ref={chipReff}
+          label={user.name}
+          avatar={<NameAvatar name={user.displayName} />}
+          onClick={(e) => { e.stopPropagation(); getUsers().then(() => setAnchorEl(chipReff.current)); }}
+          onDelete={(e) => { e.stopPropagation(); getUsers().then(() => setAnchorEl(chipReff.current)); }}
+          deleteIcon={anchorEl ? <ExpandLessTwoTone /> : <ExpandMoreTwoTone />}
+        />
+      </Tooltip>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
         {users.map((user, ind) =>
           <MenuItem key={ind} value={user.name} onClick={() => { setAnchorEl(null); setUser(user) }}>
@@ -242,7 +245,7 @@ const WorkspaceList: React.VFC = () => {
   const hooks = useWorkspaceModule();
   const { user } = useWorkspaceUsersModule();
   const { loginUser } = useLogin();
-  const isAdmin = (loginUser?.roles.includes('cosmo-admin'));
+  const isAdmin = isAdminUser(loginUser);
   const [searchStr, setSearchStr] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [openTutorialTooltip, setOpenTutorialTooltip] = useState<boolean | undefined>(undefined);
@@ -290,11 +293,13 @@ const WorkspaceList: React.VFC = () => {
         />
         <Box sx={{ flexGrow: 1 }} />
         {isAdmin && (isUpSM || (!isSearchFocused && searchStr === "")) && <UserSelect />}
-        <IconButton
-          color="inherit"
-          onClick={() => { hooks.refreshWorkspaces(user.name) }}>
-          <RefreshTwoTone />
-        </IconButton>
+        <Tooltip title="Refresh" placement="top">
+          <IconButton
+            color="inherit"
+            onClick={() => { hooks.refreshWorkspaces(user.name) }}>
+            <RefreshTwoTone />
+          </IconButton>
+        </Tooltip>
         <AlertTooltip arrow placement="top"
           open={openTutorialTooltip || false}
           title={<Alert severity="info" onClick={() => { setOpenTutorialTooltip(false) }}>Create your first workspace!</Alert>} >

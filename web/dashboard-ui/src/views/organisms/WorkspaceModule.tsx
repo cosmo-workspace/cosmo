@@ -10,6 +10,7 @@ import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { NetworkRule, Workspace, WorkspaceStatus } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
 import { useTemplateService, useUserService, useWorkspaceService } from "../../services/DashboardServices";
+import { hasAdminForRole, hasPrivilegedRole } from "./UserModule";
 
 export function computeStatus(workspace: Workspace) {
   const status = workspace.status!.phase;
@@ -272,13 +273,25 @@ const useWorkspaceUsers = () => {
   const { handleError } = useHandleError();
   const userService = useUserService();
 
+  const filterUsersByRoles = (users: User[], myRoles: string[]) => {
+    return hasPrivilegedRole(myRoles) ? users : users.filter((u) => {
+      for (const userRole of u.roles) {
+        if (hasAdminForRole(myRoles, userRole)) {
+          return true
+        }
+      }
+      return false
+    })
+  }
+
   const getUsers = async () => {
     console.log('useWorkspaceUsers:getUsers');
     try {
       const result = await userService.getUsers({});
       setUsers(prev => {
         const newUsers = result.items.sort((a, b) => (a.name < b.name) ? -1 : 1);
-        return JSON.stringify(prev) === JSON.stringify(newUsers) ? prev : newUsers;
+        const roleFilteredNewUsers = filterUsersByRoles(newUsers, (loginUser?.roles || []))
+        return JSON.stringify(prev) === JSON.stringify(roleFilteredNewUsers) ? prev : roleFilteredNewUsers;
       });
     }
     catch (error) { handleError(error) };

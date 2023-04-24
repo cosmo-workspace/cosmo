@@ -61,7 +61,7 @@ export const UserNameChangeDialog: React.VFC<{ onClose: () => void, user: User }
         </DialogContent>
         <DialogActions>
           <Button onClick={() => onClose()} color="primary">Cancel</Button>
-          <Button type="submit" variant="contained" color="primary">Update</Button>
+          <Button type="submit" variant="contained" color="secondary">Update</Button>
         </DialogActions>
       </form>
     </Dialog>

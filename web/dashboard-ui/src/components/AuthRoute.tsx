@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { isAdminUser } from '../views/organisms/UserModule';
 import { useLogin } from './LoginProvider';
 
 type Props = {
@@ -9,7 +10,7 @@ type Props = {
 
 export const AuthRoute: React.VFC<Props> = ({ children, admin }) => {
   const { loginUser } = useLogin();
-  const isAdmin = loginUser && loginUser.roles.includes('cosmo-admin');
+  const isAdmin = isAdminUser(loginUser);
   let location = useLocation();
 
   if (!loginUser) {
