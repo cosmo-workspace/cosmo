@@ -62,8 +62,8 @@ var _ = Describe("cosmoctl [template]", func() {
 
 	AfterEach(func() {
 		clientMock.Clear()
-		test_DeleteTemplateAll()
-		test_DeleteClusterTemplateAll()
+		testUtil.DeleteTemplateAll()
+		testUtil.DeleteClusterTemplateAll()
 	})
 
 	//==================================================================================
@@ -107,10 +107,10 @@ var _ = Describe("cosmoctl [template]", func() {
 	Describe("[get]", func() {
 
 		run_test := func(args ...string) {
-			test_CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
-			test_CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template2")
-			test_CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "template3")
-			test_CreateClusterTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "cluster-template1")
+			testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
+			testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template2")
+			testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "template3")
+			testUtil.CreateClusterTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "cluster-template1")
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()

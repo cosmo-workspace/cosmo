@@ -80,7 +80,7 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name
+      --name string    user name (default \"-\")
       --role strings   user role (default [-])
 
 Global Flags:
@@ -809,18 +809,113 @@ Global Flags:
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 2']
 SnapShot = 'failed to reset password: namespaces "cosmo-user-XXXXXX" not found'
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user1 --name namechanged 1']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name  1']
 SnapShot = """
-\u001B[32mSuccessfully updated user user1
+\u001B[32mSuccessfully updated user upd-norole
 \u001B[0m"""
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user1 --name namechanged 2']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name  2']
 SnapShot = 'success'
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user1 --name namechanged 3']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name  3']
 SnapShot = """
 {
-  \"Name\": \"user1\",
+  \"Name\": \"upd-norole\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"ロールなし\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name  4']
+SnapShot = """
+{
+  \"Name\": \"upd-norole\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name name1 --role team-dev 1']
+SnapShot = """
+\u001B[32mSuccessfully updated user upd-norole
+\u001B[0m"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name name1 --role team-dev 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name name1 --role team-dev 3']
+SnapShot = """
+{
+  \"Name\": \"upd-norole\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"ロールなし\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name name1 --role team-dev 4']
+SnapShot = """
+{
+  \"Name\": \"upd-norole\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"name1\",
+    \"roles\": [
+      {
+        \"name\": \"team-dev\"
+      }
+    ],
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name namechanged 1']
+SnapShot = """
+\u001B[32mSuccessfully updated user upd-norole
+\u001B[0m"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name namechanged 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name namechanged 3']
+SnapShot = """
+{
+  \"Name\": \"upd-norole\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"ロールなし\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name namechanged 4']
+SnapShot = """
+{
+  \"Name\": \"upd-norole\",
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"namechanged\",
@@ -832,21 +927,36 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user1 --role cosmo-admin 1']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --role cosmo-admin 1']
 SnapShot = """
-\u001B[32mSuccessfully updated user user1
+\u001B[32mSuccessfully updated user upd-norole
 \u001B[0m"""
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user1 --role cosmo-admin 2']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --role cosmo-admin 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user1 --role cosmo-admin 3']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --role cosmo-admin 3']
 SnapShot = """
 {
-  \"Name\": \"user1\",
+  \"Name\": \"upd-norole\",
   \"Namespace\": \"\",
   \"Spec\": {
-    \"displayName\": \"name1\",
+    \"displayName\": \"ロールなし\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --role cosmo-admin 4']
+SnapShot = """
+{
+  \"Name\": \"upd-norole\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"ロールなし\",
     \"roles\": [
       {
         \"name\": \"cosmo-admin\"
@@ -860,21 +970,21 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --name name1 --role  1']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --role team-developer,otherteam-developer 1']
 SnapShot = """
-\u001B[32mSuccessfully updated user user2
+\u001B[32mSuccessfully updated user upd-norole
 \u001B[0m"""
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --name name1 --role  2']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --role team-developer,otherteam-developer 2']
 SnapShot = 'success'
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --name name1 --role  3']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --role team-developer,otherteam-developer 3']
 SnapShot = """
 {
-  \"Name\": \"user2\",
+  \"Name\": \"upd-norole\",
   \"Namespace\": \"\",
   \"Spec\": {
-    \"displayName\": \"name1\",
+    \"displayName\": \"ロールなし\",
     \"authType\": \"kosmo-secret\"
   },
   \"Status\": {
@@ -883,24 +993,19 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role xxxxx 1']
-SnapShot = """
-\u001B[32mSuccessfully updated user user2
-\u001B[0m"""
-
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role xxxxx 2']
-SnapShot = 'success'
-
-['cosmoctl [user] [update] ✅ success in normal context: user update user2 --role xxxxx 3']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --role team-developer,otherteam-developer 4']
 SnapShot = """
 {
-  \"Name\": \"user2\",
+  \"Name\": \"upd-norole\",
   \"Namespace\": \"\",
   \"Spec\": {
-    \"displayName\": \"name2\",
+    \"displayName\": \"ロールなし\",
     \"roles\": [
       {
-        \"name\": \"xxxxx\"
+        \"name\": \"team-developer\"
+      },
+      {
+        \"name\": \"otherteam-developer\"
       }
     ],
     \"authType\": \"kosmo-secret\"
@@ -911,7 +1016,50 @@ SnapShot = """
 }
 """
 
-['cosmoctl [user] [update] ❌ fail with an unexpected error at update: user update user1 --name namechanged 1']
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-priv --role  1']
+SnapShot = """
+\u001B[32mSuccessfully updated user upd-priv
+\u001B[0m"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-priv --role  2']
+SnapShot = 'success'
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-priv --role  3']
+SnapShot = """
+{
+  \"Name\": \"upd-priv\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"特権\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ✅ success in normal context: user update upd-priv --role  4']
+SnapShot = """
+{
+  \"Name\": \"upd-priv\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"特権\",
+    \"authType\": \"kosmo-secret\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [update] ❌ fail with an unexpected error at update: user update upd-norole --name namechanged 1']
 SnapShot = """
 Error: failed to update user: mock update error
 Usage:
@@ -919,7 +1067,7 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name
+      --name string    user name (default \"-\")
       --role strings   user role (default [-])
 
 Global Flags:
@@ -929,7 +1077,7 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] ❌ fail with an unexpected error at update: user update user1 --name namechanged 2']
+['cosmoctl [user] [update] ❌ fail with an unexpected error at update: user update upd-norole --name namechanged 2']
 SnapShot = 'failed to update user: mock update error'
 
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update 1']
@@ -940,7 +1088,7 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name
+      --name string    user name (default \"-\")
       --role strings   user role (default [-])
 
 Global Flags:
@@ -953,15 +1101,15 @@ Global Flags:
 ['cosmoctl [user] [update] ❌ fail with invalid args: user update 2']
 SnapShot = 'validation error: invalid args'
 
-['cosmoctl [user] [update] ❌ fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 1']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update notfound --name namechanged --role cosmo-admin 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"XXXXXX\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"notfound\" not found
 Usage:
   cosmoctl user update USER_NAME --role ROLE --name NAME [flags]
 
 Flags:
   -h, --help           help for update
-      --name string    user name
+      --name string    user name (default \"-\")
       --role strings   user role (default [-])
 
 Global Flags:
@@ -971,10 +1119,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] ❌ fail with invalid args: user update XXXXXX --name namechanged --role cosmo-admin 2']
-SnapShot = 'user is not found: users.cosmo-workspace.github.io "XXXXXX" not found'
+['cosmoctl [user] [update] ❌ fail with invalid args: user update notfound --name namechanged --role cosmo-admin 2']
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "notfound" not found'
 
-['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name  1']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update upd-priv --role cosmo-admin 1']
 SnapShot = """
 Error: no change
 Usage:
@@ -982,7 +1130,7 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name
+      --name string    user name (default \"-\")
       --role strings   user role (default [-])
 
 Global Flags:
@@ -992,10 +1140,10 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 --name  2']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update upd-priv --role cosmo-admin 2']
 SnapShot = 'no change'
 
-['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 1']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update upd-priv 1']
 SnapShot = """
 Error: no change
 Usage:
@@ -1003,7 +1151,7 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name
+      --name string    user name (default \"-\")
       --role strings   user role (default [-])
 
 Global Flags:
@@ -1013,5 +1161,5 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [update] ❌ fail with invalid args: user update user1 2']
+['cosmoctl [user] [update] ❌ fail with invalid args: user update upd-priv 2']
 SnapShot = 'no change'

@@ -56,18 +56,18 @@ var _ = Describe("cosmoctl [workspace]", func() {
 		options.Scheme = scheme
 		rootCmd = NewRootCmd(options)
 
-		test_CreateLoginUser("user2", "お名前", nil, "password")
-		test_CreateLoginUser("user1", "アドミン", []cosmov1alpha1.UserRole{{Name: cosmov1alpha1.UserAdminRole}}, "password")
-		test_CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
+		testUtil.CreateLoginUser("user2", "お名前", nil, "password")
+		testUtil.CreateLoginUser("user1", "アドミン", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, "password")
+		testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
 		By("---------------BeforeEach end----------------")
 	})
 
 	AfterEach(func() {
 		By("---------------AfterEach start---------------")
 		clientMock.Clear()
-		test_DeleteWorkspaceAll()
-		test_DeleteCosmoUserAll()
-		test_DeleteTemplateAll()
+		testUtil.DeleteWorkspaceAll()
+		testUtil.DeleteCosmoUserAll()
+		testUtil.DeleteTemplateAll()
 	})
 
 	//==================================================================================
@@ -149,10 +149,10 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_CreateWorkspace("user1", "ws2", "template1", nil)
-				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/", false)
 
 				rootCmd.SetArgs(args)
 				err := rootCmd.Execute()
@@ -232,8 +232,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("❌ fail with an unexpected error at list workspace:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_CreateWorkspace("user1", "ws2", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
 				clientMock.ListMock = func(ctx context.Context, list client.ObjectList, opts ...client.ListOption) (mocked bool, err error) {
 					if clientMock.IsCallingFrom("\\.ListWorkspacesByUserName$") {
 						return true, errors.New("mock listWorkspacesByUserName error")
@@ -264,9 +264,9 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws2", "template1", nil)
-				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/")
+				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/", false)
 
 				run_test(args...)
 
@@ -279,9 +279,9 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("✅ success with dry-run:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws2", "template1", nil)
-				test_createNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/")
+				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/", false)
 
 				run_test(args...)
 
@@ -304,7 +304,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("❌ fail with an unexpected error at delete:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
 				clientMock.DeleteMock = func(ctx context.Context, obj client.Object, opts ...client.DeleteOption) (mocked bool, err error) {
 					if clientMock.IsCallingFrom("\\.RunE$") {
 						return true, errors.New("mock delete error")
@@ -336,8 +336,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_StopWorkspace("user1", "ws1")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.StopWorkspace("user1", "ws1")
 				run_test(args...)
 			},
 			Entry(desc, "workspace", "run-instance", "ws1", "--user", "user1"),
@@ -345,9 +345,9 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("❌ fail with invalid args:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_StopWorkspace("user1", "ws1")
-				test_CreateWorkspace("user1", "ws2", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.StopWorkspace("user1", "ws1")
+				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
 				run_test(args...)
 			},
 			Entry(desc, "workspace", "run-instance", "ws1", "--user", "user1", "-A"),
@@ -361,8 +361,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("❌ fail with an unexpected error at update:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_StopWorkspace("user1", "ws1")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.StopWorkspace("user1", "ws1")
 				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
 				run_test(args...)
 			},
@@ -389,7 +389,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
 				run_test(args...)
 			},
 			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "user1"),
@@ -397,9 +397,9 @@ var _ = Describe("cosmoctl [workspace]", func() {
 
 		DescribeTable("❌ fail with invalid args:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_CreateWorkspace("user1", "ws2", "template1", nil)
-				test_StopWorkspace("user1", "ws2")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
+				testUtil.StopWorkspace("user1", "ws2")
 				run_test(args...)
 			},
 			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "user1", "-A"),
@@ -414,7 +414,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 		DescribeTable("❌ fail with an unexpected error at update:",
 			func(args ...string) {
 				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
 				run_test(args...)
 			},
 			Entry(desc, "workspace", "stop-instance", "ws1", "--user", "user1"),

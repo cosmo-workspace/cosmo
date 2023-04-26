@@ -19,13 +19,15 @@ type updateOption struct {
 	UserName string
 	Name     string
 	Role     []string
+
+	displayName *string
 }
 
 func updateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &updateOption{CliOptions: cliOpt}
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-	cmd.Flags().StringVar(&o.Name, "name", "", "user name")
+	cmd.Flags().StringVar(&o.Name, "name", "-", "user name")
 	cmd.Flags().StringSliceVar(&o.Role, "role", []string{"-"}, "user role")
 	return cmd
 }
@@ -55,6 +57,10 @@ func (o *updateOption) Complete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	o.UserName = args[0]
+
+	if o.Name != "-" {
+		o.displayName = &o.Name
+	}
 	return nil
 }
 
@@ -64,7 +70,7 @@ func (o *updateOption) RunE(cmd *cobra.Command, args []string) error {
 
 	ctx = clog.IntoContext(ctx, o.Logr)
 	_, err := o.Client.UpdateUser(ctx, o.UserName, kosmo.UpdateUserOpts{
-		DisplayName: &o.Name,
+		DisplayName: o.displayName,
 		UserRoles:   o.Role,
 	})
 	if err != nil {

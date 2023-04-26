@@ -26,7 +26,7 @@ func isAllowedToUseTemplate(ctx context.Context, tmpl cosmov1alpha1.TemplateObje
 	debugAll := clog.FromContext(ctx).DebugAll()
 
 	ann := tmpl.GetAnnotations()
-	if ann == nil || cosmov1alpha1.HasAdminRole(roles) {
+	if ann == nil || cosmov1alpha1.HasPrivilegedRole(roles) {
 		// all allowed
 		debugAll.Info("all allowed", "tmpl", tmpl.GetName())
 		return true

@@ -25,7 +25,7 @@ var _ = Describe("Dashboard server [Template]", func() {
 
 	BeforeEach(func() {
 		userSession = test_CreateLoginUserSession("normal-user", "お名前", nil, "password")
-		adminSession = test_CreateLoginUserSession("admin-user", "アドミン", []cosmov1alpha1.UserRole{{Name: cosmov1alpha1.UserAdminRole}}, "password")
+		adminSession = test_CreateLoginUserSession("admin-user", "アドミン", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, "password")
 		client = dashboardv1alpha1connect.NewTemplateServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 

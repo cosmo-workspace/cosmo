@@ -55,18 +55,18 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		options.Scheme = scheme
 		rootCmd = NewRootCmd(options)
 
-		test_CreateLoginUser("user2", "お名前", nil, "password")
-		test_CreateLoginUser("user1", "アドミン", []cosmov1alpha1.UserRole{{Name: cosmov1alpha1.UserAdminRole}}, "password")
-		test_CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
+		testUtil.CreateLoginUser("user2", "お名前", nil, "password")
+		testUtil.CreateLoginUser("user1", "アドミン", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, "password")
+		testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
 		By("---------------BeforeEach end----------------")
 	})
 
 	AfterEach(func() {
 		By("---------------AfterEach start---------------")
 		clientMock.Clear()
-		test_DeleteWorkspaceAll()
-		test_DeleteCosmoUserAll()
-		test_DeleteTemplateAll()
+		testUtil.DeleteWorkspaceAll()
+		testUtil.DeleteCosmoUserAll()
+		testUtil.DeleteTemplateAll()
 	})
 
 	//==================================================================================
@@ -107,9 +107,9 @@ var _ = Describe("cosmoctl [netrule]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws1", "nw3", 2222, "gp2", "/")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw3", 2222, "gp2", "/", false)
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "3000", "--path", "/abc", "--group", "gp11"),
@@ -119,8 +119,8 @@ var _ = Describe("cosmoctl [netrule]", func() {
 
 		DescribeTable("❌ fail with invalid args:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "3000", "--path", "/", "-A"),
@@ -137,7 +137,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 
 		DescribeTable("❌ fail with an unexpected error at update:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
 				clientMock.UpdateMock = func(ctx context.Context, obj client.Object, opts ...client.UpdateOption) (mocked bool, err error) {
 					if clientMock.IsCallingFrom("\\.RunE$") {
 						return true, errors.New("mock update error")
@@ -169,9 +169,9 @@ var _ = Describe("cosmoctl [netrule]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
-				test_createNetworkRule("user1", "ws1", "nw2", 2222, "gp2", "/")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw2", 2222, "gp2", "/", false)
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "delete", "ws1", "--user", "user1", "--workspace", "nw1"),
@@ -180,8 +180,8 @@ var _ = Describe("cosmoctl [netrule]", func() {
 
 		DescribeTable("❌ fail with invalid args:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "delete", "nw11", "--user", "user1", "--workspace", "ws1", "-A"),
@@ -197,8 +197,8 @@ var _ = Describe("cosmoctl [netrule]", func() {
 
 		DescribeTable("❌ fail with an unexpected error at update:",
 			func(args ...string) {
-				test_CreateWorkspace("user1", "ws1", "template1", nil)
-				test_createNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/")
+				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
 				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
 				run_test(args...)
 			},

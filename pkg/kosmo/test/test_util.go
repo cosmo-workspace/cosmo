@@ -53,6 +53,31 @@ func (c *TestUtil) CreateTemplate(templateType string, templateName string) {
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
 
+func (c *TestUtil) CreateClusterTemplate(templateType string, templateName string) {
+	ctx := context.Background()
+	tmpl := cosmov1alpha1.ClusterTemplate{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: templateName,
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: templateType,
+			},
+		},
+		Spec: cosmov1alpha1.TemplateSpec{
+			RequiredVars: []cosmov1alpha1.RequiredVarSpec{
+				{Var: "{{HOGE}}", Default: "HOGEhoge"},
+				{Var: "{{FUGA}}", Default: "FUGAfuga"},
+			},
+		},
+	}
+	err := c.kosmoClient.Create(ctx, &tmpl)
+	Expect(err).ShouldNot(HaveOccurred())
+
+	Eventually(func() error {
+		err := c.kosmoClient.Get(ctx, client.ObjectKey{Name: templateName}, &cosmov1alpha1.ClusterTemplate{})
+		return err
+	}, time.Second*5, time.Millisecond*100).Should(Succeed())
+}
+
 func (c *TestUtil) DeleteTemplateAll() {
 	ctx := context.Background()
 	err := c.kosmoClient.DeleteAllOf(ctx, &cosmov1alpha1.Template{})
@@ -61,6 +86,17 @@ func (c *TestUtil) DeleteTemplateAll() {
 		var tmplList cosmov1alpha1.TemplateList
 		err := c.kosmoClient.List(ctx, &tmplList)
 		return tmplList.Items, err
+	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
+}
+
+func (c *TestUtil) DeleteClusterTemplateAll() {
+	ctx := context.Background()
+	err := c.kosmoClient.DeleteAllOf(ctx, &cosmov1alpha1.ClusterTemplate{})
+	Expect(err).ShouldNot(HaveOccurred())
+	Eventually(func() ([]cosmov1alpha1.ClusterTemplate, error) {
+		var l cosmov1alpha1.ClusterTemplateList
+		err := c.kosmoClient.List(ctx, &l)
+		return l.Items, err
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 

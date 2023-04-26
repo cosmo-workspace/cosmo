@@ -144,7 +144,7 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 
 	before := user.DeepCopy()
 
-	if opts.DisplayName != nil && *opts.DisplayName != "" {
+	if opts.DisplayName != nil {
 		user.Spec.DisplayName = *opts.DisplayName
 	}
 

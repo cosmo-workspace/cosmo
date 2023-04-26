@@ -68,7 +68,7 @@ func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	o.UserName = args[0]
 
 	if o.Admin {
-		o.Roles = []string{cosmov1alpha1.UserAdminRole}
+		o.Roles = []string{cosmov1alpha1.PrivilegedRoleName}
 	}
 
 	o.userAddons = make([]cosmov1alpha1.UserAddon, 0, len(o.Addons)+len(o.ClusterAddons))

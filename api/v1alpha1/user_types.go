@@ -99,13 +99,39 @@ type UserRole struct {
 	Name string `json:"name"`
 }
 
+// GetGroupAndRole exclude group and role from UserRole.Name
+// if UserRole is `cosmo-admin`, it returns group: cosmo, role: admin
+// role is one of the [`admin`]
+func (r UserRole) GetGroupAndRole() (group string, role string) {
+	v := strings.Split(r.Name, "-")
+	if len(v) > 0 {
+		return strings.Join(v[:len(v)-1], "-"), v[len(v)-1]
+	}
+	return r.Name, ""
+}
+
+func (u *User) GetGroupRoleMap() map[string]string {
+	groupRoleMap := make(map[string]string)
+	for _, v := range u.Spec.Roles {
+		group, role := v.GetGroupAndRole()
+		groupRoleMap[group] = role
+	}
+	return groupRoleMap
+}
+
 const (
-	UserAdminRole string = "cosmo-admin"
+	PrivilegedRoleName  string = "cosmo-admin"
+	PrivilegedGroupName string = "cosmo"
+	AdminRoleName       string = "admin"
 )
 
-func HasAdminRole(roles []UserRole) bool {
+var (
+	PrivilegedRole = UserRole{Name: PrivilegedRoleName}
+)
+
+func HasPrivilegedRole(roles []UserRole) bool {
 	for _, role := range roles {
-		if role.Name == UserAdminRole {
+		if role == PrivilegedRole {
 			return true
 		}
 	}
