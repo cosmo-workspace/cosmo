@@ -80,6 +80,7 @@ deploy-cert-manager: create-k3d-cluster helm ## Deploy cert-manager.
 
 deploy-traefik: create-k3d-cluster helm docker-build-traefik-plugins ## Deploy traefik.
 	@echo ====== $@ ======
+	helm dependency update ../../charts/cosmo-traefik 
 	helm upgrade --install traefik ../../charts/cosmo-traefik -n kube-system \
 		--wait \
 	 	-f ./charts/traefik.values.yaml
