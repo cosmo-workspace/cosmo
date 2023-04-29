@@ -27,10 +27,6 @@ func (s *Server) TemplateServiceHandler(mux *http.ServeMux) {
 func (s *Server) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.GetWorkspaceTemplatesResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	if err := s.adminAuthentication(ctx); err != nil {
-		return nil, ErrResponse(log, err)
-	}
-
 	tmpls, err := s.Klient.ListWorkspaceTemplates(ctx)
 	if err != nil {
 		return nil, ErrResponse(log, err)
@@ -54,10 +50,6 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Requ
 
 func (s *Server) GetUserAddonTemplates(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.GetUserAddonTemplatesResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
-
-	if err := s.adminAuthentication(ctx); err != nil {
-		return nil, ErrResponse(log, err)
-	}
 
 	tmpls, err := s.Klient.ListUserAddonTemplates(ctx)
 	if err != nil {
