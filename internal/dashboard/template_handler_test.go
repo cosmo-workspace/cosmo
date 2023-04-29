@@ -62,6 +62,8 @@ var _ = Describe("Dashboard server [Template]", func() {
 			run_test,
 			Entry(nil, "admin-user", "empty"),
 			Entry(nil, "admin-user", "not empty"),
+			Entry(nil, "normal-user", "empty"),
+			Entry(nil, "normal-user", "not empty"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at list:",
@@ -69,7 +71,6 @@ var _ = Describe("Dashboard server [Template]", func() {
 				clientMock.SetListError((*Server).GetWorkspaceTemplates, errors.New("template list error"))
 				run_test(user, testCase)
 			},
-			Entry(nil, "normal-user", "permission deny"),
 			Entry(nil, "admin-user", "not empty"),
 		)
 	})
@@ -101,6 +102,8 @@ var _ = Describe("Dashboard server [Template]", func() {
 			run_test,
 			Entry(nil, "admin-user", "empty"),
 			Entry(nil, "admin-user", "not empty"),
+			Entry(nil, "normal-user", "empty"),
+			Entry(nil, "normal-user", "not empty"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at list:",
@@ -108,7 +111,6 @@ var _ = Describe("Dashboard server [Template]", func() {
 				clientMock.SetListError((*Server).GetUserAddonTemplates, errors.New("template list error"))
 				run_test(user, testCase)
 			},
-			Entry(nil, "normal-user", "permission deny"),
 			Entry(nil, "admin-user", "not empty"),
 		)
 	})
