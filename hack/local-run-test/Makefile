@@ -217,6 +217,11 @@ BASEURL := https://$(DASHBOARD_URL)
 add-user: kubectl cosmoctl
 	@echo ====== $@ ======
 	-cosmoctl user create tom --admin 2> /dev/null
+	-cosmoctl user create team-a-dev --role "team-a-dev" 2> /dev/null
+	-cosmoctl user create team-a-admin --role "team-a-admin" 2> /dev/null
+	-cosmoctl user create team-b-dev --role "team-b-dev" 2> /dev/null
+	-cosmoctl user create team-b-admin --role "team-b-admin" 2> /dev/null
+	-cosmoctl user create team-ab-dev --role "team-a-dev,team-b-dev" 2> /dev/null
 	export PASSWORD=`cosmoctl user reset-password tom | grep -Po "(?<=New password: ).*"` && \
 	bash -c 'until ( \
 		curl -L -c bin/cookie.txt -X POST -H "Content-Type: application/json" \
