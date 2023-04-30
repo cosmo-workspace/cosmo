@@ -25,7 +25,7 @@ export const hasPrivilegedRole = (roles: string[]) => {
 }
 
 export const isAdminUser = (user?: User) => {
-  if (user) {
+  if (user && user.roles) {
     if (hasPrivilegedRole(user.roles)) {
       return true
     }

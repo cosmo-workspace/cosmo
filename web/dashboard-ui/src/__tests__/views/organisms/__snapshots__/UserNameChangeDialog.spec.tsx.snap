@@ -1,4 +1,4 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+// Vitest Snapshot v1
 
 exports[`UserNameChangeDialog > UserNameChangeDialogContext > open/close > 1.initial render 1`] = `
 .emotion-0 {
@@ -489,6 +489,13 @@ exports[`UserNameChangeDialog > UserNameChangeDialogContext > open/close > 2.ope
   border-bottom-color: #d32f2f;
 }
 
+.emotion-13.Mui-error:focus-within:after {
+  -webkit-transform: scaleX(1);
+  -moz-transform: scaleX(1);
+  -ms-transform: scaleX(1);
+  transform: scaleX(1);
+}
+
 .emotion-13:before {
   border-bottom: 1px solid rgba(0, 0, 0, 0.42);
   left: 0;
@@ -673,7 +680,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-16:focus::-ms-input-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: calc(133% - 32px);
+  max-width: calc(133% - 24px);
   position: absolute;
   left: 0;
   top: 0;
@@ -990,7 +997,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
   -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   color: #fff;
-  background-color: #1976d2;
+  background-color: #9c27b0;
   box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
 }
 
@@ -1013,13 +1020,13 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
 .emotion-28:hover {
   -webkit-text-decoration: none;
   text-decoration: none;
-  background-color: #1565c0;
+  background-color: #7b1fa2;
   box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
 }
 
 @media (hover: none) {
   .emotion-28:hover {
-    background-color: #1976d2;
+    background-color: #9c27b0;
   }
 }
 
@@ -1070,7 +1077,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
   >
     <div
       aria-hidden="true"
-      class="MuiBackdrop-root MuiModal-backdrop emotion-5"
+      class="MuiBackdrop-root emotion-5"
       style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
     />
     <div
@@ -1099,7 +1106,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
             class="MuiDialogContent-root emotion-9"
           >
             <div
-              class="MuiStack-root emotion-10"
+              class="emotion-10"
             >
               <div
                 class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root emotion-11"
@@ -1113,7 +1120,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
                   User ID
                 </label>
                 <div
-                  class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart Mui-readOnly MuiInputBase-readOnly emotion-13"
+                  class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart Mui-readOnly emotion-13"
                 >
                   <div
                     class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-filled MuiInputAdornment-sizeMedium emotion-14"
@@ -1147,7 +1154,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
                   </div>
                   <input
                     aria-invalid="false"
-                    class="MuiInputBase-input MuiFilledInput-input MuiInputBase-inputAdornedStart Mui-readOnly MuiInputBase-readOnly emotion-16"
+                    class="MuiInputBase-input MuiFilledInput-input MuiInputBase-inputAdornedStart Mui-readOnly emotion-16"
                     id=":rj:"
                     readonly=""
                     tabindex="-1"
@@ -1239,7 +1246,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
               />
             </button>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium emotion-28"
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium emotion-28"
               tabindex="0"
               type="submit"
             >
@@ -1658,6 +1665,13 @@ exports[`UserNameChangeDialog > render > render 1`] = `
   border-bottom-color: #d32f2f;
 }
 
+.emotion-9.Mui-error:focus-within:after {
+  -webkit-transform: scaleX(1);
+  -moz-transform: scaleX(1);
+  -ms-transform: scaleX(1);
+  transform: scaleX(1);
+}
+
 .emotion-9:before {
   border-bottom: 1px solid rgba(0, 0, 0, 0.42);
   left: 0;
@@ -1842,7 +1856,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-12:focus::-ms-input-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: calc(133% - 32px);
+  max-width: calc(133% - 24px);
   position: absolute;
   left: 0;
   top: 0;
@@ -2250,7 +2264,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
   -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   color: #fff;
-  background-color: #1976d2;
+  background-color: #9c27b0;
   box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
 }
 
@@ -2273,13 +2287,13 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
 .emotion-24:hover {
   -webkit-text-decoration: none;
   text-decoration: none;
-  background-color: #1565c0;
+  background-color: #7b1fa2;
   box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
 }
 
 @media (hover: none) {
   .emotion-24:hover {
-    background-color: #1976d2;
+    background-color: #9c27b0;
   }
 }
 
@@ -2309,7 +2323,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
   >
     <div
       aria-hidden="true"
-      class="MuiBackdrop-root MuiModal-backdrop emotion-1"
+      class="MuiBackdrop-root emotion-1"
       style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
     />
     <div
@@ -2338,7 +2352,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
             class="MuiDialogContent-root emotion-5"
           >
             <div
-              class="MuiStack-root emotion-6"
+              class="emotion-6"
             >
               <div
                 class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root emotion-7"
@@ -2352,7 +2366,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
                   User ID
                 </label>
                 <div
-                  class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart Mui-readOnly MuiInputBase-readOnly emotion-9"
+                  class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart Mui-readOnly emotion-9"
                 >
                   <div
                     class="MuiInputAdornment-root MuiInputAdornment-positionStart MuiInputAdornment-filled MuiInputAdornment-sizeMedium emotion-10"
@@ -2386,7 +2400,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
                   </div>
                   <input
                     aria-invalid="false"
-                    class="MuiInputBase-input MuiFilledInput-input MuiInputBase-inputAdornedStart Mui-readOnly MuiInputBase-readOnly emotion-12"
+                    class="MuiInputBase-input MuiFilledInput-input MuiInputBase-inputAdornedStart Mui-readOnly emotion-12"
                     id=":r1:"
                     readonly=""
                     tabindex="-1"
@@ -2478,7 +2492,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
               />
             </button>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium emotion-24"
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium emotion-24"
               tabindex="0"
               type="submit"
             >
