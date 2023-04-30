@@ -189,7 +189,7 @@ func test_Login(userName string, password string) string {
 	return res.Header().Get("Set-Cookie")
 }
 
-func test_CreateLoginUserSession(userName, displayName string, role cosmov1alpha1.UserRole, password string) string {
+func test_CreateLoginUserSession(userName, displayName string, role []cosmov1alpha1.UserRole, password string) string {
 	testUtil.CreateLoginUser(userName, displayName, role, password)
 	return test_Login(userName, password)
 }

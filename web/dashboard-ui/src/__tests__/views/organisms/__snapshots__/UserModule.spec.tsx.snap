@@ -1,4 +1,4 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+// Vitest Snapshot v1
 
 exports[`useTemplates > useTemplates getUserAddonTemplates > error 1`] = `[Error: [mock] getUser error]`;
 
@@ -60,7 +60,9 @@ exports[`useUserModule > useUserModule createUser > nomal 1`] = `
     "defaultPassword": "",
     "displayName": "user1 name",
     "name": "user1",
-    "role": "cosmoAdmin",
+    "roles": [
+      "cosmoAdmin",
+    ],
     "status": "",
   },
   {
@@ -69,7 +71,7 @@ exports[`useUserModule > useUserModule createUser > nomal 1`] = `
     "defaultPassword": "",
     "displayName": "user2 name",
     "name": "user2",
-    "role": "",
+    "roles": [],
     "status": "",
   },
   {
@@ -78,7 +80,7 @@ exports[`useUserModule > useUserModule createUser > nomal 1`] = `
     "defaultPassword": "",
     "displayName": "user3 name",
     "name": "user3",
-    "role": "",
+    "roles": [],
     "status": "",
   },
 ]
@@ -116,7 +118,9 @@ exports[`useUserModule > useUserModule deleteUser > nomal 1`] = `
     "defaultPassword": "",
     "displayName": "user1 name",
     "name": "user1",
-    "role": "cosmoAdmin",
+    "roles": [
+      "cosmoAdmin",
+    ],
     "status": "",
   },
   {
@@ -125,7 +129,7 @@ exports[`useUserModule > useUserModule deleteUser > nomal 1`] = `
     "defaultPassword": "",
     "displayName": "user3 name",
     "name": "user3",
-    "role": "",
+    "roles": [],
     "status": "",
   },
 ]
@@ -163,7 +167,9 @@ exports[`useUserModule > useUserModule getUsers > normal 1`] = `
     "defaultPassword": "",
     "displayName": "user1 name",
     "name": "user1",
-    "role": "cosmoAdmin",
+    "roles": [
+      "cosmoAdmin",
+    ],
     "status": "",
   },
   {
@@ -172,7 +178,7 @@ exports[`useUserModule > useUserModule getUsers > normal 1`] = `
     "defaultPassword": "",
     "displayName": "user2 name",
     "name": "user2",
-    "role": "",
+    "roles": [],
     "status": "",
   },
   {
@@ -181,7 +187,7 @@ exports[`useUserModule > useUserModule getUsers > normal 1`] = `
     "defaultPassword": "",
     "displayName": "user3 name",
     "name": "user3",
-    "role": "",
+    "roles": [],
     "status": "",
   },
 ]
@@ -218,7 +224,9 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers 1`] = `
     "defaultPassword": "",
     "displayName": "user1 name",
     "name": "user1",
-    "role": "cosmoAdmin",
+    "roles": [
+      "cosmoAdmin",
+    ],
     "status": "",
   },
   {
@@ -227,7 +235,9 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers 1`] = `
     "defaultPassword": "",
     "displayName": "user2 name",
     "name": "user2",
-    "role": "Role2",
+    "roles": [
+      "Role2",
+    ],
     "status": "",
   },
   {
@@ -236,7 +246,7 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers 1`] = `
     "defaultPassword": "",
     "displayName": "user3 name",
     "name": "user3",
-    "role": "",
+    "roles": [],
     "status": "",
   },
 ]
@@ -261,7 +271,9 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers. return
     "defaultPassword": "",
     "displayName": "user1 name",
     "name": "user1",
-    "role": "cosmoAdmin",
+    "roles": [
+      "cosmoAdmin",
+    ],
     "status": "",
   },
   {
@@ -270,7 +282,7 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers. return
     "defaultPassword": "",
     "displayName": "user2 name",
     "name": "user2",
-    "role": "",
+    "roles": [],
     "status": "",
   },
   {
@@ -279,7 +291,7 @@ exports[`useUserModule > useUserModule updateRole > nomal after getUsers. return
     "defaultPassword": "",
     "displayName": "user3 name",
     "name": "user3",
-    "role": "",
+    "roles": [],
     "status": "",
   },
 ]
@@ -330,7 +342,9 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 1`]
     "defaultPassword": "",
     "displayName": "user1 name",
     "name": "user1",
-    "role": "cosmoAdmin",
+    "roles": [
+      "cosmoAdmin",
+    ],
     "status": "",
   },
   {
@@ -339,7 +353,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 1`]
     "defaultPassword": "",
     "displayName": "displayNameChange",
     "name": "user2",
-    "role": "",
+    "roles": [],
     "status": "",
   },
   {
@@ -348,7 +362,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers 1`]
     "defaultPassword": "",
     "displayName": "user3 name",
     "name": "user3",
-    "role": "",
+    "roles": [],
     "status": "",
   },
 ]
@@ -373,7 +387,9 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers. re
     "defaultPassword": "",
     "displayName": "user1 name",
     "name": "user1",
-    "role": "cosmoAdmin",
+    "roles": [
+      "cosmoAdmin",
+    ],
     "status": "",
   },
   {
@@ -382,7 +398,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers. re
     "defaultPassword": "",
     "displayName": "user2 name",
     "name": "user2",
-    "role": "",
+    "roles": [],
     "status": "",
   },
   {
@@ -391,7 +407,7 @@ exports[`useUserModule > useUserModule updateUserName > nomal after getUsers. re
     "defaultPassword": "",
     "displayName": "user3 name",
     "name": "user3",
-    "role": "",
+    "roles": [],
     "status": "",
   },
 ]

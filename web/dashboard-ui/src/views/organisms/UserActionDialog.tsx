@@ -1,19 +1,21 @@
-import { Close, ExtensionRounded, PersonOutlineTwoTone, SecurityOutlined, SupervisorAccountTwoTone } from "@mui/icons-material";
+import { Add, Close, ExpandLess, ExpandMore, PersonOutlineTwoTone, Remove, SecurityOutlined } from "@mui/icons-material";
 import {
-  Alert, Button, Checkbox, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
+  Alert, Button, Checkbox, Chip, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
   Divider,
   FormControlLabel,
   FormHelperText,
-  IconButton, InputAdornment, MenuItem, Stack, TextField, Tooltip, Typography
+  Grid, IconButton, InputAdornment, List, ListItem, ListItemText, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Tooltip, Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import { NameAvatar } from "../atoms/NameAvatar";
+import { FormSelectableChip } from "../atoms/SelectableChips";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
 import { PasswordDialogContext } from "./PasswordDialog";
-import { useTemplates, useUserModule } from "./UserModule";
+import { isAdminRole, isPrivilegedRole, useTemplates, useUserModule } from "./UserModule";
 
 const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
   inputRef: ref, ...rest
@@ -27,10 +29,17 @@ interface UserActionDialogProps {
   actions: React.ReactNode
   user: User,
   onClose: () => void,
+  defaultOpenUserAddon?: boolean
 }
 
-const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, user, onClose }) => {
+const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, user, onClose, defaultOpenUserAddon }) => {
   console.log(user)
+  const [openUserAddon, setOpenUserAddon] = useState<boolean>(defaultOpenUserAddon || false);
+
+  const handleOpenUserAddonClick = () => {
+    setOpenUserAddon(!openUserAddon);
+  };
+
   return (
     <Dialog open={true} onClose={() => onClose()} fullWidth maxWidth={'xs'}>
       <DialogTitle>{title}
@@ -41,14 +50,68 @@ const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, us
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <Stack spacing={3} sx={{ mt: 1 }}>
-          <TextFieldLabel label="User ID" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
-          <TextFieldLabel label="User Name" fullWidth value={user.displayName} startAdornmentIcon={<PersonOutlineTwoTone />} />
-          <TextFieldLabel label="Role" fullWidth value={user.role} startAdornmentIcon={<SupervisorAccountTwoTone />} />
+        <Stack spacing={2}>
+          <Stack alignItems="center" >
+            <NameAvatar name={user?.displayName} sx={{ width: 50, height: 50 }} />
+          </Stack>
+          <TextFieldLabel label="Name" fullWidth value={user.name} startAdornmentIcon={<PersonOutlineTwoTone />} />
+          <TextFieldLabel label="Display Name" fullWidth value={user.displayName} startAdornmentIcon={<PersonOutlineTwoTone />} />
           <TextFieldLabel label="AuthType" fullWidth value={user.authType} startAdornmentIcon={<SecurityOutlined />} />
-          {user.addons?.map((v, i) => {
-            return <TextFieldLabel label="Addons" key={i} fullWidth value={v.template} startAdornmentIcon={<ExtensionRounded />} />
-          })}
+          <Typography color="text.secondary" display="block" variant="caption" >Roles</Typography>
+          <Stack alignItems="center" >
+            <Grid container justifyContent="center" sx={{ width: 300 }} >
+              {user?.roles && user.roles.map((v, i) => {
+                return (
+                  <Grid item key={i} >
+                    <Chip color={isPrivilegedRole(v) ? "error" : isAdminRole(v) ? "warning" : "default"} size="small" key={i} label={v} sx={{ m: 0.05 }} />
+                  </Grid>)
+              })}
+            </Grid>
+          </Stack>
+          <Divider />
+          {Boolean(user.addons.length) && <Stack spacing={1}>
+            <Typography
+              color="text.secondary"
+              display="block"
+              variant="caption"
+            >
+              User Addons
+              <IconButton size="small" aria-label="openUserAddon" onClick={handleOpenUserAddonClick}>
+                {openUserAddon ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
+              </IconButton>
+            </Typography>
+            <Collapse in={openUserAddon} timeout="auto" unmountOnExit>
+              <List component="nav">
+                {user.addons.map((v, i) =>
+                  <ListItem key={i}>
+                    <ListItemText
+                      disableTypography={true}
+                      primary={
+                        <Typography
+                          color="text.secondary"
+                          display="block"
+                          variant="caption"
+                        >* {v.template}</Typography>}
+                      secondary={
+                        <TableContainer component={Paper}>
+                          <Table aria-label={v.template}>
+                            <TableBody>
+                              {Object.keys(v.vars).map((key, j) =>
+                                <TableRow key={j} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
+                                  <TableCell component="th" scope="row">{key}</TableCell>
+                                  <TableCell align="right">{v.vars[key]}</TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      }
+                    />
+                  </ListItem>
+                )}
+              </List>
+            </Collapse>
+          </Stack>}
         </Stack>
       </DialogContent>
       <DialogActions>{actions}</DialogActions>
@@ -63,7 +126,7 @@ export const UserInfoDialog: React.VFC<{ onClose: () => void, user: User }> = ({
   console.log('UserInfoDialog');
   return (
     <UserActionDialog
-      title='User'
+      title='User Info'
       onClose={() => onClose()}
       user={user}
       actions={<Button variant="contained" color="primary" onClick={() => { onClose() }}>Close</Button>} />
@@ -96,13 +159,43 @@ export const UserDeleteDialog: React.VFC<{ onClose: () => void, user: User }> = 
   );
 };
 
+export const UserCreateConfirmDialog: React.VFC<{ onClose: () => void, onConfirm: () => void, user: User }> = ({ onClose, onConfirm, user }) => {
+  console.log('UserCreateConfirmDialog');
+
+  const hooks = useUserModule();
+  const passwordDialogDispatch = PasswordDialogContext.useDispatch();
+  return (
+    <UserActionDialog
+      title='Create?'
+      onClose={() => onClose()}
+      user={user}
+      defaultOpenUserAddon={true}
+      actions={<DialogActions>
+        <Button onClick={() => onClose()} color="primary">Back</Button>
+        <Button variant="contained" color="secondary"
+          onClick={() => {
+            hooks.createUser(user.name, user.displayName, user.roles, user.addons)
+              .then(newUser => {
+                onClose();
+                onConfirm();
+                passwordDialogDispatch(true, { user: newUser! });
+                hooks.getUsers();
+              });
+          }}
+        >Create</Button>
+      </DialogActions>
+      } />
+  );
+}
+
 /**
  * Create
  */
 type Inputs = {
   id: string;
   name: string;
-  role?: string;
+  existingRoles: { enabled: boolean }[];
+  roles: { name: string }[];
   addons: {
     template: Template;
     enable: boolean;
@@ -112,17 +205,33 @@ type Inputs = {
 export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }) => {
   console.log('UserCreateDialog');
   const hooks = useUserModule();
-  const passwordDialogDispatch = PasswordDialogContext.useDispatch();
+  const userCreateConfirmDialogDispatch = UserCreateConfirmDialogContext.useDispatch();
 
-  const { register, handleSubmit, watch, control, formState: { errors } } = useForm<Inputs>();
-  const { fields, replace } = useFieldArray({ control, name: "addons" });
+  const { register, handleSubmit, watch, control, formState: { errors } } = useForm<Inputs>({
+    defaultValues: {}
+  });
+
+  const { fields: addonsFields, replace: replaceAddons } = useFieldArray({ control, name: "addons" });
 
   const templ = useTemplates();
   useEffect(() => { templ.getUserAddonTemplates(); }, []);  // eslint-disable-line
   useEffect(() => {
-    replace(templ.templates.map(t => ({ template: t, enable: false, vars: [] })));
+    replaceAddons(templ.templates.map(t => ({ template: t, enable: false, vars: [] })));
   }, [templ.templates]);  // eslint-disable-line
 
+  const { fields: rolesFields, append: appendRoles, remove: removeRoles } = useFieldArray({
+    control,
+    name: "roles",
+    rules: {
+      validate: (fieldArrayValues) => {
+        // check that no duplicates exist
+        let values = fieldArrayValues.map((item) => item.name).filter((v) => v !== "");
+        values.push(...hooks.existingRoles);
+        const uniqueValues = [...new Set(values)];
+        return values.length === uniqueValues.length || "No duplicates allowed";
+      }
+    }
+  });
 
   return (
     <Dialog open={true}
@@ -138,19 +247,27 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
             });
             return { template: inpAddon.template.name, vars: vars, clusterScoped: inpAddon.template.isClusterScope }
           });
-
-        console.log("inp.id", inp.id, "inp.name", inp.name, "inp.role", inp.role, "userAddons", userAddons)
         const protoUserAddons = userAddons.map(ua => new UserAddons(ua));
-        hooks.createUser(inp.id, inp.name, inp.role, protoUserAddons)
-          .then(newUser => {
-            onClose();
-            passwordDialogDispatch(true, { user: newUser! });
-            hooks.getUsers();
-          });
+        console.log("protoUserAddons", protoUserAddons)
+
+        let protoRoles = inp.roles.map((v) => { return v.name })
+        inp.existingRoles.forEach((v, i) => {
+          if (v.enabled) {
+            protoRoles.push(hooks.existingRoles[i])
+          }
+        })
+        protoRoles = [...new Set(protoRoles)]; // remove duplicates
+        console.log("protoRoles", protoRoles)
+
+        userCreateConfirmDialogDispatch(true, {
+          onConfirm: () => { onClose(); },
+          user:
+            new User({ name: inp.id, displayName: inp.name, roles: protoRoles, authType: "default", addons: protoUserAddons })
+        });
       })}
         autoComplete="new-password">
         <DialogContent>
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             <TextField label="User ID" fullWidth autoFocus
               {...registerMui(register('id', {
                 required: { value: true, message: "Required" },
@@ -167,7 +284,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
                 startAdornment: (<InputAdornment position="start"><PersonOutlineTwoTone /></InputAdornment>),
               }}
             />
-            <TextField label="User Name" fullWidth
+            <TextField label="Display Name" fullWidth
               {...registerMui(register('name', {
                 required: { value: true, message: "Required" },
                 maxLength: { value: 32, message: "Max 32 characters" }
@@ -179,14 +296,30 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
                 startAdornment: (<InputAdornment position="start"><PersonOutlineTwoTone /></InputAdornment>),
               }}
             />
-            <TextField label="Role" select fullWidth defaultValue=''
-              {...registerMui(register('role'))}
-              error={Boolean(errors.role)} >
-              {[
-                (<MenuItem key="" value=""><em>none</em></MenuItem>),
-                (<MenuItem key="cosmo-admin" value="cosmo-admin"><em>cosmo-admin</em></MenuItem>),
-              ]}
-            </TextField>
+            <Typography color="text.secondary" display="block" variant="caption" >Roles</Typography>
+            <Grid container>
+              {hooks.existingRoles.map((label, index) =>
+                <FormSelectableChip key={index} control={control} label={label} color="primary" sx={{ m: 0.05 }}
+                  {...register(`existingRoles.${index}.enabled` as const)} />
+              )}
+            </Grid>
+            {rolesFields.map((field, index) =>
+              <TextField label="Role" key={index} fullWidth
+                {...registerMui(register(`roles.${index}.name`, { required: { value: true, message: "Required" }, }))}
+                defaultValue={field.name}
+                InputProps={{
+                  endAdornment: <IconButton onClick={() => { removeRoles(index) }} ><Remove /></IconButton>
+                }}
+                error={Boolean(errors.roles?.[index]?.name)}
+                helperText={errors.roles?.[index]?.name?.message}
+              />
+            )}
+            <FormHelperText error={Boolean(errors.roles?.root?.message)}>
+              {errors.roles?.root?.message}
+            </FormHelperText>
+            <Button variant="outlined" onClick={() => { appendRoles({ name: '' }) }} startIcon={<Add />}>
+              Add Custom Role
+            </Button>
             <Divider />
             <Stack spacing={1}>
               {Boolean(templ.templates.length) && <Typography
@@ -196,7 +329,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
               >
                 Enable User Addons
               </Typography>}
-              {fields.map((field, index) =>
+              {addonsFields.map((field, index) =>
                 <React.Fragment key={field.id}>
                   <Tooltip title={field.template.description || "No description"} placement="bottom" arrow enterDelay={1000}>
                     <>
@@ -235,7 +368,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
         </DialogContent>
         <DialogActions>
           <Button onClick={() => onClose()} color="primary">Cancel</Button>
-          <Button type="submit" variant="contained" color="primary">Create</Button>
+          <Button type="submit" variant="contained" color="primary">Confirm</Button>
         </DialogActions>
       </form>
     </Dialog >
@@ -251,3 +384,5 @@ export const UserDeleteDialogContext = DialogContext<{ user: User }>(
   props => (<UserDeleteDialog {...props} />));
 export const UserCreateDialogContext = DialogContext(
   props => (<UserCreateDialog {...props} />));
+export const UserCreateConfirmDialogContext = DialogContext<{ onConfirm: () => void, user: User }>(
+  props => (<UserCreateConfirmDialog {...props} />));

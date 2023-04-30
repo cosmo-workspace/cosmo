@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -106,7 +107,7 @@ func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *cosmov1a
 	return loginUser, deadline, nil
 }
 
-func (s *Server) userAuthentication(ctx context.Context, userName string) error {
+func userAuthentication(ctx context.Context, userName string) error {
 	log := clog.FromContext(ctx).WithCaller()
 
 	caller := callerFromContext(ctx)
@@ -115,7 +116,7 @@ func (s *Server) userAuthentication(ctx context.Context, userName string) error 
 	}
 
 	if caller.Name != userName {
-		if cosmov1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
+		if cosmov1alpha1.HasPrivilegedRole(caller.Spec.Roles) {
 			// Admin user have access to all resources
 			log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "username", caller.Name)
 		} else {
@@ -127,20 +128,75 @@ func (s *Server) userAuthentication(ctx context.Context, userName string) error 
 	return nil
 }
 
-func (s *Server) adminAuthentication(ctx context.Context) error {
-	log := clog.FromContext(ctx).WithCaller()
+func adminAuthentication(ctx context.Context, customAuthenFuncs ...func(callerGroupRoleMap map[string]string) error) error {
+	log := clog.FromContext(ctx).WithCaller().WithName("audit")
 
 	caller := callerFromContext(ctx)
 	if caller == nil {
 		return kosmo.NewInternalServerError("invalid user authentication: NOT authorized", nil)
 	}
+	auditlog := log.WithValues("caller", caller.Name, "role", caller.Spec.Roles)
 
-	// Check if the user role is Admin
-	if !cosmov1alpha1.UserRole(caller.Spec.Role).IsAdmin() {
-		log.Info("invalid admin authentication: NOT cosmo-admin", "username", caller.Name)
-		return kosmo.NewForbiddenError("", nil)
+	auditlog.Info("try admin request")
+
+	// pass if the user role is privileged
+	if cosmov1alpha1.HasPrivilegedRole(caller.Spec.Roles) {
+		auditlog.Info("privileged request")
+		return nil
 	}
 
-	log.WithName("audit").Info(fmt.Sprintf("admin request %s", caller.Name), "username", caller.Name)
+	// deny if the user has admin role
+	callerGroupRoleMap := caller.GetGroupRoleMap()
+	err := validateCallerHasAdmin(callerGroupRoleMap)
+	if err != nil {
+		auditlog.Info(err.Error())
+		return kosmo.NewForbiddenError("", err)
+	}
+
+	// pass if all custom authens are passed
+	if len(customAuthenFuncs) > 0 {
+		errs := make([]error, 0, len(customAuthenFuncs))
+		for _, f := range customAuthenFuncs {
+			if err := f(callerGroupRoleMap); err != nil {
+				errs = append(errs, err)
+			}
+		}
+		if len(errs) > 0 {
+			auditlog.Info("custom admin authentication failed", "errs", errs)
+			return kosmo.NewForbiddenError(errs[0].Error(), errs[0])
+		}
+		auditlog.Info("admin request is allowed")
+		return nil
+	}
+
+	auditlog.Info("admin authentication failed")
+	return kosmo.NewForbiddenError("", nil)
+}
+
+func validateCallerHasAdmin(callerGroupRoleMap map[string]string) error {
+	for _, role := range callerGroupRoleMap {
+		if role == cosmov1alpha1.AdminRoleName {
+			// Allow if caller has at least one administrative privilege.
+			return nil
+		}
+	}
+	return errors.New("not admin")
+}
+
+func validateCallerHasAdminForTheRolesFunc(tryRoleNames []string) func(map[string]string) error {
+	return func(m map[string]string) error {
+		for _, r := range tryRoleNames {
+			tryAccessGroup, _ := (cosmov1alpha1.UserRole{Name: r}).GetGroupAndRole()
+			callerRoleForTheGroup := m[tryAccessGroup]
+
+			if callerRoleForTheGroup != cosmov1alpha1.AdminRoleName {
+				return fmt.Errorf("no access to %s", tryAccessGroup)
+			}
+		}
+		return nil
+	}
+}
+
+var passAllAdmin = func(map[string]string) error {
 	return nil
 }

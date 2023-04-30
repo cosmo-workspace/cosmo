@@ -26,7 +26,7 @@ func (s *Server) CreateWorkspace(ctx context.Context, req *connect_go.Request[da
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -48,7 +48,7 @@ func (s *Server) GetWorkspaces(ctx context.Context, req *connect_go.Request[dash
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -74,7 +74,7 @@ func (s *Server) GetWorkspace(ctx context.Context, req *connect_go.Request[dashv
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -93,7 +93,7 @@ func (s *Server) DeleteWorkspace(ctx context.Context, req *connect_go.Request[da
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -114,7 +114,7 @@ func (s *Server) UpdateWorkspace(ctx context.Context, req *connect_go.Request[da
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 

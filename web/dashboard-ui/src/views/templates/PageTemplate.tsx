@@ -1,11 +1,11 @@
+import { AccountCircle, Badge, ExitToApp, LockOutlined, Menu as MenuIcon, SupervisorAccountTwoTone, VpnKey, WebTwoTone } from "@mui/icons-material";
 import {
-  Box, Chip, colors, Container, CssBaseline, Divider, IconButton,
+  Box, Chip, colors, Container, CssBaseline, Divider, Grid, IconButton,
   Link, ListItemIcon, ListItemText,
   Menu, MenuItem, Stack, Toolbar, Typography
 } from "@mui/material";
 import MuiAppBar, { AppBarProps } from '@mui/material/AppBar';
 import { experimentalStyled as styled } from "@mui/material/styles";
-import { AccountCircle, Badge, ExitToApp, LockOutlined, Menu as MenuIcon, SupervisorAccountTwoTone, VpnKey, WebTwoTone } from "@mui/icons-material";
 import React from "react";
 import { ErrorBoundary } from 'react-error-boundary';
 import { Link as RouterLink } from "react-router-dom";
@@ -13,6 +13,7 @@ import { useLogin } from "../../components/LoginProvider";
 import logo from "../../logo-with-name-small.png";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { PasswordChangeDialogContext } from "../organisms/PasswordChangeDialog";
+import { isAdminRole, isAdminUser, isPrivilegedRole } from "../organisms/UserModule";
 import { UserNameChangeDialogContext } from "../organisms/UserNameChangeDialog";
 
 
@@ -45,7 +46,7 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
   const { loginUser, logout } = useLogin();
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
   const userNameChangeDialogDispach = UserNameChangeDialogContext.useDispatch();
-  const isAdmin = (loginUser?.role === 'cosmo-admin');
+  const isAdmin = isAdminUser(loginUser);
   const isSignIn = Boolean(loginUser);
 
   const changeUserName = () => {
@@ -128,7 +129,14 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
                 <NameAvatar name={loginUser?.displayName} sx={{ width: 50, height: 50 }} />
                 <Typography>{loginUser?.displayName}</Typography>
                 <Typography color={colors.grey[700]} fontSize="small">{loginUser?.name}</Typography>
-                {loginUser?.role && <Chip variant="outlined" size="small" label={loginUser?.role} />}
+                <Grid container justifyContent="center" sx={{ width: 200 }}>
+                  {loginUser?.roles && loginUser.roles.map((v, i) => {
+                    return (
+                      <Grid item key={i} >
+                        <Chip color={isPrivilegedRole(v) ? "error" : isAdminRole(v) ? "warning" : "default"} variant="outlined" size="small" key={i} label={v} />
+                      </Grid>)
+                  })}
+                </Grid>
               </Stack>
               <Divider sx={{ mb: 1 }} />
               {isSignIn && <MenuItem onClick={() => changeUserName()}>
@@ -163,7 +171,7 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
         }}
       >
         <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
           <Typography
             component="h2"
             variant="h5"

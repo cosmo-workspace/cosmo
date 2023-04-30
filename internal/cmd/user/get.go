@@ -69,7 +69,11 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	columnNames := []string{"name", "NAME", "ROLE", "NAMESPACE", "STATUS"}
 	fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 	for _, v := range users {
-		rowdata := []string{v.Name, v.Spec.DisplayName, v.Spec.Role.String(), v.Status.Namespace.Name, string(v.Status.Phase)}
+		role := make([]string, 0, len(v.Spec.Roles))
+		for _, v := range v.Spec.Roles {
+			role = append(role, v.Name)
+		}
+		rowdata := []string{v.Name, v.Spec.DisplayName, strings.Join(role, ","), v.Status.Namespace.Name, string(v.Status.Phase)}
 		fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 	}
 

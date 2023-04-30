@@ -1,4 +1,4 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+// Vitest Snapshot v1
 
 exports[`useNetworkRule > useNetworkRule removeNetwork > error 1`] = `[Error: [mock] deleteNetworkRule error]`;
 
@@ -8852,37 +8852,7 @@ exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > error 2`] = `
 ]
 `;
 
-exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal 1`] = `
-[
-  {
-    "addons": [],
-    "authType": "",
-    "defaultPassword": "",
-    "displayName": "user1 name",
-    "name": "user1",
-    "role": "CosmoAdmin",
-    "status": "",
-  },
-  {
-    "addons": [],
-    "authType": "",
-    "defaultPassword": "",
-    "displayName": "user2 name",
-    "name": "user2",
-    "role": "",
-    "status": "",
-  },
-  {
-    "addons": [],
-    "authType": "",
-    "defaultPassword": "",
-    "displayName": "user2 name",
-    "name": "user3",
-    "role": "",
-    "status": "",
-  },
-]
-`;
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal 1`] = `[]`;
 
 exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal 2`] = `[]`;
 
@@ -8890,37 +8860,7 @@ exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal empty 1`] = `[]
 
 exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal empty 2`] = `[]`;
 
-exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal no change 1`] = `
-[
-  {
-    "addons": [],
-    "authType": "",
-    "defaultPassword": "",
-    "displayName": "user1 name",
-    "name": "user1",
-    "role": "CosmoAdmin",
-    "status": "",
-  },
-  {
-    "addons": [],
-    "authType": "",
-    "defaultPassword": "",
-    "displayName": "user2 name",
-    "name": "user2",
-    "role": "",
-    "status": "",
-  },
-  {
-    "addons": [],
-    "authType": "",
-    "defaultPassword": "",
-    "displayName": "user2 name",
-    "name": "user3",
-    "role": "",
-    "status": "",
-  },
-]
-`;
+exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal no change 1`] = `[]`;
 
 exports[`useWorkspaceUsers > useWorkspaceUsers getUsers > normal no change 2`] = `[]`;
 
@@ -8931,7 +8871,7 @@ exports[`useWorkspaceUsers > useWorkspaceUsers not login > normal 1`] = `
   "defaultPassword": "",
   "displayName": "",
   "name": "",
-  "role": "",
+  "roles": [],
   "status": "",
 }
 `;
@@ -8944,7 +8884,7 @@ exports[`useWorkspaceUsers > useWorkspaceUsers not login > normal 2`] = `
     "defaultPassword": "",
     "displayName": "",
     "name": "",
-    "role": "",
+    "roles": [],
     "status": "",
   },
 ]

@@ -126,7 +126,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 		}
 
 	default:
-		columnNames := []string{"NAME", "REQUIRED-VARS", "TYPE", "IsClusterScope"}
+		columnNames := []string{"NAME", "REQUIREDVARS", "TYPE", "ISCLUSTERSCOPE", "FORROLE", "FORBIDDENROLE"}
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, v := range tmpls {
@@ -136,8 +136,15 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 			}
 			rawTmplVars := strings.Join(vars, ",")
 
+			var forRoles, forbiddenRoles string
+			ann := v.GetAnnotations()
+			if ann != nil {
+				forRoles = ann[cosmov1alpha1.TemplateAnnKeyUserRoles]
+				forbiddenRoles = ann[cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles]
+			}
+
 			tmplType := v.GetLabels()[cosmov1alpha1.TemplateLabelKeyType]
-			rowdata := []string{v.GetName(), rawTmplVars, tmplType, strconv.FormatBool(v.GetScope() == meta.RESTScopeRoot)}
+			rowdata := []string{v.GetName(), rawTmplVars, tmplType, strconv.FormatBool(v.GetScope() == meta.RESTScopeRoot), forRoles, forbiddenRoles}
 			fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 		}
 	}

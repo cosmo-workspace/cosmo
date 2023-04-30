@@ -53,6 +53,31 @@ func (c *TestUtil) CreateTemplate(templateType string, templateName string) {
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
 
+func (c *TestUtil) CreateClusterTemplate(templateType string, templateName string) {
+	ctx := context.Background()
+	tmpl := cosmov1alpha1.ClusterTemplate{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: templateName,
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: templateType,
+			},
+		},
+		Spec: cosmov1alpha1.TemplateSpec{
+			RequiredVars: []cosmov1alpha1.RequiredVarSpec{
+				{Var: "{{HOGE}}", Default: "HOGEhoge"},
+				{Var: "{{FUGA}}", Default: "FUGAfuga"},
+			},
+		},
+	}
+	err := c.kosmoClient.Create(ctx, &tmpl)
+	Expect(err).ShouldNot(HaveOccurred())
+
+	Eventually(func() error {
+		err := c.kosmoClient.Get(ctx, client.ObjectKey{Name: templateName}, &cosmov1alpha1.ClusterTemplate{})
+		return err
+	}, time.Second*5, time.Millisecond*100).Should(Succeed())
+}
+
 func (c *TestUtil) DeleteTemplateAll() {
 	ctx := context.Background()
 	err := c.kosmoClient.DeleteAllOf(ctx, &cosmov1alpha1.Template{})
@@ -64,7 +89,18 @@ func (c *TestUtil) DeleteTemplateAll() {
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
-func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role cosmov1alpha1.UserRole) {
+func (c *TestUtil) DeleteClusterTemplateAll() {
+	ctx := context.Background()
+	err := c.kosmoClient.DeleteAllOf(ctx, &cosmov1alpha1.ClusterTemplate{})
+	Expect(err).ShouldNot(HaveOccurred())
+	Eventually(func() ([]cosmov1alpha1.ClusterTemplate, error) {
+		var l cosmov1alpha1.ClusterTemplateList
+		err := c.kosmoClient.List(ctx, &l)
+		return l.Items, err
+	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
+}
+
+func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role []cosmov1alpha1.UserRole) {
 	ctx := context.Background()
 	user := cosmov1alpha1.User{
 		ObjectMeta: metav1.ObjectMeta{
@@ -72,7 +108,7 @@ func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role cosm
 		},
 		Spec: cosmov1alpha1.UserSpec{
 			DisplayName: dispayName,
-			Role:        role,
+			Roles:       role,
 			AuthType:    cosmov1alpha1.UserAuthTypePasswordSecert,
 		},
 	}
@@ -116,7 +152,7 @@ func (c *TestUtil) CreateUserNameSpaceandDefaultPasswordIfAbsent(userName string
 	Expect(err).ShouldNot(HaveOccurred())
 }
 
-func (c *TestUtil) CreateLoginUser(userName, displayName string, role cosmov1alpha1.UserRole, password string) {
+func (c *TestUtil) CreateLoginUser(userName, displayName string, role []cosmov1alpha1.UserRole, password string) {
 	ctx := context.Background()
 
 	c.CreateCosmoUser(userName, displayName, role)

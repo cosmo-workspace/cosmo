@@ -209,24 +209,6 @@ var _ = Describe("User webhook", func() {
 			Expect(err).Should(HaveOccurred())
 		})
 	})
-
-	Context("when creating user with invalid role", func() {
-		It("should deny", func() {
-			ctx := context.Background()
-
-			user := cosmov1alpha1.User{}
-			user.SetName("testuser7")
-			user.Spec = cosmov1alpha1.UserSpec{
-				Role:     "invalid",
-				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
-				Addons: []cosmov1alpha1.UserAddon{
-					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
-				},
-			}
-			err := k8sClient.Create(ctx, &user)
-			Expect(err).Should(HaveOccurred())
-		})
-	})
 })
 
 func Test_validName(t *testing.T) {

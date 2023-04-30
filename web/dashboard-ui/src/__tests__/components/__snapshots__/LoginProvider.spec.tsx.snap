@@ -1,4 +1,4 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+// Vitest Snapshot v1
 
 exports[`LoginProvider > login > ✅ ok 1`] = `
 {
@@ -15,7 +15,9 @@ exports[`LoginProvider > login > ✅ ok 2`] = `
   "defaultPassword": "",
   "displayName": "user1 name",
   "name": "user1",
-  "role": "CosmoAdmin",
+  "roles": [
+    "CosmoAdmin",
+  ],
   "status": "",
 }
 `;
@@ -100,7 +102,9 @@ exports[`LoginProvider > refreshUserInfo > logined > ✅ ok 2`] = `
   "defaultPassword": "",
   "displayName": "user1 name",
   "name": "user1",
-  "role": "CosmoAdmin",
+  "roles": [
+    "CosmoAdmin",
+  ],
   "status": "",
 }
 `;
@@ -165,7 +169,9 @@ exports[`LoginProvider > verify > ✅ ok 1`] = `
   "defaultPassword": "",
   "displayName": "user1 name",
   "name": "user1",
-  "role": "CosmoAdmin",
+  "roles": [
+    "CosmoAdmin",
+  ],
   "status": "",
 }
 `;

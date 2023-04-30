@@ -73,7 +73,7 @@ function wsStat(ws: Workspace, replicas: number, phase: string): Workspace {
   return new Workspace({ ...ws, spec: { ...ws.spec!, replicas: protoInt64.parse(replicas) }, status: { ...ws.status, phase } });
 }
 
-const user1: User = new User({ name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' });
+const user1: User = new User({ name: 'user1', roles: ["cosmo-admin"], displayName: 'user1 name' });
 const user2: User = new User({ name: 'user2', displayName: 'user2 name' });
 const user3: User = new User({ name: 'user3', displayName: 'user2 name' });
 const tmpl1: Template = new Template({ name: 'tmpl1' });

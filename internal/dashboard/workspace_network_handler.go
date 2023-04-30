@@ -16,7 +16,7 @@ func (s *Server) UpsertNetworkRule(ctx context.Context, req *connect_go.Request[
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -38,7 +38,7 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, req *connect_go.Request[
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 

@@ -665,8 +665,6 @@ func (m *CreateUserRequest) validate(all bool) error {
 
 	// no validation rules for DisplayName
 
-	// no validation rules for Role
-
 	// no validation rules for AuthType
 
 	for idx, item := range m.GetAddons() {
@@ -1401,8 +1399,6 @@ func (m *UpdateUserRoleRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for UserName
-
-	// no validation rules for Role
 
 	if len(errors) > 0 {
 		return UpdateUserRoleRequestMultiError(errors)

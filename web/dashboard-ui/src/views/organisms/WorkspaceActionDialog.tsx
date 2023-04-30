@@ -118,6 +118,8 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
     required: { value: true, message: "Required" },
   }));
 
+  const isNoTemplates = templ.templates.length === 0
+
   return (
     <Dialog open={true} fullWidth maxWidth={'xs'}>
       <DialogTitle>Create New Workspace 🚀</DialogTitle>
@@ -149,8 +151,8 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({ onCl
                 const tmpl = templ.templates.find((v) => v.name === e.target.value);
                 setTemplate(tmpl!)
               }}
-              error={Boolean(errors.templateName?.message)}
-              helperText={errors.templateName?.message}
+              error={Boolean(errors.templateName?.message || isNoTemplates)}
+              helperText={isNoTemplates ? "No available Templates. Please contact administrators." : errors.templateName?.message}
             >
               {templ.templates.map(template =>
                 <MenuItem key={template.name} value={template.name}>

@@ -8,11 +8,13 @@ metadata:
     workspace.cosmo-workspace.github.io/service: workspace
     workspace.cosmo-workspace.github.io/service-main-port: main
     workspace.cosmo-workspace.github.io/urlbase: ""
+    cosmo-workspace.github.io/userroles: "team-a-*"
   creationTimestamp: null
   labels:
     cosmo-workspace.github.io/type: workspace
-  name: code-server-01
+  name: team-a-codeserver
 spec:
+  description: only for team A
   rawYaml: |
     # Warning: 'patchesStrategicMerge' is deprecated. Please use 'patches' instead. Run 'kustomize edit fix' to update your Kustomization automatically.
     apiVersion: v1
@@ -117,7 +119,7 @@ spec:
             path: /
             pathType: Prefix
   requiredVars:
-  - default: "20"
-    var: CODE-SERVER_STORAGE_GB
-  - default: "20"
-    var: DOCKER_STORAGE
+    - default: "20"
+      var: CODE-SERVER_STORAGE_GB
+    - default: "20"
+      var: DOCKER_STORAGE

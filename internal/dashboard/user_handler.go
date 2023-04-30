@@ -26,13 +26,14 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.adminAuthentication(ctx); err != nil {
+	// group-admin user can create users which have only the their groups
+	if err := adminAuthentication(ctx, validateCallerHasAdminForTheRolesFunc(req.Msg.Roles)); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
 	// create user
 	user, err := s.Klient.CreateUser(ctx, req.Msg.UserName, req.Msg.DisplayName,
-		req.Msg.Role, req.Msg.AuthType, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons))
+		req.Msg.Roles, req.Msg.AuthType, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons))
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -57,7 +58,8 @@ func (s *Server) GetUsers(ctx context.Context, req *connect_go.Request[emptypb.E
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.adminAuthentication(ctx); err != nil {
+	// admin users can get all users
+	if err := adminAuthentication(ctx, passAllAdmin); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -81,7 +83,7 @@ func (s *Server) GetUser(ctx context.Context, req *connect_go.Request[dashv1alph
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -100,7 +102,13 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := s.adminAuthentication(ctx); err != nil {
+	targetUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+	if err != nil {
+		return nil, ErrResponse(log, err)
+	}
+
+	// group-admin user can delete users which have only the their groups
+	if err := adminAuthentication(ctx, validateCallerHasAdminForTheRolesFunc(convertUserRolesToStringSlice(targetUser.Spec.Roles))); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -137,11 +145,19 @@ func convertUserToDashv1alpha1User(user cosmov1alpha1.User) *dashv1alpha1.User {
 	return &dashv1alpha1.User{
 		Name:        user.Name,
 		DisplayName: user.Spec.DisplayName,
-		Role:        user.Spec.Role.String(),
+		Roles:       convertUserRolesToStringSlice(user.Spec.Roles),
 		AuthType:    user.Spec.AuthType.String(),
 		Addons:      addons,
 		Status:      string(user.Status.Phase),
 	}
+}
+
+func convertUserRolesToStringSlice(apiRoles []cosmov1alpha1.UserRole) []string {
+	roles := make([]string, 0, len(apiRoles))
+	for _, v := range apiRoles {
+		roles = append(roles, v.Name)
+	}
+	return roles
 }
 
 func convertDashv1alpha1UserAddonToUserAddon(addons []*dashv1alpha1.UserAddons) []cosmov1alpha1.UserAddon {

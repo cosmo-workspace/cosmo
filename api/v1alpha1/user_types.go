@@ -48,7 +48,7 @@ func UserNameByNamespace(namespace string) string {
 // +kubebuilder:resource:scope="Cluster"
 // +kubebuilder:subresource:status
 // +kubebuilder:storageversion
-// +kubebuilder:printcolumn:name="Role",type=string,JSONPath=`.spec.role`
+// +kubebuilder:printcolumn:name="Roles",type=string,JSONPath=`.spec.roles[*].name`
 // +kubebuilder:printcolumn:name="AuthType",type=string,JSONPath=`.spec.authType`
 // +kubebuilder:printcolumn:name="Namespace",type=string,JSONPath=`.status.namespace.name`
 // +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
@@ -72,7 +72,7 @@ type UserList struct {
 
 type UserSpec struct {
 	DisplayName string       `json:"displayName,omitempty"`
-	Role        UserRole     `json:"role,omitempty"`
+	Roles       []UserRole   `json:"roles,omitempty"`
 	AuthType    UserAuthType `json:"authType,omitempty"`
 	Addons      []UserAddon  `json:"addons,omitempty"`
 }
@@ -95,31 +95,47 @@ type UserAddonTemplateRef struct {
 	ClusterScoped bool   `json:"clusterScoped,omitempty"`
 }
 
-// +kubebuilder:validation:enum=cosmo-admin
-// UserRole enums
-type UserRole string
+type UserRole struct {
+	Name string `json:"name"`
+}
+
+// GetGroupAndRole exclude group and role from UserRole.Name
+// if UserRole is `cosmo-admin`, it returns group: cosmo, role: admin
+// role is one of the [`admin`]
+func (r UserRole) GetGroupAndRole() (group string, role string) {
+	v := strings.Split(r.Name, "-")
+	if len(v) > 0 {
+		return strings.Join(v[:len(v)-1], "-"), v[len(v)-1]
+	}
+	return r.Name, ""
+}
+
+func (u *User) GetGroupRoleMap() map[string]string {
+	groupRoleMap := make(map[string]string)
+	for _, v := range u.Spec.Roles {
+		group, role := v.GetGroupAndRole()
+		groupRoleMap[group] = role
+	}
+	return groupRoleMap
+}
 
 const (
-	UserAdminRole UserRole = "cosmo-admin"
+	PrivilegedRoleName  string = "cosmo-admin"
+	PrivilegedGroupName string = "cosmo"
+	AdminRoleName       string = "admin"
 )
 
-func (r UserRole) IsAdmin() bool {
-	return r == UserAdminRole
-}
+var (
+	PrivilegedRole = UserRole{Name: PrivilegedRoleName}
+)
 
-func (r UserRole) IsValid() bool {
-	switch r {
-	case UserAdminRole:
-		return true
-	case UserRole(""):
-		return true
-	default:
-		return false
+func HasPrivilegedRole(roles []UserRole) bool {
+	for _, role := range roles {
+		if role == PrivilegedRole {
+			return true
+		}
 	}
-}
-
-func (r UserRole) String() string {
-	return string(r)
+	return false
 }
 
 // +kubebuilder:validation:enum=kosmo-secret

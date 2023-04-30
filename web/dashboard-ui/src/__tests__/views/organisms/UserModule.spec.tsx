@@ -58,7 +58,7 @@ const snackbarMock: MockedMemberFunction<typeof useSnackbar> = {
 //--------------------------------------------------
 // mock data definition
 //--------------------------------------------------
-const user1 = new User({ name: 'user1', role: 'cosmoAdmin', displayName: 'user1 name' });
+const user1 = new User({ name: 'user1', roles: ['cosmoAdmin'], displayName: 'user1 name' });
 const user2 = new User({ name: 'user2', displayName: 'user2 name' });
 const user3 = new User({ name: 'user3', displayName: 'user3 name' });
 
@@ -180,7 +180,7 @@ describe('useUserModule', () => {
     it('nomal before getUsers', async () => {
       const { result } = await renderUseUserModule();
       userMock.updateUserRole.mockResolvedValue(new UpdateUserRoleResponse({ message: "ok", user: user2 }));
-      await act(async () => { result.current.updateRole('user2', 'user2 name') });
+      await act(async () => { result.current.updateRole('user2', ['user2 name']) });
       expect(result.current.users).toMatchSnapshot();
     });
 
@@ -189,10 +189,10 @@ describe('useUserModule', () => {
       userMock.getUsers.mockResolvedValue(new GetUsersResponse({ message: "ok", items: [user1, user2, user3] }));
       await act(async () => { result.current.getUsers() });
 
-      const user2x = { ...user2, role: 'Role2' }
+      const user2x = { ...user2, roles: ['Role2'] }
       userMock.updateUserRole.mockResolvedValue(new UpdateUserRoleResponse({ message: "ok", user: user2x }));
 
-      await act(async () => { result.current.updateRole('user2', 'Role2') });
+      await act(async () => { result.current.updateRole('user2', ['Role2']) });
       expect(result.current.users).toMatchSnapshot();
     });
 
@@ -203,14 +203,14 @@ describe('useUserModule', () => {
 
       userMock.updateUserRole.mockResolvedValue(new UpdateUserRoleResponse({ message: "ok", user: undefined as any }));
 
-      await act(async () => { result.current.updateRole('user2', 'Role2') });
+      await act(async () => { result.current.updateRole('user2', ['Role2']) });
       expect(result.current.users).toMatchSnapshot();
     });
 
     it('error', async () => {
       const { result } = await renderUseUserModule();
       userMock.updateUserRole.mockRejectedValue(new Error('[mock] updateUserRole error'));
-      await expect(result.current.updateRole('user2', 'user2 name')).rejects.toMatchSnapshot();
+      await expect(result.current.updateRole('user2', ['user2 name'])).rejects.toMatchSnapshot();
     });
   });
 

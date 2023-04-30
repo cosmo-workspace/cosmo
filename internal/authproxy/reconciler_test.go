@@ -138,7 +138,7 @@ var _ = Describe("auth-proxy controller", func() {
 
 		func(initialFunc func(), modifyFuncs ...func()) {
 			testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
-			testUtil.CreateLoginUser("test-user", "", "", "password")
+			testUtil.CreateLoginUser("test-user", "", nil, "password")
 			initialFunc()
 			By("---------------test start----------------")
 			defer stopManager()

@@ -8,7 +8,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
@@ -19,16 +18,17 @@ type updateOption struct {
 
 	UserName string
 	Name     string
-	Role     string
-	role     cosmov1alpha1.UserRole
+	Role     []string
+
+	displayName *string
 }
 
 func updateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &updateOption{CliOptions: cliOpt}
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-	cmd.Flags().StringVar(&o.Name, "name", "", "user name")
-	cmd.Flags().StringVar(&o.Role, "role", "-", "user role")
+	cmd.Flags().StringVar(&o.Name, "name", "-", "user name")
+	cmd.Flags().StringSliceVar(&o.Role, "role", []string{"-"}, "user role")
 	return cmd
 }
 
@@ -49,11 +49,6 @@ func (o *updateOption) Validate(cmd *cobra.Command, args []string) error {
 	if len(args) < 1 {
 		return errors.New("invalid args")
 	}
-	if o.Role != "-" {
-		if o.role = cosmov1alpha1.UserRole(o.Role); !o.role.IsValid() {
-			return fmt.Errorf("role %s is invalid", o.Role)
-		}
-	}
 	return nil
 }
 
@@ -62,6 +57,10 @@ func (o *updateOption) Complete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	o.UserName = args[0]
+
+	if o.Name != "-" {
+		o.displayName = &o.Name
+	}
 	return nil
 }
 
@@ -71,8 +70,8 @@ func (o *updateOption) RunE(cmd *cobra.Command, args []string) error {
 
 	ctx = clog.IntoContext(ctx, o.Logr)
 	_, err := o.Client.UpdateUser(ctx, o.UserName, kosmo.UpdateUserOpts{
-		DisplayName: &o.Name,
-		UserRole:    &o.Role,
+		DisplayName: o.displayName,
+		UserRoles:   o.Role,
 	})
 	if err != nil {
 		return err

@@ -25,11 +25,9 @@ export class User extends Message<User> {
   displayName = "";
 
   /**
-   * {"","cosmo-admin"}
-   *
-   * @generated from field: string role = 3;
+   * @generated from field: repeated string roles = 3;
    */
-  role = "";
+  roles: string[] = [];
 
   /**
    * {"","kosmo-secret"}
@@ -63,7 +61,7 @@ export class User extends Message<User> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "role", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "roles", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 4, name: "auth_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "addons", kind: "message", T: UserAddons, repeated: true },
     { no: 6, name: "default_password", kind: "scalar", T: 9 /* ScalarType.STRING */ },

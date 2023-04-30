@@ -60,8 +60,6 @@ func (m *User) validate(all bool) error {
 
 	// no validation rules for DisplayName
 
-	// no validation rules for Role
-
 	// no validation rules for AuthType
 
 	for idx, item := range m.GetAddons() {

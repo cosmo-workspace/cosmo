@@ -94,7 +94,7 @@ describe('LoginProvider', () => {
         requirePasswordUpdate: false,
       }));
       userMock.getUser.mockResolvedValue(new GetUserResponse({
-        user: new User({ name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' }),
+        user: new User({ name: 'user1', roles: ["CosmoAdmin"], displayName: 'user1 name' }),
       }));
 
       const { result } = await renderUseLogin();
@@ -147,7 +147,7 @@ describe('LoginProvider', () => {
         requirePasswordUpdate: true,
       }));
       userMock.getUser.mockResolvedValue(new GetUserResponse({
-        user: new User({ name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' }),
+        user: new User({ name: 'user1', roles: ["CosmoAdmin"], displayName: 'user1 name' }),
       }));
       const { result } = await renderUseLogin();
       // await act(async () => {
@@ -165,7 +165,7 @@ describe('LoginProvider', () => {
         requirePasswordUpdate: true,
       }));
       userMock.getUser.mockResolvedValue(new GetUserResponse({
-        user: { name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' },
+        user: { name: 'user1', roles: ["CosmoAdmin"], displayName: 'user1 name' },
       }));
       authMock.login.mockRejectedValue(new Error('[mock] login error'));
       const { result } = await renderUseLogin();
@@ -218,7 +218,7 @@ describe('LoginProvider', () => {
           requirePasswordUpdate: false,
         }));
         userMock.getUser.mockResolvedValue(new GetUserResponse({
-          user: { name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' },
+          user: { name: 'user1', roles: ["CosmoAdmin"], displayName: 'user1 name' },
         }));
       });
 
@@ -243,7 +243,7 @@ describe('LoginProvider', () => {
         requirePasswordUpdate: false,
       }));
       userMock.getUser.mockResolvedValue(new GetUserResponse({
-        user: { name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' },
+        user: { name: 'user1', roles: ["CosmoAdmin"], displayName: 'user1 name' },
       }));
     });
 
@@ -278,7 +278,7 @@ describe('LoginProvider', () => {
         requirePasswordUpdate: false,
       }));
       userMock.getUser.mockResolvedValue(new GetUserResponse({
-        user: { name: 'user1', role: "CosmoAdmin", displayName: 'user1 name' },
+        user: { name: 'user1', roles: ["CosmoAdmin"], displayName: 'user1 name' },
       }));
     });
 

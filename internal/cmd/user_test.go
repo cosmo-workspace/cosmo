@@ -37,6 +37,15 @@ var _ = Describe("cosmoctl [user]", func() {
 		return string(out)
 	}
 
+	userSnap := func(us *cosmov1alpha1.User) struct{ Name, Namespace, Spec, Status interface{} } {
+		return struct{ Name, Namespace, Spec, Status interface{} }{
+			Name:      us.Name,
+			Namespace: us.Namespace,
+			Spec:      us.Spec,
+			Status:    us.Status,
+		}
+	}
+
 	BeforeEach(func() {
 		scheme := runtime.NewScheme()
 		utilruntime.Must(clientgoscheme.AddToScheme(scheme))
@@ -59,9 +68,9 @@ var _ = Describe("cosmoctl [user]", func() {
 
 	AfterEach(func() {
 		clientMock.Clear()
-		test_DeleteCosmoUserAll()
-		test_DeleteTemplateAll()
-		test_DeleteClusterTemplateAll()
+		testUtil.DeleteCosmoUserAll()
+		testUtil.DeleteTemplateAll()
+		testUtil.DeleteClusterTemplateAll()
 	})
 
 	//==================================================================================
@@ -108,22 +117,16 @@ var _ = Describe("cosmoctl [user]", func() {
 			if err == nil {
 				wsv1User, err := k8sClient.GetUser(context.Background(), args[2])
 				Expect(err).NotTo(HaveOccurred()) // created
-				userSnap := struct{ Name, Namespace, Spec, Status interface{} }{
-					Name:      wsv1User.Name,
-					Namespace: wsv1User.Namespace,
-					Spec:      wsv1User.Spec,
-					Status:    wsv1User.Status,
-				}
-				Expect(userSnap).To(MatchSnapShot())
+				Expect(userSnap(wsv1User)).To(MatchSnapShot())
 			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
-				test_CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "user-template1")
-				test_CreateClusterTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "user-clustertemplate1")
+				testUtil.CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
+				testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "user-template1")
+				testUtil.CreateClusterTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "user-clustertemplate1")
 				run_test(args...)
 			},
 			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--addon", "user-template1,HOGE:HOGEHOGE"),
@@ -131,12 +134,14 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "create", "user-create"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1,HOGE: HOGE HOGE ,FUGA:FUGAF:UGA"),
-			Entry(desc, "user", "create", "user-create2", "--addon", "user-template1", "--cluster-addon", "user-clustertemplate1"),
+			Entry(desc, "user", "create", "user-create", "--addon", "user-template1", "--cluster-addon", "user-clustertemplate1"),
+			Entry(desc, "user", "create", "user-create", "--admin", "--role", "cosmo-admin"),
+			Entry(desc, "user", "create", "user-create", "--role", "xxx"),
 		)
 
 		DescribeTable("✅ success to create password immediately:",
 			func(args ...string) {
-				test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
+				testUtil.CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create")
 				run_test(args...)
 			},
 			Entry(desc, "user", "create", "user-create"),
@@ -145,7 +150,7 @@ var _ = Describe("cosmoctl [user]", func() {
 		DescribeTable("✅ success to create password later:",
 			func(args ...string) {
 				timer := time.AfterFunc(100*time.Millisecond, func() {
-					test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-later")
+					testUtil.CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-later")
 				})
 				defer timer.Stop()
 				run_test(args...)
@@ -158,8 +163,6 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "create"),
 			Entry(desc, "user", "create", "--admin"),
 			Entry(desc, "user", "create", "TESTuser"),
-			Entry(desc, "user", "create", "user-create", "--admin", "--role", "cosmo-admin"),
-			Entry(desc, "user", "create", "user-create", "--role", "xxx"),
 			Entry(desc, "user", "create", "user-create", "--addon", "XXXXXXXXX,HOGE:yyy"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1 ,HOGE:yyy"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1,HOGE :yyy"),
@@ -169,7 +172,7 @@ var _ = Describe("cosmoctl [user]", func() {
 		DescribeTable("❌ fail to create password timeout",
 			func(args ...string) {
 				timer := time.AfterFunc(30*time.Second, func() {
-					test_CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-timeout")
+					testUtil.CreateUserNameSpaceandDefaultPasswordIfAbsent("user-create-timeout")
 				})
 				defer timer.Stop()
 				run_test(args...)
@@ -192,8 +195,8 @@ var _ = Describe("cosmoctl [user]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				test_CreateLoginUser("user1", "name1", "", "password")
-				test_CreateLoginUser("user2", "name2", cosmov1alpha1.UserAdminRole, "password")
+				testUtil.CreateLoginUser("user1", "name1", nil, "password")
+				testUtil.CreateLoginUser("user2", "name2", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, "password")
 				run_test(args...)
 			},
 			Entry(desc, "user", "get"),
@@ -217,7 +220,7 @@ var _ = Describe("cosmoctl [user]", func() {
 	Describe("[delete]", func() {
 
 		run_test := func(args ...string) {
-			test_CreateCosmoUser("user-delete1", "delete", "")
+			testUtil.CreateCosmoUser("user-delete1", "delete", nil)
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()
@@ -256,10 +259,22 @@ var _ = Describe("cosmoctl [user]", func() {
 	//==================================================================================
 	Describe("[update]", func() {
 
+		var (
+			noRoleUser string = "upd-norole"
+			privUser   string = "upd-priv"
+		)
+
 		run_test := func(args ...string) {
-			test_CreateLoginUser("user1", "name1", "", "password")
-			test_CreateLoginUser("user2", "name2", cosmov1alpha1.UserAdminRole, "password")
+			testUtil.CreateCosmoUser(noRoleUser, "ロールなし", nil)
+			testUtil.CreateCosmoUser(privUser, "特権",
+				[]cosmov1alpha1.UserRole{{Name: "cosmo-admin"}})
+
 			By("---------------test start----------------")
+			var befUser *cosmov1alpha1.User
+			if len(args) > 2 {
+				befUser, _ = k8sClient.GetUser(ctx, args[2])
+			}
+
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()
 			Ω(consoleOut()).To(MatchSnapShot())
@@ -267,32 +282,28 @@ var _ = Describe("cosmoctl [user]", func() {
 			if err == nil {
 				wsv1User, err := k8sClient.GetUser(context.Background(), args[2])
 				Expect(err).NotTo(HaveOccurred())
-				userSnap := struct{ Name, Namespace, Spec, Status interface{} }{
-					Name:      wsv1User.Name,
-					Namespace: wsv1User.Namespace,
-					Spec:      wsv1User.Spec,
-					Status:    wsv1User.Status,
-				}
-				Expect(userSnap).To(MatchSnapShot())
+				Expect(userSnap(befUser)).To(MatchSnapShot())
+				Expect(userSnap(wsv1User)).To(MatchSnapShot())
 			}
 			By("---------------test end---------------")
 		}
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry(desc, "user", "update", "user1", "--name", "namechanged"),
-			Entry(desc, "user", "update", "user1", "--role", "cosmo-admin"),
-			Entry(desc, "user", "update", "user2", "--role", ""),
+			Entry(desc, "user", "update", noRoleUser, "--name", "namechanged"),
+			Entry(desc, "user", "update", noRoleUser, "--role", "cosmo-admin"),
+			Entry(desc, "user", "update", noRoleUser, "--role", "team-developer,otherteam-developer"),
+			Entry(desc, "user", "update", noRoleUser, "--name", "name1", "--role", "team-dev"),
+			Entry(desc, "user", "update", privUser, "--role", ""),
+			Entry(desc, "user", "update", noRoleUser, "--name", ""),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
 			run_test,
 			Entry(desc, "user", "update"),
-			Entry(desc, "user", "update", "user1"),
-			Entry(desc, "user", "update", "XXXXXX", "--name", "namechanged", "--role", "cosmo-admin"),
-			Entry(desc, "user", "update", "user1", "--name", ""),
-			Entry(desc, "user", "update", "user1", "--name", "name1", "--role", ""),
-			Entry(desc, "user", "update", "user1", "--role", "xxxxx"),
+			Entry(desc, "user", "update", privUser),
+			Entry(desc, "user", "update", "notfound", "--name", "namechanged", "--role", "cosmo-admin"),
+			Entry(desc, "user", "update", privUser, "--role", "cosmo-admin"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
@@ -300,7 +311,7 @@ var _ = Describe("cosmoctl [user]", func() {
 				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
 				run_test(args...)
 			},
-			Entry(desc, "user", "update", "user1", "--name", "namechanged"),
+			Entry(desc, "user", "update", noRoleUser, "--name", "namechanged"),
 		)
 	})
 
@@ -308,7 +319,7 @@ var _ = Describe("cosmoctl [user]", func() {
 	Describe("[reset-password]", func() {
 
 		run_test := func(args ...string) {
-			test_CreateLoginUser("user1", "name1", "", "password")
+			testUtil.CreateLoginUser("user1", "name1", nil, "password")
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()
