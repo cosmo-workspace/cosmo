@@ -206,7 +206,7 @@ auth-proxy: go generate fmt vet ## Build auth-proxy binary.
 	CGO_ENABLED=0 $(GO) build -o bin/auth-proxy ./cmd/auth-proxy/main.go
 
 .PHONY: update-version
-update-version: ## Update version in version.go.
+update-version: kustomize ## Update version in version.go.
 ifndef VERSION
 	@echo "Usage: make update-version VERSION=v9.9.9"
 	@exit 9
