@@ -99,7 +99,7 @@ endef
 WEBHOOK_CHART_YAML ?= charts/cosmo-controller-manager/templates/webhook.yaml
 
 export WEBHOOK_CHART_SUFIX
-gen-charts:
+gen-charts: kustomize
 	cp config/crd/bases/* charts/cosmo-controller-manager/crds/
 	kustomize build config/webhook-chart \
 		| sed -e 's/namespace: system/namespace: {{ .Release.Namespace }}/g' \
@@ -154,8 +154,9 @@ clear-snapshots: ## Clear snapshots
 	-find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
 
 .PHONY: go-test.env
-go-test.env: 
+go-test.env:
 	@echo KUBEBUILDER_ASSETS=$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path) > ./.vscode/go-test.env
+	@echo PATH=$(PATH) >> ./.vscode/go-test.env
 
 .PHONY: test
 test: manifests generate fmt vet envtest go-test.env go-test ## Run tests.
@@ -205,7 +206,7 @@ auth-proxy: go generate fmt vet ## Build auth-proxy binary.
 	CGO_ENABLED=0 $(GO) build -o bin/auth-proxy ./cmd/auth-proxy/main.go
 
 .PHONY: update-version
-update-version: ## Update version in version.go.
+update-version: kustomize ## Update version in version.go.
 ifndef VERSION
 	@echo "Usage: make update-version VERSION=v9.9.9"
 	@exit 9
@@ -343,7 +344,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 ## Tool Versions
 GO_VERSION ?= 1.19.4
-KUSTOMIZE_VERSION ?= v4.5.7
+KUSTOMIZE_VERSION ?= v5.0.1
 CONTROLLER_TOOLS_VERSION ?= v0.10.0
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
