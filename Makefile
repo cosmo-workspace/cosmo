@@ -171,11 +171,9 @@ endif
 .PHONY: test-all-k8s-versions
 test-all-k8s-versions: go manifests generate fmt vet envtest ## Run tests on targeting k8s versions.
 ifeq ($(QUICK_BUILD),no)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.19.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.20.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.21.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.22.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.23.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.26.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.25.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.24.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
 endif
 
 .PHONY: clear-snapshots-ui
@@ -343,12 +341,12 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 ##---------------------------------------------------------------------
 
 ## Tool Versions
-GO_VERSION ?= 1.19.4
+GO_VERSION ?= 1.20.4
 KUSTOMIZE_VERSION ?= v5.0.1
-CONTROLLER_TOOLS_VERSION ?= v0.10.0
+CONTROLLER_TOOLS_VERSION ?= v0.12.0
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION ?= 1.25.x
+ENVTEST_K8S_VERSION ?= 1.26.x
 
 ## Location to install dependencies to
 LOCALBIN ?= $(shell pwd)/bin
@@ -375,6 +373,7 @@ KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/k
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
 $(KUSTOMIZE): $(LOCALBIN)
+	rm -f $(KUSTOMIZE)
 	curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN)
 
 .PHONY: controller-gen

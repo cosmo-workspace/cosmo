@@ -60,7 +60,7 @@ create-k3d-cluster: k3d kubectl  ## Create k3s cluster.
 	@echo ====== $@ ======
 	@k3d cluster list $(CLUSTER_NAME) > /dev/null 2>&1 && echo "This cluster has already been created" || { \
 		k3d cluster create $(CLUSTER_NAME) \
-			-i rancher/k3s:v1.24.11-k3s1 \
+			-i rancher/k3s:v1.26.3-k3s1 \
 			--api-port 43000 \
 			-p "15000:80@loadbalancer" \
 			-p "15080:80@loadbalancer" \
