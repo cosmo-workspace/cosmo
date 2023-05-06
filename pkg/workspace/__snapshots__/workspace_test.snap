@@ -1,0 +1,299 @@
+
+[TestPatchWorkspaceInstanceAsDesired/✅_OK - 1]
+{
+ "metadata": {
+  "creationTimestamp": null,
+  "name": "inst1",
+  "namespace": "cosmo-user-default"
+ },
+ "spec": {
+  "override": {
+   "network": {
+    "ingress": [
+     {
+      "rules": [
+       {
+        "http": {
+         "paths": [
+          {
+           "backend": {
+            "service": {
+             "name": "ws1-ws-svc",
+             "port": {
+              "name": "port18080"
+             }
+            }
+           },
+           "path": "/",
+           "pathType": "Prefix"
+          },
+          {
+           "backend": {
+            "service": {
+             "name": "ws1-ws-svc",
+             "port": {
+              "name": "port19999"
+             }
+            }
+           },
+           "path": "/",
+           "pathType": "Prefix"
+          }
+         ]
+        }
+       }
+      ],
+      "targetName": "ws-ing"
+     }
+    ],
+    "service": [
+     {
+      "ports": [
+       {
+        "name": "port18080",
+        "port": 18080,
+        "protocol": "TCP",
+        "targetPort": 18080
+       },
+       {
+        "name": "port19999",
+        "port": 19999,
+        "protocol": "TCP",
+        "targetPort": 19999
+       }
+      ],
+      "targetName": "ws-svc"
+     }
+    ]
+   },
+   "scale": [
+    {
+     "replicas": 1,
+     "target": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "ws-deploy"
+     }
+    }
+   ]
+  },
+  "template": {
+   "name": "tmpl1"
+  },
+  "vars": {
+   "VAR1": "VAL1",
+   "{{USER_NAME}}": "default",
+   "{{WORKSPACE_DEPLOYMENT_NAME}}": "ws-deploy",
+   "{{WORKSPACE_INGRESS_NAME}}": "ws-ing",
+   "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}": "main",
+   "{{WORKSPACE_SERVICE_NAME}}": "ws-svc",
+   "{{WORKSPACE}}": "ws1"
+  }
+ },
+ "status": {}
+}
+---
+
+[TestPatchWorkspaceInstanceAsDesired/✅_OK_with_scheme - 1]
+{
+ "metadata": {
+  "creationTimestamp": null,
+  "name": "inst1",
+  "namespace": "cosmo-user-default",
+  "ownerReferences": [
+   {
+    "apiVersion": "cosmo-workspace.github.io/v1alpha1",
+    "blockOwnerDeletion": true,
+    "controller": true,
+    "kind": "Workspace",
+    "name": "ws1",
+    "uid": ""
+   }
+  ]
+ },
+ "spec": {
+  "override": {
+   "network": {
+    "ingress": [
+     {
+      "targetName": "ws-ing"
+     }
+    ],
+    "service": [
+     {
+      "targetName": "ws-svc"
+     }
+    ]
+   },
+   "scale": [
+    {
+     "replicas": 0,
+     "target": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "ws-deploy"
+     }
+    }
+   ]
+  },
+  "template": {
+   "name": "tmpl1"
+  },
+  "vars": {
+   "{{USER_NAME}}": "default",
+   "{{WORKSPACE_DEPLOYMENT_NAME}}": "ws-deploy",
+   "{{WORKSPACE_INGRESS_NAME}}": "ws-ing",
+   "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}": "main",
+   "{{WORKSPACE_SERVICE_NAME}}": "ws-svc",
+   "{{WORKSPACE}}": "ws1"
+  }
+ },
+ "status": {}
+}
+---
+
+[TestPatchWorkspaceInstanceAsDesired/❌_Err_witr_invalid_scheme - 1]
+failed to set owner reference: no kind is registered for the type v1alpha1.Workspace in scheme "pkg/runtime/scheme.go:100"
+---
+
+[TestSvcPorts/✅_OK1 - 1]
+[
+ {
+  "name": "port2222",
+  "port": 2222,
+  "protocol": "TCP",
+  "targetPort": 2222
+ }
+]
+---
+
+[TestSvcPorts/✅_OK2 - 1]
+[
+ {
+  "name": "port2222",
+  "port": 2222,
+  "protocol": "TCP",
+  "targetPort": 2222
+ },
+ {
+  "name": "port4444",
+  "port": 4444,
+  "protocol": "TCP",
+  "targetPort": 4444
+ }
+]
+---
+
+[TestSvcPorts/✅_OK3 - 1]
+[
+ {
+  "name": "port2222",
+  "port": 2222,
+  "protocol": "TCP",
+  "targetPort": 2222
+ }
+]
+---
+
+[TestIngressRules/✅_OK - 1]
+[
+ {
+  "host": "host1",
+  "http": {
+   "paths": [
+    {
+     "backend": {
+      "service": {
+       "name": "bksvc",
+       "port": {
+        "name": "port2222"
+       }
+      }
+     },
+     "path": "/",
+     "pathType": "Prefix"
+    }
+   ]
+  }
+ }
+]
+---
+
+[TestIngressRules/✅_OK2 - 1]
+[
+ {
+  "host": "host1",
+  "http": {
+   "paths": [
+    {
+     "backend": {
+      "service": {
+       "name": "bksvc",
+       "port": {
+        "name": "port2222"
+       }
+      }
+     },
+     "path": "/",
+     "pathType": "Prefix"
+    }
+   ]
+  }
+ },
+ {
+  "host": "host2",
+  "http": {
+   "paths": [
+    {
+     "backend": {
+      "service": {
+       "name": "bksvc",
+       "port": {
+        "name": "port4444"
+       }
+      }
+     },
+     "path": "/",
+     "pathType": "Prefix"
+    }
+   ]
+  }
+ }
+]
+---
+
+[TestIngressRules/✅_OK3 - 1]
+[
+ {
+  "host": "host1",
+  "http": {
+   "paths": [
+    {
+     "backend": {
+      "service": {
+       "name": "bksvc",
+       "port": {
+        "name": "port2222"
+       }
+      }
+     },
+     "path": "/",
+     "pathType": "Prefix"
+    },
+    {
+     "backend": {
+      "service": {
+       "name": "bksvc",
+       "port": {
+        "name": "port4444"
+       }
+      }
+     },
+     "path": "/aaa",
+     "pathType": "Prefix"
+    }
+   ]
+  }
+ }
+]
+---
