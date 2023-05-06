@@ -7,11 +7,10 @@ import (
 	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"sigs.k8s.io/yaml"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
-	"github.com/google/go-cmp/cmp"
+	"github.com/gkampitakis/go-snaps/snaps"
 )
 
 func TestNetworkTransformer_Transform(t *testing.T) {
@@ -266,25 +265,8 @@ spec:
 				return
 			}
 			gotObj, err := tr.Transform(obj)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NetworkTransformer.Transform() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr {
-				got, err := yaml.Marshal(gotObj)
-				if err != nil {
-					t.Errorf("yaml.Marshal err = %v", err)
-				}
-				if string(got) != tt.want {
-					t.Errorf("NetworkTransformer.Transform() = %v, want %v", string(got), tt.want)
-					t.Errorf("NetworkTransformer.Transform() diff = %v", cmp.Diff(string(got), tt.want))
-				}
-
-			} else {
-				if gotObj != nil {
-					t.Errorf("NetworkTransformer.Transform() gotObj not nil %v", gotObj)
-				}
-			}
+			snaps.MatchSnapshot(t, err)
+			snaps.MatchJSON(t, gotObj)
 		})
 	}
 }
@@ -297,7 +279,6 @@ func Test_overrideAnnotations(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want string
 	}{
 		{
 			name: "OK",
@@ -327,28 +308,6 @@ spec:
 					"key2": "VAL1", "KEY": "VAL2",
 				},
 			},
-			want: `apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    KEY: VAL2
-    key1: val
-    key2: VAL1
-  name: test-ing
-  namespace: default
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8080
-        path: /*
-        pathType: Exact
-`,
 		},
 		{
 			name: "Empty annotation",
@@ -376,26 +335,6 @@ spec:
 					"key": "val",
 				},
 			},
-			want: `apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    key: val
-  name: test-ing
-  namespace: default
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8080
-        path: /*
-        pathType: Exact
-`,
 		},
 		{
 			name: "nil",
@@ -405,7 +344,6 @@ spec:
 					"key2": "VAL1", "KEY": "VAL2",
 				},
 			},
-			want: ``,
 		},
 	}
 	for _, tt := range tests {
@@ -422,20 +360,7 @@ spec:
 				obj = nil
 			}
 			overrideAnnotations(obj, tt.args.ann)
-			if tt.want != "" {
-				got, err := yaml.Marshal(obj)
-				if err != nil {
-					t.Errorf("yaml.Marshal err = %v", err)
-				}
-				if string(got) != tt.want {
-					t.Errorf("overrideAnnotations() = %v, want %v", string(got), tt.want)
-					t.Errorf("overrideAnnotations() = %v, want %v", got, []byte(tt.want))
-				}
-			} else {
-				if obj != nil {
-					t.Errorf("overrideAnnotations() = %v, want nil", obj)
-				}
-			}
+			snaps.MatchJSON(t, obj)
 		})
 	}
 }
@@ -449,7 +374,6 @@ func Test_overrideIngressRules(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want string
 	}{
 		{
 			name: "append",
@@ -495,34 +419,6 @@ spec:
 					},
 				},
 			},
-			want: `apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: test-ing
-  namespace: default
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8080
-        path: /*
-        pathType: Exact
-  - host: example2.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test2
-            port:
-              number: 8081
-        path: /test
-        pathType: Prefix
-`,
 		},
 		{
 			name: "override",
@@ -568,24 +464,6 @@ spec:
 					},
 				},
 			},
-			want: `apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: test-ing
-  namespace: default
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8081
-        path: /
-        pathType: Prefix
-`,
 		},
 		{
 			name: "path",
@@ -643,31 +521,6 @@ spec:
 					},
 				},
 			},
-			want: `apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: test-ing
-  namespace: default
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8081
-        path: /
-        pathType: Prefix
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8082
-        path: /test
-        pathType: Prefix
-`,
 		},
 		{
 			name: "rule and path",
@@ -767,48 +620,6 @@ spec:
 					},
 				},
 			},
-			want: `apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: test-ing
-  namespace: default
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8081
-        path: /
-        pathType: Prefix
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8082
-        path: /test
-        pathType: Prefix
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8083
-        path: /add
-        pathType: Prefix
-  - host: example2.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8081
-        path: /
-        pathType: Prefix
-`,
 		},
 		{
 			name: "No rules",
@@ -834,24 +645,6 @@ spec:
         pathType: Exact`,
 				ingRules: []netv1.IngressRule{},
 			},
-			want: `apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: test-ing
-  namespace: default
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test
-            port:
-              number: 8080
-        path: /*
-        pathType: Exact
-`,
 		},
 		{
 			name: "nil",
@@ -880,7 +673,6 @@ spec:
 					},
 				},
 			},
-			want: ``,
 		},
 	}
 	for _, tt := range tests {
@@ -897,20 +689,7 @@ spec:
 				obj = nil
 			}
 			overrideIngressRules(obj, tt.args.ingRules)
-			if tt.want != "" {
-				got, err := yaml.Marshal(obj)
-				if err != nil {
-					t.Errorf("yaml.Marshal err = %v", err)
-				}
-				if string(got) != tt.want {
-					t.Errorf("overrideIngressRules() diff = %s", cmp.Diff(string(got), tt.want))
-					t.Errorf("overrideIngressRules() diff bytes = %s", cmp.Diff(got, []byte(tt.want)))
-				}
-			} else {
-				if obj != nil {
-					t.Errorf("overrideIngressRules() = %v, want nil", obj)
-				}
-			}
+			snaps.MatchJSON(t, obj)
 		})
 	}
 }
@@ -923,7 +702,6 @@ func Test_overrideServicePort(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want string
 	}{
 		{
 			name: "append",
@@ -955,26 +733,6 @@ spec:
 					},
 				},
 			},
-			want: `apiVersion: v1
-kind: Service
-metadata:
-  name: test-svc
-  namespace: default
-spec:
-  ports:
-  - name: port1
-    port: 8080
-    protocol: TCP
-  - name: port2
-    port: 8081
-    protocol: TCP
-    targetPort: 8081
-  - name: port3
-    port: 8082
-    protocol: UDP
-    targetPort: 8082
-  type: ClusterIP
-`,
 		},
 		{
 			name: "override",
@@ -1006,23 +764,6 @@ spec:
 					},
 				},
 			},
-			want: `apiVersion: v1
-kind: Service
-metadata:
-  name: test-svc
-  namespace: default
-spec:
-  ports:
-  - name: port1
-    port: 8082
-    protocol: UDP
-    targetPort: 8082
-  - name: port2
-    port: 8081
-    protocol: TCP
-    targetPort: 8081
-  type: ClusterIP
-`,
 		},
 		{
 			name: "No ports",
@@ -1041,18 +782,6 @@ spec:
     protocol: TCP`,
 				svcPorts: []corev1.ServicePort{},
 			},
-			want: `apiVersion: v1
-kind: Service
-metadata:
-  name: test-svc
-  namespace: default
-spec:
-  ports:
-  - name: port1
-    port: 8080
-    protocol: TCP
-  type: ClusterIP
-`,
 		},
 		{
 			name: "nil",
@@ -1073,7 +802,6 @@ spec:
 					},
 				},
 			},
-			want: ``,
 		},
 	}
 	for _, tt := range tests {
@@ -1090,20 +818,7 @@ spec:
 				obj = nil
 			}
 			overrideServicePort(obj, tt.args.svcPorts)
-			if tt.want != "" {
-				got, err := yaml.Marshal(obj)
-				if err != nil {
-					t.Errorf("yaml.Marshal err = %v", err)
-				}
-				if string(got) != tt.want {
-					t.Errorf("overrideServicePort() = %v, want %v", string(got), tt.want)
-					t.Errorf("overrideServicePort() = %v, want %v", got, []byte(tt.want))
-				}
-			} else {
-				if obj != nil {
-					t.Errorf("overrideServicePort() = %v, want nil", obj)
-				}
-			}
+			snaps.MatchJSON(t, obj)
 		})
 	}
 }

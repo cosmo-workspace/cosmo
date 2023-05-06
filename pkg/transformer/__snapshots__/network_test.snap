@@ -1,0 +1,525 @@
+
+[TestNetworkTransformer_Transform/Override_service - 1]
+nil
+---
+
+[TestNetworkTransformer_Transform/Override_service - 2]
+{
+ "apiVersion": "v1",
+ "kind": "Service",
+ "metadata": {
+  "name": "instance-workspace",
+  "namespace": "default"
+ },
+ "spec": {
+  "ports": [
+   {
+    "name": "port2",
+    "port": 8081,
+    "protocol": "TCP",
+    "targetPort": 8081
+   }
+  ],
+  "type": "ClusterIP"
+ }
+}
+---
+
+[TestNetworkTransformer_Transform/Override_ingress - 1]
+nil
+---
+
+[TestNetworkTransformer_Transform/Override_ingress - 2]
+{
+ "apiVersion": "networking.k8s.io/v1",
+ "kind": "Ingress",
+ "metadata": {
+  "annotations": {
+   "key": "val"
+  },
+  "name": "instance-workspace",
+  "namespace": "default"
+ },
+ "spec": {
+  "rules": [
+   {
+    "host": "example.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8080
+         }
+        }
+       },
+       "path": "/*",
+       "pathType": "Exact"
+      }
+     ]
+    }
+   },
+   {
+    "host": "example2.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test2",
+         "port": {
+          "number": 8081
+         }
+        }
+       },
+       "path": "/test",
+       "pathType": "Prefix"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
+---
+
+[TestNetworkTransformer_Transform/netSpec_nil - 1]
+nil
+---
+
+[TestNetworkTransformer_Transform/netSpec_nil - 2]
+{
+ "apiVersion": "v1",
+ "kind": "Service",
+ "metadata": {
+  "name": "instance-test",
+  "namespace": "default"
+ },
+ "spec": {
+  "ports": [
+   {
+    "name": "port1",
+    "port": 8080,
+    "protocol": "TCP"
+   },
+   {
+    "name": "port2",
+    "port": 8081,
+    "protocol": "TCP"
+   }
+  ],
+  "type": "ClusterIP"
+ }
+}
+---
+
+[Test_overrideAnnotations/OK - 1]
+{
+ "apiVersion": "networking.k8s.io/v1",
+ "kind": "Ingress",
+ "metadata": {
+  "annotations": {
+   "KEY": "VAL2",
+   "key1": "val",
+   "key2": "VAL1"
+  },
+  "name": "test-ing",
+  "namespace": "default"
+ },
+ "spec": {
+  "rules": [
+   {
+    "host": "example.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8080
+         }
+        }
+       },
+       "path": "/*",
+       "pathType": "Exact"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
+---
+
+[Test_overrideAnnotations/Empty_annotation - 1]
+{
+ "apiVersion": "networking.k8s.io/v1",
+ "kind": "Ingress",
+ "metadata": {
+  "annotations": {
+   "key": "val"
+  },
+  "name": "test-ing",
+  "namespace": "default"
+ },
+ "spec": {
+  "rules": [
+   {
+    "host": "example.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8080
+         }
+        }
+       },
+       "path": "/*",
+       "pathType": "Exact"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
+---
+
+[Test_overrideAnnotations/nil - 1]
+null
+---
+
+[Test_overrideIngressRules/append - 1]
+{
+ "apiVersion": "networking.k8s.io/v1",
+ "kind": "Ingress",
+ "metadata": {
+  "name": "test-ing",
+  "namespace": "default"
+ },
+ "spec": {
+  "rules": [
+   {
+    "host": "example.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8080
+         }
+        }
+       },
+       "path": "/*",
+       "pathType": "Exact"
+      }
+     ]
+    }
+   },
+   {
+    "host": "example2.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test2",
+         "port": {
+          "number": 8081
+         }
+        }
+       },
+       "path": "/test",
+       "pathType": "Prefix"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
+---
+
+[Test_overrideIngressRules/override - 1]
+{
+ "apiVersion": "networking.k8s.io/v1",
+ "kind": "Ingress",
+ "metadata": {
+  "name": "test-ing",
+  "namespace": "default"
+ },
+ "spec": {
+  "rules": [
+   {
+    "host": "example.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8081
+         }
+        }
+       },
+       "path": "/",
+       "pathType": "Prefix"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
+---
+
+[Test_overrideIngressRules/path - 1]
+{
+ "apiVersion": "networking.k8s.io/v1",
+ "kind": "Ingress",
+ "metadata": {
+  "name": "test-ing",
+  "namespace": "default"
+ },
+ "spec": {
+  "rules": [
+   {
+    "host": "example.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8081
+         }
+        }
+       },
+       "path": "/",
+       "pathType": "Prefix"
+      },
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8082
+         }
+        }
+       },
+       "path": "/test",
+       "pathType": "Prefix"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
+---
+
+[Test_overrideIngressRules/rule_and_path - 1]
+{
+ "apiVersion": "networking.k8s.io/v1",
+ "kind": "Ingress",
+ "metadata": {
+  "name": "test-ing",
+  "namespace": "default"
+ },
+ "spec": {
+  "rules": [
+   {
+    "host": "example.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8081
+         }
+        }
+       },
+       "path": "/",
+       "pathType": "Prefix"
+      },
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8082
+         }
+        }
+       },
+       "path": "/test",
+       "pathType": "Prefix"
+      },
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8083
+         }
+        }
+       },
+       "path": "/add",
+       "pathType": "Prefix"
+      }
+     ]
+    }
+   },
+   {
+    "host": "example2.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8081
+         }
+        }
+       },
+       "path": "/",
+       "pathType": "Prefix"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
+---
+
+[Test_overrideIngressRules/No_rules - 1]
+{
+ "apiVersion": "networking.k8s.io/v1",
+ "kind": "Ingress",
+ "metadata": {
+  "name": "test-ing",
+  "namespace": "default"
+ },
+ "spec": {
+  "rules": [
+   {
+    "host": "example.com",
+    "http": {
+     "paths": [
+      {
+       "backend": {
+        "service": {
+         "name": "test",
+         "port": {
+          "number": 8080
+         }
+        }
+       },
+       "path": "/*",
+       "pathType": "Exact"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
+---
+
+[Test_overrideIngressRules/nil - 1]
+null
+---
+
+[Test_overrideServicePort/append - 1]
+{
+ "apiVersion": "v1",
+ "kind": "Service",
+ "metadata": {
+  "name": "test-svc",
+  "namespace": "default"
+ },
+ "spec": {
+  "ports": [
+   {
+    "name": "port2",
+    "port": 8081,
+    "protocol": "TCP",
+    "targetPort": 8081
+   },
+   {
+    "name": "port3",
+    "port": 8082,
+    "protocol": "UDP",
+    "targetPort": 8082
+   }
+  ],
+  "type": "ClusterIP"
+ }
+}
+---
+
+[Test_overrideServicePort/override - 1]
+{
+ "apiVersion": "v1",
+ "kind": "Service",
+ "metadata": {
+  "name": "test-svc",
+  "namespace": "default"
+ },
+ "spec": {
+  "ports": [
+   {
+    "name": "port2",
+    "port": 8081,
+    "protocol": "TCP",
+    "targetPort": 8081
+   },
+   {
+    "name": "port1",
+    "port": 8082,
+    "protocol": "UDP",
+    "targetPort": 8082
+   }
+  ],
+  "type": "ClusterIP"
+ }
+}
+---
+
+[Test_overrideServicePort/No_ports - 1]
+{
+ "apiVersion": "v1",
+ "kind": "Service",
+ "metadata": {
+  "name": "test-svc",
+  "namespace": "default"
+ },
+ "spec": {
+  "ports": [
+   {
+    "name": "port1",
+    "port": 8080,
+    "protocol": "TCP"
+   }
+  ],
+  "type": "ClusterIP"
+ }
+}
+---
+
+[Test_overrideServicePort/nil - 1]
+null
+---

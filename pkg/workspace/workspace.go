@@ -68,9 +68,6 @@ func svcPorts(netRules []cosmov1alpha1.NetworkRule) []corev1.ServicePort {
 	portMap := make(map[int32]corev1.ServicePort, len(netRules))
 
 	for _, netRule := range netRules {
-		if !netRule.TargetPortNumberIsValid() {
-			continue
-		}
 		port := netRule.ServicePort()
 		if _, ok := portMap[port.Port]; ok {
 			continue
@@ -86,9 +83,6 @@ func ingressRules(netRules []cosmov1alpha1.NetworkRule, backendSvcName string) [
 	ingRuleMap := make(map[string]netv1.IngressRule, len(netRules))
 
 	for _, netRule := range netRules {
-		if !netRule.TargetPortNumberIsValid() {
-			continue
-		}
 		ingRule := netRule.IngressRule(backendSvcName)
 		// Merge rules for the same host
 		if r, ok := ingRuleMap[ingRule.Host]; ok {

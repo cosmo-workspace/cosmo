@@ -103,17 +103,6 @@ func (r *NetworkRule) Default() {
 	}
 }
 
-func (r *NetworkRule) TargetPortNumberIsValid() bool {
-	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 {
-		return false
-	}
-	if r.Public {
-		return int32(r.PortNumber) == *r.TargetPortNumber
-	} else {
-		return int32(r.PortNumber) != *r.TargetPortNumber
-	}
-}
-
 func (r *NetworkRule) portName() string {
 	return fmt.Sprintf("port%d", *r.TargetPortNumber)
 }

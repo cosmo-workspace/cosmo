@@ -39,6 +39,7 @@
 | github.com/bufbuild/connect-go      | Apache License 2.0   | https://github.com/bufbuild/connect-go/blob/main/LICENSE                  |
 | github.com/envoyproxy/protoc-gen-validate | Apache License 2.0 | https://github.com/bufbuild/protoc-gen-validate/blob/main/LICENSELICENSE |
 | github.com/evanphx/json-patch/v5    | BSD 3-Clause License | https://github.com/evanphx/json-patch/blob/master/LICENSE                 |
+| github.com/gkampitakis/go-snaps     | MIT                  | https://github.com/gkampitakis/go-snaps/blob/main/LICENSE                 |
 | github.com/go-logr/logr             | Apache License 2.0   | https://github.com/go-logr/logr/blob/master/LICENSE                       |
 | github.com/google/gofuzz            | Apache License 2.0   | https://github.com/google/gofuzz/blob/master/LICENSE                      |
 | github.com/google/uuid              | BSD 3-Clause License | https://github.com/google/uuid/blob/master/LICENSE                        |
