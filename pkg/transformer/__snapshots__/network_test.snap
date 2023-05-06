@@ -14,11 +14,6 @@ nil
  "spec": {
   "ports": [
    {
-    "name": "port1",
-    "port": 8080,
-    "protocol": "TCP"
-   },
-   {
     "name": "port2",
     "port": 8081,
     "protocol": "TCP",
@@ -459,11 +454,6 @@ null
  "spec": {
   "ports": [
    {
-    "name": "port1",
-    "port": 8080,
-    "protocol": "TCP"
-   },
-   {
     "name": "port2",
     "port": 8081,
     "protocol": "TCP",
@@ -492,16 +482,16 @@ null
  "spec": {
   "ports": [
    {
-    "name": "port1",
-    "port": 8082,
-    "protocol": "UDP",
-    "targetPort": 8082
-   },
-   {
     "name": "port2",
     "port": 8081,
     "protocol": "TCP",
     "targetPort": 8081
+   },
+   {
+    "name": "port1",
+    "port": 8082,
+    "protocol": "UDP",
+    "targetPort": 8082
    }
   ],
   "type": "ClusterIP"

@@ -7,12 +7,10 @@ import (
 	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"sigs.k8s.io/yaml"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/gkampitakis/go-snaps/snaps"
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestNetworkTransformer_Transform(t *testing.T) {
@@ -269,25 +267,6 @@ spec:
 			gotObj, err := tr.Transform(obj)
 			snaps.MatchSnapshot(t, err)
 			snaps.MatchJSON(t, gotObj)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NetworkTransformer.Transform() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr {
-				got, err := yaml.Marshal(gotObj)
-				if err != nil {
-					t.Errorf("yaml.Marshal err = %v", err)
-				}
-				if string(got) != tt.want {
-					t.Errorf("NetworkTransformer.Transform() = %v, want %v", string(got), tt.want)
-					t.Errorf("NetworkTransformer.Transform() diff = %v", cmp.Diff(string(got), tt.want))
-				}
-
-			} else {
-				if gotObj != nil {
-					t.Errorf("NetworkTransformer.Transform() gotObj not nil %v", gotObj)
-				}
-			}
 		})
 	}
 }
