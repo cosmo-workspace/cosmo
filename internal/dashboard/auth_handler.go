@@ -110,11 +110,13 @@ func (s *Server) Logout(ctx context.Context, req *connect_go.Request[emptypb.Emp
 		return nil, ErrResponse(log, err)
 	}
 
+	// clear session
 	cookie := s.sessionCookieKey()
 	cookie.MaxAge = -1
+	w := responseWriterFromContext(ctx)
+	http.SetCookie(w, cookie)
 
 	resp := connect_go.NewResponse(&emptypb.Empty{})
-	resp.Header().Set("Set-Cookie", cookie.Raw)
 
 	return resp, nil
 }
