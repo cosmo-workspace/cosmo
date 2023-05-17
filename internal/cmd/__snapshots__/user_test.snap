@@ -56,14 +56,15 @@ Global Flags:
 
 """
 
-['cosmoctl [user] [all] ❌ fail with invalid arg: kubeconfig user reset-password user1 --kubeconfig XXXX 1']
+['cosmoctl [user] [all] ❌ fail with invalid arg: kubeconfig user reset-password user1 --password XXXXXXXX --kubeconfig XXXX 1']
 SnapShot = """
 Error: invalid options: stat XXXX: no such file or directory
 Usage:
   cosmoctl user reset-password USER_NAME [flags]
 
 Flags:
-  -h, --help   help for reset-password
+  -h, --help              help for reset-password
+      --password string   new password (default: random string)
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -742,6 +743,14 @@ Global Flags:
 ['cosmoctl [user] [get] ❌ fail with an unexpected error at list: user get 2']
 SnapShot = 'failed to list users: mock user list error'
 
+['cosmoctl [user] [reset-password] ✅ success in normal context: user reset-password user1 --password XXXXXXXX 1']
+SnapShot = """
+\u001B[32mSuccessfully reset password: user user1
+\u001B[0m"""
+
+['cosmoctl [user] [reset-password] ✅ success in normal context: user reset-password user1 --password XXXXXXXX 2']
+SnapShot = 'success'
+
 ['cosmoctl [user] [reset-password] ✅ success in normal context: user reset-password user1 1']
 SnapShot = """
 \u001B[32mSuccessfully reset password: user user1
@@ -759,7 +768,8 @@ Usage:
   cosmoctl user reset-password USER_NAME [flags]
 
 Flags:
-  -h, --help   help for reset-password
+  -h, --help              help for reset-password
+      --password string   new password (default: random string)
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -778,7 +788,8 @@ Usage:
   cosmoctl user reset-password USER_NAME [flags]
 
 Flags:
-  -h, --help   help for reset-password
+  -h, --help              help for reset-password
+      --password string   new password (default: random string)
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -797,7 +808,8 @@ Usage:
   cosmoctl user reset-password USER_NAME [flags]
 
 Flags:
-  -h, --help   help for reset-password
+  -h, --help              help for reset-password
+      --password string   new password (default: random string)
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -808,6 +820,15 @@ Global Flags:
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 2']
 SnapShot = 'failed to reset password: namespaces "cosmo-user-XXXXXX" not found'
+
+['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password user1 --password  1']
+SnapShot = """
+\u001B[32mSuccessfully reset password: user user1
+\u001B[0mNew password: xxxxxxxx
+"""
+
+['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password user1 --password  2']
+SnapShot = 'success'
 
 ['cosmoctl [user] [update] ✅ success in normal context: user update upd-norole --name  1']
 SnapShot = """

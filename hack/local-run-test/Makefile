@@ -222,17 +222,7 @@ add-user: kubectl cosmoctl
 	-cosmoctl user create team-b-dev --role "team-b-dev" 2> /dev/null
 	-cosmoctl user create team-b-admin --role "team-b-admin" 2> /dev/null
 	-cosmoctl user create team-ab-dev --role "team-a-dev,team-b-dev" 2> /dev/null
-	export PASSWORD=`cosmoctl user reset-password tom | grep -Po "(?<=New password: ).*"` && \
-	bash -c 'until ( \
-		curl -L -c bin/cookie.txt -X POST -H "Content-Type: application/json" \
-		$(BASEURL)/dashboard.v1alpha1.AuthService/Login \
-		-d "{\"userName\":\"tom\",\"password\":\"$${PASSWORD}\"}" \
-	) do sleep 1; done' && \
-	bash -c ' \
-		curl -L -b bin/cookie.txt -X POST -H "Content-Type: application/json" \
-		$(BASEURL)/dashboard.v1alpha1.UserService/UpdateUserPassword \
-		-d "{\"userName\":\"tom\",\"currentPassword\":\"$${PASSWORD}\",\"newPassword\": \"vvv\"}" \
-	'
+	cosmoctl user reset-password tom --password vvv
 
 
 add-workspace: kubectl cosmoctl
