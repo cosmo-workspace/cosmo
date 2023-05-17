@@ -99,7 +99,7 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "get", "--kubeconfig", "XXXX"),
 			Entry(desc, "user", "delete", "user1", "--kubeconfig", "XXXX"),
 			Entry(desc, "user", "update", "user1", "--kubeconfig", "XXXX"),
-			Entry(desc, "user", "reset-password", "user1", "--kubeconfig", "XXXX"),
+			Entry(desc, "user", "reset-password", "user1", "--password", "XXXXXXXX", "--kubeconfig", "XXXX"),
 		)
 	})
 
@@ -333,12 +333,14 @@ var _ = Describe("cosmoctl [user]", func() {
 		DescribeTable("✅ success in normal context:",
 			run_test,
 			Entry(desc, "user", "reset-password", "user1"),
+			Entry(desc, "user", "reset-password", "user1", "--password", "XXXXXXXX"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
 			run_test,
 			Entry(desc, "user", "reset-password", "XXXXXX"),
 			Entry(desc, "user", "reset-password"),
+			Entry(desc, "user", "reset-password", "user1", "--password", ""),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",

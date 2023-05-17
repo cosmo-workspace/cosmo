@@ -16,12 +16,14 @@ type resetPasswordOption struct {
 	*cmdutil.CliOptions
 
 	UserName string
+	Password string
 }
 
 func resetPasswordCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &resetPasswordOption{CliOptions: cliOpt}
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+	cmd.Flags().StringVar(&o.Password, "password", "", "new password (default: random string)")
 	return cmd
 }
 
@@ -60,18 +62,25 @@ func (o *resetPasswordOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	if err := c.ResetPassword(ctx, o.UserName); err != nil {
-		return err
+	if o.Password == "" {
+		if err := c.ResetPassword(ctx, o.UserName); err != nil {
+			return err
+		}
+	} else {
+		if err := c.RegisterPassword(ctx, o.UserName, []byte(o.Password)); err != nil {
+			return err
+		}
 	}
 
 	cmdutil.PrintfColorInfo(o.Out, "Successfully reset password: user %s\n", o.UserName)
 
-	pass, err := c.GetDefaultPassword(ctx, o.UserName)
-	if err != nil {
-		return err
+	if o.Password == "" {
+		pass, err := c.GetDefaultPassword(ctx, o.UserName)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintln(o.Out, "New password:", *pass)
 	}
-
-	fmt.Fprintln(o.Out, "New password:", *pass)
 
 	return nil
 }
