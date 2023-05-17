@@ -31,8 +31,11 @@ SnapShot = """
 {}
 """
 
+['Dashboard server [auth] [Logout] ✅ success in normal context: Entry: logined session 2']
+SnapShot = 'test-server=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax'
+
 ['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: logouted session 1']
-SnapShot = 'unauthenticated: session is not found'
+SnapShot = 'unauthenticated: failed to get session from store'
 
 ['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: nil session 1']
 SnapShot = 'unauthenticated: session is not found'
@@ -46,7 +49,7 @@ SnapShot = """
 """
 
 ['Dashboard server [auth] [Verify] ❌ fail with invalid request: Entry: logouted session 1']
-SnapShot = 'unauthenticated: session is not found'
+SnapShot = 'unauthenticated: failed to get session from store'
 
 ['Dashboard server [auth] [Verify] ❌ fail with invalid request: Entry: nil session 1']
 SnapShot = 'unauthenticated: session is not found'

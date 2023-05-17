@@ -128,7 +128,7 @@ var _ = Describe("Dashboard server [auth]", func() {
 			res, err := client.Logout(ctx, NewRequestWithSession(&emptypb.Empty{}, session))
 			if err == nil {
 				Ω(res.Msg).To(MatchSnapShot())
-				Expect(res.Header().Get("Set-Cookie")).Should(BeEmpty())
+				Ω(res.Header().Get("Set-Cookie")).To(MatchSnapShot())
 			} else {
 				Ω(err.Error()).To(MatchSnapShot())
 				Expect(res).Should(BeNil())
