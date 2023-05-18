@@ -45,7 +45,7 @@ MIT 2022 cosmo-workspace/cosmo
 		Use:   "version",
 		Short: "Print the version number",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Fprintln(o.Out, "cosmoctl - cosmo v0.7.0 cosmo-workspace 2022")
+			fmt.Fprintln(o.Out, "cosmoctl - cosmo v0.8.0 cosmo-workspace 2022")
 		},
 	}
 

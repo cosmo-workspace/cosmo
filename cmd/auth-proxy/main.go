@@ -175,5 +175,5 @@ func printOptions() {
 }
 
 func printVersion() {
-	fmt.Println("cosmo-auth-proxy - cosmo v0.7.0 cosmo-workspace 2022")
+	fmt.Println("cosmo-auth-proxy - cosmo v0.8.0 cosmo-workspace 2022")
 }
