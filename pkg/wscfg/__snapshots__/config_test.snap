@@ -1,0 +1,56 @@
+
+[TestSetConfigOnTemplateAnnotations/OK - 1]
+{
+ "metadata": {
+  "annotations": {
+   "workspace.cosmo-workspace.github.io/deployment": "workspace1",
+   "workspace.cosmo-workspace.github.io/ingress": "workspace3",
+   "workspace.cosmo-workspace.github.io/service": "workspace2",
+   "workspace.cosmo-workspace.github.io/service-main-port": "main",
+   "workspace.cosmo-workspace.github.io/urlbase": ""
+  },
+  "creationTimestamp": null,
+  "name": "tmpl"
+ },
+ "spec": {}
+}
+---
+
+[TestSetConfigOnTemplateAnnotations/no_annotations - 1]
+{
+ "metadata": {
+  "annotations": {
+   "workspace.cosmo-workspace.github.io/deployment": "workspace1",
+   "workspace.cosmo-workspace.github.io/ingress": "workspace3",
+   "workspace.cosmo-workspace.github.io/service": "workspace2",
+   "workspace.cosmo-workspace.github.io/service-main-port": "main",
+   "workspace.cosmo-workspace.github.io/urlbase": ""
+  },
+  "creationTimestamp": null,
+  "name": "tmpl"
+ },
+ "spec": {}
+}
+---
+
+[TestConfigFromTemplateAnnotations/found - 1]
+{
+ "deploymentName": "workspace1",
+ "ingressName": "workspace3",
+ "mainServicePortName": "main",
+ "serviceName": "workspace2",
+ "urlbase": "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain"
+}
+---
+
+[TestConfigFromTemplateAnnotations/no_label - 1]
+{}
+---
+
+[TestConfigFromTemplateAnnotations/not_type_workspace - 1]
+{}
+---
+
+[TestConfigFromTemplateAnnotations/no_annotations - 1]
+{}
+---

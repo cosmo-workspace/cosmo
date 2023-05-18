@@ -1,13 +1,11 @@
 package wscfg
 
 import (
-	"reflect"
 	"testing"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/pkg/template"
+	"github.com/gkampitakis/go-snaps/snaps"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 func TestSetConfigOnTemplateAnnotations(t *testing.T) {
@@ -18,7 +16,6 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *cosmov1alpha1.Template
 	}{
 		{
 			name: "OK",
@@ -39,18 +36,6 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 					},
 				},
 			},
-			want: &cosmov1alpha1.Template{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "tmpl",
-					Annotations: map[string]string{
-						cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
-						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
-						cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
-						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
-						cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
-					},
-				},
-			},
 		},
 		{
 			name: "no annotations",
@@ -67,23 +52,12 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 					},
 				},
 			},
-			want: &cosmov1alpha1.Template{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "tmpl",
-					Annotations: map[string]string{
-						cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
-						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
-						cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
-						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
-						cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
-					},
-				},
-			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			SetConfigOnTemplateAnnotations(tt.args.obj, tt.args.cfg)
+			snaps.MatchJSON(t, tt.args.obj)
 		})
 	}
 }
@@ -95,7 +69,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    cosmov1alpha1.Config
 		wantErr error
 	}{
 		{
@@ -117,13 +90,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 						},
 					},
 				},
-			},
-			want: cosmov1alpha1.Config{
-				DeploymentName:      "workspace1",
-				ServiceName:         "workspace2",
-				IngressName:         "workspace3",
-				ServiceMainPortName: "main",
-				URLBase:             "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 			},
 		},
 		{
@@ -180,7 +146,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 					},
 				},
 			},
-			want: cosmov1alpha1.Config{},
 		},
 	}
 	for _, tt := range tests {
@@ -189,20 +154,7 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 			if err != tt.wantErr {
 				t.Errorf("ConfigFromTemplateAnnotations() gotErr = %v, wantErr %v", err, tt.wantErr)
 			}
-			if err == nil {
-				if !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("ConfigFromTemplateAnnotations() got = %v, want %v", got, tt.want)
-				}
-			}
+			snaps.MatchJSON(t, got)
 		})
 	}
-}
-
-func preTemplateBuild(rawTmpl string) ([]unstructured.Unstructured, error) {
-	var inst cosmov1alpha1.Instance
-	inst.SetName("dummy")
-	inst.SetNamespace("dummy")
-
-	builder := template.NewRawYAMLBuilder(rawTmpl, &inst)
-	return builder.Build()
 }
