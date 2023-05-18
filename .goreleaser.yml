@@ -1,6 +1,6 @@
 before:
   hooks:
-    - go mod download
+    - go mod tidy
 builds:
   - id: cosmoctl
     main: ./cmd/cosmoctl/main.go
