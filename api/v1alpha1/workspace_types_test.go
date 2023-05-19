@@ -109,7 +109,7 @@ func TestNetworkRule_portName(t *testing.T) {
 				PortNumber:       1111,
 				TargetPortNumber: pointer.Int32(2222),
 			},
-			want: "port2222",
+			want: "port1111",
 		},
 	}
 	for _, tt := range tests {
@@ -190,6 +190,56 @@ func TestNetworkRule_IngressRule(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.netRule.IngressRule(tt.args.backendSvcName)
+			snaps.MatchJSON(t, got)
+		})
+	}
+}
+
+func TestNetworkRule_TraefikRoute(t *testing.T) {
+	type args struct {
+		backendSvcName       string
+		headerMiddlewareName string
+	}
+	tests := []struct {
+		name    string
+		netRule *NetworkRule
+		args    args
+	}{
+		{
+			name: "✅ public",
+			netRule: &NetworkRule{
+				Name:             "name",
+				PortNumber:       1111,
+				HTTPPath:         "/path",
+				TargetPortNumber: pointer.Int32(2222),
+				Host:             pointer.String("host"),
+				Group:            pointer.String("group"),
+				Public:           true,
+			},
+			args: args{
+				backendSvcName: "svcname",
+			},
+		},
+		{
+			name: "✅ not public",
+			netRule: &NetworkRule{
+				Name:             "name",
+				PortNumber:       1111,
+				HTTPPath:         "/path",
+				TargetPortNumber: pointer.Int32(2222),
+				Host:             pointer.String("host"),
+				Group:            pointer.String("group"),
+				Public:           false,
+			},
+			args: args{
+				backendSvcName:       "svcname",
+				headerMiddlewareName: "headers",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.netRule.TraefikRoute(tt.args.backendSvcName, tt.args.headerMiddlewareName)
 			snaps.MatchJSON(t, got)
 		})
 	}

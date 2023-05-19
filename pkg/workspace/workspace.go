@@ -1,8 +1,10 @@
 package workspace
 
 import (
+	"encoding/json"
 	"fmt"
 
+	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -18,6 +20,17 @@ func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws cosmov1alp
 	backendSvcName := instance.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName)
 	svcPorts := svcPorts(ws.Spec.Network)
 	ingRules := ingressRules(ws.Spec.Network, backendSvcName)
+	traefikRoutes := traefikRoutes(ws)
+
+	traefikRoutesJson, err := json.Marshal(traefikRoutes)
+	if err != nil {
+		return err
+	}
+	traefikJsonPatch := fmt.Sprintf(`[{
+"op": "replace",
+"path": "/spec/routes",
+"value": %s
+}]`, string(traefikRoutesJson))
 
 	scaleTargetRef := func(ws cosmov1alpha1.Workspace) cosmov1alpha1.ObjectRef {
 		tgt := cosmov1alpha1.ObjectRef{}
@@ -48,6 +61,19 @@ func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws cosmov1alp
 						TargetName: ws.Status.Config.IngressName,
 						Rules:      ingRules,
 					},
+				},
+			},
+			PatchesJson6902: []cosmov1alpha1.Json6902{
+				{
+					Target: cosmov1alpha1.ObjectRef{
+						ObjectReference: corev1.ObjectReference{
+							APIVersion: "traefik.containo.us/v1alpha1",
+							Kind:       "IngressRoute",
+							Namespace:  "",
+							Name:       ws.Status.Config.IngressName,
+						},
+					},
+					Patch: traefikJsonPatch,
 				},
 			},
 		},
@@ -93,6 +119,20 @@ func ingressRules(netRules []cosmov1alpha1.NetworkRule, backendSvcName string) [
 		ingRules = append(ingRules, ingRule)
 	}
 	return ingRules
+}
+
+func traefikRoutes(ws cosmov1alpha1.Workspace) []traefikv1.Route {
+	backendSvcName := instance.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName)
+	headerMiddleName := instance.InstanceResourceName(ws.Name, "headers")
+
+	netRules := ws.Spec.Network
+	routes := make([]traefikv1.Route, 0, len(netRules))
+
+	for _, netRule := range netRules {
+		traefikRule := netRule.TraefikRoute(backendSvcName, headerMiddleName)
+		routes = append(routes, traefikRule)
+	}
+	return routes
 }
 
 func addWorkspaceDefaultVars(vars map[string]string, ws cosmov1alpha1.Workspace) map[string]string {

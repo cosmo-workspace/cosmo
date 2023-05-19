@@ -73,7 +73,7 @@
 
 [TestNetworkRule_ServicePort/✅_OK - 1]
 {
- "name": "port2222",
+ "name": "port1111",
  "port": 2222,
  "protocol": "TCP",
  "targetPort": 2222
@@ -90,7 +90,7 @@
      "service": {
       "name": "svcname",
       "port": {
-       "name": "port2222"
+       "name": "port1111"
       }
      }
     },
@@ -111,7 +111,7 @@
      "service": {
       "name": "svcname",
       "port": {
-       "name": "port2222"
+       "name": "port1111"
       }
      }
     },
@@ -120,6 +120,47 @@
    }
   ]
  }
+}
+---
+
+[TestNetworkRule_TraefikRoute/✅_public - 1]
+{
+ "kind": "Rule",
+ "match": "Host(`host`) \u0026\u0026 PathPrefix(`/path`)",
+ "priority": 100,
+ "services": [
+  {
+   "kind": "Service",
+   "name": "svcname",
+   "port": "port1111",
+   "scheme": "http"
+  }
+ ]
+}
+---
+
+[TestNetworkRule_TraefikRoute/✅_not_public - 1]
+{
+ "kind": "Rule",
+ "match": "Host(`host`) \u0026\u0026 PathPrefix(`/path`)",
+ "middlewares": [
+  {
+   "name": "headers"
+  },
+  {
+   "name": "cosmo-auth",
+   "namespace": "cosmo-system"
+  }
+ ],
+ "priority": 100,
+ "services": [
+  {
+   "kind": "Service",
+   "name": "svcname",
+   "port": "port1111",
+   "scheme": "http"
+  }
+ ]
 }
 ---
 

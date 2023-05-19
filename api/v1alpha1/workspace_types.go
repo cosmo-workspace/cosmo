@@ -2,7 +2,9 @@ package v1alpha1
 
 import (
 	"fmt"
+	"strings"
 
+	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -104,7 +106,7 @@ func (r *NetworkRule) Default() {
 }
 
 func (r *NetworkRule) portName() string {
-	return fmt.Sprintf("port%d", *r.TargetPortNumber)
+	return fmt.Sprintf("port%d", r.PortNumber)
 }
 
 func (r *NetworkRule) ServicePort() corev1.ServicePort {
@@ -142,6 +144,49 @@ func (r *NetworkRule) IngressRule(backendSvcName string) netv1.IngressRule {
 				},
 			},
 		},
+	}
+}
+
+func (r *NetworkRule) TraefikRoute(backendSvcName string, headerMiddlewareName string) traefikv1.Route {
+	matches := []string{}
+	if r.Host != nil {
+		matches = append(matches, fmt.Sprintf("Host(`%s`)", *r.Host))
+	}
+	if r.HTTPPath != "" && r.HTTPPath != "/" {
+		matches = append(matches, fmt.Sprintf("PathPrefix(`%s`)", r.HTTPPath))
+	}
+	match := strings.Join(matches[:], " && ")
+
+	var middlewares []traefikv1.MiddlewareRef
+	if r.Public {
+		middlewares = []traefikv1.MiddlewareRef{}
+	} else {
+		middlewares = []traefikv1.MiddlewareRef{
+			{
+				Name: headerMiddlewareName,
+			},
+			{
+				Name:      "cosmo-auth",
+				Namespace: "cosmo-system",
+			},
+		}
+	}
+
+	return traefikv1.Route{
+		Kind:     "Rule",
+		Match:    match,
+		Priority: 100,
+		Services: []traefikv1.Service{
+			{
+				LoadBalancerSpec: traefikv1.LoadBalancerSpec{
+					Kind:   "Service",
+					Name:   backendSvcName,
+					Port:   intstr.FromString(r.portName()),
+					Scheme: "http",
+				},
+			},
+		},
+		Middlewares: middlewares,
 	}
 }
 

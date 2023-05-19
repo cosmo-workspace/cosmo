@@ -20,7 +20,7 @@
             "service": {
              "name": "ws1-ws-svc",
              "port": {
-              "name": "port18080"
+              "name": "port8080"
              }
             }
            },
@@ -32,7 +32,7 @@
             "service": {
              "name": "ws1-ws-svc",
              "port": {
-              "name": "port19999"
+              "name": "port9999"
              }
             }
            },
@@ -50,13 +50,13 @@
      {
       "ports": [
        {
-        "name": "port18080",
+        "name": "port8080",
         "port": 18080,
         "protocol": "TCP",
         "targetPort": 18080
        },
        {
-        "name": "port19999",
+        "name": "port9999",
         "port": 19999,
         "protocol": "TCP",
         "targetPort": 19999
@@ -66,6 +66,16 @@
      }
     ]
    },
+   "patchesJson6902": [
+    {
+     "patch": "[{\n\"op\": \"replace\",\n\"path\": \"/spec/routes\",\n\"value\": [{\"match\":\"\",\"kind\":\"Rule\",\"priority\":100,\"services\":[{\"name\":\"ws1-ws-svc\",\"kind\":\"Service\",\"port\":\"port8080\",\"scheme\":\"http\"}],\"middlewares\":[{\"name\":\"ws1-headers\"},{\"name\":\"cosmo-auth\",\"namespace\":\"cosmo-system\"}]},{\"match\":\"\",\"kind\":\"Rule\",\"priority\":100,\"services\":[{\"name\":\"ws1-ws-svc\",\"kind\":\"Service\",\"port\":\"port9999\",\"scheme\":\"http\"}],\"middlewares\":[{\"name\":\"ws1-headers\"},{\"name\":\"cosmo-auth\",\"namespace\":\"cosmo-system\"}]}]\n}]",
+     "target": {
+      "apiVersion": "traefik.containo.us/v1alpha1",
+      "kind": "IngressRoute",
+      "name": "ws-ing"
+     }
+    }
+   ],
    "scale": [
     {
      "replicas": 1,
@@ -125,6 +135,16 @@
      }
     ]
    },
+   "patchesJson6902": [
+    {
+     "patch": "[{\n\"op\": \"replace\",\n\"path\": \"/spec/routes\",\n\"value\": []\n}]",
+     "target": {
+      "apiVersion": "traefik.containo.us/v1alpha1",
+      "kind": "IngressRoute",
+      "name": "ws-ing"
+     }
+    }
+   ],
    "scale": [
     {
      "replicas": 0,
@@ -159,7 +179,7 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
 [TestSvcPorts/✅_OK1 - 1]
 [
  {
-  "name": "port2222",
+  "name": "port1111",
   "port": 2222,
   "protocol": "TCP",
   "targetPort": 2222
@@ -170,13 +190,13 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
 [TestSvcPorts/✅_OK2 - 1]
 [
  {
-  "name": "port2222",
+  "name": "port1111",
   "port": 2222,
   "protocol": "TCP",
   "targetPort": 2222
  },
  {
-  "name": "port4444",
+  "name": "port3333",
   "port": 4444,
   "protocol": "TCP",
   "targetPort": 4444
@@ -187,7 +207,7 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
 [TestSvcPorts/✅_OK3 - 1]
 [
  {
-  "name": "port2222",
+  "name": "port1111",
   "port": 2222,
   "protocol": "TCP",
   "targetPort": 2222
@@ -206,7 +226,7 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
       "service": {
        "name": "bksvc",
        "port": {
-        "name": "port2222"
+        "name": "port1111"
        }
       }
      },
@@ -230,7 +250,7 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
       "service": {
        "name": "bksvc",
        "port": {
-        "name": "port2222"
+        "name": "port1111"
        }
       }
      },
@@ -249,7 +269,7 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
       "service": {
        "name": "bksvc",
        "port": {
-        "name": "port4444"
+        "name": "port3333"
        }
       }
      },
@@ -273,7 +293,7 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
       "service": {
        "name": "bksvc",
        "port": {
-        "name": "port2222"
+        "name": "port1111"
        }
       }
      },
@@ -285,7 +305,7 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
       "service": {
        "name": "bksvc",
        "port": {
-        "name": "port4444"
+        "name": "port3333"
        }
       }
      },

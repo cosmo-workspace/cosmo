@@ -2,21 +2,18 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	corev1 "k8s.io/api/core/v1"
-	netv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/utils/pointer"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -146,46 +143,6 @@ spec:
 		},
 	}
 
-	expectedInst := cosmov1alpha1.Instance{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      wsName,
-			Namespace: nsName,
-		},
-		Spec: cosmov1alpha1.InstanceSpec{
-			Template: cosmov1alpha1.TemplateRef{
-				Name: tmplName,
-			},
-			Vars: map[string]string{
-				"{{DOMAIN}}":                           "example.com",
-				"{{IMAGE_TAG}}":                        "latest",
-				"{{WORKSPACE_DEPLOYMENT_NAME}}":        wsConfig.DeploymentName,
-				"{{WORKSPACE_INGRESS_NAME}}":           wsConfig.IngressName,
-				"{{WORKSPACE_SERVICE_NAME}}":           wsConfig.ServiceName,
-				"{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}": wsConfig.ServiceMainPortName,
-				"{{WORKSPACE}}":                        wsName,
-				"{{USER_NAME}}":                        userName,
-			},
-			Override: cosmov1alpha1.OverrideSpec{
-				Scale: []cosmov1alpha1.ScalingOverrideSpec{
-					{
-						Target: cosmov1alpha1.ObjectRef{
-							ObjectReference: corev1.ObjectReference{
-								APIVersion: "apps/v1",
-								Kind:       "Deployment",
-								Name:       wsConfig.DeploymentName,
-							},
-						},
-						Replicas: 1,
-					},
-				},
-				Network: &cosmov1alpha1.NetworkOverrideSpec{
-					Ingress: []cosmov1alpha1.IngressOverrideSpec{{TargetName: wsConfig.IngressName}},
-					Service: []cosmov1alpha1.ServiceOverrideSpec{{TargetName: wsConfig.ServiceName}},
-				},
-			},
-		},
-	}
-
 	Context("when creating Template resource on new cluster", func() {
 		It("should do nothing", func() {
 			ctx := context.Background()
@@ -233,13 +190,8 @@ spec:
 				ResourceVersion: createdInst.ResourceVersion,
 			}
 
-			expected := expectedInst.DeepCopy()
-			ownerRef := ownerRef(&ws, scheme.Scheme)
-			expected.OwnerReferences = []metav1.OwnerReference{ownerRef}
-
 			created := looseDeepCopyObject(createdInst)
-
-			Expect(created).Should(BeEqualityDeepEqual(expected))
+			Expect(created).To(MatchSnapShot())
 
 			By("fetching workspace resource and checking workspace status")
 
@@ -301,58 +253,8 @@ spec:
 				return createdInst.Spec.Override.Scale[0].Replicas
 			}, time.Second*10).Should(BeEquivalentTo(0))
 
-			expected := expectedInst.DeepCopy()
-			ownerRef := ownerRef(&ws, scheme.Scheme)
-			expected.OwnerReferences = []metav1.OwnerReference{ownerRef}
-			prefix := netv1.PathTypePrefix
-			expected.Spec.Override.Scale[0].Replicas = 0
-			expected.Spec.Override.Network = &cosmov1alpha1.NetworkOverrideSpec{
-				Ingress: []cosmov1alpha1.IngressOverrideSpec{
-					{
-						TargetName: wsConfig.IngressName,
-						Rules: []netv1.IngressRule{
-							{
-								// Host is filled by Webhook
-								// Host: fmt.Sprintf("%s-%s-%s.domain", "group1", wsName, userName),
-								IngressRuleValue: netv1.IngressRuleValue{
-									HTTP: &netv1.HTTPIngressRuleValue{
-										Paths: []netv1.HTTPIngressPath{
-											{
-												Path:     "/path",
-												PathType: &prefix,
-												Backend: netv1.IngressBackend{
-													Service: &netv1.IngressServiceBackend{
-														Name: fmt.Sprintf("%s-ws-svc", wsName),
-														Port: netv1.ServiceBackendPort{
-															Name: "port30000",
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				Service: []cosmov1alpha1.ServiceOverrideSpec{
-					{
-						TargetName: wsConfig.ServiceName,
-						Ports: []corev1.ServicePort{
-							{
-								Name:       "port30000",
-								Protocol:   corev1.ProtocolTCP,
-								Port:       30000,
-								TargetPort: intstr.FromInt(30000),
-							},
-						},
-					},
-				},
-			}
-
 			created := looseDeepCopyObject(createdInst)
-			Expect(created).Should(BeEqualityDeepEqual(expected))
+			Expect(created).To(MatchSnapShot())
 		})
 	})
 })
@@ -366,5 +268,8 @@ func looseDeepCopyObject(inst cosmov1alpha1.Instance) *cosmov1alpha1.Instance {
 	loose.SetCreationTimestamp(metav1.Time{})
 	loose.SetManagedFields(nil)
 	loose.Status = cosmov1alpha1.InstanceStatus{}
+	for i := range loose.OwnerReferences {
+		loose.OwnerReferences[i].UID = ""
+	}
 	return loose
 }
