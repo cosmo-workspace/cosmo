@@ -145,7 +145,7 @@ endif
 ##---------------------------------------------------------------------
 ##@ Test
 ##---------------------------------------------------------------------
-TEST_FILES ?= ./...
+TEST_FILES ?= ./... ./traefik/plugins/cosmo-workspace/cosmoauth/
 COVER_PROFILE ?= cover.out
 #TEST_OPTS ?= --ginkgo.focus 'Dashboard server \[User\]' -ginkgo.v -ginkgo.progress -test.v > test.out 2>&1
 
@@ -288,8 +288,9 @@ docker-build-auth-proxy: test ## Build the docker image for auth-proxy.
 
 .PHONY: docker-build-traefik-plugins
 docker-build-traefik-plugins: test ## Build the docker image for traefik-plugins.
-	# cd traefik/plugins/cosmo/authenticate && ${MAKE} vendor 
+	cd traefik/plugins/cosmo-workspace/cosmoauth && ${MAKE} vendor 
 	DOCKER_BUILDKIT=1 docker build . -t ${IMG_TRAEFIK_PLUGINS} -f dockerfile/traefik-plugins.Dockerfile
+	cd traefik/plugins/cosmo-workspace/cosmoauth && ${MAKE} clean 
 
 
 .PHONY: docker-push docker-push-manager docker-push-dashboard docker-push-auth-proxy docker-push-traefik-plugins
@@ -371,19 +372,18 @@ HELM ?= $(LOCALBIN)/helm
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
-kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
-$(KUSTOMIZE): $(LOCALBIN)
-	rm -f $(KUSTOMIZE)
+kustomize: $(LOCALBIN) $(KUSTOMIZE) ## Download kustomize locally if necessary.
+$(KUSTOMIZE):
 	curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN)
 
 .PHONY: controller-gen
-controller-gen: go $(CONTROLLER_GEN) ## Download controller-gen locally if necessary.
-$(CONTROLLER_GEN): $(LOCALBIN)
+controller-gen: go $(LOCALBIN) $(CONTROLLER_GEN) ## Download controller-gen locally if necessary.
+$(CONTROLLER_GEN):
 	GOBIN=$(LOCALBIN) $(GO) install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
 
 .PHONY: envtest
-envtest: go $(ENVTEST) ## Download envtest-setup locally if necessary.
-$(ENVTEST): $(LOCALBIN)
+envtest: go $(LOCALBIN) $(ENVTEST) ## Download envtest-setup locally if necessary.
+$(ENVTEST):
 	GOBIN=$(LOCALBIN) $(GO) install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
 
 .PHONY: go

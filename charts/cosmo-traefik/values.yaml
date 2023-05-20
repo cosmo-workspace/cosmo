@@ -30,7 +30,7 @@ traefik:
   # Configure the deployment
   #
   deployment:
-    # Additional volumes available for use with initContainers and additionalContainers  
+    # Additional volumes available for use with initContainers and additionalContainers
     additionalVolumes:
       - name: local-plugins
         emptyDir: {}
@@ -62,7 +62,7 @@ traefik:
       # Specify the allowed entrypoints to use for the dashboard ingress route, (e.g. traefik, web, websecure).
       # By default, it's using traefik entrypoint, which is not exposed.
       # /!\ Do not expose your dashboard without any protection over the internet /!\
-      entryPoints: ["web","websecure", "traefik"]
+      entryPoints: ["web", "websecure", "traefik"]
       # Additional ingressRoute middlewares (e.g. for authentication)
       middlewares:
         - name: traefik-dashboard-auth
@@ -90,7 +90,7 @@ traefik:
     access:
       # To enable access logs
       enabled: true
-  
+
   globalArguments:
     # - "--global.checknewversion"
     - "--global.sendanonymoususage"
@@ -103,8 +103,8 @@ traefik:
   ## Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
   additionalArguments:
     - "--log.level=DEBUG"
-    - "--experimental.localPlugins.ldapAuth.modulename=github.com/wiltonsr/ldapAuth"
-    # - "--experimental.localPlugins.authenticate.modulename=github.com/cosmo/authenticate"
+    #- "--experimental.localPlugins.ldapAuth.modulename=github.com/wiltonsr/ldapAuth"
+    - "--experimental.localPlugins.cosmoauth.modulename=github.com/cosmo-workspace/cosmoauth"
 
   # Configure ports
   ports:

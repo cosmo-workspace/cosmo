@@ -1,0 +1,16 @@
+displayName: cosmo-auth middleware
+type: middleware
+iconPath: .assets/icon.png
+
+import: github.com/cosmo-workspace/cosmoauth
+
+summary: "cosmo-auth middleware"
+
+testData:
+  cosmoauth:
+    logLevel: DEBUG
+    cookieSessionName: COOKIE_SESSION_NAME
+    cookieDomain: domain.local
+    cookieHashKey: random_over_32_charctors
+    cookieBlockKey: random_over_32_charctors
+    signInUrl: https://signin.domain.local
