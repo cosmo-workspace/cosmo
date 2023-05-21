@@ -1,7 +1,13 @@
 # Default values for cosmo-traefik.
 
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: traefik
+namespaceOverride: cosmo-system
+
+domain: ""
+
+cosmoAuth:
+  signinUrl: ""
 
 # Definition of ingress for external Loadbalancer.
 ingress:
@@ -17,15 +23,12 @@ ingress:
           pathType: Prefix
           entryPoint: websecure
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 # see https://github.com/k3s-io/k3s/blob/master/manifests/traefik.yaml
 traefik:
   enable: true
   fullnameOverride: traefik
-  namespaceOverride: kube-system
+  namespaceOverride: cosmo-system
   #
   # Configure the deployment
   #
@@ -37,7 +40,7 @@ traefik:
     # Additional initContainers (e.g. for setting file permission as shown below)
     initContainers:
       - name: copy-plugins
-        image: "ghcr.io/cosmo-workspace/traefik-plugins:xxxx"
+        image: ghcr.io/cosmo-workspace/traefik-plugins:xxxx
         imagePullPolicy: Always
         command: ["sh", "-c", "cp -r /plugins-local/* /local-plugins/"]
         volumeMounts:
@@ -58,7 +61,7 @@ traefik:
     dashboard:
       enabled: true
       # The router match rule used for the dashboard ingressRoute
-      matchRule: HostRegexp(`{host:^traefik-dashboard.*$}`)
+      matchRule: Host(`traefik-dashboard-xxx.domain`)
       # Specify the allowed entrypoints to use for the dashboard ingress route, (e.g. traefik, web, websecure).
       # By default, it's using traefik entrypoint, which is not exposed.
       # /!\ Do not expose your dashboard without any protection over the internet /!\
@@ -105,15 +108,20 @@ traefik:
     - "--log.level=DEBUG"
     #- "--experimental.localPlugins.ldapAuth.modulename=github.com/wiltonsr/ldapAuth"
     - "--experimental.localPlugins.cosmoauth.modulename=github.com/cosmo-workspace/cosmoauth"
+  envFrom:
+    - secretRef:
+        name: cosmo-auth-env
 
   # Configure ports
   ports:
     web:
       forwardedHeaders:
         insecure: true
+      # nodePort: 32080
     websecure:
       forwardedHeaders:
         insecure: true
+      # nodePort: 32443
       ## Set TLS at the entrypoint
       ## https://doc.traefik.io/traefik/routing/entrypoints/#tls
       tls:
@@ -150,7 +158,7 @@ traefik:
       kind: Secret
       metadata:
         name: traefik-dashboard-auth-secret
-        namespace: kube-system
+        namespace: cosmo-system
       type: kubernetes.io/basic-auth
       stringData:
         username: admin
@@ -160,7 +168,7 @@ traefik:
       kind: Middleware
       metadata:
         name: traefik-dashboard-auth
-        namespace: kube-system
+        namespace: cosmo-system
       spec:
         #digestAuth:
         basicAuth:

@@ -13,6 +13,7 @@ TRAEFIK_PLUGINS_VERSION ?= $(VERSION)
 
 CHART_MANAGER_VERSION   ?= $(MANAGER_VERSION)
 CHART_DASHBOARD_VERSION ?= $(DASHBOARD_VERSION)
+CHART_TRAEFIK_VERSION ?= $(TRAEFIK_PLUGINS_VERSION)
 
 IMG_MANAGER ?= cosmo-controller-manager:$(MANAGER_VERSION)
 IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
@@ -215,7 +216,7 @@ ifeq ($(shell expr $(VERSION) : '^v[0-9]\+\.[0-9]\+\.[0-9]\+$$'),0)
 endif
 endif
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${MANAGER_VERSION} cosmo-workspace/" ./cmd/controller-manager/main.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${DASHBOARD_VERSION} cosmo-workspace/" ./cmd/dashboard/main.go
+	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${DASHBOARD_VERSION} cosmo-workspace/" ./internal/dashboard/root.go
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${COSMOCTL_VERSION} cosmo-workspace/" ./internal/cmd/root_cmd.go
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${AUTHPROXY_VERSION} cosmo-workspace/" ./cmd/auth-proxy/main.go
 	cd config/manager && kustomize edit set image controller=${IMG_MANAGER}
@@ -230,6 +231,10 @@ endif
 		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${DASHBOARD_VERSION}/" \
 		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
 		charts/cosmo-dashboard/Chart.yaml
+	sed -i.bk \
+		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_TRAEFIK_VERSION:v%=%}/" \
+		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
+		charts/cosmo-traefik/Chart.yaml
 
 ##---------------------------------------------------------------------
 ##@ Run
@@ -237,12 +242,26 @@ endif
 
 LOG_LEVEL ?= 3
 
+COOKIE_DOMAIN ?= 
+COOKIE_SESSION_NAME ?= test-cosmo-auth
+COOKIE_HASHkEY  ?= 12345678901234567890123456789012
+COOKIE_BLOCKKEY ?= ----+----1----+----2----+----3--
+
+
 # Run against the configured Kubernetes cluster in ~/.kube/config
 .PHONY: run-dashboard
 run-dashboard: go generate fmt vet manifests ## Run dashboard against the configured Kubernetes cluster in ~/.kube/config.
+ifndef COOKIE_DOMAIN
+	@echo "Usage: make run-dashboard COOKIE_DOMAIN=xxxx.xxx"
+	@exit 9
+endif
 	$(GO) run ./cmd/dashboard/main.go \
 		--zap-log-level $(LOG_LEVEL) \
 		--zap-time-encoding=iso8601 \
+		--cookie-session-name=$(COOKIE_SESSION_NAME) \
+		--cookie-domain=$(COOKIE_DOMAIN) \
+		--cookie-hashkey=$(COOKIE_HASHkEY) \
+		--cookie-blockkey=$(COOKIE_BLOCKKEY) \
 		--insecure
 
 .PHONY: run-dashboard-ui

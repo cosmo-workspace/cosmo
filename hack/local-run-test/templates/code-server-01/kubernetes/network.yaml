@@ -1,20 +1,3 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: workspace
-spec:
-  rules:
-    - host: main-{{INSTANCE}}-{{NAMESPACE}}.domain
-      http:
-        paths:
-          - backend:
-              service:
-                name: workspace
-                port:
-                  name: main
-            path: /
-            pathType: Prefix
----
 apiVersion: v1
 kind: Service
 metadata:
@@ -25,3 +8,37 @@ spec:
     - name: main
       port: 18080
       protocol: TCP
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: headers
+spec:
+  headers:
+    customRequestHeaders:
+      X-Cosmo-UserName: "{{USER_NAME}}"
+    customResponseHeaders:
+      X-Cosmo-UserName: "{{USER_NAME}}"
+---
+#
+# IngressRoute
+#
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: workspace
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      # match: "Host(`main-{{INSTANCE}}-{{USER_NAME}}-k3d-main-aa-cosmo2-hashiro.cosmo4.goblab51.com`)"
+      match: "Host(`main-{{INSTANCE}}-{{USER_NAME}}-k3d.domain`)"
+      middlewares:
+        - name: "{{INSTANCE}}-headers"
+        - name: cosmo-auth
+          namespace: cosmo-system
+      priority: 10
+      services:
+        - name: "{{INSTANCE}}-workspace"
+          port: main

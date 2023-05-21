@@ -1,15 +1,6 @@
 # see https://github.com/k3s-io/k3s/blob/master/manifests/traefik.yaml
 
 traefik:
-  deployment:
-    initContainers:
-      - name: copy-plugins
-        image: "cosmo.io:5000/traefik-plugins:latest"
-        imagePullPolicy: Always
-        command: ["sh", "-c", "cp -r /plugins-local/* /local-plugins/"]
-        volumeMounts:
-          - name: local-plugins
-            mountPath: /local-plugins
-
   service:
     type: LoadBalancer
+    # type: NodePort

@@ -26,13 +26,21 @@ VSCODE_PROXY_URI ?= $$VSCODE_PROXY_URI
 PARENT_URLBASE ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=://)[^\.]*")
 DOMAIN ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=\.)[^/]*")
 DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
-DASHBOARD_URL := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
+DASHBOARD_HOST := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
+DASHBOARD_URL := https://$(DASHBOARD_HOST)
+SIGNIN_URL := https://$(DASHBOARD_HOST)/\#/signin
+TRAEFIK_DASHBOARD_HOST := traefik-dashboard-k3d-$(PARENT_URLBASE).$(DOMAIN)
 
 show-url: ## show-url
 	@echo ----------------------------------------------------
-	@echo DEFAULT_URLBASE_HOST=$(DEFAULT_URLBASE_HOST)
-	@echo DASHBOARD_URL=$(DASHBOARD_URL)
-	@echo TRAEFIK_DASHBOARD_URL=traefik-dashboard-k3d-$(PARENT_URLBASE).$(DOMAIN)/
+	@echo "DOMAIN                : $(DOMAIN)"
+	@echo "PARENT_URLBASE        : $(PARENT_URLBASE)"
+	@echo "DEFAULT_URLBASE_HOST  : $(DEFAULT_URLBASE_HOST)"
+	@echo "DASHBOARD_HOST        : $(DASHBOARD_HOST)"
+	@echo "DASHBOARD_URL         : $(DASHBOARD_URL)"
+	@echo "SIGNIN_URL            : $(SIGNIN_URL)"
+	@echo "TRAEFIK_DASHBOARD_HOST: $(TRAEFIK_DASHBOARD_HOST)"
+	@echo "TRAEFIK_DASHBOARD_URL : http://$(TRAEFIK_DASHBOARD_HOST)/"
 	@echo ----------------------------------------------------
 
 ##---------------------------------------------------------------------
@@ -63,8 +71,10 @@ create-k3d-cluster: k3d kubectl  ## Create k3s cluster.
 			-i rancher/k3s:v1.26.3-k3s1 \
 			--api-port 43000 \
 			-p "15000:80@loadbalancer" \
-			-p "15080:80@loadbalancer" \
 			-p "15443:443@loadbalancer" \
+			-p "32080:32080@loadbalancer" \
+			-p "32443:32443@loadbalancer" \
+			-p "30080:30080@loadbalancer" \
 			--registry-create cosmo.io:0.0.0.0:5000 \
 			--agents 2 \
 			--k3s-arg "-v=2@server:*" \
@@ -81,9 +91,17 @@ deploy-cert-manager: create-k3d-cluster helm ## Deploy cert-manager.
 deploy-traefik: create-k3d-cluster helm docker-build-traefik-plugins ## Deploy traefik.
 	@echo ====== $@ ======
 	helm dependency update ../../charts/cosmo-traefik 
-	helm upgrade --install traefik ../../charts/cosmo-traefik -n kube-system \
+	helm upgrade --install traefik ../../charts/cosmo-traefik -n cosmo-system --create-namespace \
 		--wait \
-	 	-f ./charts/traefik.values.yaml
+		-f <(sed \
+		  -e 's/ghcr.io\/cosmo-workspace\/traefik-plugins:.*/cosmo.io:5000\/traefik-plugins:latest/g' \
+		  ../../charts/cosmo-traefik/values.yaml ) \
+	 	-f ./charts/traefik.values.yaml \
+		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
+		--set cosmoAuth.signinUrl=$(SIGNIN_URL) \
+		--set domain=$(DOMAIN)
+	-kubectl rollout restart deploy -n cosmo-system traefik
+	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
 
 create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik  ## Create k3s cluster.
 
@@ -108,20 +126,25 @@ docker-build-manager: ## build & push cosmo contoller-manager image.
 	cd ../.. && make docker-build-manager VERSION=$(MANAGER_IMAGE_TAG) QUICK_BUILD=yes
 	docker tag cosmo-controller-manager:$(MANAGER_IMAGE_TAG) localhost:5000/cosmo-controller-manager:$(MANAGER_IMAGE_TAG)
 	docker push localhost:5000/cosmo-controller-manager:$(MANAGER_IMAGE_TAG)
+	docker rmi cosmo-controller-manager:$(MANAGER_IMAGE_TAG)
 	k3d image import localhost:5000/cosmo-controller-manager:$(MANAGER_IMAGE_TAG) -c $(CLUSTER_NAME)
+	-kubectl rollout restart deploy -n cosmo-system cosmo-controller-manager
 
 docker-build-dashboard: ## build & push cosmo dashboard image.
 	@echo ====== $@ ======
 	cd ../.. && make docker-build-dashboard VERSION=$(DASHBOARD_IMAGE_TAG) QUICK_BUILD=yes
 	docker tag cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG)
 	docker push localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG)
+	docker rmi cosmo-dashboard:$(DASHBOARD_IMAGE_TAG)
 	k3d image import localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) -c $(CLUSTER_NAME)
+	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
 
 docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
 	@echo ====== $@ ======
 	cd ../.. && make docker-build-auth-proxy VERSION=$(AUTHPROXY_IMAGE_TAG) QUICK_BUILD=yes
 	docker tag cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
 	docker push localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+	docker rmi cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
 	k3d image import localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) -c $(CLUSTER_NAME)
 
 docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
@@ -129,8 +152,9 @@ docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
 	cd ../.. && make docker-build-traefik-plugins VERSION=$(TRAEFIK_PLUGINS_IMAGE_TAG) QUICK_BUILD=yes
 	docker tag traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
 	docker push localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
+	docker rmi traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
 	k3d image import localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) -c $(CLUSTER_NAME)
-	-kubectl rollout restart deploy -n kube-system traefik
+	-kubectl rollout restart deploy -n cosmo-system traefik
 
 
 docker-cache-clear: ## docker cache clear.
@@ -149,7 +173,7 @@ docker-cache-clear: ## docker cache clear.
 
 LOGLEVEL ?= info
 
-install-manager: helm kubectl create-cluster docker-build-manager ## Install cosmo contoller-manager resources.
+install-manager: helm kubectl docker-build-manager ## Install cosmo contoller-manager resources.
 	@echo ====== $@ ======
 	helm upgrade --install cosmo-controller-manager ../../charts/cosmo-controller-manager \
 		-n cosmo-system --create-namespace \
@@ -161,7 +185,7 @@ install-manager: helm kubectl create-cluster docker-build-manager ## Install cos
 		--set defaultURLBase.domain="\$(DOMAIN)" \
 		--set logLevel=$(LOGLEVEL)
 
-install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-manager resources.
+install-manager-local: helm kubectl ## Install cosmo contoller-manager resources.
 	@echo ====== $@ ======
 	helm upgrade --install cosmo-controller-manager ../../charts/cosmo-controller-manager \
 		-n cosmo-system --create-namespace \
@@ -175,9 +199,9 @@ install-manager-local: helm kubectl create-cluster ## Install cosmo contoller-ma
 		--set localRunTest.enabled=true \
 		--set localRunTest.webhookEndpoint.ip=$(shell hostname -i) \
 		--set localRunTest.webhookEndpoint.port=9443 \
-		--set logLevel=$(LOGLEVEL)
+		--set logLevel="$(LOGLEVEL)"
 
-install-dashboard: helm kubectl create-cluster docker-build-dashboard ## Install cosmo contoller-manager resources.
+install-dashboard: helm kubectl docker-build-dashboard ## Install cosmo dashboard resources.
 	@echo ====== $@ ======
 	helm upgrade --install cosmo-dashboard ../../charts/cosmo-dashboard \
 		-n cosmo-system \
@@ -186,11 +210,28 @@ install-dashboard: helm kubectl create-cluster docker-build-dashboard ## Install
 		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
 		--set ingress.enabled=true \
-		--set ingress.hosts[0].host=$(DASHBOARD_URL) \
-		--set ingress.hosts[0].paths[0].path=/ \
-		--set ingress.hosts[0].paths[0].pathType=Prefix \
-		--set cert.dnsName=$(DASHBOARD_URL) \
+		--set ingress.hostName=$(DASHBOARD_HOST) \
+		--set cert.dnsName=$(DASHBOARD_HOST) \
+		--set insecure=false \
+		--set logLevel=$(LOGLEVEL)
+
+install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
+	@echo ====== $@ ======
+	helm upgrade --install cosmo-dashboard ../../charts/cosmo-dashboard \
+		-n cosmo-system \
+		--wait \
+		--set image.repository=cosmo.io:5000/cosmo-dashboard \
+		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
+		--set image.pullPolicy=Always \
+		--set ingress.enabled=true \
+		--set ingress.hostName=$(DASHBOARD_HOST) \
+		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=true \
+		--set replicaCount=0 \
+		--set localRunTest.enabled=true \
+		--set localRunTest.dashboardEndpoint.ip=$(shell hostname -i) \
+		--set localRunTest.dashboardEndpoint.uiServerPort=3000 \
+		--set localRunTest.dashboardEndpoint.serverPort=8443 \
 		--set logLevel=$(LOGLEVEL)
 
 uninstall-manager: helm  ## Uninstall cosmo contoller-manager resources.
@@ -212,7 +253,6 @@ apply-template: kubectl cosmoctl docker-build-cs ## Apply template.
 	$(MAKE) -C templates/code-server-01 apply
 	# $(MAKE) -C templates/example apply
 
-BASEURL := https://$(DASHBOARD_URL)
 
 add-user: kubectl cosmoctl
 	@echo ====== $@ ======
@@ -240,22 +280,36 @@ add-workspace: kubectl cosmoctl
 ##---------------------------------------------------------------------
 ##@ Execute test
 ##---------------------------------------------------------------------
-.PHONY: run-manager run-local rerun stop
+.PHONY: run-manager-local run-dashboard-local run-local stop
 
-run-manager:
+run-manager-local: go
 	@echo ====== $@ ======
 	@#(cd ../.. && bash hack/download-certs.sh webhook-server-cert && make run QUICK_BUILD=yes)
 	cd ../.. && bash hack/download-certs.sh webhook-server-cert && \
-		go run ./cmd/controller-manager/main.go \
+		$(GO) run ./cmd/controller-manager/main.go \
 		--metrics-bind-address :8085 \
 		--cert-dir . \
 		--zap-log-level=$(LOGLEVEL) \
 		--zap-devel=false \
 		--workspace-default-urlbase=https://$(DEFAULT_URLBASE_HOST).$(DOMAIN)
 
+run-dashboard-local:
+	@echo ====== $@ ======
+	cd ../.. && \
+	$(GO) run ./cmd/dashboard/main.go \
+		--zap-log-level=$(LOGLEVEL) \
+		--zap-time-encoding=iso8601 \
+		--cookie-domain=$(DOMAIN) \
+		--cookie-session-name="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_SESSION_NAME} | base64 -d)" \
+		--cookie-hashkey="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_HASHKEY} | base64 -d)" \
+		--cookie-blockkey="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_BLOCKKEY} | base64 -d)" \
+		--insecure
+
 run-local: kubectl ## Run test.
 	-@make uninstall-manager
 	make install-manager-local
+	-@make uninstall-dashboard
+	make install-dashboard-local
 	@# if session presents then attach, not presents then creat session
 	@tmux -2 attach-session -d -t cosmo 2> /dev/null || { \
 		# ======== create session ======== \
@@ -275,19 +329,17 @@ run-local: kubectl ## Run test.
 			\; splitw -h -t 1 \
 			\; resizep -t 1 -x 20% \; resizep -t 3 -x 20% && \
 		# ======== run controller-manager ======== \
-		tmux send-keys -t 0 'make run-manager LOGLEVEL=$(LOGLEVEL) 2>&1 | tee -a $${BIN_DIR}/local-manager.log' Enter && \
+		tmux send-keys -t 0 'make run-manager-local 2>&1 | tee -a $${BIN_DIR}/local-manager.log' Enter && \
 		# ======== run dashboard-ui ======== \
-		tmux send-keys -t 1 '(cd ../.. && make run-dashboard-ui LOGLEVEL=$(LOGLEVEL) 2>&1 | tee -a $${BIN_DIR}/local-dashboard-ui.log)' Enter && \
+		tmux send-keys -t 1 '(cd ../.. && make run-dashboard-ui 2>&1 | tee -a $${BIN_DIR}/local-dashboard-ui.log)' Enter && \
 		# ======== run dashboard ======== \
-		tmux send-keys -t 2 '(cd ../.. && make run-dashboard QUICK_BUILD=yes LOGLEVEL=$(LOGLEVEL) 2>&1 | tee -a $${BIN_DIR}/local-dashboard.log)' Enter && \
+		tmux send-keys -t 2 'make run-dashboard-local 2>&1 | tee -a $${BIN_DIR}/local-dashboard.log' Enter && \
 		# ======== move to pane 3 ======== \
 		tmux select-pane -t 3 && \
 		# ======== attach ======== \
 		tmux attach-session -d -t cosmo && \
 		echo end ; \
 	}
-
-rerun: stop run ## Rerun test.
 
 stop: ## Stop test.
 	-@tmux kill-session -t cosmo 2> /dev/null
@@ -307,6 +359,22 @@ bin/cosmoctl: ../../cmd/cosmoctl/main.go $(GO_SRC)
 ##---------------------------------------------------------------------
 bin:
 	mkdir -p $(BIN)
+
+GO_VERSION ?= 1.20.4
+# Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
+ifeq (,$(shell go env GOBIN))
+GOBIN=$(shell go env GOPATH)/bin
+else
+GOBIN=$(shell go env GOBIN)
+endif
+GO ?= $(GOBIN)/go$(GO_VERSION)
+
+
+go: $(GO) ## go
+$(GO):
+	go install golang.org/dl/go$(GO_VERSION)@latest
+	$(GO) download
+
 
 k3d: bin bin/k3d ## k3d
 bin/k3d:

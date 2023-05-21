@@ -12,15 +12,43 @@ metadata:
     traefik.ingress.kubernetes.io/service.serversscheme: https
   {{- end }}
 spec:
+  type: {{ .Values.service.type }}
   ports:
-  - name: cosmo-dashboard
+  - name: cosmo-dashboard-server
     port: {{ .Values.service.port }}
     protocol: TCP
     targetPort: {{ .Values.service.port }}
+  {{- if .Values.localRunTest.enabled }}
+  - name: cosmo-dashboard-ui-server
+    port: {{ .Values.localRunTest.dashboardEndpoint.uiServerPort }}
+    protocol: TCP
+    targetPort: {{ .Values.localRunTest.dashboardEndpoint.uiServerPort }}
+  {{- end }}
+  {{- if not .Values.localRunTest.enabled }}
   selector:
     {{- include "cosmo-dashboard.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.service.type }}
+  {{- end }}
 ---
+{{- if .Values.localRunTest.enabled }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  labels:
+    {{- include "cosmo-dashboard.labels" . | nindent 4 }}
+  name: cosmo-dashboard
+  namespace: {{ .Release.Namespace }}
+subsets:
+- addresses:
+  - ip: {{ .Values.localRunTest.dashboardEndpoint.ip }}
+  ports:
+  - name: cosmo-dashboard-server
+    port: {{ .Values.localRunTest.dashboardEndpoint.serverPort }}
+    protocol: TCP
+  - name: cosmo-dashboard-ui-server
+    port: {{ .Values.localRunTest.dashboardEndpoint.uiServerPort }}
+    protocol: TCP
+---
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,7 +57,7 @@ metadata:
   name: cosmo-dashboard
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "cosmo-dashboard.selectorLabels" . | nindent 6 }}
@@ -51,6 +79,10 @@ spec:
         - --maxage-minutes={{ .Values.maxMinutes }}
         - --zap-log-level={{ .Values.logLevel }}
         - --zap-time-encoding={{ .Values.logTimeEncoding }}
+        - --cookie-domain=$(COOKIE_DOMAIN)
+        - --cookie-hashkey=$(COOKIE_HASHKEY)
+        - --cookie-blockkey=$(COOKIE_BLOCKKEY)
+        - --cookie-session-name=$(COOKIE_SESSION_NAME)
         {{- if ne .Values.logLevel "info" }}
         - --zap-devel=true
         {{- end }}
@@ -80,6 +112,9 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 20
         name: dashboard
+        envFrom:
+          - secretRef:
+              name: cosmo-auth-env
         ports:
         - containerPort: 8443
           name: https

@@ -42,19 +42,8 @@ service:
 
 ingress:
   enabled: false
-  className: traefik
-  annotations:
-    {}
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: Prefix
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  annotations: {}
+  hostName: dashboard.local
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -89,3 +78,10 @@ cert:
   dnsName:
 
 insecure: false
+
+localRunTest:
+  enabled: false
+  dashboardEndpoint:
+    ip: 127.0.0.1
+    uiServerPort: 3000
+    serverPort: 8443
