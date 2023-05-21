@@ -78,7 +78,7 @@ func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *cosmov1a
 	if r.Header.Get("Cookie") == "" {
 		return nil, deadline, kosmo.NewUnauthorizedError("session is not found", err)
 	}
-	ses, err := s.sessionStore.Get(r, s.SessionName)
+	ses, err := s.sessionStore.Get(r, s.CookieSessionName)
 	if ses == nil || err != nil {
 		return nil, deadline, kosmo.NewUnauthorizedError("failed to get session from store", err)
 	}

@@ -12,7 +12,7 @@ import (
 
 	"github.com/bufbuild/connect-go"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	"k8s.io/client-go/kubernetes/scheme"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -49,7 +49,7 @@ var (
 const DefaultURLBase = "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain"
 
 func init() {
-	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme.Scheme))
+	utilruntime.Must(cosmov1alpha1.AddToScheme(clientgoscheme.Scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -80,7 +80,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 
-	c, err := client.New(cfg, client.Options{Scheme: scheme.Scheme})
+	c, err := client.New(cfg, client.Options{Scheme: clientgoscheme.Scheme})
 	Expect(err).NotTo(HaveOccurred())
 
 	k8sClient = kosmo.NewClient(c)
@@ -89,7 +89,7 @@ var _ = BeforeSuite(func() {
 	testUtil = test.NewTestUtil(k8sClient)
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
-		Scheme:             scheme.Scheme,
+		Scheme:             clientgoscheme.Scheme,
 		MetricsBindAddress: "0",
 		CertDir:            testEnv.WebhookInstallOptions.LocalServingCertDir,
 		Port:               testEnv.WebhookInstallOptions.LocalServingPort,
@@ -156,8 +156,13 @@ var _ = BeforeSuite(func() {
 		StaticFileDir:       filepath.Join(".", "test"),
 		Port:                8888,
 		MaxAgeSeconds:       60,
-		SessionName:         "test-server",
+		TLSPrivateKeyPath:   "",
+		TLSCertPath:         "",
 		Insecure:            true,
+		CookieDomain:        "test.domain",
+		CookieHashKey:       "----+----1----+----2----+----3----+----4----+----5----+----6----",
+		CookieBlockKey:      "----+----1----+----2----+----3--",
+		CookieSessionName:   "test-server",
 		Authorizers:         auths,
 	})
 	err = mgr.Add(serv)

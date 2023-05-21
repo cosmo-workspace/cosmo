@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -26,10 +25,14 @@ type Server struct {
 	StaticFileDir       string
 	Port                int
 	MaxAgeSeconds       int
-	SessionName         string
 	TLSPrivateKeyPath   string
 	TLSCertPath         string
 	Insecure            bool
+
+	CookieDomain      string
+	CookieHashKey     string
+	CookieBlockKey    string
+	CookieSessionName string
 
 	Authorizers map[cosmov1alpha1.UserAuthType]auth.Authorizer
 
@@ -57,13 +60,14 @@ func (s *Server) setupRouter() {
 }
 
 func (s *Server) setupSessionStore() {
-	store := session.NewStore(securecookie.GenerateRandomKey(64), securecookie.GenerateRandomKey(32), s.sessionCookieKey())
+	store := session.NewStore([]byte(s.CookieHashKey), []byte(s.CookieBlockKey), s.sessionCookieKey())
 	s.sessionStore = store
 }
 
 func (s *Server) sessionCookieKey() *http.Cookie {
 	return &http.Cookie{
-		Name:     s.SessionName,
+		Name:     s.CookieSessionName,
+		Domain:   s.CookieDomain,
 		MaxAge:   s.MaxAgeSeconds,
 		HttpOnly: true,
 		Path:     "/",

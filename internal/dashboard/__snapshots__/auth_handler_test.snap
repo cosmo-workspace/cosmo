@@ -32,7 +32,7 @@ SnapShot = """
 """
 
 ['Dashboard server [auth] [Logout] ✅ success in normal context: Entry: logined session 2']
-SnapShot = 'test-server=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax'
+SnapShot = 'test-server=; Path=/; Domain=test.domain; Max-Age=0; HttpOnly; SameSite=Lax'
 
 ['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: logouted session 1']
 SnapShot = 'unauthenticated: failed to get session from store'
