@@ -102,6 +102,7 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// check user name is owner's
 	userName := r.Header.Get("X-Cosmo-UserName")
+	// TODO: improvement
 	if userName != "" && sesInfo.UserName != userName {
 		LoggerINFO.Print("invalid authorization.", " storedUserName=", sesInfo.UserName, " ownerName=", userName)
 		p.redirectToLoginPage(w, r)
