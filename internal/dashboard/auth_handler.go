@@ -80,7 +80,7 @@ func (s *Server) Login(ctx context.Context, req *connect_go.Request[dashv1alpha1
 	now := time.Now()
 	expireAt := now.Add(time.Duration(s.MaxAgeSeconds) * time.Second)
 
-	ses, _ := s.sessionStore.New(r, s.SessionName)
+	ses, _ := s.sessionStore.New(r, s.CookieSessionName)
 	sesInfo := session.Info{
 		UserName: req.Msg.UserName,
 		Deadline: expireAt.Unix(),

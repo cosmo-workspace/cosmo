@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 
+	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	appsv1apply "k8s.io/client-go/applyconfigurations/apps/v1"
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
@@ -32,6 +34,14 @@ func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured
 	dps := make([]unstructured.Unstructured, 0)
 	svcs := make([]unstructured.Unstructured, 0)
 	ings := make([]unstructured.Unstructured, 0)
+	ingRoutes := make([]unstructured.Unstructured, 0)
+
+	ingressRouteGVK := schema.GroupVersionKind{
+		Group:   "traefik.containo.us",
+		Version: "v1alpha1",
+		Kind:    "IngressRoute",
+	}
+
 	for _, u := range unst {
 		if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.DeploymentGVK) {
 			dps = append(dps, u)
@@ -39,6 +49,8 @@ func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured
 			svcs = append(svcs, u)
 		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) {
 			ings = append(ings, u)
+		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), ingressRouteGVK) {
+			ingRoutes = append(ingRoutes, u)
 		}
 	}
 
@@ -51,7 +63,7 @@ func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured
 	}
 
 	// validate deployment
-	var validDep, validSvc, validIng bool
+	var validDep, validSvc, validIng, validIngRoute bool
 	for _, v := range dps {
 		if wsConfig.DeploymentName == v.GetName() {
 			validDep = true
@@ -151,6 +163,33 @@ func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured
 		}
 		if !validIng {
 			return fmt.Errorf("ingress '%s' is not found", wsConfig.IngressName)
+		}
+	}
+	if len(ingRoutes) > 0 {
+		// complete ingress name
+		if wsConfig.IngressName == "" {
+			if len(ingRoutes) == 1 {
+				wsConfig.IngressName = ingRoutes[0].GetName()
+
+			} else {
+				return errors.New("failed to specify the ingressroute")
+			}
+		}
+
+		// validate ingressRoute
+		for _, v := range ingRoutes {
+			if wsConfig.IngressName == v.GetName() {
+				var ingRoute traefikv1.IngressRoute
+				err := runtime.DefaultUnstructuredConverter.FromUnstructured(v.Object, &ingRoute)
+				if err != nil {
+					return err
+				}
+				validIngRoute = true
+				break
+			}
+		}
+		if !validIngRoute {
+			return fmt.Errorf("ingressRoute '%s' is not found", wsConfig.IngressName)
 		}
 	}
 	return nil

@@ -14,7 +14,6 @@ metadata:
   name: code-server-01
 spec:
   rawYaml: |
-    # Warning: 'patchesStrategicMerge' is deprecated. Please use 'patches' instead. Run 'kustomize edit fix' to update your Kustomization automatically.
     apiVersion: v1
     kind: Service
     metadata:
@@ -56,20 +55,11 @@ spec:
             cosmo-workspace.github.io/template: '{{TEMPLATE}}'
         spec:
           containers:
-          - args:
-            - --insecure
-            env:
-            - name: COSMO_AUTH_PROXY_INSTANCE
-              value: '{{INSTANCE}}'
-            - name: COSMO_AUTH_PROXY_NAMESPACE
-              value: '{{NAMESPACE}}'
-            image: cosmo.io:5000/cosmo-auth-proxy:latest
-            name: cosmo-auth-proxy
           - command:
             - sh
             - -c
             - |
-              /usr/bin/entrypoint.sh --log debug --auth=none --bind-addr 0.0.0.0:18080 .
+              /usr/bin/entrypoint.sh --log debug --auth=none --bind-addr 0.0.0.0:18080 --app-name=cosmo .
             image: cosmo.io:5000/my-code-server:latest
             imagePullPolicy: Always
             livenessProbe:
@@ -96,8 +86,8 @@ spec:
             fsGroup: 1000
           serviceAccountName: default
     ---
-    apiVersion: networking.k8s.io/v1
-    kind: Ingress
+    apiVersion: traefik.containo.us/v1alpha1
+    kind: IngressRoute
     metadata:
       labels:
         cosmo-workspace.github.io/instance: '{{INSTANCE}}'
@@ -105,17 +95,34 @@ spec:
       name: '{{INSTANCE}}-workspace'
       namespace: '{{NAMESPACE}}'
     spec:
-      rules:
-      - host: main-{{INSTANCE}}-{{NAMESPACE}}.domain
-        http:
-          paths:
-          - backend:
-              service:
-                name: '{{INSTANCE}}-workspace'
-                port:
-                  name: main
-            path: /
-            pathType: Prefix
+      entryPoints:
+      - web
+      routes:
+      - kind: Rule
+        match: Host(`main-{{INSTANCE}}-{{USER_NAME}}-k3d.domain`)
+        middlewares:
+        - name: '{{INSTANCE}}-headers'
+        - name: cosmo-auth
+          namespace: cosmo-system
+        priority: 10
+        services:
+        - name: '{{INSTANCE}}-workspace'
+          port: main
+    ---
+    apiVersion: traefik.containo.us/v1alpha1
+    kind: Middleware
+    metadata:
+      labels:
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
+      name: '{{INSTANCE}}-headers'
+      namespace: '{{NAMESPACE}}'
+    spec:
+      headers:
+        customRequestHeaders:
+          X-Cosmo-UserName: '{{USER_NAME}}'
+        customResponseHeaders:
+          X-Cosmo-UserName: '{{USER_NAME}}'
   requiredVars:
   - default: "20"
     var: CODE-SERVER_STORAGE_GB

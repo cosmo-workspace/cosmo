@@ -44,6 +44,7 @@ func NewStore(hashKey, blockKey []byte, opt *http.Cookie) sessions.Store {
 	store.Options.SameSite = opt.SameSite
 	store.Options.Path = opt.Path
 	store.Options.MaxAge = opt.MaxAge
+	store.Options.Domain = opt.Domain
 
 	store.MaxAge(store.Options.MaxAge)
 	return store

@@ -1,8 +1,7 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "cosmo-dashboard.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
   name: {{ $fullName }}
   namespace: {{ .Release.Namespace }}
@@ -13,26 +12,39 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if .Values.ingress.className}}
-  ingressClassName: {{ .Values.ingress.className }}
-  {{- end}}
-  {{- with .Values.ingress.tls }}
-  tls:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-  rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
-      http:
-        paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: {{ $fullName }}
-                port: 
-                  number: {{ $svcPort }}
-          {{- end }}
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    {{- if .Values.localRunTest.enabled }}
+    - kind: Rule
+      match: Host(`{{ .Values.ingress.hostName }}`) && (Path(`/`) || PathPrefix(`/@`,`/src`,`/manifest.json`,`/node_modules`,`/logo`))
+      priority: 1002
+      services:
+        - kind: Service
+          name: {{ $fullName }}
+          namespace: {{ .Release.Namespace }}
+          port: cosmo-dashboard-ui-server
+          scheme: {{ if .Values.insecure -}}http{{- else -}}https{{ end }}
     {{- end }}
-  {{- end }}
+    - kind: Rule
+      match: Host(`{{ .Values.ingress.hostName }}`) && (Path(`/`) || PathPrefix(`/logo`,`/assets/`,`/dashboard.v1alpha1.AuthService/`))
+      priority: 1001
+      services:
+        - kind: Service
+          name: {{ $fullName }}
+          namespace: {{ .Release.Namespace }}
+          port: cosmo-dashboard-server
+          scheme: {{ if .Values.insecure -}}http{{- else -}}https{{ end }}
+    - kind: Rule
+      match: Host(`{{ .Values.ingress.hostName }}`)
+      priority: 1000
+      services:
+        - kind: Service
+          name: {{ $fullName }}
+          namespace: {{ .Release.Namespace }}
+          port: cosmo-dashboard-server
+          scheme: {{ if .Values.insecure -}}http{{- else -}}https{{ end }}
+      middlewares:
+        - name: cosmo-auth
+{{- end }}

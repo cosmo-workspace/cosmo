@@ -18,7 +18,7 @@ spec:
             - sh
             - -c
             - |
-              /usr/bin/entrypoint.sh --log debug --auth=none --bind-addr 0.0.0.0:18080 .
+              /usr/bin/entrypoint.sh --log debug --auth=none --bind-addr 0.0.0.0:18080 --app-name=cosmo .
           securityContext:
             runAsUser: 1000
           ports:

@@ -36,7 +36,7 @@ export function SignIn() {
 const SignInContent: React.VFC = () => {
   console.log('SignIn');
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
-  const { login } = useLogin();
+  const { login, loginUser } = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -51,8 +51,17 @@ const SignInContent: React.VFC = () => {
     if (requirePasswordUpdate) {
       passwordChangeDialogDispach(true);
     }
+
+    const query = new URLSearchParams(location.search);
+    let redirect_to = query.get('redirect_to')
+    if (redirect_to) {
+      console.log('redirect_to=' + redirect_to);
+      window.location.href = redirect_to;
+      return;
+    }
+
     let _location = location;
-    let _route = '/workspace'
+    let _route = '/workspace';
     if (_location.state && (_location.state as any).from) {
       _route = (_location.state as any).from.pathname;
     }
@@ -68,7 +77,7 @@ const SignInContent: React.VFC = () => {
       <Typography component="h1" variant="h5">Sign in</Typography>
       <Typography color="textPrimary" variant="body1">cosmo-dashboard</Typography>
       <form noValidate onSubmit={handleSubmit(onSignIn)}>
-        <TextField label="User ID" margin="normal" fullWidth autoComplete="username" autoFocus
+        <TextField label="User ID" margin="normal" fullWidth autoComplete="username" autoFocus defaultValue={loginUser?.name}
           {...registerMui(register("username", {
             required: { value: true, message: "Required" },
             pattern: {
@@ -80,6 +89,7 @@ const SignInContent: React.VFC = () => {
           error={Boolean(errors.username)}
           helperText={(errors.username && errors.username.message)}
         />
+        {loginUser ? <Typography color="secondary" variant="body2">currently logged in</Typography> : ""}
         <PasswordTextField label="Password" margin="normal" fullWidth autoComplete="current-password"
           {...registerMui(register("password", {
             required: { value: true, message: "Required" },
