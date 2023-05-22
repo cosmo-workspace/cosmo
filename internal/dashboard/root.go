@@ -113,6 +113,7 @@ func (o *options) PreRunE(cmd *cobra.Command, args []string) error {
 }
 
 func (o *options) Validate(cmd *cobra.Command, args []string) error {
+	// TODO: validate length
 	if o.CookieDomain == "" {
 		return fmt.Errorf("%s is required", "cookie-domain")
 	}
