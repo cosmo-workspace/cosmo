@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`useNetworkRule > useNetworkRule removeNetwork > error 1`] = `[Error: [mock] deleteNetworkRule error]`;
 
