@@ -86,7 +86,7 @@ spec:
             fsGroup: 1000
           serviceAccountName: default
     ---
-    apiVersion: traefik.containo.us/v1alpha1
+    apiVersion: traefik.io/v1alpha1
     kind: IngressRoute
     metadata:
       labels:
@@ -109,7 +109,7 @@ spec:
         - name: '{{INSTANCE}}-workspace'
           port: main
     ---
-    apiVersion: traefik.containo.us/v1alpha1
+    apiVersion: traefik.io/v1alpha1
     kind: Middleware
     metadata:
       labels:
