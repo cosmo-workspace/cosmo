@@ -1,8 +1,11 @@
-import { AccountCircle, Badge, ExitToApp, LockOutlined, Menu as MenuIcon, SupervisorAccountTwoTone, VpnKey, WebTwoTone } from "@mui/icons-material";
+import { AccountCircle, Badge, ExitToApp, LockOutlined, Menu as MenuIcon, ReportProblem, SupervisorAccountTwoTone, VpnKey, WebTwoTone } from "@mui/icons-material";
 import {
-  Box, Chip, colors, Container, CssBaseline, Divider, Grid, IconButton,
+  Alert,
+  Box, Button, Chip,
+  Container, CssBaseline, Divider, Grid, IconButton,
   Link, ListItemIcon, ListItemText,
-  Menu, MenuItem, Stack, Toolbar, Typography
+  Menu, MenuItem, Stack, Toolbar, Typography,
+  colors
 } from "@mui/material";
 import MuiAppBar, { AppBarProps } from '@mui/material/AppBar';
 import { experimentalStyled as styled } from "@mui/material/styles";
@@ -185,10 +188,15 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
             FallbackComponent={
               ({ error, resetErrorBoundary }) => {
                 return (
-                  <div>
-                    <p>Something went wrong:</p>
-                    <pre>{error.message}</pre>
-                  </div>
+                  <Stack sx={{ marginTop: 3, alignItems: 'center' }}>
+                    <ReportProblem fontSize="large" />
+                    <Typography variant="h5">Something went wrong...</Typography>
+                    <p>{error.toString()}</p>
+                    <Alert severity="info" variant="outlined" sx={{ margin: 2 }}>Please contact administrators to report the issue.</Alert>
+                    <Stack direction="row" spacing={1}>
+                      <Button size="small" onClick={() => { window.location.href = '/'; resetErrorBoundary() }} variant="contained" color="primary">Go to Top</Button>
+                    </Stack>
+                  </Stack>
                 )
               }
             }
