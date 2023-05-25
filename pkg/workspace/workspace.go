@@ -67,7 +67,7 @@ func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws cosmov1alp
 				{
 					Target: cosmov1alpha1.ObjectRef{
 						ObjectReference: corev1.ObjectReference{
-							APIVersion: "traefik.containo.us/v1alpha1",
+							APIVersion: "traefik.io/v1alpha1",
 							Kind:       "IngressRoute",
 							Namespace:  "",
 							Name:       ws.Status.Config.IngressName,

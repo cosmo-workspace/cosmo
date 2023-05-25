@@ -10,7 +10,7 @@ stringData:
   COOKIE_SESSION_NAME: "{{ randAlphaNum 10 }}"
   SIGNIN_URL: "{{ .Values.cosmoAuth.signinUrl }}"
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: cosmo-auth

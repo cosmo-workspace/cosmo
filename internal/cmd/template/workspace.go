@@ -37,7 +37,7 @@ func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured
 	ingRoutes := make([]unstructured.Unstructured, 0)
 
 	ingressRouteGVK := schema.GroupVersionKind{
-		Group:   "traefik.containo.us",
+		Group:   "traefik.io",
 		Version: "v1alpha1",
 		Kind:    "IngressRoute",
 	}
