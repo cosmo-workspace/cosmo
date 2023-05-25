@@ -8,7 +8,7 @@ SnapShot = """
     \"roles\": [
       \"team-admin\"
     ],
-    \"auth_type\": \"kosmo-secret\",
+    \"auth_type\": \"password-secret\",
     \"default_password\": \"xxxxxxxx\"
   }
 }
@@ -26,7 +26,7 @@ SnapShot = """
         \"name\": \"team-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -45,7 +45,7 @@ SnapShot = """
       \"team-developer\",
       \"team-etc\"
     ],
-    \"auth_type\": \"kosmo-secret\",
+    \"auth_type\": \"password-secret\",
     \"default_password\": \"xxxxxxxx\"
   }
 }
@@ -66,7 +66,7 @@ SnapShot = """
         \"name\": \"team-etc\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -84,7 +84,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\",
+    \"auth_type\": \"password-secret\",
     \"default_password\": \"xxxxxxxx\"
   }
 }
@@ -102,7 +102,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -121,7 +121,7 @@ SnapShot = """
       \"team-a\",
       \"team-b\"
     ],
-    \"auth_type\": \"kosmo-secret\",
+    \"auth_type\": \"password-secret\",
     \"addons\": [
       {
         \"template\": \"user-tmpl1\",
@@ -150,7 +150,7 @@ SnapShot = """
         \"name\": \"team-b\"
       }
     ],
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -178,7 +178,7 @@ SnapShot = """
     \"roles\": [
       \"cosmo-admin\"
     ],
-    \"auth_type\": \"kosmo-secret\",
+    \"auth_type\": \"password-secret\",
     \"default_password\": \"xxxxxxxx\"
   }
 }
@@ -196,7 +196,7 @@ SnapShot = """
         \"name\": \"cosmo-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -211,7 +211,7 @@ SnapShot = """
   \"user\": {
     \"name\": \"create-user-with-delay\",
     \"display_name\": \"create-user-with-delay\",
-    \"auth_type\": \"kosmo-secret\",
+    \"auth_type\": \"password-secret\",
     \"default_password\": \"xxxxxxxx\"
   }
 }
@@ -224,7 +224,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"create-user-with-delay\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -239,7 +239,7 @@ SnapShot = """
   \"user\": {
     \"name\": \"create-user-only-name\",
     \"display_name\": \"create-user-only-name\",
-    \"auth_type\": \"kosmo-secret\",
+    \"auth_type\": \"password-secret\",
     \"default_password\": \"xxxxxxxx\"
   }
 }
@@ -252,7 +252,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"create-user-only-name\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -288,7 +288,7 @@ SnapShot = """
   \"message\": \"Successfully deleted\",
   \"user\": {
     \"name\": \"del-norole\",
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -302,7 +302,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -317,7 +317,7 @@ SnapShot = """
     \"roles\": [
       \"team-admin\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -328,7 +328,7 @@ SnapShot = """
   \"message\": \"Successfully deleted\",
   \"user\": {
     \"name\": \"del-norole\",
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -342,7 +342,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -357,7 +357,7 @@ SnapShot = """
       \"team-developer\",
       \"otherteam-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -372,7 +372,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -410,7 +410,7 @@ SnapShot = """
     \"roles\": [
       \"team-admin\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -424,7 +424,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -438,7 +438,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -465,7 +465,7 @@ SnapShot = """
       \"roles\": [
         \"team-admin\"
       ],
-      \"auth_type\": \"kosmo-secret\"
+      \"auth_type\": \"password-secret\"
     },
     {
       \"name\": \"normal-user\",
@@ -473,7 +473,7 @@ SnapShot = """
       \"roles\": [
         \"team-developer\"
       ],
-      \"auth_type\": \"kosmo-secret\"
+      \"auth_type\": \"password-secret\"
     },
     {
       \"name\": \"priv-user\",
@@ -481,7 +481,7 @@ SnapShot = """
       \"roles\": [
         \"cosmo-admin\"
       ],
-      \"auth_type\": \"kosmo-secret\"
+      \"auth_type\": \"password-secret\"
     }
   ]
 }
@@ -497,7 +497,7 @@ SnapShot = """
       \"roles\": [
         \"team-admin\"
       ],
-      \"auth_type\": \"kosmo-secret\"
+      \"auth_type\": \"password-secret\"
     },
     {
       \"name\": \"normal-user\",
@@ -505,7 +505,7 @@ SnapShot = """
       \"roles\": [
         \"team-developer\"
       ],
-      \"auth_type\": \"kosmo-secret\"
+      \"auth_type\": \"password-secret\"
     },
     {
       \"name\": \"priv-user\",
@@ -513,7 +513,7 @@ SnapShot = """
       \"roles\": [
         \"cosmo-admin\"
       ],
-      \"auth_type\": \"kosmo-secret\"
+      \"auth_type\": \"password-secret\"
     }
   ]
 }
@@ -542,7 +542,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -559,7 +559,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -579,7 +579,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -597,7 +597,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -614,7 +614,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -634,7 +634,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -651,7 +651,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -668,7 +668,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -687,7 +687,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -760,7 +760,7 @@ SnapShot = """
     \"roles\": [
       \"team-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -771,7 +771,7 @@ SnapShot = """
   \"Name\": \"upd-norole\",
   \"Namespace\": \"\",
   \"Spec\": {
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -790,7 +790,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -808,7 +808,7 @@ SnapShot = """
       \"team-developer\",
       \"otherteam-developer\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -824,7 +824,7 @@ SnapShot = """
         \"name\": \"otherteam-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -846,7 +846,7 @@ SnapShot = """
         \"name\": \"otherteam-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -864,7 +864,7 @@ SnapShot = """
     \"roles\": [
       \"cosmo-admin\"
     ],
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -881,7 +881,7 @@ SnapShot = """
         \"name\": \"team-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -901,7 +901,7 @@ SnapShot = """
         \"name\": \"cosmo-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -916,7 +916,7 @@ SnapShot = """
   \"user\": {
     \"name\": \"priv-user\",
     \"display_name\": \"特権\",
-    \"auth_type\": \"kosmo-secret\"
+    \"auth_type\": \"password-secret\"
   }
 }
 """
@@ -933,7 +933,7 @@ SnapShot = """
         \"name\": \"cosmo-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -948,7 +948,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"特権\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}

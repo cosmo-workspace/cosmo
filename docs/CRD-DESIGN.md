@@ -294,7 +294,7 @@ metadata:
 spec:
   displayName: administrator
   role: cosmo-admin
-  authType: kosmo-secret
+  authType: password-secret
   addons:
   - template:
       name: cosmo-auth-proxy-role

@@ -138,12 +138,12 @@ func HasPrivilegedRole(roles []UserRole) bool {
 	return false
 }
 
-// +kubebuilder:validation:enum=kosmo-secret
+// +kubebuilder:validation:enum=password-secret
 // UserAuthType enums
 type UserAuthType string
 
 const (
-	UserAuthTypePasswordSecert UserAuthType = "kosmo-secret" // TODO change password-secret
+	UserAuthTypePasswordSecert UserAuthType = "password-secret"
 	// TODO
 	// UserAuthTypeLDAP    = "ldap"
 	// UserAuthTypeOIDC    = "oidc"
