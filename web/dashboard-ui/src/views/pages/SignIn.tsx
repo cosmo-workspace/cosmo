@@ -1,7 +1,7 @@
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Avatar, Button, Container, CssBaseline, Stack, TextField, Typography } from '@mui/material';
 import React from 'react';
-import { useForm, UseFormRegisterReturn } from 'react-hook-form';
+import { UseFormRegisterReturn, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLogin } from '../../components/LoginProvider';
 import { PasswordTextField } from '../atoms/PasswordTextField';
@@ -11,6 +11,17 @@ import { PageTemplate } from '../templates/PageTemplate';
 const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
   inputRef: ref, ...rest
 });
+
+export const extractDomainFromHostname = (hostname: string) => {
+  return hostname.slice(hostname.indexOf('.') + 1)
+}
+
+export const isValidRedirectURLDomain = (url: string) => {
+  // check redirect domain is the same as current domain
+  const redirect_hostname = new URL(url).hostname;
+  const current_hostname = window.location.hostname;
+  return extractDomainFromHostname(redirect_hostname) === extractDomainFromHostname(current_hostname);
+}
 
 interface Inputs {
   username: string,
@@ -42,22 +53,16 @@ const SignInContent: React.VFC = () => {
 
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
 
-  /**
-   * submit
-   */
-  const onSignIn = async (data: Inputs) => {
-    console.log('onSignIn');
-    const { requirePasswordUpdate } = await login(data.username, data.password);
-    if (requirePasswordUpdate) {
-      passwordChangeDialogDispach(true);
-    }
-
+  const redirect = () => {
     const query = new URLSearchParams(location.search);
     let redirect_to = query.get('redirect_to')
     if (redirect_to) {
       console.log('redirect_to=' + redirect_to);
-      window.location.href = redirect_to;
-      return;
+      if (isValidRedirectURLDomain(redirect_to)) {
+        window.location.href = redirect_to;
+        return;
+      }
+      throw new Error("invalid redirect URL");
     }
 
     let _location = location;
@@ -67,6 +72,19 @@ const SignInContent: React.VFC = () => {
     }
     console.log(_route);
     navigate(_route);
+  }
+  React.useEffect(() => { loginUser && redirect() }, []);
+
+  /**
+   * submit
+   */
+  const onSignIn = async (data: Inputs) => {
+    console.log('onSignIn');
+    const { requirePasswordUpdate } = await login(data.username, data.password);
+    if (requirePasswordUpdate) {
+      passwordChangeDialogDispach(true);
+    }
+    redirect();
   }
 
   return (
@@ -89,8 +107,7 @@ const SignInContent: React.VFC = () => {
           error={Boolean(errors.username)}
           helperText={(errors.username && errors.username.message)}
         />
-        {loginUser ? <Typography color="secondary" variant="body2">currently logged in</Typography> : ""}
-        <PasswordTextField label="Password" margin="normal" fullWidth autoComplete="current-password"
+        <PasswordTextField label="Password" margin="normal" fullWidth autoComplete="current-password" defaultValue={loginUser && "you-are-logined"}
           {...registerMui(register("password", {
             required: { value: true, message: "Required" },
             maxLength: { value: 128, message: "Max 128 characters" },
