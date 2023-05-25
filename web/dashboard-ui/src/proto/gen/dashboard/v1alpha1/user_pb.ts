@@ -30,8 +30,6 @@ export class User extends Message<User> {
   roles: string[] = [];
 
   /**
-   * {"","kosmo-secret"}
-   *
    * @generated from field: string auth_type = 4;
    */
   authType = "";

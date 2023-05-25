@@ -60,7 +60,16 @@ func (m *User) validate(all bool) error {
 
 	// no validation rules for DisplayName
 
-	// no validation rules for AuthType
+	if _, ok := _User_AuthType_InLookup[m.GetAuthType()]; !ok {
+		err := UserValidationError{
+			field:  "AuthType",
+			reason: "value must be in list [password-secret ldap]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetAddons() {
 		_, _ = idx, item
@@ -176,6 +185,11 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserValidationError{}
+
+var _User_AuthType_InLookup = map[string]struct{}{
+	"password-secret": {},
+	"ldap":            {},
+}
 
 // Validate checks the field values on UserAddons with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

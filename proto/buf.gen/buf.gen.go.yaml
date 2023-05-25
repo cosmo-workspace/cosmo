@@ -8,21 +8,21 @@ managed:
       - buf.build/envoyproxy/protoc-gen-validate
 
 plugins:
-  - name: go
+  - plugin: go
     out: ./gen
     opt: paths=source_relative
 
-  - name: validate
+  - plugin: validate
     out: ./gen
     opt:
       - paths=source_relative
       - lang=go
 
-  - name: connect-go
+  - plugin: connect-go
     out: ./gen
     opt: paths=source_relative
 
-  - name: doc
+  - plugin: doc
     out: ./gen
     opt: markdown,index.md
     strategy: all
