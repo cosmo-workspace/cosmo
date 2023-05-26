@@ -129,6 +129,8 @@ var _ = Describe("cosmoctl [user]", func() {
 				testUtil.CreateClusterTemplate(cosmov1alpha1.TemplateLabelEnumTypeUserAddon, "user-clustertemplate1")
 				run_test(args...)
 			},
+			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--auth-type", "password-secret", "user-template1,HOGE:HOGEHOGE"),
+			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--auth-type", "ldap", "user-template1,HOGE:HOGEHOGE"),
 			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--role", "cosmo-admin", "--addon", "user-template1,HOGE:HOGEHOGE"),
 			Entry(desc, "user", "create", "user-create", "--name", "create 1", "--admin", "--addon", "user-template1,HOGE:HOGEHOGE"),
 			Entry(desc, "user", "create", "user-create"),
@@ -167,6 +169,7 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1 ,HOGE:yyy"),
 			Entry(desc, "user", "create", "user-create", "--addon", "user-template1,HOGE :yyy"),
 			Entry(desc, "user", "create", "user-create", "--cluster-addon", "user-clustertemplate1,HOGE :"),
+			Entry(desc, "user", "create", "user-create", "--auth-type", "xxxx"),
 		)
 
 		DescribeTable("❌ fail to create password timeout",

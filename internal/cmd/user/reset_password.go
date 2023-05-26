@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
@@ -61,6 +62,14 @@ func (o *resetPasswordOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx = clog.IntoContext(ctx, o.Logr)
 
 	c := o.Client
+
+	user, err := c.GetUser(ctx, o.UserName)
+	if err != nil {
+		return err
+	}
+	if user.Spec.AuthType != cosmov1alpha1.UserAuthTypePasswordSecert {
+		return fmt.Errorf("password cannot be changed if auth-type is '%s'", user.Spec.AuthType.String())
+	}
 
 	if o.Password == "" {
 		if err := c.ResetPassword(ctx, o.UserName); err != nil {

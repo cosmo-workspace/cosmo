@@ -83,14 +83,16 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		log.Info("status updated")
 	}
 
-	// generate default password if password secret is not found
-	if _, err := password.GetDefaultPassword(ctx, r.Client, user.Name); err != nil && apierrors.IsNotFound(err) {
-		if err := password.ResetPassword(ctx, r.Client, user.Name); err != nil {
-			r.Recorder.Eventf(&user, corev1.EventTypeWarning, "InitFailed", "failed to reset password: %v", err)
-			log.Error(err, "failed to reset password")
-			return ctrl.Result{}, err
+	if user.Spec.AuthType == cosmov1alpha1.UserAuthTypePasswordSecert {
+		// generate default password if password secret is not found
+		if _, err := password.GetDefaultPassword(ctx, r.Client, user.Name); err != nil && apierrors.IsNotFound(err) {
+			if err := password.ResetPassword(ctx, r.Client, user.Name); err != nil {
+				r.Recorder.Eventf(&user, corev1.EventTypeWarning, "InitFailed", "failed to reset password: %v", err)
+				log.Error(err, "failed to reset password")
+				return ctrl.Result{}, err
+			}
+			r.Recorder.Eventf(&user, corev1.EventTypeNormal, "PasswordSecret Initialized", "successfully reset password secret")
 		}
-		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "PasswordSecret Initialized", "successfully reset password secret")
 	}
 
 	// reconcile user addon

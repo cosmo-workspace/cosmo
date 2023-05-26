@@ -21,6 +21,7 @@ type CreateOption struct {
 	UserName      string
 	DisplayName   string
 	Roles         []string
+	AuthType      string
 	Admin         bool
 	Addons        []string
 	ClusterAddons []string
@@ -34,6 +35,7 @@ func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVar(&o.DisplayName, "name", "", "user display name (default: same as USER_NAME)")
 	cmd.Flags().StringSliceVar(&o.Roles, "role", nil, "user roles")
+	cmd.Flags().StringVar(&o.AuthType, "auth-type", cosmov1alpha1.UserAuthTypePasswordSecert.String(), "user auth type 'password-secret'(default),'ldap'")
 	cmd.Flags().BoolVar(&o.Admin, "admin", false, "user admin role")
 	cmd.Flags().StringArrayVar(&o.Addons, "addon", nil, "user addons by Template, which created in UserNamespace\nformat is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' ")
 	cmd.Flags().StringArrayVar(&o.ClusterAddons, "cluster-addon", nil, "user addons by ClusterTemplate\nformat is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' ")
@@ -53,6 +55,9 @@ func (o *CreateOption) PreRunE(cmd *cobra.Command, args []string) error {
 func (o *CreateOption) Validate(cmd *cobra.Command, args []string) error {
 	if err := o.CliOptions.Validate(cmd, args); err != nil {
 		return err
+	}
+	if !cosmov1alpha1.UserAuthType(o.AuthType).IsValid() {
+		return fmt.Errorf("invalid auth-type: %s", o.AuthType)
 	}
 	if len(args) < 1 {
 		return errors.New("invalid args")
@@ -128,16 +133,19 @@ func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)
 
-	if _, err := o.Client.CreateUser(ctx, o.UserName, o.DisplayName, o.Roles, "", o.userAddons); err != nil {
+	if _, err := o.Client.CreateUser(ctx, o.UserName, o.DisplayName, o.Roles, o.AuthType, o.userAddons); err != nil {
 		return err
 	}
 
-	defaultPassword, err := o.Client.GetDefaultPasswordAwait(ctx, o.UserName)
-	if err != nil {
-		return err
+	if o.AuthType == cosmov1alpha1.UserAuthTypePasswordSecert.String() {
+		defaultPassword, err := o.Client.GetDefaultPasswordAwait(ctx, o.UserName)
+		if err != nil {
+			return err
+		}
+		cmdutil.PrintfColorInfo(o.Out, "Successfully created user %s\n", o.UserName)
+		fmt.Fprintln(o.Out, "Default password:", *defaultPassword)
+	} else {
+		cmdutil.PrintfColorInfo(o.Out, "Successfully created user %s\n", o.UserName)
 	}
-
-	cmdutil.PrintfColorInfo(o.Out, "Successfully created user %s\n", o.UserName)
-	fmt.Fprintln(o.Out, "Default password:", *defaultPassword)
 	return nil
 }
