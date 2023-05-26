@@ -138,14 +138,13 @@ func HasPrivilegedRole(roles []UserRole) bool {
 	return false
 }
 
-// +kubebuilder:validation:enum=password-secret
+// +kubebuilder:validation:enum=password-secret;ldap
 // UserAuthType enums
 type UserAuthType string
 
 const (
 	UserAuthTypePasswordSecert UserAuthType = "password-secret"
-	// TODO
-	// UserAuthTypeLDAP    = "ldap"
+	UserAuthTypeLDAP           UserAuthType = "ldap"
 	// UserAuthTypeOIDC    = "oidc"
 	// UserAuthTypeWebhook = "webhook"
 )
@@ -153,6 +152,8 @@ const (
 func (t UserAuthType) IsValid() bool {
 	switch t {
 	case UserAuthTypePasswordSecert:
+		return true
+	case UserAuthTypeLDAP:
 		return true
 	default:
 		return false
