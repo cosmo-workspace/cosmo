@@ -7,6 +7,7 @@ metadata:
     cosmo-workspace.github.io/type: useraddon
   name: eks-irsa
 spec:
+  description: UserAddon to associate ServiceAccount with IAM Role
   rawYaml: |
     apiVersion: v1
     kind: ServiceAccount

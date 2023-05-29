@@ -1,0 +1,66 @@
+apiVersion: cosmo-workspace.github.io/v1alpha1
+kind: Template
+metadata:
+  annotations:
+    workspace.cosmo-workspace.github.io/deployment: workspace
+    workspace.cosmo-workspace.github.io/service: workspace
+    workspace.cosmo-workspace.github.io/service-main-port: main
+  labels:
+    cosmo-workspace.github.io/type: workspace
+  name: openvscode-server-example
+spec:
+  description: Example Workspace Template for gitpod/openvscode-server
+  rawYaml: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
+      name: '{{INSTANCE}}-workspace'
+      namespace: '{{NAMESPACE}}'
+    spec:
+      ports:
+      - name: main
+        port: 3000
+        protocol: TCP
+      selector:
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
+      type: ClusterIP
+    ---
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
+      name: '{{INSTANCE}}-workspace'
+      namespace: '{{NAMESPACE}}'
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+          cosmo-workspace.github.io/template: '{{TEMPLATE}}'
+      template:
+        metadata:
+          labels:
+            cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+            cosmo-workspace.github.io/template: '{{TEMPLATE}}'
+        spec:
+          containers:
+          - image: gitpod/openvscode-server
+            imagePullPolicy: IfNotPresent
+            name: openvscode-server
+            ports:
+            - containerPort: 3000
+              name: main
+              protocol: TCP
+            volumeMounts:
+            - mountPath: /home/project
+              name: data
+          serviceAccountName: default
+          volumes:
+          - emptyDir: {}
+            name: data
