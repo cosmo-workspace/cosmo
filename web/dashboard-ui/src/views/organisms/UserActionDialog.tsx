@@ -7,7 +7,7 @@ import {
   Grid, IconButton, InputAdornment, List, ListItem, ListItemText, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Tooltip, Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
+import { UseFormRegisterReturn, useFieldArray, useForm } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
@@ -331,22 +331,20 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
               </Typography>}
               {addonsFields.map((field, index) =>
                 <React.Fragment key={field.id}>
-                  <Tooltip title={field.template.description || "No description"} placement="bottom" arrow enterDelay={1000}>
-                    <>
-                      <FormControlLabel label={field.template.name} control={
-                        <Checkbox defaultChecked={field.template.isDefaultUserAddon || false}
-                          {...registerMui(register(`addons.${index}.enable` as const, {
-                            required: { value: field.template.isDefaultUserAddon || false, message: "Required" },
-                          }))}
-                        />}
+                  <FormControlLabel label={field.template.name} control={
+                    <Tooltip title={field.template.description || "No description"} placement="bottom" arrow enterDelay={1000}>
+                      <Checkbox defaultChecked={field.template.isDefaultUserAddon || false}
+                        {...registerMui(register(`addons.${index}.enable` as const, {
+                          required: { value: field.template.isDefaultUserAddon || false, message: "Required" },
+                        }))}
                       />
-                      <FormHelperText error={Boolean(errors.addons?.[index]?.enable)}>
-                        {errors.addons?.[index]?.enable?.message}
-                      </FormHelperText>
-                    </>
-                  </Tooltip>
-                  <Collapse in={(watch('addons')[index].enable)} timeout="auto" unmountOnExit>
-                    <Stack spacing={2} sx={{ m: 2 }}>
+                    </Tooltip>}
+                  />
+                  <FormHelperText error={Boolean(errors.addons?.[index]?.enable)}>
+                    {errors.addons?.[index]?.enable?.message}
+                  </FormHelperText>
+                  <Collapse in={(watch('addons')[index].enable)}>
+                    <Stack spacing={2}>
                       {field.template.requiredVars?.map((required, j) =>
                         <TextField key={field.id + j}
                           size="small" fullWidth
