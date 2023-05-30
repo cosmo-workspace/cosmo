@@ -79,12 +79,18 @@ var _ = Describe("cosmoctl [template]", func() {
 	//==================================================================================
 	Describe("[generate]", func() {
 
+		var versionRegexp = regexp.MustCompile(`v[0-9]+.[0-9]+.[0-9]+.* cosmo-workspace`)
+
+		templateOutputSnapshot := func(output string) string {
+			return versionRegexp.ReplaceAllString(output, "vX.X.X cosmo-workspace")
+		}
+
 		run_test := func(args ...string) {
 			inBuf.WriteString(yamlData)
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()
-			Expect(consoleOut()).To(MatchSnapShot())
+			Expect(templateOutputSnapshot(consoleOut())).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
 			By("---------------test end---------------")
 		}
@@ -95,6 +101,7 @@ var _ = Describe("cosmoctl [template]", func() {
 			Entry(desc, "template", "generate", "--workspace", "--workspace-main-service-port-name", "main", "-o", "/tmp/test-cosmo-template"),
 			Entry(desc, "template", "generate", "--user-addon", "--set-default-user-addon", "--disable-nameprefix"),
 			Entry(desc, "template", "generate", "--user-addon", "--set-default-user-addon", "--cluster-scope", "--disable-nameprefix"),
+			Entry(desc, "template", "generate", "--workspace", "--userroles", "teama-*", "--forbidden-userroles", "teama-operator,teama-testuser"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
@@ -197,9 +204,6 @@ spec:
   - name: main
     port: 3000
     protocol: TCP
-  - name: sub
-    port: 3001
-    protocol: TCP
   type: ClusterIP
 ---
 apiVersion: v1
@@ -300,9 +304,6 @@ spec:
       ports:
       - name: main
         port: 3000
-        protocol: TCP
-      - name: sub
-        port: 3001
         protocol: TCP
       selector:
         cosmo-workspace.github.io/instance: '{{INSTANCE}}'

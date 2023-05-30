@@ -17,6 +17,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/internal/cmd/stop"
 	"github.com/cosmo-workspace/cosmo/internal/cmd/template"
 	"github.com/cosmo-workspace/cosmo/internal/cmd/user"
+	"github.com/cosmo-workspace/cosmo/internal/cmd/version"
 	"github.com/cosmo-workspace/cosmo/internal/cmd/workspace"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
@@ -41,15 +42,7 @@ MIT 2022 cosmo-workspace/cosmo
 	rootCmd.PersistentFlags().StringVar(&o.KubeContext, "context", "", "kube-context (default: current context)")
 	rootCmd.PersistentFlags().IntVarP(&o.LogLevel, "verbose", "v", -1, "log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL")
 
-	versionCmd := &cobra.Command{
-		Use:   "version",
-		Short: "Print the version number",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Fprintln(o.Out, "cosmoctl - cosmo v0.8.0 cosmo-workspace 2022")
-		},
-	}
-
-	rootCmd.AddCommand(versionCmd)
+	version.AddCommand(rootCmd, o)
 	template.AddCommand(rootCmd, o)
 	user.AddCommand(rootCmd, o)
 	workspace.AddCommand(rootCmd, o)
