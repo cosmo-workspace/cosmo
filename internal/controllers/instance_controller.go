@@ -217,7 +217,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 		var obj unstructured.Unstructured
 		obj.SetAPIVersion(d.APIVersion)
 		obj.SetKind(d.Kind)
-		err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: inst.GetNamespace()}, &obj)
+		err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: d.Namespace}, &obj)
 		if err != nil {
 			if !apierrs.IsNotFound(err) {
 				log.Error(err, "failed to get object to be deleted", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)

@@ -61,7 +61,19 @@ parameters:
   server: nfs-server.example.com
   path: {{MOUNT_PATH}}
 ---
-`, pvSufix, scSufix, scSufix),
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: %s
+  namespace: default
+spec:
+  storageClassName: {{INSTANCE}}-%s
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+`, pvSufix, scSufix, scSufix, pvSufix, scSufix),
 			RequiredVars: []cosmov1alpha1.RequiredVarSpec{
 				{
 					Var:     varMountPath,
@@ -124,7 +136,7 @@ parameters:
 				Expect(err).ShouldNot(HaveOccurred())
 
 				return createdInst.Status.LastAppliedObjectsCount
-			}, time.Second*10).ShouldNot(BeZero())
+			}, time.Second*10).Should(Equal(3))
 			Ω(instanceSnapshot(&createdInst)).To(MatchSnapShot())
 
 			By("checking PersistentVolume is as expected in template")
@@ -148,6 +160,18 @@ parameters:
 				return k8sClient.Get(ctx, key, &sc)
 			}, time.Second*10).Should(Succeed())
 			Ω(objectSnapshot(&sc)).To(MatchSnapShot())
+
+			By("checking PVC is as expected")
+
+			var pvc corev1.PersistentVolumeClaim
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name:      instance.InstanceResourceName(inst.Name, pvSufix),
+					Namespace: "default",
+				}
+				return k8sClient.Get(ctx, key, &pvc)
+			}, time.Second*10).Should(Succeed())
+			Ω(objectSnapshot(&pvc)).To(MatchSnapShot())
 
 		})
 	})
@@ -280,6 +304,84 @@ spec:
 			for _, pod := range pods.Items {
 				Expect(pod.Name).ShouldNot(Equal(podName))
 			}
+		})
+	})
+
+	Context("when removing namespaced resource in ClusterTemplate", func() {
+		It("should remove unmanaged resources(GC)", func() {
+			ctx := context.Background()
+
+			var curInst cosmov1alpha1.ClusterInstance
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name: inst.Name,
+				}
+				return k8sClient.Get(ctx, key, &curInst)
+			}, time.Second*10).Should(Succeed())
+
+			// fetch current clustertemplate
+			var curTmpl cosmov1alpha1.ClusterTemplate
+			Eventually(func() error {
+				key := types.NamespacedName{
+					Name: tmpl.Name,
+				}
+				err := k8sClient.Get(ctx, key, &curTmpl)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				// remove pvc
+				curTmpl.Spec.RawYaml = fmt.Sprintf(`
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: %s
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: {{INSTANCE}}-%s
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    server: nfs-server.example.com
+    path: {{MOUNT_PATH}}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: %s
+provisioner: example.com/external-nfs
+parameters:
+  server: nfs-server.example.com
+  path: {{MOUNT_PATH}}
+`, pvSufix, scSufix, scSufix)
+				return k8sClient.Update(ctx, &curTmpl)
+			}, time.Second*60).Should(Succeed())
+
+			By("checking if pvc is removed")
+
+			var pvc corev1.PersistentVolumeClaim
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name: instance.InstanceResourceName(inst.Name, pvSufix),
+				}
+				return k8sClient.Get(ctx, key, &pvc)
+			}, time.Second*60).Should(HaveOccurred())
+
+			// fetch current clusterinstance
+			var updatedInst cosmov1alpha1.ClusterInstance
+			Eventually(func() int {
+				key := client.ObjectKey{
+					Name: inst.Name,
+				}
+				err := k8sClient.Get(ctx, key, &updatedInst)
+				Expect(err).ShouldNot(HaveOccurred())
+				return updatedInst.Status.LastAppliedObjectsCount
+			}, time.Second*60).Should(Equal(2))
+			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 })

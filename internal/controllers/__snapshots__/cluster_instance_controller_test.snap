@@ -23,13 +23,19 @@ SnapShot = """
         \"apiVersion\": \"v1\"
       },
       {
+        \"kind\": \"PersistentVolumeClaim\",
+        \"namespace\": \"default\",
+        \"name\": \"test-pv-clusterinst1-pv\",
+        \"apiVersion\": \"v1\"
+      },
+      {
         \"kind\": \"StorageClass\",
         \"name\": \"test-pv-clusterinst1-sc\",
         \"apiVersion\": \"storage.k8s.io/v1\"
       }
     ],
-    \"lastAppliedObjectsCount\": 2,
-    \"templateObjectsCount\": 2
+    \"lastAppliedObjectsCount\": 3,
+    \"templateObjectsCount\": 3
   }
 }
 """
@@ -111,6 +117,96 @@ SnapShot = """
   },
   \"reclaimPolicy\": \"Delete\",
   \"volumeBindingMode\": \"Immediate\"
+}
+"""
+
+['ClusterInstance controller when creating a Instance resource should do reconcile once and create child resources 4']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-pv-clusterinst1-pv\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo-workspace.github.io/instance\": \"test-pv-clusterinst1\",
+      \"cosmo-workspace.github.io/template\": \"test-storage-clustertmpl1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"ClusterInstance\",
+        \"name\": \"test-pv-clusterinst1\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ],
+    \"finalizers\": [
+      \"kubernetes.io/pvc-protection\"
+    ]
+  },
+  \"spec\": {
+    \"accessModes\": [
+      \"ReadWriteOnce\"
+    ],
+    \"resources\": {
+      \"requests\": {
+        \"storage\": \"5Gi\"
+      }
+    },
+    \"storageClassName\": \"test-pv-clusterinst1-sc\",
+    \"volumeMode\": \"Filesystem\"
+  },
+  \"status\": {
+    \"phase\": \"Pending\"
+  }
+}
+"""
+
+['ClusterInstance controller when removing namespaced resource in ClusterTemplate should remove unmanaged resources(GC) 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-pv-clusterinst1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"test-storage-clustertmpl1\"
+    },
+    \"vars\": {
+      \"MOUNT_PATH\": \"/tmp\"
+    },
+    \"override\": {
+      \"patchesJson6902\": [
+        {
+          \"target\": {
+            \"kind\": \"PersistentVolume\",
+            \"name\": \"pv\",
+            \"apiVersion\": \"v1\"
+          },
+          \"patch\": \"\\n[\\n  {\\n    \\\"op\\\": \\\"replace\\\",\\n    \\\"path\\\": \\\"/spec/capacity/storage\\\",\\n    \\\"value\\\": \\\"10Gi\\\"\\n  }\\n]\\n\\t\\t\\t\\t\\t\\t\"
+        }
+      ]
+    }
+  },
+  \"status\": {
+    \"templateName\": \"test-storage-clustertmpl1\",
+    \"lastApplied\": [
+      {
+        \"kind\": \"PersistentVolume\",
+        \"name\": \"test-pv-clusterinst1-pv\",
+        \"apiVersion\": \"v1\"
+      },
+      {
+        \"kind\": \"StorageClass\",
+        \"name\": \"test-pv-clusterinst1-sc\",
+        \"apiVersion\": \"storage.k8s.io/v1\"
+      }
+    ],
+    \"lastAppliedObjectsCount\": 2,
+    \"templateObjectsCount\": 2
+  }
 }
 """
 
