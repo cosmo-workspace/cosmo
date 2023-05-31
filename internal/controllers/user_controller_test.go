@@ -3,10 +3,13 @@ package controllers
 import (
 	"context"
 	"errors"
+	"fmt"
+	"sort"
 	"time"
 
 	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -38,7 +41,7 @@ metadata:
     cosmo-workspace.github.io/template: code-server-test
   name: '{{INSTANCE}}-job'
   namespace: '{{NAMESPACE}}'
-spec:
+spec: 
   template:
     metadata:
       labels:
@@ -47,9 +50,10 @@ spec:
     spec:
       containers:
       - name: eksctl
-        image: weaveworks/eksctl:0.71.0
+        image: weaveworks/eksctl:{{IMAGE_TAG}}
       restartPolicy: OnFailure
 `,
+			RequiredVars: []cosmov1alpha1.RequiredVarSpec{{Var: "IMAGE_TAG"}},
 		},
 	}
 
@@ -97,6 +101,15 @@ spec:
 		},
 	}
 
+	emptyUserAddon := cosmov1alpha1.Template{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "empty-addon",
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
+			},
+		},
+	}
+
 	Context("when creating User resource", func() {
 		It("should do create namespace, password and addons", func() {
 			ctx := context.Background()
@@ -124,7 +137,7 @@ spec:
 								Name: namespacedUserAddon.Name,
 							},
 							Vars: map[string]string{
-								"KEY": "VAL",
+								"IMAGE_TAG": "v0.71.0",
 							},
 						},
 						{
@@ -148,15 +161,22 @@ spec:
 				return k8sClient.Get(ctx, key, &createdNs)
 			}, time.Second*10).Should(Succeed())
 
-			Eventually(func() string {
+			Eventually(func() error {
 				key := client.ObjectKey{
 					Name: user.Name,
 				}
 				err := k8sClient.Get(ctx, key, &user)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				return user.Status.Namespace.Name
-			}, time.Second*30).Should(BeEquivalentTo(cosmov1alpha1.UserNamespace(user.Name)))
+				if user.Status.Namespace.Name == "" {
+					return fmt.Errorf("user namespace is empty")
+				}
+				if len(user.Status.Addons) != 2 {
+					return fmt.Errorf("user addon count is not 2: %d", len(user.Status.Addons))
+				}
+				return nil
+			}, time.Second*30).ShouldNot(HaveOccurred())
+			Expect(userSnapshot(&user)).Should(MatchSnapShot())
 
 			By("check namespace label")
 
@@ -203,7 +223,7 @@ spec:
 				if equality.Semantic.DeepEqual(addonInst.Spec.Vars, user.Spec.Addons[0].Vars) {
 					return errors.New("invalid template name")
 				}
-				return nil
+				return k8sClient.Get(ctx, client.ObjectKey{Name: user.Name}, &user)
 			}, time.Second*10).Should(Succeed())
 
 			Eventually(func() error {
@@ -223,4 +243,62 @@ spec:
 		})
 	})
 
+	Context("when updating user addon with invalid addon", func() {
+		It("should try to create addon but status AddonFailed", func() {
+			ctx := context.Background()
+
+			By("creating invalid template")
+
+			err := k8sClient.Create(ctx, &emptyUserAddon)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			By("fetching and update user")
+			var user cosmov1alpha1.User
+			Eventually(func() error {
+				err = k8sClient.Get(ctx, client.ObjectKey{Name: "ua"}, &user)
+				Expect(err).ShouldNot(HaveOccurred())
+				user.Spec.Addons = append(user.Spec.Addons, cosmov1alpha1.UserAddon{
+					Template: cosmov1alpha1.UserAddonTemplateRef{
+						Name: emptyUserAddon.Name,
+					},
+				})
+				return k8sClient.Update(ctx, &user)
+			}, time.Second*30).Should(Succeed())
+			Expect(userSnapshot(&user)).Should(MatchSnapShot())
+
+			var updatedUser cosmov1alpha1.User
+			Eventually(func() int {
+				err = k8sClient.Get(ctx, client.ObjectKey{Name: "ua"}, &updatedUser)
+				Expect(err).ShouldNot(HaveOccurred())
+				return len(updatedUser.Status.Addons)
+			}, time.Second*30).Should(Equal(3))
+			Expect(userSnapshot(&updatedUser)).Should(MatchSnapShot())
+
+		})
+	})
+
 })
+
+func userSnapshot(in *cosmov1alpha1.User) *cosmov1alpha1.User {
+	obj := in.DeepCopy()
+	removeDynamicFields(obj)
+
+	obj.Status.Namespace.CreationTimestamp = nil
+	obj.Status.Namespace.UID = ""
+	obj.Status.Namespace.ResourceVersion = ""
+
+	for i, v := range obj.Status.Addons {
+		v.CreationTimestamp = nil
+		v.UID = ""
+		v.ResourceVersion = ""
+		obj.Status.Addons[i] = v
+	}
+	sort.Slice(obj.Status.Addons, func(i, j int) bool {
+		return obj.Status.Addons[i].Kind < obj.Status.Addons[j].Kind
+	})
+	sort.Slice(obj.Status.Addons, func(i, j int) bool {
+		return obj.Status.Addons[i].Name < obj.Status.Addons[j].Name
+	})
+
+	return obj
+}

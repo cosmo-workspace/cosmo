@@ -1,0 +1,164 @@
+['User controller when creating User resource should do create namespace, password and addons 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ua\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"displayName\": \"お名前\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"namespaced-addon\"
+        },
+        \"vars\": {
+          \"IMAGE_TAG\": \"v0.71.0\"
+        }
+      },
+      {
+        \"template\": {
+          \"name\": \"cluster-addon\",
+          \"clusterScoped\": true
+        }
+      }
+    ]
+  },
+  \"status\": {
+    \"phase\": \"Active\",
+    \"namespace\": {
+      \"kind\": \"Namespace\",
+      \"name\": \"cosmo-user-ua\",
+      \"apiVersion\": \"v1\"
+    },
+    \"addons\": [
+      {
+        \"kind\": \"Instance\",
+        \"name\": \"useraddon-namespaced-addon\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
+      },
+      {
+        \"kind\": \"ClusterInstance\",
+        \"name\": \"useraddon-ua-cluster-addon\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
+      }
+    ]
+  }
+}
+"""
+
+['User controller when updating user addon with invalid addon should try to create addon but status AddonFailed 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ua\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"displayName\": \"お名前\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"namespaced-addon\"
+        },
+        \"vars\": {
+          \"IMAGE_TAG\": \"v0.71.0\"
+        }
+      },
+      {
+        \"template\": {
+          \"name\": \"cluster-addon\",
+          \"clusterScoped\": true
+        }
+      },
+      {
+        \"template\": {
+          \"name\": \"empty-addon\"
+        }
+      }
+    ]
+  },
+  \"status\": {
+    \"phase\": \"Active\",
+    \"namespace\": {
+      \"kind\": \"Namespace\",
+      \"name\": \"cosmo-user-ua\",
+      \"apiVersion\": \"v1\"
+    },
+    \"addons\": [
+      {
+        \"kind\": \"Instance\",
+        \"name\": \"useraddon-namespaced-addon\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
+      },
+      {
+        \"kind\": \"ClusterInstance\",
+        \"name\": \"useraddon-ua-cluster-addon\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
+      }
+    ]
+  }
+}
+"""
+
+['User controller when updating user addon with invalid addon should try to create addon but status AddonFailed 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ua\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"displayName\": \"お名前\",
+    \"authType\": \"kosmo-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"namespaced-addon\"
+        },
+        \"vars\": {
+          \"IMAGE_TAG\": \"v0.71.0\"
+        }
+      },
+      {
+        \"template\": {
+          \"name\": \"cluster-addon\",
+          \"clusterScoped\": true
+        }
+      },
+      {
+        \"template\": {
+          \"name\": \"empty-addon\"
+        }
+      }
+    ]
+  },
+  \"status\": {
+    \"phase\": \"Active\",
+    \"namespace\": {
+      \"kind\": \"Namespace\",
+      \"name\": \"cosmo-user-ua\",
+      \"apiVersion\": \"v1\"
+    },
+    \"addons\": [
+      {
+        \"kind\": \"Instance\",
+        \"name\": \"useraddon-empty-addon\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
+      },
+      {
+        \"kind\": \"Instance\",
+        \"name\": \"useraddon-namespaced-addon\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
+      },
+      {
+        \"kind\": \"ClusterInstance\",
+        \"name\": \"useraddon-ua-cluster-addon\",
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
+      }
+    ]
+  }
+}
+"""

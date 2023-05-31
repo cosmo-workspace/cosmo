@@ -97,6 +97,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	if len(user.Spec.Addons) > 0 {
 		errs := make([]error, 0)
 
+		addonStatusMap := sliceToObjectMap(user.Status.Addons)
 		for _, addon := range user.Spec.Addons {
 			log.Info("syncing user addon", "addon", addon)
 
@@ -106,12 +107,32 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 				continue
 			}
 
-			if _, err := kubeutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
+			_, err := kubeutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
 				return useraddon.PatchUserAddonInstanceAsDesired(inst, addon, user, r.Scheme)
-			}); err != nil {
+			})
+			if err != nil {
 				errs = append(errs, fmt.Errorf("failed to create or update addon %s :%w", inst.GetSpec().Template.Name, err))
+				continue
+			}
+
+			ct := inst.GetCreationTimestamp()
+			gvk, err := apiutil.GVKForObject(inst, r.Scheme)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("failed to recognize addon instance GVK %s :%w", inst.GetSpec().Template.Name, err))
+				continue
+			}
+			addonStatusMap[inst.GetUID()] = cosmov1alpha1.ObjectRef{
+				ObjectReference: corev1.ObjectReference{
+					APIVersion:      gvk.GroupVersion().String(),
+					Kind:            gvk.Kind,
+					Name:            inst.GetName(),
+					UID:             inst.GetUID(),
+					ResourceVersion: inst.GetResourceVersion(),
+				},
+				CreationTimestamp: &ct,
 			}
 		}
+		user.Status.Addons = objectRefMapToSlice(addonStatusMap)
 
 		if len(errs) > 0 {
 			for _, e := range errs {
