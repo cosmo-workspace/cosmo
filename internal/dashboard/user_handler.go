@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	connect_go "github.com/bufbuild/connect-go"
@@ -31,6 +32,14 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 		return nil, ErrResponse(log, err)
 	}
 
+	if req.Msg.AuthType != "" {
+		if _, ok := s.Authorizers[cosmov1alpha1.UserAuthType(req.Msg.AuthType)]; !ok {
+			log.Info("authrizer not found", "username", req.Msg.UserName, "authType", req.Msg.AuthType)
+			return nil, ErrResponse(log, kosmo.NewBadRequestError(
+				fmt.Sprintf("auth-type '%s' is not supported", req.Msg.AuthType), nil))
+		}
+	}
+
 	// create user
 	user, err := s.Klient.CreateUser(ctx, req.Msg.UserName, req.Msg.DisplayName,
 		req.Msg.Roles, req.Msg.AuthType, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons))
@@ -38,14 +47,17 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 		return nil, ErrResponse(log, err)
 	}
 
-	// Wait until user created
-	defaultPassword, err := s.Klient.GetDefaultPasswordAwait(ctx, req.Msg.UserName)
-	if err != nil {
-		return nil, ErrResponse(log, err)
+	resUser := convertUserToDashv1alpha1User(*user)
+
+	if user.Spec.AuthType == cosmov1alpha1.UserAuthTypePasswordSecert {
+		// Wait until user created
+		defaultPassword, err := s.Klient.GetDefaultPasswordAwait(ctx, req.Msg.UserName)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
+		resUser.DefaultPassword = *defaultPassword
 	}
 
-	resUser := convertUserToDashv1alpha1User(*user)
-	resUser.DefaultPassword = *defaultPassword
 	res := &dashv1alpha1.CreateUserResponse{
 		Message: "Successfully created",
 		User:    resUser,

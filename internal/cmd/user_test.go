@@ -198,8 +198,8 @@ var _ = Describe("cosmoctl [user]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
-				testUtil.CreateLoginUser("user1", "name1", nil, "password")
-				testUtil.CreateLoginUser("user2", "name2", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, "password")
+				testUtil.CreateLoginUser("user1", "name1", nil, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
+				testUtil.CreateLoginUser("user2", "name2", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
 				run_test(args...)
 			},
 			Entry(desc, "user", "get"),
@@ -223,7 +223,7 @@ var _ = Describe("cosmoctl [user]", func() {
 	Describe("[delete]", func() {
 
 		run_test := func(args ...string) {
-			testUtil.CreateCosmoUser("user-delete1", "delete", nil)
+			testUtil.CreateCosmoUser("user-delete1", "delete", nil, cosmov1alpha1.UserAuthTypePasswordSecert)
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()
@@ -268,9 +268,9 @@ var _ = Describe("cosmoctl [user]", func() {
 		)
 
 		run_test := func(args ...string) {
-			testUtil.CreateCosmoUser(noRoleUser, "ロールなし", nil)
+			testUtil.CreateCosmoUser(noRoleUser, "ロールなし", nil, cosmov1alpha1.UserAuthTypePasswordSecert)
 			testUtil.CreateCosmoUser(privUser, "特権",
-				[]cosmov1alpha1.UserRole{{Name: "cosmo-admin"}})
+				[]cosmov1alpha1.UserRole{{Name: "cosmo-admin"}}, cosmov1alpha1.UserAuthTypePasswordSecert)
 
 			By("---------------test start----------------")
 			var befUser *cosmov1alpha1.User
@@ -322,7 +322,7 @@ var _ = Describe("cosmoctl [user]", func() {
 	Describe("[reset-password]", func() {
 
 		run_test := func(args ...string) {
-			testUtil.CreateLoginUser("user1", "name1", nil, "password")
+			testUtil.CreateLoginUser("user1", "name1", nil, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
 			By("---------------test start----------------")
 			rootCmd.SetArgs(args)
 			err := rootCmd.Execute()

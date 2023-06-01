@@ -168,6 +168,33 @@ SnapShot = """
 }
 """
 
+['Dashboard server [User] [CreateUser] ✅ success create user by privileged role: create normal user with ldap auth 1']
+SnapShot = """
+{
+  \"message\": \"Successfully created\",
+  \"user\": {
+    \"name\": \"create-user-ldap\",
+    \"display_name\": \"create-user-ldap\",
+    \"auth_type\": \"ldap\"
+  }
+}
+"""
+
+['Dashboard server [User] [CreateUser] ✅ success create user by privileged role: create normal user with ldap auth 2']
+SnapShot = """
+{
+  \"Name\": \"create-user-ldap\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"create-user-ldap\",
+    \"authType\": \"ldap\"
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
 ['Dashboard server [User] [CreateUser] ✅ success create user by privileged role: create privileged user 1']
 SnapShot = """
 {
@@ -274,7 +301,7 @@ SnapShot = 'unavailable: failed to create user'
 
 ['Dashboard server [User] [CreateUser] ❌ fail with invalid request: invalid auth type 1']
 SnapShot = """
-invalid_argument: 'authtype' is invalid"""
+invalid_argument: auth-type 'INVALID' is not supported"""
 
 ['Dashboard server [User] [CreateUser] ❌ fail with invalid request: no name 1']
 SnapShot = 'unavailable: failed to create user'

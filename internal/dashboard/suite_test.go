@@ -147,6 +147,11 @@ var _ = BeforeSuite(func() {
 
 	auths := make(map[cosmov1alpha1.UserAuthType]auth.Authorizer)
 	auths[cosmov1alpha1.UserAuthTypePasswordSecert] = auth.NewPasswordSecretAuthorizer(klient)
+	auths[cosmov1alpha1.UserAuthTypeLDAP] = auth.NewMockAuthorizer(
+		map[string]string{
+			"ldap-user": "password",
+		},
+	)
 
 	serv := (&Server{
 		Log:                 clog.NewLogger(ctrl.Log.WithName("dashboard")),
@@ -195,7 +200,7 @@ func test_Login(userName string, password string) string {
 }
 
 func test_CreateLoginUserSession(userName, displayName string, role []cosmov1alpha1.UserRole, password string) string {
-	testUtil.CreateLoginUser(userName, displayName, role, password)
+	testUtil.CreateLoginUser(userName, displayName, role, cosmov1alpha1.UserAuthTypePasswordSecert, password)
 	return test_Login(userName, password)
 }
 

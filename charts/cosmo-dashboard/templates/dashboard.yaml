@@ -98,6 +98,11 @@ spec:
         - --tls-key=/app/cert/tls.key
         - --tls-cert=/app/cert/tls.crt
         {{- end }}
+        {{- if .Values.ldapURL }}
+        - --ldap-url={{ .Values.ldapURL }}
+        - --ldap-user-attr={{ .Values.ldapUserAttr }}
+        - --ldap-basedn={{ .Values.ldapBaseDn }}
+        {{- end }}
         command:
         - /app/dashboard
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

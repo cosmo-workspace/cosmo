@@ -26,10 +26,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
-const (
-	fieldManager string = "cosmo-dashboard"
-)
-
 var (
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
@@ -62,13 +58,16 @@ type options struct {
 	Insecure                bool
 	ServerPort              int
 	MaxAgeMinutes           int
+	LdapURL                 string
+	LdapUserNameAttribute   string
+	LdapBaseDN              string
 }
 
 func NewRootCmd(o *options) *cobra.Command {
 
 	rootCmd := &cobra.Command{
-		Use:   "authserver",
-		Short: "Authenticate server",
+		Use:   "dashboard",
+		Short: "cosmo dashboard server",
 		Long: `
 cosmo dashboard server
 Complete documentation is available at http://github.com/cosmo-workspace/cosmo
@@ -84,7 +83,7 @@ MIT 2023 cosmo-workspace/cosmo
 	klog.InitFlags(goflags)
 	o.ZapOpts.BindFlags(goflags)
 	ctrl.RegisterFlags(goflags)
-	rootCmd.Flags().AddGoFlagSet(goflags)
+	rootCmd.PersistentFlags().AddGoFlagSet(goflags)
 
 	rootCmd.PersistentFlags().Int64Var(&o.ResponseTimeoutSeconds, "timeout-seconds", 3, "Timeout seconds for response")
 	rootCmd.PersistentFlags().Int64Var(&o.GracefulShutdownSeconds, "graceful-shutdown-seconds", 10, "Graceful shutdown seconds")
@@ -98,6 +97,9 @@ MIT 2023 cosmo-workspace/cosmo
 	rootCmd.PersistentFlags().BoolVar(&o.Insecure, "insecure", false, "start http server not https server")
 	rootCmd.PersistentFlags().IntVar(&o.ServerPort, "port", 8443, "Port for dashboard server")
 	rootCmd.PersistentFlags().IntVar(&o.MaxAgeMinutes, "maxage-minutes", 720, "session maxage minutes")
+	rootCmd.PersistentFlags().StringVar(&o.LdapURL, "ldap-url", "", "LDAP URL. ldap[s]://hostname.or.ip[:port]")
+	rootCmd.PersistentFlags().StringVar(&o.LdapUserNameAttribute, "ldap-user-attr", "sAMAccountname", "LDAP user attribute. ex: sAMAccountname or uid or cn")
+	rootCmd.PersistentFlags().StringVar(&o.LdapBaseDN, "ldap-basedn", "", "LDAP BaseDN. ex: dc=example,dc=com")
 
 	return rootCmd
 }
@@ -113,15 +115,18 @@ func (o *options) PreRunE(cmd *cobra.Command, args []string) error {
 }
 
 func (o *options) Validate(cmd *cobra.Command, args []string) error {
-	// TODO: validate length
-	if o.CookieDomain == "" {
-		return fmt.Errorf("%s is required", "cookie-domain")
-	}
+
 	if o.CookieHashKey == "" {
 		return fmt.Errorf("%s is required", "cookie-hashkey")
 	}
+	if len(o.CookieHashKey) < 16 {
+		return fmt.Errorf("%s is minimum 16 characters", "cookie-hashkey")
+	}
 	if o.CookieBlockKey == "" {
 		return fmt.Errorf("%s is required", "cookie-blockkey")
+	}
+	if len(o.CookieBlockKey) < 16 {
+		return fmt.Errorf("%s is minimum 16 characters", "cookie-blockkey")
 	}
 	if !o.Insecure {
 		if o.TLSCertPath == "" {
@@ -129,6 +134,14 @@ func (o *options) Validate(cmd *cobra.Command, args []string) error {
 		}
 		if o.TLSPrivateKeyPath == "" {
 			return fmt.Errorf("%s is required", "tls-key")
+		}
+	}
+	if o.LdapURL != "" {
+		if o.LdapUserNameAttribute == "" {
+			return fmt.Errorf("%s is required", "ldap-user-attr")
+		}
+		if o.LdapBaseDN == "" {
+			return fmt.Errorf("%s is required", "ldap-basedn")
 		}
 	}
 	return nil
@@ -139,6 +152,7 @@ func (o *options) Complete(cmd *cobra.Command, args []string) error {
 }
 
 func (o *options) RunE(cmd *cobra.Command, args []string) error {
+	cmd.SilenceUsage = true
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&o.ZapOpts)))
 
 	printVersion(cmd, o)
@@ -155,14 +169,16 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
-		os.Exit(1)
+		return err
 	}
 
 	// Setup server
 	klient := kosmo.NewClient(mgr.GetClient())
 
-	auths := map[cosmov1alpha1.UserAuthType]auth.Authorizer{
-		cosmov1alpha1.UserAuthTypePasswordSecert: auth.NewPasswordSecretAuthorizer(klient),
+	auths := make(map[cosmov1alpha1.UserAuthType]auth.Authorizer)
+	auths[cosmov1alpha1.UserAuthTypePasswordSecert] = auth.NewPasswordSecretAuthorizer(klient)
+	if o.LdapURL != "" {
+		auths[cosmov1alpha1.UserAuthTypeLDAP] = auth.NewLdapAuthorizer(o.LdapURL, o.LdapBaseDN, o.LdapUserNameAttribute)
 	}
 
 	serv := &Server{
@@ -187,14 +203,14 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 
 	if err := mgr.Add(serv); err != nil {
 		setupLog.Error(err, "failed to add server to controller-manager")
-		os.Exit(1)
+		return err
 	}
 
 	// Start server
 	setupLog.Info("Start dashboard server")
 	if err := mgr.Start(ctx); err != nil {
 		setupLog.Error(err, "problem running dashboard server")
-		os.Exit(1)
+		return err
 	}
 
 	return nil
