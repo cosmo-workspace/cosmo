@@ -89,12 +89,12 @@ const useUser = () => {
   /**
    * CreateDialog: Add user 
    */
-  const createUser = async (userName: string, displayName: string, roles?: string[], addons?: UserAddons[]) => {
+  const createUser = async (userName: string, displayName: string, authType: string, roles?: string[], addons?: UserAddons[]) => {
     console.log('addUser');
     setMask();
     try {
       try {
-        const result = await userService.createUser({ userName, displayName, roles, addons });
+        const result = await userService.createUser({ userName, displayName, authType, roles, addons });
         enqueueSnackbar(result.message, { variant: 'success' });
         return result.user;
       }
