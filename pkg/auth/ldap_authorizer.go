@@ -25,7 +25,7 @@ func NewLdapAuthorizer(url, baseDN, userNameAttribute string) *LdapAuthorizer {
 
 func (a *LdapAuthorizer) Authorize(ctx context.Context, msg AuthRequest) (bool, error) {
 
-	conn, err := ldap.DialURL(a.URL, ldap.DialWithTLSConfig(&tls.Config{InsecureSkipVerify: true}))
+	conn, err := ldap.DialURL(a.URL, ldap.DialWithTLSConfig(&tls.Config{}))
 	if err != nil {
 		return false, err
 	}
