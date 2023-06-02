@@ -114,8 +114,10 @@ var _ = Describe("Dashboard server [User]", func() {
 			ctx := context.Background()
 			res, err := client.CreateUser(ctx, NewRequestWithSession(req, getSession(loginUser)))
 			if err == nil {
-				Ω(res.Msg.User.DefaultPassword).ShouldNot(BeEmpty())
-				res.Msg.User.DefaultPassword = "xxxxxxxx"
+				if res.Msg.User.AuthType == cosmov1alpha1.UserAuthTypePasswordSecert.String() {
+					Ω(res.Msg.User.DefaultPassword).ShouldNot(BeEmpty())
+					res.Msg.User.DefaultPassword = "xxxxxxxx"
+				}
 				Ω(res.Msg).To(MatchSnapShot())
 				wsv1User, err := k8sClient.GetUser(context.Background(), req.UserName)
 				Expect(err).NotTo(HaveOccurred())
@@ -133,12 +135,14 @@ var _ = Describe("Dashboard server [User]", func() {
 				UserName:    "create-user-by-priv",
 				DisplayName: "create 1",
 				Roles:       []string{"team-a", "team-b"},
-				AuthType:    "kosmo-secret",
+				AuthType:    "password-secret",
 				Addons: []*dashv1alpha1.UserAddons{{
 					Template: "user-tmpl1",
 					Vars:     map[string]string{"HOGE": "FUGA"},
 				}},
 			}, withNamespace(0), withUserAddon("user-tmpl1")),
+			Entry("create normal user with ldap auth", privilegedUser, &dashv1alpha1.CreateUserRequest{
+				UserName: "create-user-ldap", AuthType: "ldap"}, withNamespace(0)),
 			Entry("create user with only name", privilegedUser, &dashv1alpha1.CreateUserRequest{UserName: "create-user-only-name"}, withNamespace(0)),
 			Entry("create privileged user", privilegedUser, &dashv1alpha1.CreateUserRequest{UserName: "create-user-priv-by-priv", Roles: []string{"cosmo-admin"}}, withNamespace(0)),
 			Entry("create user with namespace creation short delay before timeout", privilegedUser, &dashv1alpha1.CreateUserRequest{UserName: "create-user-with-delay"}, withNamespace(100*time.Millisecond)),
@@ -288,13 +292,13 @@ var _ = Describe("Dashboard server [User]", func() {
 		)
 
 		run_test := func(loginUser string, req *dashv1alpha1.DeleteUserRequest) {
-			testUtil.CreateCosmoUser(noRoleUser, "", nil)
+			testUtil.CreateCosmoUser(noRoleUser, "", nil, cosmov1alpha1.UserAuthTypePasswordSecert)
 			testUtil.CreateCosmoUser(teamDevRoleUser, "",
-				[]cosmov1alpha1.UserRole{{Name: "team-developer"}})
+				[]cosmov1alpha1.UserRole{{Name: "team-developer"}}, cosmov1alpha1.UserAuthTypePasswordSecert)
 			testUtil.CreateCosmoUser(otherteamDevRoleUser, "",
-				[]cosmov1alpha1.UserRole{{Name: "otherteam-developer"}})
+				[]cosmov1alpha1.UserRole{{Name: "otherteam-developer"}}, cosmov1alpha1.UserAuthTypePasswordSecert)
 			testUtil.CreateCosmoUser(teamDevAndOtherteamDevRoleUser, "",
-				[]cosmov1alpha1.UserRole{{Name: "team-developer"}, {Name: "otherteam-developer"}})
+				[]cosmov1alpha1.UserRole{{Name: "team-developer"}, {Name: "otherteam-developer"}}, cosmov1alpha1.UserAuthTypePasswordSecert)
 			By("---------------test start----------------")
 			ctx := context.Background()
 			_, beferr := k8sClient.GetUser(context.Background(), req.UserName)
@@ -423,13 +427,13 @@ var _ = Describe("Dashboard server [User]", func() {
 		)
 
 		run_test := func(loginUser string, req *dashv1alpha1.UpdateUserRoleRequest) {
-			testUtil.CreateCosmoUser(noRoleUser, "", nil)
+			testUtil.CreateCosmoUser(noRoleUser, "", nil, cosmov1alpha1.UserAuthTypePasswordSecert)
 			testUtil.CreateCosmoUser(teamDevRoleUser, "",
-				[]cosmov1alpha1.UserRole{{Name: "team-developer"}})
+				[]cosmov1alpha1.UserRole{{Name: "team-developer"}}, cosmov1alpha1.UserAuthTypePasswordSecert)
 			testUtil.CreateCosmoUser(otherteamDevRoleUser, "",
-				[]cosmov1alpha1.UserRole{{Name: "otherteam-developer"}})
+				[]cosmov1alpha1.UserRole{{Name: "otherteam-developer"}}, cosmov1alpha1.UserAuthTypePasswordSecert)
 			testUtil.CreateCosmoUser(teamDevAndOtherteamDevRoleUser, "",
-				[]cosmov1alpha1.UserRole{{Name: "team-developer"}, {Name: "otherteam-developer"}})
+				[]cosmov1alpha1.UserRole{{Name: "team-developer"}, {Name: "otherteam-developer"}}, cosmov1alpha1.UserAuthTypePasswordSecert)
 
 			By("---------------test start----------------")
 			ctx := context.Background()

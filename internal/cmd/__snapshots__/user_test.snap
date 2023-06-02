@@ -8,6 +8,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -107,7 +108,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"user-create\",
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -144,7 +145,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"user-create\",
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -175,7 +176,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"user-create\",
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -215,7 +216,7 @@ SnapShot = """
         \"name\": \"cosmo-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -251,7 +252,7 @@ SnapShot = """
         \"name\": \"cosmo-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -290,7 +291,7 @@ SnapShot = """
         \"name\": \"cosmo-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -298,6 +299,77 @@ SnapShot = """
         },
         \"vars\": {
           \"HOGE\": \"HOGEHOGE\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --auth-type ldap user-template1,HOGE:HOGEHOGE 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0m"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --auth-type ldap user-template1,HOGE:HOGEHOGE 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --auth-type ldap user-template1,HOGE:HOGEHOGE 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"create 1\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
+    \"authType\": \"ldap\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-template1\"
+        }
+      }
+    ]
+  },
+  \"Status\": {
+    \"namespace\": {}
+  }
+}
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --auth-type password-secret user-template1,HOGE:HOGEHOGE 1']
+SnapShot = """
+\u001B[32mSuccessfully created user user-create
+\u001B[0mDefault password: xxxxxxxx
+"""
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --auth-type password-secret user-template1,HOGE:HOGEHOGE 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [create] ✅ success in normal context: user create user-create --name create 1 --role cosmo-admin --auth-type password-secret user-template1,HOGE:HOGEHOGE 3']
+SnapShot = """
+{
+  \"Name\": \"user-create\",
+  \"Namespace\": \"\",
+  \"Spec\": {
+    \"displayName\": \"create 1\",
+    \"roles\": [
+      {
+        \"name\": \"cosmo-admin\"
+      }
+    ],
+    \"authType\": \"password-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"user-template1\"
         }
       }
     ]
@@ -329,7 +401,7 @@ SnapShot = """
         \"name\": \"xxx\"
       }
     ],
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -360,7 +432,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"user-create\",
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -391,7 +463,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"user-create\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -415,7 +487,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"user-create-later\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -433,6 +505,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -459,6 +532,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -485,6 +559,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -511,6 +586,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -538,6 +614,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -564,6 +641,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -590,6 +668,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -606,6 +685,33 @@ Global Flags:
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --addon user-template1,HOGE :yyy 2']
 SnapShot = 'invalid options: invalid addon vars format: user-template1,HOGE :yyy'
 
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --auth-type xxxx 1']
+SnapShot = """
+Error: validation error: invalid auth-type: xxxx
+Usage:
+  cosmoctl user create USER_NAME --role cosmo-admin [flags]
+
+Flags:
+      --addon stringArray           user addons by Template, which created in UserNamespace
+                                    format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
+      --cluster-addon stringArray   user addons by ClusterTemplate
+                                    format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+  -h, --help                        help for create
+      --name string                 user display name (default: same as USER_NAME)
+      --role strings                user roles
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --auth-type xxxx 2']
+SnapShot = 'validation error: invalid auth-type: xxxx'
+
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create user-create --cluster-addon user-clustertemplate1,HOGE : 1']
 SnapShot = """
 Error: invalid options: invalid addon vars format: user-clustertemplate1,HOGE :
@@ -616,6 +722,7 @@ Flags:
       --addon stringArray           user addons by Template, which created in UserNamespace
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
+      --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
   -h, --help                        help for create
@@ -803,7 +910,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 1']
 SnapShot = """
-Error: failed to reset password: namespaces \"cosmo-user-XXXXXX\" not found
+Error: user is not found: users.cosmo-workspace.github.io \"XXXXXX\" not found
 Usage:
   cosmoctl user reset-password USER_NAME [flags]
 
@@ -819,7 +926,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 2']
-SnapShot = 'failed to reset password: namespaces "cosmo-user-XXXXXX" not found'
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "XXXXXX" not found'
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password user1 --password  1']
 SnapShot = """
@@ -845,7 +952,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"ロールなし\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -859,7 +966,7 @@ SnapShot = """
   \"Name\": \"upd-norole\",
   \"Namespace\": \"\",
   \"Spec\": {
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -882,7 +989,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"ロールなし\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -902,7 +1009,7 @@ SnapShot = """
         \"name\": \"team-dev\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -925,7 +1032,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"ロールなし\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -940,7 +1047,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"namechanged\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -963,7 +1070,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"ロールなし\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -983,7 +1090,7 @@ SnapShot = """
         \"name\": \"cosmo-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -1006,7 +1113,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"ロールなし\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -1029,7 +1136,7 @@ SnapShot = """
         \"name\": \"otherteam-developer\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -1057,7 +1164,7 @@ SnapShot = """
         \"name\": \"cosmo-admin\"
       }
     ],
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}
@@ -1072,7 +1179,7 @@ SnapShot = """
   \"Namespace\": \"\",
   \"Spec\": {
     \"displayName\": \"特権\",
-    \"authType\": \"kosmo-secret\"
+    \"authType\": \"password-secret\"
   },
   \"Status\": {
     \"namespace\": {}

@@ -165,7 +165,7 @@ const UserList: React.VFC = () => {
         .filter((us) => us.status === 'Active')
         .filter((us) => (filterRoles.length == 0 || isUserMatchedToFilterRoles(us)))
         .map((us) =>
-          <Grid item key={us.name} xs={12} sm={6} md={4}>
+          <Grid item key={us.name} xs={12} sm={6} md={6} lg={4}>
             <Card>
               <CardHeader
                 avatar={<NameAvatar name={us.displayName} onClick={() => { userInfoDialogDispatch(true, { user: us }) }} />}

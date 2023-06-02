@@ -79,6 +79,10 @@ cert:
 
 insecure: false
 
+ldapURL: ""
+ldapUserAttr: ""
+ldapBaseDn: ""
+
 localRunTest:
   enabled: false
   dashboardEndpoint:

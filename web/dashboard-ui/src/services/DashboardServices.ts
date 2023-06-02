@@ -1,4 +1,5 @@
-import { createConnectTransport, createPromiseClient } from "@bufbuild/connect-web";
+import { createPromiseClient } from "@bufbuild/connect";
+import { createConnectTransport } from "@bufbuild/connect-web";
 import { useMemo } from "react";
 import { AuthService } from "../proto/gen/dashboard/v1alpha1/auth_service_connectweb";
 import { TemplateService } from "../proto/gen/dashboard/v1alpha1/template_service_connectweb";

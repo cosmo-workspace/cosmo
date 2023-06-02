@@ -325,7 +325,7 @@
 | name | [string](#string) |  |  |
 | display_name | [string](#string) |  |  |
 | roles | [string](#string) | repeated |  |
-| auth_type | [string](#string) |  | {&#34;&#34;,&#34;kosmo-secret&#34;} |
+| auth_type | [string](#string) |  |  |
 | addons | [UserAddons](#dashboard-v1alpha1-UserAddons) | repeated |  |
 | default_password | [string](#string) |  |  |
 | status | [string](#string) |  |  |

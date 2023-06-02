@@ -7,7 +7,7 @@ SnapShot = """
   },
   \"spec\": {
     \"displayName\": \"お名前\",
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -57,7 +57,7 @@ SnapShot = """
   },
   \"spec\": {
     \"displayName\": \"お名前\",
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {
@@ -112,7 +112,7 @@ SnapShot = """
   },
   \"spec\": {
     \"displayName\": \"お名前\",
-    \"authType\": \"kosmo-secret\",
+    \"authType\": \"password-secret\",
     \"addons\": [
       {
         \"template\": {

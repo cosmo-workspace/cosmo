@@ -100,7 +100,7 @@ func (c *TestUtil) DeleteClusterTemplateAll() {
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 
-func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role []cosmov1alpha1.UserRole) {
+func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role []cosmov1alpha1.UserRole, authType cosmov1alpha1.UserAuthType) {
 	ctx := context.Background()
 	user := cosmov1alpha1.User{
 		ObjectMeta: metav1.ObjectMeta{
@@ -109,7 +109,7 @@ func (c *TestUtil) CreateCosmoUser(userName string, dispayName string, role []co
 		Spec: cosmov1alpha1.UserSpec{
 			DisplayName: dispayName,
 			Roles:       role,
-			AuthType:    cosmov1alpha1.UserAuthTypePasswordSecert,
+			AuthType:    authType,
 		},
 	}
 	err := c.kosmoClient.Create(ctx, &user)
@@ -152,18 +152,20 @@ func (c *TestUtil) CreateUserNameSpaceandDefaultPasswordIfAbsent(userName string
 	Expect(err).ShouldNot(HaveOccurred())
 }
 
-func (c *TestUtil) CreateLoginUser(userName, displayName string, role []cosmov1alpha1.UserRole, password string) {
+func (c *TestUtil) CreateLoginUser(userName, displayName string, role []cosmov1alpha1.UserRole, authType cosmov1alpha1.UserAuthType, password string) {
 	ctx := context.Background()
 
-	c.CreateCosmoUser(userName, displayName, role)
+	c.CreateCosmoUser(userName, displayName, role, authType)
 	c.CreateUserNameSpaceandDefaultPasswordIfAbsent(userName)
-	err := c.kosmoClient.RegisterPassword(ctx, userName, []byte(password))
-	Expect(err).ShouldNot(HaveOccurred())
 
-	Eventually(func() error {
-		_, _, err := c.kosmoClient.VerifyPassword(ctx, userName, []byte(password))
-		return err
-	}, time.Second*5, time.Millisecond*100).Should(Succeed())
+	if authType == cosmov1alpha1.UserAuthTypePasswordSecert {
+		err := c.kosmoClient.RegisterPassword(ctx, userName, []byte(password))
+		Expect(err).ShouldNot(HaveOccurred())
+		Eventually(func() error {
+			_, _, err := c.kosmoClient.VerifyPassword(ctx, userName, []byte(password))
+			return err
+		}, time.Second*5, time.Millisecond*100).Should(Succeed())
+	}
 }
 
 func (c *TestUtil) CreateWorkspace(userName string, name string, template string, vars map[string]string) {

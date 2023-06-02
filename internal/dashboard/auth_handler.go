@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -55,7 +56,8 @@ func (s *Server) Login(ctx context.Context, req *connect_go.Request[dashv1alpha1
 	authrizer, ok := s.Authorizers[user.Spec.AuthType]
 	if !ok {
 		log.Info("authrizer not found", "username", req.Msg.UserName, "authType", user.Spec.AuthType)
-		return nil, ErrResponse(log, kosmo.NewServiceUnavailableError("incorrect user or password", nil))
+		return nil, ErrResponse(log, kosmo.NewServiceUnavailableError(
+			fmt.Sprintf("auth-type '%s' is not supported", user.Spec.AuthType), nil))
 	}
 	verified, err := authrizer.Authorize(ctx, req.Msg)
 	if err != nil {

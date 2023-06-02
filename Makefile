@@ -102,7 +102,7 @@ WEBHOOK_CHART_YAML ?= charts/cosmo-controller-manager/templates/webhook.yaml
 export WEBHOOK_CHART_SUFIX
 gen-charts: kustomize
 	cp config/crd/bases/* charts/cosmo-controller-manager/crds/
-	kustomize build config/webhook-chart \
+	$(KUSTOMIZE) build config/webhook-chart \
 		| sed -e 's/namespace: system/namespace: {{ .Release.Namespace }}/g' \
 		| sed -z 's;apiVersion: v1\nkind: Service\nmetadata:\n  name: cosmo-webhook-service\n  namespace: {{ .Release.Namespace }}\nspec:\n  ports:\n  - port: 443\n    targetPort: 9443\n  selector:\n    control-plane: controller-manager;{{ $$tls := fromYaml ( include "cosmo-controller-manager.gen-certs" . ) }};g' \
 		| sed -z 's;creationTimestamp: null;{{- if $$.Values.enableCertManager }}\n  annotations:\n    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/cosmo-serving-cert\n  {{- end }}\n  labels:\n    {{- include "cosmo-controller-manager.labels" . | nindent 4 }};g' \
@@ -166,7 +166,7 @@ test: manifests generate fmt vet envtest go-test.env go-test ## Run tests.
 go-test: go
 ifeq ($(QUICK_BUILD),no)
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" \
-	$(GO) test $(TEST_FILES) -coverprofile $(COVER_PROFILE) $(TEST_OPTS)
+	$(GO) test $(TEST_FILES) -coverpkg="./..." -coverprofile $(COVER_PROFILE) $(TEST_OPTS)
 endif
 
 .PHONY: test-all-k8s-versions
@@ -219,8 +219,8 @@ endif
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${DASHBOARD_VERSION} cosmo-workspace/" ./internal/dashboard/root.go
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${COSMOCTL_VERSION} cosmo-workspace/" ./internal/cmd/version/version.go
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${AUTHPROXY_VERSION} cosmo-workspace/" ./cmd/auth-proxy/main.go
-	cd config/manager && kustomize edit set image controller=${IMG_MANAGER}
-	cd config/dashboard && kustomize edit set image dashboard=${IMG_DASHBOARD}
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG_MANAGER}
+	cd config/dashboard && $(KUSTOMIZE) edit set image dashboard=${IMG_DASHBOARD}
 	sed -i.bk \
 		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_MANAGER_VERSION:v%=%}/" \
 		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${MANAGER_VERSION}/" \

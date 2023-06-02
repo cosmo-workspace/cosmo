@@ -4,10 +4,10 @@ import {
   Divider,
   FormControlLabel,
   FormHelperText,
-  Grid, IconButton, InputAdornment, List, ListItem, ListItemText, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Tooltip, Typography
+  Grid, IconButton, InputAdornment, List, ListItem, ListItemText, MenuItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Tooltip, Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { UseFormRegisterReturn, useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
@@ -32,7 +32,7 @@ interface UserActionDialogProps {
   defaultOpenUserAddon?: boolean
 }
 
-const UserActionDialog: React.VFC<UserActionDialogProps> = ({ title, actions, user, onClose, defaultOpenUserAddon }) => {
+const UserActionDialog: React.FC<UserActionDialogProps> = ({ title, actions, user, onClose, defaultOpenUserAddon }) => {
   console.log(user)
   const [openUserAddon, setOpenUserAddon] = useState<boolean>(defaultOpenUserAddon || false);
 
@@ -174,11 +174,13 @@ export const UserCreateConfirmDialog: React.VFC<{ onClose: () => void, onConfirm
         <Button onClick={() => onClose()} color="primary">Back</Button>
         <Button variant="contained" color="secondary"
           onClick={() => {
-            hooks.createUser(user.name, user.displayName, user.roles, user.addons)
+            hooks.createUser(user.name, user.displayName, user.authType, user.roles, user.addons)
               .then(newUser => {
                 onClose();
                 onConfirm();
-                passwordDialogDispatch(true, { user: newUser! });
+                if (newUser?.defaultPassword) {
+                  passwordDialogDispatch(true, { user: newUser! });
+                }
                 hooks.getUsers();
               });
           }}
@@ -194,6 +196,7 @@ export const UserCreateConfirmDialog: React.VFC<{ onClose: () => void, onConfirm
 type Inputs = {
   id: string;
   name: string;
+  authType: string;
   existingRoles: { enabled: boolean }[];
   roles: { name: string }[];
   addons: {
@@ -262,7 +265,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
         userCreateConfirmDialogDispatch(true, {
           onConfirm: () => { onClose(); },
           user:
-            new User({ name: inp.id, displayName: inp.name, roles: protoRoles, authType: "default", addons: protoUserAddons })
+            new User({ name: inp.id, displayName: inp.name, roles: protoRoles, authType: inp.authType, addons: protoUserAddons })
         });
       })}
         autoComplete="new-password">
@@ -296,6 +299,28 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
                 startAdornment: (<InputAdornment position="start"><PersonOutlineTwoTone /></InputAdornment>),
               }}
             />
+            <TextField label="Auth Type" select fullWidth defaultValue=''
+              {...registerMui(register('authType', {
+                required: { value: true, message: "Required" },
+              }))}
+              error={Boolean(errors.authType)}
+              helperText={errors.authType && errors.authType.message}
+              InputProps={{
+                autoComplete: "off",
+                startAdornment: (<InputAdornment position="start"><SecurityOutlined /></InputAdornment>),
+              }}
+            >
+              <MenuItem key={"password-secret"} value={"password-secret"}>
+                <Tooltip title={"Authentication by password registered with cosmo"} placement="right" arrow enterDelay={500}>
+                  <div>password-secret</div>
+                </Tooltip>
+              </MenuItem>
+              <MenuItem key={"ldap"} value={"ldap"}>
+                <Tooltip title={"Authentication by ldap"} placement="right" arrow enterDelay={500}>
+                  <div>ldap</div>
+                </Tooltip>
+              </MenuItem>
+            </TextField>
             <Typography color="text.secondary" display="block" variant="caption" >Roles</Typography>
             <Grid container>
               {hooks.existingRoles.map((label, index) =>

@@ -22,8 +22,9 @@ var _ = Describe("Dashboard server [auth]", func() {
 	var client dashboardv1alpha1connect.AuthServiceClient
 
 	BeforeEach(func() {
-		testUtil.CreateLoginUser("normal-user", "user", nil, "password1")
-		testUtil.CreateLoginUser("admin-user", "admin", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, "password2")
+		testUtil.CreateLoginUser("normal-user", "user", nil, cosmov1alpha1.UserAuthTypePasswordSecert, "password1")
+		testUtil.CreateLoginUser("admin-user", "admin", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, cosmov1alpha1.UserAuthTypePasswordSecert, "password2")
+		testUtil.CreateLoginUser("ldap-user", "ldap-u", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, cosmov1alpha1.UserAuthTypeLDAP, "")
 		client = dashboardv1alpha1connect.NewAuthServiceClient(http.DefaultClient, "http://localhost:8888")
 	})
 
@@ -57,6 +58,7 @@ var _ = Describe("Dashboard server [auth]", func() {
 			run_test,
 			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "normal-user", Password: "password1"}),
 			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "admin-user", Password: "password2"}),
+			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "ldap-user", Password: "password"}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
@@ -64,6 +66,7 @@ var _ = Describe("Dashboard server [auth]", func() {
 			Entry(nil, &dashv1alpha1.LoginRequest{Password: "password1"}),
 			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "normal-user"}),
 			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "normal-user", Password: "invalid"}),
+			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "ldap-user", Password: "invalid"}),
 			Entry(nil, &dashv1alpha1.LoginRequest{UserName: "xxxxxxx", Password: "password1"}),
 		)
 	})

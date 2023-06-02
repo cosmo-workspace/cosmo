@@ -7,12 +7,13 @@ syntax = "proto3";
 
 package dashboard.v1alpha1;
 
+import "validate/validate.proto";
+
 message User {
   string name = 1;
   string display_name = 2;
   repeated string roles = 3;
-  // {"","kosmo-secret"}
-  string auth_type = 4;
+  string auth_type = 4 [(validate.rules).string = {in: ["password-secret", "ldap"]}];
   repeated UserAddons addons = 5;
   string default_password = 6;
   string status = 7;

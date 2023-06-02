@@ -111,16 +111,31 @@ spec:
 	}
 
 	Context("when creating User resource", func() {
-		It("should do create namespace, password and addons", func() {
+
+		BeforeEach(func() {
 			ctx := context.Background()
 
 			By("creating template")
-
-			err := k8sClient.Create(ctx, &namespacedUserAddon)
+			addon := namespacedUserAddon.DeepCopy()
+			err := k8sClient.Create(ctx, addon)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			err = k8sClient.Create(ctx, &clusterUserAddon)
+			clusterAddon := clusterUserAddon.DeepCopy()
+			err = k8sClient.Create(ctx, clusterAddon)
 			Expect(err).ShouldNot(HaveOccurred())
+		})
+
+		AfterEach(func() {
+			By("delete template")
+			addon := namespacedUserAddon.DeepCopy()
+			err := k8sClient.Delete(ctx, addon)
+			Expect(err).ShouldNot(HaveOccurred())
+			clusterAddon := clusterUserAddon.DeepCopy()
+			err = k8sClient.Delete(ctx, clusterAddon)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+
+		It("should do create namespace, password and addons", func() {
 
 			By("creating user")
 
@@ -150,7 +165,7 @@ spec:
 				},
 			}
 
-			err = k8sClient.Create(ctx, &user)
+			err := k8sClient.Create(ctx, &user)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			var createdNs corev1.Namespace
@@ -224,6 +239,121 @@ spec:
 					return errors.New("invalid template name")
 				}
 				return k8sClient.Get(ctx, client.ObjectKey{Name: user.Name}, &user)
+			}, time.Second*10).Should(Succeed())
+
+			Eventually(func() error {
+				var clusterAddonInst cosmov1alpha1.ClusterInstance
+				key := client.ObjectKey{
+					Name: useraddon.InstanceName(clusterUserAddon.Name, user.GetName()),
+				}
+				err := k8sClient.Get(ctx, key, &clusterAddonInst)
+				if err != nil {
+					return err
+				}
+				if clusterAddonInst.Spec.Template.Name != clusterUserAddon.Name {
+					return errors.New("invalid template name")
+				}
+				return nil
+			}, time.Second*10).Should(Succeed())
+		})
+
+		It("should do create namespace and addons when authtype is ldap", func() {
+
+			By("creating user")
+
+			user := cosmov1alpha1.User{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "ualdap",
+				},
+				Spec: cosmov1alpha1.UserSpec{
+					DisplayName: "お名前",
+					AuthType:    cosmov1alpha1.UserAuthTypeLDAP,
+					Addons: []cosmov1alpha1.UserAddon{
+						{
+							Template: cosmov1alpha1.UserAddonTemplateRef{
+								Name: namespacedUserAddon.Name,
+							},
+							Vars: map[string]string{
+								"KEY": "VAL",
+							},
+						},
+						{
+							Template: cosmov1alpha1.UserAddonTemplateRef{
+								Name:          clusterUserAddon.Name,
+								ClusterScoped: true,
+							},
+						},
+					},
+				},
+			}
+
+			err := k8sClient.Create(ctx, &user)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			var createdNs corev1.Namespace
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name: cosmov1alpha1.UserNamespace(user.Name),
+				}
+				return k8sClient.Get(ctx, key, &createdNs)
+			}, time.Second*10).Should(Succeed())
+
+			Eventually(func() string {
+				key := client.ObjectKey{
+					Name: user.Name,
+				}
+				err := k8sClient.Get(ctx, key, &user)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return user.Status.Namespace.Name
+			}, time.Second*30).Should(BeEquivalentTo(cosmov1alpha1.UserNamespace(user.Name)))
+
+			By("check namespace label")
+
+			label := createdNs.GetLabels()
+			Expect(label).ShouldNot(BeNil())
+
+			username, ok := label[cosmov1alpha1.NamespaceLabelKeyUserName]
+			Expect(ok).Should(BeTrue())
+			Expect(username).Should(BeEquivalentTo(user.Name))
+
+			By("check namespace owner reference")
+
+			ownerref := ownerRef(&user, scheme.Scheme)
+			Expect(createdNs.OwnerReferences).Should(BeEqualityDeepEqual([]metav1.OwnerReference{ownerref}))
+
+			By("check user's namespace reference")
+
+			Expect(user.Status.Namespace.Name).Should(BeEquivalentTo(createdNs.GetName()))
+			Expect(user.Status.Namespace.UID).Should(BeEquivalentTo(createdNs.GetUID()))
+			Expect(user.Status.Namespace.ResourceVersion).Should(BeEquivalentTo(createdNs.GetResourceVersion()))
+
+			By("check password secret is not created")
+
+			Eventually(func() error {
+				_, err := password.GetDefaultPassword(ctx, k8sClient, user.Name)
+				return err
+			}, time.Second*5).ShouldNot(Succeed())
+
+			By("check addon instance is created")
+
+			Eventually(func() error {
+				var addonInst cosmov1alpha1.Instance
+				key := client.ObjectKey{
+					Name:      useraddon.InstanceName(namespacedUserAddon.Name, ""),
+					Namespace: createdNs.GetName(),
+				}
+				err := k8sClient.Get(ctx, key, &addonInst)
+				if err != nil {
+					return err
+				}
+				if addonInst.Spec.Template.Name != namespacedUserAddon.Name {
+					return errors.New("invalid template name")
+				}
+				if equality.Semantic.DeepEqual(addonInst.Spec.Vars, user.Spec.Addons[0].Vars) {
+					return errors.New("invalid template name")
+				}
+				return nil
 			}, time.Second*10).Should(Succeed())
 
 			Eventually(func() error {

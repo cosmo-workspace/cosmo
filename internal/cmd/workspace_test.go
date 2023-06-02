@@ -56,8 +56,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 		options.Scheme = scheme
 		rootCmd = NewRootCmd(options)
 
-		testUtil.CreateLoginUser("user2", "お名前", nil, "password")
-		testUtil.CreateLoginUser("user1", "アドミン", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, "password")
+		testUtil.CreateLoginUser("user2", "お名前", nil, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
+		testUtil.CreateLoginUser("user1", "アドミン", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
 		testUtil.CreateTemplate(cosmov1alpha1.TemplateLabelEnumTypeWorkspace, "template1")
 		By("---------------BeforeEach end----------------")
 	})
