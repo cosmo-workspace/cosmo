@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -137,7 +138,7 @@ spec:
 
 				return createdInst.Status.LastAppliedObjectsCount
 			}, time.Second*10).Should(Equal(3))
-			Ω(instanceSnapshot(&createdInst)).To(MatchSnapShot())
+			Ω(snap.InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 
 			By("checking PersistentVolume is as expected in template")
 			var pv corev1.PersistentVolume
@@ -147,7 +148,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &pv)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&pv)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&pv)).To(MatchSnapShot())
 
 			// StorageClass
 			By("checking StorageClass is as expected")
@@ -159,7 +160,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &sc)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&sc)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&sc)).To(MatchSnapShot())
 
 			By("checking PVC is as expected")
 
@@ -171,7 +172,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &pvc)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&pvc)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&pvc)).To(MatchSnapShot())
 
 		})
 	})
@@ -229,7 +230,7 @@ spec:
 				return *pv.Spec.Capacity.Storage()
 
 			}, time.Second*30).Should(Equal(expectedQuantity))
-			Ω(objectSnapshot(&pv)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&pv)).To(MatchSnapShot())
 
 			By("checking if StorageClass not updated")
 			var sc storagev1.StorageClass
@@ -239,7 +240,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &sc)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&sc)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&sc)).To(MatchSnapShot())
 		})
 	})
 
@@ -381,7 +382,7 @@ parameters:
 				Expect(err).ShouldNot(HaveOccurred())
 				return updatedInst.Status.LastAppliedObjectsCount
 			}, time.Second*60).Should(Equal(2))
-			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
+			Ω(snap.InstanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 })

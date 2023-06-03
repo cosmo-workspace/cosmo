@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"k8s.io/apimachinery/pkg/api/meta"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -14,6 +15,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
+	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
@@ -159,7 +161,21 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 
 	warnings := make([]string, 0)
 	if !template.IsSkipValidation(tmpl) {
+		if t, _ := template.GetTemplateType(tmpl); t == cosmov1alpha1.TemplateLabelEnumTypeUserAddon {
+			dummyUser := cosmov1alpha1.User{}
+			dummyUser.SetName("dummy")
+			dummyUserAddon := cosmov1alpha1.UserAddon{
+				Template: cosmov1alpha1.UserAddonTemplateRef{
+					Name:          tmpl.GetName(),
+					ClusterScoped: tmpl.GetScope() == meta.RESTScopeRoot,
+				},
+			}
+			useraddon.PatchUserAddonInstanceAsDesired(dummyInst, dummyUserAddon, dummyUser, nil)
+		}
+		mutateInstanceObject(dummyInst, tmpl)
+
 		// dryrun apply
+		log.Debug().Info("dryrun validation", "dummy_instance", dummyInst)
 		if errs := dryrunReconcile(ctx, h.Client, h.FieldManager, dummyInst, tmpl); len(errs) > 0 {
 			for _, err := range errs {
 				warnings = append(warnings, err.Error())
@@ -171,6 +187,7 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 
 	res := admission.Allowed("Validation OK")
 	if len(warnings) > 0 {
+		log.Info("dryrun validation warnings", "warnings", warnings)
 		res.Warnings = warnings
 	}
 	return res

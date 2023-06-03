@@ -45,9 +45,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 	ctx = clog.IntoContext(ctx, log)
 
 	var inst cosmov1alpha1.InstanceObject
-	var instSpec *cosmov1alpha1.InstanceSpec
 	var tmpl cosmov1alpha1.TemplateObject
-	var tmplSpec *cosmov1alpha1.TemplateSpec
 
 	switch req.RequestKind.Kind {
 	case "Instance":
@@ -59,15 +57,12 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		}
 		log.DumpObject(h.Client.Scheme(), inst, "request instance")
 
-		instSpec = inst.GetSpec()
-
 		tmpl = &cosmov1alpha1.Template{}
 		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
 		if err != nil {
 			log.Error(err, "failed to get template")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		tmplSpec = tmpl.GetSpec()
 
 	case "ClusterInstance":
 		inst = &cosmov1alpha1.ClusterInstance{}
@@ -78,15 +73,12 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		}
 		log.DumpObject(h.Client.Scheme(), inst, "request cluster instance")
 
-		instSpec = inst.GetSpec()
-
 		tmpl = &cosmov1alpha1.ClusterTemplate{}
 		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
 		if err != nil {
 			log.Error(err, "failed to get cluster template")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		tmplSpec = tmpl.GetSpec()
 
 	default:
 		err := fmt.Errorf("invalid kind: %v", req.RequestKind)
@@ -95,6 +87,22 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 	}
 
 	before := inst.DeepCopyObject().(cosmov1alpha1.InstanceObject)
+
+	mutateInstanceObject(inst, tmpl)
+
+	log.Debug().PrintObjectDiff(before, inst)
+
+	marshaled, err := json.Marshal(inst)
+	if err != nil {
+		log.Error(err, "failed to marshal response")
+		return admission.Errored(http.StatusInternalServerError, err)
+	}
+	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
+}
+
+func mutateInstanceObject(inst cosmov1alpha1.InstanceObject, tmpl cosmov1alpha1.TemplateObject) {
+	instSpec := inst.GetSpec()
+	tmplSpec := tmpl.GetSpec()
 
 	// mutate the fields in instance
 	// propagate template type annotation to instance annotation
@@ -148,15 +156,6 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 			scaleSpecs[i].Target.Name = instance.InstanceResourceName(inst.GetName(), scaleSpec.Target.Name)
 		}
 	}
-
-	log.Debug().PrintObjectDiff(before, inst)
-
-	marshaled, err := json.Marshal(inst)
-	if err != nil {
-		log.Error(err, "failed to marshal response")
-		return admission.Errored(http.StatusInternalServerError, err)
-	}
-	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
 }
 
 func fixIngressBackendName(ingRules []netv1.IngressRule, instName string) {

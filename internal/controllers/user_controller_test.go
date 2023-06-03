@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sort"
 	"time"
 
 	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 	. "github.com/onsi/ginkgo/v2"
@@ -191,7 +191,7 @@ spec:
 				}
 				return nil
 			}, time.Second*30).ShouldNot(HaveOccurred())
-			Expect(userSnapshot(&user)).Should(MatchSnapShot())
+			Expect(snap.UserSnapshot(&user)).Should(MatchSnapShot())
 
 			By("check namespace label")
 
@@ -394,7 +394,7 @@ spec:
 				})
 				return k8sClient.Update(ctx, &user)
 			}, time.Second*30).Should(Succeed())
-			Expect(userSnapshot(&user)).Should(MatchSnapShot())
+			Expect(snap.UserSnapshot(&user)).Should(MatchSnapShot())
 
 			var updatedUser cosmov1alpha1.User
 			Eventually(func() int {
@@ -402,33 +402,9 @@ spec:
 				Expect(err).ShouldNot(HaveOccurred())
 				return len(updatedUser.Status.Addons)
 			}, time.Second*30).Should(Equal(3))
-			Expect(userSnapshot(&updatedUser)).Should(MatchSnapShot())
+			Expect(snap.UserSnapshot(&updatedUser)).Should(MatchSnapShot())
 
 		})
 	})
 
 })
-
-func userSnapshot(in *cosmov1alpha1.User) *cosmov1alpha1.User {
-	obj := in.DeepCopy()
-	removeDynamicFields(obj)
-
-	obj.Status.Namespace.CreationTimestamp = nil
-	obj.Status.Namespace.UID = ""
-	obj.Status.Namespace.ResourceVersion = ""
-
-	for i, v := range obj.Status.Addons {
-		v.CreationTimestamp = nil
-		v.UID = ""
-		v.ResourceVersion = ""
-		obj.Status.Addons[i] = v
-	}
-	sort.Slice(obj.Status.Addons, func(i, j int) bool {
-		return obj.Status.Addons[i].Kind < obj.Status.Addons[j].Kind
-	})
-	sort.Slice(obj.Status.Addons, func(i, j int) bool {
-		return obj.Status.Addons[i].Name < obj.Status.Addons[j].Name
-	})
-
-	return obj
-}
