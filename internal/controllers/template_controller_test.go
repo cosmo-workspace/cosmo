@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -81,7 +82,7 @@ spec:
 			Eventually(func() error {
 				return k8sClient.Get(ctx, client.ObjectKey{Name: tmpl.Name}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&createdTmpl)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&createdTmpl)).To(MatchSnapShot())
 
 			var pod corev1.Pod
 			key := client.ObjectKey{
@@ -109,7 +110,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &pod)
 			}, time.Second*30).Should(Succeed())
-			Ω(objectSnapshot(&pod)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&pod)).To(MatchSnapShot())
 
 			var pod2 corev1.Pod
 			Eventually(func() error {
@@ -119,7 +120,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &pod2)
 			}, time.Second*30).Should(Succeed())
-			Ω(objectSnapshot(&pod2)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&pod2)).To(MatchSnapShot())
 
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
@@ -133,7 +134,7 @@ spec:
 				Expect(err).ShouldNot(HaveOccurred())
 				return createdInst.Status.LastAppliedObjectsCount
 			}, time.Second*60).Should(BeEquivalentTo(2))
-			Ω(instanceSnapshot(&createdInst)).To(MatchSnapShot())
+			Ω(snap.InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 		})
 	})
 
@@ -186,7 +187,7 @@ spec:
 				Expect(err).NotTo(HaveOccurred())
 				return pod.Spec.Containers[0].Image
 			}, time.Second*30).Should(BeEquivalentTo("alpine:next"))
-			Ω(objectSnapshot(&pod)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&pod)).To(MatchSnapShot())
 
 			By("checking if pod2 is deleted")
 			var pod2 corev1.Pod
@@ -212,7 +213,7 @@ spec:
 				Expect(err).ShouldNot(HaveOccurred())
 				return updatedInst.Status.LastAppliedObjectsCount
 			}, time.Second*60).Should(Equal(1))
-			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
+			Ω(snap.InstanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 })

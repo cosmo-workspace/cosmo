@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -99,7 +100,7 @@ rules:
 				}
 				return k8sClient.Get(ctx, key, &cr)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&cr)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&cr)).To(MatchSnapShot())
 
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
@@ -168,7 +169,7 @@ rules:
 
 				return cr.Rules[0].Verbs
 			}, time.Second*60).Should(Equal([]string{"get", "list", "watch", "update"}))
-			Ω(objectSnapshot(&cr)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&cr)).To(MatchSnapShot())
 
 			// fetch current clusterinstance
 			var updatedInst cosmov1alpha1.ClusterInstance
@@ -180,7 +181,7 @@ rules:
 				Expect(err).ShouldNot(HaveOccurred())
 				return updatedInst.Status.TemplateResourceVersion
 			}, time.Second*60).ShouldNot(Equal(curInst.Status.TemplateResourceVersion))
-			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
+			Ω(snap.InstanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 })

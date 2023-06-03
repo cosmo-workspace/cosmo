@@ -3,10 +3,10 @@ package controllers
 import (
 	"context"
 	"reflect"
-	"sort"
 	"testing"
 	"time"
 
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -151,7 +151,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &deploy)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&deploy)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&deploy)).To(MatchSnapShot())
 
 			By("checking if child service is as expected")
 			var svc corev1.Service
@@ -162,7 +162,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &svc)
 			}, time.Second*10).Should(Succeed())
-			Ω(serviceSnapshot(&svc)).To(MatchSnapShot())
+			Ω(snap.ServiceSnapshot(&svc)).To(MatchSnapShot())
 
 			By("checking if child ingress is as expected")
 			var ing netv1.Ingress
@@ -173,7 +173,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &ing)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&ing)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&ing)).To(MatchSnapShot())
 
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
@@ -185,7 +185,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &createdInst)
 			}, time.Second*10).Should(Succeed())
-			Ω(instanceSnapshot(&createdInst)).To(MatchSnapShot())
+			Ω(snap.InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 		})
 	})
 
@@ -289,7 +289,7 @@ spec:
 				}
 				return k8sClient.Update(ctx, &curInst)
 			}, time.Second*60).Should(Succeed())
-			Ω(instanceSnapshot(&curInst)).To(MatchSnapShot())
+			Ω(snap.InstanceSnapshot(&curInst)).To(MatchSnapShot())
 
 			By("checking if child deployment is as expected")
 			var deploy appsv1.Deployment
@@ -303,7 +303,7 @@ spec:
 
 				return *deploy.Spec.Replicas
 			}, time.Second*10).Should(Equal(int32(3)))
-			Ω(objectSnapshot(&deploy)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&deploy)).To(MatchSnapShot())
 
 			By("checking if child service is as expected")
 			var svc corev1.Service
@@ -317,7 +317,7 @@ spec:
 
 				return svc.Spec.Type
 			}, time.Second*10).Should(Equal(corev1.ServiceTypeLoadBalancer))
-			Ω(serviceSnapshot(&svc)).To(MatchSnapShot())
+			Ω(snap.ServiceSnapshot(&svc)).To(MatchSnapShot())
 
 			By("checking if child ingress is as expected")
 			var ing netv1.Ingress
@@ -328,7 +328,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &ing)
 			}, time.Second*10).Should(Succeed())
-			Ω(objectSnapshot(&ing)).To(MatchSnapShot())
+			Ω(snap.ObjectSnapshot(&ing)).To(MatchSnapShot())
 
 			var updatedInst cosmov1alpha1.Instance
 			Eventually(func() error {
@@ -338,7 +338,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &updatedInst)
 			}, time.Second*10).Should(Succeed())
-			Ω(instanceSnapshot(&updatedInst)).To(MatchSnapShot())
+			Ω(snap.InstanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 
@@ -456,64 +456,4 @@ func Test_unstToObjectRef(t *testing.T) {
 			}
 		})
 	}
-}
-
-func instanceSnapshot(in cosmov1alpha1.InstanceObject) cosmov1alpha1.InstanceObject {
-	o := in.DeepCopyObject()
-	obj := o.(cosmov1alpha1.InstanceObject)
-	removeDynamicFields(obj)
-
-	for i, v := range obj.GetStatus().LastApplied {
-		v.CreationTimestamp = nil
-		v.UID = ""
-		v.ResourceVersion = ""
-		obj.GetStatus().LastApplied[i] = v
-	}
-	sort.Slice(obj.GetStatus().LastApplied, func(i, j int) bool {
-		return obj.GetStatus().LastApplied[i].Kind < obj.GetStatus().LastApplied[j].Kind
-	})
-	sort.Slice(obj.GetStatus().LastApplied, func(i, j int) bool {
-		return obj.GetStatus().LastApplied[i].Name < obj.GetStatus().LastApplied[j].Name
-	})
-	obj.GetStatus().TemplateResourceVersion = ""
-
-	return obj
-}
-
-func serviceSnapshot(in *corev1.Service) *corev1.Service {
-	obj := in.DeepCopy()
-	removeDynamicFields(obj)
-
-	obj.Spec.ClusterIP = ""
-	obj.Spec.ClusterIPs = nil
-
-	for i, p := range obj.Spec.Ports {
-		if p.NodePort >= 30000 {
-			obj.Spec.Ports[i].NodePort = 30000
-		}
-	}
-
-	return obj
-}
-
-func objectSnapshot(obj client.Object) client.Object {
-	t := obj.DeepCopyObject()
-	o := t.(client.Object)
-	removeDynamicFields(o)
-	return o
-}
-
-func removeDynamicFields(o client.Object) {
-	o.SetCreationTimestamp(metav1.Time{})
-	o.SetResourceVersion("")
-	o.SetGeneration(0)
-	o.SetUID(types.UID(""))
-	o.SetManagedFields(nil)
-
-	ownerRefs := make([]metav1.OwnerReference, len(o.GetOwnerReferences()))
-	for i, v := range o.GetOwnerReferences() {
-		v.UID = ""
-		ownerRefs[i] = v
-	}
-	o.SetOwnerReferences(ownerRefs)
 }

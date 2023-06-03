@@ -1,0 +1,66 @@
+
+[Test_mutateInstanceObject/mutate_workspace_instance - 1]
+{
+ "metadata": {
+  "creationTimestamp": null,
+  "labels": {
+   "cosmo-workspace.github.io/type": "workspace"
+  },
+  "name": "workspace-instance"
+ },
+ "spec": {
+  "override": {
+   "network": {
+    "ingress": [
+     {
+      "targetName": "workspace-instance-ingress"
+     }
+    ],
+    "service": [
+     {
+      "targetName": "workspace-instance-service"
+     }
+    ]
+   },
+   "scale": [
+    {
+     "replicas": 0,
+     "target": {
+      "name": "workspace-instance-deployment"
+     }
+    }
+   ]
+  },
+  "template": {
+   "name": "workspace-template"
+  },
+  "vars": {
+   "XXX": "xxx"
+  }
+ },
+ "status": {}
+}
+---
+
+[Test_mutateInstanceObject/mutate_useraddon_clusterinstance - 1]
+{
+ "metadata": {
+  "creationTimestamp": null,
+  "labels": {
+   "cosmo-workspace.github.io/type": "useraddon"
+  },
+  "name": "workspace-instance"
+ },
+ "spec": {
+  "override": {},
+  "template": {
+   "name": "workspace-template"
+  },
+  "vars": {
+   "XXX": "xxx",
+   "YYY": "yyy"
+  }
+ },
+ "status": {}
+}
+---

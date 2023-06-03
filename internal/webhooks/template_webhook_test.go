@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -134,13 +135,9 @@ spec:
 
 			var createdTmpl cosmov1alpha1.Template
 			Eventually(func() error {
-				err := k8sClient.Get(ctx, client.ObjectKey{Name: tmpl.GetName(), Namespace: tmpl.GetNamespace()}, &createdTmpl)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, client.ObjectKey{Name: tmpl.GetName()}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
-			Expect(&createdTmpl).Should(BeLooseDeepEqual(expectedTmpl))
+			Expect(snap.ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
 		})
 	})
 
@@ -177,6 +174,12 @@ rules:
 
 			// Error but pass with warning
 			Expect(err).ShouldNot(HaveOccurred())
+
+			var createdTmpl cosmov1alpha1.Template
+			Eventually(func() error {
+				return k8sClient.Get(ctx, client.ObjectKey{Name: clusterLevelTmpl.GetName()}, &createdTmpl)
+			}, time.Second*10).Should(Succeed())
+			Expect(snap.ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
 		})
 	})
 
@@ -206,6 +209,12 @@ spec:
 
 			// Error but pass with warning
 			Expect(err).ShouldNot(HaveOccurred())
+
+			var createdTmpl cosmov1alpha1.ClusterTemplate
+			Eventually(func() error {
+				return k8sClient.Get(ctx, client.ObjectKey{Name: nsLevelTmpl.GetName()}, &createdTmpl)
+			}, time.Second*10).Should(Succeed())
+			Expect(snap.ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
 		})
 	})
 
@@ -243,6 +252,12 @@ rules:
 			}
 			err := k8sClient.Create(ctx, &clusterLevelTmpl)
 			Expect(err).ShouldNot(HaveOccurred())
+
+			var createdTmpl cosmov1alpha1.Template
+			Eventually(func() error {
+				return k8sClient.Get(ctx, client.ObjectKey{Name: clusterLevelTmpl.GetName()}, &createdTmpl)
+			}, time.Second*10).Should(Succeed())
+			Expect(snap.ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
 		})
 	})
 })
