@@ -160,7 +160,16 @@ func (h *TemplateValidationWebhookHandler) Handle(ctx context.Context, req admis
 	}
 
 	warnings := make([]string, 0)
-	if !template.IsSkipValidation(tmpl) {
+	skipValidation := template.IsSkipValidation(tmpl)
+	for _, rv := range tmpl.GetSpec().RequiredVars {
+		if rv.Default == "" {
+			warnings = append(warnings, fmt.Sprintf("skip dryrun validation because required var %v has no default", rv.Var))
+			skipValidation = true
+			break
+		}
+	}
+
+	if !skipValidation {
 		if t, _ := template.GetTemplateType(tmpl); t == cosmov1alpha1.TemplateLabelEnumTypeUserAddon {
 			dummyUser := cosmov1alpha1.User{}
 			dummyUser.SetName("dummy")
