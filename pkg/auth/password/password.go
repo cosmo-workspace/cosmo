@@ -148,8 +148,14 @@ func registerPassword(ctx context.Context, c client.Client, username string, pas
 	secret.SetNamespace(cosmov1alpha1.UserNamespace(username))
 
 	_, err := ctrl.CreateOrUpdate(ctx, c, &secret, func() error {
-		secret.Annotations = map[string]string{
-			cosmov1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault: strconv.FormatBool(isDefault)}
+		ann := secret.GetAnnotations()
+		if ann == nil {
+			ann = make(map[string]string)
+		}
+		ann[cosmov1alpha1.UserPasswordSecretAnnKeyUserPasswordIfDefault] = strconv.FormatBool(isDefault)
+		secret.SetAnnotations(ann)
+
+		cosmov1alpha1.SetControllerManaged(&secret)
 
 		secret.Data = map[string][]byte{
 			cosmov1alpha1.UserPasswordSecretDataKeyUserPasswordSecret: password,
