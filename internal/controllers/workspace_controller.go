@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -12,7 +13,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	corev1 "k8s.io/api/core/v1"
+	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -26,6 +27,8 @@ type WorkspaceReconciler struct {
 	client.Client
 	Recorder record.EventRecorder
 	Scheme   *runtime.Scheme
+
+	TraefikIngressRouteCfg *workspace.TraefikIngressRouteConfig
 }
 
 // +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch;create;update;patch;delete
@@ -56,17 +59,19 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 	ws.Status.Config = cfg
 
+	// sync instance
 	inst := &cosmov1alpha1.Instance{}
 	inst.SetName(ws.Name)
 	inst.SetNamespace(ws.Namespace)
-
 	op, err := kubeutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
 		return workspace.PatchWorkspaceInstanceAsDesired(inst, ws, r.Scheme)
 	})
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-
+	if op != controllerutil.OperationResultNone {
+		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. instance synced")
+	}
 	gvk, _ := apiutil.GVKForObject(inst, r.Scheme)
 	ws.Status.Instance = cosmov1alpha1.ObjectRef{
 		ObjectReference: corev1.ObjectReference{
@@ -80,8 +85,18 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		CreationTimestamp: &inst.CreationTimestamp,
 	}
 
+	// sync ingress route
+	ir := traefikv1.IngressRoute{}
+	ir.SetName(ws.Name)
+	ir.SetNamespace(ws.Namespace)
+	op, err = kubeutil.CreateOrUpdate(ctx, r.Client, &ir, func() error {
+		return r.TraefikIngressRouteCfg.PatchTraefikIngressRouteAsDesired(&ir, ws, r.Scheme)
+	})
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 	if op != controllerutil.OperationResultNone {
-		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. instance synced")
+		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. traefik ingress route synced")
 	}
 
 	// update workspace status

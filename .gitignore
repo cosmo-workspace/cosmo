@@ -28,3 +28,5 @@ bin
 *.key
 *.crt
 *.cert
+
+config/crd/traefik

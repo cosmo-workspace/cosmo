@@ -69,6 +69,37 @@ SnapShot = """
 }
 """
 
+['Workspace controller when creating a Workspace resource should do reconcile once and create Instance resources 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws-test\",
+    \"namespace\": \"cosmo-user-wsctltest\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo-workspace.github.io/controller-managed\": \"1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Workspace\",
+        \"name\": \"ws-test\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ]
+  },
+  \"spec\": {
+    \"routes\": [],
+    \"entryPoints\": [
+      \"web\",
+      \"websecure\"
+    ]
+  }
+}
+"""
+
 ['Workspace controller when updating Workspace spec should do reconcile again and update child Instance 1']
 SnapShot = """
 {
@@ -164,6 +195,84 @@ SnapShot = """
       ]
     }
   },
-  \"status\": {}
+  \"status\": {
+    \"templateName\": \"code-server-test\",
+    \"lastApplied\": [
+      {
+        \"kind\": \"Deployment\",
+        \"namespace\": \"cosmo-user-wsctltest\",
+        \"name\": \"ws-test-ws-dep\",
+        \"apiVersion\": \"apps/v1\"
+      },
+      {
+        \"kind\": \"Ingress\",
+        \"namespace\": \"cosmo-user-wsctltest\",
+        \"name\": \"ws-test-ws-ing\",
+        \"apiVersion\": \"networking.k8s.io/v1\"
+      },
+      {
+        \"kind\": \"Service\",
+        \"namespace\": \"cosmo-user-wsctltest\",
+        \"name\": \"ws-test-ws-svc\",
+        \"apiVersion\": \"v1\"
+      }
+    ],
+    \"lastAppliedObjectsCount\": 3,
+    \"templateObjectsCount\": 3
+  }
+}
+"""
+
+['Workspace controller when updating Workspace spec should do reconcile again and update child Instance 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws-test\",
+    \"namespace\": \"cosmo-user-wsctltest\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo-workspace.github.io/controller-managed\": \"1\"
+    },
+    \"ownerReferences\": [
+      {
+        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
+        \"kind\": \"Workspace\",
+        \"name\": \"ws-test\",
+        \"uid\": \"\",
+        \"controller\": true,
+        \"blockOwnerDeletion\": true
+      }
+    ]
+  },
+  \"spec\": {
+    \"routes\": [
+      {
+        \"match\": \"PathPrefix(`/path`)\",
+        \"kind\": \"Rule\",
+        \"priority\": 100,
+        \"services\": [
+          {
+            \"name\": \"ws-test-ws-svc\",
+            \"kind\": \"Service\",
+            \"port\": 3000,
+            \"scheme\": \"http\"
+          }
+        ],
+        \"middlewares\": [
+          {
+            \"name\": \"userNameHeader\"
+          },
+          {
+            \"name\": \"cosmo-auth\",
+            \"namespace\": \"cosmo-system\"
+          }
+        ]
+      }
+    ],
+    \"entryPoints\": [
+      \"web\",
+      \"websecure\"
+    ]
+  }
 }
 """
