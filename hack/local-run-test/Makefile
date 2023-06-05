@@ -209,7 +209,6 @@ install-dashboard: helm kubectl docker-build-dashboard ## Install cosmo dashboar
 		--set image.repository=cosmo.io:5000/cosmo-dashboard \
 		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
-		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=false \
@@ -223,7 +222,6 @@ install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
 		--set image.repository=cosmo.io:5000/cosmo-dashboard \
 		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
-		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=true \

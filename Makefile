@@ -102,6 +102,7 @@ WEBHOOK_CHART_YAML ?= charts/cosmo-controller-manager/templates/webhook.yaml
 export WEBHOOK_CHART_SUFIX
 gen-charts: kustomize
 	cp config/crd/bases/* charts/cosmo-controller-manager/crds/
+	cp config/user-addon/traefik-middleware/useraddon-*.yaml charts/cosmo-dashboard/templates/
 	$(KUSTOMIZE) build config/webhook-chart \
 		| sed -e 's/namespace: system/namespace: {{ .Release.Namespace }}/g' \
 		| sed -z 's;apiVersion: v1\nkind: Service\nmetadata:\n  name: cosmo-webhook-service\n  namespace: {{ .Release.Namespace }}\nspec:\n  ports:\n  - port: 443\n    targetPort: 9443\n  selector:\n    control-plane: controller-manager;{{ $$tls := fromYaml ( include "cosmo-controller-manager.gen-certs" . ) }};g' \

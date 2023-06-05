@@ -111,6 +111,20 @@ spec:
         {{- if ne .Values.logLevel "info" }}
         - --zap-devel=true
         {{- end }}
+        {{- if .Values.traefik.entrypoints }}
+        - --traefik-entrypoints={{ join "," .Values.traefik.entrypoints }}
+        {{- end }}
+        {{- if .Values.traefik.middlewares.auth }}
+        - --traefik-authen-middleware={{ .Values.traefik.middlewares.auth }}
+        {{- end }}
+        {{- if .Values.traefik.namespace }}
+        - --traefik-authen-middleware-namespace={{ .Values.traefik.namespace }}
+        {{- else }}
+        - --traefik-authen-middleware-namespace={{ .Release.Namespace }}
+        {{- end }}
+        {{- if .Values.traefik.middlewares.usernameHeader }}
+        - --traefik-username-header-middleware={{ .Values.traefik.middlewares.usernameHeader }}
+        {{- end }}
         - --workspace-default-urlbase={{ .Values.defaultURLBase.protocol }}://{{ .Values.defaultURLBase.host }}.{{ .Values.defaultURLBase.domain }}
         command:
         - /manager
