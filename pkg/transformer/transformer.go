@@ -3,6 +3,8 @@ package transformer
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"strings"
 
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -53,11 +55,11 @@ func AllTransformers(inst cosmov1alpha1.InstanceObject, scheme *runtime.Scheme, 
 	return []Transformer{
 		// MetadataTransformer perform update each object's metadata
 		NewMetadataTransformer(inst, scheme, template.IsDisableNamePrefix(tmpl)),
-		// NetworkTransformer perform update ingresses and services by network override
-		NewNetworkTransformer(inst.GetSpec().Override.Network, inst.GetName()),
 		// JSONPatchTransformer perform JSONPatch
 		NewJSONPatchTransformer(inst.GetSpec().Override.PatchesJson6902, inst.GetName()),
-		// ScalingTransformer perform override replicas
-		NewScalingTransformer(inst.GetSpec().Override.Scale, inst.GetName()),
 	}
+}
+
+func Name(trans Transformer) string {
+	return strings.Split(reflect.TypeOf(trans).String(), ".")[1]
 }
