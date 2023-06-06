@@ -152,7 +152,7 @@ COVER_PROFILE ?= cover.out
 
 .PHONY: clear-snapshots
 clear-snapshots: ## Clear snapshots
-	-find . -type f | grep __snapshots__ | grep -v web | xargs rm -f
+	-find . -type f | grep __snapshots__ | grep -v "/web/" | xargs rm -f
 
 .PHONY: go-test.env
 go-test.env:

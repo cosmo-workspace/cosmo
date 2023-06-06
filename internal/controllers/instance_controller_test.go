@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -151,7 +150,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &deploy)
 			}, time.Second*10).Should(Succeed())
-			Ω(snap.ObjectSnapshot(&deploy)).To(MatchSnapShot())
+			Ω(ObjectSnapshot(&deploy)).To(MatchSnapShot())
 
 			By("checking if child service is as expected")
 			var svc corev1.Service
@@ -162,7 +161,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &svc)
 			}, time.Second*10).Should(Succeed())
-			Ω(snap.ServiceSnapshot(&svc)).To(MatchSnapShot())
+			Ω(ServiceSnapshot(&svc)).To(MatchSnapShot())
 
 			By("checking if child ingress is as expected")
 			var ing netv1.Ingress
@@ -173,7 +172,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &ing)
 			}, time.Second*10).Should(Succeed())
-			Ω(snap.ObjectSnapshot(&ing)).To(MatchSnapShot())
+			Ω(ObjectSnapshot(&ing)).To(MatchSnapShot())
 
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
@@ -185,7 +184,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &createdInst)
 			}, time.Second*10).Should(Succeed())
-			Ω(snap.InstanceSnapshot(&createdInst)).To(MatchSnapShot())
+			Ω(InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 		})
 	})
 
@@ -289,7 +288,7 @@ spec:
 				}
 				return k8sClient.Update(ctx, &curInst)
 			}, time.Second*60).Should(Succeed())
-			Ω(snap.InstanceSnapshot(&curInst)).To(MatchSnapShot())
+			Ω(InstanceSnapshot(&curInst)).To(MatchSnapShot())
 
 			By("checking if child deployment is as expected")
 			var deploy appsv1.Deployment
@@ -303,7 +302,7 @@ spec:
 
 				return *deploy.Spec.Replicas
 			}, time.Second*10).Should(Equal(int32(3)))
-			Ω(snap.ObjectSnapshot(&deploy)).To(MatchSnapShot())
+			Ω(ObjectSnapshot(&deploy)).To(MatchSnapShot())
 
 			By("checking if child service is as expected")
 			var svc corev1.Service
@@ -317,7 +316,7 @@ spec:
 
 				return svc.Spec.Type
 			}, time.Second*10).Should(Equal(corev1.ServiceTypeLoadBalancer))
-			Ω(snap.ServiceSnapshot(&svc)).To(MatchSnapShot())
+			Ω(ServiceSnapshot(&svc)).To(MatchSnapShot())
 
 			By("checking if child ingress is as expected")
 			var ing netv1.Ingress
@@ -328,7 +327,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &ing)
 			}, time.Second*10).Should(Succeed())
-			Ω(snap.ObjectSnapshot(&ing)).To(MatchSnapShot())
+			Ω(ObjectSnapshot(&ing)).To(MatchSnapShot())
 
 			var updatedInst cosmov1alpha1.Instance
 			Eventually(func() error {
@@ -338,7 +337,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &updatedInst)
 			}, time.Second*10).Should(Succeed())
-			Ω(snap.InstanceSnapshot(&updatedInst)).To(MatchSnapShot())
+			Ω(InstanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 

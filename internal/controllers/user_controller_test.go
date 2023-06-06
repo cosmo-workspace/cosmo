@@ -6,22 +6,20 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
-	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
+	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 )
 
 var _ = Describe("User controller", func() {
@@ -191,7 +189,7 @@ spec:
 				}
 				return nil
 			}, time.Second*30).ShouldNot(HaveOccurred())
-			Expect(snap.UserSnapshot(&user)).Should(MatchSnapShot())
+			Expect(UserSnapshot(&user)).Should(MatchSnapShot())
 
 			By("check namespace label")
 
@@ -394,7 +392,7 @@ spec:
 				})
 				return k8sClient.Update(ctx, &user)
 			}, time.Second*30).Should(Succeed())
-			Expect(snap.UserSnapshot(&user)).Should(MatchSnapShot())
+			Expect(UserSnapshot(&user)).Should(MatchSnapShot())
 
 			var updatedUser cosmov1alpha1.User
 			Eventually(func() int {
@@ -402,7 +400,7 @@ spec:
 				Expect(err).ShouldNot(HaveOccurred())
 				return len(updatedUser.Status.Addons)
 			}, time.Second*30).Should(Equal(3))
-			Expect(snap.UserSnapshot(&updatedUser)).Should(MatchSnapShot())
+			Expect(UserSnapshot(&updatedUser)).Should(MatchSnapShot())
 
 		})
 	})

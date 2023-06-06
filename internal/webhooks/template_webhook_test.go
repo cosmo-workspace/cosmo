@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/snap"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -137,7 +136,7 @@ spec:
 			Eventually(func() error {
 				return k8sClient.Get(ctx, client.ObjectKey{Name: tmpl.GetName()}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
-			Expect(snap.ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
+			Expect(ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
 		})
 	})
 
@@ -179,7 +178,7 @@ rules:
 			Eventually(func() error {
 				return k8sClient.Get(ctx, client.ObjectKey{Name: clusterLevelTmpl.GetName()}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
-			Expect(snap.ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
+			Expect(ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
 		})
 	})
 
@@ -214,7 +213,7 @@ spec:
 			Eventually(func() error {
 				return k8sClient.Get(ctx, client.ObjectKey{Name: nsLevelTmpl.GetName()}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
-			Expect(snap.ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
+			Expect(ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
 		})
 	})
 
@@ -257,7 +256,7 @@ rules:
 			Eventually(func() error {
 				return k8sClient.Get(ctx, client.ObjectKey{Name: clusterLevelTmpl.GetName()}, &createdTmpl)
 			}, time.Second*10).Should(Succeed())
-			Expect(snap.ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
+			Expect(ObjectSnapshot(&createdTmpl)).Should(MatchSnapShot())
 		})
 	})
 })
