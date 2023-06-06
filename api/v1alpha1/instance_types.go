@@ -78,9 +78,7 @@ type TemplateRef struct {
 
 // OverrideSpec defines overrides to transform built objects
 type OverrideSpec struct {
-	Scale           []ScalingOverrideSpec `json:"scale,omitempty"`
-	Network         *NetworkOverrideSpec  `json:"network,omitempty"`
-	PatchesJson6902 []Json6902            `json:"patchesJson6902,omitempty"`
+	PatchesJson6902 []Json6902 `json:"patchesJson6902,omitempty"`
 }
 
 // NetworkOverrideSpec defines overrides to transform network resources
