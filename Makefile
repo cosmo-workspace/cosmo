@@ -155,10 +155,10 @@ COVER_PROFILE ?= cover.out
 clear-snapshots: ## Clear snapshots
 	-find . -type f | grep __snapshots__ | grep -v "/web/" | xargs rm -f
 
-config/crd/traefik/traefik.io_ingressroutes.yaml:
+config/crd/traefik/traefik.io_ingressroutes.yaml: $(HELM)
 	mkdir -p config/crd/traefik
-	wget -O config/crd/traefik/traefik.io_ingressroutes.yaml \
-		https://raw.githubusercontent.com/traefik/traefik-helm-chart/master/traefik/crds/traefik.io_ingressroutes.yaml
+	$(HELM) dependency update ./charts/cosmo-traefik
+	tar -xvf ./charts/cosmo-traefik/charts/traefik-*.tgz -O traefik/crds/traefik.io_ingressroutes.yaml > config/crd/traefik/traefik.io_ingressroutes.yaml
 
 .PHONY: go-test.env
 go-test.env:
