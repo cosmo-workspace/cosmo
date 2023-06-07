@@ -1,6 +1,6 @@
 # eks-irsa-useraddon example
 
-Example CSOMO UserAddon Template for creating serviceaccount associated with IAM Role
+Example COSMO UserAddon Template for creating serviceaccount associated with IAM Role
 
 ```sh
 # fetch Cluster's OIDC Provider info
@@ -16,5 +16,5 @@ aws cloudformation create-stack --stack-name cosmo-test-user-addon --template-bo
 kubectl create -f eks-irsa-useraddon.yaml
 
 # create COSMO User with "eks-irsa-useraddon" UserAddon
-cosmoctl user create sample-user --addons eks-irsa-useraddon
+cosmoctl user create sample-user --addon eks-irsa-useraddon
 ```

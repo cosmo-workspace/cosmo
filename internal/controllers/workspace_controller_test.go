@@ -4,17 +4,16 @@ import (
 	"context"
 	"time"
 
-	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"sigs.k8s.io/controller-runtime/pkg/client"
-
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/utils/pointer"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
@@ -174,38 +173,15 @@ spec:
 
 			var createdInst cosmov1alpha1.Instance
 			Eventually(func() error {
-				key := client.ObjectKey{
-					Name:      wsName,
-					Namespace: nsName,
-				}
-				return k8sClient.Get(ctx, key, &createdInst)
+				return k8sClient.Get(ctx, client.ObjectKey{Name: wsName, Namespace: nsName}, &createdInst)
 			}, time.Second*10).Should(Succeed())
+			Expect(InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 
-			instRef := corev1.ObjectReference{
-				APIVersion:      cosmov1alpha1.GroupVersion.String(),
-				Kind:            "Instance",
-				Name:            createdInst.Name,
-				Namespace:       createdInst.Namespace,
-				UID:             createdInst.UID,
-				ResourceVersion: createdInst.ResourceVersion,
-			}
-
-			created := looseDeepCopyObject(createdInst)
-			Expect(created).To(MatchSnapShot())
-
-			By("fetching workspace resource and checking workspace status")
-
-			var createdWs cosmov1alpha1.Workspace
-			Eventually(func() corev1.ObjectReference {
-				key := client.ObjectKey{
-					Name:      wsName,
-					Namespace: nsName,
-				}
-				err := k8sClient.Get(ctx, key, &createdWs)
-				Expect(err).ShouldNot(HaveOccurred())
-
-				return createdWs.Status.Instance.ObjectReference
-			}, time.Second*10).Should(BeEqualityDeepEqual(instRef))
+			var createdIngRoute traefikv1.IngressRoute
+			Eventually(func() error {
+				return k8sClient.Get(ctx, client.ObjectKey{Name: wsName, Namespace: nsName}, &createdIngRoute)
+			}, time.Second*10).Should(Succeed())
+			Expect(ObjectSnapshot(&createdIngRoute)).To(MatchSnapShot())
 		})
 	})
 
@@ -216,12 +192,7 @@ spec:
 			// fetch current workspace
 			var ws cosmov1alpha1.Workspace
 			Eventually(func() error {
-				key := types.NamespacedName{
-					Name:      wsName,
-					Namespace: nsName,
-				}
-				err := k8sClient.Get(ctx, key, &ws)
-				if err != nil {
+				if err := k8sClient.Get(ctx, client.ObjectKey{Name: wsName, Namespace: nsName}, &ws); err != nil {
 					return err
 				}
 
@@ -243,33 +214,18 @@ spec:
 
 			var createdInst cosmov1alpha1.Instance
 			Eventually(func() int64 {
-				key := client.ObjectKey{
-					Name:      wsName,
-					Namespace: nsName,
-				}
-				err := k8sClient.Get(ctx, key, &createdInst)
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: wsName, Namespace: nsName}, &createdInst)
 				Expect(err).ShouldNot(HaveOccurred())
 
 				return createdInst.Spec.Override.Scale[0].Replicas
 			}, time.Second*10).Should(BeEquivalentTo(0))
+			Expect(InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 
-			created := looseDeepCopyObject(createdInst)
-			Expect(created).To(MatchSnapShot())
+			var createdIngRoute traefikv1.IngressRoute
+			Eventually(func() error {
+				return k8sClient.Get(ctx, client.ObjectKey{Name: wsName, Namespace: nsName}, &createdIngRoute)
+			}, time.Second*10).Should(Succeed())
+			Expect(ObjectSnapshot(&createdIngRoute)).To(MatchSnapShot())
 		})
 	})
 })
-
-func looseDeepCopyObject(inst cosmov1alpha1.Instance) *cosmov1alpha1.Instance {
-	loose := inst.DeepCopy()
-	loose.SetSelfLink("")
-	loose.SetUID("")
-	loose.SetResourceVersion("")
-	loose.SetGeneration(0)
-	loose.SetCreationTimestamp(metav1.Time{})
-	loose.SetManagedFields(nil)
-	loose.Status = cosmov1alpha1.InstanceStatus{}
-	for i := range loose.OwnerReferences {
-		loose.OwnerReferences[i].UID = ""
-	}
-	return loose
-}

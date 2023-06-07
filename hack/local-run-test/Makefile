@@ -209,7 +209,6 @@ install-dashboard: helm kubectl docker-build-dashboard ## Install cosmo dashboar
 		--set image.repository=cosmo.io:5000/cosmo-dashboard \
 		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
-		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=false \
@@ -223,7 +222,6 @@ install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
 		--set image.repository=cosmo.io:5000/cosmo-dashboard \
 		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
-		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=true \
@@ -248,8 +246,10 @@ docker-build-cs:  ## Docker build code-server.
 
 apply-template: kubectl cosmoctl docker-build-cs ## Apply template.
 	@echo ====== $@ ======
-	until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
-	until (kubectl apply -f ../../example/fixed-efs-pv-useraddon.yaml) do sleep 1; done
+	# until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
+	# until (kubectl apply -f ../../config/user-addon/traefik-middleware/useraddon-cosmo-username-headers.yaml) do sleep 1; done
+	for i in `ls ../../example/useraddons/*/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
+	for i in `ls ../../example/workspaces/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
 	$(MAKE) -C templates/code-server-01 apply
 	# $(MAKE) -C templates/example apply
 

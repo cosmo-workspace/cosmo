@@ -95,3 +95,12 @@ localRunTest:
   webhookEndpoint:
     ip: 127.0.0.1
     port: 9443
+
+traefik:
+  entrypoints:
+    - web
+    - websecure
+  namespace:
+  middlewares:
+    auth: cosmo-auth
+    usernameHeader: cosmo-username-headers

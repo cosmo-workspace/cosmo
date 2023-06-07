@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cosmo-username-headers
+spec:
+  headers:
+    customRequestHeaders:
+      X-Cosmo-UserName: "{{USER_NAME}}"
+    customResponseHeaders:
+      X-Cosmo-UserName: "{{USER_NAME}}"

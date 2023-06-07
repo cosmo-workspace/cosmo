@@ -1,0 +1,164 @@
+
+[TestTraefikIngressRouteConfig_PatchTraefikIngressRouteAsDesired/ok - 1]
+{
+ "metadata": {
+  "creationTimestamp": null,
+  "labels": {
+   "cosmo-workspace.github.io/controller-managed": "1"
+  }
+ },
+ "spec": {
+  "entryPoints": [
+   "web",
+   "websecure"
+  ],
+  "routes": [
+   {
+    "kind": "Rule",
+    "match": "Host(`www.host.example.com`)",
+    "middlewares": [
+     {
+      "name": "userNameHeader"
+     },
+     {
+      "name": "cosmo-auth",
+      "namespace": "cosmo-system"
+     }
+    ],
+    "priority": 100,
+    "services": [
+     {
+      "kind": "Service",
+      "name": "ws1-svc",
+      "port": 8080,
+      "scheme": "http"
+     }
+    ]
+   },
+   {
+    "kind": "Rule",
+    "match": "Host(`public.host.example.com`)",
+    "priority": 100,
+    "services": [
+     {
+      "kind": "Service",
+      "name": "ws1-svc",
+      "port": 8080,
+      "scheme": "http"
+     }
+    ]
+   },
+   {
+    "kind": "Rule",
+    "match": "Host(`min.host.example.com`)",
+    "middlewares": [
+     {
+      "name": "userNameHeader"
+     },
+     {
+      "name": "cosmo-auth",
+      "namespace": "cosmo-system"
+     }
+    ],
+    "priority": 100,
+    "services": [
+     {
+      "kind": "Service",
+      "name": "ws1-svc",
+      "port": 8080,
+      "scheme": "http"
+     }
+    ]
+   },
+   {
+    "kind": "Rule",
+    "match": "",
+    "middlewares": [
+     {
+      "name": "userNameHeader"
+     },
+     {
+      "name": "cosmo-auth",
+      "namespace": "cosmo-system"
+     }
+    ],
+    "priority": 100,
+    "services": [
+     {
+      "kind": "Service",
+      "name": "ws1-svc",
+      "port": 8080,
+      "scheme": "http"
+     }
+    ]
+   }
+  ]
+ }
+}
+---
+
+[TestTraefikIngressRouteConfig_TraefikRoute/default - 1]
+{
+ "kind": "Rule",
+ "match": "Host(`host.example.com`)",
+ "middlewares": [
+  {
+   "name": "userNameHeader"
+  },
+  {
+   "name": "cosmo-auth",
+   "namespace": "cosmo-system"
+  }
+ ],
+ "priority": 100,
+ "services": [
+  {
+   "kind": "Service",
+   "name": "backend-svc",
+   "port": 8080,
+   "scheme": "http"
+  }
+ ]
+}
+---
+
+[TestTraefikIngressRouteConfig_TraefikRoute/no_hostname - 1]
+{
+ "kind": "Rule",
+ "match": "PathPrefix(`/path`)",
+ "middlewares": [
+  {
+   "name": "userNameHeader"
+  },
+  {
+   "name": "cosmo-auth",
+   "namespace": "cosmo-system"
+  }
+ ],
+ "priority": 100,
+ "services": [
+  {
+   "kind": "Service",
+   "name": "backend-svc",
+   "port": 8080,
+   "scheme": "http"
+  }
+ ]
+}
+---
+
+[TestTraefikIngressRouteConfig_TraefikRoute/no_hostname#01 - 1]
+{
+ "kind": "Rule",
+ "match": "Host(`host.example.com`) \u0026\u0026 PathPrefix(`/path`)",
+ "priority": 100,
+ "services": [
+  {
+   "kind": "Service",
+   "name": "backend-svc",
+   "port": 8080,
+   "scheme": "http"
+  }
+ ]
+}
+---

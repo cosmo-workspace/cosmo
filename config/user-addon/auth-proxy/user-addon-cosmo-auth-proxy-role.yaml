@@ -2,8 +2,6 @@
 apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Template
 metadata:
-  annotations:
-    useraddon.cosmo-workspace.github.io/default: "true"
   creationTimestamp: null
   labels:
     cosmo-workspace.github.io/type: useraddon

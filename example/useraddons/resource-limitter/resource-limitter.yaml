@@ -1,0 +1,30 @@
+apiVersion: cosmo-workspace.github.io/v1alpha1
+kind: Template
+metadata:
+  annotations:
+    cosmo-workspace.github.io/disable-nameprefix: "true"
+  labels:
+    cosmo-workspace.github.io/type: useraddon
+  name: resource-limitter
+spec:
+  description: "limit user resources"
+  rawYaml: |
+    apiVersion: v1
+    kind: ResourceQuota
+    metadata:
+      name: quota
+      namespace: '{{NAMESPACE}}'
+    spec:
+      hard:
+        limits.cpu: '{{LIMIT_TOTAL_CPU_CORE}}'
+        limits.memory: '{{LIMIT_TOTAL_MEM_GB}}Gi'
+        {{STORAGE_CLASS_NAME}}.storageclass.storage.k8s.io/requests.storage: '{{LIMIT_TOTAL_VOLUME_GB}}Gi'
+  requiredVars:
+    - var: LIMIT_TOTAL_CPU_CORE
+      default: "2"
+    - var: LIMIT_TOTAL_MEM_GB
+      default: "16"
+    - var: LIMIT_TOTAL_VOLUME_GB
+      default: "64"
+    - var: STORAGE_CLASS_NAME
+      default: "gp2"

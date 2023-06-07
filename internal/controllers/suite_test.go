@@ -22,8 +22,11 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
+
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo/test"
+	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -55,6 +58,7 @@ var (
 
 func init() {
 	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme.Scheme))
+	utilruntime.Must(traefikv1.AddToScheme(scheme.Scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -71,7 +75,9 @@ var _ = BeforeSuite(func() {
 	By("bootstrapping test environment")
 
 	testEnv = &envtest.Environment{
-		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
+		CRDDirectoryPaths: []string{
+			filepath.Join("..", "..", "config", "crd", "bases"),
+			filepath.Join("..", "..", "config", "crd", "traefik")},
 		ErrorIfCRDPathMissing: true,
 	}
 
@@ -121,6 +127,18 @@ var _ = BeforeSuite(func() {
 		Client:   mgr.GetClient(),
 		Scheme:   mgr.GetScheme(),
 		Recorder: mgr.GetEventRecorderFor(wsController),
+
+		TraefikIngressRouteCfg: &workspace.TraefikIngressRouteConfig{
+			Entrypoints: []string{"web", "websecure"},
+			TLS:         nil,
+			AuthenMiddleware: traefikv1.MiddlewareRef{
+				Name:      "cosmo-auth",
+				Namespace: "cosmo-system",
+			},
+			UserNameHeaderMiddleware: traefikv1.MiddlewareRef{
+				Name: "userNameHeader",
+			},
+		},
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 

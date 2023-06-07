@@ -41,7 +41,7 @@ service:
   port: 8443
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
   hostName: dashboard.local
 
@@ -77,7 +77,7 @@ cert:
     name: cosmo-selfsigned-clusterissuer
   dnsName:
 
-insecure: false
+insecure: true
 
 ldapURL: ""
 ldapUserAttr: ""
