@@ -155,7 +155,7 @@ COVER_PROFILE ?= cover.out
 clear-snapshots: ## Clear snapshots
 	-find . -type f | grep __snapshots__ | grep -v "/web/" | xargs rm -f
 
-config/crd/traefik/traefik.io_ingressroutes.yaml: $(HELM)
+config/crd/traefik/traefik.io_ingressroutes.yaml: helm
 	mkdir -p config/crd/traefik
 	$(HELM) dependency update ./charts/cosmo-traefik
 	tar -xvf ./charts/cosmo-traefik/charts/traefik-*.tgz -O traefik/crds/traefik.io_ingressroutes.yaml > config/crd/traefik/traefik.io_ingressroutes.yaml
@@ -411,6 +411,12 @@ envtest: go $(LOCALBIN) $(ENVTEST) ## Download envtest-setup locally if necessar
 $(ENVTEST):
 	GOBIN=$(LOCALBIN) $(GO) install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
 
+.PHONY: helm
+helm: $(LOCALBIN) $(HELM) ## Download helm locally if necessary.
+$(HELM):
+	export HELM_INSTALL_DIR=$(LOCALBIN) && \
+	curl -s curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
 .PHONY: go
 go: $(GO)
 $(GO): 
@@ -419,9 +425,3 @@ $(GO):
 
 .PHONY: configure
 configure: kustomize controller-gen envtest
-
-.PHONY: helm
-helm: $(HELM) ## Download helm locally if necessary.
-$(HELM): $(LOCALBIN)
-	export HELM_INSTALL_DIR=$(LOCALBIN) && \
-	curl -s curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
