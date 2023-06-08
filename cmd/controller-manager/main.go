@@ -232,7 +232,7 @@ MIT 2023 cosmo-workspace/cosmo
 	rootCmd.PersistentFlags().StringVar(&o.MetricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	rootCmd.PersistentFlags().StringVar(&o.ProbeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	rootCmd.PersistentFlags().StringVar(&o.CertDir, "cert-dir", "/tmp/k8s-webhook-server/serving-certs", "Certificate dir. The server key and certificate must be named tls.key and tls.crt")
-	rootCmd.PersistentFlags().StringVar(&o.WorkspaceDefaultURLBase, "workspace-default-urlbase", "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com", "workspace default urlbase. used if not set on template")
+	rootCmd.PersistentFlags().StringVar(&o.WorkspaceDefaultURLBase, "workspace-default-urlbase", "https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}.example.com", "workspace default urlbase. used if not set on template")
 	rootCmd.PersistentFlags().BoolVar(&o.EnableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")

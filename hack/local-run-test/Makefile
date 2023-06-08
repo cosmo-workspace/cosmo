@@ -25,7 +25,7 @@ help: ## Display this help.
 VSCODE_PROXY_URI ?= $$VSCODE_PROXY_URI
 PARENT_URLBASE ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=://)[^\.]*")
 DOMAIN ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=\.)[^/]*")
-DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
+DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
 DASHBOARD_HOST := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
 DASHBOARD_URL := https://$(DASHBOARD_HOST)
 SIGNIN_URL := https://$(DASHBOARD_HOST)/\#/signin
@@ -209,6 +209,7 @@ install-dashboard: helm kubectl docker-build-dashboard ## Install cosmo dashboar
 		--set image.repository=cosmo.io:5000/cosmo-dashboard \
 		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
+		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=false \
@@ -222,6 +223,7 @@ install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
 		--set image.repository=cosmo.io:5000/cosmo-dashboard \
 		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set image.pullPolicy=Always \
+		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=true \

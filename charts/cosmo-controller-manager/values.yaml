@@ -87,7 +87,7 @@ defaultURLBase:
   # this values are passed to the entrypoint args as follows
   # --workspace-default-urlbase=https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com
   protocol: https
-  host: "{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}"
+  host: "{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}"
   domain: example.com
 
 localRunTest:
