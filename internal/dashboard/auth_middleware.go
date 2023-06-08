@@ -145,7 +145,7 @@ func adminAuthentication(ctx context.Context, customAuthenFuncs ...func(callerGr
 		return nil
 	}
 
-	// deny if the user has admin role
+	// deny if the user does not have admin role
 	callerGroupRoleMap := caller.GetGroupRoleMap()
 	err := validateCallerHasAdmin(callerGroupRoleMap)
 	if err != nil {
@@ -183,14 +183,15 @@ func validateCallerHasAdmin(callerGroupRoleMap map[string]string) error {
 	return errors.New("not admin")
 }
 
-func validateCallerHasAdminForTheRolesFunc(tryRoleNames []string) func(map[string]string) error {
-	return func(m map[string]string) error {
+func validateCallerHasAdminForAllRoles(tryRoleNames []string) func(map[string]string) error {
+	return func(callerGroupRoleMap map[string]string) error {
 		for _, r := range tryRoleNames {
 			tryAccessGroup, _ := (cosmov1alpha1.UserRole{Name: r}).GetGroupAndRole()
-			callerRoleForTheGroup := m[tryAccessGroup]
+			callerRoleForTriedGroup := callerGroupRoleMap[tryAccessGroup]
 
-			if callerRoleForTheGroup != cosmov1alpha1.AdminRoleName {
-				return fmt.Errorf("no access to %s", tryAccessGroup)
+			// Deny if caller does not have administrative privilege for tried group.
+			if callerRoleForTriedGroup != cosmov1alpha1.AdminRoleName {
+				return fmt.Errorf("denied to access '%s' group", tryAccessGroup)
 			}
 		}
 		return nil

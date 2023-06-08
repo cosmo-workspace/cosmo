@@ -68,7 +68,7 @@ func (s *Server) UpdateUserRole(ctx context.Context, req *connect_go.Request[das
 
 	// group-admin can attach or detach only group-roles
 	changingRoles := diff(convertUserRolesToStringSlice(currentUser.Spec.Roles), req.Msg.Roles)
-	if err := adminAuthentication(ctx, validateCallerHasAdminForTheRolesFunc(changingRoles)); err != nil {
+	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(changingRoles)); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 

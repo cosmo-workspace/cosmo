@@ -6,9 +6,9 @@ import { NetworkRule, Workspace } from '../../proto/gen/dashboard/v1alpha1/works
 import { AlertTooltip } from '../atoms/AlertTooltip';
 import { NameAvatar } from '../atoms/NameAvatar';
 import { NetworkRuleDeleteDialogContext, NetworkRuleUpsertDialogContext } from '../organisms/NetworkRuleActionDialog';
-import { isAdminUser } from '../organisms/UserModule';
+import { hasPrivilegedRole } from '../organisms/UserModule';
 import { WorkspaceCreateDialogContext, WorkspaceDeleteDialogContext, WorkspaceStartDialogContext, WorkspaceStopDialogContext } from '../organisms/WorkspaceActionDialog';
-import { computeStatus, useWorkspaceModule, useWorkspaceUsersModule, WorkspaceContext, WorkspaceUsersContext } from '../organisms/WorkspaceModule';
+import { WorkspaceContext, WorkspaceUsersContext, computeStatus, useWorkspaceModule, useWorkspaceUsersModule } from '../organisms/WorkspaceModule';
 import { PageTemplate } from '../templates/PageTemplate';
 
 /**
@@ -245,7 +245,7 @@ const WorkspaceList: React.VFC = () => {
   const hooks = useWorkspaceModule();
   const { user } = useWorkspaceUsersModule();
   const { loginUser } = useLogin();
-  const isAdmin = isAdminUser(loginUser);
+  const isPriv = hasPrivilegedRole(loginUser?.roles || []);
   const [searchStr, setSearchStr] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [openTutorialTooltip, setOpenTutorialTooltip] = useState<boolean | undefined>(undefined);
@@ -292,7 +292,7 @@ const WorkspaceList: React.VFC = () => {
           sx={{ flexGrow: 0.5 }}
         />
         <Box sx={{ flexGrow: 1 }} />
-        {isAdmin && (isUpSM || (!isSearchFocused && searchStr === "")) && <UserSelect />}
+        {isPriv && (isUpSM || (!isSearchFocused && searchStr === "")) && <UserSelect />}
         <Tooltip title="Refresh" placement="top">
           <IconButton
             color="inherit"
