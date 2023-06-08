@@ -28,7 +28,7 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 	log.Debug().Info("request", "req", req)
 
 	// group-admin user can create users which have only the their groups
-	if err := adminAuthentication(ctx, validateCallerHasAdminForTheRolesFunc(req.Msg.Roles)); err != nil {
+	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(req.Msg.Roles)); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -120,7 +120,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 	}
 
 	// group-admin user can delete users which have only the their groups
-	if err := adminAuthentication(ctx, validateCallerHasAdminForTheRolesFunc(convertUserRolesToStringSlice(targetUser.Spec.Roles))); err != nil {
+	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(convertUserRolesToStringSlice(targetUser.Spec.Roles))); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
