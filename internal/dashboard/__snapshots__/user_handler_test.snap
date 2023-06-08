@@ -291,7 +291,8 @@ SnapShot = """
 SnapShot = 'unavailable: 503 Service Unavailable'
 
 ['Dashboard server [User] [CreateUser] ❌ fail with authorization by role: admin user cannot create user including other roles 1']
-SnapShot = 'permission_denied: no access to cosmo'
+SnapShot = """
+permission_denied: denied to access 'cosmo' group"""
 
 ['Dashboard server [User] [CreateUser] ❌ fail with authorization by role: normal user cannot create user 1']
 SnapShot = 'permission_denied'
@@ -411,10 +412,12 @@ SnapShot = 'internal: failed to delete user'
 SnapShot = 'internal: failed to get user'
 
 ['Dashboard server [User] [DeleteUser] ❌ fail with authorization by role: admin user cannot delete the user which has an other roles 1']
-SnapShot = 'permission_denied: no access to otherteam'
+SnapShot = """
+permission_denied: denied to access 'otherteam' group"""
 
 ['Dashboard server [User] [DeleteUser] ❌ fail with authorization by role: admin user cannot delete the user which has an other roles 2']
-SnapShot = 'permission_denied: no access to otherteam'
+SnapShot = """
+permission_denied: denied to access 'otherteam' group"""
 
 ['Dashboard server [User] [DeleteUser] ❌ fail with authorization by role: normal user cannot delete anyone 1']
 SnapShot = 'permission_denied'
@@ -984,13 +987,16 @@ SnapShot = """
 """
 
 ['Dashboard server [User] [UpdateUserRole] ❌ fail with authorization by role: admin user cannot attach other team role 1']
-SnapShot = 'permission_denied: no access to cosmo'
+SnapShot = """
+permission_denied: denied to access 'cosmo' group"""
 
 ['Dashboard server [User] [UpdateUserRole] ❌ fail with authorization by role: admin user cannot attach other team role 2']
-SnapShot = 'permission_denied: no access to otherteam'
+SnapShot = """
+permission_denied: denied to access 'otherteam' group"""
 
 ['Dashboard server [User] [UpdateUserRole] ❌ fail with authorization by role: admin user cannot detach other team role 1']
-SnapShot = 'permission_denied: no access to otherteam'
+SnapShot = """
+permission_denied: denied to access 'otherteam' group"""
 
 ['Dashboard server [User] [UpdateUserRole] ❌ fail with authorization by role: normal user cannot update roles 1']
 SnapShot = 'permission_denied'
