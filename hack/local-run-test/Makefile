@@ -34,6 +34,10 @@ TRAEFIK_DASHBOARD_HOST := traefik-dashboard-$(K3D_URLBASE)
 TRAEFIK_DASHBOARD_URL := https://$(TRAEFIK_DASHBOARD_HOST)/
 ARGOCD_HOST := argocd-$(K3D_URLBASE)
 ARGOCD_URL := https://$(ARGOCD_HOST)
+LDAP_SSL_HOST := ssl-ldap2-$(K3D_URLBASE)
+LDAP_SSL_URL := https://ssl-ldap2-$(K3D_URLBASE)
+PHPLDAPADMIN_HOST := phpldapadmin-$(K3D_URLBASE)
+PHPLDAPADMIN_URL := https://phpldapadmin-$(K3D_URLBASE)
 
 show-url: ## show-url
 	@echo ----------------------------------------------------
@@ -44,6 +48,8 @@ show-url: ## show-url
 	@echo "SIGNIN_URL            : $(SIGNIN_URL)"
 	@echo "TRAEFIK_DASHBOARD_URL : $(TRAEFIK_DASHBOARD_URL)"
 	@echo "ARGOCD_URL            : $(ARGOCD_URL)"
+	@echo "LDAP_SSL_URL          : $(LDAP_SSL_URL)"
+	@echo "PHPLDAPADMIN_URL      : $(PHPLDAPADMIN_URL)"
 	@echo ----------------------------------------------------
 
 ##---------------------------------------------------------------------
@@ -65,9 +71,11 @@ uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resource
 ##@ Kubernetes environment
 ##---------------------------------------------------------------------
 CLUSTER_NAME := cosmo
-.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd
+.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd undeploy-argocd
 
 # ports
+#   389  : ldap port.
+#   636  : ldaps port.
 #   15000: traefik web entrypoint 80.
 #   15443: traefik websecure entrypoint 443.
 #   30080: argocd nodeport
@@ -77,6 +85,8 @@ create-k3d-cluster: k3d kubectl  ## Create k3s cluster.
 		k3d cluster create $(CLUSTER_NAME) \
 			-i rancher/k3s:v1.26.3-k3s1 \
 			--api-port 43000 \
+			-p "389:30389@loadbalancer" \
+			-p "636:30636@loadbalancer" \
 			-p "15000:80@loadbalancer" \
 			-p "15443:443@loadbalancer" \
 			-p "30080:30080@loadbalancer" \
@@ -156,7 +166,25 @@ undeploy-argocd: ## Undeploy argocd.
 	helm uninstall -n argocd argocd
 
 
-create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd  ## Create k3s cluster.
+install-openldap: deploy-argocd ## Install openldap.
+	@echo ====== $@ ======
+	kubectl apply -f ./manifests/openldap.cert.yaml
+	kubectl apply -f <(sed \
+		-e 's/$${LDAP_SSL_HOST}/$(LDAP_SSL_HOST)/g' \
+		-e 's/$${PHPLDAPADMIN_HOST}/$(PHPLDAPADMIN_HOST)/g' \
+		./manifests/openldap.app.yaml )
+	@echo ====== wait openldap ======
+	until (kubectl get po -n cosmo-system -l app.kubernetes.io/name=openldap-stack-ha | grep open-ldap) do sleep 1; done
+	kubectl wait po -n cosmo-system -l app.kubernetes.io/name=openldap-stack-ha --for condition=Ready --timeout=90s
+	kubectl get po -n cosmo-system
+	@echo ----------------------------------------------------
+	@echo "url  : $(PHPLDAPADMIN_URL)"
+	@echo "user : admin"
+	@echo "pass : vvvvvvvv"
+	@echo ----------------------------------------------------
+
+
+create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd install-openldap  ## Create k3s cluster.
 
 delete-cluster: k3d  ## Delete k3s cluster.
 	@echo ====== $@ ======
