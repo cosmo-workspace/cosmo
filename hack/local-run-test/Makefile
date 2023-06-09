@@ -38,6 +38,8 @@ LDAP_SSL_HOST := ssl-ldap2-$(K3D_URLBASE)
 LDAP_SSL_URL := https://ssl-ldap2-$(K3D_URLBASE)
 PHPLDAPADMIN_HOST := phpldapadmin-$(K3D_URLBASE)
 PHPLDAPADMIN_URL := https://phpldapadmin-$(K3D_URLBASE)
+AUTHENTIK_HOST := authentik-$(K3D_URLBASE)
+AUTHENTIK_URL := https://$(AUTHENTIK_HOST)
 
 show-url: ## show-url
 	@echo ----------------------------------------------------
@@ -50,6 +52,7 @@ show-url: ## show-url
 	@echo "ARGOCD_URL            : $(ARGOCD_URL)"
 	@echo "LDAP_SSL_URL          : $(LDAP_SSL_URL)"
 	@echo "PHPLDAPADMIN_URL      : $(PHPLDAPADMIN_URL)"
+	@echo "AUTHENTIK_URL         : $(AUTHENTIK_URL)"
 	@echo ----------------------------------------------------
 
 ##---------------------------------------------------------------------
@@ -71,7 +74,7 @@ uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resource
 ##@ Kubernetes environment
 ##---------------------------------------------------------------------
 CLUSTER_NAME := cosmo
-.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd undeploy-argocd
+.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd undeploy-argocd install-authentik
 
 # ports
 #   389  : ldap port.
@@ -183,6 +186,14 @@ install-openldap: deploy-argocd ## Install openldap.
 	@echo "pass : vvvvvvvv"
 	@echo ----------------------------------------------------
 
+
+install-authentik: deploy-argocd ## Install authentik. (optional)
+	kubectl apply -f <(sed -e 's/$${AUTHENTIK_HOST}/$(AUTHENTIK_HOST)/g' ./manifests/authentik.app.yaml )
+	@echo ----------------------------------------------------
+	@echo "initial setup url : $(AUTHENTIK_URL)/if/flow/initial-setup/"
+	@echo "user : admin"
+	@echo "pass : vvvvvvvv"
+	@echo ----------------------------------------------------
 
 create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd install-openldap  ## Create k3s cluster.
 
