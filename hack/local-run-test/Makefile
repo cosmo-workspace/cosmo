@@ -53,7 +53,7 @@ show-url: ## show-url
 create-all: create-cluster docker-build-all install-all apply-template add-user add-workspace ## Create all
 delete-all: delete-cluster ## Delete all
 
-docker-build-all: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-build-cs ## Docker build all
+docker-build-all: docker-build-manager docker-build-dashboard docker-build-cs ## Docker build all
 
 install-all: install-manager install-dashboard ## Install cosmo resources.
 uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resources.
@@ -139,13 +139,13 @@ docker-build-dashboard: ## build & push cosmo dashboard image.
 	k3d image import localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) -c $(CLUSTER_NAME)
 	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
 
-docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
-	@echo ====== $@ ======
-	cd ../.. && make docker-build-auth-proxy VERSION=$(AUTHPROXY_IMAGE_TAG) QUICK_BUILD=yes
-	docker tag cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-	docker push localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-	docker rmi cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-	k3d image import localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) -c $(CLUSTER_NAME)
+# docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
+# 	@echo ====== $@ ======
+# 	cd ../.. && make docker-build-auth-proxy VERSION=$(AUTHPROXY_IMAGE_TAG) QUICK_BUILD=yes
+# 	docker tag cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+# 	docker push localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+# 	docker rmi cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+# 	k3d image import localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) -c $(CLUSTER_NAME)
 
 docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
 	@echo ====== $@ ======
