@@ -1,0 +1,61 @@
+# helm repo add authentik https://charts.goauthentik.io
+# helm repo update
+# helm upgrade --install -n authentik --wait authentik authentik/authentik -f authentik.values.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://charts.goauthentik.io"
+    namespace: authentik
+    targetRevision: 2023.5.1
+    helm:
+      valueFiles:
+        - values.yaml
+      values: |-
+        authentik:
+          avatars: initials
+          log_level: debug
+          secret_key: "AuthCosmo"
+          error_reporting:
+            enabled: true
+          postgresql:
+            password: "vvvvvvvv"
+          # https://goauthentik.io/docs/installation/automated-install#authentik_bootstrap_password
+          bootstrap_token: akadmin
+          bootstrap_password: "vvvvvvvv"
+
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          ## annotations:
+          ##   traefik.ingress.kubernetes.io/router.middlewares: default-authentik-header@kubernetescrd
+          hosts:
+            - host: "${AUTHENTIK_HOST}"
+              paths:
+                - path: "/"
+                  pathType: Prefix
+
+        postgresql:
+          enabled: true
+          postgresqlPassword: "vvvvvvvv"
+          persistence:
+            enabled: false
+        redis:
+          enabled: true
+          master:
+            persistence:
+              enabled: false
+          replica:
+            persistence:
+              enabled: false
+    chart: authentik
+  destination:
+    server: "https://kubernetes.default.svc"
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true

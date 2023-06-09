@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: local-run-test-selfsigned-clusterissuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: openldap-cert
+  namespace: cosmo-system
+spec:
+  dnsNames:
+    - open-ldap.cosmo-system.svc
+    - open-ldap.cosmo-system.svc.cluster.local
+    - localhost
+    - localhost:389
+    - localhost:636
+    - localhost:30389
+    - localhost:30636
+  issuerRef:
+    kind: ClusterIssuer
+    name: local-run-test-selfsigned-clusterissuer
+  secretName: openldap-cert

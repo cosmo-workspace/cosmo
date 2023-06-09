@@ -26,21 +26,33 @@ VSCODE_PROXY_URI ?= $$VSCODE_PROXY_URI
 PARENT_URLBASE ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=://)[^\.]*")
 DOMAIN ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=\.)[^/]*")
 DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
-DASHBOARD_HOST := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
+K3D_URLBASE := k3d-$(PARENT_URLBASE).$(DOMAIN)
+DASHBOARD_HOST := dash-$(K3D_URLBASE)
 DASHBOARD_URL := https://$(DASHBOARD_HOST)
 SIGNIN_URL := https://$(DASHBOARD_HOST)/\#/signin
-TRAEFIK_DASHBOARD_HOST := traefik-dashboard-k3d-$(PARENT_URLBASE).$(DOMAIN)
+TRAEFIK_DASHBOARD_HOST := traefik-dashboard-$(K3D_URLBASE)
+TRAEFIK_DASHBOARD_URL := https://$(TRAEFIK_DASHBOARD_HOST)/
+ARGOCD_HOST := argocd-$(K3D_URLBASE)
+ARGOCD_URL := https://$(ARGOCD_HOST)
+LDAP_SSL_HOST := ssl-ldap2-$(K3D_URLBASE)
+LDAP_SSL_URL := https://ssl-ldap2-$(K3D_URLBASE)
+PHPLDAPADMIN_HOST := phpldapadmin-$(K3D_URLBASE)
+PHPLDAPADMIN_URL := https://phpldapadmin-$(K3D_URLBASE)
+AUTHENTIK_HOST := authentik-$(K3D_URLBASE)
+AUTHENTIK_URL := https://$(AUTHENTIK_HOST)
 
 show-url: ## show-url
 	@echo ----------------------------------------------------
 	@echo "DOMAIN                : $(DOMAIN)"
 	@echo "PARENT_URLBASE        : $(PARENT_URLBASE)"
 	@echo "DEFAULT_URLBASE_HOST  : $(DEFAULT_URLBASE_HOST)"
-	@echo "DASHBOARD_HOST        : $(DASHBOARD_HOST)"
 	@echo "DASHBOARD_URL         : $(DASHBOARD_URL)"
 	@echo "SIGNIN_URL            : $(SIGNIN_URL)"
-	@echo "TRAEFIK_DASHBOARD_HOST: $(TRAEFIK_DASHBOARD_HOST)"
-	@echo "TRAEFIK_DASHBOARD_URL : http://$(TRAEFIK_DASHBOARD_HOST)/"
+	@echo "TRAEFIK_DASHBOARD_URL : $(TRAEFIK_DASHBOARD_URL)"
+	@echo "ARGOCD_URL            : $(ARGOCD_URL)"
+	@echo "LDAP_SSL_URL          : $(LDAP_SSL_URL)"
+	@echo "PHPLDAPADMIN_URL      : $(PHPLDAPADMIN_URL)"
+	@echo "AUTHENTIK_URL         : $(AUTHENTIK_URL)"
 	@echo ----------------------------------------------------
 
 ##---------------------------------------------------------------------
@@ -53,7 +65,7 @@ show-url: ## show-url
 create-all: create-cluster docker-build-all install-all apply-template add-user add-workspace ## Create all
 delete-all: delete-cluster ## Delete all
 
-docker-build-all: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-build-cs ## Docker build all
+docker-build-all: docker-build-manager docker-build-dashboard ## Docker build all
 
 install-all: install-manager install-dashboard ## Install cosmo resources.
 uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resources.
@@ -62,18 +74,24 @@ uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resource
 ##@ Kubernetes environment
 ##---------------------------------------------------------------------
 CLUSTER_NAME := cosmo
-.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik
+.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd undeploy-argocd install-authentik
 
+# ports
+#   389  : ldap port.
+#   636  : ldaps port.
+#   15000: traefik web entrypoint 80.
+#   15443: traefik websecure entrypoint 443.
+#   30080: argocd nodeport
 create-k3d-cluster: k3d kubectl  ## Create k3s cluster.
 	@echo ====== $@ ======
 	@k3d cluster list $(CLUSTER_NAME) > /dev/null 2>&1 && echo "This cluster has already been created" || { \
 		k3d cluster create $(CLUSTER_NAME) \
 			-i rancher/k3s:v1.26.3-k3s1 \
 			--api-port 43000 \
+			-p "389:30389@loadbalancer" \
+			-p "636:30636@loadbalancer" \
 			-p "15000:80@loadbalancer" \
 			-p "15443:443@loadbalancer" \
-			-p "32080:32080@loadbalancer" \
-			-p "32443:32443@loadbalancer" \
 			-p "30080:30080@loadbalancer" \
 			--registry-create cosmo.io:0.0.0.0:5000 \
 			--agents 2 \
@@ -91,11 +109,16 @@ deploy-cert-manager: create-k3d-cluster helm ## Deploy cert-manager.
 deploy-traefik: create-k3d-cluster helm docker-build-traefik-plugins ## Deploy traefik.
 	@echo ====== $@ ======
 	helm dependency update ../../charts/cosmo-traefik 
+	helm template traefik ../../charts/cosmo-traefik -n cosmo-system \
+		-f <(sed -e 's/\S*\/traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo-traefik/values.yaml ) \
+	 	-f ./charts/traefik.values.yaml \
+		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
+		--set cosmoAuth.signinUrl=$(SIGNIN_URL) \
+		--set domain=$(DOMAIN) \
+		> ./bin/traefik.manifest.yaml
 	helm upgrade --install traefik ../../charts/cosmo-traefik -n cosmo-system --create-namespace \
 		--wait \
-		-f <(sed \
-		  -e 's/ghcr.io\/cosmo-workspace\/traefik-plugins:.*/cosmo.io:5000\/traefik-plugins:latest/g' \
-		  ../../charts/cosmo-traefik/values.yaml ) \
+		-f <(sed -e 's/\S*\/traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo-traefik/values.yaml ) \
 	 	-f ./charts/traefik.values.yaml \
 		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
 		--set cosmoAuth.signinUrl=$(SIGNIN_URL) \
@@ -103,7 +126,76 @@ deploy-traefik: create-k3d-cluster helm docker-build-traefik-plugins ## Deploy t
 	-kubectl rollout restart deploy -n cosmo-system traefik
 	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
 
-create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik  ## Create k3s cluster.
+
+ARGOCD_LOCAL_URL := localhost:30080
+# argocd value.yaml https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml
+deploy-argocd: create-k3d-cluster helm argocd ## Deploy argocd.
+	@echo ====== $@ ======
+	helm repo add argo https://argoproj.github.io/argo-helm
+	helm repo update
+	helm template -n argocd --create-namespace argocd argo/argo-cd \
+		--set configs.params."server\.insecure"=true \
+		--set server.service.type=NodePort \
+		--set server.service.nodePortHttp=30080 \
+		> ./bin/argocd.manifest.yaml
+	helm upgrade --install -n argocd --create-namespace argocd argo/argo-cd \
+		--set configs.params."server\.insecure"=true \
+		--set server.service.type=NodePort \
+		--set server.service.nodePortHttp=30080 \
+		--wait
+	@echo ====== wait argocd ======
+	until (kubectl get po -n argocd -l app.kubernetes.io/name=argocd-server  | grep argocd-server) do sleep 1; done
+	kubectl wait po -n argocd -l app.kubernetes.io/name=argocd-server --for condition=Ready
+	kubectl get po -n argocd
+	@echo ====== argocd-setting ======
+	chmod 600 ~/.config/argocd/config
+	@argocd login $(ARGOCD_LOCAL_URL) --grpc-web --plaintext --username admin --password vvvvvvvv > /dev/null 2>&1 && \
+		echo "Initial password has already been changed" || { \
+		echo ====== login argocd ====== && \
+		INITIAL_PW=$$(kubectl -n argocd get secret/argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d) && \
+		argocd login $(ARGOCD_LOCAL_URL) --grpc-web --plaintext --username admin --password $${INITIAL_PW} && \
+		echo ====== argocd password change ====== && \
+		argocd account update-password --account admin --current-password $${INITIAL_PW} --new-password vvvvvvvv && \
+		echo "Initial password has been changed" \
+		; \
+	}
+	@echo ----------------------------------------------------
+	@echo "url  : $(ARGOCD_URL)"
+	@echo "user : admin"
+	@echo "pass : vvvvvvvv"
+	@echo ----------------------------------------------------
+
+undeploy-argocd: ## Undeploy argocd.
+	helm uninstall -n argocd argocd
+
+
+install-openldap: deploy-argocd ## Install openldap.
+	@echo ====== $@ ======
+	kubectl apply -f ./manifests/openldap.cert.yaml
+	kubectl apply -f <(sed \
+		-e 's/$${LDAP_SSL_HOST}/$(LDAP_SSL_HOST)/g' \
+		-e 's/$${PHPLDAPADMIN_HOST}/$(PHPLDAPADMIN_HOST)/g' \
+		./manifests/openldap.app.yaml )
+	@echo ====== wait openldap ======
+	until (kubectl get po -n cosmo-system -l app.kubernetes.io/name=openldap-stack-ha | grep open-ldap) do sleep 1; done
+	kubectl wait po -n cosmo-system -l app.kubernetes.io/name=openldap-stack-ha --for condition=Ready --timeout=90s
+	kubectl get po -n cosmo-system
+	@echo ----------------------------------------------------
+	@echo "url  : $(PHPLDAPADMIN_URL)"
+	@echo "user : admin"
+	@echo "pass : vvvvvvvv"
+	@echo ----------------------------------------------------
+
+
+install-authentik: deploy-argocd ## Install authentik. (optional)
+	kubectl apply -f <(sed -e 's/$${AUTHENTIK_HOST}/$(AUTHENTIK_HOST)/g' ./manifests/authentik.app.yaml )
+	@echo ----------------------------------------------------
+	@echo "initial setup url : $(AUTHENTIK_URL)/if/flow/initial-setup/"
+	@echo "user : admin"
+	@echo "pass : vvvvvvvv"
+	@echo ----------------------------------------------------
+
+create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd install-openldap  ## Create k3s cluster.
 
 delete-cluster: k3d  ## Delete k3s cluster.
 	@echo ====== $@ ======
@@ -139,13 +231,13 @@ docker-build-dashboard: ## build & push cosmo dashboard image.
 	k3d image import localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) -c $(CLUSTER_NAME)
 	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
 
-docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
-	@echo ====== $@ ======
-	cd ../.. && make docker-build-auth-proxy VERSION=$(AUTHPROXY_IMAGE_TAG) QUICK_BUILD=yes
-	docker tag cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-	docker push localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-	docker rmi cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-	k3d image import localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) -c $(CLUSTER_NAME)
+# docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
+# 	@echo ====== $@ ======
+# 	cd ../.. && make docker-build-auth-proxy VERSION=$(AUTHPROXY_IMAGE_TAG) QUICK_BUILD=yes
+# 	docker tag cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+# 	docker push localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+# 	docker rmi cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
+# 	k3d image import localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) -c $(CLUSTER_NAME)
 
 docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
 	@echo ====== $@ ======
@@ -242,21 +334,17 @@ uninstall-dashboard: helm  ## Uninstall cosmo dashboard resources.
 	@echo ====== $@ ======
 	-helm uninstall -n cosmo-system cosmo-dashboard
 
-docker-build-cs:  ## Docker build code-server.
-	@echo ====== $@ ======
-	cd templates/code-server-01 && $(MAKE) docker-build
 
-apply-template: kubectl cosmoctl docker-build-cs ## Apply template.
+apply-template: kubectl cosmoctl ## Apply template.
 	@echo ====== $@ ======
 	# until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
 	until (kubectl apply -f ../../config/user-addon/traefik-middleware/useraddon-cosmo-username-headers.yaml) do sleep 1; done
 	for i in `ls ../../example/useraddons/*/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
 	for i in `ls ../../example/workspaces/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
-	$(MAKE) -C templates/code-server-01 apply
-	# $(MAKE) -C templates/example apply
+	$(MAKE) -C templates/dev-code-server apply
 
 
-add-user: kubectl cosmoctl
+add-user: kubectl cosmoctl ## add user
 	@echo ====== $@ ======
 	-cosmoctl user create tom --admin 2> /dev/null
 	-cosmoctl user create team-a-dev --role "team-a-dev" 2> /dev/null
@@ -267,9 +355,9 @@ add-user: kubectl cosmoctl
 	cosmoctl user reset-password tom --password vvv
 
 
-add-workspace: kubectl cosmoctl
+add-workspace: kubectl cosmoctl ## add workspace
 	@echo ====== $@ ======
-	-cosmoctl workspace create --user=tom --template=code-server-01 ws1
+	-cosmoctl workspace create --user=tom --template=dev-code-server ws1
 	sleep 5
 	-cosmoctl networkrule add proxy11 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /
 	sleep 1
@@ -399,6 +487,11 @@ bin/kubectl:
 	curl -L -o $@ "https://storage.googleapis.com/kubernetes-release/release/$(KUBE_VER)/bin/linux/amd64/kubectl"
 	chmod +x $@
 
+argocd: bin bin/argocd ## argocd
+bin/argocd:
+	curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+	sudo install -m 555 argocd-linux-amd64 bin/argocd
+	rm -f argocd-linux-amd64
 
 ##---------------------------------------------------------------------
 ##@ Utility
@@ -415,3 +508,4 @@ kg: ## Get k0s resources.
 	-@kubectl get ing -A
 	-@kubectl get svc -A
 	-@kubectl get ep -A
+	-@kubectl get application -A

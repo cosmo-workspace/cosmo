@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: open-ldap
+  namespace: argocd
+spec:
+  destination:
+    namespace: cosmo-system
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://jp-gouin.github.io/helm-openldap/
+    chart: openldap-stack-ha
+    targetRevision: 4.1.1
+    helm:
+      valueFiles:
+        - values.yaml
+      values: |-
+        global:
+          ldapDomain: cosmows.dev
+          adminPassword:  vvvvvvvv
+          configPassword: vvvvvvvv
+        users:         ldapuser1, ldapuser2
+        userPasswords: xxxxxxxx,  xxxxxxxx
+        customTLS:
+          enabled: true
+          secret: openldap-cert
+        service:
+          type: NodePort
+          ldapPortNodePort: 30389
+          sslLdapPortNodePort: 30636
+        replicaCount: 1
+        replication:
+          enabled: false
+        persistence:
+          enabled: false
+        ltb-passwd:
+          ingress:
+            annotations:
+              kubernetes.io/ingress.class: traefik
+            hosts:
+              - "${LDAP_SSL_HOST}"
+        phpldapadmin:
+          ingress:
+            annotations:
+              kubernetes.io/ingress.class: traefik
+            hosts:
+              - "${PHPLDAPADMIN_HOST}"
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
