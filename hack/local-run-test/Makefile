@@ -342,7 +342,6 @@ apply-template: kubectl cosmoctl ## Apply template.
 	for i in `ls ../../example/useraddons/*/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
 	for i in `ls ../../example/workspaces/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
 	$(MAKE) -C templates/dev-code-server apply
-	# $(MAKE) -C templates/example apply
 
 
 add-user: kubectl cosmoctl ## add user
