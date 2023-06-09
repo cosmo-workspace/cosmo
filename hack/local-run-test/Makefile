@@ -53,7 +53,7 @@ show-url: ## show-url
 create-all: create-cluster docker-build-all install-all apply-template add-user add-workspace ## Create all
 delete-all: delete-cluster ## Delete all
 
-docker-build-all: docker-build-manager docker-build-dashboard docker-build-cs ## Docker build all
+docker-build-all: docker-build-manager docker-build-dashboard ## Docker build all
 
 install-all: install-manager install-dashboard ## Install cosmo resources.
 uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resources.
@@ -242,21 +242,18 @@ uninstall-dashboard: helm  ## Uninstall cosmo dashboard resources.
 	@echo ====== $@ ======
 	-helm uninstall -n cosmo-system cosmo-dashboard
 
-docker-build-cs:  ## Docker build code-server.
-	@echo ====== $@ ======
-	cd templates/code-server-01 && $(MAKE) docker-build
 
-apply-template: kubectl cosmoctl docker-build-cs ## Apply template.
+apply-template: kubectl cosmoctl ## Apply template.
 	@echo ====== $@ ======
 	# until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
 	until (kubectl apply -f ../../config/user-addon/traefik-middleware/useraddon-cosmo-username-headers.yaml) do sleep 1; done
 	for i in `ls ../../example/useraddons/*/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
 	for i in `ls ../../example/workspaces/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
-	$(MAKE) -C templates/code-server-01 apply
+	$(MAKE) -C templates/dev-code-server apply
 	# $(MAKE) -C templates/example apply
 
 
-add-user: kubectl cosmoctl
+add-user: kubectl cosmoctl ## add user
 	@echo ====== $@ ======
 	-cosmoctl user create tom --admin 2> /dev/null
 	-cosmoctl user create team-a-dev --role "team-a-dev" 2> /dev/null
@@ -267,9 +264,9 @@ add-user: kubectl cosmoctl
 	cosmoctl user reset-password tom --password vvv
 
 
-add-workspace: kubectl cosmoctl
+add-workspace: kubectl cosmoctl ## add workspace
 	@echo ====== $@ ======
-	-cosmoctl workspace create --user=tom --template=code-server-01 ws1
+	-cosmoctl workspace create --user=tom --template=dev-code-server ws1
 	sleep 5
 	-cosmoctl networkrule add proxy11 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /
 	sleep 1

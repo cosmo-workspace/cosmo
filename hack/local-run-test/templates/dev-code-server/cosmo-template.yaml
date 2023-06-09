@@ -11,7 +11,7 @@ metadata:
   creationTimestamp: null
   labels:
     cosmo-workspace.github.io/type: workspace
-  name: code-server-01
+  name: dev-code-server
 spec:
   rawYaml: |
     apiVersion: v1
@@ -60,7 +60,7 @@ spec:
             - -c
             - |
               /usr/bin/entrypoint.sh --log debug --auth=none --bind-addr 0.0.0.0:18080 --app-name=cosmo .
-            image: cosmo.io:5000/my-code-server:latest
+            image: ghcr.io/cosmo-workspace/dev-code-server:v0.0.2-4.13.0
             imagePullPolicy: Always
             livenessProbe:
               httpGet:
