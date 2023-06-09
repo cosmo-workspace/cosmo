@@ -26,21 +26,21 @@ VSCODE_PROXY_URI ?= $$VSCODE_PROXY_URI
 PARENT_URLBASE ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=://)[^\.]*")
 DOMAIN ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=\.)[^/]*")
 DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
-DASHBOARD_HOST := dash-k3d-$(PARENT_URLBASE).$(DOMAIN)
+K3D_URLBASE := k3d-$(PARENT_URLBASE).$(DOMAIN)
+DASHBOARD_HOST := dash-$(K3D_URLBASE)
 DASHBOARD_URL := https://$(DASHBOARD_HOST)
 SIGNIN_URL := https://$(DASHBOARD_HOST)/\#/signin
-TRAEFIK_DASHBOARD_HOST := traefik-dashboard-k3d-$(PARENT_URLBASE).$(DOMAIN)
+TRAEFIK_DASHBOARD_HOST := traefik-dashboard-$(K3D_URLBASE)
+TRAEFIK_DASHBOARD_URL := https://$(TRAEFIK_DASHBOARD_HOST)/
 
 show-url: ## show-url
 	@echo ----------------------------------------------------
 	@echo "DOMAIN                : $(DOMAIN)"
 	@echo "PARENT_URLBASE        : $(PARENT_URLBASE)"
 	@echo "DEFAULT_URLBASE_HOST  : $(DEFAULT_URLBASE_HOST)"
-	@echo "DASHBOARD_HOST        : $(DASHBOARD_HOST)"
 	@echo "DASHBOARD_URL         : $(DASHBOARD_URL)"
 	@echo "SIGNIN_URL            : $(SIGNIN_URL)"
-	@echo "TRAEFIK_DASHBOARD_HOST: $(TRAEFIK_DASHBOARD_HOST)"
-	@echo "TRAEFIK_DASHBOARD_URL : http://$(TRAEFIK_DASHBOARD_HOST)/"
+	@echo "TRAEFIK_DASHBOARD_URL : $(TRAEFIK_DASHBOARD_URL)"
 	@echo ----------------------------------------------------
 
 ##---------------------------------------------------------------------
@@ -64,6 +64,10 @@ uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resource
 CLUSTER_NAME := cosmo
 .PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik
 
+# ports
+#   15000: traefik web entrypoint 80.
+#   15443: traefik websecure entrypoint 443.
+#   30080: argocd nodeport
 create-k3d-cluster: k3d kubectl  ## Create k3s cluster.
 	@echo ====== $@ ======
 	@k3d cluster list $(CLUSTER_NAME) > /dev/null 2>&1 && echo "This cluster has already been created" || { \
@@ -72,8 +76,6 @@ create-k3d-cluster: k3d kubectl  ## Create k3s cluster.
 			--api-port 43000 \
 			-p "15000:80@loadbalancer" \
 			-p "15443:443@loadbalancer" \
-			-p "32080:32080@loadbalancer" \
-			-p "32443:32443@loadbalancer" \
 			-p "30080:30080@loadbalancer" \
 			--registry-create cosmo.io:0.0.0.0:5000 \
 			--agents 2 \
@@ -91,11 +93,16 @@ deploy-cert-manager: create-k3d-cluster helm ## Deploy cert-manager.
 deploy-traefik: create-k3d-cluster helm docker-build-traefik-plugins ## Deploy traefik.
 	@echo ====== $@ ======
 	helm dependency update ../../charts/cosmo-traefik 
+	helm template traefik ../../charts/cosmo-traefik -n cosmo-system \
+		-f <(sed -e 's/\S*\/traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo-traefik/values.yaml ) \
+	 	-f ./charts/traefik.values.yaml \
+		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
+		--set cosmoAuth.signinUrl=$(SIGNIN_URL) \
+		--set domain=$(DOMAIN) \
+		> ./bin/traefik.manifest.yaml
 	helm upgrade --install traefik ../../charts/cosmo-traefik -n cosmo-system --create-namespace \
 		--wait \
-		-f <(sed \
-		  -e 's/ghcr.io\/cosmo-workspace\/traefik-plugins:.*/cosmo.io:5000\/traefik-plugins:latest/g' \
-		  ../../charts/cosmo-traefik/values.yaml ) \
+		-f <(sed -e 's/\S*\/traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo-traefik/values.yaml ) \
 	 	-f ./charts/traefik.values.yaml \
 		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
 		--set cosmoAuth.signinUrl=$(SIGNIN_URL) \
