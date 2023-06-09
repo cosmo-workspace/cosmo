@@ -32,6 +32,8 @@ DASHBOARD_URL := https://$(DASHBOARD_HOST)
 SIGNIN_URL := https://$(DASHBOARD_HOST)/\#/signin
 TRAEFIK_DASHBOARD_HOST := traefik-dashboard-$(K3D_URLBASE)
 TRAEFIK_DASHBOARD_URL := https://$(TRAEFIK_DASHBOARD_HOST)/
+ARGOCD_HOST := argocd-$(K3D_URLBASE)
+ARGOCD_URL := https://$(ARGOCD_HOST)
 
 show-url: ## show-url
 	@echo ----------------------------------------------------
@@ -41,6 +43,7 @@ show-url: ## show-url
 	@echo "DASHBOARD_URL         : $(DASHBOARD_URL)"
 	@echo "SIGNIN_URL            : $(SIGNIN_URL)"
 	@echo "TRAEFIK_DASHBOARD_URL : $(TRAEFIK_DASHBOARD_URL)"
+	@echo "ARGOCD_URL            : $(ARGOCD_URL)"
 	@echo ----------------------------------------------------
 
 ##---------------------------------------------------------------------
@@ -62,7 +65,7 @@ uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resource
 ##@ Kubernetes environment
 ##---------------------------------------------------------------------
 CLUSTER_NAME := cosmo
-.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik
+.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd
 
 # ports
 #   15000: traefik web entrypoint 80.
@@ -110,7 +113,50 @@ deploy-traefik: create-k3d-cluster helm docker-build-traefik-plugins ## Deploy t
 	-kubectl rollout restart deploy -n cosmo-system traefik
 	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
 
-create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik  ## Create k3s cluster.
+
+ARGOCD_LOCAL_URL := localhost:30080
+# argocd value.yaml https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml
+deploy-argocd: create-k3d-cluster helm argocd ## Deploy argocd.
+	@echo ====== $@ ======
+	helm repo add argo https://argoproj.github.io/argo-helm
+	helm repo update
+	helm template -n argocd --create-namespace argocd argo/argo-cd \
+		--set configs.params."server\.insecure"=true \
+		--set server.service.type=NodePort \
+		--set server.service.nodePortHttp=30080 \
+		> ./bin/argocd.manifest.yaml
+	helm upgrade --install -n argocd --create-namespace argocd argo/argo-cd \
+		--set configs.params."server\.insecure"=true \
+		--set server.service.type=NodePort \
+		--set server.service.nodePortHttp=30080 \
+		--wait
+	@echo ====== wait argocd ======
+	until (kubectl get po -n argocd -l app.kubernetes.io/name=argocd-server  | grep argocd-server) do sleep 1; done
+	kubectl wait po -n argocd -l app.kubernetes.io/name=argocd-server --for condition=Ready
+	kubectl get po -n argocd
+	@echo ====== argocd-setting ======
+	chmod 600 ~/.config/argocd/config
+	@argocd login $(ARGOCD_LOCAL_URL) --grpc-web --plaintext --username admin --password vvvvvvvv > /dev/null 2>&1 && \
+		echo "Initial password has already been changed" || { \
+		echo ====== login argocd ====== && \
+		INITIAL_PW=$$(kubectl -n argocd get secret/argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d) && \
+		argocd login $(ARGOCD_LOCAL_URL) --grpc-web --plaintext --username admin --password $${INITIAL_PW} && \
+		echo ====== argocd password change ====== && \
+		argocd account update-password --account admin --current-password $${INITIAL_PW} --new-password vvvvvvvv && \
+		echo "Initial password has been changed" \
+		; \
+	}
+	@echo ----------------------------------------------------
+	@echo "url  : $(ARGOCD_URL)"
+	@echo "user : admin"
+	@echo "pass : vvvvvvvv"
+	@echo ----------------------------------------------------
+
+undeploy-argocd: ## Undeploy argocd.
+	helm uninstall -n argocd argocd
+
+
+create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd  ## Create k3s cluster.
 
 delete-cluster: k3d  ## Delete k3s cluster.
 	@echo ====== $@ ======
@@ -403,6 +449,11 @@ bin/kubectl:
 	curl -L -o $@ "https://storage.googleapis.com/kubernetes-release/release/$(KUBE_VER)/bin/linux/amd64/kubectl"
 	chmod +x $@
 
+argocd: bin bin/argocd ## argocd
+bin/argocd:
+	curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+	sudo install -m 555 argocd-linux-amd64 bin/argocd
+	rm -f argocd-linux-amd64
 
 ##---------------------------------------------------------------------
 ##@ Utility
@@ -419,3 +470,4 @@ kg: ## Get k0s resources.
 	-@kubectl get ing -A
 	-@kubectl get svc -A
 	-@kubectl get ep -A
+	-@kubectl get application -A
