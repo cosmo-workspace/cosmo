@@ -1,4 +1,5 @@
-import { createConnectTransport, createPromiseClient } from '@bufbuild/connect-web';
+import { createPromiseClient } from '@bufbuild/connect';
+import { createConnectTransport } from '@bufbuild/connect-web';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Alert, AppBar, Avatar, Backdrop, Box, Button, CircularProgress, Container, Link, Snackbar, Stack, TextField, Toolbar, Typography } from '@mui/material';
 import React, { useMemo, useState } from 'react';

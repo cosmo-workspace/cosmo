@@ -1,4 +1,4 @@
-import { Code, ConnectError } from '@bufbuild/connect-web';
+import { Code, ConnectError } from '@bufbuild/connect';
 import { protoInt64 } from '@bufbuild/protobuf';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { useSnackbar } from "notistack";
