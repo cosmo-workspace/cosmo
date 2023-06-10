@@ -19,20 +19,17 @@ func TestNewRootCmd(t *testing.T) {
 		args []string
 	}{
 		{
-			name: "❌ cookie-hashkey is required",
-			args: []string{""},
+			name: "❌ flags are required",
+			args: []string{
+				"--ldap-url=xxxx",
+			},
 		},
 		{
 			name: "❌ cookie-hashkey is minimum 16 characters",
 			args: []string{
 				"--cookie-hashkey=123456789012345",
 				"--cookie-blockkey=1234567890123456",
-			},
-		},
-		{
-			name: "❌ cookie-blockkey is required",
-			args: []string{
-				"--cookie-hashkey=1234567890123456",
+				"--insecure",
 			},
 		},
 		{
@@ -40,44 +37,18 @@ func TestNewRootCmd(t *testing.T) {
 			args: []string{
 				"--cookie-hashkey=1234567890123456",
 				"--cookie-blockkey=yyy",
+				"--insecure",
 			},
 		},
 		{
-			name: "❌ tls-cert is required",
+			name: "❌ ldap-url is invalid",
 			args: []string{
 				"--cookie-hashkey=1234567890123456",
 				"--cookie-blockkey=1234567890123456",
-				"--insecure=false",
-				"--tls-key=",
-				"--tls-cert=",
-			},
-		},
-		{
-			name: "❌ tls-key is required",
-			args: []string{
-				"--cookie-hashkey=1234567890123456",
-				"--cookie-blockkey=1234567890123456",
-				"--insecure=false",
-				"--tls-key=",
-				"--tls-cert=xxxxx",
-			},
-		},
-		{
-			name: "❌ ldap-basedn is required",
-			args: []string{
-				"--cookie-hashkey=1234567890123456",
-				"--cookie-blockkey=1234567890123456",
-				"--ldap-url=ldap://sssssss",
-			},
-		},
-		{
-			name: "❌ ldap-user-attr is required",
-			args: []string{
-				"--cookie-hashkey=1234567890123456",
-				"--cookie-blockkey=1234567890123456",
-				"--ldap-url=ldap://sssssss",
-				"--ldap-basedn=xxxxx",
-				"--ldap-user-attr=",
+				"--ldap-url=ldap://sss  ssss",
+				"--ldap-basedn=xxxx",
+				"--ldap-user-attr=yyyy",
+				"--insecure",
 			},
 		},
 	}

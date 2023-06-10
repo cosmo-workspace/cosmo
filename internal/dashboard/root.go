@@ -4,9 +4,12 @@ Copyright © 2023 NAME HERE cosmo-workspace
 package dashboard
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"flag"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"reflect"
 	"time"
@@ -61,6 +64,9 @@ type options struct {
 	LdapURL                 string
 	LdapUserNameAttribute   string
 	LdapBaseDN              string
+	LdapStartTLS            bool
+	LdapCaCertPath          string
+	LdapInsecureSkipVerify  bool
 }
 
 func NewRootCmd(o *options) *cobra.Command {
@@ -100,48 +106,40 @@ MIT 2023 cosmo-workspace/cosmo
 	rootCmd.PersistentFlags().StringVar(&o.LdapURL, "ldap-url", "", "LDAP URL. ldap[s]://hostname.or.ip[:port]")
 	rootCmd.PersistentFlags().StringVar(&o.LdapUserNameAttribute, "ldap-user-attr", "sAMAccountname", "LDAP user attribute. ex: sAMAccountname or uid or cn")
 	rootCmd.PersistentFlags().StringVar(&o.LdapBaseDN, "ldap-basedn", "", "LDAP BaseDN. ex: dc=example,dc=com")
+	rootCmd.PersistentFlags().BoolVar(&o.LdapStartTLS, "ldap-start-tls", false, "Enables StartTLS functionality")
+	rootCmd.PersistentFlags().BoolVar(&o.LdapInsecureSkipVerify, "ldap-insecure-skip-verify", false, "Skip server certificate chain and hostname validation")
+	rootCmd.PersistentFlags().StringVar(&o.LdapCaCertPath, "ldap-ca-cert", "", "ca cert file path")
 
 	return rootCmd
 }
 
 func (o *options) PreRunE(cmd *cobra.Command, args []string) error {
-	if err := o.Validate(cmd, args); err != nil {
-		return fmt.Errorf("validation error: %w", err)
+	cmd.MarkPersistentFlagRequired("cookie-hashkey")
+	cmd.MarkPersistentFlagRequired("cookie-blockkey")
+
+	if !o.Insecure {
+		cmd.MarkPersistentFlagRequired("tls-key")
+		cmd.MarkPersistentFlagRequired("tls-cert")
 	}
-	if err := o.Complete(cmd, args); err != nil {
-		return fmt.Errorf("invalid options: %w", err)
+	if o.LdapURL != "" {
+		cmd.MarkPersistentFlagRequired("ldap-user-attr")
+		cmd.MarkPersistentFlagRequired("ldap-basedn")
 	}
 	return nil
 }
 
 func (o *options) Validate(cmd *cobra.Command, args []string) error {
 
-	if o.CookieHashKey == "" {
-		return fmt.Errorf("%s is required", "cookie-hashkey")
-	}
 	if len(o.CookieHashKey) < 16 {
 		return fmt.Errorf("%s is minimum 16 characters", "cookie-hashkey")
-	}
-	if o.CookieBlockKey == "" {
-		return fmt.Errorf("%s is required", "cookie-blockkey")
 	}
 	if len(o.CookieBlockKey) < 16 {
 		return fmt.Errorf("%s is minimum 16 characters", "cookie-blockkey")
 	}
-	if !o.Insecure {
-		if o.TLSCertPath == "" {
-			return fmt.Errorf("%s is required", "tls-cert")
-		}
-		if o.TLSPrivateKeyPath == "" {
-			return fmt.Errorf("%s is required", "tls-key")
-		}
-	}
 	if o.LdapURL != "" {
-		if o.LdapUserNameAttribute == "" {
-			return fmt.Errorf("%s is required", "ldap-user-attr")
-		}
-		if o.LdapBaseDN == "" {
-			return fmt.Errorf("%s is required", "ldap-basedn")
+		_, err := url.Parse(o.LdapURL)
+		if err != nil {
+			return err
 		}
 	}
 	return nil
@@ -151,9 +149,44 @@ func (o *options) Complete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+func (o *options) newLdapAuthorizer() (*auth.LdapAuthorizer, error) {
+	u, _ := url.Parse(o.LdapURL)
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: o.LdapInsecureSkipVerify,
+		ServerName:         u.Host,
+	}
+	if o.LdapCaCertPath != "" {
+		caCert, err := os.ReadFile(o.LdapCaCertPath)
+		if err != nil {
+			setupLog.Error(err, "failed to read CA cert file")
+			return nil, err
+		}
+		certPool, err := x509.SystemCertPool()
+		if err != nil {
+			certPool = x509.NewCertPool()
+		}
+		certPool.AppendCertsFromPEM(caCert)
+		tlsConfig.RootCAs = certPool
+	}
+	autorizer, err := auth.NewLdapAuthorizer(o.LdapURL, o.LdapBaseDN, o.LdapUserNameAttribute, tlsConfig, o.LdapStartTLS)
+	if err != nil {
+		setupLog.Error(err, "unable to create LdapAuthorizer")
+		return nil, err
+	}
+	return autorizer, err
+}
+
 func (o *options) RunE(cmd *cobra.Command, args []string) error {
-	cmd.SilenceUsage = true
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&o.ZapOpts)))
+
+	if err := o.Validate(cmd, args); err != nil {
+		return fmt.Errorf("validation error: %w", err)
+	}
+	if err := o.Complete(cmd, args); err != nil {
+		return fmt.Errorf("invalid options: %w", err)
+	}
+
+	cmd.SilenceUsage = true
 
 	printVersion(cmd, o)
 	printOptions(o)
@@ -178,7 +211,10 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 	auths := make(map[cosmov1alpha1.UserAuthType]auth.Authorizer)
 	auths[cosmov1alpha1.UserAuthTypePasswordSecert] = auth.NewPasswordSecretAuthorizer(klient)
 	if o.LdapURL != "" {
-		auths[cosmov1alpha1.UserAuthTypeLDAP] = auth.NewLdapAuthorizer(o.LdapURL, o.LdapBaseDN, o.LdapUserNameAttribute)
+		auths[cosmov1alpha1.UserAuthTypeLDAP], err = o.newLdapAuthorizer()
+		if err != nil {
+			return err
+		}
 	}
 
 	serv := &Server{

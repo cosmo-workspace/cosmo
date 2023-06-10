@@ -1,7 +1,8 @@
 SHELL := /bin/bash
 BIN := $(shell pwd)/bin
+PROJ_BIN := $(abspath $(shell pwd)/../../bin)
 export BIN_DIR := $(BIN)
-export PATH := $(BIN):$(PATH)
+export PATH := $(BIN):$(PROJ_BIN):$(PATH)
 export KUBECONFIG := $(BIN)/kubeconfig
 unexport KUBERNETES_SERVICE_PORT
 unexport KUBERNETES_SERVICE_HOST
@@ -305,6 +306,11 @@ install-dashboard: helm kubectl docker-build-dashboard ## Install cosmo dashboar
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=false \
+		--set auth.ldap.enable=true \
+		--set auth.ldap.url="ldaps://open-ldap.cosmo-system.svc.cluster.local" \
+		--set auth.ldap.baseDn="ou=users\,dc=cosmows\,dc=dev" \
+		--set auth.ldap.userAttr=cn \
+		--set auth.ldap.tls.secretName=openldap-cert \
 		--set logLevel=$(LOGLEVEL)
 
 install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
@@ -318,6 +324,11 @@ install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
 		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
+		--set auth.ldap.enable=true \
+		--set auth.ldap.url="ldap://localhost:389" \
+		--set auth.ldap.baseDn="ou=users\,dc=cosmows\,dc=dev" \
+		--set auth.ldap.userAttr=cn \
+		--set auth.ldap.tls.secretName=openldap-cert \
 		--set insecure=true \
 		--set replicaCount=0 \
 		--set localRunTest.enabled=true \
@@ -353,11 +364,13 @@ add-user: kubectl cosmoctl ## add user
 	-cosmoctl user create team-b-admin --role "team-b-admin" 2> /dev/null
 	-cosmoctl user create team-ab-dev --role "team-a-dev,team-b-dev" 2> /dev/null
 	cosmoctl user reset-password tom --password vvv
+	-cosmoctl user create ldapuser1 --admin --auth-type ldap 2> /dev/null
 
 
 add-workspace: kubectl cosmoctl ## add workspace
 	@echo ====== $@ ======
 	-cosmoctl workspace create --user=tom --template=dev-code-server ws1
+	-cosmoctl workspace create --user=ldapuser1 --template=dev-code-server ldapws1
 	sleep 5
 	-cosmoctl networkrule add proxy11 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /
 	sleep 1
@@ -393,6 +406,9 @@ run-dashboard-local:
 		--cookie-session-name="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_SESSION_NAME} | base64 -d)" \
 		--cookie-hashkey="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_HASHKEY} | base64 -d)" \
 		--cookie-blockkey="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_BLOCKKEY} | base64 -d)" \
+		--ldap-url=ldap://localhost:389 \
+		--ldap-basedn=ou=users\,dc=cosmows\,dc=dev \
+		--ldap-user-attr=cn \
 		--insecure
 
 run-local: kubectl ## Run test.
@@ -503,9 +519,11 @@ helm-ls: ## helm list
 	-@helm list -a -A
 
 kg: ## Get k0s resources.
-	-@kubectl get node
-	-@kubectl get po -A
-	-@kubectl get ing -A
-	-@kubectl get svc -A
-	-@kubectl get ep -A
-	-@kubectl get application -A
+	-@kubectl get node --show-kind
+	-@kubectl get po -A --show-kind
+	-@kubectl get ing -A --show-kind
+	-@kubectl get ingressroute.traefik.io -A --show-kind
+	-@kubectl get middleware.traefik.io -A --show-kind
+	-@kubectl get svc -A --show-kind
+	-@kubectl get ep -A --show-kind
+	-@kubectl get application -A --show-kind
