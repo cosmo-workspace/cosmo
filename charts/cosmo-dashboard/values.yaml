@@ -69,11 +69,6 @@ logTimeEncoding: iso8601
 
 maxMinutes: 180
 
-tls:
-  insecure: false
-  key: /app/cert/tls.key
-  cert: /app/cert/tls.crt
-
 auth:
   ldap:
     enabled: false
