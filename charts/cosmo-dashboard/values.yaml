@@ -76,7 +76,7 @@ tls:
 
 auth:
   ldap:
-    enable: false
+    enabled: false
     # url is ldap server url. protocol is supported "ldap://" or "ldaps://"
     url: "ldap://example.com:389"
     # sAMAccountname=USERX,dc=example,dc=com
