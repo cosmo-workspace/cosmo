@@ -13,8 +13,6 @@ template:
 .PHONY: apply
 apply: template ## Apply template
 	kubectl apply -f cosmo-template.yaml
-	kubectl apply -f team-a-template.yaml
-	kubectl apply -f team-shared-template.yaml
 
 .PHONY: docker-build
 docker-build: ## Build docker image

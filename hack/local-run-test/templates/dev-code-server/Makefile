@@ -10,6 +10,20 @@ template: ## Create template
 		--workspace-urlbase "$(URLBASE)" \
 		--disable-inject-auth-proxy \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
+	kustomize build kubernetes/ | cosmoctl tmpl generate -o team-a-template.yaml --workspace \
+		--name team-a-codeserver \
+		--desc 'only for team A' \
+		--userroles 'team-a-*' \
+		--workspace-urlbase "$(URLBASE)" \
+		--disable-inject-auth-proxy \
+		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
+	kustomize build kubernetes/ | cosmoctl tmpl generate -o team-shared-template.yaml --workspace \
+		--name team-shared-codeserver \
+		--desc 'shared template excluding team-a-dev' \
+		--forbidden-userroles team-a-dev \
+		--workspace-urlbase "$(URLBASE)" \
+		--disable-inject-auth-proxy \
+		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
 
 .PHONY: apply
 apply: template ## Apply template
