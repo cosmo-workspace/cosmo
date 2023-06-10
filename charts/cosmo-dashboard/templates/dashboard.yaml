@@ -98,7 +98,7 @@ spec:
         - --tls-key=/app/cert/tls.key
         - --tls-cert=/app/cert/tls.crt
         {{- end }}
-        {{- if .Values.auth.ldap.enable }}
+        {{- if .Values.auth.ldap.enabled }}
         - --ldap-url={{ .Values.auth.ldap.url }}
         - --ldap-user-attr={{ .Values.auth.ldap.userAttr }}
         - --ldap-basedn={{ .Values.auth.ldap.baseDn }}

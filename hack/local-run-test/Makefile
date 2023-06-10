@@ -306,7 +306,7 @@ install-dashboard: helm kubectl docker-build-dashboard ## Install cosmo dashboar
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
 		--set insecure=false \
-		--set auth.ldap.enable=true \
+		--set auth.ldap.enabled=true \
 		--set auth.ldap.url="ldaps://open-ldap.cosmo-system.svc.cluster.local" \
 		--set auth.ldap.baseDn="ou=users\,dc=cosmows\,dc=dev" \
 		--set auth.ldap.userAttr=cn \
@@ -324,7 +324,7 @@ install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
 		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
-		--set auth.ldap.enable=true \
+		--set auth.ldap.enabled=true \
 		--set auth.ldap.url="ldap://localhost:389" \
 		--set auth.ldap.baseDn="ou=users\,dc=cosmows\,dc=dev" \
 		--set auth.ldap.userAttr=cn \
