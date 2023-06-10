@@ -1,4 +1,4 @@
-import { Code, ConnectError } from "@bufbuild/connect-web";
+import { Code, ConnectError } from "@bufbuild/connect";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
