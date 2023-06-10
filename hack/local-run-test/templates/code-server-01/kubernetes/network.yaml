@@ -8,21 +8,3 @@ spec:
     - name: main
       port: 18080
       protocol: TCP
----
-#
-# IngressRoute
-#
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: workspace
-spec:
-  entryPoints:
-    - web
-  routes:
-    - kind: Rule
-      match: "Host(`main-{{INSTANCE}}-{{USER_NAME}}-k3d.domain`)"
-      priority: 10
-      services:
-        - name: "{{INSTANCE}}-workspace"
-          port: main
