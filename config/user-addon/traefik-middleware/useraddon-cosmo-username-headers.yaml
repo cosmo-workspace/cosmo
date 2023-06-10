@@ -15,14 +15,14 @@ spec:
     kind: Middleware
     metadata:
       labels:
-        cosmo-workspace.github.io/instance: '{{ print "{{INSTANCE}}" }}'
-        cosmo-workspace.github.io/template: '{{ print "{{TEMPLATE}}" }}'
+        cosmo-workspace.github.io/instance: '{{INSTANCE}}'
+        cosmo-workspace.github.io/template: '{{TEMPLATE}}'
       name: cosmo-username-headers
-      namespace: '{{ print "{{NAMESPACE}}" }}'
+      namespace: '{{NAMESPACE}}'
     spec:
       headers:
         customRequestHeaders:
-          X-Cosmo-UserName: '{{ print "{{USER_NAME}}" }}'
+          X-Cosmo-UserName: '{{USER_NAME}}'
         customResponseHeaders:
-          X-Cosmo-UserName: '{{ print "{{USER_NAME}}" }}'
+          X-Cosmo-UserName: '{{USER_NAME}}'
 
