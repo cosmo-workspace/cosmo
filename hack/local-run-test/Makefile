@@ -363,8 +363,13 @@ add-user: kubectl cosmoctl ## add user
 	-cosmoctl user create team-b-dev --role "team-b-dev" 2> /dev/null
 	-cosmoctl user create team-b-admin --role "team-b-admin" 2> /dev/null
 	-cosmoctl user create team-ab-dev --role "team-a-dev,team-b-dev" 2> /dev/null
-	cosmoctl user reset-password tom --password vvv
 	-cosmoctl user create ldapuser1 --admin --auth-type ldap 2> /dev/null
+	-cosmoctl user reset-password tom --password vvv
+	-cosmoctl user reset-password team-a-dev   --password xxxxxxxx
+	-cosmoctl user reset-password team-a-admin --password xxxxxxxx
+	-cosmoctl user reset-password team-b-dev   --password xxxxxxxx
+	-cosmoctl user reset-password team-b-admin --password xxxxxxxx
+	-cosmoctl user reset-password team-ab-dev  --password xxxxxxxx
 
 
 add-workspace: kubectl cosmoctl ## add workspace
