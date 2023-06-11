@@ -47,6 +47,16 @@ const templateMock: MockedMemberFunction<typeof useTemplateService> = {
   getWorkspaceTemplates: vi.fn(),
   getUserAddonTemplates: vi.fn(),
 }
+const useLoginMock = useLogin as MockedFunction<typeof useLogin>;
+const loginMock: MockedMemberFunction<typeof useLogin> = {
+  loginUser: {} as any,
+  verifyLogin: vi.fn(),
+  login: vi.fn(),
+  logout: vi.fn(),
+  updataPassword: vi.fn(),
+  refreshUserInfo: vi.fn(),
+  clearLoginUser: vi.fn(),
+};
 const useProgressMock = useProgress as MockedFunction<typeof useProgress>;
 const progressMock: MockedMemberFunction<typeof useProgress> = {
   setMask: vi.fn(),
@@ -109,6 +119,7 @@ describe('useWorkspace', () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     useWorkspaceServiceMock.mockReturnValue(wsMock);
+    useLoginMock.mockReturnValue(loginMock);
     wsMock.getWorkspaces.mockResolvedValue(new GetWorkspacesResponse({ message: "", items: [ws11, ws13, ws12] }));
   });
 
@@ -430,6 +441,7 @@ describe('useTemplates', () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     useTemplateServiceMock.mockReturnValue(templateMock);
+    useLoginMock.mockReturnValue(loginMock);
   });
 
   afterEach(() => {
@@ -470,6 +482,7 @@ describe('useNetworkRule', () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     useWorkspaceServiceMock.mockReturnValue(wsMock);
+    useLoginMock.mockReturnValue(loginMock);
   });
 
   afterEach(() => {
@@ -529,6 +542,7 @@ describe('useWorkspaceUsers', () => {
     logout: vi.fn(),
     updataPassword: vi.fn(),
     refreshUserInfo: vi.fn(),
+    clearLoginUser: vi.fn(),
   }
   const useUserServiceMock = useUserService as MockedFunction<typeof useUserService>;
   const userMock: MockedMemberFunction<typeof useUserService> = {
@@ -556,12 +570,13 @@ describe('useWorkspaceUsers', () => {
 
     it('normal', async () => {
       useLoginMock.mockReturnValue({
-        loginUser: undefined,
+        loginUser: undefined as any,
         verifyLogin: vi.fn(),
         login: vi.fn(),
         logout: vi.fn(),
         updataPassword: vi.fn(),
         refreshUserInfo: vi.fn(),
+        clearLoginUser: vi.fn(),
       });
       const result = renderHook(() => useWorkspaceUsersModule(), {
         wrapper: ({ children }) => (<WorkspaceUsersContext.Provider>{children}</WorkspaceUsersContext.Provider>),

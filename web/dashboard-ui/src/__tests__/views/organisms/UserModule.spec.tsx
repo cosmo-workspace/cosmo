@@ -4,6 +4,7 @@ import { act, cleanup, renderHook } from '@testing-library/react';
 import { useSnackbar } from "notistack";
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi } from "vitest";
+import { useLogin } from '../../../components/LoginProvider';
 import { useProgress } from '../../../components/ProgressProvider';
 import { Template } from '../../../proto/gen/dashboard/v1alpha1/template_pb';
 import { GetUserAddonTemplatesResponse } from '../../../proto/gen/dashboard/v1alpha1/template_service_pb';
@@ -37,7 +38,16 @@ const userMock: MockedMemberFunction<typeof useUserService> = {
   updateUserPassword: vi.fn(),
   updateUserRole: vi.fn(),
 }
-
+const useLoginMock = useLogin as MockedFunction<typeof useLogin>;
+const loginMock: MockedMemberFunction<typeof useLogin> = {
+  loginUser: {} as any,
+  verifyLogin: vi.fn(),
+  login: vi.fn(),
+  logout: vi.fn(),
+  updataPassword: vi.fn(),
+  refreshUserInfo: vi.fn(),
+  clearLoginUser: vi.fn(),
+};
 const useTemplateServiceMock = useTemplateService as MockedFunction<typeof useTemplateService>;
 const templateMock: MockedMemberFunction<typeof useTemplateService> = {
   getUserAddonTemplates: vi.fn(),
@@ -71,6 +81,7 @@ describe('useUserModule', () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     useUserServiceMock.mockReturnValue(userMock);
+    useLoginMock.mockReturnValue(loginMock);
   });
 
   afterEach(() => {
@@ -243,6 +254,7 @@ describe('useTemplates', () => {
     useSnackbarMock.mockReturnValue(snackbarMock);
     useProgressMock.mockReturnValue(progressMock);
     useTemplateServiceMock.mockReturnValue(templateMock);
+    useLoginMock.mockReturnValue(loginMock);
   });
 
   afterEach(() => {

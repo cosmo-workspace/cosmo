@@ -29,6 +29,7 @@ describe('AuthRoute', () => {
     logout: vi.fn(),
     updataPassword: vi.fn(),
     refreshUserInfo: vi.fn(),
+    clearLoginUser: vi.fn(),
   }
 
   beforeEach(async () => {
