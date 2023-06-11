@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const Footprint = `cosmoctl - cosmo v0.8.0 cosmo-workspace 2023`
+const Footprint = `cosmoctl - cosmo v0.9.0 cosmo-workspace 2023`
 
 func AddCommand(cmd *cobra.Command, o *cmdutil.CliOptions) {
 	versionCmd := &cobra.Command{
