@@ -3,6 +3,7 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ModuleContext } from "../../components/ContextProvider";
+import { useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
@@ -215,12 +216,14 @@ export const useTemplates = () => {
 const useHandleError = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { clearLoginUser } = useLogin();
 
   const handleError = (error: any) => {
     console.log('handleError', error);
 
     if (error instanceof ConnectError &&
       error.code === Code.Unauthenticated) {
+      clearLoginUser();
       navigate('/signin');
     }
     const msg = error?.message;

@@ -4,7 +4,7 @@ import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { useSnackbar } from "notistack";
 import React from "react";
-import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi } from "vitest";
+import { MockedFunction, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useLogin } from "../../../components/LoginProvider";
 import { User } from "../../../proto/gen/dashboard/v1alpha1/user_pb";
 import { useUserModule } from "../../../views/organisms/UserModule";
@@ -23,6 +23,7 @@ type MockedMemberFunction<T extends (...args: any) => any> = {
 
 const useUserModuleMock = useUserModule as MockedFunction<typeof useUserModule>;
 const userModuleMock: MockedMemberFunction<typeof useUserModule> = {
+  existingRoles: [] as any,
   users: [] as any,
   getUsers: vi.fn(),
   createUser: vi.fn(),
@@ -38,6 +39,7 @@ const loginMock: MockedMemberFunction<typeof useLogin> = {
   logout: vi.fn(),
   updataPassword: vi.fn(),
   refreshUserInfo: vi.fn(),
+  clearLoginUser: vi.fn(),
 };
 
 const useSnackbarMock = useSnackbar as MockedFunction<typeof useSnackbar>;

@@ -4,6 +4,7 @@ import { User } from '../proto/gen/dashboard/v1alpha1/user_pb';
 import { useAuthService, useUserService } from '../services/DashboardServices';
 import { useProgress } from './ProgressProvider';
 
+
 /**
  * context
  * ref: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/24509#issuecomment-774430643
@@ -38,6 +39,7 @@ const useLoginModule = () => {
       }
     }
     catch (error) {
+      setLoginUser(undefined);
       //handleError(error);
     }
     finally {
@@ -136,6 +138,12 @@ const useLoginModule = () => {
     }
   }
 
+  /**
+   * clearLoginUser 
+   */
+  const clearLoginUser = async () => {
+    setLoginUser(undefined);
+  }
 
   /**
    * error handler
@@ -153,6 +161,7 @@ const useLoginModule = () => {
     logout,
     refreshUserInfo,
     updataPassword,
+    clearLoginUser,
   };
 }
 

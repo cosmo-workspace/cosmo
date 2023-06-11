@@ -155,7 +155,9 @@ COVER_PROFILE ?= cover.out
 clear-snapshots: ## Clear snapshots
 	-find . -type f | grep __snapshots__ | grep -v "/web/" | xargs rm -f
 
-config/crd/traefik/traefik.io_ingressroutes.yaml: helm
+.PHONY: ingressroute.yaml
+ingressroute.yaml: helm config/crd/traefik/traefik.io_ingressroutes.yaml
+config/crd/traefik/traefik.io_ingressroutes.yaml:
 	mkdir -p config/crd/traefik
 	$(HELM) dependency update ./charts/cosmo-traefik
 	tar -xvf ./charts/cosmo-traefik/charts/traefik-*.tgz -O traefik/crds/traefik.io_ingressroutes.yaml > config/crd/traefik/traefik.io_ingressroutes.yaml
@@ -169,7 +171,7 @@ go-test.env:
 test: manifests generate fmt vet envtest go-test.env go-test ## Run tests.
 
 .PHONY: go-test
-go-test: go config/crd/traefik/traefik.io_ingressroutes.yaml
+go-test: go ingressroute.yaml
 ifeq ($(QUICK_BUILD),no)
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" \
 	$(GO) test $(TEST_FILES) -coverpkg="./..." -coverprofile $(COVER_PROFILE) $(TEST_OPTS)

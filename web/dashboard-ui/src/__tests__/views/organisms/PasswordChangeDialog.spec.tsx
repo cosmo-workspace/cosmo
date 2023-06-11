@@ -26,6 +26,7 @@ const loginMock: MockedMemberFunction<typeof useLogin> = {
   logout: vi.fn(),
   updataPassword: vi.fn(),
   refreshUserInfo: vi.fn(),
+  clearLoginUser: vi.fn(),
 };
 
 const useSnackbarMock = useSnackbar as MockedFunction<typeof useSnackbar>;

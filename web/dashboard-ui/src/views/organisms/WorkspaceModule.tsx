@@ -311,12 +311,14 @@ const useWorkspaceUsers = () => {
 const useHandleError = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { clearLoginUser } = useLogin();
 
   const handleError = (error: any) => {
     console.log('handleError', error);
 
     if (error instanceof ConnectError &&
       error.code === Code.Unauthenticated) {
+      clearLoginUser();
       navigate('/signin');
     }
     const msg = error?.message;
