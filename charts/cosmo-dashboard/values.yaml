@@ -69,6 +69,22 @@ logTimeEncoding: iso8601
 
 maxMinutes: 180
 
+auth:
+  ldap:
+    enabled: false
+    # url is ldap server url. protocol is supported "ldap://" or "ldaps://"
+    url: "ldap://example.com:389"
+    # sAMAccountname=USERX,dc=example,dc=com
+    # ^^^^^^^^^^^^^^       ^^^^^^^^^^^^^^^^^
+    #   user-attr               baseDn
+    baseDn: "dc=example,dc=com"
+    # usually sAMAccountname or uid or cn
+    userAttr: "sAMAccountname"
+    tls:
+      insecure: false
+      secretName: ""
+      startTls: false
+
 cert:
   secretName: dashboard-server-cert
   enableCertManager: true
@@ -78,10 +94,6 @@ cert:
   dnsName:
 
 insecure: true
-
-ldapURL: ""
-ldapUserAttr: ""
-ldapBaseDn: ""
 
 localRunTest:
   enabled: false

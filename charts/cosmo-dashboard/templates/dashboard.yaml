@@ -98,10 +98,15 @@ spec:
         - --tls-key=/app/cert/tls.key
         - --tls-cert=/app/cert/tls.crt
         {{- end }}
-        {{- if .Values.ldapURL }}
-        - --ldap-url={{ .Values.ldapURL }}
-        - --ldap-user-attr={{ .Values.ldapUserAttr }}
-        - --ldap-basedn={{ .Values.ldapBaseDn }}
+        {{- if .Values.auth.ldap.enabled }}
+        - --ldap-url={{ .Values.auth.ldap.url }}
+        - --ldap-user-attr={{ .Values.auth.ldap.userAttr }}
+        - --ldap-basedn={{ .Values.auth.ldap.baseDn }}
+        - --ldap-insecure-skip-verify={{ .Values.auth.ldap.tls.insecure }}
+        - --ldap-start-tls={{ .Values.auth.ldap.tls.startTls }}
+        {{- if .Values.auth.ldap.tls.secretName }}
+        - --ldap-ca-cert=/app/ldapCert/ca.crt
+        {{- end }}
         {{- end }}
         command:
         - /app/dashboard
@@ -128,20 +133,31 @@ spec:
           {{- toYaml .Values.resources | nindent 10 }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
-        {{- if not .Values.insecure }}
         volumeMounts:
+        {{- if not .Values.insecure }}
         - mountPath: /app/cert
           name: cert
+          readOnly: true
+        {{- end }}
+        {{- if .Values.auth.ldap.tls.secretName }}
+        - mountPath: /app/ldapCert
+          name: ldap-cert
           readOnly: true
         {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       serviceAccountName: {{ include "cosmo-dashboard.serviceAccountName" . }}
       terminationGracePeriodSeconds: 10
-      {{- if not .Values.insecure }}
       volumes:
+      {{- if not .Values.insecure }}
       - name: cert
         secret:
           defaultMode: 420
           secretName: {{ .Values.cert.secretName }}
+      {{- end }}
+      {{- if .Values.auth.ldap.tls.secretName }}
+      - name: ldap-cert
+        secret:
+          defaultMode: 420
+          secretName: {{ .Values.auth.ldap.tls.secretName }}
       {{- end }}
