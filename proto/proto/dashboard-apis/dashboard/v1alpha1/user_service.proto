@@ -58,7 +58,7 @@ message CreateUserRequest {
   string display_name = 2;
   repeated string roles = 3;
   string auth_type = 4;
-  repeated UserAddons addons = 5;
+  repeated UserAddon addons = 5;
 }
 
 message CreateUserResponse {

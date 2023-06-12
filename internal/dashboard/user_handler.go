@@ -145,9 +145,9 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 }
 
 func convertUserToDashv1alpha1User(user cosmov1alpha1.User) *dashv1alpha1.User {
-	addons := make([]*dashv1alpha1.UserAddons, len(user.Spec.Addons))
+	addons := make([]*dashv1alpha1.UserAddon, len(user.Spec.Addons))
 	for i, v := range user.Spec.Addons {
-		addons[i] = &dashv1alpha1.UserAddons{
+		addons[i] = &dashv1alpha1.UserAddon{
 			Template:      v.Template.Name,
 			ClusterScoped: v.Template.ClusterScoped,
 			Vars:          v.Vars,
@@ -172,7 +172,7 @@ func convertUserRolesToStringSlice(apiRoles []cosmov1alpha1.UserRole) []string {
 	return roles
 }
 
-func convertDashv1alpha1UserAddonToUserAddon(addons []*dashv1alpha1.UserAddons) []cosmov1alpha1.UserAddon {
+func convertDashv1alpha1UserAddonToUserAddon(addons []*dashv1alpha1.UserAddon) []cosmov1alpha1.UserAddon {
 	a := make([]cosmov1alpha1.UserAddon, len(addons))
 	for i, v := range addons {
 		addon := cosmov1alpha1.UserAddon{

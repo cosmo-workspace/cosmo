@@ -136,7 +136,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				DisplayName: "create 1",
 				Roles:       []string{"team-a", "team-b"},
 				AuthType:    "password-secret",
-				Addons: []*dashv1alpha1.UserAddons{{
+				Addons: []*dashv1alpha1.UserAddon{{
 					Template: "user-tmpl1",
 					Vars:     map[string]string{"HOGE": "FUGA"},
 				}},

@@ -22,8 +22,8 @@
   
 - [dashboard/v1alpha1/user.proto](#dashboard_v1alpha1_user-proto)
     - [User](#dashboard-v1alpha1-User)
-    - [UserAddons](#dashboard-v1alpha1-UserAddons)
-    - [UserAddons.VarsEntry](#dashboard-v1alpha1-UserAddons-VarsEntry)
+    - [UserAddon](#dashboard-v1alpha1-UserAddon)
+    - [UserAddon.VarsEntry](#dashboard-v1alpha1-UserAddon-VarsEntry)
   
 - [dashboard/v1alpha1/user_service.proto](#dashboard_v1alpha1_user_service-proto)
     - [CreateUserRequest](#dashboard-v1alpha1-CreateUserRequest)
@@ -279,7 +279,7 @@
 | display_name | [string](#string) |  |  |
 | roles | [string](#string) | repeated |  |
 | auth_type | [string](#string) |  |  |
-| addons | [UserAddons](#dashboard-v1alpha1-UserAddons) | repeated |  |
+| addons | [UserAddon](#dashboard-v1alpha1-UserAddon) | repeated |  |
 | default_password | [string](#string) |  |  |
 | status | [string](#string) |  |  |
 
@@ -288,9 +288,9 @@
 
 
 
-<a name="dashboard-v1alpha1-UserAddons"></a>
+<a name="dashboard-v1alpha1-UserAddon"></a>
 
-### UserAddons
+### UserAddon
 
 
 
@@ -298,16 +298,16 @@
 | ----- | ---- | ----- | ----------- |
 | template | [string](#string) |  |  |
 | cluster_scoped | [bool](#bool) |  |  |
-| vars | [UserAddons.VarsEntry](#dashboard-v1alpha1-UserAddons-VarsEntry) | repeated |  |
+| vars | [UserAddon.VarsEntry](#dashboard-v1alpha1-UserAddon-VarsEntry) | repeated |  |
 
 
 
 
 
 
-<a name="dashboard-v1alpha1-UserAddons-VarsEntry"></a>
+<a name="dashboard-v1alpha1-UserAddon-VarsEntry"></a>
 
-### UserAddons.VarsEntry
+### UserAddon.VarsEntry
 
 
 
@@ -349,7 +349,7 @@
 | display_name | [string](#string) |  |  |
 | roles | [string](#string) | repeated |  |
 | auth_type | [string](#string) |  |  |
-| addons | [UserAddons](#dashboard-v1alpha1-UserAddons) | repeated |  |
+| addons | [UserAddon](#dashboard-v1alpha1-UserAddon) | repeated |  |
 
 
 

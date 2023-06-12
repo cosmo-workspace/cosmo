@@ -9,7 +9,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3 } from "@bufbuild/protobuf";
-import { User, UserAddons } from "./user_pb.js";
+import { User, UserAddon } from "./user_pb.js";
 
 /**
  * @generated from message dashboard.v1alpha1.DeleteUserRequest
@@ -233,9 +233,9 @@ export class CreateUserRequest extends Message<CreateUserRequest> {
   authType = "";
 
   /**
-   * @generated from field: repeated dashboard.v1alpha1.UserAddons addons = 5;
+   * @generated from field: repeated dashboard.v1alpha1.UserAddon addons = 5;
    */
-  addons: UserAddons[] = [];
+  addons: UserAddon[] = [];
 
   constructor(data?: PartialMessage<CreateUserRequest>) {
     super();
@@ -249,7 +249,7 @@ export class CreateUserRequest extends Message<CreateUserRequest> {
     { no: 2, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "roles", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 4, name: "auth_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "addons", kind: "message", T: UserAddons, repeated: true },
+    { no: 5, name: "addons", kind: "message", T: UserAddon, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateUserRequest {
