@@ -33,6 +33,8 @@
     - [GetUserRequest](#dashboard-v1alpha1-GetUserRequest)
     - [GetUserResponse](#dashboard-v1alpha1-GetUserResponse)
     - [GetUsersResponse](#dashboard-v1alpha1-GetUsersResponse)
+    - [UpdateUserAddonsRequest](#dashboard-v1alpha1-UpdateUserAddonsRequest)
+    - [UpdateUserAddonsResponse](#dashboard-v1alpha1-UpdateUserAddonsResponse)
     - [UpdateUserDisplayNameRequest](#dashboard-v1alpha1-UpdateUserDisplayNameRequest)
     - [UpdateUserDisplayNameResponse](#dashboard-v1alpha1-UpdateUserDisplayNameResponse)
     - [UpdateUserPasswordRequest](#dashboard-v1alpha1-UpdateUserPasswordRequest)
@@ -449,6 +451,38 @@
 
 
 
+<a name="dashboard-v1alpha1-UpdateUserAddonsRequest"></a>
+
+### UpdateUserAddonsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+| addons | [UserAddon](#dashboard-v1alpha1-UserAddon) | repeated |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-UpdateUserAddonsResponse"></a>
+
+### UpdateUserAddonsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+| user | [User](#dashboard-v1alpha1-User) |  |  |
+
+
+
+
+
+
 <a name="dashboard-v1alpha1-UpdateUserDisplayNameRequest"></a>
 
 ### UpdateUserDisplayNameRequest
@@ -565,6 +599,7 @@
 | UpdateUserDisplayName | [UpdateUserDisplayNameRequest](#dashboard-v1alpha1-UpdateUserDisplayNameRequest) | [UpdateUserDisplayNameResponse](#dashboard-v1alpha1-UpdateUserDisplayNameResponse) | Update user display name |
 | UpdateUserPassword | [UpdateUserPasswordRequest](#dashboard-v1alpha1-UpdateUserPasswordRequest) | [UpdateUserPasswordResponse](#dashboard-v1alpha1-UpdateUserPasswordResponse) | Update a single User password |
 | UpdateUserRole | [UpdateUserRoleRequest](#dashboard-v1alpha1-UpdateUserRoleRequest) | [UpdateUserRoleResponse](#dashboard-v1alpha1-UpdateUserRoleResponse) | Update a single User role |
+| UpdateUserAddons | [UpdateUserAddonsRequest](#dashboard-v1alpha1-UpdateUserAddonsRequest) | [UpdateUserAddonsResponse](#dashboard-v1alpha1-UpdateUserAddonsResponse) | Update a single User role |
 
  
 
