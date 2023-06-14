@@ -18,7 +18,7 @@ CHART_TRAEFIK_VERSION ?= $(TRAEFIK_PLUGINS_VERSION)
 IMG_MANAGER ?= cosmo-controller-manager:$(MANAGER_VERSION)
 IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
 IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
-IMG_TRAEFIK_PLUGINS ?= traefik-plugins:$(TRAEFIK_PLUGINS_VERSION)
+IMG_TRAEFIK_PLUGINS ?= cosmo-traefik-plugins:$(TRAEFIK_PLUGINS_VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:generateEmbeddedObjectMeta=true"
 
@@ -243,6 +243,9 @@ endif
 		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_TRAEFIK_VERSION:v%=%}/" \
 		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
 		charts/cosmo-traefik/Chart.yaml
+	sed -i.bk \
+		-e "s;image: ghcr.io/cosmo-workspace/cosmo-traefik-plugins:v[0-9]\+.[0-9]\+.[0-9]\+.*;image: ghcr.io/cosmo-workspace/cosmo-traefik-plugins:${CHART_TRAEFIK_VERSION};" \
+		charts/cosmo-traefik/values.yaml
 
 ##---------------------------------------------------------------------
 ##@ Run
@@ -315,10 +318,7 @@ docker-build-auth-proxy: test ## Build the docker image for auth-proxy.
 
 .PHONY: docker-build-traefik-plugins
 docker-build-traefik-plugins: test ## Build the docker image for traefik-plugins.
-	cd traefik/plugins/cosmo-workspace/cosmoauth && ${MAKE} vendor 
 	DOCKER_BUILDKIT=1 docker build . -t ${IMG_TRAEFIK_PLUGINS} -f dockerfile/traefik-plugins.Dockerfile
-	cd traefik/plugins/cosmo-workspace/cosmoauth && ${MAKE} clean 
-
 
 .PHONY: docker-push docker-push-manager docker-push-dashboard docker-push-auth-proxy docker-push-traefik-plugins
 docker-push: docker-push-manager docker-push-dashboard docker-push-auth-proxy docker-push-traefik-plugins ## Build the docker image.
