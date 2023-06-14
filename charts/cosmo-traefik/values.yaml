@@ -40,7 +40,7 @@ traefik:
     # Additional initContainers (e.g. for setting file permission as shown below)
     initContainers:
       - name: copy-plugins
-        image: ghcr.io/cosmo-workspace/traefik-plugins:xxxx
+        image: ghcr.io/cosmo-workspace/cosmo-traefik-plugins:v0.9.1
         imagePullPolicy: Always
         command: ["sh", "-c", "cp -r /plugins-local/* /local-plugins/"]
         volumeMounts:
