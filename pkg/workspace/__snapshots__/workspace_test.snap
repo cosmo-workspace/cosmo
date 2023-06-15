@@ -8,77 +8,17 @@
  },
  "spec": {
   "override": {
-   "network": {
-    "ingress": [
-     {
-      "rules": [
-       {
-        "http": {
-         "paths": [
-          {
-           "backend": {
-            "service": {
-             "name": "ws1-ws-svc",
-             "port": {
-              "name": "port8080"
-             }
-            }
-           },
-           "path": "/",
-           "pathType": "Prefix"
-          },
-          {
-           "backend": {
-            "service": {
-             "name": "ws1-ws-svc",
-             "port": {
-              "name": "port9999"
-             }
-            }
-           },
-           "path": "/",
-           "pathType": "Prefix"
-          }
-         ]
-        }
-       }
-      ],
-      "targetName": "ws-ing"
-     }
-    ],
-    "service": [
-     {
-      "ports": [
-       {
-        "name": "port8080",
-        "port": 18080,
-        "protocol": "TCP",
-        "targetPort": 18080
-       },
-       {
-        "name": "port9999",
-        "port": 19999,
-        "protocol": "TCP",
-        "targetPort": 19999
-       }
-      ],
-      "targetName": "ws-svc"
-     }
-    ]
-   },
    "patchesJson6902": [
     {
-     "patch": "[{\n\"op\": \"replace\",\n\"path\": \"/spec/routes\",\n\"value\": [{\"match\":\"\",\"kind\":\"Rule\",\"priority\":100,\"services\":[{\"name\":\"ws1-ws-svc\",\"kind\":\"Service\",\"port\":\"port8080\",\"scheme\":\"http\"}],\"middlewares\":[{\"name\":\"ws1-headers\"},{\"name\":\"cosmo-auth\",\"namespace\":\"cosmo-system\"}]},{\"match\":\"\",\"kind\":\"Rule\",\"priority\":100,\"services\":[{\"name\":\"ws1-ws-svc\",\"kind\":\"Service\",\"port\":\"port9999\",\"scheme\":\"http\"}],\"middlewares\":[{\"name\":\"ws1-headers\"},{\"name\":\"cosmo-auth\",\"namespace\":\"cosmo-system\"}]}]\n}]",
+     "patch": "[{\"op\": \"replace\",\"path\": \"/spec/ports\",\"value\": [{\"name\":\"port8080\",\"protocol\":\"TCP\",\"port\":8080,\"targetPort\":18080},{\"name\":\"port9999\",\"protocol\":\"TCP\",\"port\":9999,\"targetPort\":19999}]}]",
      "target": {
-      "apiVersion": "traefik.io/v1alpha1",
-      "kind": "IngressRoute",
-      "name": "ws-ing"
+      "apiVersion": "v1",
+      "kind": "Service",
+      "name": "ws-svc"
      }
-    }
-   ],
-   "scale": [
+    },
     {
-     "replicas": 1,
+     "patch": "[{\"op\": \"replace\",\"path\": \"/spec/replicas\",\"value\": 1}]",
      "target": {
       "apiVersion": "apps/v1",
       "kind": "Deployment",
@@ -94,8 +34,6 @@
    "VAR1": "VAL1",
    "{{USER_NAME}}": "default",
    "{{WORKSPACE_DEPLOYMENT_NAME}}": "ws-deploy",
-   "{{WORKSPACE_INGRESS_NAME}}": "ws-ing",
-   "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}": "main",
    "{{WORKSPACE_SERVICE_NAME}}": "ws-svc",
    "{{WORKSPACE}}": "ws1"
   }
@@ -123,31 +61,17 @@
  },
  "spec": {
   "override": {
-   "network": {
-    "ingress": [
-     {
-      "targetName": "ws-ing"
-     }
-    ],
-    "service": [
-     {
-      "targetName": "ws-svc"
-     }
-    ]
-   },
    "patchesJson6902": [
     {
-     "patch": "[{\n\"op\": \"replace\",\n\"path\": \"/spec/routes\",\n\"value\": []\n}]",
+     "patch": "[{\"op\": \"replace\",\"path\": \"/spec/ports\",\"value\": []}]",
      "target": {
-      "apiVersion": "traefik.io/v1alpha1",
-      "kind": "IngressRoute",
-      "name": "ws-ing"
+      "apiVersion": "v1",
+      "kind": "Service",
+      "name": "ws-svc"
      }
-    }
-   ],
-   "scale": [
+    },
     {
-     "replicas": 0,
+     "patch": "[{\"op\": \"replace\",\"path\": \"/spec/replicas\",\"value\": 0}]",
      "target": {
       "apiVersion": "apps/v1",
       "kind": "Deployment",
@@ -162,8 +86,6 @@
   "vars": {
    "{{USER_NAME}}": "default",
    "{{WORKSPACE_DEPLOYMENT_NAME}}": "ws-deploy",
-   "{{WORKSPACE_INGRESS_NAME}}": "ws-ing",
-   "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}": "main",
    "{{WORKSPACE_SERVICE_NAME}}": "ws-svc",
    "{{WORKSPACE}}": "ws1"
   }
@@ -180,7 +102,7 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
 [
  {
   "name": "port1111",
-  "port": 2222,
+  "port": 1111,
   "protocol": "TCP",
   "targetPort": 2222
  }
@@ -191,13 +113,13 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
 [
  {
   "name": "port1111",
-  "port": 2222,
+  "port": 1111,
   "protocol": "TCP",
   "targetPort": 2222
  },
  {
   "name": "port3333",
-  "port": 4444,
+  "port": 3333,
   "protocol": "TCP",
   "targetPort": 4444
  }
@@ -208,112 +130,32 @@ failed to set owner reference: no kind is registered for the type v1alpha1.Works
 [
  {
   "name": "port1111",
-  "port": 2222,
+  "port": 1111,
+  "protocol": "TCP",
+  "targetPort": 2222
+ },
+ {
+  "name": "port3333",
+  "port": 3333,
   "protocol": "TCP",
   "targetPort": 2222
  }
 ]
 ---
 
-[TestIngressRules/✅_OK - 1]
+[TestSvcPorts/✅_OK3#01 - 1]
 [
  {
-  "host": "host1",
-  "http": {
-   "paths": [
-    {
-     "backend": {
-      "service": {
-       "name": "bksvc",
-       "port": {
-        "name": "port1111"
-       }
-      }
-     },
-     "path": "/",
-     "pathType": "Prefix"
-    }
-   ]
-  }
- }
-]
----
-
-[TestIngressRules/✅_OK2 - 1]
-[
- {
-  "host": "host1",
-  "http": {
-   "paths": [
-    {
-     "backend": {
-      "service": {
-       "name": "bksvc",
-       "port": {
-        "name": "port1111"
-       }
-      }
-     },
-     "path": "/",
-     "pathType": "Prefix"
-    }
-   ]
-  }
+  "name": "port1111",
+  "port": 1111,
+  "protocol": "TCP",
+  "targetPort": 2222
  },
  {
-  "host": "host2",
-  "http": {
-   "paths": [
-    {
-     "backend": {
-      "service": {
-       "name": "bksvc",
-       "port": {
-        "name": "port3333"
-       }
-      }
-     },
-     "path": "/",
-     "pathType": "Prefix"
-    }
-   ]
-  }
- }
-]
----
-
-[TestIngressRules/✅_OK3 - 1]
-[
- {
-  "host": "host1",
-  "http": {
-   "paths": [
-    {
-     "backend": {
-      "service": {
-       "name": "bksvc",
-       "port": {
-        "name": "port1111"
-       }
-      }
-     },
-     "path": "/",
-     "pathType": "Prefix"
-    },
-    {
-     "backend": {
-      "service": {
-       "name": "bksvc",
-       "port": {
-        "name": "port3333"
-       }
-      }
-     },
-     "path": "/aaa",
-     "pathType": "Prefix"
-    }
-   ]
-  }
+  "name": "port3333",
+  "port": 3333,
+  "protocol": "TCP",
+  "targetPort": 2222
  }
 ]
 ---

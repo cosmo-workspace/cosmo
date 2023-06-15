@@ -203,66 +203,28 @@ spec:
 				Expect(err).NotTo(HaveOccurred())
 
 				// update instance override spec
-				prefix := netv1.PathTypePrefix
 				curInst.Spec.Override = cosmov1alpha1.OverrideSpec{
-					Scale: []cosmov1alpha1.ScalingOverrideSpec{
+					PatchesJson6902: []cosmov1alpha1.Json6902{
 						{
 							Target: cosmov1alpha1.ObjectRef{
 								ObjectReference: corev1.ObjectReference{
-									APIVersion: metav1.GroupVersion{
-										Group:   "apps",
-										Version: "v1",
-									}.String(),
-									Kind: "Deployment",
-									Name: "deploy",
+									APIVersion: "apps/v1",
+									Kind:       "Deployment",
+									Name:       "deploy",
 								},
 							},
-							Replicas: 3,
+							Patch: `[{"op": "replace", "path": "/spec/replicas", "value": 3}]`,
 						},
-					},
-					Network: &cosmov1alpha1.NetworkOverrideSpec{
-						Service: []cosmov1alpha1.ServiceOverrideSpec{
-							{
-								TargetName: "svc",
-								Ports: []corev1.ServicePort{
-									{
-										Name:     "add",
-										Port:     9090,
-										Protocol: corev1.ProtocolTCP,
-									},
+						{
+							Target: cosmov1alpha1.ObjectRef{
+								ObjectReference: corev1.ObjectReference{
+									APIVersion: "v1",
+									Kind:       "Service",
+									Name:       "svc",
 								},
 							},
+							Patch: `[{"op": "replace", "path": "/spec/ports", "value": [{"name": "add", "port": 9090, "protocol": "TCP"},{"name": "add2", "port": 9091, "protocol": "TCP"}]}]`,
 						},
-						Ingress: []cosmov1alpha1.IngressOverrideSpec{
-							{
-								TargetName: "ing",
-								Rules: []netv1.IngressRule{
-									{
-										Host: "add.example.com",
-										IngressRuleValue: netv1.IngressRuleValue{
-											HTTP: &netv1.HTTPIngressRuleValue{
-												Paths: []netv1.HTTPIngressPath{
-													{
-														Path:     "/add",
-														PathType: &prefix,
-														Backend: netv1.IngressBackend{
-															Service: &netv1.IngressServiceBackend{
-																Name: "svc",
-																Port: netv1.ServiceBackendPort{
-																	Number: 9090,
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					PatchesJson6902: []cosmov1alpha1.Json6902{
 						{
 							Target: cosmov1alpha1.ObjectRef{
 								ObjectReference: corev1.ObjectReference{
@@ -274,21 +236,23 @@ spec:
 									Name: "svc",
 								},
 							},
-							Patch: `
-[
-  {
-    "op": "replace",
-    "path": "/spec/type",
-    "value": "LoadBalancer"
-  }
-]
-						`,
+							Patch: `[{"op": "replace", "path": "/spec/type", "value": "LoadBalancer"}]`,
 						},
 					},
 				}
 				return k8sClient.Update(ctx, &curInst)
 			}, time.Second*60).Should(Succeed())
 			Ω(InstanceSnapshot(&curInst)).To(MatchSnapShot())
+
+			var updatedInst cosmov1alpha1.Instance
+			Eventually(func() error {
+				key := client.ObjectKey{
+					Name:      inst.Name,
+					Namespace: inst.Namespace,
+				}
+				return k8sClient.Get(ctx, key, &updatedInst)
+			}, time.Second*10).Should(Succeed())
+			Ω(InstanceSnapshot(&updatedInst)).To(MatchSnapShot())
 
 			By("checking if child deployment is as expected")
 			var deploy appsv1.Deployment
@@ -318,26 +282,6 @@ spec:
 			}, time.Second*10).Should(Equal(corev1.ServiceTypeLoadBalancer))
 			Ω(ServiceSnapshot(&svc)).To(MatchSnapShot())
 
-			By("checking if child ingress is as expected")
-			var ing netv1.Ingress
-			Eventually(func() error {
-				key := client.ObjectKey{
-					Name:      instance.InstanceResourceName(inst.Name, "ing"),
-					Namespace: inst.Namespace,
-				}
-				return k8sClient.Get(ctx, key, &ing)
-			}, time.Second*10).Should(Succeed())
-			Ω(ObjectSnapshot(&ing)).To(MatchSnapShot())
-
-			var updatedInst cosmov1alpha1.Instance
-			Eventually(func() error {
-				key := client.ObjectKey{
-					Name:      inst.Name,
-					Namespace: inst.Namespace,
-				}
-				return k8sClient.Get(ctx, key, &updatedInst)
-			}, time.Second*10).Should(Succeed())
-			Ω(InstanceSnapshot(&updatedInst)).To(MatchSnapShot())
 		})
 	})
 

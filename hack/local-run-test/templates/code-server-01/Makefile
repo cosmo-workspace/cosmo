@@ -7,7 +7,6 @@ template:
 	cd kubernetes/ && kustomize edit set image codercom/code-server=cosmo.io:5000/my-code-server:latest
 	kustomize build kubernetes/ | cosmoctl tmpl generate -o cosmo-template.yaml --workspace \
 		--workspace-urlbase "$(URLBASE)" \
-		--disable-inject-auth-proxy \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
 
 .PHONY: apply

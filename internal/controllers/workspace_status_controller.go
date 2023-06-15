@@ -8,7 +8,6 @@ import (
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
-	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -175,7 +174,7 @@ func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws c
 	log := clog.FromContext(ctx).WithCaller()
 	urlbase := wsnet.URLBase(ws.Status.Config.URLBase)
 
-	svc, _, err := getWorkspaceServicesAndIngress(ctx, r.Client, ws)
+	svc, err := getWorkspaceServices(ctx, r.Client, ws)
 	if err != nil {
 		return nil, err
 	}
@@ -242,9 +241,8 @@ func listWorkspacePods(ctx context.Context, c client.Client, ws cosmov1alpha1.Wo
 	return podList.Items, nil
 }
 
-func getWorkspaceServicesAndIngress(ctx context.Context, c client.Client, ws cosmov1alpha1.Workspace) (svc corev1.Service, ing netv1.Ingress, err error) {
+func getWorkspaceServices(ctx context.Context, c client.Client, ws cosmov1alpha1.Workspace) (svc corev1.Service, err error) {
 	var svcList corev1.ServiceList
-	var ingList netv1.IngressList
 
 	ls := labels.NewSelector()
 	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstanceName, selection.In, []string{ws.GetName()})
@@ -256,11 +254,11 @@ func getWorkspaceServicesAndIngress(ctx context.Context, c client.Client, ws cos
 	}
 
 	if err := c.List(ctx, &svcList, opts); err != nil {
-		return svc, ing, err
+		return svc, err
 	}
 
 	if len(svcList.Items) == 0 {
-		return svc, ing, errors.New("no services")
+		return svc, errors.New("no services")
 	}
 
 	for _, v := range svcList.Items {
@@ -269,15 +267,5 @@ func getWorkspaceServicesAndIngress(ctx context.Context, c client.Client, ws cos
 		}
 	}
 
-	if err := c.List(ctx, &ingList, opts); err != nil {
-		return svc, ing, err
-	}
-
-	for _, v := range ingList.Items {
-		if instance.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.IngressName) {
-			ing = v
-		}
-	}
-
-	return svc, ing, nil
+	return svc, nil
 }

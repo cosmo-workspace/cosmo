@@ -16,6 +16,8 @@ import (
 	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
+	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
 var _ = Describe("Workspace controller", func() {
@@ -27,7 +29,6 @@ var _ = Describe("Workspace controller", func() {
 	wsConfig := cosmov1alpha1.Config{
 		DeploymentName:      "ws-dep",
 		ServiceName:         "ws-svc",
-		IngressName:         "ws-ing",
 		ServiceMainPortName: "mainPort",
 		URLBase:             "https://{{NETRULE_GROUP}}-{{WOKRSPACE}}-{{USER}}.domain",
 	}
@@ -40,7 +41,6 @@ var _ = Describe("Workspace controller", func() {
 			},
 			Annotations: map[string]string{
 				cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
-				cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     wsConfig.IngressName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         wsConfig.URLBase,
@@ -213,12 +213,19 @@ spec:
 			}, time.Second*60).Should(Succeed())
 
 			var createdInst cosmov1alpha1.Instance
-			Eventually(func() int64 {
+			var expectedScalePatch, _ = workspace.JSONPatch("replace", "/spec/replicas", 0)
+			Eventually(func() string {
 				err := k8sClient.Get(ctx, client.ObjectKey{Name: wsName, Namespace: nsName}, &createdInst)
 				Expect(err).ShouldNot(HaveOccurred())
 
-				return createdInst.Spec.Override.Scale[0].Replicas
-			}, time.Second*10).Should(BeEquivalentTo(0))
+				for _, v := range createdInst.Spec.Override.PatchesJson6902 {
+					if kubeutil.DeploymentGVK == v.Target.GroupVersionKind() &&
+						v.Target.Name == wsConfig.DeploymentName {
+						return v.Patch
+					}
+				}
+				return "invalid"
+			}, time.Second*10).Should(Equal(expectedScalePatch))
 			Expect(InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 
 			var createdIngRoute traefikv1.IngressRoute

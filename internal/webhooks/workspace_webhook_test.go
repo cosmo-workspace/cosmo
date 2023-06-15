@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -21,7 +20,6 @@ var _ = Describe("Workspace webhook", func() {
 	wsConfig := cosmov1alpha1.Config{
 		DeploymentName:      "ws-dep",
 		ServiceName:         "ws-svc",
-		IngressName:         "ws-ing",
 		ServiceMainPortName: "mainPort",
 		URLBase:             "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com",
 	}
@@ -34,7 +32,6 @@ var _ = Describe("Workspace webhook", func() {
 			},
 			Annotations: map[string]string{
 				cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
-				cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     wsConfig.IngressName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         wsConfig.URLBase,
@@ -128,7 +125,6 @@ spec:
 			},
 			Annotations: map[string]string{
 				cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
-				cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     wsConfig.IngressName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         wsConfig.URLBase,
@@ -240,50 +236,12 @@ spec:
 			err = k8sClient.Create(ctx, &ws)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			netRuleName := "main"
-			PortNumber := int32(8080)
-			host := "main-testws1-cosmo-user-testuser-ws.example.com"
-
-			expectedWs := cosmov1alpha1.Workspace{
-				TypeMeta: metav1.TypeMeta{
-					Kind:       "Workspace",
-					APIVersion: cosmov1alpha1.GroupVersion.String(),
-				},
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "testws1",
-					Namespace: "cosmo-user-testuser-ws",
-				},
-				Spec: cosmov1alpha1.WorkspaceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
-					Vars: map[string]string{
-						"DOMAIN":    "example.com",
-						"IMAGE_TAG": "latest",
-					},
-					Replicas: rep,
-					Network: []cosmov1alpha1.NetworkRule{
-						{
-							Name:             netRuleName,
-							PortNumber:       PortNumber,
-							TargetPortNumber: &PortNumber,
-							HTTPPath:         "/",
-							Group:            &netRuleName,
-							Host:             &host,
-						},
-					},
-				},
-			}
-
 			var createdWs cosmov1alpha1.Workspace
 			Eventually(func() error {
-				err := k8sClient.Get(ctx, client.ObjectKey{Name: ws.GetName(), Namespace: ws.GetNamespace()}, &createdWs)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, client.ObjectKey{Name: ws.GetName(), Namespace: ws.GetNamespace()}, &createdWs)
 			}, time.Second*10).Should(Succeed())
 
-			expectedWs.ObjectMeta = createdWs.ObjectMeta
-			Expect(&createdWs).Should(BeLooseDeepEqual(&expectedWs))
+			Expect(ObjectSnapshot(&createdWs)).Should(MatchSnapShot())
 		})
 	})
 
@@ -312,50 +270,12 @@ spec:
 			err := k8sClient.Create(ctx, &ws)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			netRuleName := "main"
-			PortNumber := int32(8080)
-			host := "main-testws3-cosmo-user-testuser-ws.example.com"
-
-			expectedWs := cosmov1alpha1.Workspace{
-				TypeMeta: metav1.TypeMeta{
-					Kind:       "Workspace",
-					APIVersion: cosmov1alpha1.GroupVersion.String(),
-				},
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "testws3",
-					Namespace: "cosmo-user-testuser-ws",
-				},
-				Spec: cosmov1alpha1.WorkspaceSpec{
-					Template: cosmov1alpha1.TemplateRef{Name: tmpl.GetName()},
-					Vars: map[string]string{
-						"DOMAIN":    "example.com",
-						"IMAGE_TAG": "latest",
-					},
-					Replicas: pointer.Int64(1),
-					Network: []cosmov1alpha1.NetworkRule{
-						{
-							Name:             netRuleName,
-							PortNumber:       PortNumber,
-							TargetPortNumber: &PortNumber,
-							HTTPPath:         "/",
-							Group:            &netRuleName,
-							Host:             &host,
-						},
-					},
-				},
-			}
-
 			var createdWs cosmov1alpha1.Workspace
 			Eventually(func() error {
-				err := k8sClient.Get(ctx, client.ObjectKey{Name: ws.GetName(), Namespace: ws.GetNamespace()}, &createdWs)
-				if err != nil {
-					return err
-				}
-				return nil
+				return k8sClient.Get(ctx, client.ObjectKey{Name: ws.GetName(), Namespace: ws.GetNamespace()}, &createdWs)
 			}, time.Second*10).Should(Succeed())
 
-			expectedWs.ObjectMeta = createdWs.ObjectMeta
-			Expect(&createdWs).Should(BeLooseDeepEqual(&expectedWs))
+			Expect(ObjectSnapshot(&createdWs)).Should(MatchSnapShot())
 		})
 	})
 

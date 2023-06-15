@@ -130,6 +130,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 				return err
 			}
 			v.SetGroupVersionKind(gvk)
+			v.SetManagedFields(nil)
 			rawObj, err := yaml.Marshal(v)
 			if err != nil {
 				o.Logr.Error(err, "failed to marshal yaml", "workspace", v.Name)

@@ -28,7 +28,7 @@
     Name:             "name",
     PortNumber:       1111,
     HTTPPath:         "/path",
-    TargetPortNumber: &int32(1111),
+    TargetPortNumber: &int32(2222),
     Host:             &"host",
     Group:            &"group",
     Public:           true,
@@ -74,120 +74,13 @@
 [TestNetworkRule_ServicePort/✅_OK - 1]
 {
  "name": "port1111",
- "port": 2222,
+ "port": 1111,
  "protocol": "TCP",
  "targetPort": 2222
 }
 ---
 
-[TestNetworkRule_IngressRule/✅_OK - 1]
-{
- "host": "host",
- "http": {
-  "paths": [
-   {
-    "backend": {
-     "service": {
-      "name": "svcname",
-      "port": {
-       "name": "port1111"
-      }
-     }
-    },
-    "path": "/path",
-    "pathType": "Prefix"
-   }
-  ]
- }
-}
----
-
-[TestNetworkRule_IngressRule/✅_host_is_nil - 1]
-{
- "http": {
-  "paths": [
-   {
-    "backend": {
-     "service": {
-      "name": "svcname",
-      "port": {
-       "name": "port1111"
-      }
-     }
-    },
-    "path": "/path",
-    "pathType": "Prefix"
-   }
-  ]
- }
-}
----
-
-[TestNetworkRule_TraefikRoute/✅_public - 1]
-{
- "kind": "Rule",
- "match": "Host(`host`) \u0026\u0026 PathPrefix(`/path`)",
- "priority": 100,
- "services": [
-  {
-   "kind": "Service",
-   "name": "svcname",
-   "port": "port1111",
-   "scheme": "http"
-  }
- ]
-}
----
-
-[TestNetworkRule_TraefikRoute/✅_not_public - 1]
-{
- "kind": "Rule",
- "match": "Host(`host`) \u0026\u0026 PathPrefix(`/path`)",
- "middlewares": [
-  {
-   "name": "headers"
-  },
-  {
-   "name": "cosmo-auth",
-   "namespace": "cosmo-system"
-  }
- ],
- "priority": 100,
- "services": [
-  {
-   "kind": "Service",
-   "name": "svcname",
-   "port": "port1111",
-   "scheme": "http"
-  }
- ]
-}
----
-
-[TestNetworkRulesByServiceAndIngress/✅_OK - 1]
-[]v1alpha1.NetworkRule{
-    {
-        Name:             "main",
-        PortNumber:       7777,
-        HTTPPath:         "/",
-        TargetPortNumber: &int32(32000),
-        Host:             &"host.example.com",
-        Group:            &"main",
-        Public:           false,
-    },
-    {
-        Name:             "main2",
-        PortNumber:       7778,
-        HTTPPath:         "/aaa",
-        TargetPortNumber: &int32(32001),
-        Host:             &"host.example.com",
-        Group:            &"main2",
-        Public:           false,
-    },
-}
----
-
-[TestNetworkRulesByServiceAndIngress/✅_no_ingress - 1]
+[TestNetworkRulesByService/✅_OK - 1]
 []v1alpha1.NetworkRule{
     {
         Name:             "main",
@@ -196,6 +89,15 @@
         TargetPortNumber: &int32(32000),
         Host:             (*string)(nil),
         Group:            &"main",
+        Public:           false,
+    },
+    {
+        Name:             "main2",
+        PortNumber:       7778,
+        HTTPPath:         "/",
+        TargetPortNumber: &int32(32001),
+        Host:             (*string)(nil),
+        Group:            &"main2",
         Public:           false,
     },
 }

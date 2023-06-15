@@ -619,34 +619,6 @@ kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 1
-  managedFields:
-  - apiVersion: cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        .: {}
-        f:replicas: {}
-        f:template:
-          .: {}
-          f:name: {}
-    manager: cmd.test
-    operation: Update
-    time: xxxxxxxx
-  - apiVersion: cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:status:
-        .: {}
-        f:config:
-          .: {}
-          f:mainServicePortName: {}
-          f:urlbase: {}
-        f:instance: {}
-        f:phase: {}
-    manager: cmd.test
-    operation: Update
-    subresource: status
-    time: xxxxxxxx
   name: ws1
   namespace: cosmo-user-user1
   resourceVersion: xxxxxxxx
@@ -667,35 +639,6 @@ kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 3
-  managedFields:
-  - apiVersion: cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        .: {}
-        f:network: {}
-        f:replicas: {}
-        f:template:
-          .: {}
-          f:name: {}
-    manager: cmd.test
-    operation: Update
-    time: xxxxxxxx
-  - apiVersion: cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:status:
-        .: {}
-        f:config:
-          .: {}
-          f:mainServicePortName: {}
-          f:urlbase: {}
-        f:instance: {}
-        f:phase: {}
-    manager: cmd.test
-    operation: Update
-    subresource: status
-    time: xxxxxxxx
   name: ws2
   namespace: cosmo-user-user1
   resourceVersion: xxxxxxxx
@@ -750,34 +693,6 @@ kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 1
-  managedFields:
-  - apiVersion: cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        .: {}
-        f:replicas: {}
-        f:template:
-          .: {}
-          f:name: {}
-    manager: cmd.test
-    operation: Update
-    time: xxxxxxxx
-  - apiVersion: cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:status:
-        .: {}
-        f:config:
-          .: {}
-          f:mainServicePortName: {}
-          f:urlbase: {}
-        f:instance: {}
-        f:phase: {}
-    manager: cmd.test
-    operation: Update
-    subresource: status
-    time: xxxxxxxx
   name: ws1
   namespace: cosmo-user-user1
   resourceVersion: xxxxxxxx
@@ -798,35 +713,6 @@ kind: Workspace
 metadata:
   creationTimestamp: xxxxxxxx
   generation: 3
-  managedFields:
-  - apiVersion: cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:spec:
-        .: {}
-        f:network: {}
-        f:replicas: {}
-        f:template:
-          .: {}
-          f:name: {}
-    manager: cmd.test
-    operation: Update
-    time: xxxxxxxx
-  - apiVersion: cosmo-workspace.github.io/v1alpha1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:status:
-        .: {}
-        f:config:
-          .: {}
-          f:mainServicePortName: {}
-          f:urlbase: {}
-        f:instance: {}
-        f:phase: {}
-    manager: cmd.test
-    operation: Update
-    subresource: status
-    time: xxxxxxxx
   name: ws2
   namespace: cosmo-user-user1
   resourceVersion: xxxxxxxx

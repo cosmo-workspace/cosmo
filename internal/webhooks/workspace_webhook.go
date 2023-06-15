@@ -10,7 +10,6 @@ import (
 	"sort"
 
 	corev1 "k8s.io/api/core/v1"
-	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -79,9 +78,9 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		ws.Spec.Replicas = &rep
 	}
 
-	// migrate template service and ingress to network rule
-	if err := h.migrateTmplServiceAndIngressToNetworkRule(ctx, ws, tmpl.Spec.RawYaml, cfg); err != nil {
-		log.Error(err, "failed to migrate service and ingress to network rule")
+	// migrate template service to network rule
+	if err := h.migrateTmplServiceToNetworkRule(ctx, ws, tmpl.Spec.RawYaml, cfg); err != nil {
+		log.Error(err, "failed to migrate service to network rule")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
@@ -124,7 +123,6 @@ func (h *WorkspaceValidationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Man
 // Handle validates the fields in Workspace
 func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
-	ctx = clog.IntoContext(ctx, log)
 
 	ws := &cosmov1alpha1.Workspace{}
 	err := h.decoder.Decode(req, ws)
@@ -214,7 +212,7 @@ func checkNetworkRules(netRules []cosmov1alpha1.NetworkRule) error {
 	return nil
 }
 
-func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkRule(ctx context.Context, ws *cosmov1alpha1.Workspace, rawTmpl string, cfg cosmov1alpha1.Config) error {
+func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceToNetworkRule(ctx context.Context, ws *cosmov1alpha1.Workspace, rawTmpl string, cfg cosmov1alpha1.Config) error {
 	log := clog.FromContext(ctx).WithCaller()
 
 	unst, err := preTemplateBuild(*ws, rawTmpl)
@@ -223,18 +221,15 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 	}
 
 	var svc corev1.Service
-	var ing netv1.Ingress
 	for _, u := range unst {
 		log.Debug().Info(fmt.Sprintf("template resources: %v", u), "resourceGVK", u.GroupVersionKind(), "resourceName", u.GetName())
 
 		log.DebugAll().Info(fmt.Sprintf("workspace config in template: %v", cfg),
 			"gvk", u.GroupVersionKind(),
-			"cfgServiceName", cfg.ServiceName, "cfgIngressName", cfg.IngressName,
+			"cfgServiceName", cfg.ServiceName,
 			"instFixedName", instance.InstanceResourceName(template.DefaultVarsInstance, u.GetName()),
 			"svcGvkEqual", kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK),
-			"ingGvkEqual", kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK),
 			"svcNameEqual", instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName),
-			"ingNameEqual", instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.IngressName),
 		)
 
 		if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) &&
@@ -244,18 +239,11 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 				return err
 			}
 
-		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) &&
-			instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.IngressName) {
-			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &ing)
-			if err != nil {
-				return err
-			}
 		}
 	}
-	log.Debug().Info("service and ingress in template", "service", svc, "ingress", ing)
+	log.DebugAll().Info("service in template", "service", svc)
 
-	netRules := cosmov1alpha1.NetworkRulesByServiceAndIngress(svc, ing)
-	log.Info("generated netrules by service and ingress in template", "netRules", netRules)
+	netRules := cosmov1alpha1.NetworkRulesByService(svc)
 
 	// append network rules
 	for _, netRule := range netRules {
@@ -266,6 +254,7 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceAndIngressToNetworkR
 			}
 		}
 		if !found {
+			log.Info("generated netrules by service in template", "netRule", netRule)
 			ws.Spec.Network = append(ws.Spec.Network, netRule)
 		}
 	}

@@ -1,0 +1,64 @@
+['Instance webhook when creating instance with existing template and no default vars should pass with defaulting vars 1']
+SnapShot = """
+{
+  \"kind\": \"Instance\",
+  \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
+  \"metadata\": {
+    \"name\": \"testinst2\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo-workspace.github.io/type\": \"workspace\"
+    }
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"code-server-test\"
+    },
+    \"vars\": {
+      \"DOMAIN\": \"example.com\",
+      \"{{IMAGE_TAG}}\": \"latest\"
+    },
+    \"override\": {}
+  },
+  \"status\": {}
+}
+"""
+
+['Instance webhook when creating instance with existing template and vars should pass with defaulting instance name prefix 1']
+SnapShot = """
+{
+  \"kind\": \"Instance\",
+  \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
+  \"metadata\": {
+    \"name\": \"testinst1\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo-workspace.github.io/type\": \"workspace\"
+    }
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"code-server-test\"
+    },
+    \"vars\": {
+      \"DOMAIN\": \"example.com\",
+      \"IMAGE_TAG\": \"latest\"
+    },
+    \"override\": {
+      \"patchesJson6902\": [
+        {
+          \"target\": {
+            \"kind\": \"Service\",
+            \"name\": \"testinst1-ws-svc\",
+            \"apiVersion\": \"v1\"
+          },
+          \"patch\": \"[{\\\"op\\\": \\\"replace\\\",\\\"path\\\": \\\"/spec/type\\\",\\\"value\\\": \\\"LoadBalancer\\\"}]\"
+        }
+      ]
+    }
+  },
+  \"status\": {}
+}
+"""

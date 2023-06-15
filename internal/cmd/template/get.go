@@ -104,7 +104,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	switch o.tmpltype {
 	case cosmov1alpha1.TemplateLabelEnumTypeWorkspace:
 
-		columnNames := []string{"NAME", "REQUIRED-VARS", "DEPLOYMENT/SERVICE/INGRESS", "URLBASE"}
+		columnNames := []string{"NAME", "REQUIRED-VARS", "DEPLOYMENT/SERVICE", "URLBASE"}
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, v := range tmpls {
@@ -120,7 +120,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 			}
 			rawTmplVars := strings.Join(vars, ",")
 
-			resources := fmt.Sprintf("%s/%s/%s", cfg.DeploymentName, cfg.ServiceName, cfg.IngressName)
+			resources := fmt.Sprintf("%s/%s", cfg.DeploymentName, cfg.ServiceName)
 			rowdata := []string{v.GetName(), rawTmplVars, resources, cfg.URLBase}
 			fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 		}

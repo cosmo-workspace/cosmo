@@ -35,19 +35,14 @@ type generateOption struct {
 	RequiredVars string
 	Desc         string
 
-	TypeWorkspace                bool
-	DisableInjectAuthProxy       bool
-	InjectAuthProxyImage         string
-	InjectAuthProxyTLSSecretName string
-	ServiceAccount               string
+	TypeWorkspace bool
+	TypeUserAddon bool
 
-	TypeUserAddon       bool
 	SetDefaultUserAddon bool
 	DisableNamePrefix   bool
-
-	ClusterScope       bool
-	UserRoles          string
-	ForbiddenUserRoles string
+	ClusterScope        bool
+	UserRoles           string
+	ForbiddenUserRoles  string
 
 	tmpl cosmov1alpha1.TemplateObject
 }
@@ -63,18 +58,13 @@ func generateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command 
 	cmd.Flags().StringVar(&o.Desc, "desc", "", "template description")
 
 	cmd.Flags().BoolVar(&o.TypeWorkspace, "workspace", false, "template as type workspace")
-	cmd.Flags().BoolVar(&o.DisableInjectAuthProxy, "disable-inject-auth-proxy", false, "disable injection cosmo-auth-proxy sidecar")
-	cmd.Flags().StringVar(&o.InjectAuthProxyImage, "inject-auth-proxy-image", "ghcr.io/cosmo-workspace/cosmo-auth-proxy:latest", "cosmo-auth-proxy sidecar image. use with --workspace")
-	cmd.Flags().StringVar(&o.InjectAuthProxyTLSSecretName, "inject-auth-proxy-tls-secret", "", "TLS secret name for https sidecar cosmo-auth-proxy. Be empty if http. use with --workspace")
-	cmd.Flags().StringVar(&o.ServiceAccount, "serviceaccount", "default", "service account name for cosmo-auth-proxy rolebinding")
-
 	cmd.Flags().StringVar(&o.wsConfig.DeploymentName, "workspace-deployment-name", "", "Deployment name for Workspace. use with --workspace (auto detected if not specified)")
 	cmd.Flags().StringVar(&o.wsConfig.ServiceName, "workspace-service-name", "", "Service name for Workspace. use with --workspace (auto detected if not specified)")
-	cmd.Flags().StringVar(&o.wsConfig.IngressName, "workspace-ingress-name", "", "Ingress name for Workspace. use with --workspace (auto detected if not specified)")
 	cmd.Flags().StringVar(&o.wsConfig.ServiceMainPortName, "workspace-main-service-port-name", "", "ServicePort name for Workspace main container port. use with --workspace (auto detected if not specified)")
 	cmd.Flags().StringVar(&o.wsConfig.URLBase, "workspace-urlbase", "", "Workspace URLBase. use with --workspace (use default urlbase in cosmo-controller-manager if not specified)")
 
 	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type useraddon")
+	cmd.Flags().BoolVar(&o.TypeUserAddon, "useraddon", false, "template as type useraddon")
 	cmd.Flags().BoolVar(&o.SetDefaultUserAddon, "set-default-user-addon", false, "set default user addon")
 	cmd.Flags().BoolVar(&o.DisableNamePrefix, "disable-nameprefix", false, "disable adding instance name prefix on child resource name")
 
@@ -240,34 +230,6 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 	}
 
 	kust := NewKustomize(o.DisableNamePrefix)
-
-	// inject cosmo-auth-proxy if enabled
-	o.Logr.Debug().Info("inject cosmo-auth-proxy", "enabled", o.TypeWorkspace, "image", o.InjectAuthProxyImage)
-
-	if o.TypeWorkspace && !o.DisableInjectAuthProxy {
-		// patch deployment
-		deploy := deploymentAuthProxyPatch(o.wsConfig.DeploymentName, o.InjectAuthProxyImage, o.InjectAuthProxyTLSSecretName)
-		rawDeploy := StructToYaml(deploy)
-		err := cmdutil.CreateFile(tmpDir, AuthProxyPatchFile, rawDeploy)
-		if err != nil {
-			return err
-		}
-		o.Logr.Debug().Info(string(rawDeploy), "obj", "cosmo-auth-proxy deployment patch", "file", AuthProxyPatchFile)
-
-		addPatchesStrategicMerges(kust, AuthProxyPatchFile)
-
-		// add auth proxy rolebindings
-		if o.ServiceAccount != "default" {
-			roleb := cosmov1alpha1.AuthProxyRoleBindingApplyConfiguration(o.ServiceAccount, template.DefaultVarsNamespace)
-			rawRoleb := StructToYaml(roleb)
-			if err := cmdutil.CreateFile(tmpDir, AuthProxyRoleBFile, rawRoleb); err != nil {
-				return err
-			}
-			o.Logr.Debug().Info(string(rawRoleb), "obj", "cosmo-auth-proxy rolebinding", "file", AuthProxyRoleBFile)
-
-			kust.Resources = append(kust.Resources, AuthProxyRoleBFile)
-		}
-	}
 
 	// run kustomize
 	out, err := cmdutil.ExecKustomize(ctx, tmpDir, kust)

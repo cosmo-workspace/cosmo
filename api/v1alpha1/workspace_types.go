@@ -88,7 +88,7 @@ type NetworkRule struct {
 }
 
 func (r *NetworkRule) Default() {
-	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 || r.Public {
+	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 {
 		r.TargetPortNumber = pointer.Int32(int32(r.PortNumber))
 	}
 	if r.HTTPPath == "" {
@@ -106,7 +106,7 @@ func (r *NetworkRule) portName() string {
 func (r *NetworkRule) ServicePort() corev1.ServicePort {
 	return corev1.ServicePort{
 		Name:       r.portName(),
-		Port:       *r.TargetPortNumber,
+		Port:       r.PortNumber,
 		Protocol:   corev1.ProtocolTCP,
 		TargetPort: intstr.FromInt(int(*r.TargetPortNumber)),
 	}

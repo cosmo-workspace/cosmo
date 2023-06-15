@@ -1,3 +1,41 @@
+['Workspace webhook when creating workspace should pass with defaulting networking 1']
+SnapShot = """
+{
+  \"kind\": \"Workspace\",
+  \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
+  \"metadata\": {
+    \"name\": \"testws1\",
+    \"namespace\": \"cosmo-user-testuser-ws\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"code-server-test2\"
+    },
+    \"replicas\": 1,
+    \"vars\": {
+      \"DOMAIN\": \"example.com\",
+      \"IMAGE_TAG\": \"latest\"
+    },
+    \"network\": [
+      {
+        \"name\": \"main\",
+        \"portNumber\": 8080,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 8080,
+        \"host\": \"main-testws1-cosmo-user-testuser-ws.example.com\",
+        \"group\": \"main\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"config\": {}
+  }
+}
+"""
+
 ['Workspace webhook when creating workspace within non user namespace should deny 1']
 SnapShot = """
 {
@@ -11,6 +49,44 @@ SnapShot = """
       \"kind\": \"namespaces\"
     },
     \"code\": 404
+  }
+}
+"""
+
+['Workspace webhook when creating workspace without replica should pass and defaulting replica 1']
+SnapShot = """
+{
+  \"kind\": \"Workspace\",
+  \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
+  \"metadata\": {
+    \"name\": \"testws3\",
+    \"namespace\": \"cosmo-user-testuser-ws\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"code-server-test2\"
+    },
+    \"replicas\": 1,
+    \"vars\": {
+      \"DOMAIN\": \"example.com\",
+      \"IMAGE_TAG\": \"latest\"
+    },
+    \"network\": [
+      {
+        \"name\": \"main\",
+        \"portNumber\": 8080,
+        \"httpPath\": \"/\",
+        \"targetPortNumber\": 8080,
+        \"host\": \"main-testws3-cosmo-user-testuser-ws.example.com\",
+        \"group\": \"main\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"config\": {}
   }
 }
 """

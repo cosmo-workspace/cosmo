@@ -33,7 +33,7 @@ func (t *JSONPatchTransformer) Transform(src *unstructured.Unstructured) (*unstr
 			// patch JSON6902
 			patch, err := jsonpatch.DecodePatch([]byte(v.Patch))
 			if err != nil {
-				return nil, fmt.Errorf("failed to decode patch: %w", err)
+				return nil, fmt.Errorf("failed to decode patch: %w: %s", err, v.Patch)
 			}
 
 			patched, err := patch.Apply(bobj)

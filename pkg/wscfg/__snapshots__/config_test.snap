@@ -4,7 +4,6 @@
  "metadata": {
   "annotations": {
    "workspace.cosmo-workspace.github.io/deployment": "workspace1",
-   "workspace.cosmo-workspace.github.io/ingress": "workspace3",
    "workspace.cosmo-workspace.github.io/service": "workspace2",
    "workspace.cosmo-workspace.github.io/service-main-port": "main",
    "workspace.cosmo-workspace.github.io/urlbase": ""
@@ -21,7 +20,6 @@
  "metadata": {
   "annotations": {
    "workspace.cosmo-workspace.github.io/deployment": "workspace1",
-   "workspace.cosmo-workspace.github.io/ingress": "workspace3",
    "workspace.cosmo-workspace.github.io/service": "workspace2",
    "workspace.cosmo-workspace.github.io/service-main-port": "main",
    "workspace.cosmo-workspace.github.io/urlbase": ""
@@ -36,7 +34,6 @@
 [TestConfigFromTemplateAnnotations/found - 1]
 {
  "deploymentName": "workspace1",
- "ingressName": "workspace3",
  "mainServicePortName": "main",
  "serviceName": "workspace2",
  "urlbase": "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain"

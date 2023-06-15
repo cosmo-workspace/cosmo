@@ -236,65 +236,30 @@ SnapShot = """
       \"{{IMAGE_TAG}}\": \"latest\"
     },
     \"override\": {
-      \"scale\": [
+      \"patchesJson6902\": [
         {
           \"target\": {
             \"kind\": \"Deployment\",
             \"name\": \"deploy\",
             \"apiVersion\": \"apps/v1\"
           },
-          \"replicas\": 3
-        }
-      ],
-      \"network\": {
-        \"ingress\": [
-          {
-            \"targetName\": \"ing\",
-            \"rules\": [
-              {
-                \"host\": \"add.example.com\",
-                \"http\": {
-                  \"paths\": [
-                    {
-                      \"path\": \"/add\",
-                      \"pathType\": \"Prefix\",
-                      \"backend\": {
-                        \"service\": {
-                          \"name\": \"svc\",
-                          \"port\": {
-                            \"number\": 9090
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ],
-        \"service\": [
-          {
-            \"targetName\": \"svc\",
-            \"ports\": [
-              {
-                \"name\": \"add\",
-                \"protocol\": \"TCP\",
-                \"port\": 9090,
-                \"targetPort\": 0
-              }
-            ]
-          }
-        ]
-      },
-      \"patchesJson6902\": [
+          \"patch\": \"[{\\\"op\\\": \\\"replace\\\", \\\"path\\\": \\\"/spec/replicas\\\", \\\"value\\\": 3}]\"
+        },
         {
           \"target\": {
             \"kind\": \"Service\",
             \"name\": \"svc\",
             \"apiVersion\": \"v1\"
           },
-          \"patch\": \"\\n[\\n  {\\n    \\\"op\\\": \\\"replace\\\",\\n    \\\"path\\\": \\\"/spec/type\\\",\\n    \\\"value\\\": \\\"LoadBalancer\\\"\\n  }\\n]\\n\\t\\t\\t\\t\\t\\t\"
+          \"patch\": \"[{\\\"op\\\": \\\"replace\\\", \\\"path\\\": \\\"/spec/ports\\\", \\\"value\\\": [{\\\"name\\\": \\\"add\\\", \\\"port\\\": 9090, \\\"protocol\\\": \\\"TCP\\\"},{\\\"name\\\": \\\"add2\\\", \\\"port\\\": 9091, \\\"protocol\\\": \\\"TCP\\\"}]}]\"
+        },
+        {
+          \"target\": {
+            \"kind\": \"Service\",
+            \"name\": \"svc\",
+            \"apiVersion\": \"v1\"
+          },
+          \"patch\": \"[{\\\"op\\\": \\\"replace\\\", \\\"path\\\": \\\"/spec/type\\\", \\\"value\\\": \\\"LoadBalancer\\\"}]\"
         }
       ]
     }
@@ -328,6 +293,79 @@ SnapShot = """
 """
 
 ['Instance controller when updating Instance resource should do reconcile again and update child resources 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"test-inst1\",
+    \"namespace\": \"default\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"test-nginx-tmpl1\"
+    },
+    \"vars\": {
+      \"{{DOMAIN}}\": \"example.com\",
+      \"{{IMAGE_TAG}}\": \"latest\"
+    },
+    \"override\": {
+      \"patchesJson6902\": [
+        {
+          \"target\": {
+            \"kind\": \"Deployment\",
+            \"name\": \"deploy\",
+            \"apiVersion\": \"apps/v1\"
+          },
+          \"patch\": \"[{\\\"op\\\": \\\"replace\\\", \\\"path\\\": \\\"/spec/replicas\\\", \\\"value\\\": 3}]\"
+        },
+        {
+          \"target\": {
+            \"kind\": \"Service\",
+            \"name\": \"svc\",
+            \"apiVersion\": \"v1\"
+          },
+          \"patch\": \"[{\\\"op\\\": \\\"replace\\\", \\\"path\\\": \\\"/spec/ports\\\", \\\"value\\\": [{\\\"name\\\": \\\"add\\\", \\\"port\\\": 9090, \\\"protocol\\\": \\\"TCP\\\"},{\\\"name\\\": \\\"add2\\\", \\\"port\\\": 9091, \\\"protocol\\\": \\\"TCP\\\"}]}]\"
+        },
+        {
+          \"target\": {
+            \"kind\": \"Service\",
+            \"name\": \"svc\",
+            \"apiVersion\": \"v1\"
+          },
+          \"patch\": \"[{\\\"op\\\": \\\"replace\\\", \\\"path\\\": \\\"/spec/type\\\", \\\"value\\\": \\\"LoadBalancer\\\"}]\"
+        }
+      ]
+    }
+  },
+  \"status\": {
+    \"templateName\": \"test-nginx-tmpl1\",
+    \"lastApplied\": [
+      {
+        \"kind\": \"Deployment\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-deploy\",
+        \"apiVersion\": \"apps/v1\"
+      },
+      {
+        \"kind\": \"Ingress\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-ing\",
+        \"apiVersion\": \"networking.k8s.io/v1\"
+      },
+      {
+        \"kind\": \"Service\",
+        \"namespace\": \"default\",
+        \"name\": \"test-inst1-svc\",
+        \"apiVersion\": \"v1\"
+      }
+    ],
+    \"lastAppliedObjectsCount\": 3,
+    \"templateObjectsCount\": 3
+  }
+}
+"""
+
+['Instance controller when updating Instance resource should do reconcile again and update child resources 3']
 SnapShot = """
 {
   \"metadata\": {
@@ -402,7 +440,7 @@ SnapShot = """
 }
 """
 
-['Instance controller when updating Instance resource should do reconcile again and update child resources 3']
+['Instance controller when updating Instance resource should do reconcile again and update child resources 4']
 SnapShot = """
 {
   \"metadata\": {
@@ -432,6 +470,13 @@ SnapShot = """
         \"port\": 9090,
         \"targetPort\": 9090,
         \"nodePort\": 30000
+      },
+      {
+        \"name\": \"add2\",
+        \"protocol\": \"TCP\",
+        \"port\": 9091,
+        \"targetPort\": 9091,
+        \"nodePort\": 30000
       }
     ],
     \"selector\": {
@@ -450,184 +495,6 @@ SnapShot = """
   },
   \"status\": {
     \"loadBalancer\": {}
-  }
-}
-"""
-
-['Instance controller when updating Instance resource should do reconcile again and update child resources 4']
-SnapShot = """
-{
-  \"metadata\": {
-    \"name\": \"test-inst1-ing\",
-    \"namespace\": \"default\",
-    \"creationTimestamp\": null,
-    \"labels\": {
-      \"cosmo-workspace.github.io/instance\": \"test-inst1\",
-      \"cosmo-workspace.github.io/template\": \"test-nginx-tmpl1\"
-    },
-    \"ownerReferences\": [
-      {
-        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
-        \"kind\": \"Instance\",
-        \"name\": \"test-inst1\",
-        \"uid\": \"\",
-        \"controller\": true,
-        \"blockOwnerDeletion\": true
-      }
-    ]
-  },
-  \"spec\": {
-    \"rules\": [
-      {
-        \"host\": \"test-inst1-default.example.com\",
-        \"http\": {
-          \"paths\": [
-            {
-              \"path\": \"/\",
-              \"pathType\": \"Prefix\",
-              \"backend\": {
-                \"service\": {
-                  \"name\": \"test-inst1-nginx\",
-                  \"port\": {
-                    \"number\": 80
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      {
-        \"host\": \"add.example.com\",
-        \"http\": {
-          \"paths\": [
-            {
-              \"path\": \"/add\",
-              \"pathType\": \"Prefix\",
-              \"backend\": {
-                \"service\": {
-                  \"name\": \"svc\",
-                  \"port\": {
-                    \"number\": 9090
-                  }
-                }
-              }
-            }
-          ]
-        }
-      }
-    ]
-  },
-  \"status\": {
-    \"loadBalancer\": {}
-  }
-}
-"""
-
-['Instance controller when updating Instance resource should do reconcile again and update child resources 5']
-SnapShot = """
-{
-  \"metadata\": {
-    \"name\": \"test-inst1\",
-    \"namespace\": \"default\",
-    \"creationTimestamp\": null
-  },
-  \"spec\": {
-    \"template\": {
-      \"name\": \"test-nginx-tmpl1\"
-    },
-    \"vars\": {
-      \"{{DOMAIN}}\": \"example.com\",
-      \"{{IMAGE_TAG}}\": \"latest\"
-    },
-    \"override\": {
-      \"scale\": [
-        {
-          \"target\": {
-            \"kind\": \"Deployment\",
-            \"name\": \"deploy\",
-            \"apiVersion\": \"apps/v1\"
-          },
-          \"replicas\": 3
-        }
-      ],
-      \"network\": {
-        \"ingress\": [
-          {
-            \"targetName\": \"ing\",
-            \"rules\": [
-              {
-                \"host\": \"add.example.com\",
-                \"http\": {
-                  \"paths\": [
-                    {
-                      \"path\": \"/add\",
-                      \"pathType\": \"Prefix\",
-                      \"backend\": {
-                        \"service\": {
-                          \"name\": \"svc\",
-                          \"port\": {
-                            \"number\": 9090
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ],
-        \"service\": [
-          {
-            \"targetName\": \"svc\",
-            \"ports\": [
-              {
-                \"name\": \"add\",
-                \"protocol\": \"TCP\",
-                \"port\": 9090,
-                \"targetPort\": 0
-              }
-            ]
-          }
-        ]
-      },
-      \"patchesJson6902\": [
-        {
-          \"target\": {
-            \"kind\": \"Service\",
-            \"name\": \"svc\",
-            \"apiVersion\": \"v1\"
-          },
-          \"patch\": \"\\n[\\n  {\\n    \\\"op\\\": \\\"replace\\\",\\n    \\\"path\\\": \\\"/spec/type\\\",\\n    \\\"value\\\": \\\"LoadBalancer\\\"\\n  }\\n]\\n\\t\\t\\t\\t\\t\\t\"
-        }
-      ]
-    }
-  },
-  \"status\": {
-    \"templateName\": \"test-nginx-tmpl1\",
-    \"lastApplied\": [
-      {
-        \"kind\": \"Deployment\",
-        \"namespace\": \"default\",
-        \"name\": \"test-inst1-deploy\",
-        \"apiVersion\": \"apps/v1\"
-      },
-      {
-        \"kind\": \"Ingress\",
-        \"namespace\": \"default\",
-        \"name\": \"test-inst1-ing\",
-        \"apiVersion\": \"networking.k8s.io/v1\"
-      },
-      {
-        \"kind\": \"Service\",
-        \"namespace\": \"default\",
-        \"name\": \"test-inst1-svc\",
-        \"apiVersion\": \"v1\"
-      }
-    ],
-    \"lastAppliedObjectsCount\": 3,
-    \"templateObjectsCount\": 3
   }
 }
 """
