@@ -149,7 +149,7 @@ deploy-argocd: create-k3d-cluster helm argocd ## Deploy argocd.
 	kubectl wait po -n argocd -l app.kubernetes.io/name=argocd-server --for condition=Ready
 	kubectl get po -n argocd
 	@echo ====== argocd-setting ======
-	bash -c "[[ -f /.config/argocd/config ]] && chmod 600 ~/.config/argocd/config || echo init"
+	bash -c "[[ -f ~/.config/argocd/config ]] && chmod 600 ~/.config/argocd/config || echo init"
 	@argocd login $(ARGOCD_LOCAL_URL) --grpc-web --plaintext --username admin --password vvvvvvvv > /dev/null 2>&1 && \
 		echo "Initial password has already been changed" || { \
 		echo ====== login argocd ====== && \
