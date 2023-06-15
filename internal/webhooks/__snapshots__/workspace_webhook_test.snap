@@ -22,7 +22,6 @@ SnapShot = """
         \"name\": \"main\",
         \"portNumber\": 8080,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 8080,
         \"host\": \"main-testws1-cosmo-user-testuser-ws.example.com\",
         \"group\": \"main\",
         \"public\": false
@@ -77,7 +76,6 @@ SnapShot = """
         \"name\": \"main\",
         \"portNumber\": 8080,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 8080,
         \"host\": \"main-testws3-cosmo-user-testuser-ws.example.com\",
         \"group\": \"main\",
         \"public\": false

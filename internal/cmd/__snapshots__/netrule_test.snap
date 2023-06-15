@@ -21,7 +21,6 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 1111,
         \"host\": \"gp1-ws1-user1.domain\",
         \"group\": \"gp1\",
         \"public\": false
@@ -30,7 +29,6 @@ SnapShot = """
         \"name\": \"nw11\",
         \"portNumber\": 3000,
         \"httpPath\": \"/abc\",
-        \"targetPortNumber\": 3000,
         \"host\": \"gp11-ws1-user1.domain\",
         \"group\": \"gp11\",
         \"public\": false
@@ -39,7 +37,6 @@ SnapShot = """
         \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 2222,
         \"host\": \"gp2-ws1-user1.domain\",
         \"group\": \"gp2\",
         \"public\": false
@@ -80,7 +77,6 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 1111,
         \"host\": \"gp1-ws1-user1.domain\",
         \"group\": \"gp1\",
         \"public\": false
@@ -89,7 +85,6 @@ SnapShot = """
         \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 2222,
         \"host\": \"gp2-ws1-user1.domain\",
         \"group\": \"gp2\",
         \"public\": false
@@ -98,7 +93,6 @@ SnapShot = """
         \"name\": \"nw12\",
         \"portNumber\": 4000,
         \"httpPath\": \"/def\",
-        \"targetPortNumber\": 4000,
         \"host\": \"nw12-ws1-user1.domain\",
         \"group\": \"nw12\",
         \"public\": false
@@ -139,7 +133,6 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 1111,
         \"host\": \"gp1-ws1-user1.domain\",
         \"group\": \"gp1\",
         \"public\": false
@@ -148,7 +141,6 @@ SnapShot = """
         \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 2222,
         \"host\": \"gp2-ws1-user1.domain\",
         \"group\": \"gp2\",
         \"public\": false
@@ -157,7 +149,6 @@ SnapShot = """
         \"name\": \"nw12\",
         \"portNumber\": 4000,
         \"httpPath\": \"/def\",
-        \"targetPortNumber\": 4000,
         \"host\": \"nw12-ws1-user1.domain\",
         \"group\": \"nw12\",
         \"public\": false

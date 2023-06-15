@@ -651,14 +651,12 @@ spec:
     name: nw1
     portNumber: 1111
     public: false
-    targetPortNumber: 1111
   - group: gp3
     host: gp3-ws2-user1.domain
     httpPath: /
     name: nw3
     portNumber: 2222
     public: false
-    targetPortNumber: 2222
   replicas: 1
   template:
     name: template1
@@ -725,14 +723,12 @@ spec:
     name: nw1
     portNumber: 1111
     public: false
-    targetPortNumber: 1111
   - group: gp3
     host: gp3-ws2-user1.domain
     httpPath: /
     name: nw3
     portNumber: 2222
     public: false
-    targetPortNumber: 2222
   replicas: 1
   template:
     name: template1
