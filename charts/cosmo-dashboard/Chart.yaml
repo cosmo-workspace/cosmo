@@ -2,8 +2,8 @@ apiVersion: v2
 name: cosmo-dashboard
 description: COSMO Dashboard Helm chart for Kubernetes
 type: application
-version: 0.9.0
-appVersion: v0.9.0
+version: 0.9.1
+appVersion: v0.9.1
 kubeVersion: ">= 1.19.0-0"
 home: https://github.com/cosmo-workspace/cosmo
 icon: https://raw.githubusercontent.com/cosmo-workspace/cosmo/main/logo/logo-square-small.png
