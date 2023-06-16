@@ -100,10 +100,13 @@ spec:
         {{- end }}
         {{- if .Values.auth.ldap.enabled }}
         - --ldap-url={{ .Values.auth.ldap.url }}
-        - --ldap-user-attr={{ .Values.auth.ldap.userAttr }}
-        - --ldap-basedn={{ .Values.auth.ldap.baseDn }}
-        - --ldap-insecure-skip-verify={{ .Values.auth.ldap.tls.insecure }}
+        - --ldap-insecure-skip-verify={{ .Values.auth.ldap.tls.insecureSkipVerify }}
         - --ldap-start-tls={{ .Values.auth.ldap.tls.startTls }}
+        - --ldap-binddn={{ .Values.auth.ldap.baseDn }}
+        - --ldap-search-binddn={{ .Values.auth.ldap.searchBindDN }}
+        - --ldap-search-password={{ .Values.auth.ldap.searchBindPassword }}
+        - --ldap-search-basedn={{ .Values.auth.ldap.searchBaseDN }}
+        - --ldap-search-filter={{ .Values.auth.ldap.searchFilter }}
         {{- if .Values.auth.ldap.tls.secretName }}
         - --ldap-ca-cert=/app/ldapCert/ca.crt
         {{- end }}

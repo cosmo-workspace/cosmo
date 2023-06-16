@@ -62,11 +62,14 @@ type options struct {
 	ServerPort              int
 	MaxAgeMinutes           int
 	LdapURL                 string
-	LdapUserNameAttribute   string
-	LdapBaseDN              string
 	LdapStartTLS            bool
 	LdapCaCertPath          string
 	LdapInsecureSkipVerify  bool
+	LdapBindDN              string
+	LdapSearchBindDN        string
+	LdapSearchBindPassword  string
+	LdapSearchBaseDN        string
+	LdapSearchFilter        string
 }
 
 func NewRootCmd(o *options) *cobra.Command {
@@ -104,11 +107,14 @@ MIT 2023 cosmo-workspace/cosmo
 	rootCmd.PersistentFlags().IntVar(&o.ServerPort, "port", 8443, "Port for dashboard server")
 	rootCmd.PersistentFlags().IntVar(&o.MaxAgeMinutes, "maxage-minutes", 720, "session maxage minutes")
 	rootCmd.PersistentFlags().StringVar(&o.LdapURL, "ldap-url", "", "LDAP URL. ldap[s]://hostname.or.ip[:port]")
-	rootCmd.PersistentFlags().StringVar(&o.LdapUserNameAttribute, "ldap-user-attr", "sAMAccountname", "LDAP user attribute. ex: sAMAccountname or uid or cn")
-	rootCmd.PersistentFlags().StringVar(&o.LdapBaseDN, "ldap-basedn", "", "LDAP BaseDN. ex: dc=example,dc=com")
 	rootCmd.PersistentFlags().BoolVar(&o.LdapStartTLS, "ldap-start-tls", false, "Enables StartTLS functionality")
 	rootCmd.PersistentFlags().BoolVar(&o.LdapInsecureSkipVerify, "ldap-insecure-skip-verify", false, "Skip server certificate chain and hostname validation")
 	rootCmd.PersistentFlags().StringVar(&o.LdapCaCertPath, "ldap-ca-cert", "", "ca cert file path")
+	rootCmd.PersistentFlags().StringVar(&o.LdapBindDN, "ldap-binddn", "", "[bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.")
+	rootCmd.PersistentFlags().StringVar(&o.LdapSearchBindDN, "ldap-search-binddn", "", "[search mode] ex: cn=admin,dc=example,dc=com '%s' is replaced by the userid.")
+	rootCmd.PersistentFlags().StringVar(&o.LdapSearchBindPassword, "ldap-search-password", "", "[search mode] password for search bindDN.")
+	rootCmd.PersistentFlags().StringVar(&o.LdapSearchBaseDN, "ldap-search-basedn", "", "[search mode] ex: dc=example,dc=com")
+	rootCmd.PersistentFlags().StringVar(&o.LdapSearchFilter, "ldap-search-filter", "", "[search mode] ex: (uid=%s)  '%s' is replaced by the userid.")
 
 	return rootCmd
 }
@@ -168,12 +174,18 @@ func (o *options) newLdapAuthorizer() (*auth.LdapAuthorizer, error) {
 		certPool.AppendCertsFromPEM(caCert)
 		tlsConfig.RootCAs = certPool
 	}
-	autorizer, err := auth.NewLdapAuthorizer(o.LdapURL, o.LdapBaseDN, o.LdapUserNameAttribute, tlsConfig, o.LdapStartTLS)
-	if err != nil {
-		setupLog.Error(err, "unable to create LdapAuthorizer")
-		return nil, err
+	autorizer := &auth.LdapAuthorizer{
+		URL:                o.LdapURL,
+		StartTLS:           o.LdapStartTLS,
+		TlsConfig:          tlsConfig,
+		BindDN:             o.LdapBindDN,
+		SearchBindDN:       o.LdapSearchBindDN,
+		SearchBindPassword: o.LdapSearchBindPassword,
+		SearchBaseDN:       o.LdapSearchBaseDN,
+		SearchFilter:       o.LdapSearchFilter,
 	}
-	return autorizer, err
+
+	return autorizer, nil
 }
 
 func (o *options) RunE(cmd *cobra.Command, args []string) error {

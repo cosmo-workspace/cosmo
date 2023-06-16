@@ -72,18 +72,22 @@ maxMinutes: 180
 auth:
   ldap:
     enabled: false
-    # url is ldap server url. protocol is supported "ldap://" or "ldaps://"
-    url: "ldap://example.com:389"
-    # sAMAccountname=USERX,dc=example,dc=com
-    # ^^^^^^^^^^^^^^       ^^^^^^^^^^^^^^^^^
-    #   user-attr               baseDn
-    baseDn: "dc=example,dc=com"
-    # usually sAMAccountname or uid or cn
-    userAttr: "sAMAccountname"
+
+    ### values for connection
+    url: "ldap://example.com:389" # url is ldap server url. protocol is supported "ldap://" or "ldaps://"
     tls:
-      insecure: false
+      insecureSkipVerify: false
       secretName: ""
       startTls: false
+
+    ### values for bind Mode
+    bindDn: "" #               ex: "uid=%s,ou=users,dc=example,dc=com"  "%s" is replaced by the user id.
+
+    ### values for search Mode
+    searchBindDN: "" #         ex: "cn=admin,dc=example,dc=com"
+    searchBindPassword: "" #   ex: "password"
+    searchBaseDN: "" #         ex: "dc=example,dc=com"
+    searchFilter: "" #         ex: "(sAMAccountname=%s)"    "%s" is replaced by the user id.
 
 cert:
   secretName: dashboard-server-cert
