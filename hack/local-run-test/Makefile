@@ -149,7 +149,7 @@ deploy-argocd: create-k3d-cluster helm argocd ## Deploy argocd.
 	kubectl wait po -n argocd -l app.kubernetes.io/name=argocd-server --for condition=Ready
 	kubectl get po -n argocd
 	@echo ====== argocd-setting ======
-	chmod 600 ~/.config/argocd/config
+	bash -c "[[ -f ~/.config/argocd/config ]] && chmod 600 ~/.config/argocd/config || echo init"
 	@argocd login $(ARGOCD_LOCAL_URL) --grpc-web --plaintext --username admin --password vvvvvvvv > /dev/null 2>&1 && \
 		echo "Initial password has already been changed" || { \
 		echo ====== login argocd ====== && \
@@ -243,9 +243,9 @@ docker-build-dashboard: ## build & push cosmo dashboard image.
 docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
 	@echo ====== $@ ======
 	cd ../.. && make docker-build-traefik-plugins VERSION=$(TRAEFIK_PLUGINS_IMAGE_TAG) QUICK_BUILD=yes
-	docker tag traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
+	docker tag cosmo-traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
 	docker push localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
-	docker rmi traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
+	docker rmi cosmo-traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
 	k3d image import localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) -c $(CLUSTER_NAME)
 	-kubectl rollout restart deploy -n cosmo-system traefik
 
