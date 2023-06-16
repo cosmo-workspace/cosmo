@@ -7,9 +7,16 @@ import (
 	"fmt"
 	"os"
 	"testing"
-
-	dashboardv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 )
+
+type IdPass struct {
+	id       string
+	password string
+}
+
+func NewIdPass(id, password string) *IdPass { return &IdPass{id: id, password: password} }
+func (a *IdPass) GetUserName() string       { return a.id }
+func (a *IdPass) GetPassword() string       { return a.password }
 
 //  This test is commented out because it requires an ldap server.
 //  To run it, follow the steps below.
@@ -26,53 +33,37 @@ func XXXTestLdapAuthorizer_Authorize(t *testing.T) {
 		wantVerified bool
 		wantErr      bool
 	}{
+		//*********************
+		//* connection
+		//*********************
 		{
-			name: "admin",
+			name: "✅ connection: no tls",
 			authorizer: func() *LdapAuthorizer {
-				a, _ := NewLdapAuthorizer("ldap://localhost", "dc=cosmows,dc=dev", "cn", nil, false)
-				return a
-			}(),
-			msg: &dashboardv1alpha1.LoginRequest{
-				UserName: "admin",
-				Password: "vvvvvvvv",
-			},
-			wantVerified: true,
-			wantErr:      false,
-		},
-
-		{
-			name: "not tls",
-			authorizer: func() *LdapAuthorizer {
-				a, _ := NewLdapAuthorizer("ldap://localhost", "ou=users,dc=cosmows,dc=dev", "cn", nil, false)
-				return a
-			}(),
-			msg: &dashboardv1alpha1.LoginRequest{
-				UserName: "ldapuser1",
-				Password: "xxxxxxxx",
-			},
-			wantVerified: true,
-			wantErr:      false,
-		},
-
-		{
-			name: "tls + skip verify",
-			authorizer: func() *LdapAuthorizer {
-				tlsConfig := &tls.Config{
-					InsecureSkipVerify: true,
+				return &LdapAuthorizer{
+					URL:    "ldap://localhost",
+					BindDN: "cn=%s,ou=users,dc=cosmows,dc=dev",
 				}
-				a, _ := NewLdapAuthorizer("ldaps://localhost", "ou=users,dc=cosmows,dc=dev", "cn", tlsConfig, false)
-				return a
 			}(),
-			msg: &dashboardv1alpha1.LoginRequest{
-				UserName: "ldapuser1",
-				Password: "xxxxxxxx",
-			},
+			msg:          NewIdPass("ldapuser1", "xxxxxxxx"),
+			wantVerified: true,
+			wantErr:      false,
+		},
+		{
+			name: "✅ connection: tls + skip verify",
+			authorizer: func() *LdapAuthorizer {
+				return &LdapAuthorizer{
+					URL:       "ldaps://localhost",
+					BindDN:    "cn=%s,ou=users,dc=cosmows,dc=dev",
+					TlsConfig: &tls.Config{InsecureSkipVerify: true},
+				}
+			}(),
+			msg:          NewIdPass("ldapuser1", "xxxxxxxx"),
 			wantVerified: true,
 			wantErr:      false,
 		},
 
 		{
-			name: "tls + verify",
+			name: "✅ connection: tls + verify",
 			authorizer: func() *LdapAuthorizer {
 				caCert, err := os.ReadFile("../../hack/local-run-test/bin/ca.crt")
 				if err != nil {
@@ -84,24 +75,18 @@ func XXXTestLdapAuthorizer_Authorize(t *testing.T) {
 					certPool = x509.NewCertPool()
 				}
 				certPool.AppendCertsFromPEM(caCert)
-				tlsConfig := &tls.Config{
-					InsecureSkipVerify: false,
-					RootCAs:            certPool,
-					ServerName:         "localhost:636",
+				return &LdapAuthorizer{
+					URL:       "ldaps://localhost",
+					BindDN:    "cn=%s,ou=users,dc=cosmows,dc=dev",
+					TlsConfig: &tls.Config{InsecureSkipVerify: false, RootCAs: certPool, ServerName: "localhost:636"},
 				}
-				a, _ := NewLdapAuthorizer("ldaps://localhost", "ou=users,dc=cosmows,dc=dev", "cn", tlsConfig, false)
-				return a
 			}(),
-			msg: &dashboardv1alpha1.LoginRequest{
-				UserName: "ldapuser1",
-				Password: "xxxxxxxx",
-			},
+			msg:          NewIdPass("ldapuser1", "xxxxxxxx"),
 			wantVerified: true,
 			wantErr:      false,
 		},
-
 		{
-			name: "start tls",
+			name: "✅ connection: start tls",
 			authorizer: func() *LdapAuthorizer {
 				caCert, err := os.ReadFile("../../hack/local-run-test/bin/ca.crt")
 				if err != nil {
@@ -113,26 +98,158 @@ func XXXTestLdapAuthorizer_Authorize(t *testing.T) {
 					certPool = x509.NewCertPool()
 				}
 				certPool.AppendCertsFromPEM(caCert)
-				tlsConfig := &tls.Config{
-					InsecureSkipVerify: false,
-					RootCAs:            certPool,
-					ServerName:         "localhost",
+				return &LdapAuthorizer{
+					URL:       "ldap://localhost",
+					StartTLS:  true,
+					BindDN:    "cn=%s,ou=users,dc=cosmows,dc=dev",
+					TlsConfig: &tls.Config{InsecureSkipVerify: false, RootCAs: certPool, ServerName: "localhost:636"},
 				}
-				a, _ := NewLdapAuthorizer("ldap://localhost", "ou=users,dc=cosmows,dc=dev", "cn", tlsConfig, true)
-				return a
 			}(),
-			msg: &dashboardv1alpha1.LoginRequest{
-				UserName: "ldapuser1",
-				Password: "xxxxxxxx",
-			},
+			msg:          NewIdPass("ldapuser1", "xxxxxxxx"),
 			wantVerified: true,
 			wantErr:      false,
+		},
+		{
+			name: "❌ connection: dialURL error",
+			authorizer: func() *LdapAuthorizer {
+				return &LdapAuthorizer{
+					URL:    "ldaplocalhost",
+					BindDN: "cn=%s,ou=users,dc=cosmows,dc=dev",
+				}
+			}(),
+			msg:          NewIdPass("ldapuser1", "xxxxxxxx"),
+			wantVerified: false,
+			wantErr:      true,
+		},
+		{
+			name: "❌ connection: start tls error",
+			authorizer: func() *LdapAuthorizer {
+				return &LdapAuthorizer{
+					URL:       "ldaps://localhost",
+					StartTLS:  true,
+					BindDN:    "cn=%s,ou=users,dc=cosmows,dc=dev",
+					TlsConfig: &tls.Config{InsecureSkipVerify: true},
+				}
+			}(),
+			msg:          NewIdPass("ldapuser1", "xxxxxxxx"),
+			wantVerified: false,
+			wantErr:      true,
+		},
+		//*********************
+		//* bind mode
+		//*********************
+		{
+			name: "✅ bind mode: admin",
+			authorizer: func() *LdapAuthorizer {
+				return &LdapAuthorizer{
+					URL:    "ldap://localhost",
+					BindDN: "cn=%s,dc=cosmows,dc=dev",
+				}
+			}(),
+			msg:          NewIdPass("admin", "vvvvvvvv"),
+			wantVerified: true,
+			wantErr:      false,
+		},
+
+		{
+			name: "✅ bind mode: verified",
+			authorizer: func() *LdapAuthorizer {
+				return &LdapAuthorizer{
+					URL:    "ldap://localhost",
+					BindDN: "cn=%s,ou=users,dc=cosmows,dc=dev",
+				}
+			}(),
+			msg:          NewIdPass("ldapuser1", "xxxxxxxx"),
+			wantVerified: true,
+			wantErr:      false,
+		},
+
+		{
+			name: "❌ bind mode: not verified",
+			authorizer: func() *LdapAuthorizer {
+				return &LdapAuthorizer{
+					URL:    "ldap://localhost",
+					BindDN: "cn=%s,ou=users,dc=cosmows,dc=dev",
+				}
+			}(),
+			msg:          NewIdPass("ldapuser1", "hogehoge"),
+			wantVerified: false,
+			wantErr:      true,
+		},
+
+		//*********************
+		//* search mode
+		//*********************
+		{
+			name: "✅ search mode: verified",
+			authorizer: func() *LdapAuthorizer {
+				a := &LdapAuthorizer{
+					URL:                "ldap://localhost",
+					SearchBaseDN:       "ou=users,dc=cosmows,dc=dev",
+					SearchBindDN:       "cn=admin,dc=cosmows,dc=dev",
+					SearchBindPassword: "vvvvvvvv",
+					SearchFilter:       "(uid=%s)",
+				}
+				return a
+			}(),
+			msg:          NewIdPass("ldapuser1", "xxxxxxxx"),
+			wantVerified: true,
+			wantErr:      false,
+		},
+		{
+			name: "❌ search mode: not verified",
+			authorizer: func() *LdapAuthorizer {
+				a := &LdapAuthorizer{
+					URL:                "ldap://localhost",
+					SearchBaseDN:       "ou=users,dc=cosmows,dc=dev",
+					SearchBindDN:       "cn=admin,dc=cosmows,dc=dev",
+					SearchBindPassword: "vvvvvvvv",
+					SearchFilter:       "(uid=%s)",
+				}
+				return a
+			}(),
+			msg:          NewIdPass("ldapuser1", "hogehoge"),
+			wantVerified: false,
+			wantErr:      true,
+		},
+		{
+			name: "❌ search mode: bind fail",
+			authorizer: func() *LdapAuthorizer {
+				a := &LdapAuthorizer{
+					URL:                "ldap://localhost",
+					SearchBaseDN:       "ou=users,dc=cosmows,dc=dev",
+					SearchBindDN:       "xxx",
+					SearchBindPassword: "vvvvvvvv",
+					SearchFilter:       "(uid=%s)",
+				}
+				return a
+			}(),
+			msg:          NewIdPass("ldapuser1", "hogehoge"),
+			wantVerified: false,
+			wantErr:      true,
+		},
+		{
+			name: "❌ search mode: UnauthenticatedBind",
+			authorizer: func() *LdapAuthorizer {
+				a := &LdapAuthorizer{
+					URL:          "ldap://localhost",
+					SearchBaseDN: "ou=users,dc=cosmows,dc=dev",
+					SearchFilter: "(uid=%s)",
+				}
+				return a
+			}(),
+			msg:          NewIdPass("ldapuser1", "hogehoge"),
+			wantVerified: false,
+			wantErr:      true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
 			gotVerified, err := tt.authorizer.Authorize(ctx, tt.msg)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
 			if (err != nil) != tt.wantErr {
 				t.Errorf("LdapAuthorizer.Authorize() error = %v, wantErr %v", err, tt.wantErr)
 				return

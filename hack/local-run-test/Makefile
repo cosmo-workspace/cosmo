@@ -308,9 +308,12 @@ install-dashboard: helm kubectl docker-build-dashboard ## Install cosmo dashboar
 		--set insecure=false \
 		--set auth.ldap.enabled=true \
 		--set auth.ldap.url="ldaps://open-ldap.cosmo-system.svc.cluster.local" \
-		--set auth.ldap.baseDn="ou=users\,dc=cosmows\,dc=dev" \
-		--set auth.ldap.userAttr=cn \
+		--set XXXXXauth.ldap.bindDn="cn=%s\,ou=users\,dc=cosmows\,dc=dev" \
 		--set auth.ldap.tls.secretName=openldap-cert \
+    	--set auth.ldap.searchBindDN="cn=admin\,dc=cosmows\,dc=dev" \
+    	--set auth.ldap.searchBindPassword="vvvvvvvv" \
+    	--set auth.ldap.searchBaseDN="dc=cosmows\,dc=dev" \
+    	--set auth.ldap.searchFilter="(uid=\%s)" \
 		--set logLevel=$(LOGLEVEL)
 
 install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
@@ -324,11 +327,7 @@ install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
 		--set ingress.enabled=true \
 		--set ingress.hostName=$(DASHBOARD_HOST) \
 		--set cert.dnsName=$(DASHBOARD_HOST) \
-		--set auth.ldap.enabled=true \
-		--set auth.ldap.url="ldap://localhost:389" \
-		--set auth.ldap.baseDn="ou=users\,dc=cosmows\,dc=dev" \
-		--set auth.ldap.userAttr=cn \
-		--set auth.ldap.tls.secretName=openldap-cert \
+		--set auth.ldap.enabled=false \
 		--set insecure=true \
 		--set replicaCount=0 \
 		--set localRunTest.enabled=true \
@@ -412,8 +411,7 @@ run-dashboard-local:
 		--cookie-hashkey="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_HASHKEY} | base64 -d)" \
 		--cookie-blockkey="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_BLOCKKEY} | base64 -d)" \
 		--ldap-url=ldap://localhost:389 \
-		--ldap-basedn=ou=users\,dc=cosmows\,dc=dev \
-		--ldap-user-attr=cn \
+		--ldap-binddn="cn=%s,ou=users,dc=cosmows,dc=dev" \
 		--insecure
 
 run-local: kubectl ## Run test.
