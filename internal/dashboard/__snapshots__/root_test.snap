@@ -1,6 +1,6 @@
 
 [TestNewRootCmd/❌_flags_are_required - 1]
-Error: required flag(s) "cookie-blockkey", "cookie-hashkey", "ldap-basedn", "ldap-user-attr", "tls-cert", "tls-key" not set
+Error: required flag(s) "cookie-blockkey", "cookie-hashkey", "tls-cert", "tls-key" not set
 Usage:
   dashboard [flags]
 
@@ -15,12 +15,15 @@ Flags:
   -h, --help                              help for dashboard
       --insecure                          start http server not https server
       --kubeconfig string                 Paths to a kubeconfig. Only required if out-of-cluster.
-      --ldap-basedn string                LDAP BaseDN. ex: dc=example,dc=com
+      --ldap-binddn string                [bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.
       --ldap-ca-cert string               ca cert file path
       --ldap-insecure-skip-verify         Skip server certificate chain and hostname validation
+      --ldap-search-basedn string         [search mode] ex: dc=example,dc=com
+      --ldap-search-binddn string         [search mode] ex: cn=admin,dc=example,dc=com '%s' is replaced by the userid.
+      --ldap-search-filter string         [search mode] ex: (uid=%s)  '%s' is replaced by the userid.
+      --ldap-search-password string       [search mode] password for search bindDN.
       --ldap-start-tls                    Enables StartTLS functionality
       --ldap-url string                   LDAP URL. ldap[s]://hostname.or.ip[:port]
-      --ldap-user-attr string             LDAP user attribute. ex: sAMAccountname or uid or cn (default "sAMAccountname")
       --log_backtrace_at traceLocation    when logging hits line file:N, emit a stack trace (default :0)
       --log_dir string                    If non-empty, write log files in this directory (no effect when -logtostderr=true)
       --log_file string                   If non-empty, use this log file (no effect when -logtostderr=true)
@@ -64,12 +67,15 @@ Flags:
   -h, --help                              help for dashboard
       --insecure                          start http server not https server
       --kubeconfig string                 Paths to a kubeconfig. Only required if out-of-cluster.
-      --ldap-basedn string                LDAP BaseDN. ex: dc=example,dc=com
+      --ldap-binddn string                [bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.
       --ldap-ca-cert string               ca cert file path
       --ldap-insecure-skip-verify         Skip server certificate chain and hostname validation
+      --ldap-search-basedn string         [search mode] ex: dc=example,dc=com
+      --ldap-search-binddn string         [search mode] ex: cn=admin,dc=example,dc=com '%s' is replaced by the userid.
+      --ldap-search-filter string         [search mode] ex: (uid=%s)  '%s' is replaced by the userid.
+      --ldap-search-password string       [search mode] password for search bindDN.
       --ldap-start-tls                    Enables StartTLS functionality
       --ldap-url string                   LDAP URL. ldap[s]://hostname.or.ip[:port]
-      --ldap-user-attr string             LDAP user attribute. ex: sAMAccountname or uid or cn (default "sAMAccountname")
       --log_backtrace_at traceLocation    when logging hits line file:N, emit a stack trace (default :0)
       --log_dir string                    If non-empty, write log files in this directory (no effect when -logtostderr=true)
       --log_file string                   If non-empty, use this log file (no effect when -logtostderr=true)
@@ -113,12 +119,15 @@ Flags:
   -h, --help                              help for dashboard
       --insecure                          start http server not https server
       --kubeconfig string                 Paths to a kubeconfig. Only required if out-of-cluster.
-      --ldap-basedn string                LDAP BaseDN. ex: dc=example,dc=com
+      --ldap-binddn string                [bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.
       --ldap-ca-cert string               ca cert file path
       --ldap-insecure-skip-verify         Skip server certificate chain and hostname validation
+      --ldap-search-basedn string         [search mode] ex: dc=example,dc=com
+      --ldap-search-binddn string         [search mode] ex: cn=admin,dc=example,dc=com '%s' is replaced by the userid.
+      --ldap-search-filter string         [search mode] ex: (uid=%s)  '%s' is replaced by the userid.
+      --ldap-search-password string       [search mode] password for search bindDN.
       --ldap-start-tls                    Enables StartTLS functionality
       --ldap-url string                   LDAP URL. ldap[s]://hostname.or.ip[:port]
-      --ldap-user-attr string             LDAP user attribute. ex: sAMAccountname or uid or cn (default "sAMAccountname")
       --log_backtrace_at traceLocation    when logging hits line file:N, emit a stack trace (default :0)
       --log_dir string                    If non-empty, write log files in this directory (no effect when -logtostderr=true)
       --log_file string                   If non-empty, use this log file (no effect when -logtostderr=true)
@@ -147,7 +156,7 @@ Flags:
 ---
 
 [TestNewRootCmd/❌_ldap-url_is_invalid - 1]
-Error: validation error: parse "ldap://sss  ssss": invalid character " " in host name
+Error: unknown flag: --ldap-basedn
 Usage:
   dashboard [flags]
 
@@ -162,12 +171,15 @@ Flags:
   -h, --help                              help for dashboard
       --insecure                          start http server not https server
       --kubeconfig string                 Paths to a kubeconfig. Only required if out-of-cluster.
-      --ldap-basedn string                LDAP BaseDN. ex: dc=example,dc=com
+      --ldap-binddn string                [bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.
       --ldap-ca-cert string               ca cert file path
       --ldap-insecure-skip-verify         Skip server certificate chain and hostname validation
+      --ldap-search-basedn string         [search mode] ex: dc=example,dc=com
+      --ldap-search-binddn string         [search mode] ex: cn=admin,dc=example,dc=com '%s' is replaced by the userid.
+      --ldap-search-filter string         [search mode] ex: (uid=%s)  '%s' is replaced by the userid.
+      --ldap-search-password string       [search mode] password for search bindDN.
       --ldap-start-tls                    Enables StartTLS functionality
       --ldap-url string                   LDAP URL. ldap[s]://hostname.or.ip[:port]
-      --ldap-user-attr string             LDAP user attribute. ex: sAMAccountname or uid or cn (default "sAMAccountname")
       --log_backtrace_at traceLocation    when logging hits line file:N, emit a stack trace (default :0)
       --log_dir string                    If non-empty, write log files in this directory (no effect when -logtostderr=true)
       --log_file string                   If non-empty, use this log file (no effect when -logtostderr=true)
