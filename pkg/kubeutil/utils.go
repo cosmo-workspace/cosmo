@@ -5,7 +5,6 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
@@ -19,11 +18,6 @@ var (
 		Group:   corev1.GroupName,
 		Version: "v1",
 		Kind:    "Service",
-	}
-	IngressGVK = schema.GroupVersionKind{
-		Group:   netv1.GroupName,
-		Version: "v1",
-		Kind:    "Ingress",
 	}
 )
 
