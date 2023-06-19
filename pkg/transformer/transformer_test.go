@@ -198,3 +198,12 @@ spec:
 		})
 	}
 }
+
+func TestName(t *testing.T) {
+	t.Run("ok", func(t *testing.T) {
+		tf := NewJSONPatchTransformer(nil, "")
+		if got := Name(tf); got != "JSONPatchTransformer" {
+			t.Errorf("Name() = %v, want JSONPatchTransformer", got)
+		}
+	})
+}

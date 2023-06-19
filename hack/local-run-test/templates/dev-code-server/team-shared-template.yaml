@@ -5,7 +5,6 @@ metadata:
   annotations:
     cosmo-workspace.github.io/forbidden-userroles: team-a-dev
     workspace.cosmo-workspace.github.io/deployment: workspace
-    workspace.cosmo-workspace.github.io/ingress: ""
     workspace.cosmo-workspace.github.io/service: workspace
     workspace.cosmo-workspace.github.io/service-main-port: main
     workspace.cosmo-workspace.github.io/urlbase: ""

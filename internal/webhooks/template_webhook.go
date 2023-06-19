@@ -39,7 +39,6 @@ func (h *TemplateMutationWebhookHandler) SetupWebhookWithManager(mgr ctrl.Manage
 
 func (h *TemplateMutationWebhookHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
-	ctx = clog.IntoContext(ctx, log)
 
 	var tmpl cosmov1alpha1.TemplateObject
 

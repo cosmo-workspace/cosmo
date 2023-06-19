@@ -164,7 +164,6 @@ SnapShot = """
         \"name\": \"main\",
         \"portNumber\": 18080,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 18080,
         \"host\": \"main-ws1-admin-user.domain\",
         \"group\": \"main\",
         \"public\": false
@@ -565,7 +564,6 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 9999,
         \"host\": \"gp1-ws1-admin-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
@@ -574,7 +572,6 @@ SnapShot = """
         \"name\": \"nw2\",
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 3000,
         \"host\": \"gp2-ws1-admin-user.domain\",
         \"group\": \"gp2\",
         \"public\": false
@@ -619,7 +616,6 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 9999,
         \"host\": \"gp1-ws1-admin-user.domain\",
         \"group\": \"gp1\",
         \"public\": false
@@ -628,7 +624,6 @@ SnapShot = """
         \"name\": \"nw2\",
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
-        \"targetPortNumber\": 3000,
         \"host\": \"nw2-ws1-admin-user.domain\",
         \"group\": \"nw2\",
         \"public\": true

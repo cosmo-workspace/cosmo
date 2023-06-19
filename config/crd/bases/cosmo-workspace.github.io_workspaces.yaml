@@ -97,8 +97,6 @@ spec:
                 properties:
                   deploymentName:
                     type: string
-                  ingressName:
-                    type: string
                   mainServicePortName:
                     type: string
                   serviceName:

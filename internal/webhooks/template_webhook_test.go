@@ -22,7 +22,6 @@ var _ = Describe("Template webhook", func() {
 			wsConfig := cosmov1alpha1.Config{
 				DeploymentName:      "ws-dep",
 				ServiceName:         "ws-svc",
-				IngressName:         "ws-ing",
 				ServiceMainPortName: "mainPort",
 				URLBase:             "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com",
 			}
@@ -35,7 +34,6 @@ var _ = Describe("Template webhook", func() {
 					},
 					Annotations: map[string]string{
 						cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
-						cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     wsConfig.IngressName,
 						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
 						cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
 						// no urlbase

@@ -2,11 +2,8 @@ package v1alpha1
 
 import (
 	"fmt"
-	"strings"
 
-	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
-	netv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/pointer"
@@ -60,7 +57,6 @@ type WorkspaceStatus struct {
 type Config struct {
 	DeploymentName      string `json:"deploymentName,omitempty"`
 	ServiceName         string `json:"serviceName,omitempty"`
-	IngressName         string `json:"ingressName,omitempty"`
 	ServiceMainPortName string `json:"mainServicePortName,omitempty"`
 	URLBase             string `json:"urlbase,omitempty"`
 }
@@ -70,7 +66,6 @@ const (
 	WorkspaceTemplateAnnKeyURLBase         = "workspace.cosmo-workspace.github.io/urlbase"
 	WorkspaceTemplateAnnKeyDeploymentName  = "workspace.cosmo-workspace.github.io/deployment"
 	WorkspaceTemplateAnnKeyServiceName     = "workspace.cosmo-workspace.github.io/service"
-	WorkspaceTemplateAnnKeyIngressName     = "workspace.cosmo-workspace.github.io/ingress"
 	WorkspaceTemplateAnnKeyServiceMainPort = "workspace.cosmo-workspace.github.io/service-main-port"
 )
 
@@ -78,7 +73,6 @@ const (
 	// TemplateVars are Template variables to set WorkspaceConfig info on resources in the Template
 	WorkspaceTemplateVarDeploymentName      = "{{WORKSPACE_DEPLOYMENT_NAME}}"
 	WorkspaceTemplateVarServiceName         = "{{WORKSPACE_SERVICE_NAME}}"
-	WorkspaceTemplateVarIngressName         = "{{WORKSPACE_INGRESS_NAME}}"
 	WorkspaceTemplateVarServiceMainPortName = "{{WORKSPACE_SERVICE_MAIN_PORT_NAME}}"
 )
 
@@ -94,9 +88,6 @@ type NetworkRule struct {
 }
 
 func (r *NetworkRule) Default() {
-	if r.TargetPortNumber == nil || *r.TargetPortNumber == 0 || r.Public {
-		r.TargetPortNumber = pointer.Int32(int32(r.PortNumber))
-	}
 	if r.HTTPPath == "" {
 		r.HTTPPath = "/"
 	}
@@ -110,87 +101,20 @@ func (r *NetworkRule) portName() string {
 }
 
 func (r *NetworkRule) ServicePort() corev1.ServicePort {
+	targetPort := r.PortNumber
+	if r.TargetPortNumber != nil && *r.TargetPortNumber != 0 {
+		targetPort = *r.TargetPortNumber
+	}
+
 	return corev1.ServicePort{
 		Name:       r.portName(),
-		Port:       *r.TargetPortNumber,
+		Port:       r.PortNumber,
 		Protocol:   corev1.ProtocolTCP,
-		TargetPort: intstr.FromInt(int(*r.TargetPortNumber)),
+		TargetPort: intstr.FromInt(int(targetPort)),
 	}
 }
 
-func (r *NetworkRule) IngressRule(backendSvcName string) netv1.IngressRule {
-	pathTypePrefix := netv1.PathTypePrefix
-	var host string
-	if r.Host != nil {
-		host = *r.Host
-	}
-	return netv1.IngressRule{
-		Host: host,
-		IngressRuleValue: netv1.IngressRuleValue{
-			HTTP: &netv1.HTTPIngressRuleValue{
-				Paths: []netv1.HTTPIngressPath{
-					{
-						Path:     r.HTTPPath,
-						PathType: &pathTypePrefix,
-						Backend: netv1.IngressBackend{
-							Service: &netv1.IngressServiceBackend{
-								Name: backendSvcName,
-								Port: netv1.ServiceBackendPort{
-									Name: r.portName(),
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-}
-
-func (r *NetworkRule) TraefikRoute(backendSvcName string, headerMiddlewareName string) traefikv1.Route {
-	matches := []string{}
-	if r.Host != nil {
-		matches = append(matches, fmt.Sprintf("Host(`%s`)", *r.Host))
-	}
-	if r.HTTPPath != "" && r.HTTPPath != "/" {
-		matches = append(matches, fmt.Sprintf("PathPrefix(`%s`)", r.HTTPPath))
-	}
-	match := strings.Join(matches[:], " && ")
-
-	var middlewares []traefikv1.MiddlewareRef
-	if r.Public {
-		middlewares = []traefikv1.MiddlewareRef{}
-	} else {
-		middlewares = []traefikv1.MiddlewareRef{
-			{
-				Name: headerMiddlewareName,
-			},
-			{
-				Name:      "cosmo-auth",
-				Namespace: "cosmo-system",
-			},
-		}
-	}
-
-	return traefikv1.Route{
-		Kind:     "Rule",
-		Match:    match,
-		Priority: 100,
-		Services: []traefikv1.Service{
-			{
-				LoadBalancerSpec: traefikv1.LoadBalancerSpec{
-					Kind:   "Service",
-					Name:   backendSvcName,
-					Port:   intstr.FromString(r.portName()),
-					Scheme: "http",
-				},
-			},
-		},
-		Middlewares: middlewares,
-	}
-}
-
-func NetworkRulesByServiceAndIngress(svc corev1.Service, ing netv1.Ingress) []NetworkRule {
+func NetworkRulesByService(svc corev1.Service) []NetworkRule {
 	netRules := make([]NetworkRule, 0, len(svc.Spec.Ports))
 	for _, p := range svc.Spec.Ports {
 		var netRule NetworkRule
@@ -199,18 +123,6 @@ func NetworkRulesByServiceAndIngress(svc corev1.Service, ing netv1.Ingress) []Ne
 
 		if p.TargetPort.IntValue() != 0 {
 			netRule.TargetPortNumber = pointer.Int32(int32(p.TargetPort.IntValue()))
-		}
-		for _, rule := range ing.Spec.Rules {
-			for _, path := range rule.HTTP.Paths {
-				if path.Backend.Service != nil {
-					if path.Backend.Service.Name == svc.Name {
-						if path.Backend.Service.Port.Name == p.Name || path.Backend.Service.Port.Number == p.Port {
-							netRule.HTTPPath = path.Path
-							netRule.Host = pointer.String(rule.Host)
-						}
-					}
-				}
-			}
 		}
 		netRule.Default()
 		netRules = append(netRules, netRule)

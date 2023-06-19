@@ -2,7 +2,6 @@ package v1alpha1
 
 import (
 	corev1 "k8s.io/api/core/v1"
-	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -78,34 +77,7 @@ type TemplateRef struct {
 
 // OverrideSpec defines overrides to transform built objects
 type OverrideSpec struct {
-	Scale           []ScalingOverrideSpec `json:"scale,omitempty"`
-	Network         *NetworkOverrideSpec  `json:"network,omitempty"`
-	PatchesJson6902 []Json6902            `json:"patchesJson6902,omitempty"`
-}
-
-// NetworkOverrideSpec defines overrides to transform network resources
-type NetworkOverrideSpec struct {
-	Ingress []IngressOverrideSpec `json:"ingress,omitempty"`
-	Service []ServiceOverrideSpec `json:"service,omitempty"`
-}
-
-// IngressOverrideSpec defines overrides to transform Ingress resources
-type IngressOverrideSpec struct {
-	TargetName  string              `json:"targetName,omitempty"`
-	Annotations map[string]string   `json:"annotations,omitempty"`
-	Rules       []netv1.IngressRule `json:"rules,omitempty"`
-}
-
-// ServiceOverrideSpec defines overrides to transform Service resources
-type ServiceOverrideSpec struct {
-	TargetName string               `json:"targetName,omitempty"`
-	Ports      []corev1.ServicePort `json:"ports,omitempty"`
-}
-
-// ScalingOverrideSpec defines workload scales.
-type ScalingOverrideSpec struct {
-	Target   ObjectRef `json:"target"`
-	Replicas int64     `json:"replicas"`
+	PatchesJson6902 []Json6902 `json:"patchesJson6902,omitempty"`
 }
 
 // Json6902 defines JSONPatch specs.

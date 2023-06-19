@@ -191,7 +191,7 @@ func ownerRef(obj runtime.Object, scheme *runtime.Scheme) metav1.OwnerReference 
 		Kind:               gvk.Kind,
 		Name:               owner.GetName(),
 		UID:                owner.GetUID(),
-		BlockOwnerDeletion: pointer.BoolPtr(true),
-		Controller:         pointer.BoolPtr(true),
+		BlockOwnerDeletion: pointer.Bool(true),
+		Controller:         pointer.Bool(true),
 	}
 }

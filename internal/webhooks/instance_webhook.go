@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	netv1 "k8s.io/api/networking/v1"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
@@ -129,44 +128,8 @@ func mutateInstanceObject(inst cosmov1alpha1.InstanceObject, tmpl cosmov1alpha1.
 	// update name to instance fixed resource name
 	patchSpec := instSpec.Override.PatchesJson6902
 	for i, p := range patchSpec {
-		if p.Target.Name != "" {
+		if p.Target.Name != "" && !template.IsDisableNamePrefix(tmpl) {
 			patchSpec[i].Target.Name = instance.InstanceResourceName(inst.GetName(), p.Target.Name)
-		}
-	}
-
-	netSpec := instSpec.Override.Network
-	if netSpec != nil {
-		for i, ingSpec := range netSpec.Ingress {
-			if ingSpec.TargetName != "" {
-				netSpec.Ingress[i].TargetName = instance.InstanceResourceName(inst.GetName(), ingSpec.TargetName)
-				fixIngressBackendName(netSpec.Ingress[i].Rules, inst.GetName())
-			}
-		}
-
-		for i, svcSpec := range netSpec.Service {
-			if svcSpec.TargetName != "" {
-				netSpec.Service[i].TargetName = instance.InstanceResourceName(inst.GetName(), svcSpec.TargetName)
-			}
-		}
-	}
-
-	scaleSpecs := instSpec.Override.Scale
-	for i, scaleSpec := range scaleSpecs {
-		if scaleSpec.Target.Name != "" {
-			scaleSpecs[i].Target.Name = instance.InstanceResourceName(inst.GetName(), scaleSpec.Target.Name)
-		}
-	}
-}
-
-func fixIngressBackendName(ingRules []netv1.IngressRule, instName string) {
-	for _, rule := range ingRules {
-		for _, path := range rule.HTTP.Paths {
-			if path.Backend.Service != nil {
-				path.Backend.Service.Name = instance.InstanceResourceName(instName, path.Backend.Service.Name)
-			}
-			if path.Backend.Resource != nil {
-				path.Backend.Resource.Name = instance.InstanceResourceName(instName, path.Backend.Resource.Name)
-			}
 		}
 	}
 }
@@ -254,19 +217,14 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		}
 	}
 
-	// validate apiVersion
-	scaleSpecs := inst.GetSpec().Override.Scale
-	for _, scaleSpec := range scaleSpecs {
-		if _, err := schema.ParseGroupVersion(scaleSpec.Target.APIVersion); err != nil {
-			return admission.Denied(fmt.Sprintf("APIVersion '%s' is invalid: %v", scaleSpec.Target.APIVersion, err))
-		}
-	}
-
-	// validate apiVersion
+	// validate patch
 	patchSpecs := inst.GetSpec().Override.PatchesJson6902
 	for _, patchSpec := range patchSpecs {
 		if _, err := schema.ParseGroupVersion(patchSpec.Target.APIVersion); err != nil {
 			return admission.Denied(fmt.Sprintf("APIVersion '%s' is invalid: %v", patchSpec.Target.APIVersion, err))
+		}
+		if _, err := json.Marshal(patchSpec.Patch); err != nil {
+			return admission.Denied(fmt.Sprintf("JSON Patch format is invalid: %v", err))
 		}
 	}
 

@@ -17,7 +17,6 @@ func SetConfigOnTemplateAnnotations(tmpl cosmov1alpha1.TemplateObject, cfg cosmo
 	}
 	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName] = cfg.DeploymentName
 	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName] = cfg.ServiceName
-	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName] = cfg.IngressName
 	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort] = cfg.ServiceMainPortName
 	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase] = cfg.URLBase
 	tmpl.SetAnnotations(ann)
@@ -43,7 +42,6 @@ func ConfigFromTemplateAnnotations(tmpl *cosmov1alpha1.Template) (cfg cosmov1alp
 	cfg = cosmov1alpha1.Config{
 		DeploymentName:      ann[cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName],
 		ServiceName:         ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName],
-		IngressName:         ann[cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName],
 		ServiceMainPortName: ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort],
 		URLBase:             ann[cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase],
 	}

@@ -10,23 +10,19 @@
  },
  "spec": {
   "override": {
-   "network": {
-    "ingress": [
-     {
-      "targetName": "workspace-instance-ingress"
-     }
-    ],
-    "service": [
-     {
-      "targetName": "workspace-instance-service"
-     }
-    ]
-   },
-   "scale": [
+   "patchesJson6902": [
     {
-     "replicas": 0,
      "target": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
       "name": "workspace-instance-deployment"
+     }
+    },
+    {
+     "target": {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "name": "workspace-instance-service"
      }
     }
    ]

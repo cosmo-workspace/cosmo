@@ -11,7 +11,6 @@ SnapShot = """
     },
     \"annotations\": {
       \"workspace.cosmo-workspace.github.io/deployment\": \"ws-dep\",
-      \"workspace.cosmo-workspace.github.io/ingress\": \"ws-ing\",
       \"workspace.cosmo-workspace.github.io/service\": \"ws-svc\",
       \"workspace.cosmo-workspace.github.io/service-main-port\": \"mainPort\",
       \"workspace.cosmo-workspace.github.io/urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"

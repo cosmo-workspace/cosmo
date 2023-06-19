@@ -23,7 +23,6 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 				cfg: cosmov1alpha1.Config{
 					DeploymentName:      "workspace1",
 					ServiceName:         "workspace2",
-					IngressName:         "workspace3",
 					ServiceMainPortName: "main",
 				},
 				obj: &cosmov1alpha1.Template{
@@ -43,7 +42,6 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 				cfg: cosmov1alpha1.Config{
 					DeploymentName:      "workspace1",
 					ServiceName:         "workspace2",
-					IngressName:         "workspace3",
 					ServiceMainPortName: "main",
 				},
 				obj: &cosmov1alpha1.Template{
@@ -84,7 +82,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 						Annotations: map[string]string{
 							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
-							cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
@@ -102,7 +99,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 						Annotations: map[string]string{
 							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
-							cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
@@ -124,7 +120,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 						Annotations: map[string]string{
 							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
-							cosmov1alpha1.WorkspaceTemplateAnnKeyIngressName:     "workspace3",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},

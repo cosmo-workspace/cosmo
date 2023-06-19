@@ -4,21 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
-	netv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-
-	appsv1apply "k8s.io/client-go/applyconfigurations/apps/v1"
-	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
-	"github.com/cosmo-workspace/cosmo/internal/authproxy"
-	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
-	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
 const (
@@ -33,24 +24,12 @@ func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured
 
 	dps := make([]unstructured.Unstructured, 0)
 	svcs := make([]unstructured.Unstructured, 0)
-	ings := make([]unstructured.Unstructured, 0)
-	ingRoutes := make([]unstructured.Unstructured, 0)
-
-	ingressRouteGVK := schema.GroupVersionKind{
-		Group:   "traefik.io",
-		Version: "v1alpha1",
-		Kind:    "IngressRoute",
-	}
 
 	for _, u := range unst {
 		if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.DeploymentGVK) {
 			dps = append(dps, u)
 		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) {
 			svcs = append(svcs, u)
-		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.IngressGVK) {
-			ings = append(ings, u)
-		} else if kubeutil.IsGVKEqual(u.GroupVersionKind(), ingressRouteGVK) {
-			ingRoutes = append(ingRoutes, u)
 		}
 	}
 
@@ -63,7 +42,7 @@ func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured
 	}
 
 	// validate deployment
-	var validDep, validSvc, validIng, validIngRoute bool
+	var validDep, validSvc bool
 	for _, v := range dps {
 		if wsConfig.DeploymentName == v.GetName() {
 			validDep = true
@@ -115,122 +94,5 @@ func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured
 		return fmt.Errorf("service '%s' is not found", wsConfig.ServiceName)
 	}
 
-	if len(ings) > 0 {
-		// complete ingress name
-		if wsConfig.IngressName == "" {
-			if len(ings) == 1 {
-				wsConfig.IngressName = ings[0].GetName()
-
-			} else {
-				return errors.New("failed to specify the ingress")
-			}
-		}
-
-		// validate ingress
-		for _, v := range ings {
-			if wsConfig.IngressName == v.GetName() {
-				var ing netv1.Ingress
-				err := runtime.DefaultUnstructuredConverter.FromUnstructured(v.Object, &ing)
-				if err != nil {
-					return err
-				}
-
-				for _, rule := range ing.Spec.Rules {
-					for _, path := range rule.HTTP.Paths {
-						if path.Backend.Service == nil {
-							continue
-						}
-						if !instance.EqualInstanceResourceName(template.DefaultVarsInstance,
-							path.Backend.Service.Name, wsConfig.ServiceName) {
-							continue
-						}
-
-						if path.Backend.Service.Port.Name != "" {
-							if path.Backend.Service.Port.Name == wsConfig.ServiceMainPortName {
-								validIng = true
-								break
-							}
-						} else {
-							if path.Backend.Service.Port.Number == mainServicePort {
-								validIng = true
-								break
-							}
-						}
-					}
-				}
-				break
-			}
-		}
-		if !validIng {
-			return fmt.Errorf("ingress '%s' is not found", wsConfig.IngressName)
-		}
-	}
-	if len(ingRoutes) > 0 {
-		// complete ingress name
-		if wsConfig.IngressName == "" {
-			if len(ingRoutes) == 1 {
-				wsConfig.IngressName = ingRoutes[0].GetName()
-
-			} else {
-				return errors.New("failed to specify the ingressroute")
-			}
-		}
-
-		// validate ingressRoute
-		for _, v := range ingRoutes {
-			if wsConfig.IngressName == v.GetName() {
-				var ingRoute traefikv1.IngressRoute
-				err := runtime.DefaultUnstructuredConverter.FromUnstructured(v.Object, &ingRoute)
-				if err != nil {
-					return err
-				}
-				validIngRoute = true
-				break
-			}
-		}
-		if !validIngRoute {
-			return fmt.Errorf("ingressRoute '%s' is not found", wsConfig.IngressName)
-		}
-	}
 	return nil
-}
-
-func deploymentAuthProxyPatch(injectDeploymentName string, authProxyImage string, tlsSecretName string) *appsv1apply.DeploymentApplyConfiguration {
-	applydeploy := (&appsv1apply.DeploymentApplyConfiguration{}).
-		WithAPIVersion("apps/v1").
-		WithKind("Deployment").
-		WithName(injectDeploymentName).
-		WithSpec(appsv1apply.DeploymentSpec().
-			WithTemplate(corev1apply.PodTemplateSpec().
-				WithSpec(corev1apply.PodSpec().
-					WithContainers(corev1apply.Container().
-						WithName("cosmo-auth-proxy").
-						WithImage(authProxyImage).
-						WithEnv(
-							corev1apply.EnvVar().
-								WithName(authproxy.EnvInstance).
-								WithValue(template.DefaultVarsInstance),
-							corev1apply.EnvVar().
-								WithName(authproxy.EnvNamespace).
-								WithValue(template.DefaultVarsNamespace))))))
-	if tlsSecretName == "" {
-		applydeploy.Spec.Template.Spec.Containers[0].WithArgs("--insecure")
-
-	} else {
-		applydeploy.Spec.Template.Spec.Containers[0].WithArgs(
-			"--tls-cert=/app/cert/tls.crt",
-			"--tls-key=/app/cert/tls.key")
-
-		applydeploy.Spec.Template.Spec.Containers[0].WithVolumeMounts(corev1apply.VolumeMount().
-			WithMountPath("/app/cert").
-			WithName("cert").
-			WithReadOnly(true))
-		applydeploy.Spec.Template.Spec.WithVolumes(corev1apply.Volume().
-			WithName("cert").
-			WithSecret(corev1apply.SecretVolumeSource().
-				WithDefaultMode(420).
-				WithSecretName(tlsSecretName)))
-	}
-
-	return applydeploy
 }

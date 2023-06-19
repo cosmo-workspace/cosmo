@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -92,7 +91,7 @@ func (o *validateOption) Complete(cmd *cobra.Command, args []string) error {
 		}
 
 	} else {
-		input, err = ioutil.ReadFile(o.File)
+		input, err = os.ReadFile(o.File)
 		if err != nil {
 			return fmt.Errorf("failed to read input file: %w", err)
 		}

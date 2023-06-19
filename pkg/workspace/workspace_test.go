@@ -60,7 +60,6 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 					Status: cosmov1alpha1.WorkspaceStatus{
 						Config: cosmov1alpha1.Config{
 							DeploymentName:      "ws-deploy",
-							IngressName:         "ws-ing",
 							ServiceName:         "ws-svc",
 							ServiceMainPortName: "main",
 						},
@@ -92,7 +91,6 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 					Status: cosmov1alpha1.WorkspaceStatus{
 						Config: cosmov1alpha1.Config{
 							DeploymentName:      "ws-deploy",
-							IngressName:         "ws-ing",
 							ServiceName:         "ws-svc",
 							ServiceMainPortName: "main",
 						},
@@ -124,7 +122,6 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 					Status: cosmov1alpha1.WorkspaceStatus{
 						Config: cosmov1alpha1.Config{
 							DeploymentName:      "ws-deploy",
-							IngressName:         "ws-ing",
 							ServiceName:         "ws-svc",
 							ServiceMainPortName: "main",
 						},
@@ -204,77 +201,19 @@ func TestSvcPorts(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "✅ OK3",
+			args: args{
+				netRules: []cosmov1alpha1.NetworkRule{
+					netRule("rule1", "host1", "/", 1111, 2222),
+					netRule("rule2", "host1", "/", 3333, 2222),
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := svcPorts(tt.args.netRules)
-			snaps.MatchJSON(t, got)
-		})
-	}
-}
-
-func TestIngressRules(t *testing.T) {
-
-	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int32) cosmov1alpha1.NetworkRule {
-		var hostp *string
-		if host != "" {
-			hostp = &host
-		}
-		var targetp *int32
-		if targetPortNumber != 0 {
-			targetp = pointer.Int32(int32(targetPortNumber))
-		}
-		return cosmov1alpha1.NetworkRule{
-			Name:             ruleName,
-			PortNumber:       portNumber,
-			HTTPPath:         path,
-			TargetPortNumber: targetp,
-			Host:             hostp,
-			Group:            nil,
-			Public:           false,
-		}
-	}
-
-	type args struct {
-		netRules       []cosmov1alpha1.NetworkRule
-		backendSvcName string
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		{
-			name: "✅ OK",
-			args: args{
-				netRules:       []cosmov1alpha1.NetworkRule{netRule("rule1", "host1", "/", 1111, 2222)},
-				backendSvcName: "bksvc",
-			},
-		},
-		{
-			name: "✅ OK2",
-			args: args{
-				netRules: []cosmov1alpha1.NetworkRule{
-					netRule("rule1", "host1", "/", 1111, 2222),
-					netRule("rule2", "host2", "/", 3333, 4444),
-				},
-				backendSvcName: "bksvc",
-			},
-		},
-		{
-			name: "✅ OK3",
-			args: args{
-
-				netRules: []cosmov1alpha1.NetworkRule{
-					netRule("rule1", "host1", "/", 1111, 2222),
-					netRule("rule2", "host1", "/aaa", 3333, 4444),
-				},
-				backendSvcName: "bksvc",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := ingressRules(tt.args.netRules, tt.args.backendSvcName)
 			snaps.MatchJSON(t, got)
 		})
 	}
