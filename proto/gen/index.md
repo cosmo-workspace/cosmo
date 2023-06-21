@@ -706,7 +706,6 @@
 | ----- | ---- | ----- | ----------- |
 | phase | [string](#string) |  |  |
 | main_url | [string](#string) |  |  |
-| url_base | [string](#string) |  |  |
 
 
 

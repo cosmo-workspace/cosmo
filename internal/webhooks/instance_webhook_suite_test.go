@@ -20,7 +20,6 @@ var _ = Describe("Instance webhook", func() {
 		DeploymentName:      "ws-dep",
 		ServiceName:         "ws-svc",
 		ServiceMainPortName: "mainPort",
-		URLBase:             "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com",
 	}
 
 	cstmpl := cosmov1alpha1.Template{
@@ -33,7 +32,6 @@ var _ = Describe("Instance webhook", func() {
 				cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
-				cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         wsConfig.URLBase,
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{

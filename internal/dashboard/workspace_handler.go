@@ -149,7 +149,6 @@ func convertWorkspaceTodashv1alpha1Workspace(ws cosmov1alpha1.Workspace) *dashv1
 		Status: &dashv1alpha1.WorkspaceStatus{
 			Phase:   string(ws.Status.Phase),
 			MainUrl: ws.Status.URLs[ws.Status.Config.ServiceMainPortName],
-			UrlBase: ws.Status.Config.URLBase,
 		},
 	}
 }

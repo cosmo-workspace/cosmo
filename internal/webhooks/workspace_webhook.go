@@ -25,13 +25,13 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
-	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
-	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
+	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
 type WorkspaceMutationWebhookHandler struct {
 	Client  client.Client
 	Log     *clog.Logger
+	URLBase workspace.URLBase
 	decoder *admission.Decoder
 }
 
@@ -65,7 +65,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 
-	cfg, err := wscfg.ConfigFromTemplateAnnotations(tmpl)
+	cfg, err := workspace.ConfigFromTemplateAnnotations(tmpl)
 	if err != nil {
 		log.Error(err, "failed to get config")
 		return admission.Errored(http.StatusBadRequest, err)
@@ -85,7 +85,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 	}
 
 	// fill default value in network rules
-	h.defaultNetworkRules(ws.Spec.Network, ws.GetName(), ws.GetNamespace(), wsnet.URLBase(cfg.URLBase))
+	h.defaultNetworkRules(ws.Spec.Network, ws.GetName(), ws.GetNamespace(), h.URLBase)
 
 	// sort network rules
 	ws.Spec.Network = sortNetworkRule(ws.Spec.Network)
@@ -177,10 +177,10 @@ func sortNetworkRule(netRules []cosmov1alpha1.NetworkRule) []cosmov1alpha1.Netwo
 	return netRules
 }
 
-func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []cosmov1alpha1.NetworkRule, name, namespace string, urlBase wsnet.URLBase) {
+func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []cosmov1alpha1.NetworkRule, name, namespace string, urlBase workspace.URLBase) {
 	for i := range netRules {
 		netRules[i].Default()
-		netRules[i].Host = pointer.String(wsnet.GenerateIngressHost(netRules[i], name, namespace, urlBase))
+		netRules[i].Host = pointer.String(workspace.GenerateIngressHost(netRules[i], name, namespace, urlBase))
 	}
 }
 

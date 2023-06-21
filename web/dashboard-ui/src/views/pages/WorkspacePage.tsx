@@ -105,10 +105,7 @@ const NetworkRuleHeader: React.VFC<{ workspace: Workspace }> = ({ workspace }) =
     <Grid item xs={2} sm={2} md={1.5} sx={{ m: 'auto' }}>{Caption('Port Name')}</Grid>
     <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{Caption('Port #')}</Grid>
     <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{Caption('Public')}</Grid>
-    {isUpSM &&
-      <Grid item xs={2} sm={5} md={7.5} zeroMinWidth sx={{ m: 'auto' }}>
-        <Stack>{Caption('URL')}{SubCaption('URLBase: ' + workspace.status?.urlBase)}</Stack>
-      </Grid>}
+    {isUpSM && <Grid item xs={2} sm={5} md={7.5} zeroMinWidth sx={{ m: 'auto' }}>{Caption('URL')}</Grid>}
     <Grid item xs={3} sm={2} md={1} sx={{ m: 'auto', textAlign: 'center' }}>
       <IconButton onClick={() => { upsertDialogDispatch(true, { workspace: workspace }); }}><AddTwoTone /></IconButton>
     </Grid>
@@ -125,38 +122,18 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
   const isUpSM = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
   const Body2 = (text?: string | number) => (<Typography variant='body2'>{text}</Typography>);
 
-  const urlLink = (nwRule: NetworkRule) => {
-    let url = workspace.status?.urlBase || ''
-    url = url.replace('{{INSTANCE}}', workspace.name);
-    url = url.replace('{{WORKSPACE}}', workspace.name);
-    url = url.replace('{{NAMESPACE}}', 'cosmo-user-' + workspace.ownerName);
-    url = url.replace('{{USER_NAME}}', workspace.ownerName || '');
-    url = url.replace('{{NETRULE_NAME}}', networkRule.name);
-    url = url.replace('{{PORT_NAME}}', networkRule.name); // for compatibility
-    url = url.replace('{{PORT_NUMBER}}', networkRule.portNumber.toString());
-    const urlParts = url.split('{{NETRULE_GROUP}}');
-    return (<>
-      <Link href={networkRule.url || ''} target='_blank'>
-        <Typography variant='body2' component='span' noWrap={false} >
-          {urlParts[0]}
-          <span style={{ border: 'solid 1px', borderRadius: '0.2em' }} >{nwRule.group}</span>
-          {urlParts.length >= 2 ? urlParts[1] : ''}
-          {nwRule.httpPath === '/' ?
-            '/' : <span style={{ border: 'solid 1px', borderRadius: '0.2em' }} >{nwRule.httpPath}</span>
-          }
-          <OpenInNewTwoTone fontSize='inherit' sx={{ position: 'relative', top: '0.2em' }} />
-        </Typography>
-      </Link>
-    </>);
-  }
-
   return (<>
     <Grid item xs={2} sm={2} md={1.5} sx={{ m: 'auto' }}>{Body2(networkRule.name)}</Grid>
     <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{Body2(networkRule.portNumber)}</Grid>
     <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{networkRule.public && <Check />}</Grid>
     {isUpSM &&
       <Grid item xs={0} sm={5} md={7.5} zeroMinWidth sx={{ m: 'auto' }}>
-        {urlLink(networkRule)}
+        <Link href={networkRule.url || ''} target='_blank'>
+          <Typography variant='body2' component='span' noWrap={false} >
+            {networkRule.url}
+            <OpenInNewTwoTone fontSize='inherit' sx={{ position: 'relative', top: '0.2em' }} />
+          </Typography>
+        </Link>
       </Grid>
     }
     <Grid item xs={3} sm={2} md={1} sx={{ m: 'auto', textAlign: 'center' }}>
@@ -171,7 +148,12 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
     </Grid>
     {!isUpSM &&
       <Grid item xs={12} sm={0} md={0} zeroMinWidth sx={{ m: 'auto' }}>
-        {urlLink(networkRule)}
+        <Link href={networkRule.url || ''} target='_blank'>
+          <Typography variant='body2' component='span' noWrap={false} >
+            {networkRule.url}
+            <OpenInNewTwoTone fontSize='inherit' sx={{ position: 'relative', top: '0.2em' }} />
+          </Typography>
+        </Link>
       </Grid>
     }
   </>);

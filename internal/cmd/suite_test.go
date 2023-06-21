@@ -22,6 +22,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo/test"
+	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -99,8 +100,9 @@ var _ = BeforeSuite(func() {
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.WorkspaceMutationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+		Client:  k8sClient,
+		Log:     clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+		URLBase: workspace.URLBase("https://{{NETRULE_GROUP}}-{{WOKRSPACE}}-{{USER}}.domain"),
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.WorkspaceValidationWebhookHandler{
@@ -116,18 +118,6 @@ var _ = BeforeSuite(func() {
 	(&webhooks.UserValidationWebhookHandler{
 		Client: k8sClient,
 		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
-	}).SetupWebhookWithManager(mgr)
-
-	(&webhooks.TemplateMutationWebhookHandler{
-		Client:         k8sClient,
-		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
-		DefaultURLBase: DefaultURLBase,
-	}).SetupWebhookWithManager(mgr)
-
-	(&webhooks.TemplateValidationWebhookHandler{
-		Client:       k8sClient,
-		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
-		FieldManager: "cosmo-instance-controller",
 	}).SetupWebhookWithManager(mgr)
 
 	go func() {

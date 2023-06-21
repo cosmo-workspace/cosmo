@@ -58,12 +58,10 @@ type Config struct {
 	DeploymentName      string `json:"deploymentName,omitempty"`
 	ServiceName         string `json:"serviceName,omitempty"`
 	ServiceMainPortName string `json:"mainServicePortName,omitempty"`
-	URLBase             string `json:"urlbase,omitempty"`
 }
 
 const (
 	// WorkspaceTemplateAnnKeys are annotation keys for WorkspaceConfig
-	WorkspaceTemplateAnnKeyURLBase         = "workspace.cosmo-workspace.github.io/urlbase"
 	WorkspaceTemplateAnnKeyDeploymentName  = "workspace.cosmo-workspace.github.io/deployment"
 	WorkspaceTemplateAnnKeyServiceName     = "workspace.cosmo-workspace.github.io/service"
 	WorkspaceTemplateAnnKeyServiceMainPort = "workspace.cosmo-workspace.github.io/service-main-port"

@@ -230,7 +230,6 @@ metadata:
     workspace.cosmo-workspace.github.io/deployment: workspace
     workspace.cosmo-workspace.github.io/service: workspace
     workspace.cosmo-workspace.github.io/service-main-port: main
-    workspace.cosmo-workspace.github.io/urlbase: \"\"
   creationTimestamp: null
   labels:
     cosmo-workspace.github.io/type: workspace
@@ -342,7 +341,6 @@ metadata:
     workspace.cosmo-workspace.github.io/deployment: workspace
     workspace.cosmo-workspace.github.io/service: workspace
     workspace.cosmo-workspace.github.io/service-main-port: main
-    workspace.cosmo-workspace.github.io/urlbase: \"\"
   creationTimestamp: null
   labels:
     cosmo-workspace.github.io/type: workspace
@@ -481,7 +479,6 @@ Flags:
       --workspace-deployment-name string          Deployment name for Workspace. use with --workspace (auto detected if not specified)
       --workspace-main-service-port-name string   ServicePort name for Workspace main container port. use with --workspace (auto detected if not specified)
       --workspace-service-name string             Service name for Workspace. use with --workspace (auto detected if not specified)
-      --workspace-urlbase string                  Workspace URLBase. use with --workspace (use default urlbase in cosmo-controller-manager if not specified)
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -495,9 +492,9 @@ SnapShot = 'validation error: --workspace and --user-addon cannot be specified c
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get --workspace 1']
 SnapShot = """
-NAME        REQUIRED-VARS       DEPLOYMENT/SERVICE   URLBASE
-template1   {{HOGE}},{{FUGA}}   /                    https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
-template2   {{HOGE}},{{FUGA}}   /                    https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
+NAME        REQUIRED-VARS       DEPLOYMENT/SERVICE
+template1   {{HOGE}},{{FUGA}}   /
+template2   {{HOGE}},{{FUGA}}   /
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get --workspace 2']
@@ -525,8 +522,8 @@ SnapShot = 'success'
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 --workspace 1']
 SnapShot = """
-NAME        REQUIRED-VARS       DEPLOYMENT/SERVICE   URLBASE
-template2   {{HOGE}},{{FUGA}}   /                    https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
+NAME        REQUIRED-VARS       DEPLOYMENT/SERVICE
+template2   {{HOGE}},{{FUGA}}   /
 """
 
 ['cosmoctl [template] [get] ✅ success in normal context: template get template2 --workspace 2']

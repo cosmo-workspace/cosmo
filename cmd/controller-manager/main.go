@@ -50,14 +50,14 @@ var (
 type option struct {
 	ZapOpts zap.Options
 
-	Port                    int
-	MetricsAddr             string
-	ProbeAddr               string
-	EnableLeaderElection    bool
-	StatusCheckIntervals    int64
-	CertDir                 string
-	WorkspaceDefaultURLBase string
-	TraefikIngressRouteCfg  workspace.TraefikIngressRouteConfig
+	Port                   int
+	MetricsAddr            string
+	ProbeAddr              string
+	EnableLeaderElection   bool
+	StatusCheckIntervals   int64
+	CertDir                string
+	WorkspaceURLBase       string
+	TraefikIngressRouteCfg workspace.TraefikIngressRouteConfig
 }
 
 func init() {
@@ -142,10 +142,10 @@ MIT 2023 cosmo-workspace/cosmo
 				os.Exit(1)
 			}
 			if err = (&controllers.WorkspaceStatusReconciler{
-				Client:         mgr.GetClient(),
-				Recorder:       mgr.GetEventRecorderFor(wsStatController),
-				Scheme:         mgr.GetScheme(),
-				DefaultURLBase: o.WorkspaceDefaultURLBase,
+				Client:   mgr.GetClient(),
+				Recorder: mgr.GetEventRecorderFor(wsStatController),
+				Scheme:   mgr.GetScheme(),
+				URLBase:  workspace.URLBase(o.WorkspaceURLBase),
 			}).SetupWithManager(mgr); err != nil {
 				setupLog.Error(err, "unable to create controller", "controller", wsStatController)
 				os.Exit(1)
@@ -171,20 +171,10 @@ MIT 2023 cosmo-workspace/cosmo
 				FieldManager: controllerFieldManager,
 			}).SetupWebhookWithManager(mgr)
 
-			(&webhooks.TemplateMutationWebhookHandler{
-				Client:         mgr.GetClient(),
-				Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhook")),
-				DefaultURLBase: o.WorkspaceDefaultURLBase,
-			}).SetupWebhookWithManager(mgr)
-			(&webhooks.TemplateValidationWebhookHandler{
-				Client:       mgr.GetClient(),
-				Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhook")),
-				FieldManager: controllerFieldManager,
-			}).SetupWebhookWithManager(mgr)
-
 			(&webhooks.WorkspaceMutationWebhookHandler{
-				Client: mgr.GetClient(),
-				Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhook")),
+				Client:  mgr.GetClient(),
+				Log:     clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhook")),
+				URLBase: workspace.URLBase(o.WorkspaceURLBase),
 			}).SetupWebhookWithManager(mgr)
 			(&webhooks.WorkspaceValidationWebhookHandler{
 				Client: mgr.GetClient(),
@@ -232,7 +222,7 @@ MIT 2023 cosmo-workspace/cosmo
 	rootCmd.PersistentFlags().StringVar(&o.MetricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	rootCmd.PersistentFlags().StringVar(&o.ProbeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	rootCmd.PersistentFlags().StringVar(&o.CertDir, "cert-dir", "/tmp/k8s-webhook-server/serving-certs", "Certificate dir. The server key and certificate must be named tls.key and tls.crt")
-	rootCmd.PersistentFlags().StringVar(&o.WorkspaceDefaultURLBase, "workspace-default-urlbase", "https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}.example.com", "workspace default urlbase. used if not set on template")
+	rootCmd.PersistentFlags().StringVar(&o.WorkspaceURLBase, "workspace-urlbase", "https://{{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}.example.com", "workspace default urlbase. used if not set on template")
 	rootCmd.PersistentFlags().BoolVar(&o.EnableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")

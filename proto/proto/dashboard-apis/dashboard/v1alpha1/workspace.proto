@@ -26,7 +26,6 @@ message WorkspaceSpec {
 message WorkspaceStatus {
   string phase = 1;
   string main_url = 2;
-  string url_base = 3;
 }
 
 message Workspace {

@@ -398,7 +398,7 @@ run-manager-local: go
 		--cert-dir . \
 		--zap-log-level=$(LOGLEVEL) \
 		--zap-devel=false \
-		--workspace-default-urlbase=https://$(DEFAULT_URLBASE_HOST).$(DOMAIN)
+		--workspace-urlbase=https://$(DEFAULT_URLBASE_HOST).$(DOMAIN)
 
 run-dashboard-local:
 	@echo ====== $@ ======

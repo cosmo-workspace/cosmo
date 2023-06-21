@@ -19,7 +19,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/workspace"
-	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
 )
 
 // WorkspaceReconciler reconciles a Workspace object
@@ -124,5 +123,5 @@ func getWorkspaceConfig(ctx context.Context, c client.Client, tmplName string) (
 	if err := c.Get(ctx, types.NamespacedName{Name: tmplName}, tmpl); err != nil {
 		return cfg, err
 	}
-	return wscfg.ConfigFromTemplateAnnotations(tmpl)
+	return workspace.ConfigFromTemplateAnnotations(tmpl)
 }

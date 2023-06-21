@@ -54,48 +54,6 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-cosmo-workspace-github-io-v1alpha1-template
-  failurePolicy: Fail
-  name: mtemplate.kb.io
-  rules:
-  - apiGroups:
-    - cosmo-workspace.github.io
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - templates
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  - v1alpha1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
-      path: /mutate-cosmo-workspace-github-io-v1alpha1-template
-  failurePolicy: Fail
-  name: mclustertemplate.kb.io
-  rules:
-  - apiGroups:
-    - cosmo-workspace.github.io
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - clustertemplates
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  - v1alpha1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
       path: /mutate-cosmo-workspace-github-io-v1alpha1-user
   failurePolicy: Fail
   name: muser.kb.io
@@ -179,48 +137,6 @@ webhooks:
     - UPDATE
     resources:
     - instances
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  - v1alpha1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
-      path: /validate-cosmo-workspace-github-io-v1alpha1-template
-  failurePolicy: Fail
-  name: vtemplate.kb.io
-  rules:
-  - apiGroups:
-    - cosmo-workspace.github.io
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - templates
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  - v1alpha1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
-      path: /validate-cosmo-workspace-github-io-v1alpha1-template
-  failurePolicy: Fail
-  name: vclustertemplate.kb.io
-  rules:
-  - apiGroups:
-    - cosmo-workspace.github.io
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - clustertemplates
   sideEffects: None
 - admissionReviewVersions:
   - v1

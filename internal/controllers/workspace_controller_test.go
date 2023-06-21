@@ -30,7 +30,6 @@ var _ = Describe("Workspace controller", func() {
 		DeploymentName:      "ws-dep",
 		ServiceName:         "ws-svc",
 		ServiceMainPortName: "mainPort",
-		URLBase:             "https://{{NETRULE_GROUP}}-{{WOKRSPACE}}-{{USER}}.domain",
 	}
 
 	tmpl := cosmov1alpha1.Template{
@@ -43,7 +42,6 @@ var _ = Describe("Workspace controller", func() {
 				cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  wsConfig.DeploymentName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     wsConfig.ServiceName,
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: wsConfig.ServiceMainPortName,
-				cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         wsConfig.URLBase,
 			},
 		},
 		Spec: cosmov1alpha1.TemplateSpec{

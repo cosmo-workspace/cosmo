@@ -1,4 +1,4 @@
-package wsnet
+package workspace
 
 import (
 	"reflect"

@@ -25,15 +25,15 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
-	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
+	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
 // WorkspaceStatusReconciler reconciles a Workspace object
 type WorkspaceStatusReconciler struct {
 	client.Client
-	Recorder       record.EventRecorder
-	Scheme         *runtime.Scheme
-	DefaultURLBase string
+	Recorder record.EventRecorder
+	Scheme   *runtime.Scheme
+	URLBase  workspace.URLBase
 }
 
 // +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
@@ -61,18 +61,15 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	if cfg.URLBase == "" {
-		cfg.URLBase = r.DefaultURLBase
-	}
 	ws.Status.Config = cfg
 
 	// fetch child pod status
-	if urlMap, err := r.GenWorkspaceURLMap(ctx, ws); err == nil {
+	if urlMap, err := r.GenWorkspaceURLMap(ctx, r.URLBase, ws); err == nil {
 		log.Debug().Info(fmt.Sprintf("workspace urlmap: %s", urlMap))
 		ws.Status.URLs = urlMap
 
 	} else {
-		log.Info("failed to gen urlmap", "error", err, "ws", ws.Name, "urlbase", cfg.URLBase, "logLevel", "warn")
+		log.Info("failed to gen urlmap", "error", err, "ws", ws.Name, "urlbase", r.URLBase, "logLevel", "warn")
 	}
 
 	// set workspace phase
@@ -170,18 +167,17 @@ func (r *WorkspaceStatusReconciler) getWorkspaceNamespacedName(ctx context.Conte
 	return req
 }
 
-func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws cosmov1alpha1.Workspace) (map[string]string, error) {
+func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, urlbase workspace.URLBase, ws cosmov1alpha1.Workspace) (map[string]string, error) {
 	log := clog.FromContext(ctx).WithCaller()
-	urlbase := wsnet.URLBase(ws.Status.Config.URLBase)
 
 	svc, err := getWorkspaceServices(ctx, r.Client, ws)
 	if err != nil {
 		return nil, err
 	}
 
-	urlvarsMap := make(map[string]wsnet.URLVars)
+	urlvarsMap := make(map[string]workspace.URLVars)
 	for _, netRule := range ws.Spec.Network {
-		urlvars := wsnet.URLVars{}
+		urlvars := workspace.URLVars{}
 		urlvars.NetworkRuleName = netRule.Name
 		urlvars.PortNumber = strconv.Itoa(int(netRule.PortNumber))
 		if netRule.Group != nil {

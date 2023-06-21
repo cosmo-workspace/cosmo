@@ -312,8 +312,6 @@ func (m *WorkspaceStatus) validate(all bool) error {
 
 	// no validation rules for MainUrl
 
-	// no validation rules for UrlBase
-
 	if len(errors) > 0 {
 		return WorkspaceStatusMultiError(errors)
 	}

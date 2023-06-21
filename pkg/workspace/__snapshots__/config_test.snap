@@ -5,8 +5,7 @@
   "annotations": {
    "workspace.cosmo-workspace.github.io/deployment": "workspace1",
    "workspace.cosmo-workspace.github.io/service": "workspace2",
-   "workspace.cosmo-workspace.github.io/service-main-port": "main",
-   "workspace.cosmo-workspace.github.io/urlbase": ""
+   "workspace.cosmo-workspace.github.io/service-main-port": "main"
   },
   "creationTimestamp": null,
   "name": "tmpl"
@@ -21,8 +20,7 @@
   "annotations": {
    "workspace.cosmo-workspace.github.io/deployment": "workspace1",
    "workspace.cosmo-workspace.github.io/service": "workspace2",
-   "workspace.cosmo-workspace.github.io/service-main-port": "main",
-   "workspace.cosmo-workspace.github.io/urlbase": ""
+   "workspace.cosmo-workspace.github.io/service-main-port": "main"
   },
   "creationTimestamp": null,
   "name": "tmpl"
@@ -35,8 +33,7 @@
 {
  "deploymentName": "workspace1",
  "mainServicePortName": "main",
- "serviceName": "workspace2",
- "urlbase": "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain"
+ "serviceName": "workspace2"
 }
 ---
 

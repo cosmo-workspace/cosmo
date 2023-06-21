@@ -1,4 +1,4 @@
-package wscfg
+package workspace
 
 import (
 	"errors"
@@ -18,7 +18,6 @@ func SetConfigOnTemplateAnnotations(tmpl cosmov1alpha1.TemplateObject, cfg cosmo
 	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName] = cfg.DeploymentName
 	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName] = cfg.ServiceName
 	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort] = cfg.ServiceMainPortName
-	ann[cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase] = cfg.URLBase
 	tmpl.SetAnnotations(ann)
 }
 
@@ -43,7 +42,6 @@ func ConfigFromTemplateAnnotations(tmpl *cosmov1alpha1.Template) (cfg cosmov1alp
 		DeploymentName:      ann[cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName],
 		ServiceName:         ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName],
 		ServiceMainPortName: ann[cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort],
-		URLBase:             ann[cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase],
 	}
 	return cfg, nil
 }

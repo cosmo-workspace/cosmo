@@ -101,8 +101,6 @@ spec:
                     type: string
                   serviceName:
                     type: string
-                  urlbase:
-                    type: string
                 type: object
               instance:
                 description: ObjectRef is a reference of resource which is created

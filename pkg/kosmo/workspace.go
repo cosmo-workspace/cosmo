@@ -14,7 +14,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
+	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
 var (
@@ -259,5 +259,5 @@ func (c *Client) GetWorkspaceConfig(ctx context.Context, tmplName string) (cfg c
 	if err := c.Get(ctx, types.NamespacedName{Name: tmplName}, tmpl); err != nil {
 		return cfg, err
 	}
-	return wscfg.ConfigFromTemplateAnnotations(tmpl)
+	return workspace.ConfigFromTemplateAnnotations(tmpl)
 }

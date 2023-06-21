@@ -146,11 +146,6 @@ export class WorkspaceStatus extends Message<WorkspaceStatus> {
    */
   mainUrl = "";
 
-  /**
-   * @generated from field: string url_base = 3;
-   */
-  urlBase = "";
-
   constructor(data?: PartialMessage<WorkspaceStatus>) {
     super();
     proto3.util.initPartial(data, this);
@@ -161,7 +156,6 @@ export class WorkspaceStatus extends Message<WorkspaceStatus> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "phase", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "main_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "url_base", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): WorkspaceStatus {

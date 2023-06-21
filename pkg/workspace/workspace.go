@@ -10,7 +10,6 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
-	"github.com/cosmo-workspace/cosmo/pkg/wsnet"
 )
 
 func JSONPatch(op, path string, value any) (string, error) {
@@ -93,8 +92,8 @@ func addWorkspaceDefaultVars(vars map[string]string, ws cosmov1alpha1.Workspace)
 		vars = make(map[string]string)
 	}
 	// urlvar
-	vars[wsnet.URLVarWorkspaceName] = ws.GetName()
-	vars[wsnet.URLVarUserName] = user
+	vars[URLVarWorkspaceName] = ws.GetName()
+	vars[URLVarUserName] = user
 
 	// workspace config
 	vars[cosmov1alpha1.WorkspaceTemplateVarDeploymentName] = ws.Status.Config.DeploymentName

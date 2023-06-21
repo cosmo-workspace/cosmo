@@ -118,18 +118,6 @@ var _ = BeforeSuite(func() {
 		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
 	}).SetupWebhookWithManager(wsMgr)
 
-	(&webhooks.TemplateMutationWebhookHandler{
-		Client:         k8sClient,
-		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
-		DefaultURLBase: "https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain",
-	}).SetupWebhookWithManager(wsMgr)
-
-	(&webhooks.TemplateValidationWebhookHandler{
-		Client:       k8sClient,
-		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
-		FieldManager: "cosmo-instance-controller",
-	}).SetupWebhookWithManager(wsMgr)
-
 	wsMgrCtx, WsMgrCancel = context.WithCancel(ctrl.SetupSignalHandler())
 
 	go func() {
