@@ -35,6 +35,7 @@ SnapShot = """
     \"addons\": [
       {
         \"kind\": \"Instance\",
+        \"namespace\": \"cosmo-user-ua\",
         \"name\": \"useraddon-namespaced-addon\",
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
       },
@@ -48,7 +49,7 @@ SnapShot = """
 }
 """
 
-['User controller when updating user addon with invalid addon should try to create addon but status AddonFailed 1']
+['User controller when updating user addon should gc old addon and try to create new addon 1']
 SnapShot = """
 {
   \"metadata\": {
@@ -64,13 +65,7 @@ SnapShot = """
           \"name\": \"namespaced-addon\"
         },
         \"vars\": {
-          \"IMAGE_TAG\": \"v0.71.0\"
-        }
-      },
-      {
-        \"template\": {
-          \"name\": \"cluster-addon\",
-          \"clusterScoped\": true
+          \"KEY\": \"VAL\"
         }
       },
       {
@@ -90,6 +85,7 @@ SnapShot = """
     \"addons\": [
       {
         \"kind\": \"Instance\",
+        \"namespace\": \"cosmo-user-ua\",
         \"name\": \"useraddon-namespaced-addon\",
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
       },
@@ -103,7 +99,7 @@ SnapShot = """
 }
 """
 
-['User controller when updating user addon with invalid addon should try to create addon but status AddonFailed 2']
+['User controller when updating user addon should gc old namespaced addon 1']
 SnapShot = """
 {
   \"metadata\": {
@@ -114,20 +110,6 @@ SnapShot = """
     \"displayName\": \"お名前\",
     \"authType\": \"password-secret\",
     \"addons\": [
-      {
-        \"template\": {
-          \"name\": \"namespaced-addon\"
-        },
-        \"vars\": {
-          \"IMAGE_TAG\": \"v0.71.0\"
-        }
-      },
-      {
-        \"template\": {
-          \"name\": \"cluster-addon\",
-          \"clusterScoped\": true
-        }
-      },
       {
         \"template\": {
           \"name\": \"empty-addon\"
@@ -145,17 +127,8 @@ SnapShot = """
     \"addons\": [
       {
         \"kind\": \"Instance\",
+        \"namespace\": \"cosmo-user-ua\",
         \"name\": \"useraddon-empty-addon\",
-        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
-      },
-      {
-        \"kind\": \"Instance\",
-        \"name\": \"useraddon-namespaced-addon\",
-        \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
-      },
-      {
-        \"kind\": \"ClusterInstance\",
-        \"name\": \"useraddon-ua-cluster-addon\",
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
       }
     ]

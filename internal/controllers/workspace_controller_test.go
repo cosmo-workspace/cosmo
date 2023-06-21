@@ -229,9 +229,11 @@ spec:
 			Expect(InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 
 			var createdIngRoute traefikv1.IngressRoute
-			Eventually(func() error {
-				return k8sClient.Get(ctx, client.ObjectKey{Name: wsName, Namespace: nsName}, &createdIngRoute)
-			}, time.Second*10).Should(Succeed())
+			Eventually(func() int {
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: wsName, Namespace: nsName}, &createdIngRoute)
+				Expect(err).ShouldNot(HaveOccurred())
+				return len(createdIngRoute.Spec.Routes)
+			}, time.Second*10).ShouldNot(BeZero())
 			Expect(ObjectSnapshot(&createdIngRoute)).To(MatchSnapShot())
 		})
 	})

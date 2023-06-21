@@ -177,13 +177,16 @@ spec:
 			By("fetching instance resource and checking if last applied resources added in instance status")
 
 			var createdInst cosmov1alpha1.Instance
-			Eventually(func() error {
+			Eventually(func() int {
 				key := client.ObjectKey{
 					Name:      inst.Name,
 					Namespace: inst.Namespace,
 				}
-				return k8sClient.Get(ctx, key, &createdInst)
-			}, time.Second*10).Should(Succeed())
+				err = k8sClient.Get(ctx, key, &createdInst)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				return createdInst.Status.LastAppliedObjectsCount
+			}, time.Second*10).ShouldNot(BeZero())
 			Ω(InstanceSnapshot(&createdInst)).To(MatchSnapShot())
 		})
 	})
