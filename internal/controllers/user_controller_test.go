@@ -13,6 +13,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -108,31 +109,29 @@ spec:
 		},
 	}
 
+	BeforeEach(func() {
+		ctx := context.Background()
+
+		By("creating template")
+		err := k8sClient.Create(ctx, namespacedUserAddon.DeepCopy())
+		Expect(err).ShouldNot(HaveOccurred())
+		err = k8sClient.Create(ctx, clusterUserAddon.DeepCopy())
+		Expect(err).ShouldNot(HaveOccurred())
+		err = k8sClient.Create(ctx, emptyUserAddon.DeepCopy())
+		Expect(err).ShouldNot(HaveOccurred())
+	})
+
+	AfterEach(func() {
+		By("delete template")
+		err := k8sClient.Delete(ctx, namespacedUserAddon.DeepCopy())
+		Expect(err).ShouldNot(HaveOccurred())
+		err = k8sClient.Delete(ctx, clusterUserAddon.DeepCopy())
+		Expect(err).ShouldNot(HaveOccurred())
+		err = k8sClient.Delete(ctx, emptyUserAddon.DeepCopy())
+		Expect(err).ShouldNot(HaveOccurred())
+	})
+
 	Context("when creating User resource", func() {
-
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			By("creating template")
-			addon := namespacedUserAddon.DeepCopy()
-			err := k8sClient.Create(ctx, addon)
-			Expect(err).ShouldNot(HaveOccurred())
-
-			clusterAddon := clusterUserAddon.DeepCopy()
-			err = k8sClient.Create(ctx, clusterAddon)
-			Expect(err).ShouldNot(HaveOccurred())
-		})
-
-		AfterEach(func() {
-			By("delete template")
-			addon := namespacedUserAddon.DeepCopy()
-			err := k8sClient.Delete(ctx, addon)
-			Expect(err).ShouldNot(HaveOccurred())
-			clusterAddon := clusterUserAddon.DeepCopy()
-			err = k8sClient.Delete(ctx, clusterAddon)
-			Expect(err).ShouldNot(HaveOccurred())
-		})
-
 		It("should do create namespace, password and addons", func() {
 
 			By("creating user")
@@ -371,37 +370,93 @@ spec:
 		})
 	})
 
-	Context("when updating user addon with invalid addon", func() {
-		It("should try to create addon but status AddonFailed", func() {
+	Context("when updating user addon", func() {
+		It("should gc old addon and try to create new addon", func() {
 			ctx := context.Background()
-
-			By("creating invalid template")
-
-			err := k8sClient.Create(ctx, &emptyUserAddon)
-			Expect(err).ShouldNot(HaveOccurred())
 
 			By("fetching and update user")
 			var user cosmov1alpha1.User
 			Eventually(func() error {
-				err = k8sClient.Get(ctx, client.ObjectKey{Name: "ua"}, &user)
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: "ua"}, &user)
 				Expect(err).ShouldNot(HaveOccurred())
-				user.Spec.Addons = append(user.Spec.Addons, cosmov1alpha1.UserAddon{
-					Template: cosmov1alpha1.UserAddonTemplateRef{
-						Name: emptyUserAddon.Name,
+
+				var ci cosmov1alpha1.ClusterInstance
+				err = k8sClient.Get(ctx, client.ObjectKey{Name: useraddon.InstanceName(clusterUserAddon.Name, user.GetName())}, &ci)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				user.Spec.Addons = []cosmov1alpha1.UserAddon{
+					{
+						Template: cosmov1alpha1.UserAddonTemplateRef{
+							Name: namespacedUserAddon.Name,
+						},
+						Vars: map[string]string{
+							"KEY": "VAL",
+						},
 					},
-				})
+					{
+						Template: cosmov1alpha1.UserAddonTemplateRef{
+							Name: emptyUserAddon.Name,
+						},
+					},
+				}
 				return k8sClient.Update(ctx, &user)
 			}, time.Second*30).Should(Succeed())
-			Expect(UserSnapshot(&user)).Should(MatchSnapShot())
 
 			var updatedUser cosmov1alpha1.User
 			Eventually(func() int {
-				err = k8sClient.Get(ctx, client.ObjectKey{Name: "ua"}, &updatedUser)
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: "ua"}, &updatedUser)
 				Expect(err).ShouldNot(HaveOccurred())
 				return len(updatedUser.Status.Addons)
-			}, time.Second*30).Should(Equal(3))
+			}, time.Second*30).Should(Equal(2))
 			Expect(UserSnapshot(&updatedUser)).Should(MatchSnapShot())
 
+			Eventually(func() bool {
+				var ci cosmov1alpha1.ClusterInstance
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: useraddon.InstanceName(clusterUserAddon.Name, user.GetName())}, &ci)
+				return apierrors.IsNotFound(err)
+			}, time.Second*30).Should(BeTrue())
+		})
+
+		It("should gc old namespaced addon", func() {
+			ctx := context.Background()
+
+			By("fetching and updating user")
+			var user cosmov1alpha1.User
+			Eventually(func() error {
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: "ua"}, &user)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				var i cosmov1alpha1.Instance
+				err = k8sClient.Get(ctx, client.ObjectKey{
+					Name:      useraddon.InstanceName(namespacedUserAddon.Name, ""),
+					Namespace: user.Status.Namespace.GetName()}, &i)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				user.Spec.Addons = []cosmov1alpha1.UserAddon{
+					{
+						Template: cosmov1alpha1.UserAddonTemplateRef{
+							Name: emptyUserAddon.Name,
+						},
+					},
+				}
+				return k8sClient.Update(ctx, &user)
+			}, time.Second*30).Should(Succeed())
+
+			var updatedUser cosmov1alpha1.User
+			Eventually(func() int {
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: "ua"}, &updatedUser)
+				Expect(err).ShouldNot(HaveOccurred())
+				return len(updatedUser.Status.Addons)
+			}, time.Second*30).Should(Equal(1))
+			Expect(UserSnapshot(&updatedUser)).Should(MatchSnapShot())
+
+			Eventually(func() bool {
+				var i cosmov1alpha1.Instance
+				err := k8sClient.Get(ctx, client.ObjectKey{
+					Name:      useraddon.InstanceName(namespacedUserAddon.Name, user.GetName()),
+					Namespace: user.Status.Namespace.GetName()}, &i)
+				return apierrors.IsNotFound(err)
+			}, time.Second*30).Should(BeTrue())
 		})
 	})
 
