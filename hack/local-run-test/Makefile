@@ -26,7 +26,7 @@ help: ## Display this help.
 VSCODE_PROXY_URI ?= $$VSCODE_PROXY_URI
 PARENT_URLBASE ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=://)[^\.]*")
 DOMAIN ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=\.)[^/]*")
-DEFAULT_URLBASE_HOST := {{NETRULE_GROUP}}-{{WORKSPACE}}-{{USER_NAME}}-k3d-$(PARENT_URLBASE)
+DEFAULT_URLBASE_HOST := {{NETRULE}}-{{WORKSPACE}}-{{USER}}-k3d-$(PARENT_URLBASE)
 K3D_URLBASE := k3d-$(PARENT_URLBASE).$(DOMAIN)
 DASHBOARD_HOST := dash-$(K3D_URLBASE)
 DASHBOARD_URL := https://$(DASHBOARD_HOST)
@@ -376,13 +376,13 @@ add-workspace: kubectl cosmoctl ## add workspace
 	-cosmoctl workspace create --user=tom --template=dev-code-server ws1
 	-cosmoctl workspace create --user=ldapuser1 --template=dev-code-server ldapws1
 	sleep 5
-	-cosmoctl networkrule add proxy11 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /
+	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --host-prefix proxy1 --path /
 	sleep 1
-	-cosmoctl networkrule add proxy12 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /aaa
+	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --host-prefix proxy1 --path /aaa
 	sleep 1
-	-cosmoctl networkrule add proxy13 --user=tom --workspace=ws1 --port=7701 --group proxy1 --path /bbb --public
+	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --host-prefix proxy1 --path /bbb --public
 	sleep 1
-	-cosmoctl networkrule add proxy21 --user=tom --workspace=ws1 --port=7701 --group proxy2 --path /
+	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --path /
 
 ##---------------------------------------------------------------------
 ##@ Execute test
@@ -398,7 +398,9 @@ run-manager-local: go
 		--cert-dir . \
 		--zap-log-level=$(LOGLEVEL) \
 		--zap-devel=false \
-		--workspace-urlbase=https://$(DEFAULT_URLBASE_HOST).$(DOMAIN)
+		--workspace-urlbase-protocol=https \
+		--workspace-urlbase-host=$(DEFAULT_URLBASE_HOST) \
+		--workspace-urlbase-domain=$(DOMAIN)
 
 run-dashboard-local:
 	@echo ====== $@ ======

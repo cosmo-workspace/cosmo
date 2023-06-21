@@ -81,7 +81,6 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
   instance: {}
   phase: Pending
 
@@ -630,7 +629,6 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
   instance: {}
   phase: Pending
 ---
@@ -646,13 +644,13 @@ metadata:
 spec:
   network:
   - group: gp1
-    host: gp1-ws2-user1.domain
+    host: gp1-{{WOKRSPACE}}-{{USER}}.domain
     httpPath: /
     name: nw1
     portNumber: 1111
     public: false
   - group: gp3
-    host: gp3-ws2-user1.domain
+    host: gp3-{{WOKRSPACE}}-{{USER}}.domain
     httpPath: /
     name: nw3
     portNumber: 2222
@@ -663,7 +661,6 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
   instance: {}
   phase: Pending
 ---
@@ -702,7 +699,6 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
   instance: {}
   phase: Pending
 ---
@@ -718,13 +714,13 @@ metadata:
 spec:
   network:
   - group: gp1
-    host: gp1-ws2-user1.domain
+    host: gp1-{{WOKRSPACE}}-{{USER}}.domain
     httpPath: /
     name: nw1
     portNumber: 1111
     public: false
   - group: gp3
-    host: gp3-ws2-user1.domain
+    host: gp3-{{WOKRSPACE}}-{{USER}}.domain
     httpPath: /
     name: nw3
     portNumber: 2222
@@ -735,7 +731,6 @@ spec:
 status:
   config:
     mainServicePortName: main
-    urlbase: https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain
   instance: {}
   phase: Pending
 ---
@@ -1022,8 +1017,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }
@@ -1253,8 +1247,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }

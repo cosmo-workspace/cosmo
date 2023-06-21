@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strconv"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -25,7 +24,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
-	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
 // WorkspaceStatusReconciler reconciles a Workspace object
@@ -33,7 +31,10 @@ type WorkspaceStatusReconciler struct {
 	client.Client
 	Recorder record.EventRecorder
 	Scheme   *runtime.Scheme
-	URLBase  workspace.URLBase
+
+	URLBaseProtocol string
+	URLBaseHostBase string
+	URLBaseDomain   string
 }
 
 // +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
@@ -64,13 +65,9 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	ws.Status.Config = cfg
 
 	// fetch child pod status
-	if urlMap, err := r.GenWorkspaceURLMap(ctx, r.URLBase, ws); err == nil {
-		log.Debug().Info(fmt.Sprintf("workspace urlmap: %s", urlMap))
-		ws.Status.URLs = urlMap
-
-	} else {
-		log.Info("failed to gen urlmap", "error", err, "ws", ws.Name, "urlbase", r.URLBase, "logLevel", "warn")
-	}
+	urlMap := r.GenWorkspaceURLMap(ctx, ws)
+	log.Debug().Info(fmt.Sprintf("workspace urlmap: %s", urlMap))
+	ws.Status.URLs = urlMap
 
 	// set workspace phase
 	requeue := false
@@ -167,57 +164,14 @@ func (r *WorkspaceStatusReconciler) getWorkspaceNamespacedName(ctx context.Conte
 	return req
 }
 
-func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, urlbase workspace.URLBase, ws cosmov1alpha1.Workspace) (map[string]string, error) {
-	log := clog.FromContext(ctx).WithCaller()
-
-	svc, err := getWorkspaceServices(ctx, r.Client, ws)
-	if err != nil {
-		return nil, err
-	}
-
-	urlvarsMap := make(map[string]workspace.URLVars)
-	for _, netRule := range ws.Spec.Network {
-		urlvars := workspace.URLVars{}
-		urlvars.NetworkRuleName = netRule.Name
-		urlvars.PortNumber = strconv.Itoa(int(netRule.PortNumber))
-		if netRule.Group != nil {
-			urlvars.NetRuleGroup = *netRule.Group
-		}
-
-		urlvars.InstanceName = ws.Name
-		urlvars.WorkspaceName = ws.Name
-		urlvars.Namespace = ws.Namespace
-		urlvars.UserName = cosmov1alpha1.UserNameByNamespace(ws.Namespace)
-
-		urlvars.IngressPath = netRule.HTTPPath
-
-		// node port
-		for _, p := range svc.Spec.Ports {
-			if p.Name == netRule.Name {
-				urlvars.NodePortNumber = strconv.Itoa(int(p.NodePort))
-			}
-		}
-
-		// load balancer
-		if svc.Status.LoadBalancer.Size() > 0 {
-			lb := svc.Status.LoadBalancer.Ingress[0]
-			if lb.Hostname != "" {
-				urlvars.LoadBalancer = lb.Hostname
-			} else {
-				urlvars.LoadBalancer = lb.IP
-			}
-		}
-
-		urlvarsMap[netRule.Name] = urlvars
-	}
-
+func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws cosmov1alpha1.Workspace) map[string]string {
 	urlMap := make(map[string]string)
-	for name, urlvars := range urlvarsMap {
-		log.DebugAll().Info("urlvar map", urlvars.Dump()...)
-		urlMap[name] = urlbase.GenURL(urlvars)
+	for _, netRule := range ws.Spec.Network {
+		host := cosmov1alpha1.GenHost(r.URLBaseHostBase, r.URLBaseDomain, netRule.HostPrefix(), ws)
+		url := cosmov1alpha1.GenURL(r.URLBaseProtocol, host, netRule.HTTPPath)
+		urlMap[netRule.UniqueKey()] = url
 	}
-
-	return urlMap, nil
+	return urlMap
 }
 
 func listWorkspacePods(ctx context.Context, c client.Client, ws cosmov1alpha1.Workspace) ([]corev1.Pod, error) {

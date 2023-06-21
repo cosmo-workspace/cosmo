@@ -3,10 +3,8 @@ package webhooks
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
-	"reflect"
 	"sort"
 
 	corev1 "k8s.io/api/core/v1"
@@ -31,7 +29,6 @@ import (
 type WorkspaceMutationWebhookHandler struct {
 	Client  client.Client
 	Log     *clog.Logger
-	URLBase workspace.URLBase
 	decoder *admission.Decoder
 }
 
@@ -58,37 +55,11 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 	before := ws.DeepCopy()
 	log.DumpObject(h.Client.Scheme(), before, "request workspace")
 
-	tmpl := &cosmov1alpha1.Template{}
-	err = h.Client.Get(ctx, types.NamespacedName{Name: ws.Spec.Template.Name}, tmpl)
+	err = h.mutateWorkspace(ctx, ws)
 	if err != nil {
-		log.Error(err, "failed to get template")
+		log.Error(err, "muration error")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-
-	cfg, err := workspace.ConfigFromTemplateAnnotations(tmpl)
-	if err != nil {
-		log.Error(err, "failed to get config")
-		return admission.Errored(http.StatusBadRequest, err)
-	}
-	log.Debug().Info(fmt.Sprintf("workspace config in template %s", cfg))
-
-	// default replica 1
-	if ws.Spec.Replicas == nil {
-		var rep int64 = 1
-		ws.Spec.Replicas = &rep
-	}
-
-	// migrate template service to network rule
-	if err := h.migrateTmplServiceToNetworkRule(ctx, ws, tmpl.Spec.RawYaml, cfg); err != nil {
-		log.Error(err, "failed to migrate service to network rule")
-		return admission.Errored(http.StatusBadRequest, err)
-	}
-
-	// fill default value in network rules
-	h.defaultNetworkRules(ws.Spec.Network, ws.GetName(), ws.GetNamespace(), h.URLBase)
-
-	// sort network rules
-	ws.Spec.Network = sortNetworkRule(ws.Spec.Network)
 
 	log.Debug().PrintObjectDiff(before, ws)
 
@@ -100,9 +71,135 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
 }
 
+func (h *WorkspaceMutationWebhookHandler) mutateWorkspace(ctx context.Context, ws *cosmov1alpha1.Workspace) error {
+	tmpl := &cosmov1alpha1.Template{}
+	err := h.Client.Get(ctx, types.NamespacedName{Name: ws.Spec.Template.Name}, tmpl)
+	if err != nil {
+		return fmt.Errorf("failed to fetch template '%s': %w", ws.Spec.Template.Name, err)
+	}
+
+	// default replica 1
+	if ws.Spec.Replicas == nil {
+		var rep int64 = 1
+		ws.Spec.Replicas = &rep
+	}
+
+	// migrate template service to network rule
+	cfg, err := workspace.ConfigFromTemplateAnnotations(tmpl)
+	if err != nil {
+		return fmt.Errorf("failed to get config from template: %w", err)
+	}
+	if err := h.migrateTmplServiceToNetworkRule(ctx, ws, tmpl.Spec.RawYaml, cfg); err != nil {
+		return fmt.Errorf("failed to migrate service to network rule: %w", err)
+	}
+
+	// fill default value in network rules
+	for i := range ws.Spec.Network {
+		ws.Spec.Network[i].Default()
+	}
+
+	// sort network rules
+	ws.Spec.Network = sortNetworkRule(ws.Spec.Network, ws.Status.Config)
+
+	return nil
+}
+
 func (h *WorkspaceMutationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
 	h.decoder = d
 	return nil
+}
+
+func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceToNetworkRule(ctx context.Context, ws *cosmov1alpha1.Workspace, rawTmpl string, cfg cosmov1alpha1.Config) error {
+	unst, err := preTemplateBuild(*ws, rawTmpl)
+	if err != nil {
+		return err
+	}
+
+	svc, err := pickServiceInUnstructureds(unst, cfg.ServiceName)
+	if err != nil {
+		return err
+	}
+
+	// append network rules
+	for _, netRule := range networkRulesByServicePorts(svc.Spec.Ports) {
+		r := *netRule.DeepCopy()
+		r.Default()
+		appendNetworkRuleIfNotExist(ws, r)
+	}
+	return nil
+}
+
+func appendNetworkRuleIfNotExist(ws *cosmov1alpha1.Workspace, netRule cosmov1alpha1.NetworkRule) {
+	for _, r := range ws.Spec.Network {
+		if netRule.UniqueKey() == r.UniqueKey() {
+			return
+		}
+	}
+	ws.Spec.Network = append(ws.Spec.Network, netRule)
+}
+
+func preTemplateBuild(ws cosmov1alpha1.Workspace, rawTmpl string) ([]unstructured.Unstructured, error) {
+	var inst cosmov1alpha1.Instance
+	inst.SetName(ws.GetName())
+	inst.SetNamespace(ws.GetNamespace())
+
+	builder := template.NewRawYAMLBuilder(rawTmpl, &inst)
+	return builder.Build()
+}
+
+func pickServiceInUnstructureds(objects []unstructured.Unstructured, serviceName string) (*corev1.Service, error) {
+	var svc corev1.Service
+	found := false
+	for _, u := range objects {
+		if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) &&
+			instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), serviceName) {
+
+			found = true
+			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &svc)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	if !found {
+		return nil, fmt.Errorf("Service '%s' not found", serviceName)
+	}
+	return &svc, nil
+}
+
+func networkRulesByServicePorts(svcPorts []corev1.ServicePort) []cosmov1alpha1.NetworkRule {
+	netRules := make([]cosmov1alpha1.NetworkRule, 0, len(svcPorts))
+	for _, p := range svcPorts {
+		var netRule cosmov1alpha1.NetworkRule
+		netRule.CustomHostPrefix = p.Name
+		netRule.PortNumber = p.Port
+
+		if p.TargetPort.IntValue() != 0 {
+			netRule.TargetPortNumber = pointer.Int32(int32(p.TargetPort.IntValue()))
+		}
+
+		netRules = append(netRules, netRule)
+	}
+	return netRules
+}
+
+func sortNetworkRule(netRules []cosmov1alpha1.NetworkRule, cfg cosmov1alpha1.Config) []cosmov1alpha1.NetworkRule {
+	sort.SliceStable(netRules, func(i, j int) bool {
+		// move main rule to the top of netrules
+		if cosmov1alpha1.MainRuleKey(cfg) == netRules[i].UniqueKey() {
+			return true
+		} else if cosmov1alpha1.MainRuleKey(cfg) == netRules[j].UniqueKey() {
+			return false
+		} else if netRules[i].CustomHostPrefix < netRules[j].CustomHostPrefix {
+			// sort by CustomHostPrefix
+			return true
+		} else if netRules[i].CustomHostPrefix == netRules[j].CustomHostPrefix {
+			// if CustomHostPrefix are the same, place in order of longer path
+			return netRules[i].HTTPPath > netRules[j].HTTPPath
+		}
+		return false
+	})
+	return netRules
 }
 
 type WorkspaceValidationWebhookHandler struct {
@@ -130,34 +227,30 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
 	}
-	log.DumpObject(h.Client.Scheme(), ws, "request workspace")
+	log.DebugAll().DumpObject(h.Client.Scheme(), ws, "request workspace")
 
+	err = h.validateWorkspace(ctx, ws)
+	if err != nil {
+		log.Error(err, "validation failed")
+		return admission.Errored(http.StatusForbidden, err)
+	}
+
+	return admission.Allowed("Validation OK")
+}
+
+func (h *WorkspaceValidationWebhookHandler) validateWorkspace(ctx context.Context, ws *cosmov1alpha1.Workspace) error {
 	// check namespace for Workspace
 	username := cosmov1alpha1.UserNameByNamespace(ws.GetNamespace())
 	if username == "" {
-		return admission.Denied(fmt.Sprintf("namespace '%s' is not cosmo user's namespace", ws.GetNamespace()))
+		return fmt.Errorf("namespace '%s' is not cosmo user's namespace", ws.GetNamespace())
 	}
 
 	// check netrules
 	if err := checkNetworkRules(ws.Spec.Network); err != nil {
-		log.Error(err, "network rules check failed")
-		return admission.Errored(http.StatusBadRequest, err)
+		return fmt.Errorf("network rules check failed: %w", err)
 	}
 
-	// TODO
-	// // dryrun
-	// inst := &cosmov1alpha1.Instance{}
-	// inst.SetName(ws.Name)
-	// inst.SetNamespace(ws.Namespace)
-
-	// _, err = kubeutil.DryrunCreateOrUpdate(ctx, h.Client, inst, func() error {
-	// 	return workspace.PatchWorkspaceInstanceAsDesired(inst, *ws, nil)
-	// })
-	// if err != nil {
-	// 	return admission.Denied(fmt.Sprintf("failed to dryrun create or update workspace instance: %v", err))
-	// }
-
-	return admission.Allowed("Validation OK")
+	return nil
 }
 
 func (h *WorkspaceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
@@ -165,107 +258,20 @@ func (h *WorkspaceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) 
 	return nil
 }
 
-func sortNetworkRule(netRules []cosmov1alpha1.NetworkRule) []cosmov1alpha1.NetworkRule {
-	sort.SliceStable(netRules, func(i, j int) bool {
-		if *netRules[i].Group < *netRules[j].Group {
-			return true
-		} else if *netRules[i].Group == *netRules[j].Group {
-			return netRules[i].HTTPPath > netRules[j].HTTPPath
-		}
-		return false
-	})
-	return netRules
-}
-
-func (h *WorkspaceMutationWebhookHandler) defaultNetworkRules(netRules []cosmov1alpha1.NetworkRule, name, namespace string, urlBase workspace.URLBase) {
-	for i := range netRules {
-		netRules[i].Default()
-		netRules[i].Host = pointer.String(workspace.GenerateIngressHost(netRules[i], name, namespace, urlBase))
-	}
-}
-
 func checkNetworkRules(netRules []cosmov1alpha1.NetworkRule) error {
 	for i, netRule := range netRules {
-		if errs := validation.IsValidPortName(netRule.Name); len(errs) > 0 {
-			return errors.New(errs[0])
-		}
 		if errs := validation.IsValidPortNum(int(netRule.PortNumber)); len(errs) > 0 {
-			return errors.New(errs[0])
+			return fmt.Errorf("port validation failed: port=%d", netRule.PortNumber)
 		}
 		for j, v := range netRules {
 			if i == j {
 				continue
 			}
-			if netRule.Name == v.Name {
-				return errors.New("duplicate network rule name")
-			}
-			if reflect.DeepEqual(netRule.Group, v.Group) &&
-				netRule.HTTPPath == v.HTTPPath {
-				return fmt.Errorf("duplicate group and path. group=%s,path=%s", *v.Group, v.HTTPPath)
-			}
-			if reflect.DeepEqual(netRule.Host, v.Host) &&
-				netRule.HTTPPath == v.HTTPPath {
-				return fmt.Errorf("duplicate host and path. host=%s,path=%s", *v.Host, v.HTTPPath)
+			if netRule.UniqueKey() == v.UniqueKey() {
+				r, _ := json.Marshal(netRules)
+				return fmt.Errorf("duplicate network rules hostPrefix=%s,path=%s,rules=%s", v.HostPrefix(), v.HTTPPath, string(r))
 			}
 		}
 	}
 	return nil
-}
-
-func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceToNetworkRule(ctx context.Context, ws *cosmov1alpha1.Workspace, rawTmpl string, cfg cosmov1alpha1.Config) error {
-	log := clog.FromContext(ctx).WithCaller()
-
-	unst, err := preTemplateBuild(*ws, rawTmpl)
-	if err != nil {
-		return err
-	}
-
-	var svc corev1.Service
-	for _, u := range unst {
-		log.Debug().Info(fmt.Sprintf("template resources: %v", u), "resourceGVK", u.GroupVersionKind(), "resourceName", u.GetName())
-
-		log.DebugAll().Info(fmt.Sprintf("workspace config in template: %v", cfg),
-			"gvk", u.GroupVersionKind(),
-			"cfgServiceName", cfg.ServiceName,
-			"instFixedName", instance.InstanceResourceName(template.DefaultVarsInstance, u.GetName()),
-			"svcGvkEqual", kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK),
-			"svcNameEqual", instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName),
-		)
-
-		if kubeutil.IsGVKEqual(u.GroupVersionKind(), kubeutil.ServiceGVK) &&
-			instance.EqualInstanceResourceName(template.DefaultVarsInstance, u.GetName(), cfg.ServiceName) {
-			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &svc)
-			if err != nil {
-				return err
-			}
-
-		}
-	}
-	log.DebugAll().Info("service in template", "service", svc)
-
-	netRules := cosmov1alpha1.NetworkRulesByService(svc)
-
-	// append network rules
-	for _, netRule := range netRules {
-		found := false
-		for _, r := range ws.Spec.Network {
-			if netRule.Name == r.Name {
-				found = true
-			}
-		}
-		if !found {
-			log.Info("generated netrules by service in template", "netRule", netRule)
-			ws.Spec.Network = append(ws.Spec.Network, netRule)
-		}
-	}
-	return nil
-}
-
-func preTemplateBuild(ws cosmov1alpha1.Workspace, rawTmpl string) ([]unstructured.Unstructured, error) {
-	var inst cosmov1alpha1.Instance
-	inst.SetName(ws.GetName())
-	inst.SetNamespace(ws.GetNamespace())
-
-	builder := template.NewRawYAMLBuilder(rawTmpl, &inst)
-	return builder.Build()
 }

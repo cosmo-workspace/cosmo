@@ -2,14 +2,19 @@ package webhooks
 
 import (
 	"context"
+	"encoding/json"
+	"reflect"
+	"testing"
 	"time"
 
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
+	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/pointer"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -321,73 +326,54 @@ spec:
 		},
 		Entry("❌ fail with invalid port number", []cosmov1alpha1.NetworkRule{
 			{
-				Name:       "a23456789012345",
-				PortNumber: 0,
-				HTTPPath:   "",
-				Public:     false,
+				PortNumber:       0,
+				CustomHostPrefix: "a23456789012345",
+				HTTPPath:         "",
+				Public:           false,
 			},
 		}),
 
 		Entry("❌ fail with invalid port name", []cosmov1alpha1.NetworkRule{
 			{
-				Name:       "a234567890123456",
-				PortNumber: 1,
-				HTTPPath:   "",
-				Public:     false,
+				CustomHostPrefix: "a234567890123456",
+				PortNumber:       1,
+				HTTPPath:         "",
+				Public:           false,
 			},
 		}),
 		Entry("❌ fail with duplicated network rule name", []cosmov1alpha1.NetworkRule{
 			{
-				Name:       "nw1",
-				PortNumber: 1111,
+				CustomHostPrefix: "nw1",
+				PortNumber:       1111,
 			},
 			{
-				Name:       "nw1",
-				PortNumber: 2222,
+				CustomHostPrefix: "nw1",
+				PortNumber:       2222,
 			},
 		}),
 		Entry("❌ fail with duplicated network rule group and path", []cosmov1alpha1.NetworkRule{
 			{
-				Name:       "nw1",
-				PortNumber: 1111,
-				HTTPPath:   "/",
-				Group:      pointer.String("gp1"),
+				CustomHostPrefix: "nw1",
+				PortNumber:       1111,
+				HTTPPath:         "/",
 			},
 			{
-				Name:       "nw2",
-				PortNumber: 2222,
-				HTTPPath:   "/",
-				Group:      pointer.String("gp1"),
+				CustomHostPrefix: "nw2",
+				PortNumber:       2222,
+				HTTPPath:         "/",
 			},
 		}),
 		Entry("❌ fail with duplicated network rule host and path", []cosmov1alpha1.NetworkRule{
 			{
-				Name:       "nw1",
-				PortNumber: 1111,
-				HTTPPath:   "/",
-				Host:       pointer.String("host.domain"),
-				Public:     false,
+				CustomHostPrefix: "nw1",
+				PortNumber:       1111,
+				HTTPPath:         "/",
+				Public:           false,
 			},
 			{
-				Name:       "nw2",
-				PortNumber: 2222,
-				HTTPPath:   "/",
-				Host:       pointer.String("host.domain"),
-			},
-		}),
-		Entry("❌ fail with duplicated network rule host and path", []cosmov1alpha1.NetworkRule{
-			{
-				Name:       "nw1",
-				PortNumber: 1111,
-				HTTPPath:   "/",
-				Host:       pointer.String("host.domain"),
-				Public:     false,
-			},
-			{
-				Name:       "nw2",
-				PortNumber: 2222,
-				HTTPPath:   "/",
-				Host:       pointer.String("host.domain"),
+				CustomHostPrefix: "nw2",
+				PortNumber:       2222,
+				HTTPPath:         "/",
 			},
 		}),
 	)
@@ -408,10 +394,10 @@ spec:
 					Vars:     map[string]string{"DOMAIN": "example.com", "IMAGE_TAG": "latest"},
 					Network: []cosmov1alpha1.NetworkRule{
 						{
-							Name:       "a23456789012345",
-							PortNumber: 0,
-							HTTPPath:   "",
-							Public:     false,
+							CustomHostPrefix: "a23456789012345",
+							PortNumber:       0,
+							HTTPPath:         "",
+							Public:           false,
 						},
 					},
 				},
@@ -422,3 +408,216 @@ spec:
 		})
 	})
 })
+
+func TestNetworkRulesByService(t *testing.T) {
+	type args struct {
+		svcPorts []corev1.ServicePort
+	}
+	tests := []struct {
+		name string
+		args args
+		want []cosmov1alpha1.NetworkRule
+	}{
+		{
+			name: "✅ OK",
+			args: args{
+				svcPorts: []corev1.ServicePort{
+					{
+						Name:     "main",
+						Port:     int32(7777),
+						Protocol: corev1.ProtocolTCP,
+					},
+					{
+						Name:       "main2",
+						Port:       int32(7778),
+						Protocol:   corev1.ProtocolTCP,
+						TargetPort: intstr.FromInt(32001),
+					},
+				},
+			},
+			want: []cosmov1alpha1.NetworkRule{
+				{
+					CustomHostPrefix: "main",
+					PortNumber:       7777,
+				},
+				{
+					CustomHostPrefix: "main2",
+					PortNumber:       7778,
+					TargetPortNumber: pointer.Int32(32001),
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := networkRulesByServicePorts(tt.args.svcPorts)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NetworkRulesByService() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_appendNetworkRuleIfNotExist(t *testing.T) {
+	type args struct {
+		ws      *cosmov1alpha1.Workspace
+		netRule cosmov1alpha1.NetworkRule
+	}
+	tests := []struct {
+		name string
+		args args
+		want *cosmov1alpha1.Workspace
+	}{
+		{
+			name: "✅ OK",
+			args: args{
+				ws: &cosmov1alpha1.Workspace{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "ws1",
+						Namespace: "cosmo-user-xxx",
+					},
+					Spec: cosmov1alpha1.WorkspaceSpec{
+						Network: []cosmov1alpha1.NetworkRule{
+							{
+								CustomHostPrefix: "main",
+								Protocol:         "http",
+								PortNumber:       8080,
+								HTTPPath:         "/",
+							},
+						},
+					},
+				},
+				netRule: cosmov1alpha1.NetworkRule{
+					PortNumber: 8081,
+				},
+			},
+			want: &cosmov1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "ws1",
+					Namespace: "cosmo-user-xxx",
+				},
+				Spec: cosmov1alpha1.WorkspaceSpec{
+					Network: []cosmov1alpha1.NetworkRule{
+						{
+							CustomHostPrefix: "main",
+							Protocol:         "http",
+							PortNumber:       8080,
+							HTTPPath:         "/",
+						},
+						{
+							Protocol:   "http",
+							PortNumber: 8081,
+							HTTPPath:   "/",
+						},
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			appendNetworkRuleIfNotExist(tt.args.ws, tt.args.netRule)
+			got, _ := json.Marshal(tt.args.ws)
+			want, _ := json.Marshal(tt.want)
+			if string(got) != string(want) {
+				t.Errorf("appendNetworkRuleIfNotExist() = %v, want %v", string(got), string(want))
+			}
+		})
+	}
+}
+
+func Test_sortNetworkRule(t *testing.T) {
+	type args struct {
+		netRules []cosmov1alpha1.NetworkRule
+		cfg      cosmov1alpha1.Config
+	}
+	tests := []struct {
+		name string
+		args args
+		want []cosmov1alpha1.NetworkRule
+	}{
+		{
+			name: "✅ OK",
+			args: args{
+				netRules: []cosmov1alpha1.NetworkRule{
+					{
+						Protocol:   "http",
+						PortNumber: 8080,
+						HTTPPath:   "/",
+					},
+					{
+						CustomHostPrefix: "main",
+						Protocol:         "http",
+						PortNumber:       8080,
+						HTTPPath:         "/",
+					},
+					{
+						Protocol:   "http",
+						PortNumber: 8081,
+						HTTPPath:   "/dev",
+					},
+					{
+						CustomHostPrefix: "bbb",
+						Protocol:         "http",
+						PortNumber:       8080,
+						HTTPPath:         "/",
+					},
+					{
+						CustomHostPrefix: "aaa",
+						Protocol:         "http",
+						PortNumber:       8080,
+						HTTPPath:         "/",
+					},
+				},
+				cfg: cosmov1alpha1.Config{
+					ServiceMainPortName: "main",
+				},
+			},
+			want: []cosmov1alpha1.NetworkRule{
+				// main
+				{
+					CustomHostPrefix: "main",
+					Protocol:         "http",
+					PortNumber:       8080,
+					HTTPPath:         "/",
+				},
+				// no name and longer path
+				{
+					Protocol:   "http",
+					PortNumber: 8081,
+					HTTPPath:   "/dev",
+				},
+				// no name and shorter path
+				{
+					Protocol:   "http",
+					PortNumber: 8080,
+					HTTPPath:   "/",
+				},
+				// order of name
+				{
+					CustomHostPrefix: "aaa",
+					Protocol:         "http",
+					PortNumber:       8080,
+					HTTPPath:         "/",
+				},
+				{
+					CustomHostPrefix: "bbb",
+					Protocol:         "http",
+					PortNumber:       8080,
+					HTTPPath:         "/",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sorted := sortNetworkRule(tt.args.netRules, tt.args.cfg)
+			got, _ := json.MarshalIndent(sorted, " ", "  ")
+			want, _ := json.MarshalIndent(tt.want, " ", "  ")
+			if string(got) != string(want) {
+				t.Errorf("sortNetworkRule() got = %v", string(got))
+				t.Errorf("diff: %v", cmp.Diff(string(got), string(want)))
+			}
+		})
+	}
+}

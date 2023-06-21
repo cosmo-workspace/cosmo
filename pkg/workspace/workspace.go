@@ -92,8 +92,8 @@ func addWorkspaceDefaultVars(vars map[string]string, ws cosmov1alpha1.Workspace)
 		vars = make(map[string]string)
 	}
 	// urlvar
-	vars[URLVarWorkspaceName] = ws.GetName()
-	vars[URLVarUserName] = user
+	vars[cosmov1alpha1.URLVarWorkspaceName] = ws.GetName()
+	vars[cosmov1alpha1.URLVarUserName] = user
 
 	// workspace config
 	vars[cosmov1alpha1.WorkspaceTemplateVarDeploymentName] = ws.Status.Config.DeploymentName

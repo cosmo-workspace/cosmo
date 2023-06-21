@@ -2,10 +2,8 @@ package dashboard
 
 import (
 	"context"
-	"sort"
 
 	connect_go "github.com/bufbuild/connect-go"
-	"k8s.io/utils/pointer"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -21,7 +19,15 @@ func (s *Server) UpsertNetworkRule(ctx context.Context, req *connect_go.Request[
 	}
 
 	m := req.Msg
-	netRule, err := s.Klient.AddNetworkRule(ctx, m.WsName, m.UserName, m.NetworkRule.Name, m.NetworkRule.PortNumber, pointer.String(m.NetworkRule.Group), m.NetworkRule.HttpPath, m.NetworkRule.Public)
+
+	r := cosmov1alpha1.NetworkRule{
+		PortNumber:       m.NetworkRule.PortNumber,
+		CustomHostPrefix: m.NetworkRule.CustomHostPrefix,
+		HTTPPath:         m.NetworkRule.HttpPath,
+		Public:           m.NetworkRule.Public,
+	}
+
+	netRule, err := s.Klient.AddNetworkRule(ctx, m.WsName, m.UserName, r, int(m.Index))
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -43,7 +49,8 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, req *connect_go.Request[
 	}
 
 	m := req.Msg
-	delRule, err := s.Klient.DeleteNetworkRule(ctx, m.WsName, m.UserName, m.NetworkRuleName)
+
+	delRule, err := s.Klient.DeleteNetworkRule(ctx, m.WsName, m.UserName, int(m.Index))
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -56,29 +63,21 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, req *connect_go.Request[
 	return connect_go.NewResponse(res), nil
 }
 
-func convertNetRulesTodashv1alpha1NetRules(netRules []cosmov1alpha1.NetworkRule, urlMap map[string]string, serviceMainPortName string) []*dashv1alpha1.NetworkRule {
+func convertNetRulesTodashv1alpha1NetRules(netRules []cosmov1alpha1.NetworkRule, urlMap map[string]string) []*dashv1alpha1.NetworkRule {
 	apirules := make([]*dashv1alpha1.NetworkRule, 0, len(netRules))
 	for _, v := range netRules {
-		if v.Name == serviceMainPortName {
-			continue
-		}
-
 		r := convertNetRuleTodashv1alpha1NetRule(v)
-		r.Url = urlMap[v.Name]
-
+		r.Url = urlMap[v.UniqueKey()]
 		apirules = append(apirules, &r)
 	}
-	sort.Slice(apirules, func(i, j int) bool { return apirules[i].Name < apirules[j].Name })
-
 	return apirules
 }
 
 func convertNetRuleTodashv1alpha1NetRule(v cosmov1alpha1.NetworkRule) dashv1alpha1.NetworkRule {
 	return dashv1alpha1.NetworkRule{
-		Name:       v.Name,
-		PortNumber: int32(v.PortNumber),
-		Group:      *v.Group,
-		HttpPath:   v.HTTPPath,
-		Public:     v.Public,
+		PortNumber:       int32(v.PortNumber),
+		CustomHostPrefix: v.CustomHostPrefix,
+		HttpPath:         v.HTTPPath,
+		Public:           v.Public,
 	}
 }

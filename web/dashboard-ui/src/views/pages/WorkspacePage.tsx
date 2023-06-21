@@ -1,5 +1,7 @@
-import { AddTwoTone, Check, CheckCircleOutlined, Clear, DeleteTwoTone, EditTwoTone, ErrorOutline, ExpandLessTwoTone, ExpandMoreTwoTone, MoreVertTwoTone, OpenInNewTwoTone, PlayCircleFilledWhiteTwoTone, RefreshTwoTone, SearchTwoTone, StopCircleOutlined, StopCircleTwoTone, WebTwoTone } from '@mui/icons-material';
+import { AddTwoTone, CheckCircleOutlined, Clear, ContentCopy, DeleteTwoTone, DoubleArrow, EditTwoTone, ErrorOutline, ExpandLessTwoTone, ExpandMoreTwoTone, LockOutlined, MoreVertTwoTone, OpenInNewTwoTone, PlayCircleFilledWhiteTwoTone, PublicOutlined, RefreshTwoTone, SearchTwoTone, StopCircleOutlined, StopCircleTwoTone, WebTwoTone } from '@mui/icons-material';
 import { Alert, Avatar, Box, Card, CardContent, CardHeader, Chip, CircularProgress, Collapse, Divider, Fab, Grid, IconButton, InputAdornment, Link, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
+import copy from 'copy-to-clipboard';
+import { useSnackbar } from "notistack";
 import React, { useEffect, useRef, useState } from "react";
 import { useLogin } from '../../components/LoginProvider';
 import { NetworkRule, Workspace } from '../../proto/gen/dashboard/v1alpha1/workspace_pb';
@@ -102,19 +104,24 @@ const NetworkRuleHeader: React.VFC<{ workspace: Workspace }> = ({ workspace }) =
 
   return (<>
     <Grid item xs={12}><Divider /></Grid>
-    <Grid item xs={2} sm={2} md={1.5} sx={{ m: 'auto' }}>{Caption('Port Name')}</Grid>
-    <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{Caption('Port #')}</Grid>
-    <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{Caption('Public')}</Grid>
-    {isUpSM && <Grid item xs={2} sm={5} md={7.5} zeroMinWidth sx={{ m: 'auto' }}>{Caption('URL')}</Grid>}
+    <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto', textAlign: 'center' }}>{Caption('Mode')}</Grid>
+    {isUpSM && <Grid item xs={4} sm={7} md={8.5} zeroMinWidth sx={{ m: 'auto' }}>{Caption('URL')}</Grid>}
+    <Grid item xs={2} sm={1.5} md={1.5} sx={{ m: 'auto', textAlign: 'center' }}>{Caption('Port #')}</Grid>
     <Grid item xs={3} sm={2} md={1} sx={{ m: 'auto', textAlign: 'center' }}>
-      <IconButton onClick={() => { upsertDialogDispatch(true, { workspace: workspace }); }}><AddTwoTone /></IconButton>
+      <IconButton onClick={() => { upsertDialogDispatch(true, { workspace: workspace, index: -1 }); }}><AddTwoTone /></IconButton>
     </Grid>
     <Grid item xs={12}><Divider /></Grid>
   </>);
 }
 
-const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRule }> = ({ workspace, networkRule }) => {
+const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRule, index: number, isMain?: boolean }> = ({ workspace, networkRule, index, isMain }) => {
   console.log('NetworkRuleItem');
+  const { enqueueSnackbar } = useSnackbar();
+  const onCopy = (text: string) => {
+    copy(text);
+    enqueueSnackbar('Copied!', { variant: 'success' });
+  }
+
   const upsertDialogDispatch = NetworkRuleUpsertDialogContext.useDispatch();
   const deleteDialogDispatch = NetworkRuleDeleteDialogContext.useDispatch();
 
@@ -123,29 +130,6 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
   const Body2 = (text?: string | number) => (<Typography variant='body2'>{text}</Typography>);
 
   return (<>
-    <Grid item xs={2} sm={2} md={1.5} sx={{ m: 'auto' }}>{Body2(networkRule.name)}</Grid>
-    <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{Body2(networkRule.portNumber)}</Grid>
-    <Grid item xs={2} sm={1.5} md={1} sx={{ m: 'auto' }}>{networkRule.public && <Check />}</Grid>
-    {isUpSM &&
-      <Grid item xs={0} sm={5} md={7.5} zeroMinWidth sx={{ m: 'auto' }}>
-        <Link href={networkRule.url || ''} target='_blank'>
-          <Typography variant='body2' component='span' noWrap={false} >
-            {networkRule.url}
-            <OpenInNewTwoTone fontSize='inherit' sx={{ position: 'relative', top: '0.2em' }} />
-          </Typography>
-        </Link>
-      </Grid>
-    }
-    <Grid item xs={3} sm={2} md={1} sx={{ m: 'auto', textAlign: 'center' }}>
-      <Stack direction='row' alignItems='center' justifyContent='center' spacing={{ xs: 0, sm: 1 }} >
-        <IconButton onClick={() => { upsertDialogDispatch(true, { workspace: workspace, networkRule: networkRule }); }}>
-          <EditTwoTone />
-        </IconButton>
-        <IconButton onClick={() => { deleteDialogDispatch(true, { workspace: workspace, networkRule: networkRule }); }}>
-          <DeleteTwoTone />
-        </IconButton>
-      </Stack>
-    </Grid>
     {!isUpSM &&
       <Grid item xs={12} sm={0} md={0} zeroMinWidth sx={{ m: 'auto' }}>
         <Link href={networkRule.url || ''} target='_blank'>
@@ -156,6 +140,37 @@ const NetworkRuleItem: React.VFC<{ workspace: Workspace, networkRule: NetworkRul
         </Link>
       </Grid>
     }
+    <Grid item xs={1} sm={1} md={1} sx={{ m: 'auto', textAlign: 'center' }}>
+      {networkRule.public
+        && <Tooltip title="No authentication is required for this URL"><PublicOutlined /></Tooltip>
+        || <Tooltip title="Private URL"><LockOutlined /></Tooltip>}
+    </Grid>
+
+    {isUpSM &&
+      <Grid item xs={2} sm={7} md={7} zeroMinWidth sx={{ m: 'auto' }}>
+        <Link href={networkRule.url || ''} target='_blank'>
+          <Typography variant='body2' component='span' noWrap={false} >
+            {networkRule.url}
+            <OpenInNewTwoTone fontSize='inherit' sx={{ position: 'relative', top: '0.2em' }} />
+          </Typography>
+        </Link>
+        <IconButton size='small' sx={{ position: 'relative', top: '0.2em' }} onClick={() => { onCopy(networkRule.url) }}>
+          <ContentCopy fontSize='inherit' />
+        </IconButton>
+      </Grid>
+    }
+    <Grid item xs={1} sm={0.5} md={1.5} sx={{ m: 'auto', textAlign: 'center' }}><DoubleArrow /></Grid>
+    <Grid item xs={2} sm={1.5} md={1.5} sx={{ m: 'auto', textAlign: 'center' }}>{Body2(networkRule.portNumber)}</Grid>
+    <Grid item xs={3} sm={2} md={1} sx={{ m: 'auto', textAlign: 'center' }}>
+      <Stack direction='row' alignItems='center' justifyContent='center' spacing={{ xs: 0, sm: 1 }} >
+        <IconButton onClick={() => { upsertDialogDispatch(true, { workspace: workspace, networkRule: networkRule, defaultOpenHttpOptions: true, index: index, isMain: isMain }); }}>
+          <EditTwoTone />
+        </IconButton>
+        <IconButton disabled={isMain} onClick={() => { deleteDialogDispatch(true, { workspace: workspace, networkRule: networkRule, index: index }); }}>
+          <DeleteTwoTone />
+        </IconButton>
+      </Stack>
+    </Grid>
   </>);
 }
 
@@ -168,10 +183,10 @@ const NetworkRuleList: React.VFC<{ workspace: Workspace }> = ({ workspace }) => 
       {/* network rule header */}
       <NetworkRuleHeader workspace={workspace} />
       {/* network rule detail */}
-      {(workspace.spec?.additionalNetwork || []).map((nwRule) => {
-        return (<NetworkRuleItem workspace={workspace} networkRule={nwRule} key={nwRule.name} />)
+      {(workspace.spec?.network || []).map((nwRule, index) => {
+        return (<NetworkRuleItem workspace={workspace} networkRule={nwRule} index={index} key={index} isMain={nwRule.url == workspace.status?.mainUrl} />)
       })}
-      {(workspace.spec?.additionalNetwork || []).length === 0 &&
+      {(workspace.spec?.network || []).length === 0 &&
         <Grid item xs={12} sx={{ p: 2, textAlign: 'center' }}>
           <Typography variant='body2' sx={{ color: 'text.secondary' }}>No NetworkRules found.</Typography>
         </Grid>

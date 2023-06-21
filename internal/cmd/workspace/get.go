@@ -147,13 +147,13 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	defer w.Flush()
 
 	if o.showNetwork {
-		columnNames := []string{"USER-NAMESPACE", "WORKSPACE-NAME", "PORT-NAME", "PORT-NUMBER", "GROUP", "HTTP-PATH", "URL"}
+		columnNames := []string{"USER-NAMESPACE", "WORKSPACE-NAME", "PORT", "URL"}
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, ws := range wss {
 			for _, v := range ws.Spec.Network {
-				url := ws.Status.URLs[v.Name]
-				rowdata := []string{ws.Namespace, ws.Name, v.Name, strconv.Itoa(int(v.PortNumber)), *v.Group, v.HTTPPath, url}
+				url := ws.Status.URLs[v.UniqueKey()]
+				rowdata := []string{ws.Namespace, ws.Name, strconv.Itoa(int(v.PortNumber)), url}
 				fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 			}
 		}

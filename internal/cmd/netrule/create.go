@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"k8s.io/utils/pointer"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -17,12 +16,11 @@ import (
 type CreateOption struct {
 	*cmdutil.UserNamespacedCliOptions
 
-	WorkspaceName string
-	NetRuleName   string
-	PortNumber    int32
-	Group         string
-	HTTPPath      string
-	Public        bool
+	WorkspaceName    string
+	CustomHostPrefix string
+	PortNumber       int32
+	HTTPPath         string
+	Public           bool
 
 	rule cosmov1alpha1.NetworkRule
 }
@@ -34,7 +32,7 @@ func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *co
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
 	cmd.Flags().StringVar(&o.WorkspaceName, "workspace", "", "workspace name (Required)")
 	cmd.Flags().Int32Var(&o.PortNumber, "port", 0, "serivce port number (Required)")
-	cmd.Flags().StringVar(&o.Group, "group", "", "group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty")
+	cmd.Flags().StringVar(&o.CustomHostPrefix, "host-prefix", "", "custom host prefix")
 	cmd.Flags().StringVar(&o.HTTPPath, "path", "/", "path for Ingress path when using ingress")
 	cmd.Flags().BoolVar(&o.Public, "public", false, "disable authentication for this port")
 
@@ -58,9 +56,6 @@ func (o *CreateOption) Validate(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Validate(cmd, args); err != nil {
 		return err
 	}
-	if len(args) < 1 {
-		return errors.New("invalid args")
-	}
 	if o.WorkspaceName == "" {
 		return errors.New("--workspace is required")
 	}
@@ -74,19 +69,14 @@ func (o *CreateOption) Complete(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
 		return err
 	}
-	o.NetRuleName = args[0]
-
-	if o.Group == "" {
-		o.Group = o.NetRuleName
-	}
 
 	o.rule = cosmov1alpha1.NetworkRule{
-		Name:       o.NetRuleName,
-		PortNumber: o.PortNumber,
-		HTTPPath:   o.HTTPPath,
-		Group:      pointer.String(o.Group),
-		Public:     o.Public,
+		CustomHostPrefix: o.CustomHostPrefix,
+		PortNumber:       o.PortNumber,
+		HTTPPath:         o.HTTPPath,
+		Public:           o.Public,
 	}
+	o.rule.Default()
 	return nil
 }
 
@@ -97,11 +87,21 @@ func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	if _, err := c.AddNetworkRule(ctx, o.WorkspaceName, o.User, o.rule.Name,
-		o.rule.PortNumber, o.rule.Group, o.rule.HTTPPath, o.rule.Public); err != nil {
+	ws, err := c.GetWorkspaceByUserName(ctx, o.WorkspaceName, o.User)
+	if err != nil {
+		return fmt.Errorf("failed to get workspace: %v", err)
+	}
+	index := -1
+	for i, v := range ws.Spec.Network {
+		if v.UniqueKey() == o.rule.UniqueKey() {
+			index = i
+		}
+	}
+
+	if _, err := c.AddNetworkRule(ctx, o.WorkspaceName, o.User, o.rule, index); err != nil {
 		return err
 	}
 
-	cmdutil.PrintfColorInfo(o.Out, "Successfully add network rule '%s' for workspace '%s'\n", o.NetRuleName, o.WorkspaceName)
+	cmdutil.PrintfColorInfo(o.Out, "Successfully add network rule for workspace '%s'\n", o.WorkspaceName)
 	return nil
 }

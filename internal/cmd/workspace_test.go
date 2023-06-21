@@ -151,8 +151,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			func(args ...string) {
 				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
 				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
-				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "/", false, -1)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "/", false, -1)
 
 				rootCmd.SetArgs(args)
 				err := rootCmd.Execute()
@@ -265,8 +265,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
 				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
-				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "/", false, -1)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "/", false, -1)
 
 				run_test(args...)
 
@@ -280,8 +280,8 @@ var _ = Describe("cosmoctl [workspace]", func() {
 		DescribeTable("✅ success with dry-run:",
 			func(args ...string) {
 				testUtil.CreateWorkspace("user1", "ws2", "template1", nil)
-				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "gp3", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw1", 1111, "/", false, -1)
+				testUtil.UpsertNetworkRule("user1", "ws2", "nw3", 2222, "/", false, -1)
 
 				run_test(args...)
 

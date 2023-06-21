@@ -24,6 +24,11 @@ type TraefikIngressRouteConfig struct {
 	// UserNameHeaderMiddlewareName is the name of middleware for username header
 	// Namespace must be empty to be the same as the workspace
 	UserNameHeaderMiddleware traefikv1.MiddlewareRef
+
+	// HostBase is a base of hostname. if empty, cosmov1alpha1.DefaultHostBase is used
+	HostBase string
+	// Domain is a domain of hostname
+	Domain string
 }
 
 func (c *TraefikIngressRouteConfig) PatchTraefikIngressRouteAsDesired(ir *traefikv1.IngressRoute, ws cosmov1alpha1.Workspace, scheme *runtime.Scheme) error {
@@ -37,10 +42,9 @@ func (c *TraefikIngressRouteConfig) PatchTraefikIngressRouteAsDesired(ir *traefi
 	ir.Spec.TLS = c.TLS
 
 	// spec.routes
-	backendSvcName := instance.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName)
 	routes := make([]traefikv1.Route, 0, len(ws.Spec.Network))
 	for _, netRule := range ws.Spec.Network {
-		traefikRule := c.TraefikRoute(netRule, backendSvcName)
+		traefikRule := c.TraefikRoute(netRule, ws)
 		routes = append(routes, traefikRule)
 	}
 	ir.Spec.Routes = routes
@@ -54,11 +58,11 @@ func (c *TraefikIngressRouteConfig) PatchTraefikIngressRouteAsDesired(ir *traefi
 	return nil
 }
 
-func (c *TraefikIngressRouteConfig) TraefikRoute(r cosmov1alpha1.NetworkRule, backendSvcName string) traefikv1.Route {
+func (c *TraefikIngressRouteConfig) TraefikRoute(r cosmov1alpha1.NetworkRule, ws cosmov1alpha1.Workspace) traefikv1.Route {
 	matches := []string{}
-	if r.Host != nil {
-		matches = append(matches, fmt.Sprintf("Host(`%s`)", *r.Host))
-	}
+
+	matches = append(matches, fmt.Sprintf("Host(`%s`)", cosmov1alpha1.GenHost(c.HostBase, c.Domain, r.HostPrefix(), ws)))
+
 	if r.HTTPPath != "" && r.HTTPPath != "/" {
 		matches = append(matches, fmt.Sprintf("PathPrefix(`%s`)", r.HTTPPath))
 	}
@@ -70,6 +74,8 @@ func (c *TraefikIngressRouteConfig) TraefikRoute(r cosmov1alpha1.NetworkRule, ba
 	} else {
 		middlewares = []traefikv1.MiddlewareRef{c.UserNameHeaderMiddleware, c.AuthenMiddleware}
 	}
+
+	backendSvcName := instance.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName)
 
 	return traefikv1.Route{
 		Kind:     "Rule",

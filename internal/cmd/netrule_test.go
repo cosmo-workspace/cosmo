@@ -108,8 +108,8 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
 				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
-				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("user1", "ws1", "nw3", 2222, "gp2", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "/", false, -1)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw3", 2222, "/", false, -1)
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "3000", "--path", "/abc", "--group", "gp11"),
@@ -120,7 +120,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		DescribeTable("❌ fail with invalid args:",
 			func(args ...string) {
 				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
-				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "/", false, -1)
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "3000", "--path", "/", "-A"),
@@ -170,8 +170,8 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		DescribeTable("✅ success in normal context:",
 			func(args ...string) {
 				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
-				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
-				testUtil.UpsertNetworkRule("user1", "ws1", "nw2", 2222, "gp2", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "/", false, -1)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw2", 2222, "/", false, -1)
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "delete", "ws1", "--user", "user1", "--workspace", "nw1"),
@@ -181,7 +181,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		DescribeTable("❌ fail with invalid args:",
 			func(args ...string) {
 				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
-				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "/", false, -1)
 				run_test(args...)
 			},
 			Entry(desc, "netrule", "delete", "nw11", "--user", "user1", "--workspace", "ws1", "-A"),
@@ -198,7 +198,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		DescribeTable("❌ fail with an unexpected error at update:",
 			func(args ...string) {
 				testUtil.CreateWorkspace("user1", "ws1", "template1", nil)
-				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "gp1", "/", false)
+				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "/", false, -1)
 				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
 				run_test(args...)
 			},

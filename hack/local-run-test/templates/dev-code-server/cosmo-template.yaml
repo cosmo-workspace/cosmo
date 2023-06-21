@@ -6,7 +6,6 @@ metadata:
     workspace.cosmo-workspace.github.io/deployment: workspace
     workspace.cosmo-workspace.github.io/service: workspace
     workspace.cosmo-workspace.github.io/service-main-port: main
-    workspace.cosmo-workspace.github.io/urlbase: ""
   creationTimestamp: null
   labels:
     cosmo-workspace.github.io/type: workspace

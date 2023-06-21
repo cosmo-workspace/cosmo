@@ -143,10 +143,12 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	err = (&WorkspaceStatusReconciler{
-		Client:   mgr.GetClient(),
-		Scheme:   mgr.GetScheme(),
-		Recorder: mgr.GetEventRecorderFor(wsStatController),
-		URLBase:  workspace.URLBase("https://{{NETRULE_GROUP}}-{{WOKRSPACE}}-{{USER}}.domain"),
+		Client:          mgr.GetClient(),
+		Scheme:          mgr.GetScheme(),
+		Recorder:        mgr.GetEventRecorderFor(wsStatController),
+		URLBaseProtocol: "https",
+		URLBaseHostBase: "{NETRULE_GROUP}}-{{WOKRSPACE}}-{{USER}}",
+		URLBaseDomain:   "domain",
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 

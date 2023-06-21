@@ -48,26 +48,23 @@ spec:
                   description: NetworkRule is an abstract network configuration rule
                     for workspace
                   properties:
-                    group:
-                      type: string
-                    host:
+                    customHostPrefix:
                       type: string
                     httpPath:
-                      type: string
-                    name:
                       type: string
                     portNumber:
                       format: int32
                       type: integer
+                    protocol:
+                      type: string
                     public:
                       type: boolean
                     targetPortNumber:
                       format: int32
                       type: integer
                   required:
-                  - httpPath
-                  - name
                   - portNumber
+                  - protocol
                   - public
                   type: object
                 type: array

@@ -1,9 +1,10 @@
 package v1alpha1
 
 import (
+	"encoding/json"
+	"reflect"
 	"testing"
 
-	"github.com/gkampitakis/go-snaps/snaps"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -13,77 +14,120 @@ import (
 func TestNetworkRule_Default(t *testing.T) {
 	tests := []struct {
 		name    string
-		netRule *NetworkRule
+		netRule NetworkRule
+		want    NetworkRule
 	}{
 		{
 			name: "✅ TargetPortNumber is nil",
-			netRule: &NetworkRule{
-				Name:             "name",
+			netRule: NetworkRule{
+				CustomHostPrefix: "name",
+				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
 				TargetPortNumber: nil,
-				Host:             pointer.String("host"),
-				Group:            pointer.String("group"),
+				Public:           false,
+			},
+			want: NetworkRule{
+				CustomHostPrefix: "name",
+				Protocol:         "http",
+				PortNumber:       1111,
+				HTTPPath:         "/path",
+				TargetPortNumber: nil,
 				Public:           false,
 			},
 		},
 		{
 			name: "✅ TargetPortNumber is 0",
-			netRule: &NetworkRule{
-				Name:             "name",
+			netRule: NetworkRule{
+				CustomHostPrefix: "name",
+				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
 				TargetPortNumber: pointer.Int32(0),
-				Host:             pointer.String("host"),
-				Group:            pointer.String("group"),
+				Public:           false,
+			},
+			want: NetworkRule{
+				CustomHostPrefix: "name",
+				Protocol:         "http",
+				PortNumber:       1111,
+				HTTPPath:         "/path",
+				TargetPortNumber: pointer.Int32(0),
 				Public:           false,
 			},
 		},
 		{
 			name: "✅ Public is true",
-			netRule: &NetworkRule{
-				Name:             "name",
+			netRule: NetworkRule{
+				CustomHostPrefix: "name",
+				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
 				TargetPortNumber: pointer.Int32(2222),
-				Host:             pointer.String("host"),
-				Group:            pointer.String("group"),
+				Public:           true,
+			},
+			want: NetworkRule{
+				CustomHostPrefix: "name",
+				Protocol:         "http",
+				PortNumber:       1111,
+				HTTPPath:         "/path",
+				TargetPortNumber: pointer.Int32(2222),
 				Public:           true,
 			},
 		},
 		{
 			name: "✅ path is empty",
-			netRule: &NetworkRule{
-				Name:             "name",
+			netRule: NetworkRule{
+				CustomHostPrefix: "name",
+				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "",
 				TargetPortNumber: pointer.Int32(2222),
-				Host:             pointer.String("host"),
-				Group:            pointer.String("group"),
+				Public:           false,
+			},
+			want: NetworkRule{
+				CustomHostPrefix: "name",
+				Protocol:         "http",
+				PortNumber:       1111,
+				HTTPPath:         "/",
+				TargetPortNumber: pointer.Int32(2222),
 				Public:           false,
 			},
 		},
 		{
-			name: "✅ group is nil",
-			netRule: &NetworkRule{
-				Name:             "name",
+			name: "✅ name is empty",
+			netRule: NetworkRule{
+				CustomHostPrefix: "",
+				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "path",
 				TargetPortNumber: pointer.Int32(2222),
-				Host:             pointer.String("host"),
-				Group:            nil,
+				Public:           false,
+			},
+			want: NetworkRule{
+				CustomHostPrefix: "port1111",
+				Protocol:         "http",
+				PortNumber:       1111,
+				HTTPPath:         "path",
+				TargetPortNumber: pointer.Int32(2222),
 				Public:           false,
 			},
 		},
 		{
-			name: "✅ group is empty",
-			netRule: &NetworkRule{
-				Name:             "name",
+			name: "✅ protocol is empty",
+			netRule: NetworkRule{
+				CustomHostPrefix: "port1111",
+				Protocol:         "",
 				PortNumber:       1111,
 				HTTPPath:         "path",
 				TargetPortNumber: pointer.Int32(2222),
-				Host:             pointer.String("host"),
-				Group:            pointer.String(""),
+				Public:           false,
+			},
+			want: NetworkRule{
+				CustomHostPrefix: "port1111",
+				Protocol:         "http",
+				PortNumber:       1111,
+				HTTPPath:         "path",
+				TargetPortNumber: pointer.Int32(2222),
 				Public:           false,
 			},
 		},
@@ -91,7 +135,11 @@ func TestNetworkRule_Default(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.netRule.Default()
-			snaps.MatchSnapshot(t, tt.netRule)
+			got, _ := json.Marshal(tt.netRule)
+			want, _ := json.Marshal(tt.want)
+			if !reflect.DeepEqual(string(got), string(want)) {
+				t.Errorf("NetworkRule.Default() = %v, want %v", string(got), string(want))
+			}
 		})
 	}
 }
@@ -124,67 +172,99 @@ func TestNetworkRule_ServicePort(t *testing.T) {
 	tests := []struct {
 		name    string
 		netRule *NetworkRule
+		want    corev1.ServicePort
 	}{
 		{
 			name: "✅ OK",
 			netRule: &NetworkRule{
-				Name:             "name",
+				CustomHostPrefix: "name",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
 				TargetPortNumber: pointer.Int32(2222),
-				Host:             pointer.String("host"),
-				Group:            pointer.String("group"),
-				Public:           true,
+			},
+			want: corev1.ServicePort{
+				Name:       "port1111",
+				Port:       1111,
+				TargetPort: intstr.FromInt(2222),
+				Protocol:   corev1.ProtocolTCP,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.netRule.ServicePort()
-			snaps.MatchJSON(t, got)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NetworkRule.ServicePort() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
 
-func TestNetworkRulesByService(t *testing.T) {
+func TestGenURL(t *testing.T) {
 	type args struct {
-		svc corev1.Service
+		protocol string
+		host     string
+		path     string
 	}
 	tests := []struct {
 		name string
 		args args
+		want string
 	}{
 		{
 			name: "✅ OK",
 			args: args{
-				svc: corev1.Service{
-					ObjectMeta: v1.ObjectMeta{
-						Name: "test-svc",
-					},
-					Spec: corev1.ServiceSpec{
-						Ports: []corev1.ServicePort{
-							{
-								Name:       "main",
-								Port:       int32(7777),
-								Protocol:   corev1.ProtocolTCP,
-								TargetPort: intstr.FromInt(32000),
-							},
-							{
-								Name:       "main2",
-								Port:       int32(7778),
-								Protocol:   corev1.ProtocolTCP,
-								TargetPort: intstr.FromInt(32001),
-							},
-						},
-					},
-				},
+				protocol: "https",
+				host:     "example.com",
+				path:     "/path",
 			},
+			want: "https://example.com/path",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NetworkRulesByService(tt.args.svc)
-			snaps.MatchSnapshot(t, got)
+			got := GenURL(tt.args.protocol, tt.args.host, tt.args.path)
+			if got != tt.want {
+				t.Errorf("GenURL() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGenHost(t *testing.T) {
+	type args struct {
+		hostbase string
+		domain   string
+		name     string
+		ws       Workspace
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "✅ OK",
+			args: args{
+				hostbase: "{{NETRULE}}-{{WORKSPACE}}-{{USER}}-k3d",
+				domain:   "example.com",
+				name:     "name",
+				ws: Workspace{
+					ObjectMeta: v1.ObjectMeta{
+						Name:      "ws",
+						Namespace: "cosmo-user-xxx",
+					},
+				},
+			},
+			want: "name-ws-xxx-k3d.example.com",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GenHost(tt.args.hostbase, tt.args.domain, tt.args.name, tt.args.ws)
+			if got != tt.want {
+				t.Errorf("GenURL() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

@@ -57,11 +57,9 @@ func (m *NetworkRule) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Name
-
 	// no validation rules for PortNumber
 
-	// no validation rules for Group
+	// no validation rules for CustomHostPrefix
 
 	// no validation rules for HttpPath
 
@@ -174,7 +172,7 @@ func (m *WorkspaceSpec) validate(all bool) error {
 
 	// no validation rules for Vars
 
-	for idx, item := range m.GetAdditionalNetwork() {
+	for idx, item := range m.GetNetwork() {
 		_, _ = idx, item
 
 		if all {
@@ -182,7 +180,7 @@ func (m *WorkspaceSpec) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, WorkspaceSpecValidationError{
-						field:  fmt.Sprintf("AdditionalNetwork[%v]", idx),
+						field:  fmt.Sprintf("Network[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -190,7 +188,7 @@ func (m *WorkspaceSpec) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, WorkspaceSpecValidationError{
-						field:  fmt.Sprintf("AdditionalNetwork[%v]", idx),
+						field:  fmt.Sprintf("Network[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -199,7 +197,7 @@ func (m *WorkspaceSpec) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return WorkspaceSpecValidationError{
-					field:  fmt.Sprintf("AdditionalNetwork[%v]", idx),
+					field:  fmt.Sprintf("Network[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

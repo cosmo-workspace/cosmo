@@ -7,19 +7,16 @@ IMAGE_TAG=v0.0.2-4.13.0
 template: ## Create template
 	cd kubernetes/ && kustomize edit set image $(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 	kustomize build kubernetes/ | cosmoctl tmpl generate -o cosmo-template.yaml --workspace \
-		--workspace-urlbase "$(URLBASE)" \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
 	kustomize build kubernetes/ | cosmoctl tmpl generate -o team-a-template.yaml --workspace \
 		--name team-a-codeserver \
 		--desc 'only for team A' \
 		--userroles 'team-a-*' \
-		--workspace-urlbase "$(URLBASE)" \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
 	kustomize build kubernetes/ | cosmoctl tmpl generate -o team-shared-template.yaml --workspace \
 		--name team-shared-codeserver \
 		--desc 'shared template excluding team-a-dev' \
 		--forbidden-userroles team-a-dev \
-		--workspace-urlbase "$(URLBASE)" \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
 
 .PHONY: apply

@@ -2,11 +2,12 @@ package v1alpha1
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/utils/pointer"
 )
 
 func init() {
@@ -76,26 +77,47 @@ const (
 
 // NetworkRule is an abstract network configuration rule for workspace
 type NetworkRule struct {
-	Name             string  `json:"name"`
-	PortNumber       int32   `json:"portNumber"`
-	HTTPPath         string  `json:"httpPath"`
-	TargetPortNumber *int32  `json:"targetPortNumber,omitempty"`
-	Host             *string `json:"host,omitempty"`
-	Group            *string `json:"group,omitempty"`
-	Public           bool    `json:"public"`
+	Protocol         string `json:"protocol"`
+	PortNumber       int32  `json:"portNumber"`
+	CustomHostPrefix string `json:"customHostPrefix,omitempty"`
+	HTTPPath         string `json:"httpPath,omitempty"`
+	TargetPortNumber *int32 `json:"targetPortNumber,omitempty"`
+	Public           bool   `json:"public"`
+}
+
+func HTTPUniqueKey(host, httpPath string) string {
+	return fmt.Sprintf("http://%s%s", host, httpPath)
+}
+
+func (r *NetworkRule) UniqueKey() string {
+	if r.Protocol == "http" {
+		return HTTPUniqueKey(r.HostPrefix(), r.HTTPPath)
+	}
+	return r.HostPrefix()
+}
+
+func MainRuleKey(cfg Config) string {
+	return HTTPUniqueKey(cfg.ServiceMainPortName, "/")
+}
+
+func (r *NetworkRule) HostPrefix() string {
+	if r.CustomHostPrefix != "" {
+		return r.CustomHostPrefix
+	}
+	return r.portName()
+}
+
+func (r *NetworkRule) portName() string {
+	return fmt.Sprintf("port%d", r.PortNumber)
 }
 
 func (r *NetworkRule) Default() {
 	if r.HTTPPath == "" {
 		r.HTTPPath = "/"
 	}
-	if r.Group == nil || *r.Group == "" {
-		r.Group = &r.Name
+	if r.Protocol == "" {
+		r.Protocol = "http"
 	}
-}
-
-func (r *NetworkRule) portName() string {
-	return fmt.Sprintf("port%d", r.PortNumber)
 }
 
 func (r *NetworkRule) ServicePort() corev1.ServicePort {
@@ -112,18 +134,36 @@ func (r *NetworkRule) ServicePort() corev1.ServicePort {
 	}
 }
 
-func NetworkRulesByService(svc corev1.Service) []NetworkRule {
-	netRules := make([]NetworkRule, 0, len(svc.Spec.Ports))
-	for _, p := range svc.Spec.Ports {
-		var netRule NetworkRule
-		netRule.Name = p.Name
-		netRule.PortNumber = p.Port
+const (
+	DefaultHostBase     = "{{NETRULE}}-{{WORKSPACE}}-{{USER}}"
+	URLVarNetRule       = "{{NETRULE}}"
+	URLVarWorkspaceName = "{{WORKSPACE}}"
+	URLVarUserName      = "{{USER}}"
+)
 
-		if p.TargetPort.IntValue() != 0 {
-			netRule.TargetPortNumber = pointer.Int32(int32(p.TargetPort.IntValue()))
-		}
-		netRule.Default()
-		netRules = append(netRules, netRule)
+func GenHost(hostbase, domain, hostprefix string, ws Workspace) string {
+	host := hostbase
+	if host == "" {
+		host = DefaultHostBase
 	}
-	return netRules
+	host = strings.ReplaceAll(host, URLVarNetRule, hostprefix)
+	host = strings.ReplaceAll(host, URLVarWorkspaceName, ws.GetName())
+	userName := UserNameByNamespace(ws.GetNamespace())
+	if userName == "" {
+		userName = "default"
+	}
+	host = strings.ReplaceAll(host, URLVarUserName, userName)
+	if domain == "" {
+		return host
+	}
+	return fmt.Sprintf("%s.%s", host, domain)
+}
+
+func GenURL(protocol, host, path string) string {
+	u := url.URL{
+		Scheme: protocol,
+		Host:   host,
+		Path:   path,
+	}
+	return u.String()
 }

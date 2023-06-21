@@ -1,9 +1,12 @@
-import { Close } from "@mui/icons-material";
+import { Close, ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
-  Alert, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel,
+  Alert,
+  Box,
+  Button, Checkbox, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel,
   IconButton, Stack, TextField, Typography
 } from "@mui/material";
-import { Controller, useForm, UseFormRegisterReturn } from "react-hook-form";
+import { useState } from "react";
+import { Controller, UseFormRegisterReturn, useForm } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { NetworkRule, Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
@@ -16,25 +19,31 @@ const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
 /**
  * view
  */
-export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkRule?: NetworkRule, onClose: () => void }>
-  = ({ workspace, networkRule, onClose }) => {
+export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkRule?: NetworkRule, index: number, onClose: () => void, defaultOpenHttpOptions?: boolean, isMain?: boolean }>
+  = ({ workspace, networkRule, onClose, index, defaultOpenHttpOptions, isMain }) => {
     console.log('NetworkRuleUpsertDialog', networkRule);
     const networkRuleModule = useNetworkRule();
     const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<NetworkRule>({
-      defaultValues: networkRule || { portNumber: 0, httpPath: '/' },
+      defaultValues: networkRule || { portNumber: 8080, httpPath: '/' },
     });
+
+    const [openHttpOptions, setOpenHttpOptions] = useState<boolean>(defaultOpenHttpOptions || false);
+
+    const handleOpenHttpOptionsClick = () => {
+      setOpenHttpOptions(!openHttpOptions);
+    };
 
     const upsertRule = (newRule: NetworkRule) => {
       if (!(newRule.httpPath || '').startsWith('/')) {
         newRule.httpPath = '/' + newRule.httpPath;
       }
-      networkRuleModule.upsertNetwork(workspace, newRule).then(() => onClose());
+      networkRuleModule.upsertNetwork(workspace, newRule, index).then(() => onClose());
     }
 
     return (
       <Dialog open={true} fullWidth maxWidth={'xs'} >
         <DialogTitle >
-          {networkRule ? "Edit NetworkRule" : "Add New NetworkRule"}
+          {networkRule ? isMain ? "⭐️ Main NetworkRule" : "Edit NetworkRule" : "Add New NetworkRule"}
           <IconButton
             sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
             onClick={() => onClose()}>
@@ -44,25 +53,7 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
         <DialogContent>
           <form onSubmit={handleSubmit((data) => { upsertRule(data); })}>
             <Stack sx={{ mt: 1 }} spacing={2}>
-              {networkRule ?
-                <TextFieldLabel label="Port Name" fullWidth value={networkRule.name} />
-                :
-                <TextField label="Port Name" fullWidth autoFocus
-                  {...registerMui(register('name', {
-                    required: { value: true, message: "Required" },
-                    maxLength: { value: 128, message: "Max 128 characters" },
-                    validate: {
-                      alpha: v => /^[^a-z]+$/.test(v) === false || 'Must contain at least one letter (a-z)',
-                      hyphen: v => /^[^-](.*[^-])?$/.test(v) || 'Must start and end with an alphanumeric character',
-                      chars: v => /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(v) || 'Only lowercase alphanumeric charactor and - are allowed',
-                    },
-                    onChange: e => { setValue('group', e.target.value); }
-                  }))}
-                  error={Boolean(errors.name)}
-                  helperText={(errors.name && errors.name.message) || 'Lowercase Alphanumeric or in ["-"]'}
-                />
-              }
-              <TextField label="Port Number" fullWidth type='number'
+              <TextField label="Port Number" fullWidth type='number' disabled={isMain}
                 {...registerMui(register('portNumber', {
                   required: { value: true, message: "Required" },
                   valueAsNumber: true,
@@ -72,26 +63,40 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
                 error={Boolean(errors.portNumber)}
                 helperText={(errors.portNumber && errors.portNumber.message) || '1 - 65535.'}
               />
-              <TextField label="Group" fullWidth
-                {...registerMui(register('group', {
-                  required: { value: true, message: "Required" },
-                  maxLength: { value: 128, message: "Max 128 characters" },
-                  validate: {
-                    hyphen: v => /^[^-](.*[^-])?$/.test(v || '') || 'Must start and end with an alphanumeric character',
-                    chars: v => /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(v || '') || 'Only lowercase alphanumeric charactor and - are allowed',
-                  },
-                }))}
-                error={Boolean(errors.group)}
-                helperText={(errors.group && errors.group.message)}
-              />
-              <TextField label="HTTP Path" fullWidth
-                {...registerMui(register('httpPath', {
-                  required: { value: true, message: "Required" },
-                  maxLength: { value: 127, message: "Max 127 characters" },
-                }))}
-                error={Boolean(errors.httpPath)}
-                helperText={(errors.httpPath && errors.httpPath.message)}
-              />
+              <Typography
+                color="text.secondary"
+                display="block"
+                variant="caption"
+              >
+                HTTP Options
+                <IconButton size="small" aria-label="openHttpOptions" onClick={handleOpenHttpOptionsClick}>
+                  {openHttpOptions ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
+                </IconButton>
+              </Typography>
+              <Collapse in={openHttpOptions} timeout="auto" unmountOnExit>
+                <TextField label="Custom Host Prefix" fullWidth disabled={isMain}
+                  {...registerMui(register('customHostPrefix', {
+                    value: networkRule?.customHostPrefix,
+                    maxLength: { value: 128, message: "Max 128 characters" },
+                    validate: {
+                      hyphen: v => /^[^-](.*[^-])?$|^$/.test(v || '') || 'Must start and end with an alphanumeric character',
+                      chars: v => /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$|^$/.test(v || '') || 'Only lowercase alphanumeric charactor and - are allowed',
+                    },
+                  }))}
+                  error={Boolean(errors.customHostPrefix)}
+                  helperText={(errors.customHostPrefix && errors.customHostPrefix.message)}
+                />
+                <Box sx={{ margin: 2 }} />
+                <TextField label="HTTP Path" fullWidth disabled={isMain}
+                  {...registerMui(register('httpPath', {
+                    required: { value: true, message: "Required" },
+                    maxLength: { value: 127, message: "Max 127 characters" },
+                  }))}
+                  error={Boolean(errors.httpPath)}
+                  helperText={(errors.httpPath && errors.httpPath.message)}
+                />
+              </Collapse>
+              <Divider />
               <FormControlLabel
                 sx={{ my: 2 }}
                 control={<Controller
@@ -122,12 +127,12 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
   };
 
 export const NetworkRuleDeleteDialog: React.VFC<{
-  workspace: Workspace, networkRule: NetworkRule, onClose: () => void
-}> = ({ workspace, networkRule, onClose }) => {
+  workspace: Workspace, networkRule: NetworkRule, index: number, onClose: () => void
+}> = ({ workspace, networkRule, index, onClose }) => {
   console.log('NetworkRuleDeleteDialog', networkRule);
   const networkRuleModule = useNetworkRule();
   const deleteRule = () => {
-    networkRuleModule.removeNetwork(workspace, networkRule.name).then(() => onClose());
+    networkRuleModule.removeNetwork(workspace, index).then(() => onClose());
   }
 
   return (
@@ -142,10 +147,10 @@ export const NetworkRuleDeleteDialog: React.VFC<{
       </DialogTitle>
       <DialogContent>
         <Stack sx={{ mt: 1 }} spacing={2}>
-          <TextFieldLabel label="Port Name" fullWidth value={networkRule.name} />
-          <TextFieldLabel label="Port Number" fullWidth value={networkRule.portNumber} />
-          <TextFieldLabel label="HTTP Path" fullWidth value={networkRule.httpPath} />
-          <TextFieldLabel label="Group" fullWidth value={networkRule.group} />
+          <TextFieldLabel label="Port" fullWidth value={networkRule.portNumber} />
+          <Typography variant="body2">HTTP Options</Typography>
+          <TextFieldLabel label="Custom Host Prefix" fullWidth value={networkRule.customHostPrefix} />
+          <TextFieldLabel label="Path" fullWidth value={networkRule.httpPath} />
         </Stack>
         <Alert severity='warning' sx={{ my: 2 }}
           action={<Button variant="contained" color="secondary" onClick={deleteRule}>DELETE</Button>}
@@ -158,7 +163,7 @@ export const NetworkRuleDeleteDialog: React.VFC<{
 /**
  * Context
  */
-export const NetworkRuleUpsertDialogContext = DialogContext<{ workspace: Workspace, networkRule?: NetworkRule }>(
+export const NetworkRuleUpsertDialogContext = DialogContext<{ workspace: Workspace, networkRule?: NetworkRule, index: number, defaultOpenHttpOptions?: boolean, isMain?: boolean }>(
   props => (<NetworkRuleUpsertDialog {...props} />));
-export const NetworkRuleDeleteDialogContext = DialogContext<{ workspace: Workspace, networkRule: NetworkRule }>(
+export const NetworkRuleDeleteDialogContext = DialogContext<{ workspace: Workspace, networkRule: NetworkRule, index: number }>(
   props => (<NetworkRuleDeleteDialog {...props} />));

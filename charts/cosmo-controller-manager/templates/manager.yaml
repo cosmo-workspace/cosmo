@@ -125,7 +125,9 @@ spec:
         {{- if .Values.traefik.middlewares.usernameHeader }}
         - --traefik-username-header-middleware={{ .Values.traefik.middlewares.usernameHeader }}
         {{- end }}
-        - --workspace-urlbase={{ .Values.defaultURLBase.protocol }}://{{ .Values.defaultURLBase.host }}.{{ .Values.defaultURLBase.domain }}
+        - --workspace-urlbase-protocol={{ .Values.defaultURLBase.protocol }}
+        - --workspace-urlbase-host={{ .Values.defaultURLBase.host }}
+        - --workspace-urlbase-domain={{ .Values.defaultURLBase.domain }}
         command:
         - /manager
         image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}

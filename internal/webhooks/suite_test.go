@@ -22,7 +22,6 @@ import (
 	//+kubebuilder:scaffold:imports
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
 const (
@@ -99,9 +98,8 @@ var _ = BeforeSuite(func() {
 	}).SetupWebhookWithManager(mgr)
 
 	(&WorkspaceMutationWebhookHandler{
-		Client:  k8sClient,
-		Log:     clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
-		URLBase: workspace.URLBase("https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{NAMESPACE}}.example.com"),
+		Client: k8sClient,
+		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 
 	(&WorkspaceValidationWebhookHandler{

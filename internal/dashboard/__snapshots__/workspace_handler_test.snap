@@ -10,8 +10,7 @@ SnapShot = """
       \"replicas\": 1
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -50,8 +49,7 @@ SnapShot = """
       }
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -90,8 +88,7 @@ SnapShot = """
       \"replicas\": 1
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -164,7 +161,7 @@ SnapShot = """
         \"name\": \"main\",
         \"portNumber\": 18080,
         \"httpPath\": \"/\",
-        \"host\": \"main-ws1-admin-user.domain\",
+        \"host\": \"main-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"main\",
         \"public\": false
       }
@@ -174,8 +171,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }
@@ -209,8 +205,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }
@@ -249,8 +244,7 @@ SnapShot = """
       }
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -271,8 +265,7 @@ SnapShot = """
       }
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -301,8 +294,7 @@ SnapShot = """
       \"replicas\": 1
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -322,8 +314,7 @@ SnapShot = """
       }
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -343,8 +334,7 @@ SnapShot = """
       }
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -374,8 +364,7 @@ SnapShot = """
         \"replicas\": 1
       },
       \"status\": {
-        \"phase\": \"Pending\",
-        \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+        \"phase\": \"Pending\"
       }
     },
     {
@@ -406,8 +395,7 @@ SnapShot = """
         ]
       },
       \"status\": {
-        \"phase\": \"Pending\",
-        \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+        \"phase\": \"Pending\"
       }
     }
   ]
@@ -451,8 +439,7 @@ SnapShot = """
       \"template\": \"template1\"
     },
     \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"phase\": \"Pending\"
     }
   }
 }
@@ -473,53 +460,14 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }
 """
 
 ['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" replicas:5 1']
-SnapShot = """
-{
-  \"message\": \"Successfully updated\",
-  \"workspace\": {
-    \"name\": \"ws1\",
-    \"owner_name\": \"normal-user\",
-    \"spec\": {
-      \"template\": \"template1\",
-      \"replicas\": 5
-    },
-    \"status\": {
-      \"phase\": \"Pending\",
-      \"url_base\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
-    }
-  }
-}
-"""
-
-['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" replicas:5 2']
-SnapShot = """
-{
-  \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-normal-user\",
-  \"Spec\": {
-    \"template\": {
-      \"name\": \"template1\"
-    },
-    \"replicas\": 5
-  },
-  \"Status\": {
-    \"instance\": {},
-    \"phase\": \"Pending\",
-    \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
-    }
-  }
-}
-"""
+SnapShot = 'internal: failed to update workspace'
 
 ['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" replicas:0 1']
 SnapShot = 'internal: failed to update workspace'
@@ -564,7 +512,7 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
-        \"host\": \"gp1-ws1-admin-user.domain\",
+        \"host\": \"gp1-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -572,7 +520,7 @@ SnapShot = """
         \"name\": \"nw2\",
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
-        \"host\": \"gp2-ws1-admin-user.domain\",
+        \"host\": \"gp2-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp2\",
         \"public\": false
       }
@@ -582,8 +530,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }
@@ -616,7 +563,7 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 9999,
         \"httpPath\": \"/\",
-        \"host\": \"gp1-ws1-admin-user.domain\",
+        \"host\": \"gp1-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -624,7 +571,7 @@ SnapShot = """
         \"name\": \"nw2\",
         \"portNumber\": 3000,
         \"httpPath\": \"/\",
-        \"host\": \"nw2-ws1-admin-user.domain\",
+        \"host\": \"nw2-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"nw2\",
         \"public\": true
       }
@@ -634,8 +581,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }

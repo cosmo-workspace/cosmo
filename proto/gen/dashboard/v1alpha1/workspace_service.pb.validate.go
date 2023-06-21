@@ -1321,6 +1321,8 @@ func (m *UpsertNetworkRuleRequest) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Index
+
 	if len(errors) > 0 {
 		return UpsertNetworkRuleRequestMultiError(errors)
 	}
@@ -1560,7 +1562,7 @@ func (m *DeleteNetworkRuleRequest) validate(all bool) error {
 
 	// no validation rules for WsName
 
-	// no validation rules for NetworkRuleName
+	// no validation rules for Index
 
 	if len(errors) > 0 {
 		return DeleteNetworkRuleRequestMultiError(errors)

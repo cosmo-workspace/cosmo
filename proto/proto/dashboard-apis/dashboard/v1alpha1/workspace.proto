@@ -8,19 +8,18 @@ syntax = "proto3";
 package dashboard.v1alpha1;
 
 message NetworkRule {
-  string name = 1;
-  int32 port_number = 2;
-  string group = 3;
-  string http_path = 4;
-  string url = 5;
-  bool public = 6;
+  int32 port_number = 1;
+  string custom_host_prefix = 2;
+  string http_path = 3;
+  string url = 4;
+  bool public = 5;
 }
 
 message WorkspaceSpec {
   string template = 1;
   int64 replicas = 2;
   map<string, string> vars = 3;
-  repeated NetworkRule additional_network = 4;
+  repeated NetworkRule network = 4;
 }
 
 message WorkspaceStatus {

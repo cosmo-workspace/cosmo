@@ -223,16 +223,22 @@ func (c *TestUtil) DeleteWorkspaceAll() {
 	}
 }
 
-func (c *TestUtil) UpsertNetworkRule(userName, workspaceName, networkRuleName string, portNumber int32, group, httpPath string, public bool) {
+func (c *TestUtil) UpsertNetworkRule(userName, workspaceName string, customHostPrefix string, portNumber int32, httpPath string, public bool, index int) {
 	ctx := context.Background()
 
-	_, err := c.kosmoClient.AddNetworkRule(ctx, workspaceName, userName, networkRuleName, portNumber, &group, httpPath, public)
+	r := cosmov1alpha1.NetworkRule{
+		PortNumber:       portNumber,
+		CustomHostPrefix: customHostPrefix,
+		HTTPPath:         httpPath,
+		Public:           public,
+	}
+	_, err := c.kosmoClient.AddNetworkRule(ctx, workspaceName, userName, r, index)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Eventually(func() bool {
 		ws, _ := c.kosmoClient.GetWorkspaceByUserName(ctx, workspaceName, userName)
 		for _, n := range ws.Spec.Network {
-			if n.Name == networkRuleName {
+			if n.UniqueKey() == r.UniqueKey() {
 				return true
 			}
 		}
@@ -240,19 +246,9 @@ func (c *TestUtil) UpsertNetworkRule(userName, workspaceName, networkRuleName st
 	}, time.Second*5, time.Millisecond*100).Should(BeTrue())
 }
 
-func (c *TestUtil) DeleteNetworkRule(userName, workspaceName, networkRuleName string) {
+func (c *TestUtil) DeleteNetworkRule(userName, workspaceName string, index int) {
 	ctx := context.Background()
 
-	_, err := c.kosmoClient.DeleteNetworkRule(ctx, workspaceName, userName, networkRuleName)
+	_, err := c.kosmoClient.DeleteNetworkRule(ctx, workspaceName, userName, index)
 	Expect(err).ShouldNot(HaveOccurred())
-
-	Eventually(func() bool {
-		ws, _ := c.kosmoClient.GetWorkspaceByUserName(ctx, workspaceName, userName)
-		for _, n := range ws.Spec.Network {
-			if n.Name == networkRuleName {
-				return true
-			}
-		}
-		return false
-	}, time.Second*5, time.Millisecond*100).Should(BeFalse())
 }

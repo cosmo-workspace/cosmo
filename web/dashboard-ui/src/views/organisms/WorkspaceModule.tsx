@@ -85,8 +85,8 @@ const useWorkspace = () => {
         return;
       }
     }
-    if ((newWorkspace.spec?.additionalNetwork &&
-      newWorkspace.spec.additionalNetwork.filter((v) => (!v.url)).length !== 0) ||
+    if ((newWorkspace.spec?.network &&
+      newWorkspace.spec.network.filter((v) => (!v.url)).length !== 0) ||
       (!['Running', 'Stopped', 'Error', 'CrashLoopBackOff'].includes(computeStatus(newWorkspace)))) {
       setTimeout(() => refreshWorkspace(newWorkspace, tout), 1000);
     }
@@ -224,11 +224,11 @@ export const useNetworkRule = () => {
   const workspaceService = useWorkspaceService();
   const workspaceModule = useWorkspaceModule();
 
-  const upsertNetwork = async (workspace: Workspace, networkRule: NetworkRule) => {
+  const upsertNetwork = async (workspace: Workspace, networkRule: NetworkRule, index: number) => {
     console.log('upsertNetwork', workspace, networkRule);
     setMask();
     try {
-      const result = await workspaceService.upsertNetworkRule({ userName: workspace.ownerName!, wsName: workspace.name, networkRule: networkRule });
+      const result = await workspaceService.upsertNetworkRule({ userName: workspace.ownerName!, wsName: workspace.name, networkRule: networkRule, index: index });
       console.log(result);
       enqueueSnackbar(result.message, { variant: 'success' });
       workspaceModule.refreshWorkspace(workspace);
@@ -239,11 +239,11 @@ export const useNetworkRule = () => {
     }
   }
 
-  const removeNetwork = async (workspace: Workspace, netRuleName: string) => {
-    console.log('removeNetwork', workspace, netRuleName);
+  const removeNetwork = async (workspace: Workspace, index: number) => {
+    console.log('removeNetwork', workspace, index);
     setMask();
     try {
-      const result_1 = await workspaceService.deleteNetworkRule({ userName: workspace.ownerName!, wsName: workspace.name, networkRuleName: netRuleName });
+      const result_1 = await workspaceService.deleteNetworkRule({ userName: workspace.ownerName!, wsName: workspace.name, index: index });
       console.log(result_1);
       enqueueSnackbar(result_1.message, { variant: 'success' });
       workspaceModule.refreshWorkspace(workspace);

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"reflect"
 	"sort"
 
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -155,57 +154,47 @@ func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opt
 	return ws, nil
 }
 
-func (c *Client) AddNetworkRule(ctx context.Context, name, username,
-	networkRuleName string, portNumber int32, group *string, httpPath string, public bool) (*cosmov1alpha1.NetworkRule, error) {
+func (c *Client) AddNetworkRule(ctx context.Context, name, username string, r cosmov1alpha1.NetworkRule, index int) (*cosmov1alpha1.NetworkRule, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
 	if err != nil {
 		return nil, err
 	}
-
-	for _, netRule := range ws.Spec.Network {
-		if netRule.Name != networkRuleName &&
-			reflect.DeepEqual(netRule.Group, group) &&
-			netRule.HTTPPath == httpPath {
-			message := fmt.Sprintf("group '%s' and http path '%s' is already used", *group, httpPath)
-			log.Error(err, message, "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
-			return nil, NewBadRequestError(message, nil)
-		}
-	}
-
 	before := ws.DeepCopy()
 
-	// upsert
-	index := getNetRuleIndex(ws.Spec.Network, networkRuleName)
-	if index == -1 {
-		index = len(ws.Spec.Network)
-		ws.Spec.Network = append(ws.Spec.Network, cosmov1alpha1.NetworkRule{})
-	}
-	var netRule = &ws.Spec.Network[index]
-	netRule.Name = networkRuleName
-	netRule.PortNumber = portNumber
-	netRule.Group = group
-	netRule.HTTPPath = httpPath
-	netRule.Public = public
+	r.Default()
 
-	log.Debug().Info("upserting network rule", "ws", ws.Name, "namespace", ws.Namespace, "netRule", netRule)
+	// upsert
+	if index < 0 || index >= len(ws.Spec.Network) {
+		ws.Spec.Network = append(ws.Spec.Network, r)
+		log.Debug().Info("insert network rule", "ws", ws.Name, "namespace", ws.Namespace, "netRule", r)
+	} else {
+		ws.Spec.Network[index] = r
+		log.Debug().Info("update network rule", "ws", ws.Name, "namespace", ws.Namespace, "netRule", r)
+	}
+
 	log.DebugAll().PrintObjectDiff(before, ws)
 
 	if equality.Semantic.DeepEqual(before, ws) {
-		log.Info("no change", "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Info("no change", "username", username, "workspace", ws.Name, "netRule", r)
 		return nil, NewBadRequestError("no change", nil)
 	}
 
 	if err := c.Update(ctx, ws); err != nil {
+		if apierrs.IsBadRequest(err) || apierrs.IsForbidden(err) {
+			message := "failed to upsert network rule"
+			log.Error(err, message, "username", username, "workspace", ws.Name, "netRule", r)
+			return nil, NewBadRequestError(message, err)
+		}
 		message := "failed to upsert network rule"
-		log.Error(err, message, "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, message, "username", username, "workspace", ws.Name, "netRule", r)
 		return nil, NewInternalServerError(message, err)
 	}
-	return netRule.DeepCopy(), nil
+	return r.DeepCopy(), nil
 }
 
-func (c *Client) DeleteNetworkRule(ctx context.Context, name, username, networkRuleName string) (*cosmov1alpha1.NetworkRule, error) {
+func (c *Client) DeleteNetworkRule(ctx context.Context, name, username string, index int) (*cosmov1alpha1.NetworkRule, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
@@ -213,24 +202,16 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, username, networkR
 		return nil, err
 	}
 	log.DebugAll().Info("GetWorkspace", "ws", ws, "username", username)
-
-	if networkRuleName == ws.Status.Config.ServiceMainPortName {
-		return nil, NewBadRequestError("main port cannot be removed", nil)
-	}
-
-	index := getNetRuleIndex(ws.Spec.Network, networkRuleName)
-	if index == -1 {
-		message := fmt.Sprintf("port name %s is not found", networkRuleName)
-		log.Info(message, "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
-		return nil, NewBadRequestError(message, nil)
-	}
-
 	before := ws.DeepCopy()
+
+	if index < 0 || index >= len(ws.Spec.Network) {
+		return nil, errors.New("index out of range")
+	}
 
 	delRule := ws.Spec.Network[index].DeepCopy()
 	ws.Spec.Network = ws.Spec.Network[:index+copy(ws.Spec.Network[index:], ws.Spec.Network[index+1:])]
 
-	log.DebugAll().Info("NetworkRule removed", "ws", ws, "username", username, "netRuleName", networkRuleName)
+	log.Debug().Info("NetworkRule removing", "ws", ws, "username", username, "index", index, "netRule", delRule)
 	log.DebugAll().PrintObjectDiff(before, ws)
 
 	if equality.Semantic.DeepEqual(before, ws) {
@@ -239,15 +220,55 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, username, networkR
 
 	if err := c.Update(ctx, ws); err != nil {
 		message := "failed to remove network rule"
-		log.Error(err, message, "username", username, "workspace", ws.Name, "netRuleName", networkRuleName)
+		log.Error(err, message, "username", username, "workspace", ws.Name, "index", index, "netRule", delRule)
 		return nil, NewInternalServerError(message, err)
 	}
 	return delRule, nil
 }
 
-func getNetRuleIndex(netRules []cosmov1alpha1.NetworkRule, netRuleName string) int {
+// func (c *Client) DeleteNetworkRule(ctx context.Context, name, username string, r cosmov1alpha1.NetworkRule) (*cosmov1alpha1.NetworkRule, error) {
+// 	log := clog.FromContext(ctx).WithCaller()
+
+// 	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	log.DebugAll().Info("GetWorkspace", "ws", ws, "username", username)
+
+// 	if r.GetName() == ws.Status.Config.ServiceMainPortName && r.HTTPPath == "/" {
+// 		return nil, NewBadRequestError("main port cannot be removed", nil)
+// 	}
+
+// 	index := getNetRuleIndex(ws.Spec.Network, r)
+// 	if index == -1 {
+// 		message := fmt.Sprintf("network rule %v is not found", r)
+// 		log.Info(message, "username", username, "workspace", ws.Name, "netRule", r)
+// 		return nil, NewBadRequestError(message, nil)
+// 	}
+
+// 	before := ws.DeepCopy()
+
+// 	delRule := ws.Spec.Network[index].DeepCopy()
+// 	ws.Spec.Network = ws.Spec.Network[:index+copy(ws.Spec.Network[index:], ws.Spec.Network[index+1:])]
+
+// 	log.DebugAll().Info("NetworkRule removed", "ws", ws, "username", username, "netRule", r)
+// 	log.DebugAll().PrintObjectDiff(before, ws)
+
+// 	if equality.Semantic.DeepEqual(before, ws) {
+// 		return nil, errors.New("no change")
+// 	}
+
+// 	if err := c.Update(ctx, ws); err != nil {
+// 		message := "failed to remove network rule"
+// 		log.Error(err, message, "username", username, "workspace", ws.Name, "netRule", r)
+// 		return nil, NewInternalServerError(message, err)
+// 	}
+// 	return delRule, nil
+// }
+
+func getNetRuleIndex(netRules []cosmov1alpha1.NetworkRule, r cosmov1alpha1.NetworkRule) int {
 	for i, netRule := range netRules {
-		if netRule.Name == netRuleName {
+		if netRule.UniqueKey() == r.UniqueKey() {
 			return i
 		}
 	}

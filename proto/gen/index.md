@@ -632,9 +632,8 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
 | port_number | [int32](#int32) |  |  |
-| group | [string](#string) |  |  |
+| custom_host_prefix | [string](#string) |  |  |
 | http_path | [string](#string) |  |  |
 | url | [string](#string) |  |  |
 | public | [bool](#bool) |  |  |
@@ -673,7 +672,7 @@
 | template | [string](#string) |  |  |
 | replicas | [int64](#int64) |  |  |
 | vars | [WorkspaceSpec.VarsEntry](#dashboard-v1alpha1-WorkspaceSpec-VarsEntry) | repeated |  |
-| additional_network | [NetworkRule](#dashboard-v1alpha1-NetworkRule) | repeated |  |
+| network | [NetworkRule](#dashboard-v1alpha1-NetworkRule) | repeated |  |
 
 
 
@@ -788,7 +787,7 @@
 | ----- | ---- | ----- | ----------- |
 | user_name | [string](#string) |  | user name |
 | ws_name | [string](#string) |  | workspace name |
-| network_rule_name | [string](#string) |  | network rule name |
+| index | [int32](#int32) |  | network rule index to delete |
 
 
 
@@ -949,6 +948,7 @@
 | user_name | [string](#string) |  | user name |
 | ws_name | [string](#string) |  | workspace name |
 | network_rule | [NetworkRule](#dashboard-v1alpha1-NetworkRule) |  | network rule to upsert |
+| index | [int32](#int32) |  | network rule index to update. insert if index is out of length |
 
 
 

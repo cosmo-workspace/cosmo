@@ -141,14 +141,14 @@ func convertWorkspaceTodashv1alpha1Workspace(ws cosmov1alpha1.Workspace) *dashv1
 		Name:      ws.Name,
 		OwnerName: cosmov1alpha1.UserNameByNamespace(ws.Namespace),
 		Spec: &dashv1alpha1.WorkspaceSpec{
-			Template:          ws.Spec.Template.Name,
-			Replicas:          *replicas,
-			Vars:              ws.Spec.Vars,
-			AdditionalNetwork: convertNetRulesTodashv1alpha1NetRules(ws.Spec.Network, ws.Status.URLs, ws.Status.Config.ServiceMainPortName),
+			Template: ws.Spec.Template.Name,
+			Replicas: *replicas,
+			Vars:     ws.Spec.Vars,
+			Network:  convertNetRulesTodashv1alpha1NetRules(ws.Spec.Network, ws.Status.URLs),
 		},
 		Status: &dashv1alpha1.WorkspaceStatus{
 			Phase:   string(ws.Status.Phase),
-			MainUrl: ws.Status.URLs[ws.Status.Config.ServiceMainPortName],
+			MainUrl: ws.Status.URLs[cosmov1alpha1.MainRuleKey(ws.Status.Config)],
 		},
 	}
 }

@@ -21,7 +21,7 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"host\": \"gp1-ws1-user1.domain\",
+        \"host\": \"gp1-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -29,7 +29,7 @@ SnapShot = """
         \"name\": \"nw11\",
         \"portNumber\": 3000,
         \"httpPath\": \"/abc\",
-        \"host\": \"gp11-ws1-user1.domain\",
+        \"host\": \"gp11-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp11\",
         \"public\": false
       },
@@ -37,7 +37,7 @@ SnapShot = """
         \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
-        \"host\": \"gp2-ws1-user1.domain\",
+        \"host\": \"gp2-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp2\",
         \"public\": false
       }
@@ -47,8 +47,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }
@@ -77,7 +76,7 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"host\": \"gp1-ws1-user1.domain\",
+        \"host\": \"gp1-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -85,7 +84,7 @@ SnapShot = """
         \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
-        \"host\": \"gp2-ws1-user1.domain\",
+        \"host\": \"gp2-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp2\",
         \"public\": false
       },
@@ -93,7 +92,7 @@ SnapShot = """
         \"name\": \"nw12\",
         \"portNumber\": 4000,
         \"httpPath\": \"/def\",
-        \"host\": \"nw12-ws1-user1.domain\",
+        \"host\": \"nw12-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"nw12\",
         \"public\": false
       }
@@ -103,8 +102,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }
@@ -133,7 +131,7 @@ SnapShot = """
         \"name\": \"nw1\",
         \"portNumber\": 1111,
         \"httpPath\": \"/\",
-        \"host\": \"gp1-ws1-user1.domain\",
+        \"host\": \"gp1-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp1\",
         \"public\": false
       },
@@ -141,7 +139,7 @@ SnapShot = """
         \"name\": \"nw3\",
         \"portNumber\": 2222,
         \"httpPath\": \"/\",
-        \"host\": \"gp2-ws1-user1.domain\",
+        \"host\": \"gp2-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"gp2\",
         \"public\": false
       },
@@ -149,7 +147,7 @@ SnapShot = """
         \"name\": \"nw12\",
         \"portNumber\": 4000,
         \"httpPath\": \"/def\",
-        \"host\": \"nw12-ws1-user1.domain\",
+        \"host\": \"nw12-{{WOKRSPACE}}-{{USER}}.domain\",
         \"group\": \"nw12\",
         \"public\": false
       }
@@ -159,8 +157,7 @@ SnapShot = """
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
-      \"mainServicePortName\": \"main\",
-      \"urlbase\": \"https://{{NETRULE_GROUP}}-{{INSTANCE}}-{{USER_NAME}}.domain\"
+      \"mainServicePortName\": \"main\"
     }
   }
 }
