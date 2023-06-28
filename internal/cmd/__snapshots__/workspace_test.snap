@@ -15,7 +15,16 @@ SnapShot = """
     \"replicas\": 1,
     \"vars\": {
       \"HOGE\": \"HOGEHOGE\"
-    }
+    },
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
   },
   \"Status\": {
     \"instance\": {},
@@ -38,7 +47,16 @@ SnapShot = """
     \"template\": {
       \"name\": \"template1\"
     },
-    \"replicas\": 1
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
   },
   \"Status\": {
     \"instance\": {},
@@ -73,6 +91,12 @@ metadata:
   namespace: cosmo-user-user1
   uid: xxxxxxxx
 spec:
+  network:
+  - customHostPrefix: main
+    httpPath: /
+    portNumber: 18080
+    protocol: http
+    public: false
   replicas: 1
   template:
     name: template1
@@ -81,6 +105,7 @@ spec:
 status:
   config:
     mainServicePortName: main
+    serviceName: workspace
   instance: {}
   phase: Pending
 
@@ -606,9 +631,11 @@ cosmo-user-user1   ws2    template1   Pending
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o wide 1']
 SnapShot = """
-USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
-cosmo-user-user1   ws2              nw1         1111          gp1     /           
-cosmo-user-user1   ws2              nw3         2222          gp3     /           
+USER-NAMESPACE     WORKSPACE-NAME   PORT    URL
+cosmo-user-user1   ws1              18080   
+cosmo-user-user1   ws2              18080   
+cosmo-user-user1   ws2              1111    
+cosmo-user-user1   ws2              2222    
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o yaml 1']
@@ -623,12 +650,19 @@ metadata:
   resourceVersion: xxxxxxxx
   uid: xxxxxxxx
 spec:
+  network:
+  - customHostPrefix: main
+    httpPath: /
+    portNumber: 18080
+    protocol: http
+    public: false
   replicas: 1
   template:
     name: template1
 status:
   config:
     mainServicePortName: main
+    serviceName: workspace
   instance: {}
   phase: Pending
 ---
@@ -643,17 +677,20 @@ metadata:
   uid: xxxxxxxx
 spec:
   network:
-  - group: gp1
-    host: gp1-{{WOKRSPACE}}-{{USER}}.domain
+  - customHostPrefix: main
     httpPath: /
-    name: nw1
-    portNumber: 1111
+    portNumber: 18080
+    protocol: http
     public: false
-  - group: gp3
-    host: gp3-{{WOKRSPACE}}-{{USER}}.domain
+  - customHostPrefix: nw1
     httpPath: /
-    name: nw3
+    portNumber: 1111
+    protocol: http
+    public: false
+  - customHostPrefix: nw3
+    httpPath: /
     portNumber: 2222
+    protocol: http
     public: false
   replicas: 1
   template:
@@ -661,6 +698,7 @@ spec:
 status:
   config:
     mainServicePortName: main
+    serviceName: workspace
   instance: {}
   phase: Pending
 ---
@@ -669,9 +707,11 @@ status:
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network 1']
 SnapShot = """
-USER-NAMESPACE     WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
-cosmo-user-user1   ws2              nw1         1111          gp1     /           
-cosmo-user-user1   ws2              nw3         2222          gp3     /           
+USER-NAMESPACE     WORKSPACE-NAME   PORT    URL
+cosmo-user-user1   ws1              18080   
+cosmo-user-user1   ws2              18080   
+cosmo-user-user1   ws2              1111    
+cosmo-user-user1   ws2              2222    
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o wide 1']
@@ -693,12 +733,19 @@ metadata:
   resourceVersion: xxxxxxxx
   uid: xxxxxxxx
 spec:
+  network:
+  - customHostPrefix: main
+    httpPath: /
+    portNumber: 18080
+    protocol: http
+    public: false
   replicas: 1
   template:
     name: template1
 status:
   config:
     mainServicePortName: main
+    serviceName: workspace
   instance: {}
   phase: Pending
 ---
@@ -713,17 +760,20 @@ metadata:
   uid: xxxxxxxx
 spec:
   network:
-  - group: gp1
-    host: gp1-{{WOKRSPACE}}-{{USER}}.domain
+  - customHostPrefix: main
     httpPath: /
-    name: nw1
-    portNumber: 1111
+    portNumber: 18080
+    protocol: http
     public: false
-  - group: gp3
-    host: gp3-{{WOKRSPACE}}-{{USER}}.domain
+  - customHostPrefix: nw1
     httpPath: /
-    name: nw3
+    portNumber: 1111
+    protocol: http
+    public: false
+  - customHostPrefix: nw3
+    httpPath: /
     portNumber: 2222
+    protocol: http
     public: false
   replicas: 1
   template:
@@ -731,6 +781,7 @@ spec:
 status:
   config:
     mainServicePortName: main
+    serviceName: workspace
   instance: {}
   phase: Pending
 ---
@@ -761,7 +812,7 @@ USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network -o wide 1']
 SnapShot = """
-USER-NAMESPACE   WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
+USER-NAMESPACE   WORKSPACE-NAME   PORT   URL
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network -o yaml 1']
@@ -771,7 +822,7 @@ SnapShot = """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network 1']
 SnapShot = """
-USER-NAMESPACE   WORKSPACE-NAME   PORT-NAME   PORT-NUMBER   GROUP   HTTP-PATH   URL
+USER-NAMESPACE   WORKSPACE-NAME   PORT   URL
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A -o wide 1']
@@ -1011,12 +1062,22 @@ SnapShot = """
     \"template\": {
       \"name\": \"template1\"
     },
-    \"replicas\": 1
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
   },
   \"Status\": {
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
+      \"serviceName\": \"workspace\",
       \"mainServicePortName\": \"main\"
     }
   }
@@ -1241,12 +1302,22 @@ SnapShot = """
     \"template\": {
       \"name\": \"template1\"
     },
-    \"replicas\": 0
+    \"replicas\": 0,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
   },
   \"Status\": {
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
+      \"serviceName\": \"workspace\",
       \"mainServicePortName\": \"main\"
     }
   }

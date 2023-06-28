@@ -58,23 +58,18 @@ func TestTraefikIngressRouteConfig_PatchTraefikIngressRouteAsDesired(t *testing.
 							{
 								PortNumber:       8080,
 								HTTPPath:         "/",
+								CustomHostPrefix: "main",
 								TargetPortNumber: pointer.Int32(18080),
 								Public:           false,
 							},
 							{
-								PortNumber:       8080,
-								HTTPPath:         "/",
-								TargetPortNumber: pointer.Int32(18080),
-								Public:           true,
+								PortNumber: 8080,
+								HTTPPath:   "/",
+								Public:     true,
 							},
 							{
 								PortNumber: 8080,
-								HTTPPath:   "/",
-								Public:     false,
-							},
-							{
-								PortNumber: 8080,
-								HTTPPath:   "/",
+								HTTPPath:   "/dev",
 								Public:     false,
 							},
 						},
@@ -114,8 +109,8 @@ func TestTraefikIngressRouteConfig_TraefikRoute(t *testing.T) {
 		UserNameHeaderMiddleware traefikv1.MiddlewareRef
 	}
 	type args struct {
-		r              cosmov1alpha1.NetworkRule
-		backendSvcName string
+		r  cosmov1alpha1.NetworkRule
+		ws cosmov1alpha1.Workspace
 	}
 	tests := []struct {
 		name   string
@@ -139,7 +134,17 @@ func TestTraefikIngressRouteConfig_TraefikRoute(t *testing.T) {
 					HTTPPath:   "/",
 					Public:     false,
 				},
-				backendSvcName: "backend-svc",
+				ws: cosmov1alpha1.Workspace{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "ws1",
+						Namespace: "cosmo-user-xxx",
+					},
+					Status: cosmov1alpha1.WorkspaceStatus{
+						Config: cosmov1alpha1.Config{
+							ServiceName: "backend-svc-name",
+						},
+					},
+				},
 			},
 		},
 		{
@@ -159,11 +164,22 @@ func TestTraefikIngressRouteConfig_TraefikRoute(t *testing.T) {
 					HTTPPath:   "/path",
 					Public:     false,
 				},
-				backendSvcName: "backend-svc",
+
+				ws: cosmov1alpha1.Workspace{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "ws1",
+						Namespace: "cosmo-user-xxx",
+					},
+					Status: cosmov1alpha1.WorkspaceStatus{
+						Config: cosmov1alpha1.Config{
+							ServiceName: "backend-svc-name",
+						},
+					},
+				},
 			},
 		},
 		{
-			name: "no hostname",
+			name: "public",
 			fields: fields{
 				AuthenMiddleware: traefikv1.MiddlewareRef{
 					Name:      "cosmo-auth",
@@ -179,20 +195,31 @@ func TestTraefikIngressRouteConfig_TraefikRoute(t *testing.T) {
 					HTTPPath:   "/path",
 					Public:     true,
 				},
-				backendSvcName: "backend-svc",
+
+				ws: cosmov1alpha1.Workspace{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "ws1",
+						Namespace: "cosmo-user-xxx",
+					},
+					Status: cosmov1alpha1.WorkspaceStatus{
+						Config: cosmov1alpha1.Config{
+							ServiceName: "backend-svc-name",
+						},
+					},
+				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// c := &TraefikIngressRouteConfig{
-			// 	Entrypoints:              tt.fields.Entrypoints,
-			// 	TLS:                      tt.fields.TLS,
-			// 	AuthenMiddleware:         tt.fields.AuthenMiddleware,
-			// 	UserNameHeaderMiddleware: tt.fields.UserNameHeaderMiddleware,
-			// }
-			// got := c.TraefikRoute(tt.args.r, tt.args.backendSvcName)
-			// snaps.MatchJSON(t, got)
+			c := &TraefikIngressRouteConfig{
+				Entrypoints:              tt.fields.Entrypoints,
+				TLS:                      tt.fields.TLS,
+				AuthenMiddleware:         tt.fields.AuthenMiddleware,
+				UserNameHeaderMiddleware: tt.fields.UserNameHeaderMiddleware,
+			}
+			got := c.TraefikRoute(tt.args.r, tt.args.ws)
+			snaps.MatchJSON(t, got)
 		})
 	}
 }

@@ -1,171 +1,319 @@
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw11 --user user1 --workspace ws1 --port 3000 --path /abc --group gp11 1']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --namespace cosmo-user-user1 --workspace ws1 --port 4000 --host-prefix nw12 --path /def 1']
 SnapShot = """
-\u001B[32mSuccessfully add network rule 'nw11' for workspace 'ws1'
+\u001B[32mSuccessfully add network rule for workspace 'ws1'
 \u001B[0m"""
 
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw11 --user user1 --workspace ws1 --port 3000 --path /abc --group gp11 2']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --namespace cosmo-user-user1 --workspace ws1 --port 4000 --host-prefix nw12 --path /def 2']
 SnapShot = 'success'
 
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw11 --user user1 --workspace ws1 --port 3000 --path /abc --group gp11 3']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --namespace cosmo-user-user1 --workspace ws1 --port 4000 --host-prefix nw12 --path /def 3']
 SnapShot = """
 {
-  \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-user1\",
-  \"Spec\": {
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
     \"template\": {
       \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [
       {
-        \"name\": \"nw1\",
-        \"portNumber\": 1111,
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
         \"httpPath\": \"/\",
-        \"host\": \"gp1-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"gp1\",
         \"public\": false
       },
       {
-        \"name\": \"nw11\",
+        \"protocol\": \"http\",
+        \"portNumber\": 1111,
+        \"customHostPrefix\": \"nw1\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 4000,
+        \"customHostPrefix\": \"nw12\",
+        \"httpPath\": \"/def\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 2222,
+        \"customHostPrefix\": \"nw3\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"serviceName\": \"workspace\",
+      \"mainServicePortName\": \"main\"
+    }
+  }
+}
+"""
+
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 3000 --host-prefix nw11 --path /abc 1']
+SnapShot = """
+\u001B[32mSuccessfully add network rule for workspace 'ws1'
+\u001B[0m"""
+
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 3000 --host-prefix nw11 --path /abc 2']
+SnapShot = 'success'
+
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 3000 --host-prefix nw11 --path /abc 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 1111,
+        \"customHostPrefix\": \"nw1\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
         \"portNumber\": 3000,
+        \"customHostPrefix\": \"nw11\",
         \"httpPath\": \"/abc\",
-        \"host\": \"gp11-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"gp11\",
         \"public\": false
       },
       {
-        \"name\": \"nw3\",
+        \"protocol\": \"http\",
         \"portNumber\": 2222,
+        \"customHostPrefix\": \"nw3\",
         \"httpPath\": \"/\",
-        \"host\": \"gp2-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"gp2\",
         \"public\": false
       }
     ]
   },
-  \"Status\": {
+  \"status\": {
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
+      \"serviceName\": \"workspace\",
       \"mainServicePortName\": \"main\"
     }
   }
 }
 """
 
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw12 --user user1 --workspace ws1 --port 4000 --path /def 1']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 --host-prefix nw13 --path /def 1']
 SnapShot = """
-\u001B[32mSuccessfully add network rule 'nw12' for workspace 'ws1'
+\u001B[32mSuccessfully add network rule for workspace 'ws1'
 \u001B[0m"""
 
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw12 --user user1 --workspace ws1 --port 4000 --path /def 2']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 --host-prefix nw13 --path /def 2']
 SnapShot = 'success'
 
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw12 --user user1 --workspace ws1 --port 4000 --path /def 3']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 --host-prefix nw13 --path /def 3']
 SnapShot = """
 {
-  \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-user1\",
-  \"Spec\": {
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
     \"template\": {
       \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [
       {
-        \"name\": \"nw1\",
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
         \"portNumber\": 1111,
+        \"customHostPrefix\": \"nw1\",
         \"httpPath\": \"/\",
-        \"host\": \"gp1-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"gp1\",
         \"public\": false
       },
       {
-        \"name\": \"nw3\",
-        \"portNumber\": 2222,
-        \"httpPath\": \"/\",
-        \"host\": \"gp2-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"gp2\",
-        \"public\": false
-      },
-      {
-        \"name\": \"nw12\",
+        \"protocol\": \"http\",
         \"portNumber\": 4000,
+        \"customHostPrefix\": \"nw13\",
         \"httpPath\": \"/def\",
-        \"host\": \"nw12-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"nw12\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 2222,
+        \"customHostPrefix\": \"nw3\",
+        \"httpPath\": \"/\",
         \"public\": false
       }
     ]
   },
-  \"Status\": {
+  \"status\": {
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
+      \"serviceName\": \"workspace\",
       \"mainServicePortName\": \"main\"
     }
   }
 }
 """
 
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw12 --user user1 --workspace ws1 --port 4000 --path /def 4']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 --path /def 1']
 SnapShot = """
-\u001B[32mSuccessfully add network rule 'nw12' for workspace 'ws1'
+\u001B[32mSuccessfully add network rule for workspace 'ws1'
 \u001B[0m"""
 
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw12 --user user1 --workspace ws1 --port 4000 --path /def 5']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 --path /def 2']
 SnapShot = 'success'
 
-['cosmoctl [netrule] [create] ✅ success in normal context: netrule create nw12 --user user1 --workspace ws1 --port 4000 --path /def 6']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 --path /def 3']
 SnapShot = """
 {
-  \"Name\": \"ws1\",
-  \"Namespace\": \"cosmo-user-user1\",
-  \"Spec\": {
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
     \"template\": {
       \"name\": \"template1\"
     },
     \"replicas\": 1,
     \"network\": [
       {
-        \"name\": \"nw1\",
-        \"portNumber\": 1111,
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
         \"httpPath\": \"/\",
-        \"host\": \"gp1-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"gp1\",
         \"public\": false
       },
       {
-        \"name\": \"nw3\",
-        \"portNumber\": 2222,
-        \"httpPath\": \"/\",
-        \"host\": \"gp2-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"gp2\",
-        \"public\": false
-      },
-      {
-        \"name\": \"nw12\",
+        \"protocol\": \"http\",
         \"portNumber\": 4000,
         \"httpPath\": \"/def\",
-        \"host\": \"nw12-{{WOKRSPACE}}-{{USER}}.domain\",
-        \"group\": \"nw12\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 1111,
+        \"customHostPrefix\": \"nw1\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 2222,
+        \"customHostPrefix\": \"nw3\",
+        \"httpPath\": \"/\",
         \"public\": false
       }
     ]
   },
-  \"Status\": {
+  \"status\": {
     \"instance\": {},
     \"phase\": \"Pending\",
     \"config\": {
+      \"serviceName\": \"workspace\",
       \"mainServicePortName\": \"main\"
     }
   }
 }
 """
 
-['cosmoctl [netrule] [create] ❌ fail with an unexpected error at update: netrule create ws1 --user user1 --workspace nw12 --port 4000 --path /def 1']
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 1']
 SnapShot = """
-Error: workspace is not found: workspaces.cosmo-workspace.github.io \"nw12\" not found
+\u001B[32mSuccessfully add network rule for workspace 'ws1'
+\u001B[0m"""
+
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 2']
+SnapShot = 'success'
+
+['cosmoctl [netrule] [create] ✅ success in normal context: netrule create --user user1 --workspace ws1 --port 4000 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 4000,
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 1111,
+        \"customHostPrefix\": \"nw1\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 2222,
+        \"customHostPrefix\": \"nw3\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"serviceName\": \"workspace\",
+      \"mainServicePortName\": \"main\"
+    }
+  }
+}
+"""
+
+['cosmoctl [netrule] [create] ❌ fail with an unexpected error at update: netrule create --workspace ws1 --user user1 --host-prefix nw99 --port 4000 --path /def 1']
+SnapShot = """
+Error: failed to upsert network rule: mock update error
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -173,12 +321,12 @@ Aliases:
   create, add
 
 Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
+  -h, --help                 help for create
+      --host-prefix string   custom host prefix
+      --path string          path for Ingress path when using ingress (default \"/\")
+      --port int32           serivce port number (Required)
+      --public               disable authentication for this port
+      --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -189,12 +337,12 @@ Global Flags:
 
 """
 
-['cosmoctl [netrule] [create] ❌ fail with an unexpected error at update: netrule create ws1 --user user1 --workspace nw12 --port 4000 --path /def 2']
-SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "nw12" not found'
+['cosmoctl [netrule] [create] ❌ fail with an unexpected error at update: netrule create --workspace ws1 --user user1 --host-prefix nw99 --port 4000 --path /def 2']
+SnapShot = 'failed to upsert network rule: mock update error'
 
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create 1']
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --namespace xxxxx --workspace ws1 --port 4000 1']
 SnapShot = """
-Error: validation error: invalid args
+Error: invalid options: namespace xxxxx is not cosmo user's namespace
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -202,12 +350,262 @@ Aliases:
   create, add
 
 Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
+  -h, --help                 help for create
+      --host-prefix string   custom host prefix
+      --path string          path for Ingress path when using ingress (default \"/\")
+      --port int32           serivce port number (Required)
+      --public               disable authentication for this port
+      --workspace string     workspace name (Required)
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user name
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --namespace xxxxx --workspace ws1 --port 4000 2']
+SnapShot = """
+invalid options: namespace xxxxx is not cosmo user's namespace"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 0 1']
+SnapShot = """
+Error: validation error: --port is required
+Usage:
+  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  create, add
+
+Flags:
+  -h, --help                 help for create
+      --host-prefix string   custom host prefix
+      --path string          path for Ingress path when using ingress (default \"/\")
+      --port int32           serivce port number (Required)
+      --public               disable authentication for this port
+      --workspace string     workspace name (Required)
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user name
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 0 2']
+SnapShot = 'validation error: --port is required'
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 124000 1']
+SnapShot = """
+Error: failed to upsert network rule: admission webhook \"vworkspace.kb.io\" denied the request: network rules check failed: port validation failed: port=124000: admission webhook \"vworkspace.kb.io\" denied the request: network rules check failed: port validation failed: port=124000
+Usage:
+  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  create, add
+
+Flags:
+  -h, --help                 help for create
+      --host-prefix string   custom host prefix
+      --path string          path for Ingress path when using ingress (default \"/\")
+      --port int32           serivce port number (Required)
+      --public               disable authentication for this port
+      --workspace string     workspace name (Required)
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user name
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 124000 2']
+SnapShot = 'failed to upsert network rule: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: port validation failed: port=124000: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: port validation failed: port=124000'
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 4000 --host-prefix main 1']
+SnapShot = """
+\u001B[32mSuccessfully add network rule for workspace 'ws1'
+\u001B[0m"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 4000 --host-prefix main 2']
+SnapShot = 'success'
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 4000 --host-prefix main 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 4000,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 1111,
+        \"customHostPrefix\": \"nw1\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"serviceName\": \"workspace\",
+      \"mainServicePortName\": \"main\"
+    }
+  }
+}
+"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 4000 1']
+SnapShot = """
+\u001B[32mSuccessfully add network rule for workspace 'ws1'
+\u001B[0m"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 4000 2']
+SnapShot = 'success'
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 4000 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 4000,
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 1111,
+        \"customHostPrefix\": \"nw1\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"serviceName\": \"workspace\",
+      \"mainServicePortName\": \"main\"
+    }
+  }
+}
+"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace xxx --port 4000 1']
+SnapShot = """
+Error: failed to get workspace: workspace is not found
+Usage:
+  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  create, add
+
+Flags:
+  -h, --help                 help for create
+      --host-prefix string   custom host prefix
+      --path string          path for Ingress path when using ingress (default \"/\")
+      --port int32           serivce port number (Required)
+      --public               disable authentication for this port
+      --workspace string     workspace name (Required)
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user name
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace xxx --port 4000 2']
+SnapShot = 'failed to get workspace: workspace is not found'
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user xxx --workspace ws1 --port 4000 1']
+SnapShot = """
+Error: failed to get workspace: user is not found
+Usage:
+  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  create, add
+
+Flags:
+  -h, --help                 help for create
+      --host-prefix string   custom host prefix
+      --path string          path for Ingress path when using ingress (default \"/\")
+      --port int32           serivce port number (Required)
+      --public               disable authentication for this port
+      --workspace string     workspace name (Required)
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -n, --namespace string    namespace
+  -u, --user string         user name
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user xxx --workspace ws1 --port 4000 2']
+SnapShot = 'failed to get workspace: user is not found'
+
+['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create 1']
+SnapShot = """
+Error: validation error: --workspace is required
+Usage:
+  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
+
+Aliases:
+  create, add
+
+Flags:
+  -h, --help                 help for create
+      --host-prefix string   custom host prefix
+      --path string          path for Ingress path when using ingress (default \"/\")
+      --port int32           serivce port number (Required)
+      --public               disable authentication for this port
+      --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -219,328 +617,114 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create 2']
-SnapShot = 'validation error: invalid args'
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw1 --user user1 --workspace ws1 --port 1111 --path / --group gp1 1']
-SnapShot = """
-Error: no change
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
-
-Aliases:
-  create, add
-
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw1 --user user1 --workspace ws1 --port 1111 --path / --group gp1 2']
-SnapShot = 'no change'
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --namespace xxxxx --workspace ws1 --port 3000 --path / 1']
-SnapShot = """
-Error: invalid options: namespace xxxxx is not cosmo user's namespace
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
-
-Aliases:
-  create, add
-
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --namespace xxxxx --workspace ws1 --port 3000 --path / 2']
-SnapShot = """
-invalid options: namespace xxxxx is not cosmo user's namespace"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --namespace cosmo-user-user1 --workspace ws1 --port 3000 --path / 1']
-SnapShot = """
-Error: validation error: --user and --namespace connot be used at the same time
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
-
-Aliases:
-  create, add
-
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --namespace cosmo-user-user1 --workspace ws1 --port 3000 --path / 2']
-SnapShot = 'validation error: --user and --namespace connot be used at the same time'
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --port 3000 --path / 1']
-SnapShot = """
-Error: validation error: --workspace is required
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
-
-Aliases:
-  create, add
-
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --port 3000 --path / 2']
 SnapShot = 'validation error: --workspace is required'
 
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --path / 1']
+['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete --user user1 --workspace ws1 --index 0 1']
 SnapShot = """
-Error: validation error: --port is required
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
+\u001B[32mSuccessfully remove network rule for workspace 'ws1'
+\u001B[0m"""
 
-Aliases:
-  create, add
+['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete --user user1 --workspace ws1 --index 0 2']
+SnapShot = 'success'
 
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
+['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete --user user1 --workspace ws1 --index 0 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 1111,
+        \"customHostPrefix\": \"nw1\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 2222,
+        \"customHostPrefix\": \"nw2\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"serviceName\": \"workspace\",
+      \"mainServicePortName\": \"main\"
+    }
+  }
+}
 """
 
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --path / 2']
-SnapShot = 'validation error: --port is required'
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 1111 --path / --group gp1 1']
+['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete --user user1 --workspace ws1 --index 1 1']
 SnapShot = """
-Error: group 'gp1' and http path '/' is already used
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
+\u001B[32mSuccessfully remove network rule for workspace 'ws1'
+\u001B[0m"""
 
-Aliases:
-  create, add
+['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete --user user1 --workspace ws1 --index 1 2']
+SnapShot = 'success'
 
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
+['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete --user user1 --workspace ws1 --index 1 3']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-user1\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      },
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 2222,
+        \"customHostPrefix\": \"nw2\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"serviceName\": \"workspace\",
+      \"mainServicePortName\": \"main\"
+    }
+  }
+}
 """
 
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 1111 --path / --group gp1 2']
-SnapShot = """
-group 'gp1' and http path '/' is already used"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 3000 --path / -A 1']
-SnapShot = """
-Error: unknown shorthand flag: 'A' in -A
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
-
-Aliases:
-  create, add
-
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace ws1 --port 3000 --path / -A 2']
-SnapShot = """
-unknown shorthand flag: 'A' in -A"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace xxx --port 3000 --path / 1']
-SnapShot = """
-Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
-
-Aliases:
-  create, add
-
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user user1 --workspace xxx --port 3000 --path / 2']
-SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user xxxxx --workspace ws1 --port 3000 --path / 1']
-SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
-Usage:
-  cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
-
-Aliases:
-  create, add
-
-Flags:
-      --group string       group of ports for URLVar. Ports in the same group are treated as the same domain. set 'name' value if empty
-  -h, --help               help for create
-      --path string        path for Ingress path when using ingress (default \"/\")
-      --port int32         serivce port number (Required)
-      --public             disable authentication for this port
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create nw11 --user xxxxx --workspace ws1 --port 3000 --path / 2']
-SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxxxx" not found'
-
-['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete ws1 --user user1 --workspace nw1 1']
-SnapShot = """
-Error: workspace is not found: workspaces.cosmo-workspace.github.io \"nw1\" not found
-Usage:
-  cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
-
-Aliases:
-  delete, rm
-
-Flags:
-  -h, --help               help for delete
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [delete] ✅ success in normal context: netrule delete ws1 --user user1 --workspace nw1 2']
-SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "nw1" not found'
-
-['cosmoctl [netrule] [delete] ✅ success in normal context: netrule rm-net ws1 --user user1 --workspace nw1 1']
-SnapShot = """
-Error: unknown flag: --workspace
-Usage:
-  cosmoctl networkrule [command]
-
-Aliases:
-  networkrule, netrule, net
-
-Available Commands:
-  create      Create or update workspace network rule
-  delete      Delete workspace network rule
-
-Flags:
-  -h, --help               help for networkrule
-  -n, --namespace string   namespace
-  -u, --user string        user name
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-Use \"cosmoctl networkrule [command] --help\" for more information about a command.
-
-"""
-
-['cosmoctl [netrule] [delete] ✅ success in normal context: netrule rm-net ws1 --user user1 --workspace nw1 2']
-SnapShot = 'unknown flag: --workspace'
-
-['cosmoctl [netrule] [delete] ❌ fail with an unexpected error at update: netrule delete nw1 --user user1 --workspace ws1 1']
+['cosmoctl [netrule] [delete] ❌ fail with an unexpected error at update: netrule delete --user user1 --workspace ws1 --index 1 1']
 SnapShot = """
 Error: failed to remove network rule: mock update error
 Usage:
@@ -551,6 +735,7 @@ Aliases:
 
 Flags:
   -h, --help               help for delete
+      --index int          network rule index (Required) (default -1)
       --workspace string   workspace name (Required)
 
 Global Flags:
@@ -562,12 +747,12 @@ Global Flags:
 
 """
 
-['cosmoctl [netrule] [delete] ❌ fail with an unexpected error at update: netrule delete nw1 --user user1 --workspace ws1 2']
+['cosmoctl [netrule] [delete] ❌ fail with an unexpected error at update: netrule delete --user user1 --workspace ws1 --index 1 2']
 SnapShot = 'failed to remove network rule: mock update error'
 
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete 1']
+['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user user1 --workspace ws1 --index -1 1']
 SnapShot = """
-Error: validation error: invalid args
+Error: index out of range
 Usage:
   cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
 
@@ -576,6 +761,7 @@ Aliases:
 
 Flags:
   -h, --help               help for delete
+      --index int          network rule index (Required) (default -1)
       --workspace string   workspace name (Required)
 
 Global Flags:
@@ -587,12 +773,12 @@ Global Flags:
 
 """
 
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete 2']
-SnapShot = 'validation error: invalid args'
+['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user user1 --workspace ws1 --index -1 2']
+SnapShot = 'index out of range'
 
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete main --user user1 --workspace ws1 1']
+['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user user1 --workspace ws1 --index 3 1']
 SnapShot = """
-Error: main port cannot be removed
+Error: index out of range
 Usage:
   cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
 
@@ -601,6 +787,7 @@ Aliases:
 
 Flags:
   -h, --help               help for delete
+      --index int          network rule index (Required) (default -1)
       --workspace string   workspace name (Required)
 
 Global Flags:
@@ -612,87 +799,10 @@ Global Flags:
 
 """
 
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete main --user user1 --workspace ws1 2']
-SnapShot = 'main port cannot be removed'
+['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user user1 --workspace ws1 --index 3 2']
+SnapShot = 'index out of range'
 
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --namespace xxxxx --workspace ws1 1']
-SnapShot = """
-Error: invalid options: namespace xxxxx is not cosmo user's namespace
-Usage:
-  cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
-
-Aliases:
-  delete, rm
-
-Flags:
-  -h, --help               help for delete
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --namespace xxxxx --workspace ws1 2']
-SnapShot = """
-invalid options: namespace xxxxx is not cosmo user's namespace"""
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 --namespace cosmo-user-user1 --workspace ws1 1']
-SnapShot = """
-Error: validation error: --user and --namespace connot be used at the same time
-Usage:
-  cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
-
-Aliases:
-  delete, rm
-
-Flags:
-  -h, --help               help for delete
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 --namespace cosmo-user-user1 --workspace ws1 2']
-SnapShot = 'validation error: --user and --namespace connot be used at the same time'
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 --workspace ws1 -A 1']
-SnapShot = """
-Error: unknown shorthand flag: 'A' in -A
-Usage:
-  cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
-
-Aliases:
-  delete, rm
-
-Flags:
-  -h, --help               help for delete
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 --workspace ws1 -A 2']
-SnapShot = """
-unknown shorthand flag: 'A' in -A"""
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 --workspace xxx 1']
+['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user user1 --workspace xxx --index 1 1']
 SnapShot = """
 Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
@@ -703,6 +813,7 @@ Aliases:
 
 Flags:
   -h, --help               help for delete
+      --index int          network rule index (Required) (default -1)
       --workspace string   workspace name (Required)
 
 Global Flags:
@@ -714,12 +825,12 @@ Global Flags:
 
 """
 
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 --workspace xxx 2']
+['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user user1 --workspace xxx --index 1 2']
 SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'
 
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 1']
+['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user xxx --workspace ws1 --index 1 1']
 SnapShot = """
-Error: validation error: workspace name is required
+Error: user is not found: users.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
 
@@ -728,6 +839,7 @@ Aliases:
 
 Flags:
   -h, --help               help for delete
+      --index int          network rule index (Required) (default -1)
       --workspace string   workspace name (Required)
 
 Global Flags:
@@ -739,55 +851,5 @@ Global Flags:
 
 """
 
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user user1 2']
-SnapShot = 'validation error: workspace name is required'
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user xxxxx --workspace ws1 1']
-SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
-Usage:
-  cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
-
-Aliases:
-  delete, rm
-
-Flags:
-  -h, --help               help for delete
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete nw11 --user xxxxx --workspace ws1 2']
-SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxxxx" not found'
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete xxxx --user user1 --workspace ws1 1']
-SnapShot = """
-Error: port name xxxx is not found
-Usage:
-  cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
-
-Aliases:
-  delete, rm
-
-Flags:
-  -h, --help               help for delete
-      --workspace string   workspace name (Required)
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete xxxx --user user1 --workspace ws1 2']
-SnapShot = 'port name xxxx is not found'
+['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user xxx --workspace ws1 --index 1 2']
+SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxx" not found'

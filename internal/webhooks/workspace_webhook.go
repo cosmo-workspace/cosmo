@@ -123,13 +123,13 @@ func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceToNetworkRule(ctx co
 	// append network rules
 	for _, netRule := range networkRulesByServicePorts(svc.Spec.Ports) {
 		r := *netRule.DeepCopy()
-		r.Default()
 		appendNetworkRuleIfNotExist(ws, r)
 	}
 	return nil
 }
 
 func appendNetworkRuleIfNotExist(ws *cosmov1alpha1.Workspace, netRule cosmov1alpha1.NetworkRule) {
+	netRule.Default()
 	for _, r := range ws.Spec.Network {
 		if netRule.UniqueKey() == r.UniqueKey() {
 			return
@@ -268,8 +268,8 @@ func checkNetworkRules(netRules []cosmov1alpha1.NetworkRule) error {
 				continue
 			}
 			if netRule.UniqueKey() == v.UniqueKey() {
-				r, _ := json.Marshal(netRules)
-				return fmt.Errorf("duplicate network rules hostPrefix=%s,path=%s,rules=%s", v.HostPrefix(), v.HTTPPath, string(r))
+				r, _ := json.Marshal(v)
+				return fmt.Errorf("duplicate network rules: %s", string(r))
 			}
 		}
 	}

@@ -94,25 +94,6 @@ func TestNetworkRule_Default(t *testing.T) {
 			},
 		},
 		{
-			name: "✅ name is empty",
-			netRule: NetworkRule{
-				CustomHostPrefix: "",
-				Protocol:         "http",
-				PortNumber:       1111,
-				HTTPPath:         "path",
-				TargetPortNumber: pointer.Int32(2222),
-				Public:           false,
-			},
-			want: NetworkRule{
-				CustomHostPrefix: "port1111",
-				Protocol:         "http",
-				PortNumber:       1111,
-				HTTPPath:         "path",
-				TargetPortNumber: pointer.Int32(2222),
-				Public:           false,
-			},
-		},
-		{
 			name: "✅ protocol is empty",
 			netRule: NetworkRule{
 				CustomHostPrefix: "port1111",

@@ -80,14 +80,6 @@ var _ = Describe("cosmoctl [netrule]", func() {
 		}
 	}
 
-	workspaceSnap := func(ws *cosmov1alpha1.Workspace) struct{ Name, Namespace, Spec, Status interface{} } {
-		return struct{ Name, Namespace, Spec, Status interface{} }{
-			Name:      ws.Name,
-			Namespace: ws.Namespace,
-			Spec:      ws.Spec,
-			Status:    ws.Status,
-		}
-	}
 	//==================================================================================
 	Describe("[create]", func() {
 
@@ -98,9 +90,9 @@ var _ = Describe("cosmoctl [netrule]", func() {
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
 			if err == nil {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[6], "user1")
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[5], "user1")
 				Expect(err).NotTo(HaveOccurred())
-				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+				Ω(ObjectSnapshot(wsv1Workspace)).To(MatchSnapShot())
 			}
 			By("---------------test end---------------")
 		}
@@ -112,9 +104,11 @@ var _ = Describe("cosmoctl [netrule]", func() {
 				testUtil.UpsertNetworkRule("user1", "ws1", "nw3", 2222, "/", false, -1)
 				run_test(args...)
 			},
-			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "3000", "--path", "/abc", "--group", "gp11"),
-			Entry(desc, "netrule", "create", "nw12", "--user", "user1", "--workspace", "ws1", "--port", "4000", "--path", "/def"),
-			Entry(desc, "netrule", "create", "nw12", "--user", "user1", "--workspace", "ws1", "--port", "4000", "--path", "/def"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "ws1", "--port", "3000", "--host-prefix", "nw11", "--path", "/abc"),
+			Entry(desc, "netrule", "create", "--namespace", "cosmo-user-user1", "--workspace", "ws1", "--port", "4000", "--host-prefix", "nw12", "--path", "/def"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "ws1", "--port", "4000", "--host-prefix", "nw13", "--path", "/def"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "ws1", "--port", "4000"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "ws1", "--port", "4000", "--path", "/def"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
@@ -123,16 +117,14 @@ var _ = Describe("cosmoctl [netrule]", func() {
 				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "/", false, -1)
 				run_test(args...)
 			},
-			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "3000", "--path", "/", "-A"),
-			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--namespace", "cosmo-user-user1", "--workspace", "ws1", "--port", "3000", "--path", "/"),
-			Entry(desc, "netrule", "create", "nw11", "--namespace", "xxxxx", "--workspace", "ws1", "--port", "3000", "--path", "/"),
+			Entry(desc, "netrule", "create", "--user", "xxx", "--workspace", "ws1", "--port", "4000"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "xxx", "--port", "4000"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "ws1", "--port", "0"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "ws1", "--port", "124000"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "ws1", "--port", "4000", "--host-prefix", "main"),
+			Entry(desc, "netrule", "create", "--user", "user1", "--workspace", "ws1", "--port", "4000"),
 			Entry(desc, "netrule", "create"),
-			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--port", "3000", "--path", "/"),
-			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--path", "/"),
-			Entry(desc, "netrule", "create", "nw11", "--user", "xxxxx", "--workspace", "ws1", "--port", "3000", "--path", "/"),
-			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "xxx", "--port", "3000", "--path", "/"),
-			Entry(desc, "netrule", "create", "nw11", "--user", "user1", "--workspace", "ws1", "--port", "1111", "--path", "/", "--group", "gp1"),
-			Entry(desc, "netrule", "create", "nw1", "--user", "user1", "--workspace", "ws1", "--port", "1111", "--path", "/", "--group", "gp1"),
+			Entry(desc, "netrule", "create", "--namespace", "xxxxx", "--workspace", "ws1", "--port", "4000"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
@@ -146,7 +138,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 				}
 				run_test(args...)
 			},
-			Entry(desc, "netrule", "create", "ws1", "--user", "user1", "--workspace", "nw12", "--port", "4000", "--path", "/def"),
+			Entry(desc, "netrule", "create", "--workspace", "ws1", "--user", "user1", "--host-prefix", "nw99", "--port", "4000", "--path", "/def"),
 		)
 	})
 
@@ -160,9 +152,9 @@ var _ = Describe("cosmoctl [netrule]", func() {
 			Expect(consoleOut()).To(MatchSnapShot())
 			Ω(errSnap(err)).To(MatchSnapShot())
 			if err == nil {
-				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[2], "user1")
+				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), args[5], args[3])
 				Expect(err).NotTo(HaveOccurred())
-				Ω(workspaceSnap(wsv1Workspace)).To(MatchSnapShot())
+				Ω(ObjectSnapshot(wsv1Workspace)).To(MatchSnapShot())
 			}
 			By("---------------test end---------------")
 		}
@@ -174,8 +166,8 @@ var _ = Describe("cosmoctl [netrule]", func() {
 				testUtil.UpsertNetworkRule("user1", "ws1", "nw2", 2222, "/", false, -1)
 				run_test(args...)
 			},
-			Entry(desc, "netrule", "delete", "ws1", "--user", "user1", "--workspace", "nw1"),
-			Entry(desc, "netrule", "rm-net", "ws1", "--user", "user1", "--workspace", "nw1"),
+			Entry(desc, "netrule", "delete", "--user", "user1", "--workspace", "ws1", "--index", "0"),
+			Entry(desc, "netrule", "delete", "--user", "user1", "--workspace", "ws1", "--index", "1"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
@@ -184,15 +176,10 @@ var _ = Describe("cosmoctl [netrule]", func() {
 				testUtil.UpsertNetworkRule("user1", "ws1", "nw1", 1111, "/", false, -1)
 				run_test(args...)
 			},
-			Entry(desc, "netrule", "delete", "nw11", "--user", "user1", "--workspace", "ws1", "-A"),
-			Entry(desc, "netrule", "delete", "nw11", "--user", "user1", "--namespace", "cosmo-user-user1", "--workspace", "ws1"),
-			Entry(desc, "netrule", "delete", "nw11", "--namespace", "xxxxx", "--workspace", "ws1"),
-			Entry(desc, "netrule", "delete"),
-			Entry(desc, "netrule", "delete", "nw11", "--user", "user1"),
-			Entry(desc, "netrule", "delete", "nw11", "--user", "xxxxx", "--workspace", "ws1"),
-			Entry(desc, "netrule", "delete", "nw11", "--user", "user1", "--workspace", "xxx"),
-			Entry(desc, "netrule", "delete", "main", "--user", "user1", "--workspace", "ws1"),
-			Entry(desc, "netrule", "delete", "xxxx", "--user", "user1", "--workspace", "ws1"),
+			Entry(desc, "netrule", "delete", "--user", "xxx", "--workspace", "ws1", "--index", "1"),
+			Entry(desc, "netrule", "delete", "--user", "user1", "--workspace", "xxx", "--index", "1"),
+			Entry(desc, "netrule", "delete", "--user", "user1", "--workspace", "ws1", "--index", "-1"),
+			Entry(desc, "netrule", "delete", "--user", "user1", "--workspace", "ws1", "--index", "3"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
@@ -202,7 +189,7 @@ var _ = Describe("cosmoctl [netrule]", func() {
 				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
 				run_test(args...)
 			},
-			Entry(desc, "netrule", "delete", "nw1", "--user", "user1", "--workspace", "ws1"),
+			Entry(desc, "netrule", "delete", "--user", "user1", "--workspace", "ws1", "--index", "1"),
 		)
 	})
 

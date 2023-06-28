@@ -23,7 +23,7 @@ SnapShot = """
     \"vars\": {
       \"{{DOMAIN}}\": \"example.com\",
       \"{{IMAGE_TAG}}\": \"latest\",
-      \"{{USER_NAME}}\": \"wsctltest\",
+      \"{{USER}}\": \"wsctltest\",
       \"{{WORKSPACE_DEPLOYMENT_NAME}}\": \"ws-dep\",
       \"{{WORKSPACE_SERVICE_NAME}}\": \"ws-svc\",
       \"{{WORKSPACE}}\": \"ws-test\"
@@ -109,7 +109,7 @@ SnapShot = """
     \"vars\": {
       \"{{DOMAIN}}\": \"example.com\",
       \"{{IMAGE_TAG}}\": \"latest\",
-      \"{{USER_NAME}}\": \"wsctltest\",
+      \"{{USER}}\": \"wsctltest\",
       \"{{WORKSPACE_DEPLOYMENT_NAME}}\": \"ws-dep\",
       \"{{WORKSPACE_SERVICE_NAME}}\": \"ws-svc\",
       \"{{WORKSPACE}}\": \"ws-test\"
@@ -163,7 +163,7 @@ SnapShot = """
   \"spec\": {
     \"routes\": [
       {
-        \"match\": \"PathPrefix(`/path`)\",
+        \"match\": \"Host(`port1-ws-test-wsctltest`) \\u0026\\u0026 PathPrefix(`/path`)\",
         \"kind\": \"Rule\",
         \"priority\": 100,
         \"services\": [

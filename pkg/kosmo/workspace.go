@@ -183,7 +183,7 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, username string, r co
 
 	if err := c.Update(ctx, ws); err != nil {
 		if apierrs.IsBadRequest(err) || apierrs.IsForbidden(err) {
-			message := "failed to upsert network rule"
+			message := fmt.Sprintf("failed to upsert network rule: %v", err.Error())
 			log.Error(err, message, "username", username, "workspace", ws.Name, "netRule", r)
 			return nil, NewBadRequestError(message, err)
 		}
@@ -225,46 +225,6 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, username string, i
 	}
 	return delRule, nil
 }
-
-// func (c *Client) DeleteNetworkRule(ctx context.Context, name, username string, r cosmov1alpha1.NetworkRule) (*cosmov1alpha1.NetworkRule, error) {
-// 	log := clog.FromContext(ctx).WithCaller()
-
-// 	ws, err := c.GetWorkspaceByUserName(ctx, name, username)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	log.DebugAll().Info("GetWorkspace", "ws", ws, "username", username)
-
-// 	if r.GetName() == ws.Status.Config.ServiceMainPortName && r.HTTPPath == "/" {
-// 		return nil, NewBadRequestError("main port cannot be removed", nil)
-// 	}
-
-// 	index := getNetRuleIndex(ws.Spec.Network, r)
-// 	if index == -1 {
-// 		message := fmt.Sprintf("network rule %v is not found", r)
-// 		log.Info(message, "username", username, "workspace", ws.Name, "netRule", r)
-// 		return nil, NewBadRequestError(message, nil)
-// 	}
-
-// 	before := ws.DeepCopy()
-
-// 	delRule := ws.Spec.Network[index].DeepCopy()
-// 	ws.Spec.Network = ws.Spec.Network[:index+copy(ws.Spec.Network[index:], ws.Spec.Network[index+1:])]
-
-// 	log.DebugAll().Info("NetworkRule removed", "ws", ws, "username", username, "netRule", r)
-// 	log.DebugAll().PrintObjectDiff(before, ws)
-
-// 	if equality.Semantic.DeepEqual(before, ws) {
-// 		return nil, errors.New("no change")
-// 	}
-
-// 	if err := c.Update(ctx, ws); err != nil {
-// 		message := "failed to remove network rule"
-// 		log.Error(err, message, "username", username, "workspace", ws.Name, "netRule", r)
-// 		return nil, NewInternalServerError(message, err)
-// 	}
-// 	return delRule, nil
-// }
 
 func getNetRuleIndex(netRules []cosmov1alpha1.NetworkRule, r cosmov1alpha1.NetworkRule) int {
 	for i, netRule := range netRules {

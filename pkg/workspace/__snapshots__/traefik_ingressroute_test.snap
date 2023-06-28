@@ -15,7 +15,7 @@
   "routes": [
    {
     "kind": "Rule",
-    "match": "Host(`www.host.example.com`)",
+    "match": "Host(`main-ws1-xxx`)",
     "middlewares": [
      {
       "name": "userNameHeader"
@@ -37,7 +37,7 @@
    },
    {
     "kind": "Rule",
-    "match": "Host(`public.host.example.com`)",
+    "match": "Host(`port8080-ws1-xxx`)",
     "priority": 100,
     "services": [
      {
@@ -50,29 +50,7 @@
    },
    {
     "kind": "Rule",
-    "match": "Host(`min.host.example.com`)",
-    "middlewares": [
-     {
-      "name": "userNameHeader"
-     },
-     {
-      "name": "cosmo-auth",
-      "namespace": "cosmo-system"
-     }
-    ],
-    "priority": 100,
-    "services": [
-     {
-      "kind": "Service",
-      "name": "ws1-svc",
-      "port": 8080,
-      "scheme": "http"
-     }
-    ]
-   },
-   {
-    "kind": "Rule",
-    "match": "",
+    "match": "Host(`port8080-ws1-xxx`) \u0026\u0026 PathPrefix(`/dev`)",
     "middlewares": [
      {
       "name": "userNameHeader"
@@ -100,7 +78,7 @@
 [TestTraefikIngressRouteConfig_TraefikRoute/default - 1]
 {
  "kind": "Rule",
- "match": "Host(`host.example.com`)",
+ "match": "Host(`port8080-ws1-xxx`)",
  "middlewares": [
   {
    "name": "userNameHeader"
@@ -114,7 +92,7 @@
  "services": [
   {
    "kind": "Service",
-   "name": "backend-svc",
+   "name": "ws1-backend-svc-name",
    "port": 8080,
    "scheme": "http"
   }
@@ -125,7 +103,7 @@
 [TestTraefikIngressRouteConfig_TraefikRoute/no_hostname - 1]
 {
  "kind": "Rule",
- "match": "PathPrefix(`/path`)",
+ "match": "Host(`port8080-ws1-xxx`) \u0026\u0026 PathPrefix(`/path`)",
  "middlewares": [
   {
    "name": "userNameHeader"
@@ -139,7 +117,7 @@
  "services": [
   {
    "kind": "Service",
-   "name": "backend-svc",
+   "name": "ws1-backend-svc-name",
    "port": 8080,
    "scheme": "http"
   }
@@ -147,15 +125,15 @@
 }
 ---
 
-[TestTraefikIngressRouteConfig_TraefikRoute/no_hostname#01 - 1]
+[TestTraefikIngressRouteConfig_TraefikRoute/public - 1]
 {
  "kind": "Rule",
- "match": "Host(`host.example.com`) \u0026\u0026 PathPrefix(`/path`)",
+ "match": "Host(`port8080-ws1-xxx`) \u0026\u0026 PathPrefix(`/path`)",
  "priority": 100,
  "services": [
   {
    "kind": "Service",
-   "name": "backend-svc",
+   "name": "ws1-backend-svc-name",
    "port": 8080,
    "scheme": "http"
   }

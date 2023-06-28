@@ -488,7 +488,9 @@ func Test_appendNetworkRuleIfNotExist(t *testing.T) {
 					},
 				},
 				netRule: cosmov1alpha1.NetworkRule{
+					Protocol:   "http",
 					PortNumber: 8081,
+					HTTPPath:   "/",
 				},
 			},
 			want: &cosmov1alpha1.Workspace{
@@ -508,6 +510,50 @@ func Test_appendNetworkRuleIfNotExist(t *testing.T) {
 							Protocol:   "http",
 							PortNumber: 8081,
 							HTTPPath:   "/",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "✅ not append",
+			args: args{
+				ws: &cosmov1alpha1.Workspace{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "ws1",
+						Namespace: "cosmo-user-xxx",
+					},
+					Spec: cosmov1alpha1.WorkspaceSpec{
+						Network: []cosmov1alpha1.NetworkRule{
+							{
+								CustomHostPrefix: "main",
+								Protocol:         "http",
+								PortNumber:       8080,
+								HTTPPath:         "/",
+							},
+						},
+					},
+				},
+				netRule: cosmov1alpha1.NetworkRule{
+					CustomHostPrefix: "main",
+					Protocol:         "http",
+					PortNumber:       8080,
+					HTTPPath:         "/",
+					Public:           true,
+				},
+			},
+			want: &cosmov1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "ws1",
+					Namespace: "cosmo-user-xxx",
+				},
+				Spec: cosmov1alpha1.WorkspaceSpec{
+					Network: []cosmov1alpha1.NetworkRule{
+						{
+							CustomHostPrefix: "main",
+							Protocol:         "http",
+							PortNumber:       8080,
+							HTTPPath:         "/",
 						},
 					},
 				},

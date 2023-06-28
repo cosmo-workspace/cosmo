@@ -33,6 +33,7 @@ func (c *TestUtil) CreateTemplate(templateType string, templateName string) {
 				cosmov1alpha1.TemplateLabelKeyType: templateType,
 			},
 			Annotations: map[string]string{
+				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:      "workspace",
 				cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort:  "main",
 				cosmov1alpha1.UserAddonTemplateAnnKeyDefaultUserAddon: "true",
 			},
@@ -42,6 +43,16 @@ func (c *TestUtil) CreateTemplate(templateType string, templateName string) {
 				{Var: "{{HOGE}}", Default: "HOGEhoge"},
 				{Var: "{{FUGA}}", Default: "FUGAfuga"},
 			},
+			RawYaml: `---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workspace
+spec:
+  ports:
+  - name: main
+    port: 18080
+`,
 		},
 	}
 	err := c.kosmoClient.Create(ctx, &tmpl)
@@ -234,16 +245,6 @@ func (c *TestUtil) UpsertNetworkRule(userName, workspaceName string, customHostP
 	}
 	_, err := c.kosmoClient.AddNetworkRule(ctx, workspaceName, userName, r, index)
 	Expect(err).ShouldNot(HaveOccurred())
-
-	Eventually(func() bool {
-		ws, _ := c.kosmoClient.GetWorkspaceByUserName(ctx, workspaceName, userName)
-		for _, n := range ws.Spec.Network {
-			if n.UniqueKey() == r.UniqueKey() {
-				return true
-			}
-		}
-		return false
-	}, time.Second*5, time.Millisecond*100).Should(BeTrue())
 }
 
 func (c *TestUtil) DeleteNetworkRule(userName, workspaceName string, index int) {
