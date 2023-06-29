@@ -23,7 +23,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/internal/cmd/version"
 	cmdutil "github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
-	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
+	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
 type generateOption struct {
@@ -61,7 +61,6 @@ func generateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command 
 	cmd.Flags().StringVar(&o.wsConfig.DeploymentName, "workspace-deployment-name", "", "Deployment name for Workspace. use with --workspace (auto detected if not specified)")
 	cmd.Flags().StringVar(&o.wsConfig.ServiceName, "workspace-service-name", "", "Service name for Workspace. use with --workspace (auto detected if not specified)")
 	cmd.Flags().StringVar(&o.wsConfig.ServiceMainPortName, "workspace-main-service-port-name", "", "ServicePort name for Workspace main container port. use with --workspace (auto detected if not specified)")
-	cmd.Flags().StringVar(&o.wsConfig.URLBase, "workspace-urlbase", "", "Workspace URLBase. use with --workspace (use default urlbase in cosmo-controller-manager if not specified)")
 
 	cmd.Flags().BoolVar(&o.TypeUserAddon, "user-addon", false, "template as type useraddon")
 	cmd.Flags().BoolVar(&o.TypeUserAddon, "useraddon", false, "template as type useraddon")
@@ -226,7 +225,7 @@ func (o *generateOption) RunE(cmd *cobra.Command, args []string) error {
 		if err := completeWorkspaceConfig(&o.wsConfig, unsts); err != nil {
 			return fmt.Errorf("type workspace validation failed: %w", err)
 		}
-		wscfg.SetConfigOnTemplateAnnotations(o.tmpl, o.wsConfig)
+		workspace.SetConfigOnTemplateAnnotations(o.tmpl, o.wsConfig)
 	}
 
 	kust := NewKustomize(o.DisableNamePrefix)

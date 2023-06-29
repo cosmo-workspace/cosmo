@@ -32,7 +32,7 @@
   },
   "vars": {
    "VAR1": "VAL1",
-   "{{USER_NAME}}": "default",
+   "{{USER}}": "default",
    "{{WORKSPACE_DEPLOYMENT_NAME}}": "ws-deploy",
    "{{WORKSPACE_SERVICE_NAME}}": "ws-svc",
    "{{WORKSPACE}}": "ws1"
@@ -84,7 +84,7 @@
    "name": "tmpl1"
   },
   "vars": {
-   "{{USER_NAME}}": "default",
+   "{{USER}}": "default",
    "{{WORKSPACE_DEPLOYMENT_NAME}}": "ws-deploy",
    "{{WORKSPACE_SERVICE_NAME}}": "ws-svc",
    "{{WORKSPACE}}": "ws1"

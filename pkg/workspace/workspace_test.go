@@ -44,13 +44,11 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 						},
 						Network: []cosmov1alpha1.NetworkRule{
 							{
-								Name:             "port1",
 								PortNumber:       8080,
 								HTTPPath:         "/",
 								TargetPortNumber: pointer.Int32(18080),
 							},
 							{
-								Name:             "port2",
 								PortNumber:       9999,
 								HTTPPath:         "/",
 								TargetPortNumber: pointer.Int32(19999),
@@ -151,21 +149,14 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 
 func TestSvcPorts(t *testing.T) {
 	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int32) cosmov1alpha1.NetworkRule {
-		var hostp *string
-		if host != "" {
-			hostp = &host
-		}
 		var targetp *int32
 		if targetPortNumber != 0 {
 			targetp = pointer.Int32(int32(targetPortNumber))
 		}
 		return cosmov1alpha1.NetworkRule{
-			Name:             ruleName,
 			PortNumber:       portNumber,
 			HTTPPath:         path,
 			TargetPortNumber: targetp,
-			Host:             hostp,
-			Group:            nil,
 			Public:           false,
 		}
 	}

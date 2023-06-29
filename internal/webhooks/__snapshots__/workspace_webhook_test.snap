@@ -19,11 +19,10 @@ SnapShot = """
     },
     \"network\": [
       {
-        \"name\": \"main\",
+        \"protocol\": \"http\",
         \"portNumber\": 8080,
+        \"customHostPrefix\": \"main\",
         \"httpPath\": \"/\",
-        \"host\": \"main-testws1-cosmo-user-testuser-ws.example.com\",
-        \"group\": \"main\",
         \"public\": false
       }
     ]
@@ -73,11 +72,10 @@ SnapShot = """
     },
     \"network\": [
       {
-        \"name\": \"main\",
+        \"protocol\": \"http\",
         \"portNumber\": 8080,
+        \"customHostPrefix\": \"main\",
         \"httpPath\": \"/\",
-        \"host\": \"main-testws3-cosmo-user-testuser-ws.example.com\",
-        \"group\": \"main\",
         \"public\": false
       }
     ]
@@ -95,7 +93,7 @@ SnapShot = """
   \"ErrStatus\": {
     \"metadata\": {},
     \"status\": \"Failure\",
-    \"message\": \"admission webhook \\\"mworkspace.kb.io\\\" denied the request: not type workspace\",
+    \"message\": \"admission webhook \\\"mworkspace.kb.io\\\" denied the request: failed to get config from template: not type workspace\",
     \"code\": 400
   }
 }
@@ -107,8 +105,14 @@ SnapShot = """
   \"ErrStatus\": {
     \"metadata\": {},
     \"status\": \"Failure\",
-    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: duplicate group and path. group=gp1,path=/\",
-    \"code\": 400
+    \"message\": \"workspaces.cosmo-workspace.github.io \\\"testws6\\\" already exists\",
+    \"reason\": \"AlreadyExists\",
+    \"details\": {
+      \"name\": \"testws6\",
+      \"group\": \"cosmo-workspace.github.io\",
+      \"kind\": \"workspaces\"
+    },
+    \"code\": 409
   }
 }
 """
@@ -119,20 +123,14 @@ SnapShot = """
   \"ErrStatus\": {
     \"metadata\": {},
     \"status\": \"Failure\",
-    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: duplicate group and path. group=main,path=/\",
-    \"code\": 400
-  }
-}
-"""
-
-['Workspace webhook when creating workspace ❌ fail with duplicated network rule host and path 2']
-SnapShot = """
-{
-  \"ErrStatus\": {
-    \"metadata\": {},
-    \"status\": \"Failure\",
-    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: duplicate group and path. group=main,path=/\",
-    \"code\": 400
+    \"message\": \"workspaces.cosmo-workspace.github.io \\\"testws6\\\" already exists\",
+    \"reason\": \"AlreadyExists\",
+    \"details\": {
+      \"name\": \"testws6\",
+      \"group\": \"cosmo-workspace.github.io\",
+      \"kind\": \"workspaces\"
+    },
+    \"code\": 409
   }
 }
 """
@@ -143,22 +141,15 @@ SnapShot = """
   \"ErrStatus\": {
     \"metadata\": {},
     \"status\": \"Failure\",
-    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: duplicate group and path. group=main,path=/\",
-    \"code\": 400
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: network rules check failed: duplicate network rules: {\\\"protocol\\\":\\\"http\\\",\\\"portNumber\\\":2222,\\\"customHostPrefix\\\":\\\"nw1\\\",\\\"httpPath\\\":\\\"/\\\",\\\"public\\\":false}\",
+    \"code\": 403
   }
 }
 """
 
 ['Workspace webhook when creating workspace ❌ fail with invalid port name 1']
 SnapShot = """
-{
-  \"ErrStatus\": {
-    \"metadata\": {},
-    \"status\": \"Failure\",
-    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: must be no more than 15 characters\",
-    \"code\": 400
-  }
-}
+null
 """
 
 ['Workspace webhook when creating workspace ❌ fail with invalid port number 1']
@@ -167,8 +158,8 @@ SnapShot = """
   \"ErrStatus\": {
     \"metadata\": {},
     \"status\": \"Failure\",
-    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: must be between 1 and 65535, inclusive\",
-    \"code\": 400
+    \"message\": \"admission webhook \\\"vworkspace.kb.io\\\" denied the request: network rules check failed: port validation failed: port=0\",
+    \"code\": 403
   }
 }
 """

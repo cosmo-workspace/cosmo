@@ -1,4 +1,4 @@
-package wscfg
+package workspace
 
 import (
 	"testing"
@@ -30,7 +30,6 @@ func TestSetConfigOnTemplateAnnotations(t *testing.T) {
 						Name: "tmpl",
 						Annotations: map[string]string{
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName: "workspace",
-							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:     "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
 					},
 				},
@@ -83,7 +82,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
-							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
 					},
 				},
@@ -100,7 +98,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
-							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
 					},
 				},
@@ -121,7 +118,6 @@ func TestConfigFromTemplateAnnotations(t *testing.T) {
 							cosmov1alpha1.WorkspaceTemplateAnnKeyDeploymentName:  "workspace1",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceName:     "workspace2",
 							cosmov1alpha1.WorkspaceTemplateAnnKeyServiceMainPort: "main",
-							cosmov1alpha1.WorkspaceTemplateAnnKeyURLBase:         "https://{{NETRULE_PORT_NAME}}-{{INSTANCE}}-{{NAMESPACE}}.domain",
 						},
 					},
 				},

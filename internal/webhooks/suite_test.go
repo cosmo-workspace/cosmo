@@ -117,18 +117,6 @@ var _ = BeforeSuite(func() {
 		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
 	}).SetupWebhookWithManager(mgr)
 
-	(&TemplateMutationWebhookHandler{
-		Client:         k8sClient,
-		Log:            clog.NewLogger(ctrl.Log.WithName("TemplateMutationWebhookHandler")),
-		DefaultURLBase: DefaultURLBase,
-	}).SetupWebhookWithManager(mgr)
-
-	(&TemplateValidationWebhookHandler{
-		Client:       k8sClient,
-		Log:          clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhookHandler")),
-		FieldManager: instControllerFieldManager,
-	}).SetupWebhookWithManager(mgr)
-
 	go func() {
 		defer GinkgoRecover()
 		err := mgr.Start(ctx)

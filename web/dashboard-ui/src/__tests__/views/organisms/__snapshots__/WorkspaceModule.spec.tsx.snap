@@ -124,7 +124,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -135,14 +135,13 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -153,14 +152,13 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -171,14 +169,13 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws15",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -189,7 +186,6 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -201,7 +197,7 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -212,14 +208,13 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -230,14 +225,13 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -248,14 +242,13 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws14",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -266,14 +259,13 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Creating",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws15",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -284,7 +276,6 @@ exports[`useWorkspace > useWorkspace createWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -322,7 +313,7 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -333,14 +324,13 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -351,14 +341,13 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -369,7 +358,6 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -381,7 +369,7 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 2`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -392,14 +380,13 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -410,14 +397,13 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -428,7 +414,6 @@ exports[`useWorkspace > useWorkspace deleteWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -466,7 +451,7 @@ exports[`useWorkspace > useWorkspace getWorkspaces > normal 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -477,14 +462,13 @@ exports[`useWorkspace > useWorkspace getWorkspaces > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -495,14 +479,13 @@ exports[`useWorkspace > useWorkspace getWorkspaces > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -513,7 +496,6 @@ exports[`useWorkspace > useWorkspace getWorkspaces > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -531,7 +513,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -542,14 +524,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -560,14 +541,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Creating",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -578,7 +558,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -590,7 +569,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 2`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -601,14 +580,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -619,14 +597,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Creating",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -637,7 +614,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -649,7 +625,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 3`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -660,14 +636,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -678,14 +653,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "NotRunning",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -696,7 +670,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -708,7 +681,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 4`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -719,14 +692,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -737,14 +709,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "NotRunning",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -755,7 +726,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -767,7 +737,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 5`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -778,14 +748,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 5`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -796,14 +765,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 5`] = `
     "status": {
       "mainUrl": "",
       "phase": "Pending",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -814,7 +782,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 5`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -826,7 +793,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 6`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -837,14 +804,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 6`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -855,14 +821,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 6`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -873,7 +838,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal creating 6`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -887,7 +851,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -898,31 +862,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [
-        {
-          "group": "",
-          "httpPath": "",
-          "name": "portname1",
-          "portNumber": 3000,
-          "public": false,
-          "url": "url1",
-        },
-        {
-          "group": "",
-          "httpPath": "",
-          "name": "portname2",
-          "portNumber": 3000,
-          "public": false,
-          "url": "url2",
-        },
-      ],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -933,14 +879,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -951,7 +896,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 1`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -963,7 +907,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -974,31 +918,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [
-        {
-          "group": "",
-          "httpPath": "",
-          "name": "portname1",
-          "portNumber": 3000,
-          "public": false,
-          "url": "url1",
-        },
-        {
-          "group": "",
-          "httpPath": "",
-          "name": "portname2",
-          "portNumber": 3000,
-          "public": false,
-          "url": "url2",
-        },
-      ],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -1009,14 +935,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1027,7 +952,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 2`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1039,7 +963,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1050,31 +974,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [
-        {
-          "group": "",
-          "httpPath": "",
-          "name": "portname1",
-          "portNumber": 3000,
-          "public": false,
-          "url": "url1",
-        },
-        {
-          "group": "",
-          "httpPath": "",
-          "name": "portname2",
-          "portNumber": 3000,
-          "public": false,
-          "url": "url2",
-        },
-      ],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -1085,14 +991,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1103,7 +1008,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal network modify 3`
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1117,7 +1021,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1128,14 +1032,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1146,14 +1049,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1164,7 +1066,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1176,7 +1077,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 2`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1187,14 +1088,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1205,14 +1105,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1223,7 +1122,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1235,7 +1133,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 3`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1246,14 +1144,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1264,14 +1161,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1282,7 +1178,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1294,7 +1189,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 4`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1305,14 +1200,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1323,14 +1217,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "NotRunning",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1341,7 +1234,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal stopping 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1355,7 +1247,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1366,14 +1258,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1384,14 +1275,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1402,7 +1292,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1414,7 +1303,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 2`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1425,14 +1314,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1443,14 +1331,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1461,7 +1348,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1473,7 +1359,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 3`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1484,14 +1370,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1502,14 +1387,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1520,7 +1404,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 3`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1532,7 +1415,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 4`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1543,14 +1426,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1561,14 +1443,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1579,7 +1460,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 4`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1591,7 +1471,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 5`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1602,14 +1482,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 5`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1620,14 +1499,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 5`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1638,7 +1516,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 5`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1650,7 +1527,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 6`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1661,14 +1538,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 6`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1679,14 +1555,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 6`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1697,7 +1572,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 6`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1709,7 +1583,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 7`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1720,14 +1594,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 7`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1738,14 +1611,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 7`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1756,7 +1628,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 7`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1768,7 +1639,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 8`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1779,14 +1650,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 8`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1797,14 +1667,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 8`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1815,7 +1684,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 8`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1827,7 +1695,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 9`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1838,14 +1706,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 9`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1856,14 +1723,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 9`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1874,7 +1740,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 9`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1886,7 +1751,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 10`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1897,14 +1762,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 10`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1915,14 +1779,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 10`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1933,7 +1796,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 10`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -1945,7 +1807,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 11`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1956,14 +1818,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 11`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -1974,14 +1835,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 11`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -1992,7 +1852,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 11`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2004,7 +1863,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 12`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2015,14 +1874,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 12`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2033,14 +1891,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 12`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2051,7 +1908,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 12`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2063,7 +1919,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 13`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2074,14 +1930,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 13`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2092,14 +1947,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 13`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2110,7 +1964,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 13`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2122,7 +1975,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 14`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2133,14 +1986,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 14`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2151,14 +2003,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 14`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2169,7 +2020,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 14`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2181,7 +2031,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 15`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2192,14 +2042,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 15`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2210,14 +2059,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 15`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2228,7 +2076,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 15`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2240,7 +2087,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 16`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2251,14 +2098,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 16`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2269,14 +2115,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 16`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2287,7 +2132,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 16`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2299,7 +2143,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 17`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2310,14 +2154,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 17`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2328,14 +2171,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 17`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2346,7 +2188,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 17`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2358,7 +2199,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 18`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2369,14 +2210,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 18`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2387,14 +2227,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 18`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2405,7 +2244,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 18`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2417,7 +2255,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 19`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2428,14 +2266,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 19`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2446,14 +2283,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 19`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2464,7 +2300,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 19`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2476,7 +2311,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 20`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2487,14 +2322,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 20`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2505,14 +2339,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 20`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2523,7 +2356,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 20`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2535,7 +2367,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 21`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2546,14 +2378,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 21`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2564,14 +2395,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 21`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2582,7 +2412,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 21`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2594,7 +2423,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 22`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2605,14 +2434,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 22`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2623,14 +2451,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 22`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2641,7 +2468,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 22`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2653,7 +2479,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 23`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2664,14 +2490,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 23`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2682,14 +2507,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 23`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2700,7 +2524,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 23`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2712,7 +2535,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 24`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2723,14 +2546,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 24`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2741,14 +2563,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 24`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2759,7 +2580,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 24`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2771,7 +2591,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 25`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2782,14 +2602,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 25`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2800,14 +2619,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 25`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2818,7 +2636,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 25`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2830,7 +2647,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 26`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2841,14 +2658,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 26`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2859,14 +2675,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 26`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2877,7 +2692,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 26`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2889,7 +2703,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 27`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2900,14 +2714,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 27`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2918,14 +2731,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 27`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2936,7 +2748,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 27`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -2948,7 +2759,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 28`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2959,14 +2770,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 28`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -2977,14 +2787,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 28`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -2995,7 +2804,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 28`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3007,7 +2815,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 29`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3018,14 +2826,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 29`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3036,14 +2843,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 29`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3054,7 +2860,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 29`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3066,7 +2871,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 30`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3077,14 +2882,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 30`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3095,14 +2899,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 30`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3113,7 +2916,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 30`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3125,7 +2927,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 31`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3136,14 +2938,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 31`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3154,14 +2955,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 31`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3172,7 +2972,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 31`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3184,7 +2983,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 32`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3195,14 +2994,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 32`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3213,14 +3011,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 32`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3231,7 +3028,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 32`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3243,7 +3039,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 33`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3254,14 +3050,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 33`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3272,14 +3067,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 33`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3290,7 +3084,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 33`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3302,7 +3095,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 34`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3313,14 +3106,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 34`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3331,14 +3123,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 34`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3349,7 +3140,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 34`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3361,7 +3151,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 35`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3372,14 +3162,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 35`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3390,14 +3179,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 35`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3408,7 +3196,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 35`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3420,7 +3207,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 36`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3431,14 +3218,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 36`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3449,14 +3235,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 36`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3467,7 +3252,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 36`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3479,7 +3263,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 37`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3490,14 +3274,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 37`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3508,14 +3291,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 37`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3526,7 +3308,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 37`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3538,7 +3319,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 38`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3549,14 +3330,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 38`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3567,14 +3347,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 38`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3585,7 +3364,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 38`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3597,7 +3375,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 39`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3608,14 +3386,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 39`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3626,14 +3403,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 39`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3644,7 +3420,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 39`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3656,7 +3431,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 40`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3667,14 +3442,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 40`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3685,14 +3459,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 40`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3703,7 +3476,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 40`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3715,7 +3487,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 41`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3726,14 +3498,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 41`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3744,14 +3515,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 41`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3762,7 +3532,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 41`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3774,7 +3543,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 42`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3785,14 +3554,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 42`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3803,14 +3571,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 42`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3821,7 +3588,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 42`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3833,7 +3599,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 43`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3844,14 +3610,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 43`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3862,14 +3627,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 43`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3880,7 +3644,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 43`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3892,7 +3655,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 44`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3903,14 +3666,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 44`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3921,14 +3683,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 44`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3939,7 +3700,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 44`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -3951,7 +3711,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 45`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3962,14 +3722,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 45`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -3980,14 +3739,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 45`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -3998,7 +3756,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 45`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4010,7 +3767,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 46`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4021,14 +3778,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 46`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4039,14 +3795,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 46`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4057,7 +3812,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 46`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4069,7 +3823,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 47`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4080,14 +3834,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 47`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4098,14 +3851,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 47`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4116,7 +3868,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 47`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4128,7 +3879,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 48`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4139,14 +3890,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 48`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4157,14 +3907,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 48`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4175,7 +3924,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 48`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4187,7 +3935,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 49`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4198,14 +3946,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 49`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4216,14 +3963,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 49`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4234,7 +3980,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 49`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4246,7 +3991,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 50`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4257,14 +4002,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 50`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4275,14 +4019,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 50`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4293,7 +4036,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 50`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4305,7 +4047,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 51`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4316,14 +4058,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 51`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4334,14 +4075,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 51`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4352,7 +4092,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 51`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4364,7 +4103,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 52`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4375,14 +4114,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 52`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4393,14 +4131,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 52`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4411,7 +4148,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 52`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4423,7 +4159,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 53`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4434,14 +4170,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 53`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4452,14 +4187,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 53`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4470,7 +4204,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 53`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4482,7 +4215,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 54`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4493,14 +4226,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 54`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4511,14 +4243,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 54`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4529,7 +4260,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 54`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4541,7 +4271,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 55`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4552,14 +4282,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 55`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4570,14 +4299,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 55`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4588,7 +4316,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 55`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4600,7 +4327,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 56`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4611,14 +4338,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 56`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4629,14 +4355,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 56`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4647,7 +4372,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 56`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4659,7 +4383,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 57`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4670,14 +4394,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 57`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4688,14 +4411,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 57`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4706,7 +4428,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 57`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4718,7 +4439,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 58`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4729,14 +4450,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 58`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4747,14 +4467,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 58`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4765,7 +4484,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 58`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4777,7 +4495,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 59`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4788,14 +4506,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 59`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4806,14 +4523,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 59`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4824,7 +4540,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 59`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4836,7 +4551,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 60`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4847,14 +4562,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 60`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4865,14 +4579,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 60`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4883,7 +4596,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 60`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4895,7 +4607,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 61`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4906,14 +4618,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 61`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4924,14 +4635,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 61`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4942,7 +4652,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 61`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -4954,7 +4663,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 62`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -4965,14 +4674,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 62`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -4983,14 +4691,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 62`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5001,7 +4708,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 62`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5013,7 +4719,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 63`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5024,14 +4730,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 63`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5042,14 +4747,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 63`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5060,7 +4764,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 63`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5072,7 +4775,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 64`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5083,14 +4786,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 64`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5101,14 +4803,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 64`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5119,7 +4820,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 64`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5131,7 +4831,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 65`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5142,14 +4842,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 65`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5160,14 +4859,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 65`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5178,7 +4876,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 65`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5190,7 +4887,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 66`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5201,14 +4898,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 66`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5219,14 +4915,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 66`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5237,7 +4932,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 66`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5249,7 +4943,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 67`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5260,14 +4954,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 67`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5278,14 +4971,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 67`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5296,7 +4988,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 67`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5308,7 +4999,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 68`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5319,14 +5010,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 68`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5337,14 +5027,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 68`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5355,7 +5044,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 68`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5367,7 +5055,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 69`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5378,14 +5066,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 69`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5396,14 +5083,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 69`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5414,7 +5100,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 69`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5426,7 +5111,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 70`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5437,14 +5122,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 70`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5455,14 +5139,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 70`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5473,7 +5156,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 70`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5485,7 +5167,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 71`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5496,14 +5178,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 71`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5514,14 +5195,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 71`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5532,7 +5212,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 71`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5544,7 +5223,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 72`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5555,14 +5234,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 72`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5573,14 +5251,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 72`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5591,7 +5268,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 72`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5603,7 +5279,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 73`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5614,14 +5290,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 73`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5632,14 +5307,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 73`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5650,7 +5324,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 73`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5662,7 +5335,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 74`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5673,14 +5346,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 74`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5691,14 +5363,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 74`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5709,7 +5380,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 74`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5721,7 +5391,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 75`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5732,14 +5402,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 75`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5750,14 +5419,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 75`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5768,7 +5436,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 75`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5780,7 +5447,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 76`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5791,14 +5458,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 76`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5809,14 +5475,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 76`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5827,7 +5492,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 76`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5839,7 +5503,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 77`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5850,14 +5514,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 77`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5868,14 +5531,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 77`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5886,7 +5548,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 77`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5898,7 +5559,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 78`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5909,14 +5570,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 78`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5927,14 +5587,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 78`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5945,7 +5604,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 78`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -5957,7 +5615,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 79`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -5968,14 +5626,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 79`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -5986,14 +5643,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 79`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6004,7 +5660,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 79`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6016,7 +5671,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 80`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6027,14 +5682,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 80`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6045,14 +5699,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 80`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6063,7 +5716,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 80`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6075,7 +5727,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 81`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6086,14 +5738,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 81`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6104,14 +5755,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 81`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6122,7 +5772,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 81`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6134,7 +5783,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 82`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6145,14 +5794,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 82`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6163,14 +5811,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 82`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6181,7 +5828,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 82`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6193,7 +5839,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 83`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6204,14 +5850,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 83`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6222,14 +5867,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 83`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6240,7 +5884,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 83`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6252,7 +5895,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 84`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6263,14 +5906,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 84`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6281,14 +5923,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 84`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6299,7 +5940,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 84`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6311,7 +5951,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 85`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6322,14 +5962,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 85`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6340,14 +5979,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 85`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6358,7 +5996,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 85`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6370,7 +6007,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 86`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6381,14 +6018,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 86`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6399,14 +6035,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 86`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6417,7 +6052,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 86`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6429,7 +6063,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 87`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6440,14 +6074,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 87`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6458,14 +6091,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 87`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6476,7 +6108,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 87`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6488,7 +6119,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 88`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6499,14 +6130,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 88`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6517,14 +6147,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 88`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6535,7 +6164,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 88`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6547,7 +6175,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 89`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6558,14 +6186,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 89`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6576,14 +6203,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 89`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6594,7 +6220,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 89`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6606,7 +6231,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 90`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6617,14 +6242,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 90`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6635,14 +6259,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 90`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6653,7 +6276,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 90`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6665,7 +6287,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 91`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6676,14 +6298,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 91`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6694,14 +6315,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 91`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6712,7 +6332,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 91`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6724,7 +6343,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 92`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6735,14 +6354,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 92`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6753,14 +6371,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 92`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6771,7 +6388,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 92`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6783,7 +6399,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 93`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6794,14 +6410,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 93`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6812,14 +6427,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 93`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6830,7 +6444,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 93`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6842,7 +6455,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 94`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6853,14 +6466,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 94`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6871,14 +6483,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 94`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6889,7 +6500,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 94`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6901,7 +6511,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 95`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6912,14 +6522,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 95`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6930,14 +6539,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 95`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6948,7 +6556,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 95`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -6960,7 +6567,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 96`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -6971,14 +6578,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 96`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -6989,14 +6595,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 96`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7007,7 +6612,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 96`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7019,7 +6623,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 97`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7030,14 +6634,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 97`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7048,14 +6651,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 97`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7066,7 +6668,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 97`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7078,7 +6679,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 98`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7089,14 +6690,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 98`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7107,14 +6707,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 98`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7125,7 +6724,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 98`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7137,7 +6735,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 99`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7148,14 +6746,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 99`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7166,14 +6763,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 99`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7184,7 +6780,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 99`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7196,7 +6791,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 100`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7207,14 +6802,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 100`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7225,14 +6819,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 100`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7243,7 +6836,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 100`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7255,7 +6847,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 101`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7266,14 +6858,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 101`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7284,14 +6875,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 101`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7302,7 +6892,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 101`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7314,7 +6903,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 102`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7325,14 +6914,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 102`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7343,14 +6931,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 102`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7361,7 +6948,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 102`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7373,7 +6959,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 103`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7384,14 +6970,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 103`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7402,14 +6987,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 103`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7420,7 +7004,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 103`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7432,7 +7015,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 104`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7443,14 +7026,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 104`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7461,14 +7043,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 104`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7479,7 +7060,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 104`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7491,7 +7071,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 105`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7502,14 +7082,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 105`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7520,14 +7099,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 105`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7538,7 +7116,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 105`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7550,7 +7127,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 106`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7561,14 +7138,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 106`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7579,14 +7155,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 106`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7597,7 +7172,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 106`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7609,7 +7183,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 107`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7620,14 +7194,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 107`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7638,14 +7211,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 107`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7656,7 +7228,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 107`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7668,7 +7239,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 108`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7679,14 +7250,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 108`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7697,14 +7267,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 108`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7715,7 +7284,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 108`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7727,7 +7295,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 109`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7738,14 +7306,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 109`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7756,14 +7323,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 109`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7774,7 +7340,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 109`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7786,7 +7351,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 110`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7797,14 +7362,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 110`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7815,14 +7379,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 110`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7833,7 +7396,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 110`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7845,7 +7407,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 111`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7856,14 +7418,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 111`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7874,14 +7435,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 111`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7892,7 +7452,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 111`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7904,7 +7463,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 112`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7915,14 +7474,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 112`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7933,14 +7491,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 112`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7951,7 +7508,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 112`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -7963,7 +7519,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 113`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -7974,14 +7530,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 113`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -7992,14 +7547,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 113`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8010,7 +7564,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 113`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8022,7 +7575,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 114`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8033,14 +7586,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 114`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -8051,14 +7603,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 114`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8069,7 +7620,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 114`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8081,7 +7631,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 115`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8092,14 +7642,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 115`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -8110,14 +7659,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 115`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8128,7 +7676,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 115`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8140,7 +7687,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 116`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8151,14 +7698,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 116`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -8169,14 +7715,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 116`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8187,7 +7732,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 116`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8199,7 +7743,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 117`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8210,14 +7754,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 117`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -8228,14 +7771,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 117`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8246,7 +7788,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 117`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8258,7 +7799,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 118`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8269,14 +7810,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 118`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -8287,14 +7827,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 118`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8305,7 +7844,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 118`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8317,7 +7855,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 119`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8328,14 +7866,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 119`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -8346,14 +7883,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 119`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8364,7 +7900,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 119`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8376,7 +7911,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 120`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8387,14 +7922,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 120`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -8405,14 +7939,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 120`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8423,7 +7956,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 120`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8435,7 +7967,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 121`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8446,14 +7978,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 121`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "0",
       "template": "tmpl2",
       "vars": {
@@ -8464,14 +7995,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 121`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8482,7 +8012,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspace > normal timeout 121`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8496,7 +8025,7 @@ exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8507,14 +8036,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -8525,14 +8053,13 @@ exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8543,7 +8070,6 @@ exports[`useWorkspace > useWorkspace refreshWorkspaces > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8572,7 +8098,7 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8583,14 +8109,13 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -8601,14 +8126,13 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8619,7 +8143,6 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8631,7 +8154,7 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 2`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8642,14 +8165,13 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -8660,14 +8182,13 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8678,7 +8199,6 @@ exports[`useWorkspace > useWorkspace runWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8716,7 +8236,7 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 1`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8727,14 +8247,13 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -8745,14 +8264,13 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8763,7 +8281,6 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 1`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]
@@ -8775,7 +8292,7 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 2`] = `
     "name": "ws11",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8786,14 +8303,13 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws12",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl2",
       "vars": {
@@ -8804,14 +8320,13 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
   {
     "name": "ws13",
     "ownerName": "user1",
     "spec": {
-      "additionalNetwork": [],
+      "network": [],
       "replicas": "1",
       "template": "tmpl1",
       "vars": {
@@ -8822,7 +8337,6 @@ exports[`useWorkspace > useWorkspace stopWorkspace > normal 2`] = `
     "status": {
       "mainUrl": "",
       "phase": "Running",
-      "urlBase": "urlbasexxxx",
     },
   },
 ]

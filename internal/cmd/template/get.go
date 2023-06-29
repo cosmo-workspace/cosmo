@@ -14,7 +14,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
-	"github.com/cosmo-workspace/cosmo/pkg/wscfg"
+	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
 type GetOption struct {
@@ -104,11 +104,11 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	switch o.tmpltype {
 	case cosmov1alpha1.TemplateLabelEnumTypeWorkspace:
 
-		columnNames := []string{"NAME", "REQUIRED-VARS", "DEPLOYMENT/SERVICE", "URLBASE"}
+		columnNames := []string{"NAME", "REQUIRED-VARS", "DEPLOYMENT/SERVICE"}
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, v := range tmpls {
-			cfg, err := wscfg.ConfigFromTemplateAnnotations(v.(*cosmov1alpha1.Template))
+			cfg, err := workspace.ConfigFromTemplateAnnotations(v.(*cosmov1alpha1.Template))
 			if err != nil {
 				o.Logr.Error(err, "failed to get workspace config", "template", v.GetName())
 				continue
@@ -121,7 +121,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 			rawTmplVars := strings.Join(vars, ",")
 
 			resources := fmt.Sprintf("%s/%s", cfg.DeploymentName, cfg.ServiceName)
-			rowdata := []string{v.GetName(), rawTmplVars, resources, cfg.URLBase}
+			rowdata := []string{v.GetName(), rawTmplVars, resources}
 			fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 		}
 

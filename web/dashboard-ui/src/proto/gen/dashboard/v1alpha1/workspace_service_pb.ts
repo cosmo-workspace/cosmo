@@ -492,6 +492,13 @@ export class UpsertNetworkRuleRequest extends Message<UpsertNetworkRuleRequest> 
    */
   networkRule?: NetworkRule;
 
+  /**
+   * network rule index to update. insert if index is out of length
+   *
+   * @generated from field: int32 index = 4;
+   */
+  index = 0;
+
   constructor(data?: PartialMessage<UpsertNetworkRuleRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -503,6 +510,7 @@ export class UpsertNetworkRuleRequest extends Message<UpsertNetworkRuleRequest> 
     { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "ws_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "network_rule", kind: "message", T: NetworkRule },
+    { no: 4, name: "index", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpsertNetworkRuleRequest {
@@ -584,11 +592,11 @@ export class DeleteNetworkRuleRequest extends Message<DeleteNetworkRuleRequest> 
   wsName = "";
 
   /**
-   * network rule name
+   * network rule index to delete
    *
-   * @generated from field: string network_rule_name = 3;
+   * @generated from field: int32 index = 3;
    */
-  networkRuleName = "";
+  index = 0;
 
   constructor(data?: PartialMessage<DeleteNetworkRuleRequest>) {
     super();
@@ -600,7 +608,7 @@ export class DeleteNetworkRuleRequest extends Message<DeleteNetworkRuleRequest> 
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "ws_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "network_rule_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "index", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteNetworkRuleRequest {
