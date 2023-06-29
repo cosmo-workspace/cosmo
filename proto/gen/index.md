@@ -3,11 +3,6 @@
 
 ## Table of Contents
 
-- [auth-proxy/v1alpha1/authproxy.proto](#auth-proxy_v1alpha1_authproxy-proto)
-    - [LoginRequest](#authproxy-v1alpha1-LoginRequest)
-  
-    - [AuthProxyService](#authproxy-v1alpha1-AuthProxyService)
-  
 - [dashboard/v1alpha1/auth_service.proto](#dashboard_v1alpha1_auth_service-proto)
     - [LoginRequest](#dashboard-v1alpha1-LoginRequest)
     - [LoginResponse](#dashboard-v1alpha1-LoginResponse)
@@ -74,48 +69,6 @@
     - [WorkspaceService](#dashboard-v1alpha1-WorkspaceService)
   
 - [Scalar Value Types](#scalar-value-types)
-
-
-
-<a name="auth-proxy_v1alpha1_authproxy-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## auth-proxy/v1alpha1/authproxy.proto
-
-
-
-<a name="authproxy-v1alpha1-LoginRequest"></a>
-
-### LoginRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  |  |
-| password | [string](#string) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="authproxy-v1alpha1-AuthProxyService"></a>
-
-### AuthProxyService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| Login | [LoginRequest](#authproxy-v1alpha1-LoginRequest) | [.google.protobuf.Empty](#google-protobuf-Empty) |  |
-
- 
 
 
 

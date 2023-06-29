@@ -35,7 +35,6 @@ template: |
   ## Docker Images
   [ghcr.io/cosmo-workspace/cosmo-controller-manager:v$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-controller-manager)
   [ghcr.io/cosmo-workspace/cosmo-dashboard:v$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-dashboard)
-  [ghcr.io/cosmo-workspace/cosmo-auth-proxy:v$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-auth-proxy)
 
   ## How to install
 
@@ -57,9 +56,6 @@ template: |
 
   # upgrade cosmo-controller-manager
   helm upgrade cosmo-controller-manager cosmo/cosmo-controller-manager -n cosmo-system --values controller-manager.values.yaml
-
-  # update default Templates
-  kubectl apply -f https://raw.githubusercontent.com/cosmo-workspace/cosmo/v$RESOLVED_VERSION/config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml
 
   # upgrade cosmo-dashboard
   helm upgrade cosmo-dashboard cosmo/cosmo-dashboard -n cosmo-system --values dashboard.values.yaml

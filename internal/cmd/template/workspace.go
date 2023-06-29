@@ -12,11 +12,6 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
-const (
-	AuthProxyPatchFile = "cosmo-auth-proxy-patch.yaml"
-	AuthProxyRoleBFile = "cosmo-auth-proxy-roleb.yaml"
-)
-
 func completeWorkspaceConfig(wsConfig *cosmov1alpha1.Config, unst []unstructured.Unstructured) error {
 	if wsConfig == nil || len(unst) == 0 {
 		return errors.New("invalid args")
