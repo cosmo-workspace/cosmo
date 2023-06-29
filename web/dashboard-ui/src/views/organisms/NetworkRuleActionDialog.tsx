@@ -43,7 +43,7 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
     return (
       <Dialog open={true} fullWidth maxWidth={'xs'} >
         <DialogTitle >
-          {networkRule ? isMain ? "⭐️ Main NetworkRule" : "Edit NetworkRule" : "Add New NetworkRule"}
+          {networkRule ? "Edit NetworkRule" : "Add New NetworkRule"}
           <IconButton
             sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
             onClick={() => onClose()}>
@@ -96,6 +96,7 @@ export const NetworkRuleUpsertDialog: React.VFC<{ workspace: Workspace, networkR
                   helperText={(errors.httpPath && errors.httpPath.message)}
                 />
               </Collapse>
+              {isMain && <Alert severity="info" >Main Network Rule values cannot be changed</Alert>}
               <Divider />
               <FormControlLabel
                 sx={{ my: 2 }}
