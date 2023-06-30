@@ -17,7 +17,6 @@ require (
 	github.com/onsi/ginkgo/v2 v2.9.5
 	github.com/onsi/gomega v1.27.7
 	github.com/pelletier/go-toml/v2 v2.0.7
-	github.com/prometheus/client_golang v1.15.1
 	github.com/sethvargo/go-password v0.2.0
 	github.com/spf13/afero v1.9.5
 	github.com/spf13/cobra v1.7.0
@@ -83,6 +82,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/prometheus/client_golang v1.15.1 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
 	github.com/prometheus/procfs v0.9.0 // indirect

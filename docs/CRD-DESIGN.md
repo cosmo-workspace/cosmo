@@ -250,8 +250,6 @@ spec:
   replicas: 1
   template:
     name: example-cs
-  vars:
-    COSMO_AUTH_PROXY_IMAGE: v0.17.0-beta2
   network:
   - name: http
     group: main
@@ -296,8 +294,6 @@ spec:
   role: cosmo-admin
   authType: password-secret
   addons:
-  - template:
-      name: cosmo-auth-proxy-role
   - template:
       name: eks-iamserviceaccount
     vars:

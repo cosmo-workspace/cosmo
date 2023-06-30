@@ -7,7 +7,6 @@ QUICK_BUILD ?= no
 MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
 COSMOCTL_VERSION  ?= $(VERSION)
-AUTHPROXY_VERSION ?= $(VERSION)
 TRAEFIK_PLUGINS_VERSION ?= $(VERSION)
 
 
@@ -17,7 +16,6 @@ CHART_TRAEFIK_VERSION ?= $(TRAEFIK_PLUGINS_VERSION)
 
 IMG_MANAGER ?= cosmo-controller-manager:$(MANAGER_VERSION)
 IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
-IMG_AUTHPROXY ?= cosmo-auth-proxy:$(AUTHPROXY_VERSION)
 IMG_TRAEFIK_PLUGINS ?= cosmo-traefik-plugins:$(TRAEFIK_PLUGINS_VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:generateEmbeddedObjectMeta=true"
@@ -48,7 +46,7 @@ help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 .PHONY: all
-all: manager cosmoctl dashboard auth-proxy
+all: manager cosmoctl dashboard
 
 ##---------------------------------------------------------------------
 ##@ Development
@@ -208,10 +206,6 @@ cosmoctl: go generate fmt vet ## Build cosmoctl binary.
 dashboard: go generate fmt vet ## Build dashboard binary.
 	CGO_ENABLED=0 $(GO) build -o bin/dashboard ./cmd/dashboard/main.go
 
-.PHONY: auth-proxy
-auth-proxy: go generate fmt vet ## Build auth-proxy binary.
-	CGO_ENABLED=0 $(GO) build -o bin/auth-proxy ./cmd/auth-proxy/main.go
-
 .PHONY: update-version
 update-version: kustomize ## Update version in version.go.
 ifndef VERSION
@@ -226,7 +220,6 @@ endif
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${MANAGER_VERSION} cosmo-workspace/" ./cmd/controller-manager/main.go
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${DASHBOARD_VERSION} cosmo-workspace/" ./internal/dashboard/root.go
 	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${COSMOCTL_VERSION} cosmo-workspace/" ./internal/cmd/version/version.go
-	sed -i.bk -e "s/v[0-9]\+.[0-9]\+.[0-9]\+.* cosmo-workspace/${AUTHPROXY_VERSION} cosmo-workspace/" ./cmd/auth-proxy/main.go
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG_MANAGER}
 	cd config/dashboard && $(KUSTOMIZE) edit set image dashboard=${IMG_DASHBOARD}
 	sed -i.bk \
@@ -279,17 +272,6 @@ endif
 run-dashboard-ui: ## Run dashboard-ui.
 	cd web/dashboard-ui && yarn install && yarn start
 
-.PHONY: run-auth-proxy
-run-auth-proxy: go generate fmt vet manifests ## Run auth-proxy against the configured Kubernetes cluster in ~/.kube/config.
-	$(GO) run ./cmd/auth-proxy/main.go \
-		--zap-log-level $(LOG_LEVEL) \
-		--zap-time-encoding=iso8601 \
-		--insecure
-
-.PHONY: run-auth-proxy-ui
-run-auth-proxy-ui: ## Run auth-proxy-ui.
-	cd web/auth-proxy-ui && yarn install && yarn dev --port 3010
-
 .PHONY: run
 run: go generate fmt vet manifests ## Run controller-manager against the configured Kubernetes cluster in ~/.kube/config.
 	$(GO) run ./cmd/controller-manager/main.go \
@@ -302,7 +284,7 @@ run: go generate fmt vet manifests ## Run controller-manager against the configu
 ##@ Docker build
 ##---------------------------------------------------------------------
 .PHONY: docker-build
-docker-build: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-build-traefik-plugins ## Build the docker image.
+docker-build: docker-build-manager docker-build-dashboard docker-build-traefik-plugins ## Build the docker image.
 
 .PHONY: docker-build-manager
 docker-build-manager: test ## Build the docker image for controller-manager.
@@ -312,16 +294,12 @@ docker-build-manager: test ## Build the docker image for controller-manager.
 docker-build-dashboard: test ## Build the docker image for dashboard.
 	DOCKER_BUILDKIT=1 docker build . -t ${IMG_DASHBOARD} -f dockerfile/dashboard.Dockerfile
 
-.PHONY: docker-build-auth-proxy
-docker-build-auth-proxy: test ## Build the docker image for auth-proxy.
-	DOCKER_BUILDKIT=1 docker build . -t ${IMG_AUTHPROXY} -f dockerfile/auth-proxy.Dockerfile
-
 .PHONY: docker-build-traefik-plugins
 docker-build-traefik-plugins: test ## Build the docker image for traefik-plugins.
 	DOCKER_BUILDKIT=1 docker build . -t ${IMG_TRAEFIK_PLUGINS} -f dockerfile/traefik-plugins.Dockerfile
 
-.PHONY: docker-push docker-push-manager docker-push-dashboard docker-push-auth-proxy docker-push-traefik-plugins
-docker-push: docker-push-manager docker-push-dashboard docker-push-auth-proxy docker-push-traefik-plugins ## Build the docker image.
+.PHONY: docker-push docker-push-manager docker-push-dashboard docker-push-traefik-plugins
+docker-push: docker-push-manager docker-push-dashboard docker-push-traefik-plugins ## Build the docker image.
 
 REGISTORY ?= ghcr.io/cosmo-workspace
 
@@ -332,10 +310,6 @@ docker-push-manager: docker-build-manager ## push cosmo contoller-manager image.
 docker-push-dashboard: docker-build-dashboard ## push cosmo dashboard image.
 	docker tag ${IMG_DASHBOARD} ${REGISTORY}/${IMG_DASHBOARD}
 	docker push ${REGISTORY}/${IMG_DASHBOARD}
-
-docker-push-auth-proxy: docker-build-auth-proxy ## push cosmo auth-proxy image.
-	docker tag ${IMG_AUTHPROXY} ${REGISTORY}/${IMG_AUTHPROXY}
-	docker push ${REGISTORY}/${IMG_AUTHPROXY}
 
 docker-push-traefik-plugins: docker-build-traefik-plugins ## push cosmo traefik-plugins image.
 	docker tag ${IMG_TRAEFIK_PLUGINS} ${REGISTORY}/${IMG_TRAEFIK_PLUGINS}

@@ -209,10 +209,9 @@ delete-cluster: k3d  ## Delete k3s cluster.
 IMAGE_TAG ?= latest
 MANAGER_IMAGE_TAG   ?= $(IMAGE_TAG)
 DASHBOARD_IMAGE_TAG ?= $(IMAGE_TAG)
-AUTHPROXY_IMAGE_TAG ?= $(IMAGE_TAG)
 TRAEFIK_PLUGINS_IMAGE_TAG ?= $(IMAGE_TAG)
 
-.PHONY: docker-build-manager docker-build-dashboard docker-build-auth-proxy docker-build-traefik-plugins docker-cache-clear
+.PHONY: docker-build-manager docker-build-dashboard docker-build-traefik-plugins docker-cache-clear
 
 docker-build-manager: ## build & push cosmo contoller-manager image.
 	@echo ====== $@ ======
@@ -231,14 +230,6 @@ docker-build-dashboard: ## build & push cosmo dashboard image.
 	docker rmi cosmo-dashboard:$(DASHBOARD_IMAGE_TAG)
 	k3d image import localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) -c $(CLUSTER_NAME)
 	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
-
-# docker-build-auth-proxy: ## build & push cosmo auth-proxy image.
-# 	@echo ====== $@ ======
-# 	cd ../.. && make docker-build-auth-proxy VERSION=$(AUTHPROXY_IMAGE_TAG) QUICK_BUILD=yes
-# 	docker tag cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-# 	docker push localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-# 	docker rmi cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG)
-# 	k3d image import localhost:5000/cosmo-auth-proxy:$(AUTHPROXY_IMAGE_TAG) -c $(CLUSTER_NAME)
 
 docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
 	@echo ====== $@ ======
@@ -347,7 +338,6 @@ uninstall-dashboard: helm  ## Uninstall cosmo dashboard resources.
 
 apply-template: kubectl cosmoctl ## Apply template.
 	@echo ====== $@ ======
-	# until (kubectl apply -f ../../config/user-addon/auth-proxy/user-addon-cosmo-auth-proxy-role.yaml) do sleep 1; done
 	until (kubectl apply -f ../../config/user-addon/traefik-middleware/useraddon-cosmo-username-headers.yaml) do sleep 1; done
 	for i in `ls ../../example/useraddons/*/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
 	for i in `ls ../../example/workspaces/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done

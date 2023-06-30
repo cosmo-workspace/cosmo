@@ -28,11 +28,6 @@ Example:
 	
       kustomize build ./kubernetes/ | cosmoctl template generate --name TEMPLATE_NAME | kubectl apply -f -
 
-  * Pipe from helm template and generate Workspace Template with cosmo-auth-proxy injection
-	
-  	  helm template code-server ci/helm-chart \
-		| cosmoctl template generate --name TEMPLATE_NAME --workspace
-
   * Input merged config file (kustomize build ... or helm template ... etc.) and save it to file
 
       cosmoctl template generate --name TEMPLATE_NAME -o cosmo-template.yaml < merged.yaml

@@ -16,9 +16,3 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 0
-
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/web/auth-proxy-ui" # Location of package manifests
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 0
