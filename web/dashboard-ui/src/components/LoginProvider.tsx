@@ -1,3 +1,4 @@
+import { Box, CircularProgress, CssBaseline, Stack, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '../proto/gen/dashboard/v1alpha1/user_pb';
@@ -180,8 +181,17 @@ export const LoginProvider: React.FC<React.PropsWithChildren<unknown>> = ({ chil
 
   return (
     <Context.Provider value={loginModule}>
-      {isVerified ? children : <div>...verify login...</div>}
-    </Context.Provider>
+      {isVerified ? children :
+        <div>
+          <CssBaseline />
+          <Stack sx={{ m: 10 }} alignItems='center' spacing={2}>
+            <Box sx={{ display: 'flex' }}>
+              <CircularProgress />
+            </Box>
+            <Typography >verifying session...</Typography>
+          </Stack>
+        </div>}
+    </Context.Provider >
   )
 }
 
