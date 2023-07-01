@@ -2,7 +2,6 @@ package cosmoauth
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -102,10 +101,9 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// check user name is owner's
 	userName := r.Header.Get("X-Cosmo-UserName")
-	// TODO: improvement
 	if userName != "" && sesInfo.UserName != userName {
-		LoggerINFO.Print("invalid authorization.", " storedUserName=", sesInfo.UserName, " ownerName=", userName)
-		p.redirectToLoginPage(w, r)
+		LoggerINFO.Print("forbidden", " storedUserName=", sesInfo.UserName, " ownerName=", userName)
+		p.forbidden(w, r)
 		return
 	}
 
@@ -126,26 +124,16 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *CosmoAuth) redirectToLoginPage(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusFound)
+	err := writeRedirectHTML(w, p.config)
+	if err != nil {
+		LoggerERROR.Printf("failed to write redirect html. err=%s", err)
+	}
+}
 
-	bodyFormat := `
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>COSMO Auth redirector</title>
-		<script type="module">
-			const originalUrl = encodeURIComponent(window.location.href);
-			const signInUrl = "%s" + "?redirect_to=" + originalUrl;
-			window.location.href = signInUrl;
-			console.log(signInUrl)
-		</script>
-	</head>
-	<body>redirect to Sign In page</body>
-</html>
-`
-	// body := fmt.Sprintf(bodyFormat, p.config.SignInUrl)
-	w.WriteHeader(http.StatusUnauthorized)
-	fmt.Fprintf(w, bodyFormat, p.config.SignInUrl)
-	// w.Write([]byte(body))
+func (p *CosmoAuth) forbidden(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusForbidden)
+	writeForbiddenHTML(w)
 }
 
 func SetLogger(level string) {
