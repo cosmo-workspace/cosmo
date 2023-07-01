@@ -6,7 +6,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -79,7 +78,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	if user.Spec.AuthType == cosmov1alpha1.UserAuthTypePasswordSecert {
 		// generate default password if password secret is not found
-		if _, err := password.GetDefaultPassword(ctx, r.Client, user.Name); err != nil && apierrors.IsNotFound(err) {
+		if _, err := password.GetDefaultPassword(ctx, r.Client, user.Name); err != nil && apierrs.IsNotFound(err) {
 			if err := password.ResetPassword(ctx, r.Client, user.Name); err != nil {
 				r.Recorder.Eventf(&user, corev1.EventTypeWarning, "InitFailed", "failed to reset password: %v", err)
 				log.Error(err, "failed to reset password")
