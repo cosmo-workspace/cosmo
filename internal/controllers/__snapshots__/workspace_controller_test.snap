@@ -163,7 +163,7 @@ SnapShot = """
   \"spec\": {
     \"routes\": [
       {
-        \"match\": \"Host(`port1-ws-test-wsctltest`) \\u0026\\u0026 PathPrefix(`/path`)\",
+        \"match\": \"Host(`port1-ws-test-wsctltest.domain`) \\u0026\\u0026 PathPrefix(`/path`)\",
         \"kind\": \"Rule\",
         \"priority\": 100,
         \"services\": [

@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -22,7 +20,6 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
@@ -31,10 +28,6 @@ type WorkspaceStatusReconciler struct {
 	client.Client
 	Recorder record.EventRecorder
 	Scheme   *runtime.Scheme
-
-	URLBaseProtocol string
-	URLBaseHostBase string
-	URLBaseDomain   string
 }
 
 // +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch
@@ -56,18 +49,6 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	current := ws.DeepCopy()
 
 	log.DumpObject(r.Scheme, &ws, "before workspace")
-
-	// sync workspace config with template
-	cfg, err := getWorkspaceConfig(ctx, r.Client, ws.Spec.Template.Name)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
-	ws.Status.Config = cfg
-
-	// fetch child pod status
-	urlMap := r.GenWorkspaceURLMap(ctx, ws)
-	log.Debug().Info(fmt.Sprintf("workspace urlmap: %s", urlMap))
-	ws.Status.URLs = urlMap
 
 	// set workspace phase
 	requeue := false
@@ -164,16 +145,6 @@ func (r *WorkspaceStatusReconciler) getWorkspaceNamespacedName(ctx context.Conte
 	return req
 }
 
-func (r *WorkspaceStatusReconciler) GenWorkspaceURLMap(ctx context.Context, ws cosmov1alpha1.Workspace) map[string]string {
-	urlMap := make(map[string]string)
-	for _, netRule := range ws.Spec.Network {
-		host := cosmov1alpha1.GenHost(r.URLBaseHostBase, r.URLBaseDomain, netRule.HostPrefix(), ws)
-		url := cosmov1alpha1.GenURL(r.URLBaseProtocol, host, netRule.HTTPPath)
-		urlMap[netRule.UniqueKey()] = url
-	}
-	return urlMap
-}
-
 func listWorkspacePods(ctx context.Context, c client.Client, ws cosmov1alpha1.Workspace) ([]corev1.Pod, error) {
 	var podList corev1.PodList
 
@@ -189,33 +160,4 @@ func listWorkspacePods(ctx context.Context, c client.Client, ws cosmov1alpha1.Wo
 		return nil, err
 	}
 	return podList.Items, nil
-}
-
-func getWorkspaceServices(ctx context.Context, c client.Client, ws cosmov1alpha1.Workspace) (svc corev1.Service, err error) {
-	var svcList corev1.ServiceList
-
-	ls := labels.NewSelector()
-	req, _ := labels.NewRequirement(cosmov1alpha1.LabelKeyInstanceName, selection.In, []string{ws.GetName()})
-	ls = ls.Add(*req)
-
-	opts := &client.ListOptions{
-		LabelSelector: ls,
-		Namespace:     ws.GetNamespace(),
-	}
-
-	if err := c.List(ctx, &svcList, opts); err != nil {
-		return svc, err
-	}
-
-	if len(svcList.Items) == 0 {
-		return svc, errors.New("no services")
-	}
-
-	for _, v := range svcList.Items {
-		if instance.EqualInstanceResourceName(ws.GetName(), v.Name, ws.Status.Config.ServiceName) {
-			svc = v
-		}
-	}
-
-	return svc, nil
 }
