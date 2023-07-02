@@ -25,7 +25,7 @@ type TraefikIngressRouteConfig struct {
 	// Namespace must be empty to be the same as the workspace
 	UserNameHeaderMiddleware traefikv1.MiddlewareRef
 
-	// HostBase is a base of hostname. if empty, cosmov1alpha1.DefaultHostBase is used
+	// HostBase is a base of hostname
 	HostBase string
 	// Domain is a domain of hostname
 	Domain string

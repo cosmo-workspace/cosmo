@@ -137,17 +137,15 @@ MIT 2023 cosmo-workspace/cosmo
 				Scheme:   mgr.GetScheme(),
 
 				TraefikIngressRouteCfg: &o.TraefikIngressRouteCfg,
+				URLBaseProtocol:        o.WorkspaceURLBaseProtocol,
 			}).SetupWithManager(mgr); err != nil {
 				setupLog.Error(err, "unable to create controller", "controller", wsController)
 				os.Exit(1)
 			}
 			if err = (&controllers.WorkspaceStatusReconciler{
-				Client:          mgr.GetClient(),
-				Recorder:        mgr.GetEventRecorderFor(wsStatController),
-				Scheme:          mgr.GetScheme(),
-				URLBaseProtocol: o.WorkspaceURLBaseProtocol,
-				URLBaseHostBase: o.TraefikIngressRouteCfg.HostBase,
-				URLBaseDomain:   o.TraefikIngressRouteCfg.Domain,
+				Client:   mgr.GetClient(),
+				Recorder: mgr.GetEventRecorderFor(wsStatController),
+				Scheme:   mgr.GetScheme(),
 			}).SetupWithManager(mgr); err != nil {
 				setupLog.Error(err, "unable to create controller", "controller", wsStatController)
 				os.Exit(1)

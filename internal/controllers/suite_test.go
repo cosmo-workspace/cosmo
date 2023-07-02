@@ -138,17 +138,17 @@ var _ = BeforeSuite(func() {
 			UserNameHeaderMiddleware: traefikv1.MiddlewareRef{
 				Name: "userNameHeader",
 			},
+			HostBase: "{{NETRULE}}-{{WORKSPACE}}-{{USER}}",
+			Domain:   "domain",
 		},
+		URLBaseProtocol: "https",
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 
 	err = (&WorkspaceStatusReconciler{
-		Client:          mgr.GetClient(),
-		Scheme:          mgr.GetScheme(),
-		Recorder:        mgr.GetEventRecorderFor(wsStatController),
-		URLBaseProtocol: "https",
-		URLBaseHostBase: "{NETRULE_GROUP}}-{{WOKRSPACE}}-{{USER}}",
-		URLBaseDomain:   "domain",
+		Client:   mgr.GetClient(),
+		Scheme:   mgr.GetScheme(),
+		Recorder: mgr.GetEventRecorderFor(wsStatController),
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 

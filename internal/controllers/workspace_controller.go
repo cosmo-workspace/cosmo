@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -28,6 +29,7 @@ type WorkspaceReconciler struct {
 	Scheme   *runtime.Scheme
 
 	TraefikIngressRouteCfg *workspace.TraefikIngressRouteConfig
+	URLBaseProtocol        string
 }
 
 // +kubebuilder:rbac:groups=cosmo-workspace.github.io,resources=workspaces,verbs=get;list;watch;create;update;patch;delete
@@ -98,6 +100,11 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. traefik ingress route synced")
 	}
 
+	// generate URL and set to status
+	urlMap := r.GenWorkspaceURLMap(ctx, ws)
+	log.DebugAll().Info(fmt.Sprintf("workspace urlmap: %s", urlMap))
+	ws.Status.URLs = urlMap
+
 	// update workspace status
 	if !equality.Semantic.DeepEqual(currentWs, &ws) {
 		log.Debug().PrintObjectDiff(currentWs, &ws)
@@ -124,4 +131,14 @@ func getWorkspaceConfig(ctx context.Context, c client.Client, tmplName string) (
 		return cfg, err
 	}
 	return workspace.ConfigFromTemplateAnnotations(tmpl)
+}
+
+func (r *WorkspaceReconciler) GenWorkspaceURLMap(ctx context.Context, ws cosmov1alpha1.Workspace) map[string]string {
+	urlMap := make(map[string]string)
+	for _, netRule := range ws.Spec.Network {
+		host := cosmov1alpha1.GenHost(r.TraefikIngressRouteCfg.HostBase, r.TraefikIngressRouteCfg.Domain, netRule.HostPrefix(), ws)
+		url := cosmov1alpha1.GenURL(r.URLBaseProtocol, host, netRule.HTTPPath)
+		urlMap[netRule.UniqueKey()] = url
+	}
+	return urlMap
 }
