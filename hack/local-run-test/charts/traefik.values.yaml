@@ -1,6 +1,53 @@
 # see https://github.com/k3s-io/k3s/blob/master/manifests/traefik.yaml
 
 traefik:
+  fullnameOverride: traefik
+
   service:
     type: LoadBalancer
-    # type: NodePort
+
+  logs:
+    general:
+      level: DEBUG
+    access:
+      enabled: true
+
+  # for k3d. see https://github.com/k3s-io/k3s/blob/master/manifests/traefik.yaml
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  # Create an IngressRoute for the dashboard
+  ingressRoute:
+    dashboard:
+      enabled: true
+      matchRule: Host(`traefik-dasbhoard.example.com`)
+      entryPoints: ["web", "websecure", "traefik"]
+      middlewares:
+        - name: traefik-dashboard-auth
+
+  extraObjects:
+    # authentication for Traefik Dashboard
+    - apiVersion: v1
+      kind: Secret
+      metadata:
+        name: traefik-dashboard-auth-secret
+        namespace: cosmo-system
+      type: kubernetes.io/basic-auth
+      stringData:
+        username: admin
+        password: adminadmin
+    - apiVersion: traefik.io/v1alpha1
+      kind: Middleware
+      metadata:
+        name: traefik-dashboard-auth
+        namespace: cosmo-system
+      spec:
+        basicAuth:
+          secret: traefik-dashboard-auth-secret

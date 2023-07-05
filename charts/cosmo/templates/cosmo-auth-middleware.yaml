@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cosmo-auth
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  plugin:
+    cosmoauth:
+      logLevel: DEBUG
+      cookieSessionName: "${COOKIE_SESSION_NAME}"
+      cookieDomain: "${COOKIE_DOMAIN}"
+      cookieHashKey: "${COOKIE_HASHKEY}"
+      cookieBlockKey: "${COOKIE_BLOCKKEY}"
+      signInUrl: "${SIGNIN_URL}"

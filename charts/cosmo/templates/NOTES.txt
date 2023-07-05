@@ -1,0 +1,8 @@
+COSMO is installed!
+
+* Your Environment Infomation
+  +-----------------------+------------------------------------------------------------
+  | DOMAIN                | *.{{ .Values.domain }}
+  | DASHBOARD_URL         | {{ include "cosmo.dashboard.signinUrl" . }}
+  | WORKSPACE_URLBase     | {{ .Values.urlbase.protocol }}://{{ .Values.urlbase.host }}.{{ .Values.domain }}
+  +-----------------------+------------------------------------------------------------
