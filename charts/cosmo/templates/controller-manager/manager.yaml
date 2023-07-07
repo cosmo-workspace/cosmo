@@ -119,23 +119,17 @@ spec:
         {{- if ne .Values.controllerManager.logging.level "info" }}
         - --zap-devel=true
         {{- end }}
-        {{- if .Values.controllerManager.traefikIngressRouteTemplate.entrypoints }}
         - --traefik-entrypoints={{ join "," .Values.controllerManager.traefikIngressRouteTemplate.entrypoints }}
-        {{- end }}
-        {{- if .Values.controllerManager.traefikIngressRouteTemplate.middlewares.auth }}
         - --traefik-authen-middleware={{ .Values.controllerManager.traefikIngressRouteTemplate.middlewares.auth }}
-        {{- end }}
         {{- if .Values.controllerManager.traefikIngressRouteTemplate.namespace }}
         - --traefik-authen-middleware-namespace={{ .Values.controllerManager.traefikIngressRouteTemplate.namespace }}
         {{- else }}
         - --traefik-authen-middleware-namespace={{ .Release.Namespace }}
         {{- end }}
-        {{- if .Values.controllerManager.traefikIngressRouteTemplate.middlewares.usernameHeader }}
         - --traefik-username-header-middleware={{ .Values.controllerManager.traefikIngressRouteTemplate.middlewares.usernameHeader }}
-        {{- end }}
         - --workspace-urlbase-protocol={{ .Values.urlbase.protocol }}
         - --workspace-urlbase-host={{ .Values.urlbase.host }}
-        - --workspace-urlbase-domain={{ .Values.domain }}
+        - --workspace-urlbase-domain={{ include "cosmo.domain" . }}
         command:
         - /manager
         image: {{ .Values.controllerManager.image.repository }}:{{ .Values.controllerManager.image.tag | default .Chart.AppVersion }}
@@ -156,7 +150,7 @@ spec:
         {{- end }}
         name: manager
         ports:
-        {{- if .Values.controllerManager.webhook.port }}
+        {{- if .Values.controllerManager.webhook.enabled }}
         - containerPort: {{ .Values.controllerManager.webhook.port }}
           name: webhook-server
           protocol: TCP

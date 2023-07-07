@@ -136,7 +136,7 @@ subjects:
   name: {{ .Values.controllerManager.serviceAccount.name }}
   namespace: {{ .Release.Namespace }}
 ---
-{{- if .Values.controllerManager.serviceAccount.create -}}
+{{- if .Values.controllerManager.serviceAccount.create }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:

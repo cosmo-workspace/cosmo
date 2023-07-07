@@ -93,7 +93,7 @@ subjects:
   name: cosmo-dashboard
   namespace: {{ .Release.Namespace }}
 ---
-{{- if .Values.dashboard.serviceAccount.create -}}
+{{- if .Values.dashboard.serviceAccount.create }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
