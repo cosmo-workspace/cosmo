@@ -4,7 +4,7 @@
 # Common network setting for COSMO
 #
 # domain is a domain name for cosmo components
-domain: example.com
+domain:
 # URLBase for Workspace URL to be unique
 urlbase:
   # protocol for Workspace. 'http' or 'https'

@@ -51,6 +51,14 @@ app.kubernetes.io/name: {{ include "cosmo.name" . }}
 {{- end }}
 
 {{/*
+Required domain
+*/}}
+{{- define "cosmo.domain" -}}
+{{- $domain := required "'.Values.domain' is required" .Values.domain -}}
+{{ $domain }}
+{{- end }}
+
+{{/*
 Dashboad URL
 */}}
 {{- define "cosmo.dashboard.signinUrl" -}}
