@@ -1,0 +1,22 @@
+testSpec:
+  desc: fullnameOverride
+  dynamicFields:
+    - apiVersion: v1
+      kind: Secret
+      name: cosmo-auth-env
+      jsonPath:
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_BLOCKKEY
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_SESSION_NAME
+
+domain: example.com
+
+controllerManager:
+  fullnameOverride: ctm
+
+dashboard:
+  fullnameOverride: dsh
+
+traefik:
+  fullnameOverride: tae

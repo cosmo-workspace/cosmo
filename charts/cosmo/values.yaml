@@ -69,13 +69,14 @@ controllerManager:
     enabled: true
     # if `hostNetwork: true` set available host port
     port: 9443
-    # Specifies if cosmo-controller-manager should be started in hostNetwork mode.
-    # set true if kubeapiserver cannot reach to the webhook endpoint(e.g. using custom CNI)
-    hostNetwork: false
-    # This may need to be used to be changed given certain conditions. For instance, if one uses the cilium CNI
-    # with certain settings, one may need to set `hostNetwork: true` and webhooks won't work unless `dnsPolicy`
-    # is set to `ClusterFirstWithHostNet`. See https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
-    dnsPolicy:
+
+  # Specifies if cosmo-controller-manager should be started in hostNetwork mode.
+  # set true if kubeapiserver cannot reach to the webhook endpoint(e.g. using custom CNI)
+  hostNetwork: false
+  # This may need to be used to be changed given certain conditions. For instance, if one uses the cilium CNI
+  # with certain settings, one may need to set `hostNetwork: true` and webhooks won't work unless `dnsPolicy`
+  # is set to `ClusterFirstWithHostNet`. See https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  dnsPolicy:
 
   healthz:
     enabled: true
@@ -236,7 +237,7 @@ installDefaultUserAddon: true
 # We need to install Traefik with `cosmo-auth` plugin for authentication of COSMO Dashboard and Workspaces
 #
 traefik:
-  enable: true
+  enabled: true
 
   # Set the same namespace with controller and dashboard
   namespaceOverride: cosmo-system

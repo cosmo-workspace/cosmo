@@ -123,6 +123,8 @@ spec:
         - --traefik-authen-middleware={{ .Values.controllerManager.traefikIngressRouteTemplate.middlewares.auth }}
         {{- if .Values.controllerManager.traefikIngressRouteTemplate.namespace }}
         - --traefik-authen-middleware-namespace={{ .Values.controllerManager.traefikIngressRouteTemplate.namespace }}
+        {{- else if .Values.traefik.enabled }}
+        - --traefik-authen-middleware-namespace={{ .Values.traefik.namespaceOverride }}
         {{- else }}
         - --traefik-authen-middleware-namespace={{ .Release.Namespace }}
         {{- end }}

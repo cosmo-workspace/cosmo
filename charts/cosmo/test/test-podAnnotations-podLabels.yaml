@@ -1,0 +1,25 @@
+testSpec:
+  desc: add podAnnotations and podLabels
+  dynamicFields:
+    - apiVersion: v1
+      kind: Secret
+      name: cosmo-auth-env
+      jsonPath:
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_BLOCKKEY
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_SESSION_NAME
+
+domain: example.com
+
+controllerManager:
+  podAnnotations:
+    test-ann: hello
+  podLabels:
+    test-label: world
+
+dashboard:
+  podAnnotations:
+    test-ann: hello
+  podLabels:
+    test-label: world

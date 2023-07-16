@@ -1,0 +1,20 @@
+testSpec:
+  desc: disable traefik
+  dynamicFields:
+    - apiVersion: v1
+      kind: Secret
+      name: cosmo-auth-env
+      jsonPath:
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_BLOCKKEY
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_SESSION_NAME
+
+domain: example.com
+
+controllerManager:
+  traefikIngressRouteTemplate:
+    namespace: traefik
+
+traefik:
+  enabled: false
