@@ -16,7 +16,11 @@ spec:
     singular: clustertemplate
   scope: Cluster
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.labels.cosmo-workspace\.github\.io/type
+      name: Type
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: ClusterTemplate is the Schema for the Templates API
@@ -56,3 +60,4 @@ spec:
         type: object
     served: true
     storage: true
+    subresources: {}
