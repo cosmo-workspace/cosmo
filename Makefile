@@ -9,10 +9,7 @@ DASHBOARD_VERSION ?= $(VERSION)
 COSMOCTL_VERSION  ?= $(VERSION)
 TRAEFIK_PLUGINS_VERSION ?= $(VERSION)
 
-
-CHART_MANAGER_VERSION   ?= $(MANAGER_VERSION)
-CHART_DASHBOARD_VERSION ?= $(DASHBOARD_VERSION)
-CHART_TRAEFIK_VERSION ?= $(TRAEFIK_PLUGINS_VERSION)
+CHART_VERSION   ?= $(VERSION)
 
 IMG_MANAGER ?= cosmo-controller-manager:$(MANAGER_VERSION)
 IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
@@ -161,8 +158,8 @@ endif
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG_MANAGER}
 	cd config/dashboard && $(KUSTOMIZE) edit set image dashboard=${IMG_DASHBOARD}
 	sed -i.bk \
-		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_MANAGER_VERSION:v%=%}/" \
-		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${MANAGER_VERSION}/" \
+		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_VERSION:v%=%}/" \
+		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${VERSION}/" \
 		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
 		charts/cosmo/Chart.yaml
 
