@@ -227,7 +227,6 @@ certManager:
     create: true
     clusterIssuer: false
     name: cosmo-selfsigned-issuer
-    namespace:
 
 # set false if error occurs like `ensure CRDs are installed first`. e.g. dry-run
 installDefaultUserAddon: true

@@ -11,7 +11,7 @@ Example
 
 ```sh
 helm upgrade --install -n cosmo-system --create-namespace cosmo cosmo/cosmo \
-  --set network.domain=example.com
+  --set domain=example.com
 ```
 
-See detail in [`values.yaml`](https://github.com/cosmo-workspace/cosmo/blob/main/charts/cosmo-controller-manager/values.yaml)
+See detail in [`values.yaml`](https://github.com/cosmo-workspace/cosmo/blob/main/charts/cosmo/values.yaml)

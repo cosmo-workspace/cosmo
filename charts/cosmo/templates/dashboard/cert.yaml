@@ -30,7 +30,6 @@ spec:
     kind: ClusterIssuer
     {{- else }}
     kind: Issuer
-    namespace: {{ .Values.certManager.issuer.namespace | default .Release.Namespace }}
     {{- end }}
     name: {{ .Values.certManager.issuer.name }}
   secretName: dashboard-server-cert

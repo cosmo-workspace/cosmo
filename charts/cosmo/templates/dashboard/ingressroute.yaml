@@ -3,7 +3,7 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: {{ $fullName }}
+  name: cosmo-dashboard
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "cosmo.labels" . | nindent 4 }}
@@ -23,7 +23,7 @@ spec:
       priority: 1002
       services:
         - kind: Service
-          name: {{ $fullName }}
+          name: cosmo-dashboard
           namespace: {{ .Release.Namespace }}
           port: cosmo-dashboard-ui-server
           scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}
@@ -33,7 +33,7 @@ spec:
       priority: 1001
       services:
         - kind: Service
-          name: {{ $fullName }}
+          name: cosmo-dashboard
           namespace: {{ .Release.Namespace }}
           port: cosmo-dashboard-server
           scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}
@@ -42,7 +42,7 @@ spec:
       priority: 1000
       services:
         - kind: Service
-          name: {{ $fullName }}
+          name: cosmo-dashboard
           namespace: {{ .Release.Namespace }}
           port: cosmo-dashboard-server
           scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}

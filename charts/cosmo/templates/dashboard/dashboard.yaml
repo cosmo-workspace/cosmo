@@ -6,7 +6,7 @@ metadata:
   name: cosmo-dashboard
   namespace: {{ .Release.Namespace }}
   annotations:
-  {{- if .Values.dashboard.tls.enabled }}
+  {{- if not .Values.dashboard.tls.enabled }}
     traefik.ingress.kubernetes.io/service.serversscheme: http
   {{ else }}
     traefik.ingress.kubernetes.io/service.serversscheme: https
@@ -26,6 +26,7 @@ spec:
   {{- end }}
   {{- if not .Values.dashboard.localRunTest.enabled }}
   selector:
+    cosmo-workspace.github.io: dashboard
     {{- include "cosmo.selectorLabels" . | nindent 4 }}
   {{- end }}
 ---
@@ -64,6 +65,7 @@ spec:
   template:
     metadata:
       labels:
+        cosmo-workspace.github.io: dashboard
         {{- include "cosmo.selectorLabels" . | nindent 8 }}
         {{- if .Values.dashboard.podLabels }}
         {{- toYaml .Values.dashboard.podLabels | nindent 8 }}
@@ -76,7 +78,7 @@ spec:
       containers:
       - args:
         - --port={{ .Values.dashboard.service.port }}
-        - --maxage-minutes={{ .Values.dashboard.maxMinutes }}
+        - --maxage-minutes={{ .Values.dashboard.session.maxMinutes }}
         - --zap-log-level={{ .Values.dashboard.logging.level }}
         - --zap-time-encoding={{ .Values.dashboard.logging.timeEncoding }}
         - --cookie-domain=$(COOKIE_DOMAIN)
@@ -92,7 +94,7 @@ spec:
         {{- if .Values.dashboard.responseTimeoutSeconds }}
         - --timeout-seconds={{ .Values.dashboard.responseTimeoutSeconds }}
         {{- end }}
-        {{- if .Values.dashboard.tls.enabled }}
+        {{- if not .Values.dashboard.tls.enabled }}
         - --insecure
         {{- else }}
         - --tls-key=/app/cert/tls.key
@@ -119,7 +121,7 @@ spec:
           httpGet:
             path: /
             port: 8443
-            {{- if .Values.dashboard.tls.enabled }}
+            {{- if not .Values.dashboard.tls.enabled }}
             scheme: HTTP
             {{- else }}
             scheme: HTTPS
@@ -139,7 +141,7 @@ spec:
         securityContext:
           {{- toYaml .Values.dashboard.securityContext | nindent 10 }}
         volumeMounts:
-        {{- if not .Values.dashboard.tls.enabled }}
+        {{- if .Values.dashboard.tls.enabled }}
         - mountPath: /app/cert
           name: cert
           readOnly: true
@@ -154,7 +156,7 @@ spec:
       serviceAccountName: {{ .Values.dashboard.serviceAccount.name }}
       terminationGracePeriodSeconds: 10
       volumes:
-      {{- if not .Values.dashboard.tls.enabled }}
+      {{- if .Values.dashboard.tls.enabled }}
       - name: cert
         secret:
           defaultMode: 420

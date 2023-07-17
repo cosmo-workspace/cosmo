@@ -227,6 +227,7 @@ SnapShot = """
                 labels:
                     app.kubernetes.io/instance: testrelease
                     app.kubernetes.io/name: cosmo
+                    cosmo-workspace.github.io: controller-manager
             spec:
                 affinity: {}
                 containers:
@@ -333,11 +334,12 @@ SnapShot = """
                 labels:
                     app.kubernetes.io/instance: testrelease
                     app.kubernetes.io/name: cosmo
+                    cosmo-workspace.github.io: dashboard
             spec:
                 containers:
                     - args:
                         - --port=8443
-                        - --maxage-minutes=
+                        - --maxage-minutes=720
                         - --zap-log-level=info
                         - --zap-time-encoding=iso8601
                         - --cookie-domain=$(COOKIE_DOMAIN)
@@ -346,7 +348,8 @@ SnapShot = """
                         - --cookie-session-name=$(COOKIE_SESSION_NAME)
                         - --graceful-shutdown-seconds=10
                         - --timeout-seconds=5
-                        - --insecure
+                        - --tls-key=/app/cert/tls.key
+                        - --tls-cert=/app/cert/tls.crt
                       command:
                         - /app/dashboard
                       envFrom:
@@ -358,7 +361,7 @@ SnapShot = """
                         httpGet:
                             path: /
                             port: 8443
-                            scheme: HTTP
+                            scheme: HTTPS
                         initialDelaySeconds: 15
                         periodSeconds: 20
                       name: dashboard
@@ -374,11 +377,18 @@ SnapShot = """
                             cpu: 100m
                             memory: 20Mi
                       securityContext: {}
-                      volumeMounts: null
+                      volumeMounts:
+                        - mountPath: /app/cert
+                          name: cert
+                          readOnly: true
                 securityContext: {}
                 serviceAccountName: cosmo-dashboard
                 terminationGracePeriodSeconds: 10
-                volumes: null
+                volumes:
+                    - name: cert
+                      secret:
+                        defaultMode: 420
+                        secretName: dashboard-server-cert
 - object:
     apiVersion: apps/v1
     kind: Deployment
@@ -950,7 +960,7 @@ SnapShot = """
             app.kubernetes.io/name: cosmo
             app.kubernetes.io/version: v0.10.0
             helm.sh/chart: cosmo-0.10.0
-        name: testrelease-cosmo
+        name: cosmo-dashboard
         namespace: testns
     spec:
         entryPoints:
@@ -962,7 +972,7 @@ SnapShot = """
               priority: 1001
               services:
                 - kind: Service
-                  name: testrelease-cosmo
+                  name: cosmo-dashboard
                   namespace: testns
                   port: cosmo-dashboard-server
                   scheme: https
@@ -973,7 +983,7 @@ SnapShot = """
               priority: 1000
               services:
                 - kind: Service
-                  name: testrelease-cosmo
+                  name: cosmo-dashboard
                   namespace: testns
                   port: cosmo-dashboard-server
                   scheme: https
@@ -1070,12 +1080,13 @@ SnapShot = """
         selector:
             app.kubernetes.io/instance: testrelease
             app.kubernetes.io/name: cosmo
+            cosmo-workspace.github.io: controller-manager
 - object:
     apiVersion: v1
     kind: Service
     metadata:
         annotations:
-            traefik.ingress.kubernetes.io/service.serversscheme: http
+            traefik.ingress.kubernetes.io/service.serversscheme: https
         labels:
             app.kubernetes.io/instance: testrelease
             app.kubernetes.io/managed-by: Helm
@@ -1093,6 +1104,7 @@ SnapShot = """
         selector:
             app.kubernetes.io/instance: testrelease
             app.kubernetes.io/name: cosmo
+            cosmo-workspace.github.io: dashboard
         type: ClusterIP
 - object:
     apiVersion: v1
@@ -1113,6 +1125,7 @@ SnapShot = """
         selector:
             app.kubernetes.io/instance: testrelease
             app.kubernetes.io/name: cosmo
+            cosmo-workspace.github.io: controller-manager
 - object:
     apiVersion: v1
     kind: Service

@@ -39,6 +39,7 @@ spec:
     port: {{ .Values.controllerManager.metrics.kubeRbacProxy.port }}
     targetPort: {{ if .Values.controllerManager.metrics.kubeRbacProxy.enabled -}}{{ .Values.controllerManager.metrics.kubeRbacProxy.port }}{{- else -}}{{ .Values.controllerManager.metrics.port }}{{ end }}
   selector:
+    cosmo-workspace.github.io: controller-manager
     {{- include "cosmo.selectorLabels" . | nindent 4 }}
 {{- end }}
 ---
@@ -55,6 +56,7 @@ spec:
     targetPort: {{ .Values.controllerManager.webhook.port }}
   {{- if not .Values.controllerManager.localRunTest.enabled }}
   selector:
+    cosmo-workspace.github.io: controller-manager
     {{- include "cosmo.selectorLabels" . | nindent 4 }}
   {{- end }}
 ---
@@ -89,6 +91,7 @@ spec:
   template:
     metadata:
       labels:
+        cosmo-workspace.github.io: controller-manager
         {{- include "cosmo.selectorLabels" . | nindent 8 }}
         {{- if .Values.controllerManager.podLabels }}
         {{- toYaml .Values.controllerManager.podLabels | nindent 8 }}
