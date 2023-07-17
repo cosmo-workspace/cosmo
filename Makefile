@@ -51,68 +51,11 @@ all: manager cosmoctl dashboard
 ##---------------------------------------------------------------------
 ##@ Development
 ##---------------------------------------------------------------------
-define WEBHOOK_CHART_SUFIX
----
-{{- if not $$.Values.enableCertManager }}
-apiVersion: v1
-kind: Secret
-metadata:
-  name: webhook-server-cert
-  namespace: {{ .Release.Namespace }}
-  labels:
-    {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
-type: kubernetes.io/tls
-data:
-  ca.crt: {{ $$tls.caCert }}
-  tls.crt: {{ $$tls.clientCert }}
-  tls.key: {{ $$tls.clientKey }}
-{{- else }}
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  labels:
-    {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
-  name: cosmo-serving-cert
-  namespace: {{ .Release.Namespace }}
-spec:
-  dnsNames:
-  - cosmo-webhook-service.{{ .Release.Namespace }}.svc
-  - cosmo-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
-  issuerRef:
-    kind: ClusterIssuer
-    name: cosmo-selfsigned-clusterissuer
-  secretName: webhook-server-cert
----
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  labels:
-    {{- include "cosmo-controller-manager.labels" . | nindent 4 }}
-  name: cosmo-selfsigned-clusterissuer
-  namespace: {{ .Release.Namespace }}
-spec:
-  selfSigned: {}
-{{- end }}
-endef
-
-WEBHOOK_CHART_YAML ?= charts/cosmo-controller-manager/templates/webhook.yaml
-
-export WEBHOOK_CHART_SUFIX
-gen-charts: kustomize
-	cp config/crd/bases/* charts/cosmo-controller-manager/crds/
-	# cp config/user-addon/traefik-middleware/useraddon-*.yaml charts/cosmo-dashboard/templates/
-	$(KUSTOMIZE) build config/webhook-chart \
-		| sed -e 's/namespace: system/namespace: {{ .Release.Namespace }}/g' \
-		| sed -z 's;apiVersion: v1\nkind: Service\nmetadata:\n  name: cosmo-webhook-service\n  namespace: {{ .Release.Namespace }}\nspec:\n  ports:\n  - port: 443\n    targetPort: 9443\n  selector:\n    control-plane: controller-manager;{{ $$tls := fromYaml ( include "cosmo-controller-manager.gen-certs" . ) }};g' \
-		| sed -z 's;creationTimestamp: null;{{- if $$.Values.enableCertManager }}\n  annotations:\n    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/cosmo-serving-cert\n  {{- end }}\n  labels:\n    {{- include "cosmo-controller-manager.labels" . | nindent 4 }};g' \
-		| sed -z 's;clientConfig:;clientConfig:\n    caBundle: {{ if not $$.Values.enableCertManager -}}{{ $$tls.caCert }}{{- else -}}Cg=={{ end }};g' > $(WEBHOOK_CHART_YAML)
-	echo "$$WEBHOOK_CHART_SUFIX" >> $(WEBHOOK_CHART_YAML)
 
 .PHONY: manifests
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 ifeq ($(QUICK_BUILD),no)
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./api/..." output:crd:artifacts:config=config/crd/bases
-	make gen-charts
 endif
 
 .PHONY: generate
@@ -124,11 +67,6 @@ endif
 .PHONY: proto-generate 
 proto-generate:  ## Generate code protocol buffer api.
 	make -C proto/ all
-
-.PHONY: chart-check
-chart-check: helm gen-charts
-	./hack/diff-chart-kust.sh controller-manager
-	./hack/diff-chart-kust.sh dashboard
 
 .PHONY: fmt
 fmt: go ## Run go fmt against code.
@@ -226,19 +164,7 @@ endif
 		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_MANAGER_VERSION:v%=%}/" \
 		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${MANAGER_VERSION}/" \
 		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
-		charts/cosmo-controller-manager/Chart.yaml
-	sed -i.bk \
-		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_DASHBOARD_VERSION:v%=%}/" \
-		-e "s/appVersion: v[0-9]\+.[0-9]\+.[0-9]\+.*/appVersion: ${DASHBOARD_VERSION}/" \
-		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
-		charts/cosmo-dashboard/Chart.yaml
-	sed -i.bk \
-		-e "s/version: [0-9]\+.[0-9]\+.[0-9]\+.*/version: ${CHART_TRAEFIK_VERSION:v%=%}/" \
-		-e 's;artifacthub.io/prerelease: "\(true\|false\)";artifacthub.io/prerelease: "$(PRERELEASE)";' \
-		charts/cosmo-traefik/Chart.yaml
-	sed -i.bk \
-		-e "s;image: ghcr.io/cosmo-workspace/cosmo-traefik-plugins:v[0-9]\+.[0-9]\+.[0-9]\+.*;image: ghcr.io/cosmo-workspace/cosmo-traefik-plugins:${CHART_TRAEFIK_VERSION};" \
-		charts/cosmo-traefik/values.yaml
+		charts/cosmo/Chart.yaml
 
 ##---------------------------------------------------------------------
 ##@ Run

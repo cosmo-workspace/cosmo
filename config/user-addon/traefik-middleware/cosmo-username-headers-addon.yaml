@@ -25,4 +25,3 @@ spec:
           X-Cosmo-UserName: '{{USER_NAME}}'
         customResponseHeaders:
           X-Cosmo-UserName: '{{USER_NAME}}'
-
