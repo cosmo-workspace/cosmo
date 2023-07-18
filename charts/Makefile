@@ -5,11 +5,16 @@ KUSTOMIZE = ../bin/kustomize
 helm:
 	make -C ../ helm
 
-chartsnap:
-	go install github.com/cosmo/controller-testtools/cmd/chartsnap
+helm-dependency-update:
+	cd cosmo; ../$(HELM) dependency update
 
-test:
-	chartsnap --chart cosmo --values cosmo/test
+chartsnap:
+	go install github.com/cosmo-workspace/controller-testtools/cmd/chartsnap@latest
+
+TEST_VALUES ?= cosmo/test
+
+test: chartsnap helm helm-dependency-update
+	chartsnap --chart cosmo --values $(TEST_VALUES) --helm-path $(HELM) $(CHARTSNAP_OPT)
 
 test-list:
 	grep -R '{{[-|] if .*}}' cosmo/templates/* | grep .Values | awk -F':' '{print $$2}' | sed -n 's/.*\(.Values[^ ]*\).*/\1/p' | tr -d ')' | sort | uniq | awk -F'.Values.' '{print $$2}' > cosmo/test/if-values.list
