@@ -1,0 +1,287 @@
+# Default values for charts.
+
+#
+# Common network setting for COSMO
+#
+# domain is a domain name for cosmo components
+domain:
+# URLBase for Workspace URL to be unique
+urlbase:
+  # protocol for Workspace. 'http' or 'https'
+  protocol: https
+  # hostname template for Workspace URL
+  # You must include {{NETRULE}}, {{WORKSPACE}} and {{USER}} variables which are used for each Workspace URL to be unique
+  host: "{{NETRULE}}-{{WORKSPACE}}-{{USER}}"
+
+#
+# COSMO Controller Manager
+#
+controllerManager:
+  image:
+    repository: ghcr.io/cosmo-workspace/cosmo-controller-manager
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  replicaCount: 1
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    name: "cosmo-controller-manager"
+
+  podAnnotations: {}
+
+  podSecurityContext:
+    runAsNonRoot: true
+
+  securityContext:
+    # capabilities:
+    #   drop:
+    #   - ALL
+    allowPrivilegeEscalation: false
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 20Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  logging:
+    level: info
+    timeEncoding: iso8601
+
+  webhook:
+    enabled: true
+    # if `hostNetwork: true` set available host port
+    port: 9443
+
+  # Specifies if cosmo-controller-manager should be started in hostNetwork mode.
+  # set true if kubeapiserver cannot reach to the webhook endpoint(e.g. using custom CNI)
+  hostNetwork: false
+  # This may need to be used to be changed given certain conditions. For instance, if one uses the cilium CNI
+  # with certain settings, one may need to set `hostNetwork: true` and webhooks won't work unless `dnsPolicy`
+  # is set to `ClusterFirstWithHostNet`. See https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  dnsPolicy:
+
+  healthz:
+    enabled: true
+    port: 8081
+
+  metrics:
+    enabled: true
+    port: 8080
+    kubeRbacProxy:
+      enabled: true
+      port: 8443
+      image:
+        repository: gcr.io/kubebuilder/kube-rbac-proxy
+        pullPolicy: IfNotPresent
+        tag: "v0.8.0"
+
+  # Development mode for redirecting webhook request to local server
+  localRunTest:
+    enabled: false
+    webhookEndpoint:
+      ip: 127.0.0.1
+      port: 9443
+
+  # common setting for traefik ingress routes created for each Workspaces
+  traefikIngressRouteTemplate:
+    entrypoints:
+      - web
+      - websecure
+    namespace:
+    middlewares:
+      # auth is an authentication plugin for Workspaces
+      auth: cosmo-auth
+      # usernameHeader is an authorization plugin for Workspaces to authorize Workspace owners
+      usernameHeader: cosmo-username-headers
+
+#
+# COSMO Dashboard
+#
+dashboard:
+  image:
+    repository: ghcr.io/cosmo-workspace/cosmo-dashboard
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  replicaCount: 1
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    name: "cosmo-dashboard"
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+
+  securityContext:
+    {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    type: ClusterIP
+    port: 8443
+
+  ingressRoute:
+    enabled: true
+    annotations: {}
+    host: dashboard
+    entryPoints: ["web", "websecure"]
+    middlewares:
+      - name: cosmo-auth
+
+  tls:
+    enabled: true
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 20Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  logging:
+    level: info
+    timeEncoding: iso8601
+
+  gracefulShutdownSeconds: 10
+  responseTimeoutSeconds: 5
+
+  session:
+    # session timeout minutes
+    maxMinutes: 720
+
+  auth:
+    # Default authentication: `password-secret`
+    # You can enabled other authentication method in this section.
+    ldap:
+      # enable ldap authentication
+      enabled: false
+
+      ### values for connection
+      url: "ldap://example.com:389" # url is ldap server url. protocol is supported "ldap://" or "ldaps://"
+      tls:
+        insecureSkipVerify: false
+        secretName: ""
+        startTls: false
+
+      ### values for bind Mode
+      bindDn: "" #               ex: "uid=%s,ou=users,dc=example,dc=com"  "%s" is replaced by the user id.
+
+      ### values for search Mode
+      searchBindDN: "" #         ex: "cn=admin,dc=example,dc=com"
+      searchBindPassword: "" #   ex: "password"
+      searchBaseDN: "" #         ex: "dc=example,dc=com"
+      searchFilter: "" #         ex: "(sAMAccountname=%s)"    "%s" is replaced by the user id.
+
+  # Development mode for redirecting to local server
+  localRunTest:
+    enabled: false
+    dashboardEndpoint:
+      ip: 127.0.0.1
+      uiServerPort: 3000
+      serverPort: 8443
+
+# Configure when using cert-manager for self-signed certificates: https://cert-manager.io/docs/installation/helm/
+# If cert-manager disabled, helm cert generation feature is used
+certManager:
+  enabled: true
+  issuer:
+    create: true
+    clusterIssuer: false
+    name: cosmo-selfsigned-issuer
+
+# set false if error occurs like `ensure CRDs are installed first`. e.g. dry-run
+installDefaultUserAddon: true
+
+#
+# Traefik: dependency on https://github.com/traefik/traefik-helm-chart
+# We need to install Traefik with `cosmo-auth` plugin for authentication of COSMO Dashboard and Workspaces
+#
+traefik:
+  enabled: true
+
+  # Set the same namespace with controller and dashboard
+  namespaceOverride: cosmo-system
+
+  # Enable plugins
+  experimental:
+    plugins:
+      enabled: true
+
+  deployment:
+    # Installing local plugins by init containers
+    initContainers:
+      - name: copy-plugins
+        image: ghcr.io/cosmo-workspace/cosmo-traefik-plugins:latest
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-c", "cp -r /plugins-local/* /local-plugins/"]
+        volumeMounts:
+          - name: local-plugins
+            mountPath: /local-plugins
+
+    additionalVolumes:
+      - name: local-plugins
+        emptyDir: {}
+
+  additionalVolumeMounts:
+    - name: local-plugins
+      mountPath: /plugins-local
+
+  # Load cosmo-auth plugin
+  additionalArguments:
+    - "--experimental.localPlugins.cosmoauth.modulename=github.com/cosmo-workspace/cosmoauth"
+  envFrom:
+    - secretRef:
+        name: cosmo-auth-env
+
+  # authenticate workspace users
+  providers:
+    kubernetesCRD:
+      allowCrossNamespace: true
+
+    kubernetesIngress:
+      publishedService:
+        enabled: true
+
+  # use self signed certificates for backend services
+  globalArguments:
+    - "--global.sendanonymoususage"
+    - "--serversTransport.insecureSkipVerify=true"

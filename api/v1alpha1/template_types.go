@@ -29,6 +29,7 @@ func init() {
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:scope="Cluster",shortName=tmpl
 // +kubebuilder:storageversion
+// +kubebuilder:printcolumn:name="Type",type=string,JSONPath=`.metadata.labels.cosmo-workspace\.github\.io/type`
 // Template is the Schema for the Templates API
 type Template struct {
 	metav1.TypeMeta   `json:",inline"`

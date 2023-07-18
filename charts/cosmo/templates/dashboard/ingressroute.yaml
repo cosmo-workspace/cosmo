@@ -1,0 +1,53 @@
+{{- if .Values.dashboard.ingressRoute.enabled -}}
+{{- $fullName := include "cosmo.fullname" . -}}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cosmo-dashboard
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  {{- with .Values.dashboard.ingressRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.dashboard.ingressRoute.entryPoints }}
+  entryPoints:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  routes:
+    {{- if .Values.dashboard.localRunTest.enabled }}
+    - kind: Rule
+      match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`) && (Path(`/`) || PathPrefix(`/@`,`/src`,`/manifest.json`,`/node_modules`,`/logo`))
+      priority: 1002
+      services:
+        - kind: Service
+          name: cosmo-dashboard
+          namespace: {{ .Release.Namespace }}
+          port: cosmo-dashboard-ui-server
+          scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}
+    {{- end }}
+    - kind: Rule
+      match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`) && (Path(`/`) || PathPrefix(`/logo`,`/assets/`,`/dashboard.v1alpha1.AuthService/`))
+      priority: 1001
+      services:
+        - kind: Service
+          name: cosmo-dashboard
+          namespace: {{ .Release.Namespace }}
+          port: cosmo-dashboard-server
+          scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}
+    - kind: Rule
+      match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`)
+      priority: 1000
+      services:
+        - kind: Service
+          name: cosmo-dashboard
+          namespace: {{ .Release.Namespace }}
+          port: cosmo-dashboard-server
+          scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}
+      {{- with .Values.dashboard.ingressRoute.middlewares }}
+      middlewares:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

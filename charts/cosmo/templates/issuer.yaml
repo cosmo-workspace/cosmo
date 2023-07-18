@@ -1,0 +1,18 @@
+---
+{{- if and (.Values.certManager.enabled) (.Values.certManager.issuer.create) -}}
+apiVersion: cert-manager.io/v1
+{{- if .Values.certManager.issuer.clusterIssuer }}
+kind: ClusterIssuer
+{{- else }}
+kind: Issuer
+{{- end }}
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: {{ .Values.certManager.issuer.name  }}
+  {{- if not .Values.certManager.issuer.clusterIssuer }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+spec:
+  selfSigned: {}
+{{- end }}

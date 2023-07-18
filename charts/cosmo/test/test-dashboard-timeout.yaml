@@ -1,0 +1,19 @@
+testSpec:
+  desc: custom timeouts for dashboard
+  dynamicFields:
+    - apiVersion: v1
+      kind: Secret
+      name: cosmo-auth-env
+      jsonPath:
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_BLOCKKEY
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_SESSION_NAME
+
+domain: example.com
+
+dashboard:
+  gracefulShutdownSeconds: 600
+  responseTimeoutSeconds: 300
+  session:
+    maxMinutes: 90

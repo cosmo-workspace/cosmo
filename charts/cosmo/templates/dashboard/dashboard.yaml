@@ -1,0 +1,170 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: cosmo-dashboard
+  namespace: {{ .Release.Namespace }}
+  annotations:
+  {{- if not .Values.dashboard.tls.enabled }}
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+  {{ else }}
+    traefik.ingress.kubernetes.io/service.serversscheme: https
+  {{- end }}
+spec:
+  type: {{ .Values.dashboard.service.type }}
+  ports:
+  - name: cosmo-dashboard-server
+    port: {{ .Values.dashboard.service.port }}
+    protocol: TCP
+    targetPort: {{ .Values.dashboard.service.port }}
+  {{- if .Values.dashboard.localRunTest.enabled }}
+  - name: cosmo-dashboard-ui-server
+    port: {{ .Values.dashboard.localRunTest.dashboardEndpoint.uiServerPort }}
+    protocol: TCP
+    targetPort: {{ .Values.dashboard.localRunTest.dashboardEndpoint.uiServerPort }}
+  {{- end }}
+  {{- if not .Values.dashboard.localRunTest.enabled }}
+  selector:
+    cosmo-workspace.github.io: dashboard
+    {{- include "cosmo.selectorLabels" . | nindent 4 }}
+  {{- end }}
+---
+{{- if .Values.dashboard.localRunTest.enabled }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: cosmo-dashboard
+  namespace: {{ .Release.Namespace }}
+subsets:
+- addresses:
+  - ip: {{ .Values.dashboard.localRunTest.dashboardEndpoint.ip }}
+  ports:
+  - name: cosmo-dashboard-server
+    port: {{ .Values.dashboard.localRunTest.dashboardEndpoint.serverPort }}
+    protocol: TCP
+  - name: cosmo-dashboard-ui-server
+    port: {{ .Values.dashboard.localRunTest.dashboardEndpoint.uiServerPort }}
+    protocol: TCP
+---
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: cosmo-dashboard
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.dashboard.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cosmo.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        cosmo-workspace.github.io: dashboard
+        {{- include "cosmo.selectorLabels" . | nindent 8 }}
+        {{- if .Values.dashboard.podLabels }}
+        {{- toYaml .Values.dashboard.podLabels | nindent 8 }}
+        {{- end }}
+      {{- if .Values.dashboard.podAnnotations }}
+      annotations:
+        {{- toYaml .Values.dashboard.podAnnotations | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+      - args:
+        - --port={{ .Values.dashboard.service.port }}
+        - --maxage-minutes={{ .Values.dashboard.session.maxMinutes }}
+        - --zap-log-level={{ .Values.dashboard.logging.level }}
+        - --zap-time-encoding={{ .Values.dashboard.logging.timeEncoding }}
+        - --cookie-domain=$(COOKIE_DOMAIN)
+        - --cookie-hashkey=$(COOKIE_HASHKEY)
+        - --cookie-blockkey=$(COOKIE_BLOCKKEY)
+        - --cookie-session-name=$(COOKIE_SESSION_NAME)
+        {{- if ne .Values.dashboard.logging.level "info" }}
+        - --zap-devel=true
+        {{- end }}
+        {{- if .Values.dashboard.gracefulShutdownSeconds }}
+        - --graceful-shutdown-seconds={{ .Values.dashboard.gracefulShutdownSeconds }}
+        {{- end }}
+        {{- if .Values.dashboard.responseTimeoutSeconds }}
+        - --timeout-seconds={{ .Values.dashboard.responseTimeoutSeconds }}
+        {{- end }}
+        {{- if not .Values.dashboard.tls.enabled }}
+        - --insecure
+        {{- else }}
+        - --tls-key=/app/cert/tls.key
+        - --tls-cert=/app/cert/tls.crt
+        {{- end }}
+        {{- if .Values.dashboard.auth.ldap.enabled }}
+        - --ldap-url={{ .Values.dashboard.auth.ldap.url }}
+        - --ldap-insecure-skip-verify={{ .Values.dashboard.auth.ldap.tls.insecureSkipVerify }}
+        - --ldap-start-tls={{ .Values.dashboard.auth.ldap.tls.startTls }}
+        - --ldap-binddn={{ .Values.dashboard.auth.ldap.baseDn }}
+        - --ldap-search-binddn={{ .Values.dashboard.auth.ldap.searchBindDN }}
+        - --ldap-search-password={{ .Values.dashboard.auth.ldap.searchBindPassword }}
+        - --ldap-search-basedn={{ .Values.dashboard.auth.ldap.searchBaseDN }}
+        - --ldap-search-filter={{ .Values.dashboard.auth.ldap.searchFilter }}
+        {{- if .Values.dashboard.auth.ldap.tls.secretName }}
+        - --ldap-ca-cert=/app/ldapCert/ca.crt
+        {{- end }}
+        {{- end }}
+        command:
+        - /app/dashboard
+        image: "{{ .Values.dashboard.image.repository }}:{{ .Values.dashboard.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.dashboard.image.pullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8443
+            {{- if not .Values.dashboard.tls.enabled }}
+            scheme: HTTP
+            {{- else }}
+            scheme: HTTPS
+            {{- end }}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: dashboard
+        envFrom:
+          - secretRef:
+              name: cosmo-auth-env
+        ports:
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.dashboard.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.dashboard.securityContext | nindent 10 }}
+        volumeMounts:
+        {{- if .Values.dashboard.tls.enabled }}
+        - mountPath: /app/cert
+          name: cert
+          readOnly: true
+        {{- end }}
+        {{- if .Values.dashboard.auth.ldap.tls.secretName }}
+        - mountPath: /app/ldapCert
+          name: ldap-cert
+          readOnly: true
+        {{- end }}
+      securityContext:
+        {{- toYaml .Values.dashboard.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ .Values.dashboard.serviceAccount.name }}
+      terminationGracePeriodSeconds: 10
+      volumes:
+      {{- if .Values.dashboard.tls.enabled }}
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: dashboard-server-cert
+      {{- end }}
+      {{- if .Values.dashboard.auth.ldap.tls.secretName }}
+      - name: ldap-cert
+        secret:
+          defaultMode: 420
+          secretName: {{ .Values.dashboard.auth.ldap.tls.secretName }}
+      {{- end }}

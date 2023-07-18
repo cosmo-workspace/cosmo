@@ -47,6 +47,7 @@ spec:
             hosts:
               - "${PHPLDAPADMIN_HOST}"
   syncPolicy:
-    automated: {}
+    automated:
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true

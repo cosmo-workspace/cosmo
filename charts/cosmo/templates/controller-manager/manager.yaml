@@ -1,0 +1,215 @@
+apiVersion: v1
+data:
+  controller_manager_config.yaml: |
+    apiVersion: controller-runtime.sigs.k8s.io/v1alpha1
+    kind: ControllerManagerConfig
+    {{- if .Values.controllerManager.healthz.enabled }}
+    health:
+      healthProbeBindAddress: :{{ .Values.controllerManager.healthz.port }}
+    {{- end }}
+    {{- if .Values.controllerManager.metrics.enabled }}
+    metrics:
+      bindAddress: 127.0.0.1:{{ .Values.controllerManager.metrics.port }}
+    {{- end }}
+    {{- if .Values.controllerManager.webhook.enabled }}
+    webhook:
+      port: {{ .Values.controllerManager.webhook.port }}
+    {{- end }}
+    leaderElection:
+      leaderElect: true
+      resourceName: 04c57811.cosmo-workspace.github.io
+kind: ConfigMap
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: cosmo-manager-config
+  namespace: {{ .Release.Namespace }}
+---
+{{- if .Values.controllerManager.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: cosmo-controller-manager-metrics-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: https
+    port: {{ .Values.controllerManager.metrics.kubeRbacProxy.port }}
+    targetPort: {{ if .Values.controllerManager.metrics.kubeRbacProxy.enabled -}}{{ .Values.controllerManager.metrics.kubeRbacProxy.port }}{{- else -}}{{ .Values.controllerManager.metrics.port }}{{ end }}
+  selector:
+    cosmo-workspace.github.io: controller-manager
+    {{- include "cosmo.selectorLabels" . | nindent 4 }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: cosmo-webhook-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - port: 443
+    targetPort: {{ .Values.controllerManager.webhook.port }}
+  {{- if not .Values.controllerManager.localRunTest.enabled }}
+  selector:
+    cosmo-workspace.github.io: controller-manager
+    {{- include "cosmo.selectorLabels" . | nindent 4 }}
+  {{- end }}
+---
+{{- if .Values.controllerManager.localRunTest.enabled }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: cosmo-webhook-service
+  namespace: {{ .Release.Namespace }}
+subsets:
+- addresses:
+  - ip: {{ .Values.controllerManager.localRunTest.webhookEndpoint.ip }}
+  ports:
+  - port: {{ .Values.controllerManager.localRunTest.webhookEndpoint.port }}
+    protocol: TCP
+---
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "cosmo.labels" . | nindent 4 }}
+  name: cosmo-controller-manager
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.controllerManager.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cosmo.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        cosmo-workspace.github.io: controller-manager
+        {{- include "cosmo.selectorLabels" . | nindent 8 }}
+        {{- if .Values.controllerManager.podLabels }}
+        {{- toYaml .Values.controllerManager.podLabels | nindent 8 }}
+        {{- end }}
+      {{- if .Values.controllerManager.podAnnotations }}
+      annotations:
+        {{- toYaml .Values.controllerManager.podAnnotations | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+      - args:
+        - --port={{ .Values.controllerManager.webhook.port }}
+        {{- if .Values.controllerManager.healthz.enabled }}
+        - --health-probe-bind-address=:{{ .Values.controllerManager.healthz.port }}
+        {{- else }}
+        - --health-probe-bind-address=0
+        {{- end }}
+        {{- if and (.Values.controllerManager.metrics.enabled) (.Values.controllerManager.metrics.kubeRbacProxy.enabled) }}
+        - --metrics-bind-address=127.0.0.1:{{ $.Values.controllerManager.metrics.port }}
+        {{- else if and (.Values.controllerManager.metrics.enabled) (not .Values.controllerManager.metrics.kubeRbacProxy.enabled) }}
+        - --metrics-bind-address=0.0.0.0:{{ $.Values.controllerManager.metrics.port }}
+        {{- else }}
+        - --metrics-bind-address=0
+        {{- end }}
+        - --leader-elect
+        - --zap-log-level={{ .Values.controllerManager.logging.level }}
+        - --zap-time-encoding={{ .Values.controllerManager.logging.timeEncoding }}
+        {{- if ne .Values.controllerManager.logging.level "info" }}
+        - --zap-devel=true
+        {{- end }}
+        - --traefik-entrypoints={{ join "," .Values.controllerManager.traefikIngressRouteTemplate.entrypoints }}
+        - --traefik-authen-middleware={{ .Values.controllerManager.traefikIngressRouteTemplate.middlewares.auth }}
+        {{- if .Values.controllerManager.traefikIngressRouteTemplate.namespace }}
+        - --traefik-authen-middleware-namespace={{ .Values.controllerManager.traefikIngressRouteTemplate.namespace }}
+        {{- else if .Values.traefik.enabled }}
+        - --traefik-authen-middleware-namespace={{ .Values.traefik.namespaceOverride }}
+        {{- else }}
+        - --traefik-authen-middleware-namespace={{ .Release.Namespace }}
+        {{- end }}
+        - --traefik-username-header-middleware={{ .Values.controllerManager.traefikIngressRouteTemplate.middlewares.usernameHeader }}
+        - --workspace-urlbase-protocol={{ .Values.urlbase.protocol }}
+        - --workspace-urlbase-host={{ .Values.urlbase.host }}
+        - --workspace-urlbase-domain={{ include "cosmo.domain" . }}
+        command:
+        - /manager
+        image: {{ .Values.controllerManager.image.repository }}:{{ .Values.controllerManager.image.tag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.controllerManager.image.pullPolicy }}
+        {{- if .Values.controllerManager.healthz.enabled }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.controllerManager.healthz.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.controllerManager.healthz.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        {{- end }}
+        name: manager
+        ports:
+        {{- if .Values.controllerManager.webhook.enabled }}
+        - containerPort: {{ .Values.controllerManager.webhook.port }}
+          name: webhook-server
+          protocol: TCP
+        {{- end }}
+        {{- if and (.Values.controllerManager.metrics.enabled) (not .Values.controllerManager.metrics.kubeRbacProxy.enabled) }}
+        - containerPort: {{ .Values.controllerManager.metrics.port }}
+          name: metrics
+          protocol: TCP
+        {{- end }}
+        resources:
+          {{- toYaml .Values.controllerManager.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.controllerManager.securityContext | nindent 10 }}
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
+      {{- if and (.Values.controllerManager.metrics.enabled) (.Values.controllerManager.metrics.kubeRbacProxy.enabled) }}
+      - args:
+        - --secure-listen-address=0.0.0.0:{{ .Values.controllerManager.metrics.kubeRbacProxy.port }}
+        - --upstream=http://127.0.0.1:{{ .Values.controllerManager.metrics.port }}/
+        - --logtostderr=true
+        - --v=10
+        image: {{ .Values.controllerManager.metrics.kubeRbacProxy.image.repository }}:{{ .Values.controllerManager.metrics.kubeRbacProxy.image.tag }}
+        imagePullPolicy: {{ .Values.controllerManager.metrics.kubeRbacProxy.image.pullPolicy }}
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: {{ .Values.controllerManager.metrics.kubeRbacProxy.port }}
+          name: https
+        resources:
+          {{- toYaml .Values.controllerManager.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.controllerManager.securityContext | nindent 10 }}
+      {{- end }}
+      {{- if .Values.controllerManager.hostNetwork }}
+      hostNetwork: true
+      {{- end }}
+      {{- if .Values.controllerManager.dnsPolicy }}
+      dnsPolicy: {{ .Values.controllerManager.dnsPolicy }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.controllerManager.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ .Values.controllerManager.serviceAccount.name }}
+      terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+        {{- toYaml .Values.controllerManager.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        {{- toYaml .Values.controllerManager.nodeSelector | nindent 8 }}
+      affinity:
+        {{- toYaml .Values.controllerManager.affinity | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.controllerManager.tolerations | nindent 8 }}
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: webhook-server-cert

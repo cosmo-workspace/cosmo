@@ -1,0 +1,29 @@
+{{- if .Values.installDefaultUserAddon }}
+apiVersion: cosmo-workspace.github.io/v1alpha1
+kind: Template
+metadata:
+  annotations:
+    cosmo-workspace.github.io/disable-nameprefix: "true"
+    useraddon.cosmo-workspace.github.io/default: "true"
+  creationTimestamp: null
+  labels:
+    cosmo-workspace.github.io/type: useraddon
+  name: cosmo-username-headers
+spec:
+  description: Traefik middleware for user authorization. DO NOT EDIT
+  rawYaml: |
+    apiVersion: traefik.io/v1alpha1
+    kind: Middleware
+    metadata:
+      labels:
+        cosmo-workspace.github.io/instance: '{{ print "{{INSTANCE}}" }}'
+        cosmo-workspace.github.io/template: '{{ print "{{TEMPLATE}}" }}'
+      name: cosmo-username-headers
+      namespace: '{{ print "{{NAMESPACE}}" }}'
+    spec:
+      headers:
+        customRequestHeaders:
+          X-Cosmo-UserName: '{{ print "{{USER_NAME}}" }}'
+        customResponseHeaders:
+          X-Cosmo-UserName: '{{ print "{{USER_NAME}}" }}'
+{{- end }}

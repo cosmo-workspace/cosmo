@@ -28,9 +28,9 @@ PARENT_URLBASE ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=://)[^\.]*")
 DOMAIN ?= $(shell echo $(VSCODE_PROXY_URI) | grep -Po "(?<=\.)[^/]*")
 DEFAULT_URLBASE_HOST := {{NETRULE}}-{{WORKSPACE}}-{{USER}}-k3d-$(PARENT_URLBASE)
 K3D_URLBASE := k3d-$(PARENT_URLBASE).$(DOMAIN)
-DASHBOARD_HOST := dash-$(K3D_URLBASE)
-DASHBOARD_URL := https://$(DASHBOARD_HOST)
-SIGNIN_URL := https://$(DASHBOARD_HOST)/\#/signin
+DASHBOARD_HOST := dash-k3d-$(PARENT_URLBASE)
+DASHBOARD_URL := https://$(DASHBOARD_HOST).$(DOMAIN)
+SIGNIN_URL := https://$(DASHBOARD_HOST).$(DOMAIN)/\#/signin
 TRAEFIK_DASHBOARD_HOST := traefik-dashboard-$(K3D_URLBASE)
 TRAEFIK_DASHBOARD_URL := https://$(TRAEFIK_DASHBOARD_HOST)/
 ARGOCD_HOST := argocd-$(K3D_URLBASE)
@@ -68,14 +68,14 @@ delete-all: delete-cluster ## Delete all
 
 docker-build-all: docker-build-manager docker-build-dashboard ## Docker build all
 
-install-all: install-manager install-dashboard ## Install cosmo resources.
-uninstall-all: uninstall-manager uninstall-dashboard ## Uninstall cosmo resources.
+install-all: install-cosmo ## Install cosmo resources.
+uninstall-all: uninstall-cosmo ## Uninstall cosmo resources.
 
 ##---------------------------------------------------------------------
 ##@ Kubernetes environment
 ##---------------------------------------------------------------------
 CLUSTER_NAME := cosmo
-.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd undeploy-argocd install-authentik
+.PHONY: create-cluster delete-cluster create-k3d-cluster deploy-cert-manager deploy-argocd undeploy-argocd install-authentik
 
 # ports
 #   389  : ldap port.
@@ -106,26 +106,6 @@ deploy-cert-manager: create-k3d-cluster helm ## Deploy cert-manager.
 	helm repo update
 	helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager \
 		--create-namespace --version v1.10.0 --set installCRDs=true --wait
-
-deploy-traefik: create-k3d-cluster helm docker-build-traefik-plugins ## Deploy traefik.
-	@echo ====== $@ ======
-	helm dependency update ../../charts/cosmo-traefik 
-	helm template traefik ../../charts/cosmo-traefik -n cosmo-system \
-		-f <(sed -e 's/\S*\/cosmo-traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo-traefik/values.yaml ) \
-	 	-f ./charts/traefik.values.yaml \
-		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
-		--set cosmoAuth.signinUrl=$(SIGNIN_URL) \
-		--set domain=$(DOMAIN) \
-		> ./bin/traefik.manifest.yaml
-	helm upgrade --install traefik ../../charts/cosmo-traefik -n cosmo-system --create-namespace \
-		--wait \
-		-f <(sed -e 's/\S*\/cosmo-traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo-traefik/values.yaml ) \
-	 	-f ./charts/traefik.values.yaml \
-		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
-		--set cosmoAuth.signinUrl=$(SIGNIN_URL) \
-		--set domain=$(DOMAIN)
-	-kubectl rollout restart deploy -n cosmo-system traefik
-	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
 
 
 ARGOCD_LOCAL_URL := localhost:30080
@@ -172,6 +152,7 @@ undeploy-argocd: ## Undeploy argocd.
 
 install-openldap: deploy-argocd ## Install openldap.
 	@echo ====== $@ ======
+	kubectl get ns cosmo-system || kubectl create ns cosmo-system
 	kubectl apply -f ./manifests/openldap.cert.yaml
 	kubectl apply -f <(sed \
 		-e 's/$${LDAP_SSL_HOST}/$(LDAP_SSL_HOST)/g' \
@@ -196,7 +177,7 @@ install-authentik: deploy-argocd ## Install authentik. (optional)
 	@echo "pass : vvvvvvvv"
 	@echo ----------------------------------------------------
 
-create-cluster: create-k3d-cluster deploy-cert-manager deploy-traefik deploy-argocd install-openldap  ## Create k3s cluster.
+create-cluster: create-k3d-cluster deploy-cert-manager deploy-argocd install-openldap  ## Create k3s cluster.
 
 delete-cluster: k3d  ## Delete k3s cluster.
 	@echo ====== $@ ======
@@ -252,93 +233,79 @@ docker-cache-clear: ## docker cache clear.
 ##---------------------------------------------------------------------
 ##@ Install cosmo to k8s
 ##---------------------------------------------------------------------
-.PHONY: install-manager   uninstall-manager
-.PHONY: install-dashboard uninstall-dashboard
+.PHONY: install-cosmo   uninstall-cosmo
 
 LOGLEVEL ?= info
 
-install-manager: helm kubectl docker-build-manager ## Install cosmo contoller-manager resources.
+install-cosmo: helm kubectl docker-build-manager docker-build-dashboard docker-build-traefik-plugins ## Install cosmo resources.
+	@echo ====== $@ ======
+	helm dependency update ../../charts/cosmo 
+	helm upgrade --install cosmo ../../charts/cosmo \
+		-n cosmo-system --create-namespace \
+		--wait \
+		--set domain="\$(DOMAIN)" \
+		--set urlbase.host="\$(DEFAULT_URLBASE_HOST)" \
+		--set controllerManager.image.repository=cosmo.io:5000/cosmo-controller-manager \
+		--set controllerManager.image.tag=$(MANAGER_IMAGE_TAG) \
+		--set controllerManager.image.pullPolicy=Always \
+		--set controllerManager.logLevel=$(LOGLEVEL) \
+		--set dashboard.image.repository=cosmo.io:5000/cosmo-dashboard \
+		--set dashboard.image.tag=$(DASHBOARD_IMAGE_TAG) \
+		--set dashboard.image.pullPolicy=Always \
+		--set dashboard.ingressRoute.host=$(DASHBOARD_HOST) \
+		--set dashboard.auth.ldap.enabled=true \
+		--set dashboard.auth.ldap.url="ldaps://open-ldap.cosmo-system.svc.cluster.local" \
+		--set dashboard.auth.ldap.bindDn="cn=%s\,ou=users\,dc=cosmows\,dc=dev" \
+		--set dashboard.auth.ldap.tls.secretName=openldap-cert \
+    	--set dashboard.auth.ldap.searchBindDN="cn=admin\,dc=cosmows\,dc=dev" \
+    	--set dashboard.auth.ldap.searchBindPassword="vvvvvvvv" \
+    	--set dashboard.auth.ldap.searchBaseDN="dc=cosmows\,dc=dev" \
+    	--set dashboard.auth.ldap.searchFilter="(uid=\%s)" \
+		--set dashboard.logLevel=$(LOGLEVEL) \
+		-f <(sed -e 's/\S*\/cosmo-traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo/values.yaml ) \
+	 	-f ./charts/traefik.values.yaml \
+		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
+
+
+install-cosmo-local: helm kubectl ## Install cosmo resources.
 	@echo ====== $@ ======
 	helm upgrade --install cosmo-controller-manager ../../charts/cosmo-controller-manager \
 		-n cosmo-system --create-namespace \
 		--wait \
-		--set image.repository=cosmo.io:5000/cosmo-controller-manager \
-		--set image.tag=$(MANAGER_IMAGE_TAG) \
-		--set image.pullPolicy=Always \
-		--set defaultURLBase.host="\$(DEFAULT_URLBASE_HOST)" \
-		--set defaultURLBase.domain="\$(DOMAIN)" \
-		--set logLevel=$(LOGLEVEL)
+		--set domain="\$(DOMAIN)" \
+		--set urlbase.host="\$(DEFAULT_URLBASE_HOST)" \
+		--set controllerManager.image.repository=cosmo.io:5000/cosmo-controller-manager \
+		--set controllerManager.image.tag=$(MANAGER_IMAGE_TAG) \
+		--set controllerManager.image.pullPolicy=Always \
+		--set controllerManager.replicaCount=0 \
+		--set controllerManager.localRunTest.enabled=true \
+		--set controllerManager.localRunTest.webhookEndpoint.ip=$(shell hostname -i) \
+		--set controllerManager.localRunTest.webhookEndpoint.port=9443 \
+		--set dashboard.image.repository=cosmo.io:5000/cosmo-dashboard \
+		--set dashboard.image.tag=$(DASHBOARD_IMAGE_TAG) \
+		--set dashboard.image.pullPolicy=Always \
+		--set dashboard.ingressRoute.host=$(DASHBOARD_HOST) \
+		--set dashboard.auth.ldap.enabled=false \
+		--set dashboard.tls.enabled=false \
+		--set dashboard.replicaCount=0 \
+		--set dashboard.localRunTest.enabled=true \
+		--set dashboard.localRunTest.dashboardEndpoint.ip=$(shell hostname -i) \
+		--set dashboard.localRunTest.dashboardEndpoint.uiServerPort=3000 \
+		--set dashboard.localRunTest.dashboardEndpoint.serverPort=8443 \
+		-f <(sed -e 's/\S*\/cosmo-traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo/values.yaml ) \
+	 	-f ./charts/traefik.values.yaml \
+		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
 
-install-manager-local: helm kubectl ## Install cosmo contoller-manager resources.
+
+uninstall-cosmo: helm  ## Uninstall cosmo resources.
 	@echo ====== $@ ======
-	helm upgrade --install cosmo-controller-manager ../../charts/cosmo-controller-manager \
-		-n cosmo-system --create-namespace \
-		--wait \
-		--set image.repository=cosmo.io:5000/cosmo-controller-manager \
-		--set image.tag=$(MANAGER_IMAGE_TAG) \
-		--set image.pullPolicy=Always \
-		--set defaultURLBase.host="\$(DEFAULT_URLBASE_HOST)" \
-		--set defaultURLBase.domain="\$(DOMAIN)" \
-		--set replicaCount=0 \
-		--set localRunTest.enabled=true \
-		--set localRunTest.webhookEndpoint.ip=$(shell hostname -i) \
-		--set localRunTest.webhookEndpoint.port=9443 \
-		--set logLevel="$(LOGLEVEL)"
+	-helm uninstall  -n cosmo-system cosmo
 
-install-dashboard: helm kubectl docker-build-dashboard ## Install cosmo dashboard resources.
-	@echo ====== $@ ======
-	helm upgrade --install cosmo-dashboard ../../charts/cosmo-dashboard \
-		-n cosmo-system \
-		--wait \
-		--set image.repository=cosmo.io:5000/cosmo-dashboard \
-		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
-		--set image.pullPolicy=Always \
-		--set ingress.enabled=true \
-		--set ingress.hostName=$(DASHBOARD_HOST) \
-		--set cert.dnsName=$(DASHBOARD_HOST) \
-		--set insecure=false \
-		--set auth.ldap.enabled=true \
-		--set auth.ldap.url="ldaps://open-ldap.cosmo-system.svc.cluster.local" \
-		--set XXXXXauth.ldap.bindDn="cn=%s\,ou=users\,dc=cosmows\,dc=dev" \
-		--set auth.ldap.tls.secretName=openldap-cert \
-    	--set auth.ldap.searchBindDN="cn=admin\,dc=cosmows\,dc=dev" \
-    	--set auth.ldap.searchBindPassword="vvvvvvvv" \
-    	--set auth.ldap.searchBaseDN="dc=cosmows\,dc=dev" \
-    	--set auth.ldap.searchFilter="(uid=\%s)" \
-		--set logLevel=$(LOGLEVEL)
-
-install-dashboard-local: helm kubectl ## Install cosmo dashboard resources.
-	@echo ====== $@ ======
-	helm upgrade --install cosmo-dashboard ../../charts/cosmo-dashboard \
-		-n cosmo-system \
-		--wait \
-		--set image.repository=cosmo.io:5000/cosmo-dashboard \
-		--set image.tag=$(DASHBOARD_IMAGE_TAG) \
-		--set image.pullPolicy=Always \
-		--set ingress.enabled=true \
-		--set ingress.hostName=$(DASHBOARD_HOST) \
-		--set cert.dnsName=$(DASHBOARD_HOST) \
-		--set auth.ldap.enabled=false \
-		--set insecure=true \
-		--set replicaCount=0 \
-		--set localRunTest.enabled=true \
-		--set localRunTest.dashboardEndpoint.ip=$(shell hostname -i) \
-		--set localRunTest.dashboardEndpoint.uiServerPort=3000 \
-		--set localRunTest.dashboardEndpoint.serverPort=8443 \
-		--set logLevel=$(LOGLEVEL)
-
-uninstall-manager: helm  ## Uninstall cosmo contoller-manager resources.
-	@echo ====== $@ ======
-	-helm uninstall -n cosmo-system cosmo-controller-manager
-
-uninstall-dashboard: helm  ## Uninstall cosmo dashboard resources.
-	@echo ====== $@ ======
-	-helm uninstall -n cosmo-system cosmo-dashboard
-
+uninstall-cosmo-all: helm delete-cosmo-resources uninstall-cosmo delete-cosmo-crd## Uninstall cosmo all resources.
+	-kubectl delete ns cosmo-system
 
 apply-template: kubectl cosmoctl ## Apply template.
 	@echo ====== $@ ======
-	until (kubectl apply -f ../../config/user-addon/traefik-middleware/useraddon-cosmo-username-headers.yaml) do sleep 1; done
 	for i in `ls ../../example/useraddons/*/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
 	for i in `ls ../../example/workspaces/*.yaml`; do until (kubectl apply -f $$i) do sleep 1; done; done
 	$(MAKE) -C templates/dev-code-server apply
@@ -374,6 +341,14 @@ add-workspace: kubectl cosmoctl ## add workspace
 	sleep 1
 	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --path /
 
+delete-cosmo-crd:  ## Delete cosmo crd.
+	-kubectl get crd | grep cosmo-workspace.github.io | awk '{print $$1}' | xargs kubectl delete crd 
+
+delete-cosmo-resources:
+	-kubectl delete user --all
+	-kubectl delete tmpl --all
+	-kubectl delete ctmpl --all
+
 ##---------------------------------------------------------------------
 ##@ Execute test
 ##---------------------------------------------------------------------
@@ -407,10 +382,8 @@ run-dashboard-local:
 		--insecure
 
 run-local: kubectl ## Run test.
-	-@make uninstall-manager
-	make install-manager-local
-	-@make uninstall-dashboard
-	make install-dashboard-local
+	-@make uninstall-cosmo
+	make install-cosmo-local
 	@# if session presents then attach, not presents then creat session
 	@tmux -2 attach-session -d -t cosmo 2> /dev/null || { \
 		# ======== create session ======== \

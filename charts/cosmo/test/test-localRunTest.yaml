@@ -1,0 +1,21 @@
+testSpec:
+  desc: enable local run test
+  dynamicFields:
+    - apiVersion: v1
+      kind: Secret
+      name: cosmo-auth-env
+      jsonPath:
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_BLOCKKEY
+        - /data/COOKIE_HASHKEY
+        - /data/COOKIE_SESSION_NAME
+
+domain: example.com
+
+controllerManager:
+  localRunTest:
+    enabled: true
+
+dashboard:
+  localRunTest:
+    enabled: true

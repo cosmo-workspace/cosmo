@@ -23,6 +23,7 @@ type TemplateObject interface {
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:scope="Cluster",shortName=ctmpl
 // +kubebuilder:storageversion
+// +kubebuilder:printcolumn:name="Type",type=string,JSONPath=`.metadata.labels.cosmo-workspace\.github\.io/type`
 // ClusterTemplate is the Schema for the Templates API
 type ClusterTemplate struct {
 	metav1.TypeMeta   `json:",inline"`
