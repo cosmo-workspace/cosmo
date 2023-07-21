@@ -147,7 +147,7 @@ ifndef VERSION
 	@echo "Usage: make update-version VERSION=v9.9.9"
 	@exit 9
 else
-ifeq ($(shell expr $(VERSION) : '^v[0-9]\+\.[0-9]\+\.[0-9]\+$$'),0)
+ifeq ($(shell expr $(VERSION) : '^v[0-9]\+\.[0-9]\+\.[0-9]\+'),0)
 	@echo "Usage: make update-version VERSION=v9.9.9"
 	@exit 9
 endif

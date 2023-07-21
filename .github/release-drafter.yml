@@ -16,25 +16,14 @@ categories:
     label: "dependencies"
 change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
-version-resolver:
-  major:
-    labels:
-      - "major"
-  minor:
-    labels:
-      - "enhancement"
-      - "improvement"
-  patch:
-    labels:
-      - "patch"
-  default: patch
 template: |
-  ## Changes
+  ## Changes from $PREVIOUS_TAG
   $CHANGES
 
   ## Docker Images
   [ghcr.io/cosmo-workspace/cosmo-controller-manager:v$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-controller-manager)
   [ghcr.io/cosmo-workspace/cosmo-dashboard:v$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-dashboard)
+  [ghcr.io/cosmo-workspace/cosmo-traefik-plugins:v$RESOLVED_VERSION](https://github.com/cosmo-workspace/cosmo/pkgs/container/cosmo-traefik-plugins)
 
   ## How to install
 
@@ -46,17 +35,11 @@ template: |
   # update helm local repository
   helm repo update
 
-  # get current values for cosmo-controller-manager 
-  helm get values cosmo-controller-manager -n cosmo-system | tail -n +2 > controller-manager.values.yaml
-
-  # get current values for cosmo-dashboard
-  helm get values cosmo-dashboard -n cosmo-system | tail -n +2 > dashboard.values.yaml
+  # get current values
+  helm get values cosmo -n cosmo-system | tail -n +2 > current.values.yaml
 
   # TODO: fix values.yaml if chart options is updated
 
-  # upgrade cosmo-controller-manager
-  helm upgrade cosmo-controller-manager cosmo/cosmo-controller-manager -n cosmo-system --values controller-manager.values.yaml
-
-  # upgrade cosmo-dashboard
-  helm upgrade cosmo-dashboard cosmo/cosmo-dashboard -n cosmo-system --values dashboard.values.yaml
+  # upgrade cosmo
+  helm upgrade cosmo cosmo/cosmo -n cosmo-system --values new.values.yaml
   ```
