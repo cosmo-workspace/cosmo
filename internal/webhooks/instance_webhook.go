@@ -54,7 +54,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DumpObject(h.Client.Scheme(), inst, "request instance")
+		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request instance")
 
 		tmpl = &cosmov1alpha1.Template{}
 		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
@@ -70,7 +70,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		log.DumpObject(h.Client.Scheme(), inst, "request cluster instance")
+		log.DebugAll().DumpObject(h.Client.Scheme(), inst, "request cluster instance")
 
 		tmpl = &cosmov1alpha1.ClusterTemplate{}
 		err = h.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
@@ -264,13 +264,11 @@ func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, 
 		// err -> metadata.ownerReferences.uid: Invalid value: "": uid must not be empty
 		built.SetOwnerReferences(nil)
 
-		log.Debug().Info(fmt.Sprintf("Validate instance's object by dry-run applying... %v\n", built))
-		out, err := kubeutil.Apply(ctx, c, &built, fieldManager, true, true)
-		log.DebugAll().Info(fmt.Sprintf("Applied object dump %v\n", out))
-
+		_, err := kubeutil.Apply(ctx, c, &built, fieldManager, true, true)
 		if err != nil {
 			// ignore NotFound in case the template contains a dependency resource that was not found.
 			if !apierrs.IsNotFound(err) {
+				log.DebugAll().Info(fmt.Sprintf("dryrun failed object dump: kind=%s name=%s: %v\n%v\n", built.GetKind(), built.GetName(), err, built))
 				errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
 			}
 		}

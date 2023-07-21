@@ -48,7 +48,7 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	current := ws.DeepCopy()
 
-	log.DumpObject(r.Scheme, &ws, "before workspace")
+	log.DebugAll().DumpObject(r.Scheme, &ws, "before workspace")
 
 	// set workspace phase
 	requeue := false
@@ -89,11 +89,13 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		if err := r.Status().Update(ctx, &ws); err != nil {
 			return ctrl.Result{}, err
 		}
-		log.Info("status updated")
+		log.Info("status phase updated", "before", current.Status.Phase, "now", ws.Status.Phase)
 	}
 
-	log.Debug().Info("finish reconcile", "requeue", requeue)
+	log.Debug().Info("finish reconcile")
 	if requeue {
+		// TODO backoff
+		log.Info("requeue after 5 sec")
 		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	}
 	return ctrl.Result{}, nil

@@ -49,7 +49,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 	before := user.DeepCopy()
-	log.DumpObject(h.Client.Scheme(), before, "request user")
+	log.DebugAll().DumpObject(h.Client.Scheme(), before, "request user")
 
 	addonTmpls, err := kubeutil.ListTemplateObjectsByType(ctx, h.Client, []string{cosmov1alpha1.TemplateLabelEnumTypeUserAddon})
 	if err != nil {
@@ -99,7 +99,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 					user.Spec.Addons = append(user.Spec.Addons, defaultAddon)
 				}
 			} else {
-				log.Info("default addon is already defined", "user", user.Name, "addon", defaultAddon)
+				log.Debug().Info("default addon is already defined", "user", user.Name, "addon", defaultAddon)
 			}
 		}
 	}

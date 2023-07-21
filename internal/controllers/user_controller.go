@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
@@ -55,6 +56,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return ctrl.Result{}, fmt.Errorf("failed to sync namespace: %w", err)
 	}
 	if op != controllerutil.OperationResultNone {
+		log.Info("namespace synced", "namespace", ns.Name)
 		r.Recorder.Eventf(&user, corev1.EventTypeNormal, string(op), "successfully reconciled. namespace synced")
 	}
 
@@ -84,6 +86,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 				log.Error(err, "failed to reset password")
 				return ctrl.Result{}, err
 			}
+			log.Info("password secret initialized")
 			r.Recorder.Eventf(&user, corev1.EventTypeNormal, "PasswordSecret Initialized", "successfully reset password secret")
 		}
 	}
@@ -96,11 +99,11 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	currAddonsMap := make(map[types.UID]cosmov1alpha1.ObjectRef)
 	for _, addon := range user.Spec.Addons {
-		log.Info("syncing user addon", "addon", addon)
+		log.Debug().Info("syncing user addon", "addon", addon)
 
 		inst := useraddon.EmptyInstanceObject(addon, user.GetName())
 		if inst == nil {
-			log.Info("WARNING: addon has no Template or ClusterTemplate", "addon", addon)
+			log.Error(errors.New("instance is nil"), "addon has no Template or ClusterTemplate", "addon", addon)
 			continue
 		}
 
@@ -113,6 +116,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		}
 
 		if op != controllerutil.OperationResultNone {
+			log.Info("addon synced", "addon", addon)
 			r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Addon Synced", fmt.Sprintf("addon %s is %s", addon.Template.Name, op))
 		}
 
@@ -150,7 +154,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
 		}
-		log.Info("status updated")
+		log.Debug().Info("status updated")
 	}
 
 	// garbage collection
