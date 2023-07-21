@@ -92,8 +92,8 @@ clear-snapshots: ## Clear snapshots
 ingressroute.yaml: helm config/crd/traefik/traefik.io_ingressroutes.yaml
 config/crd/traefik/traefik.io_ingressroutes.yaml:
 	mkdir -p config/crd/traefik
-	$(HELM) dependency update ./charts/cosmo-traefik
-	tar -xvf ./charts/cosmo-traefik/charts/traefik-*.tgz -O traefik/crds/traefik.io_ingressroutes.yaml > config/crd/traefik/traefik.io_ingressroutes.yaml
+	$(HELM) dependency update ./charts/cosmo
+	tar -xvf ./charts/cosmo/charts/traefik-*.tgz -O traefik/crds/traefik.io_ingressroutes.yaml > config/crd/traefik/traefik.io_ingressroutes.yaml
 
 .PHONY: go-test.env
 go-test.env:

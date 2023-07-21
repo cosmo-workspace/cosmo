@@ -248,7 +248,7 @@ install-cosmo: helm kubectl docker-build-manager docker-build-dashboard docker-b
 		--set controllerManager.image.repository=cosmo.io:5000/cosmo-controller-manager \
 		--set controllerManager.image.tag=$(MANAGER_IMAGE_TAG) \
 		--set controllerManager.image.pullPolicy=Always \
-		--set controllerManager.logLevel=$(LOGLEVEL) \
+		--set controllerManager.logging.level=$(LOGLEVEL) \
 		--set dashboard.image.repository=cosmo.io:5000/cosmo-dashboard \
 		--set dashboard.image.tag=$(DASHBOARD_IMAGE_TAG) \
 		--set dashboard.image.pullPolicy=Always \
@@ -261,7 +261,7 @@ install-cosmo: helm kubectl docker-build-manager docker-build-dashboard docker-b
     	--set dashboard.auth.ldap.searchBindPassword="vvvvvvvv" \
     	--set dashboard.auth.ldap.searchBaseDN="dc=cosmows\,dc=dev" \
     	--set dashboard.auth.ldap.searchFilter="(uid=\%s)" \
-		--set dashboard.logLevel=$(LOGLEVEL) \
+		--set dashboard.logging.level=$(LOGLEVEL) \
 		-f <(sed -e 's/\S*\/cosmo-traefik-plugins:\S*/cosmo.io:5000\/traefik-plugins:latest/g' ../../charts/cosmo/values.yaml ) \
 	 	-f ./charts/traefik.values.yaml \
 		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
