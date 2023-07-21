@@ -83,7 +83,7 @@ Complete documentation is available at http://github.com/cosmo-workspace/cosmo
 
 MIT 2023 cosmo-workspace/cosmo
 `,
-		Version:           "v0.10.0 cosmo-workspace 2023",
+		Version:           "v0.11.0 cosmo-workspace 2023",
 		PersistentPreRunE: o.PreRunE,
 		RunE:              o.RunE,
 	}
