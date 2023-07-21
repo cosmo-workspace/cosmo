@@ -71,6 +71,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, err
 	}
 	if op != controllerutil.OperationResultNone {
+		log.Info("instance synced", "instance", inst.Name)
 		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. instance synced")
 	}
 	gvk, _ := apiutil.GVKForObject(inst, r.Scheme)
@@ -97,6 +98,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, err
 	}
 	if op != controllerutil.OperationResultNone {
+		log.Info("traefik ingress route synced", "ingressroute", ir.Name)
 		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. traefik ingress route synced")
 	}
 
@@ -111,7 +113,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		if err := r.Status().Update(ctx, &ws); err != nil {
 			return ctrl.Result{}, err
 		}
-		log.Info("status updated")
+		log.Debug().Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")

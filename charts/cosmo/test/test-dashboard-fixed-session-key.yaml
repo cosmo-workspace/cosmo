@@ -1,0 +1,11 @@
+testSpec:
+  desc: fixed session key
+
+domain: example.com
+
+dashboard:
+  session:
+    secretKeys:
+      COOKIE_HASHKEY: hash_key
+      COOKIE_BLOCKKEY: block_key
+      COOKIE_SESSION_NAME: sess_name

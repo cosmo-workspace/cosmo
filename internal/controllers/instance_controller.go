@@ -49,7 +49,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	ctx = clog.IntoContext(ctx, log)
 
 	before := inst.DeepCopy()
-	log.DumpObject(r.Scheme, before, "request object")
+	log.DebugAll().DumpObject(r.Scheme, before, "request object")
 
 	tmpl := &cosmov1alpha1.Template{}
 	err := r.Client.Get(ctx, types.NamespacedName{Name: inst.GetSpec().Template.Name}, tmpl)
@@ -90,7 +90,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			log.Error(err, "failed to update InstanceStatus")
 			return ctrl.Result{}, err
 		}
-		log.Info("status updated")
+		log.Debug().Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")
@@ -156,7 +156,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 			// if not found, create resource
 			if apierrs.IsNotFound(err) {
 				log.Info("creating new built resource", "kind", built.GetKind(), "name", built.GetName())
-				log.DumpObject(r.Scheme, &built, "built object")
+				log.Debug().DumpObject(r.Scheme, &built, "built object")
 
 				created, err := r.apply(ctx, &built, r.FieldManager)
 				if err != nil {
@@ -188,7 +188,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 			// compare current with the desired state
 			if !kubeutil.LooseDeepEqual(current, desired) {
 				log.Info("current is not desired state, synced", "kind", desired.GetKind(), "name", desired.GetName())
-				log.PrintObjectDiff(current, desired)
+				log.Debug().PrintObjectDiff(current, desired)
 
 				// apply
 				log.DumpObject(r.Scheme, &built, "applying object")

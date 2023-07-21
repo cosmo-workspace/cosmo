@@ -53,7 +53,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 		return admission.Errored(http.StatusBadRequest, err)
 	}
 	before := ws.DeepCopy()
-	log.DumpObject(h.Client.Scheme(), before, "request workspace")
+	log.DebugAll().DumpObject(h.Client.Scheme(), before, "request workspace")
 
 	err = h.mutateWorkspace(ctx, ws)
 	if err != nil {

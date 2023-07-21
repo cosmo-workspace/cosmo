@@ -55,17 +55,6 @@ See the offical install docs https://cert-manager.io/docs/installation/
 kubectl apply -f https://github.com/jetstack/cert-manager/releases/latest/download/cert-manager.yaml
 ```
 
-
-helm upgrade --install traefik ../../charts/cosmo-traefik -n cosmo-system --create-namespace \
-		--wait \
-		-f <(sed \
-		  -e 's/ghcr.io\/cosmo-workspace\/traefik-plugins:.*/cosmo.io:5000\/traefik-plugins:latest/g' \
-		  ../../charts/cosmo-traefik/values.yaml ) \
-	 	-f ./charts/traefik.values.yaml \
-		--set traefik.ingressRoute.dashboard.matchRule="Host(\`$(TRAEFIK_DASHBOARD_HOST)\`)" \
-		--set cosmoAuth.signinUrl=$(SIGNIN_URL) \
-    
-
 ### 2-2. Install COSMO
 
 Add helm repo

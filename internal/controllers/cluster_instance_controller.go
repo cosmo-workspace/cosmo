@@ -40,7 +40,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	ctx = clog.IntoContext(ctx, log)
 
 	before := inst.DeepCopy()
-	log.DumpObject(r.Scheme, before, "request object")
+	log.DebugAll().DumpObject(r.Scheme, before, "request object")
 
 	tmpl := &cosmov1alpha1.ClusterTemplate{}
 	err := r.Client.Get(ctx, types.NamespacedName{Name: inst.Spec.Template.Name}, tmpl)
@@ -81,7 +81,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			log.Error(err, "failed to update InstanceStatus")
 			return ctrl.Result{}, err
 		}
-		log.Info("status updated")
+		log.Debug().Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")
