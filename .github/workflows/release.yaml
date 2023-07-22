@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
           ref: main
       - name: Update-version
-        run: make update-version VERSION=v${{ inputs.version }}
+        run: make update-version VERSION=v${{ inputs.version }} PRERELEASE=${{ inputs.prerelease }}
       - name: Commit updates
         uses: EndBug/add-and-commit@v7
         with:
