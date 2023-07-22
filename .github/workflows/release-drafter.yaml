@@ -1,4 +1,4 @@
-name: Release drafter
+name: Create Draft
 
 on:
   # on merge
