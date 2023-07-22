@@ -4,7 +4,7 @@ kind: Kustomization
 images:
 - name: controller
   newName: cosmo-controller-manager
-  newTag: v0.11.0
+  newTag: v1.0.0-rc1
 
 resources:
 - manager.yaml
