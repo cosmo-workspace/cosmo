@@ -155,6 +155,30 @@ const useUser = () => {
   }
 
   /**
+   * updateAddonsDialog: Update user 
+   */
+  const updateAddons = async (userName: string, addons: UserAddon[]) => {
+    console.log('updateAddons', userName, addons);
+    setMask();
+    try {
+      try {
+        const result = await userService.updateUserAddons({ userName, addons });
+        const newUser = result.user;
+        enqueueSnackbar(result.message, { variant: 'success' });
+        if (users && newUser) {
+          const newUsers = users.map(us => us.name === newUser.name ? new User(newUser) : us);
+          setUsers(newUsers);
+        }
+        return newUser;
+      }
+      catch (error) {
+        handleError(error);
+      }
+    }
+    finally { releaseMask(); }
+  }
+
+  /**
    * DeleteDialog: Delete user 
    */
   const deleteUser = async (userName: string) => {
@@ -182,6 +206,7 @@ const useUser = () => {
       createUser,
       updateName,
       updateRole,
+      updateAddons,
       deleteUser,
     }
   );

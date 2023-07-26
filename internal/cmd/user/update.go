@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
@@ -21,6 +22,7 @@ type updateOption struct {
 	Role     []string
 
 	displayName *string
+	roles       []cosmov1alpha1.UserRole
 }
 
 func updateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
@@ -61,6 +63,12 @@ func (o *updateOption) Complete(cmd *cobra.Command, args []string) error {
 	if o.Name != "-" {
 		o.displayName = &o.Name
 	}
+	if o.Role != nil {
+		o.roles = make([]cosmov1alpha1.UserRole, 0, len(o.Role))
+		for _, v := range o.Role {
+			o.roles = append(o.roles, cosmov1alpha1.UserRole{Name: v})
+		}
+	}
 	return nil
 }
 
@@ -71,7 +79,7 @@ func (o *updateOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx = clog.IntoContext(ctx, o.Logr)
 	_, err := o.Client.UpdateUser(ctx, o.UserName, kosmo.UpdateUserOpts{
 		DisplayName: o.displayName,
-		UserRoles:   o.Role,
+		UserRoles:   o.roles,
 	})
 	if err != nil {
 		return err

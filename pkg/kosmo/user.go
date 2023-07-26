@@ -131,7 +131,8 @@ func (c *Client) DeleteUser(ctx context.Context, username string) (*cosmov1alpha
 
 type UpdateUserOpts struct {
 	DisplayName *string
-	UserRoles   []string
+	UserRoles   []cosmov1alpha1.UserRole
+	UserAddons  []cosmov1alpha1.UserAddon
 }
 
 func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUserOpts) (*cosmov1alpha1.User, error) {
@@ -148,24 +149,13 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 		user.Spec.DisplayName = *opts.DisplayName
 	}
 
-	// opts.UserRoles `[]string{}` is treated as changing to no roles,
 	// `nil` means caller would not like to change roles.
-	// `[]string{"-", ""}` is ignored as invalid
-	if opts.UserRoles == nil {
-		// would not like to change roles
-	} else {
-		if len(opts.UserRoles) == 0 {
-			// change to no roles
-			user.Spec.Roles = nil
-		} else {
-			userrole := make([]cosmov1alpha1.UserRole, 0)
-			for _, v := range opts.UserRoles {
-				if v != "" && v != "-" {
-					userrole = append(userrole, cosmov1alpha1.UserRole{Name: v})
-				}
-			}
-			user.Spec.Roles = userrole
-		}
+	if opts.UserRoles != nil {
+		user.Spec.Roles = opts.UserRoles
+	}
+
+	if opts.UserAddons != nil {
+		user.Spec.Addons = opts.UserAddons
 	}
 
 	if equality.Semantic.DeepEqual(before, user) {
@@ -177,6 +167,9 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 	}
 	if !equality.Semantic.DeepEqual(before.Spec.Roles, user.Spec.Roles) {
 		logr.Debug().Info("role changed", "role", opts.UserRoles)
+	}
+	if !equality.Semantic.DeepEqual(before.Spec.Addons, user.Spec.Addons) {
+		logr.Debug().Info("addons changed", "addons", opts.UserAddons)
 	}
 
 	if err := c.Update(ctx, user); err != nil {

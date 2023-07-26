@@ -172,6 +172,14 @@ func convertUserRolesToStringSlice(apiRoles []cosmov1alpha1.UserRole) []string {
 	return roles
 }
 
+func convertStringSliceToUserRoles(roles []string) []cosmov1alpha1.UserRole {
+	apiRoles := make([]cosmov1alpha1.UserRole, 0, len(roles))
+	for _, v := range roles {
+		apiRoles = append(apiRoles, cosmov1alpha1.UserRole{Name: v})
+	}
+	return apiRoles
+}
+
 func convertDashv1alpha1UserAddonToUserAddon(addons []*dashv1alpha1.UserAddon) []cosmov1alpha1.UserAddon {
 	a := make([]cosmov1alpha1.UserAddon, len(addons))
 	for i, v := range addons {
