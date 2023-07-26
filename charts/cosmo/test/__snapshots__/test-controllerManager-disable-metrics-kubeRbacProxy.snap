@@ -1053,6 +1053,7 @@ SnapShot = """
         COOKIE_HASHKEY: '###DYNAMIC_FIELD###'
         COOKIE_SESSION_NAME: '###DYNAMIC_FIELD###'
         SIGNIN_URL: aHR0cHM6Ly9kYXNoYm9hcmQuZXhhbXBsZS5jb20vIy9zaWduaW4=
+    immutable: true
     kind: Secret
     metadata:
         name: cosmo-auth-env
