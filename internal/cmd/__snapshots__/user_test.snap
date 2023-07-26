@@ -82,8 +82,8 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name (default \"-\")
-      --role strings   user role (default [-])
+      --name string    set this flag only if you want to change user display name (default \"-\")
+      --role strings   set this flag only if you want to change user roles. you need pass all roles including roles not changed
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -1195,8 +1195,8 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name (default \"-\")
-      --role strings   user role (default [-])
+      --name string    set this flag only if you want to change user display name (default \"-\")
+      --role strings   set this flag only if you want to change user roles. you need pass all roles including roles not changed
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -1216,8 +1216,8 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name (default \"-\")
-      --role strings   user role (default [-])
+      --name string    set this flag only if you want to change user display name (default \"-\")
+      --role strings   set this flag only if you want to change user roles. you need pass all roles including roles not changed
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -1237,8 +1237,8 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name (default \"-\")
-      --role strings   user role (default [-])
+      --name string    set this flag only if you want to change user display name (default \"-\")
+      --role strings   set this flag only if you want to change user roles. you need pass all roles including roles not changed
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -1258,8 +1258,8 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name (default \"-\")
-      --role strings   user role (default [-])
+      --name string    set this flag only if you want to change user display name (default \"-\")
+      --role strings   set this flag only if you want to change user roles. you need pass all roles including roles not changed
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -1279,8 +1279,8 @@ Usage:
 
 Flags:
   -h, --help           help for update
-      --name string    user name (default \"-\")
-      --role strings   user role (default [-])
+      --name string    set this flag only if you want to change user display name (default \"-\")
+      --role strings   set this flag only if you want to change user roles. you need pass all roles including roles not changed
 
 Global Flags:
       --context string      kube-context (default: current context)

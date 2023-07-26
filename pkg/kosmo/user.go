@@ -148,15 +148,15 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 		user.Spec.DisplayName = *opts.DisplayName
 	}
 
-	// opts.UserRoles `[]string{"-"}` means caller would not like to change roles.
-	// `nil` or `[]string{}` is treated as changing to no roles,
+	// opts.UserRoles `[]string{}` is treated as changing to no roles,
+	// `nil` means caller would not like to change roles.
 	// `[]string{"-", ""}` is ignored as invalid
-	if len(opts.UserRoles) == 0 {
-		// change to no roles
-		user.Spec.Roles = nil
+	if opts.UserRoles == nil {
+		// would not like to change roles
 	} else {
-		if len(opts.UserRoles) == 1 && opts.UserRoles[0] == "-" {
-			// would not like to change roles
+		if len(opts.UserRoles) == 0 {
+			// change to no roles
+			user.Spec.Roles = nil
 		} else {
 			userrole := make([]cosmov1alpha1.UserRole, 0)
 			for _, v := range opts.UserRoles {
@@ -175,7 +175,7 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 	if before.Spec.DisplayName != user.Spec.DisplayName {
 		logr.Debug().Info("name changed", "name", *opts.DisplayName)
 	}
-	if equality.Semantic.DeepEqual(before.Spec.Roles, user.Spec.Roles) {
+	if !equality.Semantic.DeepEqual(before.Spec.Roles, user.Spec.Roles) {
 		logr.Debug().Info("role changed", "role", opts.UserRoles)
 	}
 

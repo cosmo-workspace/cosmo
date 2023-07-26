@@ -18,9 +18,7 @@ func (s *Server) UpdateUserDisplayName(ctx context.Context, req *connect_go.Requ
 		return nil, ErrResponse(log, err)
 	}
 
-	user, err := s.Klient.UpdateUser(ctx, req.Msg.UserName, kosmo.UpdateUserOpts{
-		DisplayName: &req.Msg.DisplayName,
-		UserRoles:   []string{"-"}})
+	user, err := s.Klient.UpdateUser(ctx, req.Msg.UserName, kosmo.UpdateUserOpts{DisplayName: &req.Msg.DisplayName})
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -60,6 +58,10 @@ func diff(slice1 []string, slice2 []string) []string {
 func (s *Server) UpdateUserRole(ctx context.Context, req *connect_go.Request[dashv1alpha1.UpdateUserRoleRequest]) (*connect_go.Response[dashv1alpha1.UpdateUserRoleResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
+
+	if req.Msg.Roles == nil {
+		req.Msg.Roles = []string{}
+	}
 
 	currentUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
 	if err != nil {

@@ -27,8 +27,8 @@ func updateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &updateOption{CliOptions: cliOpt}
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-	cmd.Flags().StringVar(&o.Name, "name", "-", "user name")
-	cmd.Flags().StringSliceVar(&o.Role, "role", []string{"-"}, "user role")
+	cmd.Flags().StringVar(&o.Name, "name", "-", "set this flag only if you want to change user display name")
+	cmd.Flags().StringSliceVar(&o.Role, "role", nil, "set this flag only if you want to change user roles. you need pass all roles including roles not changed")
 	return cmd
 }
 
