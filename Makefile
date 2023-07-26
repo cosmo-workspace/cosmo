@@ -86,7 +86,7 @@ COVER_PROFILE ?= cover.out
 
 .PHONY: clear-snapshots
 clear-snapshots: ## Clear snapshots
-	-find . -type f | grep __snapshots__ | grep -v "/web/" | xargs rm -f
+	-find . -type f | grep __snapshots__ | grep -v "/web/" | grep -v "/charts/" | xargs rm -f
 
 .PHONY: ingressroute.yaml
 ingressroute.yaml: helm config/crd/traefik/traefik.io_ingressroutes.yaml

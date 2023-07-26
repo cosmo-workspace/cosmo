@@ -62,5 +62,5 @@ Required domain
 Dashboad URL
 */}}
 {{- define "cosmo.dashboard.signinUrl" -}}
-{{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}://{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}/#/signin
+{{ if not .Values.dashboard.tls.enabled -}}http{{- else -}}https{{ end }}://{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}/#/signin
 {{- end }}

@@ -26,7 +26,7 @@ spec:
           name: cosmo-dashboard
           namespace: {{ .Release.Namespace }}
           port: cosmo-dashboard-ui-server
-          scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}
+          scheme: {{ if not .Values.dashboard.tls.enabled -}}http{{- else -}}https{{ end }}
     {{- end }}
     - kind: Rule
       match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`) && (Path(`/`) || PathPrefix(`/logo`,`/assets/`,`/dashboard.v1alpha1.AuthService/`))
@@ -36,7 +36,7 @@ spec:
           name: cosmo-dashboard
           namespace: {{ .Release.Namespace }}
           port: cosmo-dashboard-server
-          scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}
+          scheme: {{ if not .Values.dashboard.tls.enabled -}}http{{- else -}}https{{ end }}
     - kind: Rule
       match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`)
       priority: 1000
@@ -45,7 +45,7 @@ spec:
           name: cosmo-dashboard
           namespace: {{ .Release.Namespace }}
           port: cosmo-dashboard-server
-          scheme: {{ if .Values.dashboard.tls.insecure -}}http{{- else -}}https{{ end }}
+          scheme: {{ if not .Values.dashboard.tls.enabled -}}http{{- else -}}https{{ end }}
       {{- with .Values.dashboard.ingressRoute.middlewares }}
       middlewares:
         {{- toYaml . | nindent 8 }}
