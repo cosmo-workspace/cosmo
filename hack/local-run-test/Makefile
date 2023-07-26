@@ -269,7 +269,7 @@ install-cosmo: helm kubectl docker-build-manager docker-build-dashboard docker-b
 
 install-cosmo-local: helm kubectl ## Install cosmo resources.
 	@echo ====== $@ ======
-	helm upgrade --install cosmo-controller-manager ../../charts/cosmo-controller-manager \
+	helm upgrade --install cosmo ../../charts/cosmo \
 		-n cosmo-system --create-namespace \
 		--wait \
 		--set domain="\$(DOMAIN)" \
