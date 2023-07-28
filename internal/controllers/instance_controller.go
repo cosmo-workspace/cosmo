@@ -115,14 +115,13 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 	log := clog.FromContext(ctx).WithCaller()
 	errs := make([]error, 0)
 
-	lastAppliedMap := sliceToObjectMap(inst.GetStatus().LastApplied)
-
 	lastApplied := make([]cosmov1alpha1.ObjectRef, len(inst.GetStatus().LastApplied))
 	copy(lastApplied, inst.GetStatus().LastApplied)
 
 	currAppliedMap := make(map[types.UID]cosmov1alpha1.ObjectRef)
+
+	// check dry-run apply on first reconciliation
 	if len(inst.GetStatus().LastApplied) == 0 {
-		// first reconcile
 		for _, built := range objects {
 			if _, err := r.dryrunApply(ctx, &built, r.FieldManager); err != nil {
 				// ignore NotFound in case the template contains a dependency resource that was not found.
@@ -161,12 +160,11 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 				created, err := r.apply(ctx, &built, r.FieldManager)
 				if err != nil {
 					errs = append(errs, fmt.Errorf("failed to create resource: kind = %s name = %s: %w", built.GetKind(), built.GetName(), err))
-					continue
+				} else {
+					r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s created", built.GetKind(), built.GetName())
 				}
-
-				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s created", built.GetKind(), built.GetName())
-
 				currAppliedMap[created.GetUID()] = unstToObjectRef(created)
+
 			} else {
 				errs = append(errs, fmt.Errorf("failed to get resource: kind = %s name = %s: %w", built.GetKind(), built.GetName(), err))
 				continue
@@ -179,11 +177,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 				errs = append(errs, fmt.Errorf("dryrun failed: kind=%s name=%s: %w", built.GetKind(), built.GetName(), err))
 				continue
 			}
-			if l, ok := lastAppliedMap[desired.GetUID()]; !ok {
-				currAppliedMap[desired.GetUID()] = l
-			} else {
-				currAppliedMap[desired.GetUID()] = unstToObjectRef(desired)
-			}
+			currAppliedMap[desired.GetUID()] = unstToObjectRef(desired)
 
 			// compare current with the desired state
 			if !kubeutil.LooseDeepEqual(current, desired) {
@@ -194,44 +188,29 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 				log.DumpObject(r.Scheme, &built, "applying object")
 				if _, err := r.apply(ctx, &built, r.FieldManager); err != nil {
 					errs = append(errs, fmt.Errorf("failed to apply resource %s %s: %w", built.GetKind(), built.GetName(), err))
-					continue
+				} else {
+					r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s is not desired state, synced", built.GetKind(), built.GetName())
 				}
-
-				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s is not desired state, synced", built.GetKind(), built.GetName())
-
-				currAppliedMap[desired.GetUID()] = unstToObjectRef(desired)
 			}
 		}
-	}
-
-	for k, v := range currAppliedMap {
-		lastAppliedMap[k] = v
 	}
 
 	// garbage collection
-	shouldDeletes := objectRefNotExistsInMap(lastApplied, currAppliedMap)
-	for _, d := range shouldDeletes {
-		log.Info("start garbage collection", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
-		delete(lastAppliedMap, d.UID)
-
-		var obj unstructured.Unstructured
-		obj.SetAPIVersion(d.APIVersion)
-		obj.SetKind(d.Kind)
-		err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: d.Namespace}, &obj)
-		if err != nil {
-			if !apierrs.IsNotFound(err) {
-				log.Error(err, "failed to get object to be deleted", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
+	if len(errs) == 0 && !cosmov1alpha1.IsPruneDisabled(inst) {
+		log.Info("start garbage collection")
+		shouldDeletes := objectRefNotExistsInMap(lastApplied, currAppliedMap)
+		for _, d := range shouldDeletes {
+			if skip, err := prune(ctx, r.Client, d); err != nil {
+				log.Error(err, "failed to delete unused obj", "pruneAPIVersion", d.APIVersion, "pruneKind", d.Kind, "pruneName", d.Name, "pruneNamespace", d.Namespace)
+				r.Recorder.Eventf(inst, corev1.EventTypeWarning, "GCFailed", "failed to delete unused obj: kind=%s name=%s namespace=%s", d.Kind, d.Name, d.Namespace)
+			} else if !skip {
+				log.Info("deleted unmanaged object", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name, "namespace", d.Namespace)
+				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "GC", "deleted unmanaged object: kind=%s name=%s namespace=%s", d.Kind, d.Name, d.Namespace)
 			}
-			continue
 		}
-
-		if err := r.Delete(ctx, &obj); err != nil {
-			r.Recorder.Eventf(inst, corev1.EventTypeWarning, "GCFailed", "failed to delete unused obj: %s %s", obj.GetKind(), obj.GetName())
-		}
-		r.Recorder.Eventf(inst, corev1.EventTypeNormal, "GC", "deleted unmanaged object: %s %s", obj.GetKind(), obj.GetName())
 	}
 
-	inst.GetStatus().LastApplied = objectRefMapToSlice(lastAppliedMap)
+	inst.GetStatus().LastApplied = objectRefMapToSlice(currAppliedMap)
 	inst.GetStatus().LastAppliedObjectsCount = len(inst.GetStatus().LastApplied)
 
 	return errs
@@ -286,4 +265,28 @@ func objectRefNotExistsInMap(s []cosmov1alpha1.ObjectRef, m map[types.UID]cosmov
 		}
 	}
 	return notExists
+}
+
+func prune(ctx context.Context, r client.Client, d cosmov1alpha1.ObjectRef) (skip bool, err error) {
+	log := clog.FromContext(ctx).WithValues("pruneAPIVersion", d.APIVersion, "pruneKind", d.Kind, "pruneName", d.Name, "pruneNamespace", d.Namespace)
+
+	var obj unstructured.Unstructured
+	obj.SetAPIVersion(d.APIVersion)
+	obj.SetKind(d.Kind)
+	err = r.Get(ctx, types.NamespacedName{Name: d.Name, Namespace: d.Namespace}, &obj)
+	if err != nil {
+		log.Error(err, "failed to get object to be deleted")
+		return true, nil
+	}
+
+	if obj.GetUID() != d.UID {
+		log.Error(err, "target object UID is changed. skip pruning", "desiredUID", d.UID, "currentUID", obj.GetUID())
+		return true, nil
+	}
+	if cosmov1alpha1.IsPruneDisabled(&obj) {
+		log.Debug().Info("skip pruning by annotation", "apiVersion")
+		return true, nil
+	}
+
+	return false, r.Delete(ctx, &obj)
 }
