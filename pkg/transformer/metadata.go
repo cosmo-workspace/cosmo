@@ -45,11 +45,12 @@ func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstru
 	labels[cosmov1alpha1.LabelKeyTemplateName] = t.tmplName
 	obj.SetLabels(labels)
 
-	// Set owner reference
-	err := ctrl.SetControllerReference(t.inst, obj, t.scheme)
-	if err != nil {
-		return nil, fmt.Errorf("failed to set owner reference on %s: %w", obj.GetObjectKind().GroupVersionKind(), err)
+	if !cosmov1alpha1.IsPruneDisabled(t.inst) && !cosmov1alpha1.IsPruneDisabled(obj) {
+		// Set owner reference
+		err := ctrl.SetControllerReference(t.inst, obj, t.scheme)
+		if err != nil {
+			return nil, fmt.Errorf("failed to set owner reference on %s: %w", obj.GetObjectKind().GroupVersionKind(), err)
+		}
 	}
-
 	return obj, nil
 }

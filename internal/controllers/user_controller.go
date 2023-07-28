@@ -8,7 +8,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
@@ -157,26 +156,18 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		log.Debug().Info("status updated")
 	}
 
-	// garbage collection
-	shouldDeletes := objectRefNotExistsInMap(lastAddons, currAddonsMap)
-	for _, d := range shouldDeletes {
-		log.Info("start garbage collection", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
-
-		var obj unstructured.Unstructured
-		obj.SetAPIVersion(d.APIVersion)
-		obj.SetKind(d.Kind)
-		err := r.Get(ctx, types.NamespacedName{Name: d.GetName(), Namespace: d.Namespace}, &obj)
-		if err != nil {
-			if !apierrs.IsNotFound(err) {
-				log.Error(err, "failed to get object to be deleted", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name)
+	if user.Status.Phase != "AddonFailed" && !cosmov1alpha1.IsPruneDisabled(&user) {
+		log.Info("start garbage collection")
+		shouldDeletes := objectRefNotExistsInMap(lastAddons, currAddonsMap)
+		for _, d := range shouldDeletes {
+			if skip, err := prune(ctx, r.Client, d); err != nil {
+				log.Error(err, "failed to delete unused addon", "pruneAPIVersion", d.APIVersion, "pruneKind", d.Kind, "pruneName", d.Name, "pruneNamespace", d.Namespace)
+				r.Recorder.Eventf(&user, corev1.EventTypeWarning, "GCFailed", "failed to delete unused addon: kind=%s name=%s namespace=%s", d.Kind, d.Name, d.Namespace)
+			} else if !skip {
+				log.Info("deleted unmanaged addon", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name, "namespace", d.Namespace)
+				r.Recorder.Eventf(&user, corev1.EventTypeNormal, "GC", "deleted unmanaged addon: kind=%s name=%s namespace=%s", d.Kind, d.Name, d.Namespace)
 			}
-			continue
 		}
-
-		if err := r.Delete(ctx, &obj); err != nil {
-			r.Recorder.Eventf(&user, corev1.EventTypeWarning, "GCFailed", "failed to delete unused addon: %s %s", obj.GetKind(), obj.GetName())
-		}
-		r.Recorder.Eventf(&user, corev1.EventTypeNormal, "GC", "deleted unmanaged addon: %s %s", obj.GetKind(), obj.GetName())
 	}
 
 	log.Debug().Info("finish reconcile")
