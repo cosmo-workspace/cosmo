@@ -51,6 +51,7 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
   const userNameChangeDialogDispach = UserNameChangeDialogContext.useDispatch();
   const isAdmin = isAdminUser(loginUser);
   const isSignIn = Boolean(loginUser);
+  const canChangePassword = Boolean(loginUser?.authType === 'password-secret');
 
   const changeUserName = () => {
     console.log('changeUserName');
@@ -146,7 +147,7 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
                 <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
                 <ListItemText>Change user name...</ListItemText>
               </MenuItem>}
-              {isSignIn && <MenuItem onClick={() => changePassword()}>
+              {isSignIn && canChangePassword && <MenuItem onClick={() => changePassword()}>
                 <ListItemIcon><VpnKey fontSize="small" /></ListItemIcon>
                 <ListItemText>Change password...</ListItemText>
               </MenuItem>}
