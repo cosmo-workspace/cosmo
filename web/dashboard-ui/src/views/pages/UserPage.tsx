@@ -8,6 +8,7 @@ import { SelectableChip } from "../atoms/SelectableChips";
 import { PasswordDialogContext } from "../organisms/PasswordDialog";
 import { RoleChangeDialogContext } from "../organisms/RoleChangeDialog";
 import { UserCreateConfirmDialogContext, UserCreateDialogContext, UserDeleteDialogContext, UserInfoDialogContext } from "../organisms/UserActionDialog";
+import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
 import { hasAdminForRole, hasPrivilegedRole, isAdminRole, isPrivilegedRole, useUserModule } from "../organisms/UserModule";
 import { UserNameChangeDialogContext } from "../organisms/UserNameChangeDialog";
 import { PageTemplate } from "../templates/PageTemplate";
@@ -21,6 +22,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
   const roleChangeDialogDispatch = RoleChangeDialogContext.useDispatch();
   const userDeleteDialogDispatch = UserDeleteDialogContext.useDispatch();
   const userNameChangeDispatch = UserNameChangeDialogContext.useDispatch();
+  const userAddonChangeDispatch = UserAddonChangeDialogContext.useDispatch();
 
   return (<>
     <Box>
@@ -48,6 +50,13 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
         }}>
           <ListItemIcon><ManageAccountsTwoTone fontSize="small" /></ListItemIcon>
           <ListItemText>Change Role...</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => {
+          userAddonChangeDispatch(true, { user: us });
+          setAnchorEl(null);
+        }}>
+          <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
+          <ListItemText>Change Addons...</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => {
           userDeleteDialogDispatch(true, { user: us });
@@ -200,11 +209,13 @@ export const UserPage: React.VFC = () => {
         <UserCreateConfirmDialogContext.Provider>
           <UserCreateDialogContext.Provider>
             <RoleChangeDialogContext.Provider>
-              <UserDeleteDialogContext.Provider>
-                <UserInfoDialogContext.Provider>
-                  <UserList />
-                </UserInfoDialogContext.Provider>
-              </UserDeleteDialogContext.Provider>
+              <UserAddonChangeDialogContext.Provider>
+                <UserDeleteDialogContext.Provider>
+                  <UserInfoDialogContext.Provider>
+                    <UserList />
+                  </UserInfoDialogContext.Provider>
+                </UserDeleteDialogContext.Provider>
+              </UserAddonChangeDialogContext.Provider>
             </RoleChangeDialogContext.Provider>
           </UserCreateDialogContext.Provider>
         </UserCreateConfirmDialogContext.Provider>

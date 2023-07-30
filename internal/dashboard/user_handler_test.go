@@ -136,7 +136,7 @@ var _ = Describe("Dashboard server [User]", func() {
 				DisplayName: "create 1",
 				Roles:       []string{"team-a", "team-b"},
 				AuthType:    "password-secret",
-				Addons: []*dashv1alpha1.UserAddons{{
+				Addons: []*dashv1alpha1.UserAddon{{
 					Template: "user-tmpl1",
 					Vars:     map[string]string{"HOGE": "FUGA"},
 				}},
@@ -467,7 +467,7 @@ var _ = Describe("Dashboard server [User]", func() {
 			Entry("admin attach custom-role to other team user", adminUser, &dashv1alpha1.UpdateUserRoleRequest{
 				UserName: otherteamDevRoleUser, Roles: []string{"team-developer", "otherteam-developer"}}),
 			Entry("priv detach role from priv", privilegedUser, &dashv1alpha1.UpdateUserRoleRequest{
-				UserName: privilegedUser, Roles: []string{""}}),
+				UserName: privilegedUser, Roles: nil}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",

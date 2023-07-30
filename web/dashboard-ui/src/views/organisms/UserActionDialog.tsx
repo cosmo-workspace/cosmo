@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
-import { User, UserAddons } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { FormSelectableChip } from "../atoms/SelectableChips";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
@@ -250,7 +250,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
             });
             return { template: inpAddon.template.name, vars: vars, clusterScoped: inpAddon.template.isClusterScope }
           });
-        const protoUserAddons = userAddons.map(ua => new UserAddons(ua));
+        const protoUserAddons = userAddons.map(ua => new UserAddon(ua));
         console.log("protoUserAddons", protoUserAddons)
 
         let protoRoles = inp.roles.map((v) => { return v.name })

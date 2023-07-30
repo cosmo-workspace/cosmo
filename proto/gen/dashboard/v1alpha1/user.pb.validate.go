@@ -191,22 +191,22 @@ var _User_AuthType_InLookup = map[string]struct{}{
 	"ldap":            {},
 }
 
-// Validate checks the field values on UserAddons with the rules defined in the
+// Validate checks the field values on UserAddon with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UserAddons) Validate() error {
+func (m *UserAddon) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserAddons with the rules defined in
+// ValidateAll checks the field values on UserAddon with the rules defined in
 // the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UserAddonsMultiError, or
-// nil if none found.
-func (m *UserAddons) ValidateAll() error {
+// result is a list of violation errors wrapped in UserAddonMultiError, or nil
+// if none found.
+func (m *UserAddon) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserAddons) validate(all bool) error {
+func (m *UserAddon) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -220,18 +220,18 @@ func (m *UserAddons) validate(all bool) error {
 	// no validation rules for Vars
 
 	if len(errors) > 0 {
-		return UserAddonsMultiError(errors)
+		return UserAddonMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserAddonsMultiError is an error wrapping multiple validation errors
-// returned by UserAddons.ValidateAll() if the designated constraints aren't met.
-type UserAddonsMultiError []error
+// UserAddonMultiError is an error wrapping multiple validation errors returned
+// by UserAddon.ValidateAll() if the designated constraints aren't met.
+type UserAddonMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserAddonsMultiError) Error() string {
+func (m UserAddonMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -240,11 +240,11 @@ func (m UserAddonsMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserAddonsMultiError) AllErrors() []error { return m }
+func (m UserAddonMultiError) AllErrors() []error { return m }
 
-// UserAddonsValidationError is the validation error returned by
-// UserAddons.Validate if the designated constraints aren't met.
-type UserAddonsValidationError struct {
+// UserAddonValidationError is the validation error returned by
+// UserAddon.Validate if the designated constraints aren't met.
+type UserAddonValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -252,22 +252,22 @@ type UserAddonsValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserAddonsValidationError) Field() string { return e.field }
+func (e UserAddonValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserAddonsValidationError) Reason() string { return e.reason }
+func (e UserAddonValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserAddonsValidationError) Cause() error { return e.cause }
+func (e UserAddonValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserAddonsValidationError) Key() bool { return e.key }
+func (e UserAddonValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserAddonsValidationError) ErrorName() string { return "UserAddonsValidationError" }
+func (e UserAddonValidationError) ErrorName() string { return "UserAddonValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserAddonsValidationError) Error() string {
+func (e UserAddonValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -279,14 +279,14 @@ func (e UserAddonsValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserAddons.%s: %s%s",
+		"invalid %sUserAddon.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserAddonsValidationError{}
+var _ error = UserAddonValidationError{}
 
 var _ interface {
 	Field() string
@@ -294,4 +294,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserAddonsValidationError{}
+} = UserAddonValidationError{}

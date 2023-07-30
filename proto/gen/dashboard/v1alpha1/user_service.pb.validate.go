@@ -1612,3 +1612,274 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateUserRoleResponseValidationError{}
+
+// Validate checks the field values on UpdateUserAddonsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateUserAddonsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateUserAddonsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateUserAddonsRequestMultiError, or nil if none found.
+func (m *UpdateUserAddonsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateUserAddonsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserName
+
+	for idx, item := range m.GetAddons() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateUserAddonsRequestValidationError{
+						field:  fmt.Sprintf("Addons[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateUserAddonsRequestValidationError{
+						field:  fmt.Sprintf("Addons[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateUserAddonsRequestValidationError{
+					field:  fmt.Sprintf("Addons[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return UpdateUserAddonsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateUserAddonsRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateUserAddonsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateUserAddonsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateUserAddonsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateUserAddonsRequestMultiError) AllErrors() []error { return m }
+
+// UpdateUserAddonsRequestValidationError is the validation error returned by
+// UpdateUserAddonsRequest.Validate if the designated constraints aren't met.
+type UpdateUserAddonsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUserAddonsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUserAddonsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUserAddonsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUserAddonsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUserAddonsRequestValidationError) ErrorName() string {
+	return "UpdateUserAddonsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateUserAddonsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUserAddonsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUserAddonsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUserAddonsRequestValidationError{}
+
+// Validate checks the field values on UpdateUserAddonsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateUserAddonsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateUserAddonsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateUserAddonsResponseMultiError, or nil if none found.
+func (m *UpdateUserAddonsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateUserAddonsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Message
+
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserAddonsResponseValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserAddonsResponseValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateUserAddonsResponseValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateUserAddonsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateUserAddonsResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateUserAddonsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateUserAddonsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateUserAddonsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateUserAddonsResponseMultiError) AllErrors() []error { return m }
+
+// UpdateUserAddonsResponseValidationError is the validation error returned by
+// UpdateUserAddonsResponse.Validate if the designated constraints aren't met.
+type UpdateUserAddonsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUserAddonsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUserAddonsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUserAddonsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUserAddonsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUserAddonsResponseValidationError) ErrorName() string {
+	return "UpdateUserAddonsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateUserAddonsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUserAddonsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUserAddonsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUserAddonsResponseValidationError{}

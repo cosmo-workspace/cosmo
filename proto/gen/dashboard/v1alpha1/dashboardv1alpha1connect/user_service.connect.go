@@ -55,6 +55,9 @@ const (
 	// UserServiceUpdateUserRoleProcedure is the fully-qualified name of the UserService's
 	// UpdateUserRole RPC.
 	UserServiceUpdateUserRoleProcedure = "/dashboard.v1alpha1.UserService/UpdateUserRole"
+	// UserServiceUpdateUserAddonsProcedure is the fully-qualified name of the UserService's
+	// UpdateUserAddons RPC.
+	UserServiceUpdateUserAddonsProcedure = "/dashboard.v1alpha1.UserService/UpdateUserAddons"
 )
 
 // UserServiceClient is a client for the dashboard.v1alpha1.UserService service.
@@ -73,6 +76,8 @@ type UserServiceClient interface {
 	UpdateUserPassword(context.Context, *connect_go.Request[v1alpha1.UpdateUserPasswordRequest]) (*connect_go.Response[v1alpha1.UpdateUserPasswordResponse], error)
 	// Update a single User role
 	UpdateUserRole(context.Context, *connect_go.Request[v1alpha1.UpdateUserRoleRequest]) (*connect_go.Response[v1alpha1.UpdateUserRoleResponse], error)
+	// Update a single User role
+	UpdateUserAddons(context.Context, *connect_go.Request[v1alpha1.UpdateUserAddonsRequest]) (*connect_go.Response[v1alpha1.UpdateUserAddonsResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the dashboard.v1alpha1.UserService service. By
@@ -120,6 +125,11 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+UserServiceUpdateUserRoleProcedure,
 			opts...,
 		),
+		updateUserAddons: connect_go.NewClient[v1alpha1.UpdateUserAddonsRequest, v1alpha1.UpdateUserAddonsResponse](
+			httpClient,
+			baseURL+UserServiceUpdateUserAddonsProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -132,6 +142,7 @@ type userServiceClient struct {
 	updateUserDisplayName *connect_go.Client[v1alpha1.UpdateUserDisplayNameRequest, v1alpha1.UpdateUserDisplayNameResponse]
 	updateUserPassword    *connect_go.Client[v1alpha1.UpdateUserPasswordRequest, v1alpha1.UpdateUserPasswordResponse]
 	updateUserRole        *connect_go.Client[v1alpha1.UpdateUserRoleRequest, v1alpha1.UpdateUserRoleResponse]
+	updateUserAddons      *connect_go.Client[v1alpha1.UpdateUserAddonsRequest, v1alpha1.UpdateUserAddonsResponse]
 }
 
 // DeleteUser calls dashboard.v1alpha1.UserService.DeleteUser.
@@ -169,6 +180,11 @@ func (c *userServiceClient) UpdateUserRole(ctx context.Context, req *connect_go.
 	return c.updateUserRole.CallUnary(ctx, req)
 }
 
+// UpdateUserAddons calls dashboard.v1alpha1.UserService.UpdateUserAddons.
+func (c *userServiceClient) UpdateUserAddons(ctx context.Context, req *connect_go.Request[v1alpha1.UpdateUserAddonsRequest]) (*connect_go.Response[v1alpha1.UpdateUserAddonsResponse], error) {
+	return c.updateUserAddons.CallUnary(ctx, req)
+}
+
 // UserServiceHandler is an implementation of the dashboard.v1alpha1.UserService service.
 type UserServiceHandler interface {
 	// Delete user by ID
@@ -185,6 +201,8 @@ type UserServiceHandler interface {
 	UpdateUserPassword(context.Context, *connect_go.Request[v1alpha1.UpdateUserPasswordRequest]) (*connect_go.Response[v1alpha1.UpdateUserPasswordResponse], error)
 	// Update a single User role
 	UpdateUserRole(context.Context, *connect_go.Request[v1alpha1.UpdateUserRoleRequest]) (*connect_go.Response[v1alpha1.UpdateUserRoleResponse], error)
+	// Update a single User role
+	UpdateUserAddons(context.Context, *connect_go.Request[v1alpha1.UpdateUserAddonsRequest]) (*connect_go.Response[v1alpha1.UpdateUserAddonsResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -229,6 +247,11 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 		svc.UpdateUserRole,
 		opts...,
 	))
+	mux.Handle(UserServiceUpdateUserAddonsProcedure, connect_go.NewUnaryHandler(
+		UserServiceUpdateUserAddonsProcedure,
+		svc.UpdateUserAddons,
+		opts...,
+	))
 	return "/dashboard.v1alpha1.UserService/", mux
 }
 
@@ -261,4 +284,8 @@ func (UnimplementedUserServiceHandler) UpdateUserPassword(context.Context, *conn
 
 func (UnimplementedUserServiceHandler) UpdateUserRole(context.Context, *connect_go.Request[v1alpha1.UpdateUserRoleRequest]) (*connect_go.Response[v1alpha1.UpdateUserRoleResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.UserService.UpdateUserRole is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) UpdateUserAddons(context.Context, *connect_go.Request[v1alpha1.UpdateUserAddonsRequest]) (*connect_go.Response[v1alpha1.UpdateUserAddonsResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.UserService.UpdateUserAddons is not implemented"))
 }

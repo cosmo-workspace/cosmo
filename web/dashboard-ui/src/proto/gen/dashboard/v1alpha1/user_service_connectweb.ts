@@ -7,7 +7,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateUserRequest, CreateUserResponse, DeleteUserRequest, DeleteUserResponse, GetUserRequest, GetUserResponse, GetUsersResponse, UpdateUserDisplayNameRequest, UpdateUserDisplayNameResponse, UpdateUserPasswordRequest, UpdateUserPasswordResponse, UpdateUserRoleRequest, UpdateUserRoleResponse } from "./user_service_pb.js";
+import { CreateUserRequest, CreateUserResponse, DeleteUserRequest, DeleteUserResponse, GetUserRequest, GetUserResponse, GetUsersResponse, UpdateUserAddonsRequest, UpdateUserAddonsResponse, UpdateUserDisplayNameRequest, UpdateUserDisplayNameResponse, UpdateUserPasswordRequest, UpdateUserPasswordResponse, UpdateUserRoleRequest, UpdateUserRoleResponse } from "./user_service_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -91,6 +91,17 @@ export const UserService = {
       name: "UpdateUserRole",
       I: UpdateUserRoleRequest,
       O: UpdateUserRoleResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * Update a single User role
+     *
+     * @generated from rpc dashboard.v1alpha1.UserService.UpdateUserAddons
+     */
+    updateUserAddons: {
+      name: "UpdateUserAddons",
+      I: UpdateUserAddonsRequest,
+      O: UpdateUserAddonsResponse,
       kind: MethodKind.Unary,
     },
   }

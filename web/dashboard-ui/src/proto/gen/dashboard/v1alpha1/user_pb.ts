@@ -35,9 +35,9 @@ export class User extends Message<User> {
   authType = "";
 
   /**
-   * @generated from field: repeated dashboard.v1alpha1.UserAddons addons = 5;
+   * @generated from field: repeated dashboard.v1alpha1.UserAddon addons = 5;
    */
-  addons: UserAddons[] = [];
+  addons: UserAddon[] = [];
 
   /**
    * @generated from field: string default_password = 6;
@@ -61,7 +61,7 @@ export class User extends Message<User> {
     { no: 2, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "roles", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 4, name: "auth_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "addons", kind: "message", T: UserAddons, repeated: true },
+    { no: 5, name: "addons", kind: "message", T: UserAddon, repeated: true },
     { no: 6, name: "default_password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
@@ -84,9 +84,9 @@ export class User extends Message<User> {
 }
 
 /**
- * @generated from message dashboard.v1alpha1.UserAddons
+ * @generated from message dashboard.v1alpha1.UserAddon
  */
-export class UserAddons extends Message<UserAddons> {
+export class UserAddon extends Message<UserAddon> {
   /**
    * @generated from field: string template = 1;
    */
@@ -102,33 +102,33 @@ export class UserAddons extends Message<UserAddons> {
    */
   vars: { [key: string]: string } = {};
 
-  constructor(data?: PartialMessage<UserAddons>) {
+  constructor(data?: PartialMessage<UserAddon>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "dashboard.v1alpha1.UserAddons";
+  static readonly typeName = "dashboard.v1alpha1.UserAddon";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "template", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "cluster_scoped", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 3, name: "vars", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserAddons {
-    return new UserAddons().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserAddon {
+    return new UserAddon().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UserAddons {
-    return new UserAddons().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UserAddon {
+    return new UserAddon().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UserAddons {
-    return new UserAddons().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UserAddon {
+    return new UserAddon().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UserAddons | PlainMessage<UserAddons> | undefined, b: UserAddons | PlainMessage<UserAddons> | undefined): boolean {
-    return proto3.util.equals(UserAddons, a, b);
+  static equals(a: UserAddon | PlainMessage<UserAddon> | undefined, b: UserAddon | PlainMessage<UserAddon> | undefined): boolean {
+    return proto3.util.equals(UserAddon, a, b);
   }
 }
 

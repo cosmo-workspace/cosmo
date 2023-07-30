@@ -9,7 +9,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3 } from "@bufbuild/protobuf";
-import { User, UserAddons } from "./user_pb.js";
+import { User, UserAddon } from "./user_pb.js";
 
 /**
  * @generated from message dashboard.v1alpha1.DeleteUserRequest
@@ -233,9 +233,9 @@ export class CreateUserRequest extends Message<CreateUserRequest> {
   authType = "";
 
   /**
-   * @generated from field: repeated dashboard.v1alpha1.UserAddons addons = 5;
+   * @generated from field: repeated dashboard.v1alpha1.UserAddon addons = 5;
    */
-  addons: UserAddons[] = [];
+  addons: UserAddon[] = [];
 
   constructor(data?: PartialMessage<CreateUserRequest>) {
     super();
@@ -249,7 +249,7 @@ export class CreateUserRequest extends Message<CreateUserRequest> {
     { no: 2, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "roles", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 4, name: "auth_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "addons", kind: "message", T: UserAddons, repeated: true },
+    { no: 5, name: "addons", kind: "message", T: UserAddon, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateUserRequest {
@@ -567,6 +567,92 @@ export class UpdateUserRoleResponse extends Message<UpdateUserRoleResponse> {
 
   static equals(a: UpdateUserRoleResponse | PlainMessage<UpdateUserRoleResponse> | undefined, b: UpdateUserRoleResponse | PlainMessage<UpdateUserRoleResponse> | undefined): boolean {
     return proto3.util.equals(UpdateUserRoleResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message dashboard.v1alpha1.UpdateUserAddonsRequest
+ */
+export class UpdateUserAddonsRequest extends Message<UpdateUserAddonsRequest> {
+  /**
+   * @generated from field: string user_name = 1;
+   */
+  userName = "";
+
+  /**
+   * @generated from field: repeated dashboard.v1alpha1.UserAddon addons = 2;
+   */
+  addons: UserAddon[] = [];
+
+  constructor(data?: PartialMessage<UpdateUserAddonsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.UpdateUserAddonsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "addons", kind: "message", T: UserAddon, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateUserAddonsRequest {
+    return new UpdateUserAddonsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateUserAddonsRequest {
+    return new UpdateUserAddonsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateUserAddonsRequest {
+    return new UpdateUserAddonsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateUserAddonsRequest | PlainMessage<UpdateUserAddonsRequest> | undefined, b: UpdateUserAddonsRequest | PlainMessage<UpdateUserAddonsRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateUserAddonsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message dashboard.v1alpha1.UpdateUserAddonsResponse
+ */
+export class UpdateUserAddonsResponse extends Message<UpdateUserAddonsResponse> {
+  /**
+   * @generated from field: string message = 1;
+   */
+  message = "";
+
+  /**
+   * @generated from field: dashboard.v1alpha1.User user = 2;
+   */
+  user?: User;
+
+  constructor(data?: PartialMessage<UpdateUserAddonsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.UpdateUserAddonsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "user", kind: "message", T: User },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateUserAddonsResponse {
+    return new UpdateUserAddonsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateUserAddonsResponse {
+    return new UpdateUserAddonsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateUserAddonsResponse {
+    return new UpdateUserAddonsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateUserAddonsResponse | PlainMessage<UpdateUserAddonsResponse> | undefined, b: UpdateUserAddonsResponse | PlainMessage<UpdateUserAddonsResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateUserAddonsResponse, a, b);
   }
 }
 
