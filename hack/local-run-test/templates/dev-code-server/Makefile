@@ -8,10 +8,11 @@ template: ## Create template
 	cd kubernetes/ && kustomize edit set image $(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 	kustomize build kubernetes/ | cosmoctl tmpl generate -o cosmo-template.yaml --workspace \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
-	kustomize build kubernetes/ | cosmoctl tmpl generate -o team-a-template.yaml --workspace \
+	kustomize build team-a | cosmoctl tmpl generate -o team-a-template.yaml --workspace \
 		--name team-a-codeserver \
 		--desc 'only for team A' \
 		--userroles 'team-a-*' \
+		--required-useraddons team-a-serviceaccount \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
 	kustomize build kubernetes/ | cosmoctl tmpl generate -o team-shared-template.yaml --workspace \
 		--name team-shared-codeserver \

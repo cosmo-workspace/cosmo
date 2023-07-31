@@ -32,7 +32,7 @@ type generateOption struct {
 
 	Name         string
 	OutputFile   string
-	RequiredVars string
+	RequiredVars []string
 	Desc         string
 
 	TypeWorkspace bool
@@ -41,8 +41,9 @@ type generateOption struct {
 	SetDefaultUserAddon bool
 	DisableNamePrefix   bool
 	ClusterScope        bool
-	UserRoles           string
-	ForbiddenUserRoles  string
+	UserRoles           []string
+	ForbiddenUserRoles  []string
+	RequiredUserAddons  []string
 
 	tmpl cosmov1alpha1.TemplateObject
 }
@@ -54,7 +55,7 @@ func generateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command 
 
 	cmd.Flags().StringVarP(&o.Name, "name", "n", "", "template name (use directory name if not specified)")
 	cmd.Flags().StringVarP(&o.OutputFile, "output", "o", "", "write output into file (default: Stdout)")
-	cmd.Flags().StringVar(&o.RequiredVars, "required-vars", "", "template custom vars to be replaced by instance. format --required-vars VAR1,VAR2:default-value")
+	cmd.Flags().StringSliceVar(&o.RequiredVars, "required-vars", []string{}, "template custom vars to be replaced by instance. format --required-vars VAR1,VAR2:default-value")
 	cmd.Flags().StringVar(&o.Desc, "desc", "", "template description")
 
 	cmd.Flags().BoolVar(&o.TypeWorkspace, "workspace", false, "template as type workspace")
@@ -68,8 +69,9 @@ func generateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command 
 	cmd.Flags().BoolVar(&o.DisableNamePrefix, "disable-nameprefix", false, "disable adding instance name prefix on child resource name")
 
 	cmd.Flags().BoolVar(&o.ClusterScope, "cluster-scope", false, "generate ClusterTemplate (default generate namespaced Template)")
-	cmd.Flags().StringVar(&o.UserRoles, "userroles", "", "user roles to show this template (e.g. 'teama-*', 'teamb-admin', etc.)")
-	cmd.Flags().StringVar(&o.ForbiddenUserRoles, "forbidden-userroles", "", "user roles NOT to show this template (e.g. 'teama-*', 'teamb-admin', etc.)")
+	cmd.Flags().StringSliceVar(&o.UserRoles, "userroles", []string{}, "user roles to show this template (e.g. 'teama-*', 'teamb-admin', etc.)")
+	cmd.Flags().StringSliceVar(&o.ForbiddenUserRoles, "forbidden-userroles", []string{}, "user roles NOT to show this template (e.g. 'teama-*', 'teamb-admin', etc.)")
+	cmd.Flags().StringSliceVar(&o.RequiredUserAddons, "required-useraddons", []string{}, "required user addons")
 
 	return cmd
 }
@@ -127,11 +129,9 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if o.RequiredVars != "" {
-		varsList := strings.Split(o.RequiredVars, ",")
-
-		vars := make([]cosmov1alpha1.RequiredVarSpec, 0, len(varsList))
-		for _, v := range varsList {
+	if len(o.RequiredVars) > 0 {
+		vars := make([]cosmov1alpha1.RequiredVarSpec, 0, len(o.RequiredVars))
+		for _, v := range o.RequiredVars {
 			vcol := strings.Split(v, ":")
 			varSpec := cosmov1alpha1.RequiredVarSpec{Var: vcol[0]}
 			if len(vcol) > 1 {
@@ -170,11 +170,14 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if o.UserRoles != "" {
-		ann[cosmov1alpha1.TemplateAnnKeyUserRoles] = o.UserRoles
+	if len(o.UserRoles) > 0 {
+		ann[cosmov1alpha1.TemplateAnnKeyUserRoles] = strings.Join(o.UserRoles, ",")
 	}
-	if o.ForbiddenUserRoles != "" {
-		ann[cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles] = o.ForbiddenUserRoles
+	if len(o.ForbiddenUserRoles) > 0 {
+		ann[cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles] = strings.Join(o.ForbiddenUserRoles, ",")
+	}
+	if len(o.RequiredUserAddons) > 0 {
+		ann[cosmov1alpha1.TemplateAnnKeyRequiredAddons] = strings.Join(o.RequiredUserAddons, ",")
 	}
 
 	o.tmpl.SetAnnotations(ann)

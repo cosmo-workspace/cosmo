@@ -466,15 +466,16 @@ Flags:
       --cluster-scope                             generate ClusterTemplate (default generate namespaced Template)
       --desc string                               template description
       --disable-nameprefix                        disable adding instance name prefix on child resource name
-      --forbidden-userroles string                user roles NOT to show this template (e.g. 'teama-*', 'teamb-admin', etc.)
+      --forbidden-userroles strings               user roles NOT to show this template (e.g. 'teama-*', 'teamb-admin', etc.)
   -h, --help                                      help for generate
   -n, --name string                               template name (use directory name if not specified)
   -o, --output string                             write output into file (default: Stdout)
-      --required-vars string                      template custom vars to be replaced by instance. format --required-vars VAR1,VAR2:default-value
+      --required-useraddons strings               required user addons
+      --required-vars strings                     template custom vars to be replaced by instance. format --required-vars VAR1,VAR2:default-value
       --set-default-user-addon                    set default user addon
       --user-addon                                template as type useraddon
       --useraddon                                 template as type useraddon
-      --userroles string                          user roles to show this template (e.g. 'teama-*', 'teamb-admin', etc.)
+      --userroles strings                         user roles to show this template (e.g. 'teama-*', 'teamb-admin', etc.)
       --workspace                                 template as type workspace
       --workspace-deployment-name string          Deployment name for Workspace. use with --workspace (auto detected if not specified)
       --workspace-main-service-port-name string   ServicePort name for Workspace main container port. use with --workspace (auto detected if not specified)

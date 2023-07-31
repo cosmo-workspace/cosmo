@@ -1,0 +1,10 @@
+resources:
+- ../kubernetes
+
+patches:
+- target:
+    kind: Deployment
+  patch: |
+    - op: replace
+      path: /spec/template/spec/serviceAccountName
+      value: iamserviceaccount
