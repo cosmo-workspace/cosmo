@@ -42,7 +42,6 @@ type generateOption struct {
 	DisableNamePrefix   bool
 	ClusterScope        bool
 	UserRoles           []string
-	ForbiddenUserRoles  []string
 	RequiredUserAddons  []string
 
 	tmpl cosmov1alpha1.TemplateObject
@@ -70,7 +69,7 @@ func generateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command 
 
 	cmd.Flags().BoolVar(&o.ClusterScope, "cluster-scope", false, "generate ClusterTemplate (default generate namespaced Template)")
 	cmd.Flags().StringSliceVar(&o.UserRoles, "userroles", []string{}, "user roles to show this template (e.g. 'teama-*', 'teamb-admin', etc.)")
-	cmd.Flags().StringSliceVar(&o.ForbiddenUserRoles, "forbidden-userroles", []string{}, "user roles NOT to show this template (e.g. 'teama-*', 'teamb-admin', etc.)")
+
 	cmd.Flags().StringSliceVar(&o.RequiredUserAddons, "required-useraddons", []string{}, "required user addons")
 
 	return cmd
@@ -172,9 +171,6 @@ func (o *generateOption) Complete(cmd *cobra.Command, args []string) error {
 
 	if len(o.UserRoles) > 0 {
 		ann[cosmov1alpha1.TemplateAnnKeyUserRoles] = strings.Join(o.UserRoles, ",")
-	}
-	if len(o.ForbiddenUserRoles) > 0 {
-		ann[cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles] = strings.Join(o.ForbiddenUserRoles, ",")
 	}
 	if len(o.RequiredUserAddons) > 0 {
 		ann[cosmov1alpha1.TemplateAnnKeyRequiredAddons] = strings.Join(o.RequiredUserAddons, ",")

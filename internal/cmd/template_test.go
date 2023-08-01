@@ -101,7 +101,7 @@ var _ = Describe("cosmoctl [template]", func() {
 			Entry(desc, "template", "generate", "--workspace", "--workspace-main-service-port-name", "main", "-o", "/tmp/test-cosmo-template"),
 			Entry(desc, "template", "generate", "--user-addon", "--set-default-user-addon", "--disable-nameprefix"),
 			Entry(desc, "template", "generate", "--user-addon", "--set-default-user-addon", "--cluster-scope", "--disable-nameprefix"),
-			Entry(desc, "template", "generate", "--workspace", "--userroles", "teama-*", "--forbidden-userroles", "teama-operator,teama-testuser"),
+			Entry(desc, "template", "generate", "--workspace", "--userroles", "teama-*"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",

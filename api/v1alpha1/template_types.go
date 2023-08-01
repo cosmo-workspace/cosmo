@@ -18,8 +18,6 @@ const (
 
 	// TemplateAnnKeyUserRoles is an annotation key on Template for specific UserRoles
 	TemplateAnnKeyUserRoles = "cosmo-workspace.github.io/userroles"
-	// TemplateAnnKeyForbiddenUserRoles is an annotation key on Template which is not for specific UserRoles
-	TemplateAnnKeyForbiddenUserRoles = "cosmo-workspace.github.io/forbidden-userroles"
 	// TemplateAnnKeyRequiredAddons is a annotation key for Template which requires useraddons
 	TemplateAnnKeyRequiredAddons = "cosmo-workspace.github.io/required-useraddons"
 )

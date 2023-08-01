@@ -33,24 +33,9 @@ func isAllowedToUseTemplate(ctx context.Context, tmpl cosmov1alpha1.TemplateObje
 	}
 
 	forRoles := ann[cosmov1alpha1.TemplateAnnKeyUserRoles]
-	forbiddenRoles := ann[cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles]
-
-	if forbiddenRoles != "" {
-		for _, forbiddenRole := range strings.Split(forbiddenRoles, ",") {
-			for _, role := range roles {
-				debugAll.Info("matching to forbiddenRole...", "forbiddenRole", forbiddenRole, "role", role.Name, "tmpl", tmpl.GetName())
-				if matched, err := filepath.Match(forbiddenRole, role.Name); err == nil && matched {
-					// the role is forbidden
-					debugAll.Info("forbidden: roles matched to forbiddenRole", "forbiddenRole", forbiddenRole, "role", role.Name, "tmpl", tmpl.GetName())
-					return false
-				}
-			}
-		}
-	}
-
 	if forRoles == "" {
 		// all allowed
-		debugAll.Info("allowed: roles does not matched all forbiddenRoles and NO forRoles", "forbiddenRoles", forbiddenRoles, "forRoles", forRoles, "tmpl", tmpl.GetName())
+		debugAll.Info("allowed: roles does not matched all forbiddenRoles and NO forRoles", "forRoles", forRoles, "tmpl", tmpl.GetName())
 		return true
 	}
 	for _, forRole := range strings.Split(forRoles, ",") {
@@ -63,7 +48,7 @@ func isAllowedToUseTemplate(ctx context.Context, tmpl cosmov1alpha1.TemplateObje
 		}
 	}
 	// the role does not match the specified roles
-	debugAll.Info("forbidden: roles does not match forRoles", forbiddenRoles, forRoles)
+	debugAll.Info("forbidden: roles does not match forRoles", forRoles)
 	return false
 }
 
