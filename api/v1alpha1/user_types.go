@@ -29,7 +29,10 @@ const NamespaceLabelKeyUserName = "cosmo-workspace.github.io/user"
 const UserAddonTemplateAnnKeyDefaultUserAddon = "useraddon.cosmo-workspace.github.io/default"
 
 // Var for user addon
-const TemplateVarUserName = "{{USER_NAME}}"
+const (
+	TemplateVarUser     = "{{USER}}"
+	TemplateVarUserName = "{{USER_NAME}}"
+)
 
 const UserNamespacePrefix = "cosmo-user-"
 

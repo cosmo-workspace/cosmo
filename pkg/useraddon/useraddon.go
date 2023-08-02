@@ -74,6 +74,7 @@ func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon co
 		addon.Vars = make(map[string]string)
 	}
 	addon.Vars[template.DefaultVarsNamespace] = cosmov1alpha1.UserNamespace(user.Name)
+	addon.Vars[cosmov1alpha1.TemplateVarUser] = user.Name
 	addon.Vars[cosmov1alpha1.TemplateVarUserName] = user.Name
 	inst.GetSpec().Vars = addon.Vars
 

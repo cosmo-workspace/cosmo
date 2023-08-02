@@ -247,6 +247,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 					},
 					Vars: map[string]string{
 						cosmov1alpha1.TemplateVarUserName: "tom",
+						cosmov1alpha1.TemplateVarUser:     "tom",
 						template.DefaultVarsNamespace:     "cosmo-user-tom",
 						"VAR1":                            "VAL1",
 					},
@@ -299,6 +300,7 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 					},
 					Vars: map[string]string{
 						cosmov1alpha1.TemplateVarUserName: "tom",
+						cosmov1alpha1.TemplateVarUser:     "tom",
 						template.DefaultVarsNamespace:     "cosmo-user-tom",
 					},
 				},
