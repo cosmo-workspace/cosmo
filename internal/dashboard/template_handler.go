@@ -31,7 +31,7 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Requ
 
 	user := callerFromContext(ctx)
 
-	tmpls, err := s.Klient.ListWorkspaceTemplates(ctx, user.Spec.Roles)
+	tmpls, err := s.Klient.ListWorkspaceTemplates(ctx, user)
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -57,7 +57,7 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context, req *connect_go.Requ
 
 	user := callerFromContext(ctx)
 
-	tmpls, err := s.Klient.ListUserAddonTemplates(ctx, user.Spec.Roles)
+	tmpls, err := s.Klient.ListUserAddonTemplates(ctx, user)
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}

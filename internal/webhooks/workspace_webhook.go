@@ -21,6 +21,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/workspace"
@@ -235,6 +236,12 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 		return admission.Errored(http.StatusForbidden, err)
 	}
 
+	err = h.validateTemplatePermission(ctx, ws)
+	if err != nil {
+		log.Error(err, "validation failed")
+		return admission.Errored(http.StatusForbidden, err)
+	}
+
 	return admission.Allowed("Validation OK")
 }
 
@@ -248,6 +255,38 @@ func (h *WorkspaceValidationWebhookHandler) validateWorkspace(ctx context.Contex
 	// check netrules
 	if err := checkNetworkRules(ws.Spec.Network); err != nil {
 		return fmt.Errorf("network rules check failed: %w", err)
+	}
+
+	return nil
+}
+
+func (h *WorkspaceValidationWebhookHandler) validateTemplatePermission(ctx context.Context, ws *cosmov1alpha1.Workspace) error {
+	// fetch user
+	var user cosmov1alpha1.User
+	user.SetName(cosmov1alpha1.UserNameByNamespace(ws.GetNamespace()))
+	err := h.Client.Get(ctx, types.NamespacedName{Name: user.GetName()}, &user)
+	if err != nil {
+		return fmt.Errorf("failed to fetch user %s :%w", user.GetName(), err)
+	}
+
+	// fetch template
+	var tmpl cosmov1alpha1.Template
+	tmpl.SetName(ws.Spec.Template.Name)
+	err = h.Client.Get(ctx, types.NamespacedName{Name: tmpl.GetName()}, &tmpl)
+	if err != nil {
+		return fmt.Errorf("failed to fetch template %s :%w", tmpl.GetName(), err)
+	}
+
+	// check user has role for the addon
+	if ok := kosmo.IsAllowedToUseTemplate(ctx, &user, &tmpl); !ok {
+		requiredRoles := kubeutil.GetAnnotation(&tmpl, cosmov1alpha1.TemplateAnnKeyUserRoles)
+		return fmt.Errorf("template '%s' is only for roles '%s'", tmpl.GetName(), requiredRoles)
+	}
+
+	// check user has required addon
+	if ok := kosmo.HasRequiredAddons(ctx, &user, &tmpl); !ok {
+		requiredAddons := kubeutil.GetAnnotation(&tmpl, cosmov1alpha1.TemplateAnnKeyRequiredAddons)
+		return fmt.Errorf("template '%s' requires useraddon '%s'", tmpl.GetName(), requiredAddons)
 	}
 
 	return nil

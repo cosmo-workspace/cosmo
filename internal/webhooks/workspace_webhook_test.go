@@ -203,6 +203,23 @@ spec:
 		},
 	}
 
+	specificRoleTmpl := tmpl.DeepCopy()
+	specificRoleTmpl.SetName("specific-role-tmpl")
+	specificRoleTmpl.Annotations[cosmov1alpha1.TemplateAnnKeyUserRoles] = "specific-role"
+
+	requireAddonTmpl := tmpl.DeepCopy()
+	requireAddonTmpl.SetName("require-addon-tmpl")
+	requireAddonTmpl.Annotations[cosmov1alpha1.TemplateAnnKeyRequiredAddons] = "required-addon"
+
+	requireAddon := cosmov1alpha1.Template{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "required-addon",
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
+			},
+		},
+	}
+
 	Context("when creating workspace", func() {
 		It("should pass with defaulting networking", func() {
 			ctx := context.Background()
@@ -213,6 +230,10 @@ spec:
 
 			ns := corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "cosmo-user-testuser-ws"}}
 			err = k8sClient.Create(ctx, &ns)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			user := cosmov1alpha1.User{ObjectMeta: metav1.ObjectMeta{Name: cosmov1alpha1.UserNameByNamespace(ns.Name)}}
+			err = k8sClient.Create(ctx, &user)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			rep := pointer.Int64(1)
@@ -405,6 +426,122 @@ spec:
 
 			err = k8sClient.Create(ctx, &ws)
 			Expect(err).To(MatchSnapShot())
+		})
+	})
+
+	Context("when creating workspace with required role for template", func() {
+		It("should pass", func() {
+			ctx := context.Background()
+			var err error
+
+			err = k8sClient.Create(ctx, specificRoleTmpl)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			user := cosmov1alpha1.User{
+				ObjectMeta: metav1.ObjectMeta{Name: "testws-user-specific-role"},
+				Spec: cosmov1alpha1.UserSpec{
+					Roles: []cosmov1alpha1.UserRole{{Name: "specific-role"}},
+				},
+			}
+			err = k8sClient.Create(ctx, &user)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			ns := corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: cosmov1alpha1.UserNamespace(user.Name)}}
+			err = k8sClient.Create(ctx, &ns)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			ws := cosmov1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "testws8",
+					Namespace: cosmov1alpha1.UserNamespace(user.Name),
+				},
+				Spec: cosmov1alpha1.WorkspaceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: specificRoleTmpl.GetName()},
+					Vars:     map[string]string{"DOMAIN": "example.com"},
+				},
+			}
+			err = k8sClient.Create(ctx, &ws)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+	})
+
+	Context("when creating workspace without required role for template", func() {
+		It("should deny", func() {
+			ctx := context.Background()
+			var err error
+
+			ws := cosmov1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "testws8-2",
+					Namespace: "cosmo-user-testuser-ws",
+				},
+				Spec: cosmov1alpha1.WorkspaceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: specificRoleTmpl.GetName()},
+					Vars:     map[string]string{"DOMAIN": "example.com"},
+				},
+			}
+			err = k8sClient.Create(ctx, &ws)
+			Expect(err).Should(HaveOccurred())
+		})
+	})
+
+	Context("when creating workspace with required addon for template", func() {
+		It("should pass", func() {
+			ctx := context.Background()
+			var err error
+
+			err = k8sClient.Create(ctx, requireAddonTmpl)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			err = k8sClient.Create(ctx, &requireAddon)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			user := cosmov1alpha1.User{
+				ObjectMeta: metav1.ObjectMeta{Name: "testws-user-required-addon"},
+				Spec: cosmov1alpha1.UserSpec{
+					Roles:  []cosmov1alpha1.UserRole{{Name: "specific-role"}},
+					Addons: []cosmov1alpha1.UserAddon{{Template: cosmov1alpha1.UserAddonTemplateRef{Name: requireAddon.Name}}},
+				},
+			}
+			err = k8sClient.Create(ctx, &user)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			ns := corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: cosmov1alpha1.UserNamespace(user.Name)}}
+			err = k8sClient.Create(ctx, &ns)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			ws := cosmov1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "testws9",
+					Namespace: cosmov1alpha1.UserNamespace(user.Name),
+				},
+				Spec: cosmov1alpha1.WorkspaceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: requireAddonTmpl.GetName()},
+					Vars:     map[string]string{"DOMAIN": "example.com"},
+				},
+			}
+			err = k8sClient.Create(ctx, &ws)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+	})
+
+	Context("when creating workspace without required addon for template", func() {
+		It("should deny", func() {
+			ctx := context.Background()
+			var err error
+
+			ws := cosmov1alpha1.Workspace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "testws9-2",
+					Namespace: cosmov1alpha1.UserNamespace("testws-user-specific-role"),
+				},
+				Spec: cosmov1alpha1.WorkspaceSpec{
+					Template: cosmov1alpha1.TemplateRef{Name: requireAddonTmpl.GetName()},
+					Vars:     map[string]string{"DOMAIN": "example.com"},
+				},
+			}
+			err = k8sClient.Create(ctx, &ws)
+			Expect(err).Should(HaveOccurred())
 		})
 	})
 })

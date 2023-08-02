@@ -4,6 +4,7 @@ kind: ClusterTemplate
 metadata:
   annotations:
     cosmo-workspace.github.io/disable-nameprefix: "true"
+    cosmo-workspace.github.io/required-useraddons: resource-limitter
     cosmo-workspace.github.io/userroles: team-a-*
   creationTimestamp: null
   labels:
@@ -26,7 +27,7 @@ spec:
       labels:
         cosmo-workspace.github.io/instance: '{{INSTANCE}}'
         cosmo-workspace.github.io/template: '{{TEMPLATE}}'
-      name: '{{USER}}-view'
+      name: '{{USER_NAME}}-view'
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: ClusterRole

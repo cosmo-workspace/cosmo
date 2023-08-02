@@ -12,21 +12,21 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
-func filterTemplates(ctx context.Context, tmpls []cosmov1alpha1.TemplateObject, roles []cosmov1alpha1.UserRole) []cosmov1alpha1.TemplateObject {
+func filterTemplates(ctx context.Context, tmpls []cosmov1alpha1.TemplateObject, u *cosmov1alpha1.User) []cosmov1alpha1.TemplateObject {
 	filteredTmpls := make([]cosmov1alpha1.TemplateObject, 0, len(tmpls))
 	for _, v := range tmpls {
-		if isAllowedToUseTemplate(ctx, v, roles) {
+		if IsAllowedToUseTemplate(ctx, u, v) {
 			filteredTmpls = append(filteredTmpls, v)
 		}
 	}
 	return filteredTmpls
 }
 
-func isAllowedToUseTemplate(ctx context.Context, tmpl cosmov1alpha1.TemplateObject, roles []cosmov1alpha1.UserRole) bool {
+func IsAllowedToUseTemplate(ctx context.Context, u *cosmov1alpha1.User, tmpl cosmov1alpha1.TemplateObject) bool {
 	debugAll := clog.FromContext(ctx).DebugAll()
 
 	ann := tmpl.GetAnnotations()
-	if ann == nil || cosmov1alpha1.HasPrivilegedRole(roles) {
+	if ann == nil || cosmov1alpha1.HasPrivilegedRole(u.Spec.Roles) {
 		// all allowed
 		debugAll.Info("all allowed", "tmpl", tmpl.GetName())
 		return true
@@ -39,7 +39,7 @@ func isAllowedToUseTemplate(ctx context.Context, tmpl cosmov1alpha1.TemplateObje
 		return true
 	}
 	for _, forRole := range strings.Split(forRoles, ",") {
-		for _, role := range roles {
+		for _, role := range u.Spec.Roles {
 			debugAll.Info("matching to forRole...", "forRoles", forRoles, "role", role.Name, "tmpl", tmpl.GetName())
 			if matched, err := filepath.Match(forRole, role.Name); err == nil && matched {
 				debugAll.Info("allowed: roles matched to forRole", "forRoles", forRoles, "role", role.Name, "tmpl", tmpl.GetName())
@@ -52,23 +52,41 @@ func isAllowedToUseTemplate(ctx context.Context, tmpl cosmov1alpha1.TemplateObje
 	return false
 }
 
-func (c *Client) ListWorkspaceTemplates(ctx context.Context, roles []cosmov1alpha1.UserRole) ([]cosmov1alpha1.TemplateObject, error) {
+func HasRequiredAddons(ctx context.Context, u *cosmov1alpha1.User, tmpl cosmov1alpha1.TemplateObject) bool {
+	debugAll := clog.FromContext(ctx).DebugAll()
+
+	reqAddons := kubeutil.GetAnnotation(tmpl, cosmov1alpha1.TemplateAnnKeyRequiredAddons)
+	if reqAddons == "" {
+		return true
+	}
+	for _, requiredAddon := range strings.Split(reqAddons, ",") {
+		for _, addon := range u.Spec.Addons {
+			if requiredAddon == addon.Template.Name {
+				return true
+			}
+		}
+	}
+	debugAll.Info("user does not have required addon for template", "requiredAddons", reqAddons)
+	return false
+}
+
+func (c *Client) ListWorkspaceTemplates(ctx context.Context, u *cosmov1alpha1.User) ([]cosmov1alpha1.TemplateObject, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	if tmpls, err := kubeutil.ListTemplateObjectsByType(ctx, c, []string{cosmov1alpha1.TemplateLabelEnumTypeWorkspace}); err != nil {
 		log.Error(err, "failed to list WorkspaceTemplates")
 		return nil, NewInternalServerError("failed to list WorkspaceTemplates", err)
 	} else {
-		return filterTemplates(ctx, tmpls, roles), nil
+		return filterTemplates(ctx, tmpls, u), nil
 	}
 }
 
-func (c *Client) ListUserAddonTemplates(ctx context.Context, roles []cosmov1alpha1.UserRole) ([]cosmov1alpha1.TemplateObject, error) {
+func (c *Client) ListUserAddonTemplates(ctx context.Context, u *cosmov1alpha1.User) ([]cosmov1alpha1.TemplateObject, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	if tmpls, err := kubeutil.ListTemplateObjectsByType(ctx, c, []string{cosmov1alpha1.TemplateLabelEnumTypeUserAddon}); err != nil {
 		log.Error(err, "failed to list UserAddon Templates")
 		return nil, NewInternalServerError("failed to list UserAddon Templates", err)
 	} else {
-		return filterTemplates(ctx, tmpls, roles), nil
+		return filterTemplates(ctx, tmpls, u), nil
 	}
 }
 

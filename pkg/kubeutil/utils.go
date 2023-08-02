@@ -107,3 +107,16 @@ func GetAnnotation(obj AnnotationHolder, key string) string {
 	}
 	return ann[key]
 }
+
+type LabelHolder interface {
+	GetLabels() map[string]string
+	SetLabels(map[string]string)
+}
+
+func GetLabel(obj LabelHolder, key string) string {
+	l := obj.GetLabels()
+	if l == nil {
+		return ""
+	}
+	return l[key]
+}
