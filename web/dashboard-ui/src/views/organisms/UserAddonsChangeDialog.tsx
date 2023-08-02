@@ -45,7 +45,7 @@ export const UserAddonChangeDialog: React.FC<{ onClose: () => void, user: User }
     })
 
     const templ = useTemplates();
-    useEffect(() => { templ.getUserAddonTemplates(); }, []);  // eslint-disable-line
+    useEffect(() => { templ.getAllUserAddonTemplates(); }, []);  // eslint-disable-line
     useEffect(() => {
         const tt = templ.templates.map(t => ({ template: t, enable: false, vars: [] }));
         replaceAddons(tt);

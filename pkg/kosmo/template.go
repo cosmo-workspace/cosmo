@@ -12,7 +12,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
-func filterTemplates(ctx context.Context, tmpls []cosmov1alpha1.TemplateObject, u *cosmov1alpha1.User) []cosmov1alpha1.TemplateObject {
+func FilterTemplates(ctx context.Context, tmpls []cosmov1alpha1.TemplateObject, u *cosmov1alpha1.User) []cosmov1alpha1.TemplateObject {
 	filteredTmpls := make([]cosmov1alpha1.TemplateObject, 0, len(tmpls))
 	for _, v := range tmpls {
 		if IsAllowedToUseTemplate(ctx, u, v) {
@@ -70,23 +70,23 @@ func HasRequiredAddons(ctx context.Context, u *cosmov1alpha1.User, tmpl cosmov1a
 	return false
 }
 
-func (c *Client) ListWorkspaceTemplates(ctx context.Context, u *cosmov1alpha1.User) ([]cosmov1alpha1.TemplateObject, error) {
+func (c *Client) ListWorkspaceTemplates(ctx context.Context) ([]cosmov1alpha1.TemplateObject, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	if tmpls, err := kubeutil.ListTemplateObjectsByType(ctx, c, []string{cosmov1alpha1.TemplateLabelEnumTypeWorkspace}); err != nil {
 		log.Error(err, "failed to list WorkspaceTemplates")
 		return nil, NewInternalServerError("failed to list WorkspaceTemplates", err)
 	} else {
-		return filterTemplates(ctx, tmpls, u), nil
+		return tmpls, nil
 	}
 }
 
-func (c *Client) ListUserAddonTemplates(ctx context.Context, u *cosmov1alpha1.User) ([]cosmov1alpha1.TemplateObject, error) {
+func (c *Client) ListUserAddonTemplates(ctx context.Context) ([]cosmov1alpha1.TemplateObject, error) {
 	log := clog.FromContext(ctx).WithCaller()
 	if tmpls, err := kubeutil.ListTemplateObjectsByType(ctx, c, []string{cosmov1alpha1.TemplateLabelEnumTypeUserAddon}); err != nil {
 		log.Error(err, "failed to list UserAddon Templates")
 		return nil, NewInternalServerError("failed to list UserAddon Templates", err)
 	} else {
-		return filterTemplates(ctx, tmpls, u), nil
+		return tmpls, nil
 	}
 }
 

@@ -7,8 +7,8 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { GetUserAddonTemplatesResponse, GetWorkspaceTemplatesResponse } from "./template_service_pb.js";
+import { GetUserAddonTemplatesRequest, GetUserAddonTemplatesResponse, GetWorkspaceTemplatesRequest, GetWorkspaceTemplatesResponse } from "./template_service_pb.js";
+import { MethodKind } from "@bufbuild/protobuf";
 
 /**
  * @generated from service dashboard.v1alpha1.TemplateService
@@ -23,7 +23,7 @@ export const TemplateService = {
      */
     getUserAddonTemplates: {
       name: "GetUserAddonTemplates",
-      I: Empty,
+      I: GetUserAddonTemplatesRequest,
       O: GetUserAddonTemplatesResponse,
       kind: MethodKind.Unary,
     },
@@ -34,7 +34,7 @@ export const TemplateService = {
      */
     getWorkspaceTemplates: {
       name: "GetWorkspaceTemplates",
-      I: Empty,
+      I: GetWorkspaceTemplatesRequest,
       O: GetWorkspaceTemplatesResponse,
       kind: MethodKind.Unary,
     },

@@ -15,7 +15,9 @@
     - [TemplateRequiredVars](#dashboard-v1alpha1-TemplateRequiredVars)
   
 - [dashboard/v1alpha1/template_service.proto](#dashboard_v1alpha1_template_service-proto)
+    - [GetUserAddonTemplatesRequest](#dashboard-v1alpha1-GetUserAddonTemplatesRequest)
     - [GetUserAddonTemplatesResponse](#dashboard-v1alpha1-GetUserAddonTemplatesResponse)
+    - [GetWorkspaceTemplatesRequest](#dashboard-v1alpha1-GetWorkspaceTemplatesRequest)
     - [GetWorkspaceTemplatesResponse](#dashboard-v1alpha1-GetWorkspaceTemplatesResponse)
   
     - [TemplateService](#dashboard-v1alpha1-TemplateService)
@@ -211,6 +213,21 @@
 
 
 
+<a name="dashboard-v1alpha1-GetUserAddonTemplatesRequest"></a>
+
+### GetUserAddonTemplatesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| use_role_filter | [bool](#bool) | optional |  |
+
+
+
+
+
+
 <a name="dashboard-v1alpha1-GetUserAddonTemplatesResponse"></a>
 
 ### GetUserAddonTemplatesResponse
@@ -221,6 +238,21 @@
 | ----- | ---- | ----- | ----------- |
 | message | [string](#string) |  |  |
 | items | [Template](#dashboard-v1alpha1-Template) | repeated |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-GetWorkspaceTemplatesRequest"></a>
+
+### GetWorkspaceTemplatesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| use_role_filter | [bool](#bool) | optional |  |
 
 
 
@@ -256,8 +288,8 @@
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| GetUserAddonTemplates | [.google.protobuf.Empty](#google-protobuf-Empty) | [GetUserAddonTemplatesResponse](#dashboard-v1alpha1-GetUserAddonTemplatesResponse) | List templates typed useraddon |
-| GetWorkspaceTemplates | [.google.protobuf.Empty](#google-protobuf-Empty) | [GetWorkspaceTemplatesResponse](#dashboard-v1alpha1-GetWorkspaceTemplatesResponse) | List templates typed workspace |
+| GetUserAddonTemplates | [GetUserAddonTemplatesRequest](#dashboard-v1alpha1-GetUserAddonTemplatesRequest) | [GetUserAddonTemplatesResponse](#dashboard-v1alpha1-GetUserAddonTemplatesResponse) | List templates typed useraddon |
+| GetWorkspaceTemplates | [GetWorkspaceTemplatesRequest](#dashboard-v1alpha1-GetWorkspaceTemplatesRequest) | [GetWorkspaceTemplatesResponse](#dashboard-v1alpha1-GetWorkspaceTemplatesResponse) | List templates typed workspace |
 
  
 

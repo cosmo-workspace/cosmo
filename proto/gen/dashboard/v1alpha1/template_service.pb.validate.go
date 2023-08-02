@@ -35,6 +35,113 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on GetUserAddonTemplatesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUserAddonTemplatesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUserAddonTemplatesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUserAddonTemplatesRequestMultiError, or nil if none found.
+func (m *GetUserAddonTemplatesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUserAddonTemplatesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.UseRoleFilter != nil {
+		// no validation rules for UseRoleFilter
+	}
+
+	if len(errors) > 0 {
+		return GetUserAddonTemplatesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUserAddonTemplatesRequestMultiError is an error wrapping multiple
+// validation errors returned by GetUserAddonTemplatesRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetUserAddonTemplatesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUserAddonTemplatesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUserAddonTemplatesRequestMultiError) AllErrors() []error { return m }
+
+// GetUserAddonTemplatesRequestValidationError is the validation error returned
+// by GetUserAddonTemplatesRequest.Validate if the designated constraints
+// aren't met.
+type GetUserAddonTemplatesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserAddonTemplatesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserAddonTemplatesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserAddonTemplatesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserAddonTemplatesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserAddonTemplatesRequestValidationError) ErrorName() string {
+	return "GetUserAddonTemplatesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserAddonTemplatesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserAddonTemplatesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserAddonTemplatesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserAddonTemplatesRequestValidationError{}
+
 // Validate checks the field values on GetUserAddonTemplatesResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -173,6 +280,113 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetUserAddonTemplatesResponseValidationError{}
+
+// Validate checks the field values on GetWorkspaceTemplatesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetWorkspaceTemplatesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetWorkspaceTemplatesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetWorkspaceTemplatesRequestMultiError, or nil if none found.
+func (m *GetWorkspaceTemplatesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetWorkspaceTemplatesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.UseRoleFilter != nil {
+		// no validation rules for UseRoleFilter
+	}
+
+	if len(errors) > 0 {
+		return GetWorkspaceTemplatesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetWorkspaceTemplatesRequestMultiError is an error wrapping multiple
+// validation errors returned by GetWorkspaceTemplatesRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetWorkspaceTemplatesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetWorkspaceTemplatesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetWorkspaceTemplatesRequestMultiError) AllErrors() []error { return m }
+
+// GetWorkspaceTemplatesRequestValidationError is the validation error returned
+// by GetWorkspaceTemplatesRequest.Validate if the designated constraints
+// aren't met.
+type GetWorkspaceTemplatesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetWorkspaceTemplatesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetWorkspaceTemplatesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetWorkspaceTemplatesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetWorkspaceTemplatesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetWorkspaceTemplatesRequestValidationError) ErrorName() string {
+	return "GetWorkspaceTemplatesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetWorkspaceTemplatesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetWorkspaceTemplatesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetWorkspaceTemplatesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetWorkspaceTemplatesRequestValidationError{}
 
 // Validate checks the field values on GetWorkspaceTemplatesResponse with the
 // rules defined in the proto definition for this message. If any rules are

@@ -264,7 +264,7 @@ func Test_filterTemplates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := filterTemplates(context.TODO(), tt.args.tmpls, tt.args.user); !reflect.DeepEqual(got, tt.want) {
+			if got := FilterTemplates(context.TODO(), tt.args.tmpls, tt.args.user); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("filterTemplates() = %v, want %v", got, tt.want)
 				t.Errorf(cmp.Diff(got, tt.want))
 			}

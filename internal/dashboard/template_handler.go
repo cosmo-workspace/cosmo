@@ -7,12 +7,12 @@ import (
 	"strings"
 
 	connect_go "github.com/bufbuild/connect-go"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/utils/pointer"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
@@ -26,14 +26,18 @@ func (s *Server) TemplateServiceHandler(mux *http.ServeMux) {
 	mux.Handle(path, s.contextMiddleware(handler))
 }
 
-func (s *Server) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.GetWorkspaceTemplatesResponse], error) {
+func (s *Server) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Request[dashv1alpha1.GetWorkspaceTemplatesRequest]) (*connect_go.Response[dashv1alpha1.GetWorkspaceTemplatesResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	user := callerFromContext(ctx)
 
-	tmpls, err := s.Klient.ListWorkspaceTemplates(ctx, user)
+	tmpls, err := s.Klient.ListWorkspaceTemplates(ctx)
 	if err != nil {
 		return nil, ErrResponse(log, err)
+	}
+
+	if req.Msg.UseRoleFilter != nil && *req.Msg.UseRoleFilter {
+		tmpls = kosmo.FilterTemplates(ctx, tmpls, user)
 	}
 
 	addonTmpls := make([]*dashv1alpha1.Template, 0, len(tmpls))
@@ -52,14 +56,18 @@ func (s *Server) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Requ
 	return connect_go.NewResponse(res), nil
 }
 
-func (s *Server) GetUserAddonTemplates(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.GetUserAddonTemplatesResponse], error) {
+func (s *Server) GetUserAddonTemplates(ctx context.Context, req *connect_go.Request[dashv1alpha1.GetUserAddonTemplatesRequest]) (*connect_go.Response[dashv1alpha1.GetUserAddonTemplatesResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
 
 	user := callerFromContext(ctx)
 
-	tmpls, err := s.Klient.ListUserAddonTemplates(ctx, user)
+	tmpls, err := s.Klient.ListUserAddonTemplates(ctx)
 	if err != nil {
 		return nil, ErrResponse(log, err)
+	}
+
+	if req.Msg.UseRoleFilter != nil && *req.Msg.UseRoleFilter {
+		tmpls = kosmo.FilterTemplates(ctx, tmpls, user)
 	}
 
 	addonTmpls := make([]*dashv1alpha1.Template, len(tmpls))
