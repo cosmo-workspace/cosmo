@@ -2,11 +2,15 @@ package dashboard
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 
 	connect_go "github.com/bufbuild/connect-go"
+	"k8s.io/apimachinery/pkg/types"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 )
 
@@ -14,9 +18,33 @@ func (s *Server) UpdateUserAddons(ctx context.Context, req *connect_go.Request[d
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
+	currentUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+	if err != nil {
+		return nil, ErrResponse(log, err)
+	}
+
+	// caller can attach or detach only:
+	//   - User who have group-role which caller is admin for
+	//   - Addons which is allowed for caller to manage
+	err = adminAuthentication(ctx,
+		validateCallerHasAdminForAtLeastOneRole(currentUser.Spec.Roles))
+	if err != nil {
+		return nil, ErrResponse(log, err)
+	}
+
 	caller := callerFromContext(ctx)
 	if caller == nil {
 		return nil, kosmo.NewInternalServerError("unable get caller", nil)
+	}
+	for _, addon := range diff(currentUser.Spec.Addons, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons)) {
+		tmpl := useraddon.EmptyTemplateObject(addon)
+		err := s.Klient.Get(ctx, types.NamespacedName{Name: tmpl.GetName()}, tmpl)
+		if err != nil {
+			return nil, kosmo.NewInternalServerError(fmt.Sprintf("failed to fetch addon '%s'", tmpl.GetName()), nil)
+		}
+		if ok := kosmo.IsAllowedToUseTemplate(ctx, caller, tmpl); !ok {
+			return nil, kosmo.NewForbiddenError("no roles for addon", nil)
+		}
 	}
 
 	addons := convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons)
@@ -56,15 +84,15 @@ func (s *Server) UpdateUserDisplayName(ctx context.Context, req *connect_go.Requ
 	return connect_go.NewResponse(res), nil
 }
 
-func diff(slice1 []string, slice2 []string) []string {
-	var diff []string
+func diff[T any](slice1 []T, slice2 []T) []T {
+	var diff []T
 	// Loop two times, first to find slice1 strings not in slice2,
 	// second loop to find slice2 strings not in slice1
 	for i := 0; i < 2; i++ {
 		for _, s1 := range slice1 {
 			found := false
 			for _, s2 := range slice2 {
-				if s1 == s2 {
+				if reflect.DeepEqual(s1, s2) {
 					found = true
 					break
 				}
