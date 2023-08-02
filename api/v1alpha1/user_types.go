@@ -108,7 +108,14 @@ type UserRole struct {
 func (r UserRole) GetGroupAndRole() (group string, role string) {
 	v := strings.Split(r.Name, "-")
 	if len(v) > 0 {
-		return strings.Join(v[:len(v)-1], "-"), v[len(v)-1]
+		group := strings.Join(v[:len(v)-1], "-")
+		role := v[len(v)-1]
+
+		if group == "" {
+			return r.Name, ""
+		}
+
+		return group, role
 	}
 	return r.Name, ""
 }
