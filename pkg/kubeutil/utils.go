@@ -94,3 +94,29 @@ func PodStatusReason(pod corev1.Pod) string {
 
 	return reason
 }
+
+type AnnotationHolder interface {
+	GetAnnotations() map[string]string
+	SetAnnotations(map[string]string)
+}
+
+func GetAnnotation(obj AnnotationHolder, key string) string {
+	ann := obj.GetAnnotations()
+	if ann == nil {
+		return ""
+	}
+	return ann[key]
+}
+
+type LabelHolder interface {
+	GetLabels() map[string]string
+	SetLabels(map[string]string)
+}
+
+func GetLabel(obj LabelHolder, key string) string {
+	l := obj.GetLabels()
+	if l == nil {
+		return ""
+	}
+	return l[key]
+}

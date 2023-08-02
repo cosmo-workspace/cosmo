@@ -222,9 +222,16 @@ export const useTemplates = () => {
   const templateService = useTemplateService();
   const { handleError } = useHandleError();
 
-  const getUserAddonTemplates = () => {
+  const getAllUserAddonTemplates = () => {
     console.log('getUserAddonTemplates');
     return templateService.getUserAddonTemplates({})
+      .then(result => { setTemplates(result.items.sort((a, b) => (a.name < b.name) ? -1 : 1)); })
+      .catch(error => { handleError(error) });
+  }
+
+  const getUserAddonTemplates = () => {
+    console.log('getUserAddonTemplates');
+    return templateService.getUserAddonTemplates({ useRoleFilter: true })
       .then(result => { setTemplates(result.items.sort((a, b) => (a.name < b.name) ? -1 : 1)); })
       .catch(error => { handleError(error) });
   }
@@ -232,6 +239,7 @@ export const useTemplates = () => {
   return ({
     templates,
     getUserAddonTemplates,
+    getAllUserAddonTemplates,
   });
 }
 

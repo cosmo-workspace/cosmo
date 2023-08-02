@@ -64,6 +64,28 @@ spec:
 	}, time.Second*5, time.Millisecond*100).Should(Succeed())
 }
 
+func (c *TestUtil) CreateTemplateForUserRole(templateType, templateName, userrole string) {
+	ctx := context.Background()
+	tmpl := cosmov1alpha1.Template{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: templateName,
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: templateType,
+			},
+			Annotations: map[string]string{
+				cosmov1alpha1.TemplateAnnKeyUserRoles: userrole,
+			},
+		},
+	}
+	err := c.kosmoClient.Create(ctx, &tmpl)
+	Expect(err).ShouldNot(HaveOccurred())
+
+	Eventually(func() error {
+		err := c.kosmoClient.Get(ctx, client.ObjectKey{Name: templateName}, &cosmov1alpha1.Template{})
+		return err
+	}, time.Second*5, time.Millisecond*100).Should(Succeed())
+}
+
 func (c *TestUtil) CreateClusterTemplate(templateType string, templateName string) {
 	ctx := context.Background()
 	tmpl := cosmov1alpha1.ClusterTemplate{

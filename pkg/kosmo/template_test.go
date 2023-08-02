@@ -79,8 +79,8 @@ func TestClient_GetTemplate(t *testing.T) {
 
 func Test_isAllowedToUseTemplate(t *testing.T) {
 	type args struct {
-		tmpl  cosmov1alpha1.TemplateObject
-		roles []cosmov1alpha1.UserRole
+		tmpl cosmov1alpha1.TemplateObject
+		user *cosmov1alpha1.User
 	}
 	tests := []struct {
 		name string
@@ -95,28 +95,15 @@ func Test_isAllowedToUseTemplate(t *testing.T) {
 						Name: "hogwarts-common",
 					},
 				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "gryffindor-developer"},
-				},
-			},
-			want: true,
-		},
-		{
-			name: "forbidden if role is matched to forbidden role",
-			args: args{
-				tmpl: &cosmov1alpha1.Template{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "sword-of-gryffindor",
-						Annotations: map[string]string{
-							cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles: "slytherin",
+				user: &cosmov1alpha1.User{
+					Spec: cosmov1alpha1.UserSpec{
+						Roles: []cosmov1alpha1.UserRole{
+							{Name: "gryffindor-developer"},
 						},
 					},
 				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "slytherin"},
-				},
 			},
-			want: false,
+			want: true,
 		},
 		{
 			name: "forbidden if role is not matched to allowed role",
@@ -129,27 +116,12 @@ func Test_isAllowedToUseTemplate(t *testing.T) {
 						},
 					},
 				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "slytherin"},
-				},
-			},
-			want: false,
-		},
-		{
-			name: "forbidden if role is matched to allowed role but also matched to forbidden role",
-			args: args{
-				tmpl: &cosmov1alpha1.Template{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "sword-of-gryffindor",
-						Annotations: map[string]string{
-							cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles: "slytherin",
-							cosmov1alpha1.TemplateAnnKeyUserRoles:          "gryffindor",
+				user: &cosmov1alpha1.User{
+					Spec: cosmov1alpha1.UserSpec{
+						Roles: []cosmov1alpha1.UserRole{
+							{Name: "slytherin"},
 						},
 					},
-				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "slytherin"},
-					{Name: "gryffindor"},
 				},
 			},
 			want: false,
@@ -165,8 +137,12 @@ func Test_isAllowedToUseTemplate(t *testing.T) {
 						},
 					},
 				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "gryffindor-developer"},
+				user: &cosmov1alpha1.User{
+					Spec: cosmov1alpha1.UserSpec{
+						Roles: []cosmov1alpha1.UserRole{
+							{Name: "gryffindor-developer"},
+						},
+					},
 				},
 			},
 			want: true,
@@ -182,8 +158,12 @@ func Test_isAllowedToUseTemplate(t *testing.T) {
 						},
 					},
 				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "slytherin"},
+				user: &cosmov1alpha1.User{
+					Spec: cosmov1alpha1.UserSpec{
+						Roles: []cosmov1alpha1.UserRole{
+							{Name: "slytherin"},
+						},
+					},
 				},
 			},
 			want: true,
@@ -199,44 +179,12 @@ func Test_isAllowedToUseTemplate(t *testing.T) {
 						},
 					},
 				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "gryffindor"},
-				},
-			},
-			want: false,
-		},
-		{
-			name: "forbidden if both allowed role wildcard and forbidden role matches",
-			args: args{
-				tmpl: &cosmov1alpha1.Template{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "sword-of-gryffindor",
-						Annotations: map[string]string{
-							cosmov1alpha1.TemplateAnnKeyUserRoles:          "gryffindor-*",
-							cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles: "gryffindor-faker",
+				user: &cosmov1alpha1.User{
+					Spec: cosmov1alpha1.UserSpec{
+						Roles: []cosmov1alpha1.UserRole{
+							{Name: "gryffindor"},
 						},
 					},
-				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "gryffindor-faker"},
-				},
-			},
-			want: false,
-		},
-		{
-			name: "forbidden if both allowed role wildcard and forbidden wildcard matches",
-			args: args{
-				tmpl: &cosmov1alpha1.Template{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "sword-of-gryffindor",
-						Annotations: map[string]string{
-							cosmov1alpha1.TemplateAnnKeyUserRoles:          "gryffindor-*",
-							cosmov1alpha1.TemplateAnnKeyForbiddenUserRoles: "gryffindor-f*",
-						},
-					},
-				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "gryffindor-faker"},
 				},
 			},
 			want: false,
@@ -244,7 +192,7 @@ func Test_isAllowedToUseTemplate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := isAllowedToUseTemplate(context.TODO(), tt.args.tmpl, tt.args.roles); got != tt.want {
+			if got := IsAllowedToUseTemplate(context.TODO(), tt.args.user, tt.args.tmpl); got != tt.want {
 				t.Errorf("isAllowedToUseTemplate() = %v, want %v", got, tt.want)
 			}
 		})
@@ -254,7 +202,7 @@ func Test_isAllowedToUseTemplate(t *testing.T) {
 func Test_filterTemplates(t *testing.T) {
 	type args struct {
 		tmpls []cosmov1alpha1.TemplateObject
-		roles []cosmov1alpha1.UserRole
+		user  *cosmov1alpha1.User
 	}
 	tests := []struct {
 		name string
@@ -288,8 +236,12 @@ func Test_filterTemplates(t *testing.T) {
 						},
 					},
 				},
-				roles: []cosmov1alpha1.UserRole{
-					{Name: "gryffindor-developer"},
+				user: &cosmov1alpha1.User{
+					Spec: cosmov1alpha1.UserSpec{
+						Roles: []cosmov1alpha1.UserRole{
+							{Name: "gryffindor-developer"},
+						},
+					},
 				},
 			},
 			want: []cosmov1alpha1.TemplateObject{
@@ -312,7 +264,7 @@ func Test_filterTemplates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := filterTemplates(context.TODO(), tt.args.tmpls, tt.args.roles); !reflect.DeepEqual(got, tt.want) {
+			if got := FilterTemplates(context.TODO(), tt.args.tmpls, tt.args.user); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("filterTemplates() = %v, want %v", got, tt.want)
 				t.Errorf(cmp.Diff(got, tt.want))
 			}

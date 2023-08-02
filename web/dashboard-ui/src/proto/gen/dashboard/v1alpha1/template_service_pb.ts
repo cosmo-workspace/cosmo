@@ -12,6 +12,43 @@ import { Message, proto3 } from "@bufbuild/protobuf";
 import { Template } from "./template_pb.js";
 
 /**
+ * @generated from message dashboard.v1alpha1.GetUserAddonTemplatesRequest
+ */
+export class GetUserAddonTemplatesRequest extends Message<GetUserAddonTemplatesRequest> {
+  /**
+   * @generated from field: optional bool use_role_filter = 1;
+   */
+  useRoleFilter?: boolean;
+
+  constructor(data?: PartialMessage<GetUserAddonTemplatesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.GetUserAddonTemplatesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "use_role_filter", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetUserAddonTemplatesRequest {
+    return new GetUserAddonTemplatesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetUserAddonTemplatesRequest {
+    return new GetUserAddonTemplatesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetUserAddonTemplatesRequest {
+    return new GetUserAddonTemplatesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetUserAddonTemplatesRequest | PlainMessage<GetUserAddonTemplatesRequest> | undefined, b: GetUserAddonTemplatesRequest | PlainMessage<GetUserAddonTemplatesRequest> | undefined): boolean {
+    return proto3.util.equals(GetUserAddonTemplatesRequest, a, b);
+  }
+}
+
+/**
  * @generated from message dashboard.v1alpha1.GetUserAddonTemplatesResponse
  */
 export class GetUserAddonTemplatesResponse extends Message<GetUserAddonTemplatesResponse> {
@@ -51,6 +88,43 @@ export class GetUserAddonTemplatesResponse extends Message<GetUserAddonTemplates
 
   static equals(a: GetUserAddonTemplatesResponse | PlainMessage<GetUserAddonTemplatesResponse> | undefined, b: GetUserAddonTemplatesResponse | PlainMessage<GetUserAddonTemplatesResponse> | undefined): boolean {
     return proto3.util.equals(GetUserAddonTemplatesResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message dashboard.v1alpha1.GetWorkspaceTemplatesRequest
+ */
+export class GetWorkspaceTemplatesRequest extends Message<GetWorkspaceTemplatesRequest> {
+  /**
+   * @generated from field: optional bool use_role_filter = 1;
+   */
+  useRoleFilter?: boolean;
+
+  constructor(data?: PartialMessage<GetWorkspaceTemplatesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.GetWorkspaceTemplatesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "use_role_filter", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetWorkspaceTemplatesRequest {
+    return new GetWorkspaceTemplatesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetWorkspaceTemplatesRequest {
+    return new GetWorkspaceTemplatesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetWorkspaceTemplatesRequest {
+    return new GetWorkspaceTemplatesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetWorkspaceTemplatesRequest | PlainMessage<GetWorkspaceTemplatesRequest> | undefined, b: GetWorkspaceTemplatesRequest | PlainMessage<GetWorkspaceTemplatesRequest> | undefined): boolean {
+    return proto3.util.equals(GetWorkspaceTemplatesRequest, a, b);
   }
 }
 

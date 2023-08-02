@@ -12,16 +12,24 @@ import "dashboard/v1alpha1/template.proto";
 
 service TemplateService {
   // List templates typed useraddon
-  rpc GetUserAddonTemplates(google.protobuf.Empty)
+  rpc GetUserAddonTemplates(GetUserAddonTemplatesRequest)
       returns (GetUserAddonTemplatesResponse);
   // List templates typed workspace
-  rpc GetWorkspaceTemplates(google.protobuf.Empty)
+  rpc GetWorkspaceTemplates(GetWorkspaceTemplatesRequest)
       returns (GetWorkspaceTemplatesResponse);
+}
+
+message GetUserAddonTemplatesRequest {
+  optional bool use_role_filter = 1;
 }
 
 message GetUserAddonTemplatesResponse {
   string message = 1;
   repeated Template items = 2;
+}
+
+message GetWorkspaceTemplatesRequest {
+  optional bool use_role_filter = 1;
 }
 
 message GetWorkspaceTemplatesResponse {

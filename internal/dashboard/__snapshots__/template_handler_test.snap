@@ -1,11 +1,11 @@
-['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: admin-user, empty 1']
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: admin-user, empty,  1']
 SnapShot = """
 {
   \"message\": \"No items found\"
 }
 """
 
-['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: admin-user, not empty 1']
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: admin-user, not empty,  1']
 SnapShot = """
 {
   \"items\": [
@@ -41,14 +41,14 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: normal-user, empty 1']
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: normal-user, empty,  1']
 SnapShot = """
 {
   \"message\": \"No items found\"
 }
 """
 
-['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: normal-user, not empty 1']
+['Dashboard server [Template] [GetUserAddonTemplates] ✅ success in normal context: Entry: normal-user, not empty,  1']
 SnapShot = """
 {
   \"items\": [
@@ -84,17 +84,98 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: admin-user, not empty 1']
+['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: admin-user, not empty,  1']
 SnapShot = 'internal: failed to list UserAddon Templates'
 
-['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: admin-user, empty 1']
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: admin-user, empty,  1']
 SnapShot = """
 {
   \"message\": \"No items found\"
 }
 """
 
-['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: admin-user, not empty 1']
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: admin-user, not empty,  1']
+SnapShot = """
+{
+  \"items\": [
+    {
+      \"name\": \"template1\",
+      \"required_vars\": [
+        {
+          \"var_name\": \"{{HOGE}}\",
+          \"default_value\": \"HOGEhoge\"
+        },
+        {
+          \"var_name\": \"{{FUGA}}\",
+          \"default_value\": \"FUGAfuga\"
+        }
+      ]
+    },
+    {
+      \"name\": \"template2\",
+      \"required_vars\": [
+        {
+          \"var_name\": \"{{HOGE}}\",
+          \"default_value\": \"HOGEhoge\"
+        },
+        {
+          \"var_name\": \"{{FUGA}}\",
+          \"default_value\": \"FUGAfuga\"
+        }
+      ]
+    },
+    {
+      \"name\": \"template3\"
+    }
+  ]
+}
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: normal-user, empty,  1']
+SnapShot = """
+{
+  \"message\": \"No items found\"
+}
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: normal-user, not empty,  1']
+SnapShot = """
+{
+  \"items\": [
+    {
+      \"name\": \"template1\",
+      \"required_vars\": [
+        {
+          \"var_name\": \"{{HOGE}}\",
+          \"default_value\": \"HOGEhoge\"
+        },
+        {
+          \"var_name\": \"{{FUGA}}\",
+          \"default_value\": \"FUGAfuga\"
+        }
+      ]
+    },
+    {
+      \"name\": \"template2\",
+      \"required_vars\": [
+        {
+          \"var_name\": \"{{HOGE}}\",
+          \"default_value\": \"HOGEhoge\"
+        },
+        {
+          \"var_name\": \"{{FUGA}}\",
+          \"default_value\": \"FUGAfuga\"
+        }
+      ]
+    },
+    {
+      \"name\": \"template3\"
+    }
+  ]
+}
+"""
+
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: normal-user, not empty, use_role_filter:true 1']
 SnapShot = """
 {
   \"items\": [
@@ -128,14 +209,7 @@ SnapShot = """
 }
 """
 
-['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: normal-user, empty 1']
-SnapShot = """
-{
-  \"message\": \"No items found\"
-}
-"""
-
-['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: normal-user, not empty 1']
+['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: role-user, not empty,  1']
 SnapShot = """
 {
   \"items\": [
@@ -164,10 +238,13 @@ SnapShot = """
           \"default_value\": \"FUGAfuga\"
         }
       ]
+    },
+    {
+      \"name\": \"template3\"
     }
   ]
 }
 """
 
-['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: admin-user, not empty 1']
+['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: admin-user, not empty,  1']
 SnapShot = 'internal: failed to list WorkspaceTemplates'

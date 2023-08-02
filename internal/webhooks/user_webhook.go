@@ -18,6 +18,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 )
@@ -161,36 +162,37 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 	// check addon template is labeled as useraddon
 	if len(user.Spec.Addons) > 0 {
 		for _, addon := range user.Spec.Addons {
+			// fetch addon template
 			tmpl := useraddon.EmptyTemplateObject(addon)
 			if tmpl == nil {
 				continue
 			}
-
 			err = h.Client.Get(ctx, types.NamespacedName{Name: tmpl.GetName()}, tmpl)
 			if err != nil {
 				log.Error(err, "failed to create addon", "user", user.Name, "addon", tmpl.GetName())
 				return admission.Denied(fmt.Sprintf("failed to create addon %s :%v", tmpl.GetName(), err))
 			}
 
-			// check label
-			label := tmpl.GetLabels()
-			if label == nil {
-				log.Info("template is not labeled as useraddon", "user", user.Name, "addon", tmpl.GetName())
-				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as useraddon", tmpl.GetName()))
-			}
-			if t, ok := label[cosmov1alpha1.TemplateLabelKeyType]; !ok || t != cosmov1alpha1.TemplateLabelEnumTypeUserAddon {
+			// check if template type is useraddon
+			typ := kubeutil.GetLabel(tmpl, cosmov1alpha1.TemplateLabelKeyType)
+			if typ != cosmov1alpha1.TemplateLabelEnumTypeUserAddon {
 				log.Info("template is not labeled as useraddon", "user", user.Name, "addon", tmpl.GetName())
 				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as useraddon", tmpl.GetName()))
 			}
 
-			// TODO
-			// // dryrun create or update addon
-			// inst := useraddon.EmptyInstanceObject(addon, user.GetName())
-			// if _, err := kubeutil.DryrunCreateOrUpdate(ctx, h.Client, inst, func() error {
-			// 	return useraddon.PatchUserAddonInstanceAsDesired(inst, addon, *user, nil)
-			// }); err != nil {
-			// 	return admission.Denied(fmt.Sprintf("failed to create or update addon %v", err))
-			// }
+			// check user has role for the addon
+			if ok := kosmo.IsAllowedToUseTemplate(ctx, user, tmpl); !ok {
+				requiredRoles := kubeutil.GetAnnotation(tmpl, cosmov1alpha1.TemplateAnnKeyUserRoles)
+				log.Info("user has no valid roles for template", "user", user.Name, "addon", tmpl.GetName(), "requiredRoles", requiredRoles)
+				return admission.Denied(fmt.Sprintf("addon '%s' is only for roles '%s'", tmpl.GetName(), requiredRoles))
+			}
+
+			// check user has required addon
+			if ok := kosmo.HasRequiredAddons(ctx, user, tmpl); !ok {
+				requiredAddons := kubeutil.GetAnnotation(tmpl, cosmov1alpha1.TemplateAnnKeyRequiredAddons)
+				log.Info("user does not have required addons for template", "user", user.Name, "addon", tmpl.GetName(), "requiredAddons", requiredAddons)
+				return admission.Denied(fmt.Sprintf("addon '%s' requires addon '%s'", tmpl.GetName(), requiredAddons))
+			}
 		}
 	}
 

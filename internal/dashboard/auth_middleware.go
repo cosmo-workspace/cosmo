@@ -198,6 +198,21 @@ func validateCallerHasAdminForAllRoles(tryRoleNames []string) func(map[string]st
 	}
 }
 
+func validateCallerHasAdminForAtLeastOneRole(tryRoleNames []cosmov1alpha1.UserRole) func(map[string]string) error {
+	return func(callerGroupRoleMap map[string]string) error {
+		for _, r := range tryRoleNames {
+			tryAccessGroup, _ := r.GetGroupAndRole()
+			callerRoleForTriedGroup := callerGroupRoleMap[tryAccessGroup]
+
+			// Allow if caller has at least one administrative privilege for tried group.
+			if callerRoleForTriedGroup == cosmov1alpha1.AdminRoleName {
+				return nil
+			}
+		}
+		return fmt.Errorf("denied to access")
+	}
+}
+
 var passAllAdmin = func(map[string]string) error {
 	return nil
 }

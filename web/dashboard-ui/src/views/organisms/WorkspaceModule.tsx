@@ -198,7 +198,7 @@ export const useTemplates = () => {
   const getTemplates = async () => {
     console.log('getTemplates');
     try {
-      const result = await templateService.getWorkspaceTemplates({});
+      const result = await templateService.getWorkspaceTemplates({ useRoleFilter: true });
       setTemplates(result.items.sort((a, b) => (a.name < b.name) ? -1 : 1));
     } catch (error) {
       handleError(error);

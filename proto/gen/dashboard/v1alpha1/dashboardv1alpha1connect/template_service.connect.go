@@ -13,7 +13,6 @@ import (
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
 	v1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"
 )
@@ -49,9 +48,9 @@ const (
 // TemplateServiceClient is a client for the dashboard.v1alpha1.TemplateService service.
 type TemplateServiceClient interface {
 	// List templates typed useraddon
-	GetUserAddonTemplates(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetUserAddonTemplatesResponse], error)
+	GetUserAddonTemplates(context.Context, *connect_go.Request[v1alpha1.GetUserAddonTemplatesRequest]) (*connect_go.Response[v1alpha1.GetUserAddonTemplatesResponse], error)
 	// List templates typed workspace
-	GetWorkspaceTemplates(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetWorkspaceTemplatesResponse], error)
+	GetWorkspaceTemplates(context.Context, *connect_go.Request[v1alpha1.GetWorkspaceTemplatesRequest]) (*connect_go.Response[v1alpha1.GetWorkspaceTemplatesResponse], error)
 }
 
 // NewTemplateServiceClient constructs a client for the dashboard.v1alpha1.TemplateService service.
@@ -64,12 +63,12 @@ type TemplateServiceClient interface {
 func NewTemplateServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) TemplateServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &templateServiceClient{
-		getUserAddonTemplates: connect_go.NewClient[emptypb.Empty, v1alpha1.GetUserAddonTemplatesResponse](
+		getUserAddonTemplates: connect_go.NewClient[v1alpha1.GetUserAddonTemplatesRequest, v1alpha1.GetUserAddonTemplatesResponse](
 			httpClient,
 			baseURL+TemplateServiceGetUserAddonTemplatesProcedure,
 			opts...,
 		),
-		getWorkspaceTemplates: connect_go.NewClient[emptypb.Empty, v1alpha1.GetWorkspaceTemplatesResponse](
+		getWorkspaceTemplates: connect_go.NewClient[v1alpha1.GetWorkspaceTemplatesRequest, v1alpha1.GetWorkspaceTemplatesResponse](
 			httpClient,
 			baseURL+TemplateServiceGetWorkspaceTemplatesProcedure,
 			opts...,
@@ -79,26 +78,26 @@ func NewTemplateServiceClient(httpClient connect_go.HTTPClient, baseURL string, 
 
 // templateServiceClient implements TemplateServiceClient.
 type templateServiceClient struct {
-	getUserAddonTemplates *connect_go.Client[emptypb.Empty, v1alpha1.GetUserAddonTemplatesResponse]
-	getWorkspaceTemplates *connect_go.Client[emptypb.Empty, v1alpha1.GetWorkspaceTemplatesResponse]
+	getUserAddonTemplates *connect_go.Client[v1alpha1.GetUserAddonTemplatesRequest, v1alpha1.GetUserAddonTemplatesResponse]
+	getWorkspaceTemplates *connect_go.Client[v1alpha1.GetWorkspaceTemplatesRequest, v1alpha1.GetWorkspaceTemplatesResponse]
 }
 
 // GetUserAddonTemplates calls dashboard.v1alpha1.TemplateService.GetUserAddonTemplates.
-func (c *templateServiceClient) GetUserAddonTemplates(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetUserAddonTemplatesResponse], error) {
+func (c *templateServiceClient) GetUserAddonTemplates(ctx context.Context, req *connect_go.Request[v1alpha1.GetUserAddonTemplatesRequest]) (*connect_go.Response[v1alpha1.GetUserAddonTemplatesResponse], error) {
 	return c.getUserAddonTemplates.CallUnary(ctx, req)
 }
 
 // GetWorkspaceTemplates calls dashboard.v1alpha1.TemplateService.GetWorkspaceTemplates.
-func (c *templateServiceClient) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetWorkspaceTemplatesResponse], error) {
+func (c *templateServiceClient) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Request[v1alpha1.GetWorkspaceTemplatesRequest]) (*connect_go.Response[v1alpha1.GetWorkspaceTemplatesResponse], error) {
 	return c.getWorkspaceTemplates.CallUnary(ctx, req)
 }
 
 // TemplateServiceHandler is an implementation of the dashboard.v1alpha1.TemplateService service.
 type TemplateServiceHandler interface {
 	// List templates typed useraddon
-	GetUserAddonTemplates(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetUserAddonTemplatesResponse], error)
+	GetUserAddonTemplates(context.Context, *connect_go.Request[v1alpha1.GetUserAddonTemplatesRequest]) (*connect_go.Response[v1alpha1.GetUserAddonTemplatesResponse], error)
 	// List templates typed workspace
-	GetWorkspaceTemplates(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetWorkspaceTemplatesResponse], error)
+	GetWorkspaceTemplates(context.Context, *connect_go.Request[v1alpha1.GetWorkspaceTemplatesRequest]) (*connect_go.Response[v1alpha1.GetWorkspaceTemplatesResponse], error)
 }
 
 // NewTemplateServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -124,10 +123,10 @@ func NewTemplateServiceHandler(svc TemplateServiceHandler, opts ...connect_go.Ha
 // UnimplementedTemplateServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedTemplateServiceHandler struct{}
 
-func (UnimplementedTemplateServiceHandler) GetUserAddonTemplates(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetUserAddonTemplatesResponse], error) {
+func (UnimplementedTemplateServiceHandler) GetUserAddonTemplates(context.Context, *connect_go.Request[v1alpha1.GetUserAddonTemplatesRequest]) (*connect_go.Response[v1alpha1.GetUserAddonTemplatesResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.TemplateService.GetUserAddonTemplates is not implemented"))
 }
 
-func (UnimplementedTemplateServiceHandler) GetWorkspaceTemplates(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetWorkspaceTemplatesResponse], error) {
+func (UnimplementedTemplateServiceHandler) GetWorkspaceTemplates(context.Context, *connect_go.Request[v1alpha1.GetWorkspaceTemplatesRequest]) (*connect_go.Response[v1alpha1.GetWorkspaceTemplatesResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.TemplateService.GetWorkspaceTemplates is not implemented"))
 }

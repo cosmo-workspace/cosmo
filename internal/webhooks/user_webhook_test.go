@@ -37,6 +37,30 @@ var _ = Describe("User webhook", func() {
 		},
 	}
 
+	specificRolesUserAddon := cosmov1alpha1.Template{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "specific-roles-user-addon-test",
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
+			},
+			Annotations: map[string]string{
+				cosmov1alpha1.TemplateAnnKeyUserRoles: "specific-role",
+			},
+		},
+	}
+
+	requireSpecificRoleUserAddon := cosmov1alpha1.Template{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "require-specific-roles-user-addon-test",
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
+			},
+			Annotations: map[string]string{
+				cosmov1alpha1.TemplateAnnKeyRequiredAddons: specificRolesUserAddon.GetName(),
+			},
+		},
+	}
+
 	notUserAddon := cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "notUserAddonTest",
@@ -52,6 +76,12 @@ var _ = Describe("User webhook", func() {
 			Expect(err).ShouldNot(HaveOccurred())
 
 			err = k8sClient.Create(ctx, &defaultUserAddon)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			err = k8sClient.Create(ctx, &specificRolesUserAddon)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			err = k8sClient.Create(ctx, &requireSpecificRoleUserAddon)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			user := cosmov1alpha1.User{}
@@ -203,6 +233,77 @@ var _ = Describe("User webhook", func() {
 				AuthType: "invalid",
 				Addons: []cosmov1alpha1.UserAddon{
 					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: defaultUserAddon.GetName()}},
+				},
+			}
+			err := k8sClient.Create(ctx, &user)
+			Expect(err).Should(HaveOccurred())
+		})
+	})
+
+	Context("when creating user with required role for addon", func() {
+		It("should pass", func() {
+			ctx := context.Background()
+
+			user := cosmov1alpha1.User{}
+			user.SetName("testuser7")
+			user.Spec = cosmov1alpha1.UserSpec{
+				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
+				Roles:    []cosmov1alpha1.UserRole{{Name: "specific-role"}},
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: specificRolesUserAddon.GetName()}},
+				},
+			}
+			err := k8sClient.Create(ctx, &user)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+	})
+
+	Context("when creating user without required role for addon", func() {
+		It("should deny", func() {
+			ctx := context.Background()
+
+			user := cosmov1alpha1.User{}
+			user.SetName("testuser7-2")
+			user.Spec = cosmov1alpha1.UserSpec{
+				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: specificRolesUserAddon.GetName()}},
+				},
+			}
+			err := k8sClient.Create(ctx, &user)
+			Expect(err).Should(HaveOccurred())
+		})
+	})
+
+	Context("when creating user with required addon for addon", func() {
+		It("should pass", func() {
+			ctx := context.Background()
+
+			user := cosmov1alpha1.User{}
+			user.SetName("testuser8")
+			user.Spec = cosmov1alpha1.UserSpec{
+				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
+				Roles:    []cosmov1alpha1.UserRole{{Name: "specific-role"}},
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: specificRolesUserAddon.GetName()}},
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: requireSpecificRoleUserAddon.GetName()}},
+				},
+			}
+			err := k8sClient.Create(ctx, &user)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+	})
+
+	Context("when creating user without required addon for addon", func() {
+		It("should deny", func() {
+			ctx := context.Background()
+
+			user := cosmov1alpha1.User{}
+			user.SetName("testuser8-2")
+			user.Spec = cosmov1alpha1.UserSpec{
+				AuthType: cosmov1alpha1.UserAuthTypePasswordSecert,
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: requireSpecificRoleUserAddon.GetName()}},
 				},
 			}
 			err := k8sClient.Create(ctx, &user)
