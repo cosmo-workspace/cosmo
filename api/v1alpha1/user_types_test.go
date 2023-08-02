@@ -94,6 +94,30 @@ func TestUserRole_GetGroupAndRole(t *testing.T) {
 			wantGroup: "cosmo-admin",
 			wantRole:  "developer",
 		},
+		{
+			name: "non-admin: no hyphen",
+			fields: fields{
+				Name: "チームX",
+			},
+			wantGroup: "チームX",
+			wantRole:  "",
+		},
+		{
+			name: "non-admin: prefix",
+			fields: fields{
+				Name: "-XXX",
+			},
+			wantGroup: "-XXX",
+			wantRole:  "",
+		},
+		{
+			name: "admin: prefix",
+			fields: fields{
+				Name: "-XXX-admin",
+			},
+			wantGroup: "-XXX",
+			wantRole:  "admin",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
