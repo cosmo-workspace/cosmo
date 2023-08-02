@@ -172,6 +172,7 @@
 | required_vars | [TemplateRequiredVars](#dashboard-v1alpha1-TemplateRequiredVars) | repeated |  |
 | is_default_user_addon | [bool](#bool) | optional |  |
 | is_cluster_scope | [bool](#bool) |  |  |
+| required_useraddons | [string](#string) | repeated |  |
 
 
 

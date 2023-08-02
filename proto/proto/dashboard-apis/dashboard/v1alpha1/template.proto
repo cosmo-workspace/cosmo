@@ -22,4 +22,6 @@ message Template {
   optional bool is_default_user_addon = 4;
 
   bool is_cluster_scope = 5;
+
+  repeated string required_useraddons = 6;
 }

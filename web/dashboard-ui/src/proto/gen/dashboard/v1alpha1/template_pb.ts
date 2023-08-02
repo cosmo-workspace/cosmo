@@ -82,6 +82,11 @@ export class Template extends Message<Template> {
    */
   isClusterScope = false;
 
+  /**
+   * @generated from field: repeated string required_useraddons = 6;
+   */
+  requiredUseraddons: string[] = [];
+
   constructor(data?: PartialMessage<Template>) {
     super();
     proto3.util.initPartial(data, this);
@@ -95,6 +100,7 @@ export class Template extends Message<Template> {
     { no: 3, name: "required_vars", kind: "message", T: TemplateRequiredVars, repeated: true },
     { no: 4, name: "is_default_user_addon", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
     { no: 5, name: "is_cluster_scope", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "required_useraddons", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Template {

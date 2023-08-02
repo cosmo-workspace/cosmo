@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strconv"
+	"strings"
 
 	connect_go "github.com/bufbuild/connect-go"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -12,6 +13,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
@@ -100,5 +102,12 @@ func convertTemplateToDashv1alpha1Template(tmpl cosmov1alpha1.TemplateObject) *d
 		Description:    tmpl.GetSpec().Description,
 		RequiredVars:   requiredVars,
 		IsClusterScope: tmpl.GetScope() == meta.RESTScopeRoot,
+		RequiredUseraddons: func() []string {
+			requiredAddons := kubeutil.GetAnnotation(tmpl, cosmov1alpha1.TemplateAnnKeyRequiredAddons)
+			if requiredAddons != "" {
+				return strings.Split(requiredAddons, ",")
+			}
+			return nil
+		}(),
 	}
 }

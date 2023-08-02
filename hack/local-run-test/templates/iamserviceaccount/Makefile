@@ -7,4 +7,5 @@ template:
 	    --userroles=team-a-* \
 		--disable-nameprefix \
 		--cluster-scope \
+		--required-useraddons resource-limitter \
 		-o addon.yaml

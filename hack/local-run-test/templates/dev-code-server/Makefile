@@ -14,14 +14,8 @@ template: ## Create template
 		--userroles 'team-a-*' \
 		--required-useraddons team-a-serviceaccount \
 		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
-	kustomize build kubernetes/ | cosmoctl tmpl generate -o team-shared-template.yaml --workspace \
-		--name team-shared-codeserver \
-		--desc 'shared template excluding team-a-dev' \
-		--forbidden-userroles team-a-dev \
-		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
 
 .PHONY: apply
 apply: template ## Apply template
 	kubectl apply -f cosmo-template.yaml
 	kubectl apply -f team-a-template.yaml
-	kubectl apply -f team-shared-template.yaml
