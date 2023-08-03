@@ -85,7 +85,7 @@ SnapShot = """
 """
 
 ['Dashboard server [Template] [GetUserAddonTemplates] ❌ fail with an unexpected error at list: Entry: admin-user, not empty,  1']
-SnapShot = 'internal: failed to list UserAddon Templates'
+SnapShot = 'internal: Internal error occurred: failed to list UserAddon Templates: template list error'
 
 ['Dashboard server [Template] [GetWorkspaceTemplates] ✅ success in normal context: Entry: admin-user, empty,  1']
 SnapShot = """
@@ -247,4 +247,4 @@ SnapShot = """
 """
 
 ['Dashboard server [Template] [GetWorkspaceTemplates] ❌ fail with an unexpected error at list: Entry: admin-user, not empty,  1']
-SnapShot = 'internal: failed to list WorkspaceTemplates'
+SnapShot = 'internal: Internal error occurred: failed to list WorkspaceTemplates: template list error'

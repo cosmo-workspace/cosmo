@@ -481,7 +481,7 @@ SnapShot = """
 
 ['cosmoctl [user] [create] ❌ fail to create password timeout user create user-create-timeout 1']
 SnapShot = """
-Error: reached to timeout in user creation
+Error: reached to timeout in user creation: %!w(<nil>)
 Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
@@ -505,7 +505,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [create] ❌ fail to create password timeout user create user-create-timeout 2']
-SnapShot = 'reached to timeout in user creation'
+SnapShot = 'reached to timeout in user creation: %!w(<nil>)'
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create --admin 1']
 SnapShot = """
@@ -786,7 +786,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"XXXXX\" not found
+Error: failed to get user: users.cosmo-workspace.github.io \"XXXXX\" not found
 Usage:
   cosmoctl user delete USER_NAME [flags]
 
@@ -804,7 +804,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 2']
-SnapShot = 'user is not found: users.cosmo-workspace.github.io "XXXXX" not found'
+SnapShot = 'failed to get user: users.cosmo-workspace.github.io "XXXXX" not found'
 
 ['cosmoctl [user] [get] ✅ success in normal context: user get --filter role=*-admin --filter role=myteam-* 1']
 SnapShot = """
@@ -973,7 +973,7 @@ SnapShot = 'validation error: invalid args'
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"XXXXXX\" not found
+Error: failed to get user: users.cosmo-workspace.github.io \"XXXXXX\" not found
 Usage:
   cosmoctl user reset-password USER_NAME [flags]
 
@@ -989,7 +989,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password XXXXXX 2']
-SnapShot = 'user is not found: users.cosmo-workspace.github.io "XXXXXX" not found'
+SnapShot = 'failed to get user: users.cosmo-workspace.github.io "XXXXXX" not found'
 
 ['cosmoctl [user] [reset-password] ❌ fail with invalid args: user reset-password user1 --password  1']
 SnapShot = """

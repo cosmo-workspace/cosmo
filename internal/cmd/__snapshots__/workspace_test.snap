@@ -306,7 +306,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user xxxxx --template template1 --dry-run 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
+Error: failed to get user: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
 
@@ -330,7 +330,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user xxxxx --template template1 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
+Error: failed to get user: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
 
@@ -538,7 +538,7 @@ unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 xxx 1']
 SnapShot = """
-Error: workspace is not found: workspaces.cosmo-workspace.github.io \"ws1\" not found
+Error: failed to get workspace: workspaces.cosmo-workspace.github.io \"ws1\" not found
 Usage:
   cosmoctl workspace delete WORKSPACE_NAME [flags]
 
@@ -559,7 +559,7 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 xxx 2']
-SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "ws1" not found'
+SnapShot = 'failed to get workspace: workspaces.cosmo-workspace.github.io "ws1" not found'
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete xxxx --user user1 -A 1']
 SnapShot = """
@@ -751,7 +751,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --user user1 xxx 1']
 SnapShot = """
-Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
+Error: failed to get workspace: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -771,7 +771,7 @@ Global Flags:
 
 ['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get --user xxxx 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"xxxx\" not found
+Error: failed to get user: users.cosmo-workspace.github.io \"xxxx\" not found
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
@@ -972,7 +972,7 @@ unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user xxxxx 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
+Error: failed to get user: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl workspace run-instance WORKSPACE_NAME [flags]
 
@@ -992,7 +992,7 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user xxxxx 2']
-SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxxxx" not found'
+SnapShot = 'failed to get user: users.cosmo-workspace.github.io "xxxxx" not found'
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws2 --user user1 1']
 SnapShot = """
@@ -1020,7 +1020,7 @@ SnapShot = 'no change'
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance xxx --user user1 1']
 SnapShot = """
-Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
+Error: failed to get workspace: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace run-instance WORKSPACE_NAME [flags]
 
@@ -1040,7 +1040,7 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance xxx --user user1 2']
-SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'
+SnapShot = 'failed to get workspace: workspaces.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [workspace] [stop-instance] ✅ success in normal context: workspace stop-instance ws1 --user user1 1']
 SnapShot = """
@@ -1205,7 +1205,7 @@ unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user xxxxx 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"xxxxx\" not found
+Error: failed to get user: users.cosmo-workspace.github.io \"xxxxx\" not found
 Usage:
   cosmoctl workspace stop-instance WORKSPACE_NAME [flags]
 
@@ -1225,7 +1225,7 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user xxxxx 2']
-SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxxxx" not found'
+SnapShot = 'failed to get user: users.cosmo-workspace.github.io "xxxxx" not found'
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws2 --user user1 1']
 SnapShot = """
@@ -1253,7 +1253,7 @@ SnapShot = 'no change'
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance xxx --user user1 1']
 SnapShot = """
-Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
+Error: failed to get workspace: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl workspace stop-instance WORKSPACE_NAME [flags]
 
@@ -1273,4 +1273,4 @@ Global Flags:
 """
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance xxx --user user1 2']
-SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'
+SnapShot = 'failed to get workspace: workspaces.cosmo-workspace.github.io "xxx" not found'

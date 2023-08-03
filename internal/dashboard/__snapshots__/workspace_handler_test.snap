@@ -170,7 +170,7 @@ SnapShot = """
 """
 
 ["Dashboard server [Workspace] [CreateWorkspace] ❌ fail with authorization by role: normal user cannot create admin user's workspace 1"]
-SnapShot = 'permission_denied'
+SnapShot = 'permission_denied: forbidden: invalid user authentication'
 
 ['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: empty template 1']
 SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.Template: value length must be at least 1 runes'
@@ -179,62 +179,20 @@ SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.Template: value len
 SnapShot = 'invalid_argument: invalid CreateWorkspaceRequest.WsName: value length must be at least 1 runes'
 
 ['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: invalid template 1']
-SnapShot = 'invalid_argument: failed to get workspace config in template'
+SnapShot = 'not_found: failed to get workspace config in template: Template.cosmo-workspace.github.io "XXX" not found'
 
 ['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: invalid username 1']
-SnapShot = 'not_found: user is not found'
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "xxxxx" not found'
 
 ['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: invalid workspace name 1']
-SnapShot = 'internal: failed to create workspace'
+SnapShot = """
+internal: failed to create workspace: Workspace.cosmo-workspace.github.io \"XXXX\" is invalid: metadata.name: Invalid value: \"XXXX\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
 
 ['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: workspace already exists 1']
-SnapShot = 'already_exists: Workspace already exists'
+SnapShot = 'already_exists: failed to create workspace: workspaces.cosmo-workspace.github.io "existing-ws" already exists'
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" index:1 1']
-SnapShot = """
-{
-  \"message\": \"Successfully removed network rule\",
-  \"network_rule\": {
-    \"port_number\": 9999,
-    \"custom_host_prefix\": \"nw1\",
-    \"http_path\": \"/\"
-  }
-}
-"""
-
-['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" index:1 2']
-SnapShot = """
-{
-  \"metadata\": {
-    \"name\": \"ws1\",
-    \"namespace\": \"cosmo-user-admin-user\",
-    \"creationTimestamp\": null
-  },
-  \"spec\": {
-    \"template\": {
-      \"name\": \"template1\"
-    },
-    \"replicas\": 1,
-    \"network\": [
-      {
-        \"protocol\": \"http\",
-        \"portNumber\": 18080,
-        \"customHostPrefix\": \"main\",
-        \"httpPath\": \"/\",
-        \"public\": false
-      }
-    ]
-  },
-  \"status\": {
-    \"instance\": {},
-    \"phase\": \"Pending\",
-    \"config\": {
-      \"serviceName\": \"workspace\",
-      \"mainServicePortName\": \"main\"
-    }
-  }
-}
-"""
+SnapShot = 'internal: index out of range'
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" index:1 1']
 SnapShot = """
@@ -283,10 +241,10 @@ SnapShot = """
 """
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" index:1 1']
-SnapShot = 'internal: failed to remove network rule'
+SnapShot = 'internal: failed to remove network rule: mock delete network rule error'
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" index:1 1']
-SnapShot = 'permission_denied'
+SnapShot = 'permission_denied: forbidden: invalid user authentication'
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" index:-1 1']
 SnapShot = 'internal: index out of range'
@@ -295,10 +253,10 @@ SnapShot = 'internal: index out of range'
 SnapShot = 'internal: index out of range'
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"admin-user" ws_name:"xxx" index:1 1']
-SnapShot = 'not_found: workspace is not found'
+SnapShot = 'not_found: failed to get workspace: Workspace.cosmo-workspace.github.io "xxx" not found'
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ❌ fail with invalid request: Entry: admin-user, user_name:"xxxxx" ws_name:"ws1" index:1 1']
-SnapShot = 'not_found: user is not found'
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "xxxxx" not found'
 
 ["Dashboard server [Workspace] [DeleteWorkspace] ✅ success in normal context: admin user can delete normal user's workspace 1"]
 SnapShot = """
@@ -357,16 +315,16 @@ SnapShot = """
 """
 
 ['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with an unexpected error at delete: unexpected err 1']
-SnapShot = 'internal: failed to delete workspace'
+SnapShot = 'internal: failed to delete workspace: mock delete workspace error'
 
 ["Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with authorization by role: normal user cannot delete admin's workspace 1"]
-SnapShot = 'permission_denied'
+SnapShot = 'permission_denied: forbidden: invalid user authentication'
 
 ['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: invalid user name 1']
-SnapShot = 'not_found: user is not found'
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "xxxxx" not found'
 
 ['Dashboard server [Workspace] [DeleteWorkspace] ❌ fail with invalid request: invalid workspace name 1']
-SnapShot = 'not_found: workspace is not found'
+SnapShot = 'not_found: failed to get workspace: Workspace.cosmo-workspace.github.io "xxx" not found'
 
 ["Dashboard server [Workspace] [GetWorkspace] ✅ success in normal context: admin user can get normal user's workspace 1"]
 SnapShot = """
@@ -457,16 +415,16 @@ SnapShot = """
 """
 
 ['Dashboard server [Workspace] [GetWorkspace] ❌ fail with an unexpected error at list: unexpected err 1']
-SnapShot = 'internal: failed to get user'
+SnapShot = 'internal: failed to get user: mock get workspace error'
 
 ["Dashboard server [Workspace] [GetWorkspace] ❌ fail with authorization by role: normal user cannot get admin's workspace 1"]
-SnapShot = 'permission_denied'
+SnapShot = 'permission_denied: forbidden: invalid user authentication'
 
 ['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: invalid user name 1']
-SnapShot = 'not_found: user is not found'
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "xxxxx" not found'
 
 ['Dashboard server [Workspace] [GetWorkspace] ❌ fail with invalid request: invalid workspace name 1']
-SnapShot = 'not_found: workspace is not found'
+SnapShot = 'not_found: failed to get workspace: Workspace.cosmo-workspace.github.io "xxx" not found'
 
 ["Dashboard server [Workspace] [GetWorkspaces] ✅ success in normal context: admin user can get normal user's workspaces 1"]
 SnapShot = """
@@ -542,13 +500,13 @@ SnapShot = """
 """
 
 ["Dashboard server [Workspace] [GetWorkspaces] ❌ fail with authorization by role: normal user cannot get admin's workspaces 1"]
-SnapShot = 'permission_denied'
+SnapShot = 'permission_denied: forbidden: invalid user authentication'
 
 ['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with invalid request: invalid user name 1']
-SnapShot = 'not_found: user is not found'
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "xxxxx" not found'
 
 ['Dashboard server [Workspace] [GetWorkspaces] ❌ fail with unexpected error: unexpected err 1']
-SnapShot = 'internal: failed to list workspaces'
+SnapShot = 'internal: failed to list workspaces: mock get list error'
 
 ['Dashboard server [Workspace] [UpdateWorkspace] ✅ success in normal context: admin user can update own workspace with no change 1']
 SnapShot = 'invalid_argument: no change'
@@ -671,16 +629,16 @@ SnapShot = """
 """
 
 ['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with an unexpected error at update: unexpected err 1']
-SnapShot = 'internal: failed to update workspace'
+SnapShot = 'internal: failed to update workspace: mock update workspace error'
 
 ["Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with authorization by role: normal user cannot update admin's workspace 1"]
-SnapShot = 'permission_denied'
+SnapShot = 'permission_denied: forbidden: invalid user authentication'
 
 ['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: invalid user name 1']
-SnapShot = 'not_found: user is not found'
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "xxxxx" not found'
 
 ['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: invalid workspace name 1']
-SnapShot = 'not_found: workspace is not found'
+SnapShot = 'not_found: failed to get workspace: Workspace.cosmo-workspace.github.io "xxx" not found'
 
 ['Dashboard server [Workspace] [UpdateWorkspace] ❌ fail with invalid request: no change 1']
 SnapShot = 'invalid_argument: no change'
@@ -913,19 +871,19 @@ SnapShot = """
 """
 
 ['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with an unexpected error at update: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" network_rule:{port_number:2001} 1']
-SnapShot = 'internal: failed to upsert network rule'
+SnapShot = 'internal: failed to upsert network rule: mock update networkrule error'
 
 ['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with authorization by role: Entry: normal-user, user_name:"admin-user" ws_name:"ws1" network_rule:{port_number:2000} 1']
-SnapShot = 'permission_denied'
+SnapShot = 'permission_denied: forbidden: invalid user authentication'
 
 ['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: duplicate ports: insert 1']
-SnapShot = 'invalid_argument: failed to upsert network rule: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: duplicate network rules: {"protocol":"http","portNumber":18080,"customHostPrefix":"main","httpPath":"/","public":false}'
+SnapShot = 'permission_denied: failed to upsert network rule: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: duplicate network rules: {"protocol":"http","portNumber":18080,"customHostPrefix":"main","httpPath":"/","public":false}'
 
 ['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: duplicate ports: update 1']
-SnapShot = 'invalid_argument: failed to upsert network rule: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: duplicate network rules: {"protocol":"http","portNumber":9999,"customHostPrefix":"nw1","httpPath":"/","public":false}'
+SnapShot = 'permission_denied: failed to upsert network rule: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: duplicate network rules: {"protocol":"http","portNumber":9999,"customHostPrefix":"nw1","httpPath":"/","public":false}'
 
 ['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: invalid user name 1']
-SnapShot = 'not_found: user is not found'
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "xxxxx" not found'
 
 ['Dashboard server [Workspace] [UpsertNetworkRule] ❌ fail with invalid request: invalid workspace name 1']
-SnapShot = 'not_found: workspace is not found'
+SnapShot = 'not_found: failed to get workspace: Workspace.cosmo-workspace.github.io "xxx" not found'
