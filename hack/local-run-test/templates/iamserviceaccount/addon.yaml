@@ -5,11 +5,11 @@ metadata:
   annotations:
     cosmo-workspace.github.io/disable-nameprefix: "true"
     cosmo-workspace.github.io/required-useraddons: resource-limitter
-    cosmo-workspace.github.io/userroles: team-a-*
+    cosmo-workspace.github.io/userroles: gryffindor,gryffindor-admin
   creationTimestamp: null
   labels:
     cosmo-workspace.github.io/type: useraddon
-  name: team-a-serviceaccount
+  name: gryffindor-serviceaccount
 spec:
   rawYaml: |
     apiVersion: v1

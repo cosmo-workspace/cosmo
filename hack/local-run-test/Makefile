@@ -315,18 +315,18 @@ apply-template: kubectl cosmoctl ## Apply template.
 add-user: kubectl cosmoctl ## add user
 	@echo ====== $@ ======
 	-cosmoctl user create tom --admin 2> /dev/null
-	-cosmoctl user create team-a-dev --role "team-a-dev" 2> /dev/null
-	-cosmoctl user create team-a-admin --role "team-a-admin" 2> /dev/null
-	-cosmoctl user create team-b-dev --role "team-b-dev" 2> /dev/null
-	-cosmoctl user create team-b-admin --role "team-b-admin" 2> /dev/null
-	-cosmoctl user create team-ab-dev --role "team-a-dev,team-b-dev" 2> /dev/null
+	-cosmoctl user create gryffindor-dev --role "gryffindor" 2> /dev/null
+	-cosmoctl user create gryffindor-admin --role "gryffindor-admin" 2> /dev/null
+	-cosmoctl user create slytherin-dev --role "slytherin" 2> /dev/null
+	-cosmoctl user create slytherin-admin --role "slytherin-admin" 2> /dev/null
+	-cosmoctl user create grytherin --role "gryffindor,slytherin" 2> /dev/null
 	-cosmoctl user create ldapuser1 --admin --auth-type ldap 2> /dev/null
 	-cosmoctl user reset-password tom --password vvv
-	-cosmoctl user reset-password team-a-dev   --password xxxxxxxx
-	-cosmoctl user reset-password team-a-admin --password xxxxxxxx
-	-cosmoctl user reset-password team-b-dev   --password xxxxxxxx
-	-cosmoctl user reset-password team-b-admin --password xxxxxxxx
-	-cosmoctl user reset-password team-ab-dev  --password xxxxxxxx
+	-cosmoctl user reset-password gryffindor-dev   --password xxxxxxxx
+	-cosmoctl user reset-password gryffindor-admin --password xxxxxxxx
+	-cosmoctl user reset-password slytherin-dev    --password xxxxxxxx
+	-cosmoctl user reset-password slytherin-admin  --password xxxxxxxx
+	-cosmoctl user reset-password grytherin        --password xxxxxxxx
 
 
 add-workspace: kubectl cosmoctl ## add workspace
