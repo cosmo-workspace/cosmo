@@ -63,6 +63,19 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 		user.Spec.AuthType = cosmov1alpha1.UserAuthTypePasswordSecert
 	}
 
+	// default cluster template
+AddonsLoop:
+	for i, a := range user.Spec.Addons {
+		if !a.Template.ClusterScoped {
+			for _, addonTmpl := range addonTmpls {
+				if addonTmpl.GetName() == a.Template.Name {
+					user.Spec.Addons[i].Template.ClusterScoped = addonTmpl.GetScope() == meta.RESTScopeRoot
+					continue AddonsLoop
+				}
+			}
+		}
+	}
+
 	// add default user addon
 	for _, addonTmpl := range addonTmpls {
 		ann := addonTmpl.GetAnnotations()
