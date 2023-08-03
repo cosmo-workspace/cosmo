@@ -37,10 +37,6 @@ Get Users. This command is similar to "kubectl get namespace"
 		Aliases: []string{"del"},
 		Short:   "Delete user",
 	}, o))
-	userCmd.AddCommand(updateCmd(&cobra.Command{
-		Use:   "update USER_NAME --role ROLE --name NAME",
-		Short: "Update user",
-	}, o))
 
 	cmd.AddCommand(userCmd)
 }
