@@ -69,12 +69,14 @@ exports[`useTemplates > normal 1`] = `
     "description": "",
     "isClusterScope": false,
     "name": "tmpl1",
+    "requiredUseraddons": [],
     "requiredVars": [],
   },
   {
     "description": "",
     "isClusterScope": false,
     "name": "tmpl2",
+    "requiredUseraddons": [],
     "requiredVars": [
       {
         "defaultValue": "",
@@ -90,6 +92,7 @@ exports[`useTemplates > normal 1`] = `
     "description": "",
     "isClusterScope": false,
     "name": "tmpl3",
+    "requiredUseraddons": [],
     "requiredVars": [],
   },
 ]

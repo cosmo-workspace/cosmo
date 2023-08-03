@@ -16,6 +16,8 @@ import { useLogin } from "../../components/LoginProvider";
 import logo from "../../logo-with-name-small.png";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { PasswordChangeDialogContext } from "../organisms/PasswordChangeDialog";
+import { UserInfoDialogContext } from "../organisms/UserActionDialog";
+import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
 import { isAdminRole, isAdminUser, isPrivilegedRole } from "../organisms/UserModule";
 import { UserNameChangeDialogContext } from "../organisms/UserNameChangeDialog";
 
@@ -49,6 +51,8 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
   const { loginUser, logout } = useLogin();
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
   const userNameChangeDialogDispach = UserNameChangeDialogContext.useDispatch();
+  const userAddonChangeDialogDispatch = UserAddonChangeDialogContext.useDispatch();
+  const userInfoDialogDispatch = UserInfoDialogContext.useDispatch();
   const isAdmin = isAdminUser(loginUser);
   const isSignIn = Boolean(loginUser);
   const canChangePassword = Boolean(loginUser?.authType === 'password-secret');
@@ -62,6 +66,18 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
   const changePassword = () => {
     console.log('changePassword');
     passwordChangeDialogDispach(true);
+    setAnchorEl(null);
+  }
+
+  const changeAddons = () => {
+    console.log('changeAddons');
+    userAddonChangeDialogDispatch(true, { user: loginUser! });
+    setAnchorEl(null);
+  }
+
+  const openUserInfoDialog = () => {
+    console.log('openUserInfoDialog');
+    userInfoDialogDispatch(true, { user: loginUser!, defaultOpenUserAddon: true });
     setAnchorEl(null);
   }
 
@@ -130,7 +146,7 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
               onClose={() => setAnchorEl(null)}
             >
               <Stack alignItems="center" spacing={1} sx={{ mt: 1, mb: 2 }}>
-                <NameAvatar name={loginUser?.displayName} sx={{ width: 50, height: 50 }} />
+                <NameAvatar name={loginUser?.displayName} sx={{ width: 50, height: 50 }} onClick={() => openUserInfoDialog()} />
                 <Typography>{loginUser?.displayName}</Typography>
                 <Typography color={colors.grey[700]} fontSize="small">{loginUser?.name}</Typography>
                 <Grid container justifyContent="center" sx={{ width: 200 }}>
@@ -150,6 +166,10 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
               {isSignIn && canChangePassword && <MenuItem onClick={() => changePassword()}>
                 <ListItemIcon><VpnKey fontSize="small" /></ListItemIcon>
                 <ListItemText>Change password...</ListItemText>
+              </MenuItem>}
+              {isSignIn && isAdmin && <MenuItem onClick={() => changeAddons()}>
+                <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
+                <ListItemText>Change addons...</ListItemText>
               </MenuItem>}
               <Divider />
               {isSignIn && <MenuItem onClick={() => logout()}>

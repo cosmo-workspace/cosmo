@@ -10,6 +10,7 @@ exports[`useTemplates > useTemplates getUserAddonTemplates > normal 1`] = `
     "description": "",
     "isClusterScope": false,
     "name": "tmpl1",
+    "requiredUseraddons": [],
     "requiredVars": [],
   },
   {
@@ -17,6 +18,7 @@ exports[`useTemplates > useTemplates getUserAddonTemplates > normal 1`] = `
     "isClusterScope": false,
     "isDefaultUserAddon": true,
     "name": "tmpl2",
+    "requiredUseraddons": [],
     "requiredVars": [
       {
         "defaultValue": "var1Value",
@@ -32,6 +34,7 @@ exports[`useTemplates > useTemplates getUserAddonTemplates > normal 1`] = `
     "description": "",
     "isClusterScope": false,
     "name": "tmpl3",
+    "requiredUseraddons": [],
     "requiredVars": [],
   },
 ]

@@ -7,7 +7,7 @@ import {
   Grid, IconButton, InputAdornment, List, ListItem, ListItemText, MenuItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Tooltip, Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
+import { UseFormRegisterReturn, useFieldArray, useForm } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
@@ -122,13 +122,14 @@ const UserActionDialog: React.FC<UserActionDialogProps> = ({ title, actions, use
 /**
  * Info
  */
-export const UserInfoDialog: React.VFC<{ onClose: () => void, user: User }> = ({ onClose, user }) => {
+export const UserInfoDialog: React.VFC<{ onClose: () => void, user: User, defaultOpenUserAddon?: boolean }> = ({ onClose, user, defaultOpenUserAddon }) => {
   console.log('UserInfoDialog');
   return (
     <UserActionDialog
       title='User Info'
       onClose={() => onClose()}
       user={user}
+      defaultOpenUserAddon={defaultOpenUserAddon}
       actions={<Button variant="contained" color="primary" onClick={() => { onClose() }}>Close</Button>} />
   );
 }
@@ -401,7 +402,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({ onClose }
 /**
  * Context
  */
-export const UserInfoDialogContext = DialogContext<{ user: User }>(
+export const UserInfoDialogContext = DialogContext<{ user: User, defaultOpenUserAddon?: boolean }>(
   props => (<UserInfoDialog {...props} />));
 export const UserDeleteDialogContext = DialogContext<{ user: User }>(
   props => (<UserDeleteDialog {...props} />));
