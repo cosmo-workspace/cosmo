@@ -3,17 +3,17 @@ apiVersion: cosmo-workspace.github.io/v1alpha1
 kind: Template
 metadata:
   annotations:
-    cosmo-workspace.github.io/required-useraddons: team-a-serviceaccount
-    cosmo-workspace.github.io/userroles: team-a-*
+    cosmo-workspace.github.io/required-useraddons: gryffindor-serviceaccount
+    cosmo-workspace.github.io/userroles: gryffindor
     workspace.cosmo-workspace.github.io/deployment: workspace
     workspace.cosmo-workspace.github.io/service: workspace
     workspace.cosmo-workspace.github.io/service-main-port: main
   creationTimestamp: null
   labels:
     cosmo-workspace.github.io/type: workspace
-  name: team-a-codeserver
+  name: gryffindor-codeserver
 spec:
-  description: only for team A
+  description: only for gryffindor
   rawYaml: |
     apiVersion: v1
     kind: Service
