@@ -200,14 +200,24 @@ var _ = Describe("cosmoctl [user]", func() {
 			func(args ...string) {
 				testUtil.CreateLoginUser("user1", "name1", nil, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
 				testUtil.CreateLoginUser("user2", "name2", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
+				testUtil.CreateLoginUser("user3", "name3", []cosmov1alpha1.UserRole{{Name: "myteam-admin"}}, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
 				run_test(args...)
 			},
 			Entry(desc, "user", "get"),
+			Entry(desc, "user", "get", "--filter", "role=cosmo-admin"),
+			Entry(desc, "user", "get", "--filter", "role=*-admin"),
+			Entry(desc, "user", "get", "--filter", "role=*-admin", "--filter", "role=myteam-*"),
 		)
 
 		DescribeTable("✅ success with empty user:",
 			run_test,
 			Entry(desc, "user", "get"),
+		)
+
+		DescribeTable("❌ fail with invalid args:",
+			run_test,
+			Entry(desc, "user", "get", "--filter", "x"),
+			Entry(desc, "user", "get", "--filter", "x=x"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at list:",

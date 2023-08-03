@@ -5,7 +5,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -49,7 +49,8 @@ Usage:
   cosmoctl user get [flags]
 
 Flags:
-  -h, --help   help for get
+      --filter strings   filter option. 'role' and 'addon' are available for now. e.g. 'role=x', 'addon=y'
+  -h, --help             help for get
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -503,7 +504,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -531,7 +532,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -559,7 +560,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -587,7 +588,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -616,7 +617,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -644,7 +645,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -672,7 +673,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -700,7 +701,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -728,7 +729,7 @@ Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
 Flags:
-      --addon stringArray           user addons by Template, which created in UserNamespace
+      --addon stringArray           user addons
                                     format is '--addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --addon TEMPLATE_NAME2,KEY:VAL ...' 
       --admin                       user admin role
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
@@ -823,11 +824,40 @@ Global Flags:
 ['cosmoctl [user] [delete] ❌ fail with invalid args: user delete XXXXX 2']
 SnapShot = 'user is not found: users.cosmo-workspace.github.io "XXXXX" not found'
 
+['cosmoctl [user] [get] ✅ success in normal context: user get --filter role=*-admin --filter role=myteam-* 1']
+SnapShot = """
+NAME    ROLES          AUTHTYPE          NAMESPACE   PHASE   ADDONS
+user3   myteam-admin   password-secret                       
+"""
+
+['cosmoctl [user] [get] ✅ success in normal context: user get --filter role=*-admin --filter role=myteam-* 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [get] ✅ success in normal context: user get --filter role=*-admin 1']
+SnapShot = """
+NAME    ROLES          AUTHTYPE          NAMESPACE   PHASE   ADDONS
+user2   cosmo-admin    password-secret                       
+user3   myteam-admin   password-secret                       
+"""
+
+['cosmoctl [user] [get] ✅ success in normal context: user get --filter role=*-admin 2']
+SnapShot = 'success'
+
+['cosmoctl [user] [get] ✅ success in normal context: user get --filter role=cosmo-admin 1']
+SnapShot = """
+NAME    ROLES         AUTHTYPE          NAMESPACE   PHASE   ADDONS
+user2   cosmo-admin   password-secret                       
+"""
+
+['cosmoctl [user] [get] ✅ success in normal context: user get --filter role=cosmo-admin 2']
+SnapShot = 'success'
+
 ['cosmoctl [user] [get] ✅ success in normal context: user get 1']
 SnapShot = """
-name    NAME    ROLE          NAMESPACE   STATUS
-user1   name1                             
-user2   name2   cosmo-admin               
+NAME    ROLES          AUTHTYPE          NAMESPACE   PHASE   ADDONS
+user1                  password-secret                       
+user2   cosmo-admin    password-secret                       
+user3   myteam-admin   password-secret                       
 """
 
 ['cosmoctl [user] [get] ✅ success in normal context: user get 2']
@@ -835,7 +865,7 @@ SnapShot = 'success'
 
 ['cosmoctl [user] [get] ✅ success with empty user: user get 1']
 SnapShot = """
-name   NAME   ROLE   NAMESPACE   STATUS
+NAME   ROLES   AUTHTYPE   NAMESPACE   PHASE   ADDONS
 """
 
 ['cosmoctl [user] [get] ✅ success with empty user: user get 2']
@@ -848,7 +878,8 @@ Usage:
   cosmoctl user get [flags]
 
 Flags:
-  -h, --help   help for get
+      --filter strings   filter option. 'role' and 'addon' are available for now. e.g. 'role=x', 'addon=y'
+  -h, --help             help for get
 
 Global Flags:
       --context string      kube-context (default: current context)
@@ -859,6 +890,46 @@ Global Flags:
 
 ['cosmoctl [user] [get] ❌ fail with an unexpected error at list: user get 2']
 SnapShot = 'failed to list users: mock user list error'
+
+['cosmoctl [user] [get] ❌ fail with invalid args: user get --filter x 1']
+SnapShot = """
+Error: invalid options: invalid filter expression: x
+Usage:
+  cosmoctl user get [flags]
+
+Flags:
+      --filter strings   filter option. 'role' and 'addon' are available for now. e.g. 'role=x', 'addon=y'
+  -h, --help             help for get
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [get] ❌ fail with invalid args: user get --filter x 2']
+SnapShot = 'invalid options: invalid filter expression: x'
+
+['cosmoctl [user] [get] ❌ fail with invalid args: user get --filter x=x 1']
+SnapShot = """
+Error: invalid options: invalid filter expression: x=x
+Usage:
+  cosmoctl user get [flags]
+
+Flags:
+      --filter strings   filter option. 'role' and 'addon' are available for now. e.g. 'role=x', 'addon=y'
+  -h, --help             help for get
+
+Global Flags:
+      --context string      kube-context (default: current context)
+      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
+  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
+
+"""
+
+['cosmoctl [user] [get] ❌ fail with invalid args: user get --filter x=x 2']
+SnapShot = 'invalid options: invalid filter expression: x=x'
 
 ['cosmoctl [user] [reset-password] ✅ success in normal context: user reset-password user1 --password XXXXXXXX 1']
 SnapShot = """

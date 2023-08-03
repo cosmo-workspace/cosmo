@@ -32,7 +32,7 @@ Get cosmo resources
 		Short: "Get user",
 	}, o.CliOptions))
 	getCmd.AddCommand(template.GetCmd(&cobra.Command{
-		Use:     "template WORKSPACE_NAME",
+		Use:     "template TEMPLATE_NAME",
 		Aliases: []string{"tmpl"},
 		Short:   "Get template",
 	}, o.CliOptions))
