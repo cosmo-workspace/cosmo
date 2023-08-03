@@ -100,7 +100,7 @@ func (c *Client) GetDefaultPasswordAwait(ctx context.Context, username string) (
 		case <-ctx.Done():
 			tk.Stop()
 			log.Error(err, "reached to timeout in user creation", "user", username)
-			return nil, fmt.Errorf("reached to timeout in user creation: %w", nil)
+			return nil, fmt.Errorf("reached to timeout in user creation")
 		default:
 			<-tk.C
 		}

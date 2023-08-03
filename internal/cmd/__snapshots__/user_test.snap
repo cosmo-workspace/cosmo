@@ -481,7 +481,7 @@ SnapShot = """
 
 ['cosmoctl [user] [create] ❌ fail to create password timeout user create user-create-timeout 1']
 SnapShot = """
-Error: reached to timeout in user creation: %!w(<nil>)
+Error: reached to timeout in user creation
 Usage:
   cosmoctl user create USER_NAME --role cosmo-admin [flags]
 
@@ -505,7 +505,7 @@ Global Flags:
 """
 
 ['cosmoctl [user] [create] ❌ fail to create password timeout user create user-create-timeout 2']
-SnapShot = 'reached to timeout in user creation: %!w(<nil>)'
+SnapShot = 'reached to timeout in user creation'
 
 ['cosmoctl [user] [create] ❌ fail with invalid args: user create --admin 1']
 SnapShot = """

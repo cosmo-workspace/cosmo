@@ -192,7 +192,50 @@ internal: failed to create workspace: Workspace.cosmo-workspace.github.io \"XXXX
 SnapShot = 'already_exists: failed to create workspace: workspaces.cosmo-workspace.github.io "existing-ws" already exists'
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" index:1 1']
-SnapShot = 'internal: index out of range'
+SnapShot = """
+{
+  \"message\": \"Successfully removed network rule\",
+  \"network_rule\": {
+    \"port_number\": 9999,
+    \"custom_host_prefix\": \"nw1\",
+    \"http_path\": \"/\"
+  }
+}
+"""
+
+['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: admin-user, user_name:"admin-user" ws_name:"ws1" index:1 2']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"ws1\",
+    \"namespace\": \"cosmo-user-admin-user\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"template\": {
+      \"name\": \"template1\"
+    },
+    \"replicas\": 1,
+    \"network\": [
+      {
+        \"protocol\": \"http\",
+        \"portNumber\": 18080,
+        \"customHostPrefix\": \"main\",
+        \"httpPath\": \"/\",
+        \"public\": false
+      }
+    ]
+  },
+  \"status\": {
+    \"instance\": {},
+    \"phase\": \"Pending\",
+    \"config\": {
+      \"serviceName\": \"workspace\",
+      \"mainServicePortName\": \"main\"
+    }
+  }
+}
+"""
 
 ['Dashboard server [Workspace] [DeleteNetworkRule] ✅ success in normal context: Entry: normal-user, user_name:"normal-user" ws_name:"ws1" index:1 1']
 SnapShot = """
