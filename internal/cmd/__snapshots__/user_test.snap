@@ -11,8 +11,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -508,8 +509,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -535,8 +537,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -562,8 +565,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -589,8 +593,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -617,8 +622,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -644,8 +650,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -671,8 +678,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -698,8 +706,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:
@@ -725,8 +734,9 @@ Flags:
       --auth-type string            user auth type 'password-secret'(default),'ldap' (default \"password-secret\")
       --cluster-addon stringArray   user addons by ClusterTemplate
                                     format is '--cluster-addon TEMPLATE_NAME1,KEY:VAL,KEY:VAL --cluster-addon TEMPLATE_NAME2,KEY:VAL ...' 
+      --display-name string         user display name (default: same as USER_NAME)
   -h, --help                        help for create
-      --name string                 user display name (default: same as USER_NAME)
+      --name string                 [DEPRICATED] use --display-name
       --role strings                user roles
 
 Global Flags:

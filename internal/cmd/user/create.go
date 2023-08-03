@@ -33,7 +33,8 @@ func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
 	o := &CreateOption{CliOptions: cliOpt}
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-	cmd.Flags().StringVar(&o.DisplayName, "name", "", "user display name (default: same as USER_NAME)")
+	cmd.Flags().StringVar(&o.DisplayName, "name", "", "[DEPRICATED] use --display-name")
+	cmd.Flags().StringVar(&o.DisplayName, "display-name", "", "user display name (default: same as USER_NAME)")
 	cmd.Flags().StringSliceVar(&o.Roles, "role", nil, "user roles")
 	cmd.Flags().StringVar(&o.AuthType, "auth-type", cosmov1alpha1.UserAuthTypePasswordSecert.String(), "user auth type 'password-secret'(default),'ldap'")
 	cmd.Flags().BoolVar(&o.Admin, "admin", false, "user admin role")
