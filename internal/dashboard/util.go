@@ -8,8 +8,10 @@ import (
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
 
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 type StoreStatusResponseWriter struct {
@@ -57,25 +59,25 @@ func ErrResponse(log *clog.Logger, err error) error {
 
 	if errors.Is(err, &connect_go.Error{}) {
 		// pass
-	} else if errors.Is(err, kosmo.ErrNotFound) {
+	} else if apierrs.IsNotFound(err) {
 		err = connect_go.NewError(connect_go.CodeNotFound, err)
 
-	} else if errors.Is(err, kosmo.ErrIsAlreadyExists) {
+	} else if apierrs.IsAlreadyExists(err) {
 		err = connect_go.NewError(connect_go.CodeAlreadyExists, err)
 
-	} else if errors.Is(err, kosmo.ErrBadRequest) {
+	} else if apierrs.IsBadRequest(err) {
 		err = connect_go.NewError(connect_go.CodeInvalidArgument, err)
 
-	} else if errors.Is(err, kosmo.ErrForbidden) {
+	} else if apierrs.IsForbidden(err) {
 		err = connect_go.NewError(connect_go.CodePermissionDenied, err)
 
-	} else if errors.Is(err, kosmo.ErrUnauthorized) {
+	} else if apierrs.IsUnauthorized(err) {
 		err = connect_go.NewError(connect_go.CodeUnauthenticated, err)
 
-	} else if errors.Is(err, kosmo.ErrServiceUnavailable) {
+	} else if apierrs.IsServiceUnavailable(err) {
 		err = connect_go.NewError(connect_go.CodeUnavailable, err)
 
-	} else if errors.Is(err, kosmo.ErrInternalServerError) {
+	} else if apierrs.IsInternalError(err) {
 		err = connect_go.NewError(connect_go.CodeInternal, err)
 
 	} else {
@@ -84,4 +86,8 @@ func ErrResponse(log *clog.Logger, err error) error {
 	}
 	log.WithCaller().Info(err.Error())
 	return err
+}
+
+func NewForbidden(err error) error {
+	return apierrs.NewForbidden(schema.GroupResource{}, "", err)
 }

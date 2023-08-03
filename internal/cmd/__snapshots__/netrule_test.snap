@@ -401,7 +401,7 @@ SnapShot = 'validation error: --port is required'
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 124000 1']
 SnapShot = """
-Error: failed to upsert network rule: admission webhook \"vworkspace.kb.io\" denied the request: network rules check failed: port validation failed: port=124000: admission webhook \"vworkspace.kb.io\" denied the request: network rules check failed: port validation failed: port=124000
+Error: failed to upsert network rule: admission webhook \"vworkspace.kb.io\" denied the request: network rules check failed: port validation failed: port=124000
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -426,7 +426,7 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 124000 2']
-SnapShot = 'failed to upsert network rule: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: port validation failed: port=124000: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: port validation failed: port=124000'
+SnapShot = 'failed to upsert network rule: admission webhook "vworkspace.kb.io" denied the request: network rules check failed: port validation failed: port=124000'
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace ws1 --port 4000 --host-prefix main 1']
 SnapShot = """
@@ -534,7 +534,7 @@ SnapShot = """
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace xxx --port 4000 1']
 SnapShot = """
-Error: failed to get workspace: workspace is not found
+Error: failed to get workspace: failed to get workspace: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -559,11 +559,11 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user user1 --workspace xxx --port 4000 2']
-SnapShot = 'failed to get workspace: workspace is not found'
+SnapShot = 'failed to get workspace: failed to get workspace: workspaces.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user xxx --workspace ws1 --port 4000 1']
 SnapShot = """
-Error: failed to get workspace: user is not found
+Error: failed to get workspace: failed to get user: users.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl networkrule create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER [flags]
 
@@ -588,7 +588,7 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create --user xxx --workspace ws1 --port 4000 2']
-SnapShot = 'failed to get workspace: user is not found'
+SnapShot = 'failed to get workspace: failed to get user: users.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [netrule] [create] ❌ fail with invalid args: netrule create 1']
 SnapShot = """
@@ -804,7 +804,7 @@ SnapShot = 'index out of range'
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user user1 --workspace xxx --index 1 1']
 SnapShot = """
-Error: workspace is not found: workspaces.cosmo-workspace.github.io \"xxx\" not found
+Error: failed to get workspace: workspaces.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
 
@@ -826,11 +826,11 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user user1 --workspace xxx --index 1 2']
-SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "xxx" not found'
+SnapShot = 'failed to get workspace: workspaces.cosmo-workspace.github.io "xxx" not found'
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user xxx --workspace ws1 --index 1 1']
 SnapShot = """
-Error: user is not found: users.cosmo-workspace.github.io \"xxx\" not found
+Error: failed to get user: users.cosmo-workspace.github.io \"xxx\" not found
 Usage:
   cosmoctl networkrule delete NETWORK_RULE_NAME --workspace WORKSPACE_NAME [flags]
 
@@ -852,4 +852,4 @@ Global Flags:
 """
 
 ['cosmoctl [netrule] [delete] ❌ fail with invalid args: netrule delete --user xxx --workspace ws1 --index 1 2']
-SnapShot = 'user is not found: users.cosmo-workspace.github.io "xxx" not found'
+SnapShot = 'failed to get user: users.cosmo-workspace.github.io "xxx" not found'

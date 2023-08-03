@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/bufbuild/connect-go"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 type ctxKeyCaller struct{}
@@ -76,27 +76,27 @@ func (s *Server) authorizationInterceptor() connect.UnaryInterceptorFunc {
 func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *cosmov1alpha1.User, deadline time.Time, err error) {
 	r := requestFromContext(ctx)
 	if r.Header.Get("Cookie") == "" {
-		return nil, deadline, kosmo.NewUnauthorizedError("session is not found", err)
+		return nil, deadline, apierrs.NewUnauthorized("session is not found")
 	}
 	ses, err := s.sessionStore.Get(r, s.CookieSessionName)
 	if ses == nil || err != nil {
-		return nil, deadline, kosmo.NewUnauthorizedError("failed to get session from store", err)
+		return nil, deadline, apierrs.NewUnauthorized(fmt.Sprintf("failed to get session from store: %v", err))
 	}
 	if ses.IsNew {
-		return nil, deadline, kosmo.NewUnauthorizedError("session is invarild", err)
+		return nil, deadline, apierrs.NewUnauthorized("session is invarild")
 	}
 
 	sesInfo := session.Get(ses)
 
 	userName := sesInfo.UserName
 	if userName == "" {
-		return nil, deadline, kosmo.NewInternalServerError("userName is empty", nil)
+		return nil, deadline, apierrs.NewInternalError(fmt.Errorf("userName is empty"))
 	}
 
 	deadline = time.Unix(sesInfo.Deadline, 0)
 	if deadline.Before(time.Now()) {
 		return nil, deadline,
-			kosmo.NewUnauthorizedError(fmt.Sprintf("deadline is before the current time: deadline %v", deadline), nil)
+			apierrs.NewUnauthorized(fmt.Sprintf("deadline is before the current time: deadline %v", deadline))
 	}
 
 	loginUser, err = s.Klient.GetUser(ctx, userName)
@@ -112,7 +112,7 @@ func userAuthentication(ctx context.Context, userName string) error {
 
 	caller := callerFromContext(ctx)
 	if caller == nil {
-		return kosmo.NewInternalServerError("invalid user authentication: NOT authorized", nil)
+		return apierrs.NewInternalError(fmt.Errorf("invalid user authentication: NOT authorized"))
 	}
 
 	if caller.Name != userName {
@@ -122,7 +122,7 @@ func userAuthentication(ctx context.Context, userName string) error {
 		} else {
 			// General User have access only to the own resources
 			log.Info("invalid user authentication: general user trying to access other's resource", "username", caller.Name, "target", userName)
-			return kosmo.NewForbiddenError("", nil)
+			return NewForbidden(fmt.Errorf("invalid user authentication"))
 		}
 	}
 	return nil
@@ -133,7 +133,7 @@ func adminAuthentication(ctx context.Context, customAuthenFuncs ...func(callerGr
 
 	caller := callerFromContext(ctx)
 	if caller == nil {
-		return kosmo.NewInternalServerError("invalid user authentication: NOT authorized", nil)
+		return apierrs.NewInternalError(fmt.Errorf("invalid user authentication: NOT authorized"))
 	}
 	auditlog := log.WithValues("caller", caller.Name, "role", caller.Spec.Roles)
 
@@ -150,7 +150,7 @@ func adminAuthentication(ctx context.Context, customAuthenFuncs ...func(callerGr
 	err := validateCallerHasAdmin(callerGroupRoleMap)
 	if err != nil {
 		auditlog.Info(err.Error())
-		return kosmo.NewForbiddenError("", err)
+		return NewForbidden(err)
 	}
 
 	// pass if all custom authens are passed
@@ -163,14 +163,14 @@ func adminAuthentication(ctx context.Context, customAuthenFuncs ...func(callerGr
 		}
 		if len(errs) > 0 {
 			auditlog.Info("custom admin authentication failed", "errs", errs)
-			return kosmo.NewForbiddenError(errs[0].Error(), errs[0])
+			return NewForbidden(errs[0])
 		}
 		auditlog.Info("admin request is allowed")
 		return nil
 	}
 
 	auditlog.Info("admin authentication failed")
-	return kosmo.NewForbiddenError("", nil)
+	return NewForbidden(fmt.Errorf("admin authentication failed"))
 }
 
 func validateCallerHasAdmin(callerGroupRoleMap map[string]string) error {

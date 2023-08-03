@@ -37,12 +37,8 @@ func (c *Client) GetWorkspace(ctx context.Context, name, namespace string) (*cos
 		Name:      name,
 	}
 	if err := c.Get(ctx, key, &ws); err != nil {
-		if apierrs.IsNotFound(err) {
-			return nil, NewNotFoundError("workspace is not found", err)
-		} else {
-			log.Error(err, "failed to get workspace", "namespace", namespace, "workspace", name)
-			return nil, NewInternalServerError("failed to get workspace", err)
-		}
+		log.Error(err, "failed to get workspace", "namespace", namespace, "workspace", name)
+		return nil, fmt.Errorf("failed to get workspace: %w", err)
 	}
 	log.DebugAll().Info("GetWorkspace", "ws", ws, "namespace", namespace)
 	return &ws, nil
@@ -64,7 +60,7 @@ func (c *Client) ListWorkspaces(ctx context.Context, namespace string) ([]cosmov
 
 	if err := c.List(ctx, &wsList, opts); err != nil {
 		log.Error(err, "failed to list workspaces", "namespace", namespace)
-		return nil, NewInternalServerError("failed to list workspaces", err)
+		return nil, fmt.Errorf("failed to list workspaces: %w", err)
 	}
 	sort.Slice(wsList.Items, func(i, j int) bool { return wsList.Items[i].Name < wsList.Items[j].Name })
 
@@ -81,7 +77,7 @@ func (c *Client) CreateWorkspace(ctx context.Context, username, wsName, tmplName
 	cfg, err := c.GetWorkspaceConfig(ctx, tmplName)
 	if err != nil {
 		log.Error(err, "failed to get workspace config in template", "template", tmplName)
-		return nil, NewBadRequestError("failed to get workspace config in template", err)
+		return nil, fmt.Errorf("failed to get workspace config in template: %w", err)
 	}
 
 	ws := &cosmov1alpha1.Workspace{}
@@ -96,12 +92,8 @@ func (c *Client) CreateWorkspace(ctx context.Context, username, wsName, tmplName
 	log.Debug().Info("creating workspace", "ws", ws, "dryrun", opts)
 
 	if err := c.Create(ctx, ws, opts...); err != nil {
-		if apierrs.IsAlreadyExists(err) {
-			return nil, NewIsAlreadyExistsError("Workspace already exists", err)
-		} else {
-			log.Error(err, "failed to create workspace", "username", username, "workspace", ws.Name, "template", tmplName, "vars", fmt.Sprintf("%v", vars))
-			return nil, NewInternalServerError("failed to create workspace", err)
-		}
+		log.Error(err, "failed to create workspace", "username", username, "workspace", ws.Name, "template", tmplName, "vars", fmt.Sprintf("%v", vars))
+		return nil, fmt.Errorf("failed to create workspace: %w", err)
 	}
 	ws.Status.Phase = "Pending"
 	ws.Status.Config = cfg
@@ -118,7 +110,7 @@ func (c *Client) DeleteWorkspace(ctx context.Context, name, username string, opt
 	}
 	if err := c.Delete(ctx, ws, opts...); err != nil {
 		log.Error(err, "failed to delete workspace", "username", username, "workspace", name)
-		return nil, NewInternalServerError("failed to delete workspace", err)
+		return nil, fmt.Errorf("failed to delete workspace: %w", err)
 	}
 	return ws, nil
 }
@@ -142,13 +134,12 @@ func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opt
 	}
 
 	if equality.Semantic.DeepEqual(before, ws) {
-		return nil, NewBadRequestError("no change", nil)
+		return nil, apierrs.NewBadRequest("no change")
 	}
 
 	if err := c.Update(ctx, ws); err != nil {
-		message := "failed to update workspace"
-		log.Error(err, message, "username", username, "workspace", ws.Name)
-		return nil, NewInternalServerError(message, err)
+		log.Error(err, "failed to update workspace", "username", username, "workspace", ws.Name)
+		return nil, fmt.Errorf("failed to update workspace: %w", err)
 	}
 
 	return ws, nil
@@ -178,18 +169,12 @@ func (c *Client) AddNetworkRule(ctx context.Context, name, username string, r co
 
 	if equality.Semantic.DeepEqual(before, ws) {
 		log.Info("no change", "username", username, "workspace", ws.Name, "netRule", r)
-		return nil, NewBadRequestError("no change", nil)
+		return nil, apierrs.NewBadRequest("no change")
 	}
 
 	if err := c.Update(ctx, ws); err != nil {
-		if apierrs.IsBadRequest(err) || apierrs.IsForbidden(err) {
-			message := fmt.Sprintf("failed to upsert network rule: %v", err.Error())
-			log.Error(err, message, "username", username, "workspace", ws.Name, "netRule", r)
-			return nil, NewBadRequestError(message, err)
-		}
-		message := "failed to upsert network rule"
-		log.Error(err, message, "username", username, "workspace", ws.Name, "netRule", r)
-		return nil, NewInternalServerError(message, err)
+		log.Error(err, "failed to upsert network rule", "username", username, "workspace", ws.Name, "netRule", r)
+		return nil, fmt.Errorf("failed to upsert network rule: %w", err)
 	}
 	return r.DeepCopy(), nil
 }
@@ -219,20 +204,10 @@ func (c *Client) DeleteNetworkRule(ctx context.Context, name, username string, i
 	}
 
 	if err := c.Update(ctx, ws); err != nil {
-		message := "failed to remove network rule"
-		log.Error(err, message, "username", username, "workspace", ws.Name, "index", index, "netRule", delRule)
-		return nil, NewInternalServerError(message, err)
+		log.Error(err, "failed to remove network rule", "username", username, "workspace", ws.Name, "index", index, "netRule", delRule)
+		return nil, fmt.Errorf("failed to remove network rule: %w", err)
 	}
 	return delRule, nil
-}
-
-func getNetRuleIndex(netRules []cosmov1alpha1.NetworkRule, r cosmov1alpha1.NetworkRule) int {
-	for i, netRule := range netRules {
-		if netRule.UniqueKey() == r.UniqueKey() {
-			return i
-		}
-	}
-	return -1
 }
 
 func (c *Client) GetWorkspaceConfig(ctx context.Context, tmplName string) (cfg cosmov1alpha1.Config, err error) {

@@ -9,11 +9,11 @@ import (
 	connect_go "github.com/bufbuild/connect-go"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
@@ -50,31 +50,31 @@ func (s *Server) Login(ctx context.Context, req *connect_go.Request[dashv1alpha1
 	user, err := s.Klient.GetUser(ctx, req.Msg.UserName)
 	if err != nil {
 		log.Info(err.Error(), "username", req.Msg.UserName)
-		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
+		return nil, ErrResponse(log, NewForbidden(fmt.Errorf("incorrect user or password")))
 	}
 	// Check password
 	authrizer, ok := s.Authorizers[user.Spec.AuthType]
 	if !ok {
 		log.Info("authrizer not found", "username", req.Msg.UserName, "authType", user.Spec.AuthType)
-		return nil, ErrResponse(log, kosmo.NewServiceUnavailableError(
-			fmt.Sprintf("auth-type '%s' is not supported", user.Spec.AuthType), nil))
+		return nil, ErrResponse(log, apierrs.NewServiceUnavailable(
+			fmt.Sprintf("auth-type '%s' is not supported", user.Spec.AuthType)))
 	}
 	verified, err := authrizer.Authorize(ctx, req.Msg)
 	if err != nil {
 		log.Error(err, "authorize failed", "username", req.Msg.UserName)
-		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
+		return nil, ErrResponse(log, NewForbidden(fmt.Errorf("incorrect user or password")))
 
 	}
 	if !verified {
 		log.Info("login failed: password invalid", "username", req.Msg.UserName)
-		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
+		return nil, ErrResponse(log, NewForbidden(fmt.Errorf("incorrect user or password")))
 	}
 	var isDefault bool
 	if cosmov1alpha1.UserAuthType(user.Spec.AuthType) == cosmov1alpha1.UserAuthTypePasswordSecert {
 		isDefault, err = s.Klient.IsDefaultPassword(ctx, req.Msg.UserName)
 		if err != nil {
 			log.Error(err, "failed to check is default password", "username", req.Msg.UserName)
-			return nil, ErrResponse(log, kosmo.NewInternalServerError("", nil))
+			return nil, ErrResponse(log, apierrs.NewInternalError(fmt.Errorf("failed to check is default password: %w", err)))
 		}
 	}
 

@@ -2,6 +2,7 @@ package kosmo
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"time"
 
@@ -19,12 +20,8 @@ func (c *Client) GetUser(ctx context.Context, name string) (*cosmov1alpha1.User,
 
 	key := types.NamespacedName{Name: name}
 	if err := c.Get(ctx, key, &user); err != nil {
-		if apierrs.IsNotFound(err) {
-			return nil, NewNotFoundError("user is not found", err)
-		} else {
-			log.Error(err, "failed to get user", "username", name)
-			return nil, NewInternalServerError("failed to get user", err)
-		}
+		log.Error(err, "failed to get user", "username", name)
+		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 	return &user, nil
 }
@@ -34,7 +31,7 @@ func (c *Client) ListUsers(ctx context.Context) ([]cosmov1alpha1.User, error) {
 	userList := cosmov1alpha1.UserList{}
 	if err := c.List(ctx, &userList); err != nil {
 		log.Error(err, "failed to list users")
-		return nil, NewInternalServerError("failed to list users", err)
+		return nil, fmt.Errorf("failed to list users: %w", err)
 	}
 	users := userList.Items
 	sort.Slice(users, func(i, j int) bool { return users[i].Name < users[j].Name })
@@ -62,7 +59,7 @@ func (c *Client) CreateUser(ctx context.Context, username string, displayName st
 	authtype := cosmov1alpha1.UserAuthType(authType)
 	if authtype != "" && !authtype.IsValid() {
 		log.Info("invalid request", "username", username, "authtype", authtype)
-		return nil, NewBadRequestError("'authtype' is invalid", nil)
+		return nil, apierrs.NewBadRequest(fmt.Sprintf("invalid authtype: %s", authType))
 	}
 
 	user := &cosmov1alpha1.User{}
@@ -78,12 +75,8 @@ func (c *Client) CreateUser(ctx context.Context, username string, displayName st
 
 	err := c.Create(ctx, user)
 	if err != nil {
-		if apierrs.IsAlreadyExists(err) {
-			return nil, NewIsAlreadyExistsError("user already exists", err)
-		} else {
-			log.Error(err, "failed to create user", "user", username)
-			return nil, NewServiceUnavailableError("failed to create user", err)
-		}
+		log.Error(err, "failed to create user", "user", username)
+		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 
 	return user, nil
@@ -107,7 +100,7 @@ func (c *Client) GetDefaultPasswordAwait(ctx context.Context, username string) (
 		case <-ctx.Done():
 			tk.Stop()
 			log.Error(err, "reached to timeout in user creation", "user", username)
-			return nil, NewInternalServerError("reached to timeout in user creation", nil)
+			return nil, fmt.Errorf("reached to timeout in user creation")
 		default:
 			<-tk.C
 		}
@@ -123,7 +116,7 @@ func (c *Client) DeleteUser(ctx context.Context, username string) (*cosmov1alpha
 
 	if err := c.Delete(ctx, user); err != nil {
 		log.Error(err, "failed to delete user")
-		return nil, NewInternalServerError("failed to delete user", err)
+		return nil, fmt.Errorf("failed to delete user: %w", err)
 	}
 
 	return user, nil
@@ -160,7 +153,7 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 
 	if equality.Semantic.DeepEqual(before, user) {
 		logr.Debug().Info("no change", "user", before)
-		return nil, NewBadRequestError("no change", err)
+		return nil, apierrs.NewBadRequest("no change")
 	}
 	if before.Spec.DisplayName != user.Spec.DisplayName {
 		logr.Debug().Info("name changed", "name", *opts.DisplayName)
@@ -174,7 +167,7 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 
 	if err := c.Update(ctx, user); err != nil {
 		logr.Error(err, "failed to update user", "user", user)
-		return nil, NewInternalServerError("failed to update user", err)
+		return nil, fmt.Errorf("failed to update user: %w", err)
 	}
 
 	return user, nil

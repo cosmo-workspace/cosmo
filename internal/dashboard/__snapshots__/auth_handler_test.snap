@@ -23,19 +23,19 @@ SnapShot = """
 """
 
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: password:"password1" 1']
-SnapShot = 'permission_denied: incorrect user or password'
+SnapShot = 'permission_denied: forbidden: incorrect user or password'
 
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"ldap-user" password:"invalid" 1']
-SnapShot = 'permission_denied: incorrect user or password'
+SnapShot = 'permission_denied: forbidden: incorrect user or password'
 
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"normal-user" 1']
-SnapShot = 'permission_denied: incorrect user or password'
+SnapShot = 'permission_denied: forbidden: incorrect user or password'
 
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"normal-user" password:"invalid" 1']
-SnapShot = 'permission_denied: incorrect user or password'
+SnapShot = 'permission_denied: forbidden: incorrect user or password'
 
 ['Dashboard server [auth] [Login] ❌ fail with invalid request: Entry: user_name:"xxxxxxx" password:"password1" 1']
-SnapShot = 'permission_denied: incorrect user or password'
+SnapShot = 'permission_denied: forbidden: incorrect user or password'
 
 ['Dashboard server [auth] [Logout] ✅ success in normal context: Entry: logined session 1']
 SnapShot = """
@@ -46,7 +46,7 @@ SnapShot = """
 SnapShot = 'test-server=; Path=/; Domain=test.domain; Max-Age=0; HttpOnly; SameSite=Lax'
 
 ['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: logouted session 1']
-SnapShot = 'unauthenticated: failed to get session from store'
+SnapShot = 'unauthenticated: failed to get session from store: securecookie: the value is not valid'
 
 ['Dashboard server [auth] [Logout] ❌ fail with invalid request: Entry: nil session 1']
 SnapShot = 'unauthenticated: session is not found'
@@ -60,7 +60,7 @@ SnapShot = """
 """
 
 ['Dashboard server [auth] [Verify] ❌ fail with invalid request: Entry: logouted session 1']
-SnapShot = 'unauthenticated: failed to get session from store'
+SnapShot = 'unauthenticated: failed to get session from store: securecookie: the value is not valid'
 
 ['Dashboard server [auth] [Verify] ❌ fail with invalid request: Entry: nil session 1']
 SnapShot = 'unauthenticated: session is not found'

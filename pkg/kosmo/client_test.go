@@ -8,7 +8,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	"k8s.io/client-go/kubernetes/scheme"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -261,7 +260,7 @@ func TestNewClientByRestConfig(t *testing.T) {
 			name: "Invalid cfg",
 			args: args{
 				cfg:    cfg,
-				scheme: scheme.Scheme,
+				scheme: clientgoscheme.Scheme,
 			},
 			wantErr: true,
 		},

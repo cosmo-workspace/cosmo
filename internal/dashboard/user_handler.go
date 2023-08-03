@@ -7,10 +7,10 @@ import (
 
 	connect_go "github.com/bufbuild/connect-go"
 	"google.golang.org/protobuf/types/known/emptypb"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
@@ -35,8 +35,8 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 	if req.Msg.AuthType != "" {
 		if _, ok := s.Authorizers[cosmov1alpha1.UserAuthType(req.Msg.AuthType)]; !ok {
 			log.Info("authrizer not found", "username", req.Msg.UserName, "authType", req.Msg.AuthType)
-			return nil, ErrResponse(log, kosmo.NewBadRequestError(
-				fmt.Sprintf("auth-type '%s' is not supported", req.Msg.AuthType), nil))
+			return nil, ErrResponse(log, apierrs.NewBadRequest(
+				fmt.Sprintf("auth-type '%s' is not supported", req.Msg.AuthType)))
 		}
 	}
 
@@ -127,7 +127,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 	caller := callerFromContext(ctx)
 
 	if req.Msg.UserName == caller.Name {
-		err := kosmo.NewBadRequestError("trying to delete yourself", nil)
+		err := apierrs.NewBadRequest("trying to delete yourself")
 		return nil, ErrResponse(log, err)
 	}
 
