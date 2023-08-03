@@ -197,7 +197,6 @@ var _ = Describe("cosmoctl [workspace]", func() {
 				Ω(err).Should(HaveOccurred())
 				Expect(consoleOut()).To(MatchSnapShot())
 			},
-			Entry(desc, "workspace", "get", "-A", "ws1"),
 			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1", "--user", "user1"),
 			Entry(desc, "workspace", "get", "--namespace", "xxx"),
 			Entry(desc, "workspace", "get", "-A", "--user", "user1"),

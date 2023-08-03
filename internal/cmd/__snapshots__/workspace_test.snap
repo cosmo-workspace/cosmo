@@ -589,28 +589,28 @@ unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --namespace cosmo-user-user1 1']
 SnapShot = """
-USER    NAME   TEMPLATE    PHASE
-user1   ws1    template1   Pending
-user1   ws2    template1   Pending
+NAME   TEMPLATE    PHASE
+ws1    template1   Pending
+ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --namespace cosmo-user-user1 ws2 1']
 SnapShot = """
-USER    NAME   TEMPLATE    PHASE
-user1   ws2    template1   Pending
+NAME   TEMPLATE    PHASE
+ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --user user1 1']
 SnapShot = """
-USER    NAME   TEMPLATE    PHASE
-user1   ws1    template1   Pending
-user1   ws2    template1   Pending
+NAME   TEMPLATE    PHASE
+ws1    template1   Pending
+ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --user user1 ws2 1']
 SnapShot = """
-USER    NAME   TEMPLATE    PHASE
-user1   ws2    template1   Pending
+NAME   TEMPLATE    PHASE
+ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network 1']
@@ -636,12 +636,12 @@ USER   NAME   TEMPLATE   PHASE
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --namespace cosmo-user-user1 1']
 SnapShot = """
-USER   NAME   TEMPLATE   PHASE
+NAME   TEMPLATE   PHASE
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --user user1 1']
 SnapShot = """
-USER   NAME   TEMPLATE   PHASE
+NAME   TEMPLATE   PHASE
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network 1']
@@ -792,26 +792,6 @@ Global Flags:
 ['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get -A --user user1 1']
 SnapShot = """
 Error: validation error: --all-namespaces connot be used with --namespace or --user
-Usage:
-  cosmoctl workspace get [WORKSPACE_NAME] [flags]
-
-Flags:
-  -A, --all-namespaces     all namespaces
-  -h, --help               help for get
-  -n, --namespace string   namespace
-      --network            show workspace network
-  -u, --user string        user name
-
-Global Flags:
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get -A ws1 1']
-SnapShot = """
-Error: invalid options: --all-namespaces is not allowed to use if WORKSPACE_NAME specified
 Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 

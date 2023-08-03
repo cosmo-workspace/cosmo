@@ -2,7 +2,6 @@ package workspace
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -61,9 +60,6 @@ func (o *GetOption) Complete(cmd *cobra.Command, args []string) error {
 	}
 	if len(args) > 0 {
 		o.WorkspaceName = args[0]
-		if o.AllNamespace {
-			return errors.New("--all-namespaces is not allowed to use if WORKSPACE_NAME specified")
-		}
 	}
 	return nil
 }
@@ -120,24 +116,47 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	defer w.Flush()
 
 	if o.showNetwork {
-		columnNames := []string{"USER", "NAME", "PORT", "URL", "PUBLIC"}
-		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
+		if o.AllNamespace {
+			columnNames := []string{"USER", "NAME", "PORT", "URL", "PUBLIC"}
+			fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
-		for _, ws := range wss {
-			for _, v := range ws.Spec.Network {
-				url := ws.Status.URLs[v.UniqueKey()]
-				rowdata := []string{cosmov1alpha1.UserNameByNamespace(ws.Namespace), ws.Name, strconv.Itoa(int(v.PortNumber)), url, strconv.FormatBool(v.Public)}
-				fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
+			for _, ws := range wss {
+				for _, v := range ws.Spec.Network {
+					url := ws.Status.URLs[v.UniqueKey()]
+					rowdata := []string{cosmov1alpha1.UserNameByNamespace(ws.Namespace), ws.Name, strconv.Itoa(int(v.PortNumber)), url, strconv.FormatBool(v.Public)}
+					fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
+				}
+			}
+		} else {
+			columnNames := []string{"INDEX", "NAME", "PORT", "URL", "PUBLIC"}
+			fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
+
+			for _, ws := range wss {
+				for i, v := range ws.Spec.Network {
+					url := ws.Status.URLs[v.UniqueKey()]
+					rowdata := []string{fmt.Sprint(i), ws.Name, strconv.Itoa(int(v.PortNumber)), url, strconv.FormatBool(v.Public)}
+					fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
+				}
 			}
 		}
 
 	} else {
-		columnNames := []string{"USER", "NAME", "TEMPLATE", "PHASE"}
-		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
+		if o.AllNamespace {
+			columnNames := []string{"USER", "NAME", "TEMPLATE", "PHASE"}
+			fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
-		for _, ws := range wss {
-			rowdata := []string{cosmov1alpha1.UserNameByNamespace(ws.Namespace), ws.Name, ws.Spec.Template.Name, string(ws.Status.Phase)}
-			fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
+			for _, ws := range wss {
+				rowdata := []string{cosmov1alpha1.UserNameByNamespace(ws.Namespace), ws.Name, ws.Spec.Template.Name, string(ws.Status.Phase)}
+				fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
+			}
+		} else {
+			columnNames := []string{"NAME", "TEMPLATE", "PHASE"}
+			fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
+
+			for _, ws := range wss {
+				rowdata := []string{ws.Name, ws.Spec.Template.Name, string(ws.Status.Phase)}
+				fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
+			}
 		}
 	}
 	return nil
