@@ -4,9 +4,9 @@ import (
 	"context"
 
 	connect_go "github.com/bufbuild/connect-go"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 type validator interface {
@@ -20,7 +20,7 @@ func (s *Server) validatorInterceptor() connect_go.UnaryInterceptorFunc {
 
 			if v, ok := req.Any().(validator); ok {
 				if err := v.Validate(); err != nil {
-					return nil, ErrResponse(log, kosmo.NewBadRequestError(err.Error(), nil))
+					return nil, ErrResponse(log, apierrs.NewBadRequest(err.Error()))
 				}
 			}
 			return next(ctx, req)

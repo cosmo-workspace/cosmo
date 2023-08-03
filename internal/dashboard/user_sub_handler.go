@@ -8,8 +8,12 @@ import (
 	connect_go "github.com/bufbuild/connect-go"
 	"k8s.io/apimachinery/pkg/types"
 
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
+
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 )
@@ -34,16 +38,17 @@ func (s *Server) UpdateUserAddons(ctx context.Context, req *connect_go.Request[d
 
 	caller := callerFromContext(ctx)
 	if caller == nil {
-		return nil, kosmo.NewInternalServerError("unable get caller", nil)
+		return nil, apierrs.NewInternalError(fmt.Errorf("unable get caller"))
 	}
 	for _, addon := range diff(currentUser.Spec.Addons, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons)) {
 		tmpl := useraddon.EmptyTemplateObject(addon)
 		err := s.Klient.Get(ctx, types.NamespacedName{Name: tmpl.GetName()}, tmpl)
 		if err != nil {
-			return nil, kosmo.NewInternalServerError(fmt.Sprintf("failed to fetch addon '%s'", tmpl.GetName()), nil)
+			return nil, apierrs.NewInternalError(fmt.Errorf("failed to fetch addon '%s'", tmpl.GetName()))
 		}
 		if ok := kosmo.IsAllowedToUseTemplate(ctx, caller, tmpl); !ok {
-			return nil, kosmo.NewForbiddenError("no roles for addon", nil)
+			roles := kubeutil.GetAnnotation(tmpl, cosmov1alpha1.TemplateAnnKeyUserRoles)
+			return nil, NewForbidden(fmt.Errorf("roles '%s' is required for addon '%s'", roles, tmpl.GetName()))
 		}
 	}
 
@@ -152,7 +157,7 @@ func (s *Server) UpdateUserPassword(ctx context.Context, req *connect_go.Request
 	}
 
 	if !verified {
-		return nil, ErrResponse(log, kosmo.NewForbiddenError("incorrect user or password", nil))
+		return nil, ErrResponse(log, NewForbidden(fmt.Errorf("incorrect user or password")))
 	}
 
 	// Upsert password
