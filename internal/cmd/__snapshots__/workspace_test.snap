@@ -122,17 +122,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -147,17 +146,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -172,17 +170,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -197,17 +194,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -222,17 +218,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -247,24 +242,23 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
 
 ['cosmoctl [workspace] [create] ❌ fail with invalid args: workspace create ws1 --user user1 --template template1 --all-namespaces 1']
 SnapShot = """
-Error: validation error: --all-namespaces is not supported in this command
+Error: unknown flag: --all-namespaces
 Usage:
   cosmoctl workspace create WORKSPACE_NAME --template TEMPLATE_NAME [flags]
 
@@ -272,17 +266,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -297,17 +290,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -322,17 +314,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -347,17 +338,16 @@ Examples:
 create my-code-server --user example-user --template code-server --vars PVC_SIZE_Gi:10
 
 Flags:
-      --dry-run           dry run
-  -h, --help              help for create
-  -t, --template string   template name
-      --vars string       template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
+      --dry-run            dry run
+  -h, --help               help for create
+  -n, --namespace string   namespace
+  -t, --template string    template name
+  -u, --user string        user name
+      --vars string        template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -404,15 +394,14 @@ Aliases:
   delete, del
 
 Flags:
-      --dry-run   dry run
-  -h, --help      help for delete
+      --dry-run            dry run
+  -h, --help               help for delete
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -430,15 +419,14 @@ Aliases:
   delete, del
 
 Flags:
-      --dry-run   dry run
-  -h, --help      help for delete
+      --dry-run            dry run
+  -h, --help               help for delete
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -456,15 +444,14 @@ Aliases:
   delete, del
 
 Flags:
-      --dry-run   dry run
-  -h, --help      help for delete
+      --dry-run            dry run
+  -h, --help               help for delete
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -482,15 +469,14 @@ Aliases:
   delete, del
 
 Flags:
-      --dry-run   dry run
-  -h, --help      help for delete
+      --dry-run            dry run
+  -h, --help               help for delete
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -508,15 +494,14 @@ Aliases:
   delete, del
 
 Flags:
-      --dry-run   dry run
-  -h, --help      help for delete
+      --dry-run            dry run
+  -h, --help               help for delete
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -527,7 +512,7 @@ invalid options: namespace xxxx is not cosmo user's namespace"""
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 -A 1']
 SnapShot = """
-Error: validation error: --all-namespaces is not supported in this command
+Error: unknown shorthand flag: 'A' in -A
 Usage:
   cosmoctl workspace delete WORKSPACE_NAME [flags]
 
@@ -535,21 +520,21 @@ Aliases:
   delete, del
 
 Flags:
-      --dry-run   dry run
-  -h, --help      help for delete
+      --dry-run            dry run
+  -h, --help               help for delete
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 -A 2']
-SnapShot = 'validation error: --all-namespaces is not supported in this command'
+SnapShot = """
+unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete ws1 --user user1 xxx 1']
 SnapShot = """
@@ -561,15 +546,14 @@ Aliases:
   delete, del
 
 Flags:
-      --dry-run   dry run
-  -h, --help      help for delete
+      --dry-run            dry run
+  -h, --help               help for delete
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -579,7 +563,7 @@ SnapShot = 'workspace is not found: workspaces.cosmo-workspace.github.io "ws1" n
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete xxxx --user user1 -A 1']
 SnapShot = """
-Error: validation error: --all-namespaces is not supported in this command
+Error: unknown shorthand flag: 'A' in -A
 Usage:
   cosmoctl workspace delete WORKSPACE_NAME [flags]
 
@@ -587,252 +571,82 @@ Aliases:
   delete, del
 
 Flags:
-      --dry-run   dry run
-  -h, --help      help for delete
+      --dry-run            dry run
+  -h, --help               help for delete
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
 
 ['cosmoctl [workspace] [delete] ❌ fail with invalid args: workspace delete xxxx --user user1 -A 2']
-SnapShot = 'validation error: --all-namespaces is not supported in this command'
+SnapShot = """
+unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --namespace cosmo-user-user1 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
+NAME   TEMPLATE    PHASE
+ws1    template1   Pending
+ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --namespace cosmo-user-user1 ws2 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws2    template1   Pending
+NAME   TEMPLATE    PHASE
+ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --user user1 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
+NAME   TEMPLATE    PHASE
+ws1    template1   Pending
+ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --user user1 ws2 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws2    template1   Pending
-"""
-
-['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o wide 1']
-SnapShot = """
-USER-NAMESPACE     WORKSPACE-NAME   PORT    URL
-cosmo-user-user1   ws1              18080   
-cosmo-user-user1   ws2              18080   
-cosmo-user-user1   ws2              1111    
-cosmo-user-user1   ws2              2222    
-"""
-
-['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o yaml 1']
-SnapShot = """
-apiVersion: cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 1
-  name: ws1
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  uid: xxxxxxxx
-spec:
-  network:
-  - customHostPrefix: main
-    httpPath: /
-    portNumber: 18080
-    protocol: http
-    public: false
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    serviceName: workspace
-  instance: {}
-  phase: Pending
----
-apiVersion: cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 3
-  name: ws2
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  uid: xxxxxxxx
-spec:
-  network:
-  - customHostPrefix: main
-    httpPath: /
-    portNumber: 18080
-    protocol: http
-    public: false
-  - customHostPrefix: nw1
-    httpPath: /
-    portNumber: 1111
-    protocol: http
-    public: false
-  - customHostPrefix: nw3
-    httpPath: /
-    portNumber: 2222
-    protocol: http
-    public: false
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    serviceName: workspace
-  instance: {}
-  phase: Pending
----
-
+NAME   TEMPLATE    PHASE
+ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network 1']
 SnapShot = """
-USER-NAMESPACE     WORKSPACE-NAME   PORT    URL
-cosmo-user-user1   ws1              18080   
-cosmo-user-user1   ws2              18080   
-cosmo-user-user1   ws2              1111    
-cosmo-user-user1   ws2              2222    
-"""
-
-['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o wide 1']
-SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE   URLS
-cosmo-user-user1   ws1    template1   Pending     map[]
-cosmo-user-user1   ws2    template1   Pending     map[]
-"""
-
-['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o yaml 1']
-SnapShot = """
-apiVersion: cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 1
-  name: ws1
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  uid: xxxxxxxx
-spec:
-  network:
-  - customHostPrefix: main
-    httpPath: /
-    portNumber: 18080
-    protocol: http
-    public: false
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    serviceName: workspace
-  instance: {}
-  phase: Pending
----
-apiVersion: cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 3
-  name: ws2
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  uid: xxxxxxxx
-spec:
-  network:
-  - customHostPrefix: main
-    httpPath: /
-    portNumber: 18080
-    protocol: http
-    public: false
-  - customHostPrefix: nw1
-    httpPath: /
-    portNumber: 1111
-    protocol: http
-    public: false
-  - customHostPrefix: nw3
-    httpPath: /
-    portNumber: 2222
-    protocol: http
-    public: false
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    serviceName: workspace
-  instance: {}
-  phase: Pending
----
-
+USER    NAME   PORT    URL   PUBLIC
+user1   ws1    18080         false
+user1   ws2    18080         false
+user1   ws2    1111          false
+user1   ws2    2222          false
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
+USER    NAME   TEMPLATE    PHASE
+user1   ws1    template1   Pending
+user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --all-namespaces 1']
 SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
+USER   NAME   TEMPLATE   PHASE
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --namespace cosmo-user-user1 1']
 SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
+NAME   TEMPLATE   PHASE
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --user user1 1']
 SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
-"""
-
-['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network -o wide 1']
-SnapShot = """
-USER-NAMESPACE   WORKSPACE-NAME   PORT   URL
-"""
-
-['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network -o yaml 1']
-SnapShot = """
-
+NAME   TEMPLATE   PHASE
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network 1']
 SnapShot = """
-USER-NAMESPACE   WORKSPACE-NAME   PORT   URL
-"""
-
-['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A -o wide 1']
-SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE   URLS
-"""
-
-['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A -o yaml 1']
-SnapShot = """
-
+USER   NAME   PORT   URL   PUBLIC
 """
 
 ['cosmoctl [workspace] [get] ❌ fail with an unexpected error at list users: workspace get -A 1']
@@ -842,16 +656,15 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -A, --all-namespaces     all namespaces
+  -h, --help               help for get
+  -n, --namespace string   namespace
+      --network            show workspace network
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -863,16 +676,15 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -A, --all-namespaces     all namespaces
+  -h, --help               help for get
+  -n, --namespace string   namespace
+      --network            show workspace network
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -884,16 +696,15 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -A, --all-namespaces     all namespaces
+  -h, --help               help for get
+  -n, --namespace string   namespace
+      --network            show workspace network
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -905,16 +716,15 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -A, --all-namespaces     all namespaces
+  -h, --help               help for get
+  -n, --namespace string   namespace
+      --network            show workspace network
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -926,16 +736,15 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -A, --all-namespaces     all namespaces
+  -h, --help               help for get
+  -n, --namespace string   namespace
+      --network            show workspace network
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -947,16 +756,15 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -A, --all-namespaces     all namespaces
+  -h, --help               help for get
+  -n, --namespace string   namespace
+      --network            show workspace network
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -968,16 +776,15 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -A, --all-namespaces     all namespaces
+  -h, --help               help for get
+  -n, --namespace string   namespace
+      --network            show workspace network
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -989,58 +796,15 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -A, --all-namespaces     all namespaces
+  -h, --help               help for get
+  -n, --namespace string   namespace
+      --network            show workspace network
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get -A -o xxxx 1']
-SnapShot = """
-Error: validation error: invalid output format: available formats is ['wide', 'yaml']
-Usage:
-  cosmoctl workspace get [WORKSPACE_NAME] [flags]
-
-Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get -A ws1 1']
-SnapShot = """
-Error: invalid options: --all-namespaces is not allowed to use if WORKSPACE_NAME specified
-Usage:
-  cosmoctl workspace get [WORKSPACE_NAME] [flags]
-
-Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1094,14 +858,13 @@ Aliases:
   run-instance, run
 
 Flags:
-  -h, --help   help for run-instance
+  -h, --help               help for run-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1119,14 +882,13 @@ Aliases:
   run-instance, run
 
 Flags:
-  -h, --help   help for run-instance
+  -h, --help               help for run-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1144,14 +906,13 @@ Aliases:
   run-instance, run
 
 Flags:
-  -h, --help   help for run-instance
+  -h, --help               help for run-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1170,14 +931,13 @@ Aliases:
   run-instance, run
 
 Flags:
-  -h, --help   help for run-instance
+  -h, --help               help for run-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1187,7 +947,7 @@ SnapShot = 'validation error: --user and --namespace connot be used at the same 
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user user1 -A 1']
 SnapShot = """
-Error: validation error: --all-namespaces connot be used with --namespace or --user
+Error: unknown shorthand flag: 'A' in -A
 Usage:
   cosmoctl workspace run-instance WORKSPACE_NAME [flags]
 
@@ -1195,20 +955,20 @@ Aliases:
   run-instance, run
 
 Flags:
-  -h, --help   help for run-instance
+  -h, --help               help for run-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user user1 -A 2']
-SnapShot = 'validation error: --all-namespaces connot be used with --namespace or --user'
+SnapShot = """
+unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [workspace] [run-instance] ❌ fail with invalid args: workspace run-instance ws1 --user xxxxx 1']
 SnapShot = """
@@ -1220,14 +980,13 @@ Aliases:
   run-instance, run
 
 Flags:
-  -h, --help   help for run-instance
+  -h, --help               help for run-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1245,14 +1004,13 @@ Aliases:
   run-instance, run
 
 Flags:
-  -h, --help   help for run-instance
+  -h, --help               help for run-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1270,14 +1028,13 @@ Aliases:
   run-instance, run
 
 Flags:
-  -h, --help   help for run-instance
+  -h, --help               help for run-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1334,14 +1091,13 @@ Aliases:
   stop-instance, stop
 
 Flags:
-  -h, --help   help for stop-instance
+  -h, --help               help for stop-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1359,14 +1115,13 @@ Aliases:
   stop-instance, stop
 
 Flags:
-  -h, --help   help for stop-instance
+  -h, --help               help for stop-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1384,14 +1139,13 @@ Aliases:
   stop-instance, stop
 
 Flags:
-  -h, --help   help for stop-instance
+  -h, --help               help for stop-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1410,14 +1164,13 @@ Aliases:
   stop-instance, stop
 
 Flags:
-  -h, --help   help for stop-instance
+  -h, --help               help for stop-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1427,7 +1180,7 @@ SnapShot = 'validation error: --user and --namespace connot be used at the same 
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user user1 -A 1']
 SnapShot = """
-Error: validation error: --all-namespaces connot be used with --namespace or --user
+Error: unknown shorthand flag: 'A' in -A
 Usage:
   cosmoctl workspace stop-instance WORKSPACE_NAME [flags]
 
@@ -1435,20 +1188,20 @@ Aliases:
   stop-instance, stop
 
 Flags:
-  -h, --help   help for stop-instance
+  -h, --help               help for stop-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user user1 -A 2']
-SnapShot = 'validation error: --all-namespaces connot be used with --namespace or --user'
+SnapShot = """
+unknown shorthand flag: 'A' in -A"""
 
 ['cosmoctl [workspace] [stop-instance] ❌ fail with invalid args: workspace stop-instance ws1 --user xxxxx 1']
 SnapShot = """
@@ -1460,14 +1213,13 @@ Aliases:
   stop-instance, stop
 
 Flags:
-  -h, --help   help for stop-instance
+  -h, --help               help for stop-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1485,14 +1237,13 @@ Aliases:
   stop-instance, stop
 
 Flags:
-  -h, --help   help for stop-instance
+  -h, --help               help for stop-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -1510,14 +1261,13 @@ Aliases:
   stop-instance, stop
 
 Flags:
-  -h, --help   help for stop-instance
+  -h, --help               help for stop-instance
+  -n, --namespace string   namespace
+  -u, --user string        user name
 
 Global Flags:
-  -A, --all-namespaces      all namespaces
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """

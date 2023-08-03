@@ -6,6 +6,7 @@ import (
 	"time"
 
 	. "github.com/cosmo-workspace/cosmo/pkg/kubeutil/test/gomega"
+	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -61,6 +62,15 @@ var _ = Describe("User webhook", func() {
 		},
 	}
 
+	clusterUserAddon := cosmov1alpha1.ClusterTemplate{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "cluster-user-addon-test",
+			Labels: map[string]string{
+				cosmov1alpha1.TemplateLabelKeyType: cosmov1alpha1.TemplateLabelEnumTypeUserAddon,
+			},
+		},
+	}
+
 	notUserAddon := cosmov1alpha1.Template{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "notUserAddonTest",
@@ -82,6 +92,9 @@ var _ = Describe("User webhook", func() {
 			Expect(err).ShouldNot(HaveOccurred())
 
 			err = k8sClient.Create(ctx, &requireSpecificRoleUserAddon)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			err = k8sClient.Create(ctx, &clusterUserAddon)
 			Expect(err).ShouldNot(HaveOccurred())
 
 			user := cosmov1alpha1.User{}
@@ -308,6 +321,24 @@ var _ = Describe("User webhook", func() {
 			}
 			err := k8sClient.Create(ctx, &user)
 			Expect(err).Should(HaveOccurred())
+		})
+	})
+
+	Context("when creating user with cluster addon", func() {
+		It("should pass with defaulting clusterScoped: true", func() {
+			ctx := context.Background()
+
+			user := cosmov1alpha1.User{}
+			user.SetName("testuser9")
+			user.Spec = cosmov1alpha1.UserSpec{
+				Addons: []cosmov1alpha1.UserAddon{
+					{Template: cosmov1alpha1.UserAddonTemplateRef{Name: clusterUserAddon.GetName()}},
+				},
+			}
+			err := k8sClient.Create(ctx, &user)
+			Expect(err).ShouldNot(HaveOccurred())
+
+			Ω(UserSnapshot(&user)).Should(MatchSnapShot())
 		})
 	})
 })

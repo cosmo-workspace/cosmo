@@ -98,7 +98,6 @@ var _ = Describe("cosmoctl [user]", func() {
 			Entry(desc, "user", "create", "user1", "--kubeconfig", "XXXX"),
 			Entry(desc, "user", "get", "--kubeconfig", "XXXX"),
 			Entry(desc, "user", "delete", "user1", "--kubeconfig", "XXXX"),
-			Entry(desc, "user", "update", "user1", "--kubeconfig", "XXXX"),
 			Entry(desc, "user", "reset-password", "user1", "--password", "XXXXXXXX", "--kubeconfig", "XXXX"),
 		)
 	})
@@ -200,14 +199,24 @@ var _ = Describe("cosmoctl [user]", func() {
 			func(args ...string) {
 				testUtil.CreateLoginUser("user1", "name1", nil, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
 				testUtil.CreateLoginUser("user2", "name2", []cosmov1alpha1.UserRole{cosmov1alpha1.PrivilegedRole}, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
+				testUtil.CreateLoginUser("user3", "name3", []cosmov1alpha1.UserRole{{Name: "myteam-admin"}}, cosmov1alpha1.UserAuthTypePasswordSecert, "password")
 				run_test(args...)
 			},
 			Entry(desc, "user", "get"),
+			Entry(desc, "user", "get", "--filter", "role=cosmo-admin"),
+			Entry(desc, "user", "get", "--filter", "role=*-admin"),
+			Entry(desc, "user", "get", "--filter", "role=*-admin", "--filter", "role=myteam-*"),
 		)
 
 		DescribeTable("✅ success with empty user:",
 			run_test,
 			Entry(desc, "user", "get"),
+		)
+
+		DescribeTable("❌ fail with invalid args:",
+			run_test,
+			Entry(desc, "user", "get", "--filter", "x"),
+			Entry(desc, "user", "get", "--filter", "x=x"),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at list:",
@@ -256,65 +265,6 @@ var _ = Describe("cosmoctl [user]", func() {
 			},
 
 			Entry(desc, "user", "delete", "user-delete1"),
-		)
-	})
-
-	//==================================================================================
-	Describe("[update]", func() {
-
-		var (
-			noRoleUser string = "upd-norole"
-			privUser   string = "upd-priv"
-		)
-
-		run_test := func(args ...string) {
-			testUtil.CreateCosmoUser(noRoleUser, "ロールなし", nil, cosmov1alpha1.UserAuthTypePasswordSecert)
-			testUtil.CreateCosmoUser(privUser, "特権",
-				[]cosmov1alpha1.UserRole{{Name: "cosmo-admin"}}, cosmov1alpha1.UserAuthTypePasswordSecert)
-
-			By("---------------test start----------------")
-			var befUser *cosmov1alpha1.User
-			if len(args) > 2 {
-				befUser, _ = k8sClient.GetUser(ctx, args[2])
-			}
-
-			rootCmd.SetArgs(args)
-			err := rootCmd.Execute()
-			Ω(consoleOut()).To(MatchSnapShot())
-			Ω(errSnap(err)).To(MatchSnapShot())
-			if err == nil {
-				wsv1User, err := k8sClient.GetUser(context.Background(), args[2])
-				Expect(err).NotTo(HaveOccurred())
-				Expect(userSnap(befUser)).To(MatchSnapShot())
-				Expect(userSnap(wsv1User)).To(MatchSnapShot())
-			}
-			By("---------------test end---------------")
-		}
-
-		DescribeTable("✅ success in normal context:",
-			run_test,
-			Entry(desc, "user", "update", noRoleUser, "--name", "namechanged"),
-			Entry(desc, "user", "update", noRoleUser, "--role", "cosmo-admin"),
-			Entry(desc, "user", "update", noRoleUser, "--role", "team-developer,otherteam-developer"),
-			Entry(desc, "user", "update", noRoleUser, "--name", "name1", "--role", "team-dev"),
-			Entry(desc, "user", "update", privUser, "--role", ""),
-			Entry(desc, "user", "update", noRoleUser, "--name", ""),
-		)
-
-		DescribeTable("❌ fail with invalid args:",
-			run_test,
-			Entry(desc, "user", "update"),
-			Entry(desc, "user", "update", privUser),
-			Entry(desc, "user", "update", "notfound", "--name", "namechanged", "--role", "cosmo-admin"),
-			Entry(desc, "user", "update", privUser, "--role", "cosmo-admin"),
-		)
-
-		DescribeTable("❌ fail with an unexpected error at update:",
-			func(args ...string) {
-				clientMock.SetUpdateError("\\.RunE$", errors.New("mock update error"))
-				run_test(args...)
-			},
-			Entry(desc, "user", "update", noRoleUser, "--name", "namechanged"),
 		)
 	})
 

@@ -20,10 +20,6 @@ use "kubectl describe workspace" or "kubectl describe instance" and see controll
 
 	o := cmdutil.NewUserNamespacedCliOptions(co)
 
-	workspaceCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user name")
-	workspaceCmd.PersistentFlags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
-	workspaceCmd.PersistentFlags().BoolVarP(&o.AllNamespace, "all-namespaces", "A", false, "all namespaces")
-
 	workspaceCmd.AddCommand(GetCmd(&cobra.Command{
 		Use:   "get [WORKSPACE_NAME]",
 		Short: "Get workspaces",

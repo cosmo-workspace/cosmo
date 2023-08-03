@@ -30,6 +30,8 @@ func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *co
 
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+	cmd.Flags().StringVarP(&o.User, "user", "u", "", "user name")
+	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
 	cmd.Flags().StringVar(&o.WorkspaceName, "workspace", "", "workspace name (Required)")
 	cmd.Flags().Int32Var(&o.PortNumber, "port", 0, "serivce port number (Required)")
 	cmd.Flags().StringVar(&o.CustomHostPrefix, "host-prefix", "", "custom host prefix")

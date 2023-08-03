@@ -21,6 +21,7 @@ Get cosmo resources
 
 	getCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user name")
 	getCmd.PersistentFlags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
+	getCmd.PersistentFlags().BoolVarP(&o.AllNamespace, "all-namespaces", "A", false, "all namespaces")
 
 	getCmd.AddCommand(workspace.GetCmd(&cobra.Command{
 		Use:     "workspace WORKSPACE_NAME",
@@ -32,7 +33,7 @@ Get cosmo resources
 		Short: "Get user",
 	}, o.CliOptions))
 	getCmd.AddCommand(template.GetCmd(&cobra.Command{
-		Use:     "template WORKSPACE_NAME",
+		Use:     "template TEMPLATE_NAME",
 		Aliases: []string{"tmpl"},
 		Short:   "Get template",
 	}, o.CliOptions))

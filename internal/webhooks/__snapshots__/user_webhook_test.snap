@@ -1,0 +1,28 @@
+['User webhook when creating user with cluster addon should pass with defaulting clusterScoped: true 1']
+SnapShot = """
+{
+  \"metadata\": {
+    \"name\": \"testuser9\",
+    \"creationTimestamp\": null
+  },
+  \"spec\": {
+    \"authType\": \"password-secret\",
+    \"addons\": [
+      {
+        \"template\": {
+          \"name\": \"cluster-user-addon-test\",
+          \"clusterScoped\": true
+        }
+      },
+      {
+        \"template\": {
+          \"name\": \"default-user-addon-test\"
+        }
+      }
+    ]
+  },
+  \"status\": {
+    \"namespace\": {}
+  }
+}
+"""

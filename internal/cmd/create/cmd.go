@@ -30,7 +30,7 @@ Create cosmo resources
 		Short: "Create user",
 	}, o.CliOptions))
 	createCmd.AddCommand(netrule.CreateCmd(&cobra.Command{
-		Use:     "networkrule NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER",
+		Use:     "networkrule --workspace WORKSPACE_NAME --port PORT_NUMBER",
 		Short:   "Create or update workspace network rule",
 		Aliases: []string{"netrule", "net"},
 	}, o))

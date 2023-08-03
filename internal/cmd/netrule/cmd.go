@@ -17,9 +17,6 @@ Workspace network rule utility command
 
 	o := cmdutil.NewUserNamespacedCliOptions(co)
 
-	netruleCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user name")
-	netruleCmd.PersistentFlags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
-
 	netruleCmd.AddCommand(CreateCmd(&cobra.Command{
 		Use:     "create NETWORK_RULE_NAME --workspace WORKSPACE_NAME --port PORT_NUMBER",
 		Short:   "Create or update workspace network rule",

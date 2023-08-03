@@ -323,16 +323,16 @@ Aliases:
 Flags:
   -h, --help                 help for create
       --host-prefix string   custom host prefix
+  -n, --namespace string     namespace
       --path string          path for Ingress path when using ingress (default \"/\")
       --port int32           serivce port number (Required)
       --public               disable authentication for this port
+  -u, --user string          user name
       --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -352,16 +352,16 @@ Aliases:
 Flags:
   -h, --help                 help for create
       --host-prefix string   custom host prefix
+  -n, --namespace string     namespace
       --path string          path for Ingress path when using ingress (default \"/\")
       --port int32           serivce port number (Required)
       --public               disable authentication for this port
+  -u, --user string          user name
       --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -382,16 +382,16 @@ Aliases:
 Flags:
   -h, --help                 help for create
       --host-prefix string   custom host prefix
+  -n, --namespace string     namespace
       --path string          path for Ingress path when using ingress (default \"/\")
       --port int32           serivce port number (Required)
       --public               disable authentication for this port
+  -u, --user string          user name
       --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -411,16 +411,16 @@ Aliases:
 Flags:
   -h, --help                 help for create
       --host-prefix string   custom host prefix
+  -n, --namespace string     namespace
       --path string          path for Ingress path when using ingress (default \"/\")
       --port int32           serivce port number (Required)
       --public               disable authentication for this port
+  -u, --user string          user name
       --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -544,16 +544,16 @@ Aliases:
 Flags:
   -h, --help                 help for create
       --host-prefix string   custom host prefix
+  -n, --namespace string     namespace
       --path string          path for Ingress path when using ingress (default \"/\")
       --port int32           serivce port number (Required)
       --public               disable authentication for this port
+  -u, --user string          user name
       --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -573,16 +573,16 @@ Aliases:
 Flags:
   -h, --help                 help for create
       --host-prefix string   custom host prefix
+  -n, --namespace string     namespace
       --path string          path for Ingress path when using ingress (default \"/\")
       --port int32           serivce port number (Required)
       --public               disable authentication for this port
+  -u, --user string          user name
       --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -602,16 +602,16 @@ Aliases:
 Flags:
   -h, --help                 help for create
       --host-prefix string   custom host prefix
+  -n, --namespace string     namespace
       --path string          path for Ingress path when using ingress (default \"/\")
       --port int32           serivce port number (Required)
       --public               disable authentication for this port
+  -u, --user string          user name
       --workspace string     workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -736,13 +736,13 @@ Aliases:
 Flags:
   -h, --help               help for delete
       --index int          network rule index (Required) (default -1)
+  -n, --namespace string   namespace
+  -u, --user string        user name
       --workspace string   workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -762,13 +762,13 @@ Aliases:
 Flags:
   -h, --help               help for delete
       --index int          network rule index (Required) (default -1)
+  -n, --namespace string   namespace
+  -u, --user string        user name
       --workspace string   workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -788,13 +788,13 @@ Aliases:
 Flags:
   -h, --help               help for delete
       --index int          network rule index (Required) (default -1)
+  -n, --namespace string   namespace
+  -u, --user string        user name
       --workspace string   workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -814,13 +814,13 @@ Aliases:
 Flags:
   -h, --help               help for delete
       --index int          network rule index (Required) (default -1)
+  -n, --namespace string   namespace
+  -u, --user string        user name
       --workspace string   workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """
@@ -840,13 +840,13 @@ Aliases:
 Flags:
   -h, --help               help for delete
       --index int          network rule index (Required) (default -1)
+  -n, --namespace string   namespace
+  -u, --user string        user name
       --workspace string   workspace name (Required)
 
 Global Flags:
       --context string      kube-context (default: current context)
       --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
   -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
 
 """

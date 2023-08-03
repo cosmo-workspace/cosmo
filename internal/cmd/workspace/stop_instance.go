@@ -26,6 +26,10 @@ func StopInstanceCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOption
 
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+
+	cmd.Flags().StringVarP(&o.User, "user", "u", "", "user name")
+	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
+
 	return cmd
 }
 

@@ -32,6 +32,10 @@ func CreateCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *co
 
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+
+	cmd.Flags().StringVarP(&o.User, "user", "u", "", "user name")
+	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
+
 	cmd.Flags().StringVarP(&o.Template, "template", "t", "", "template name")
 	cmd.Flags().StringVar(&o.RawVars, "vars", "", "template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)")
 	cmd.Flags().BoolVar(&o.DryRun, "dry-run", false, "dry run")
