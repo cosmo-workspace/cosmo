@@ -26,6 +26,10 @@ func RunInstanceCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions
 
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+
+	cmd.Flags().StringVarP(&o.User, "user", "u", "", "user name")
+	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
+
 	return cmd
 }
 

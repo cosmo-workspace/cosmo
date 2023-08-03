@@ -29,6 +29,11 @@ func GetCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra
 
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+
+	cmd.Flags().StringVarP(&o.User, "user", "u", "", "user name")
+	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
+	cmd.Flags().BoolVarP(&o.AllNamespace, "all-namespaces", "A", false, "all namespaces")
+
 	cmd.Flags().BoolVar(&o.showNetwork, "network", false, "show workspace network")
 	return cmd
 }
