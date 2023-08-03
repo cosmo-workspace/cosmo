@@ -169,11 +169,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1"),
 			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1", "ws2"),
 			Entry(desc, "workspace", "get", "-A"),
-			Entry(desc, "workspace", "get", "-A", "-o", "yaml"),
-			Entry(desc, "workspace", "get", "-A", "-o", "wide"),
 			Entry(desc, "workspace", "get", "-A", "--network"),
-			Entry(desc, "workspace", "get", "-A", "--network", "-o", "yaml"),
-			Entry(desc, "workspace", "get", "-A", "--network", "-o", "wide"),
 		)
 
 		DescribeTable("✅ success when workspace is empty:",
@@ -191,11 +187,7 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			Entry(desc, "workspace", "get", "--user", "user1"),
 			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1"),
 			Entry(desc, "workspace", "get", "--all-namespaces"),
-			Entry(desc, "workspace", "get", "-A", "-o", "yaml"),
-			Entry(desc, "workspace", "get", "-A", "-o", "wide"),
 			Entry(desc, "workspace", "get", "-A", "--network"),
-			Entry(desc, "workspace", "get", "-A", "--network", "-o", "yaml"),
-			Entry(desc, "workspace", "get", "-A", "--network", "-o", "wide"),
 		)
 
 		DescribeTable("❌ fail with invalid args:",
@@ -209,7 +201,6 @@ var _ = Describe("cosmoctl [workspace]", func() {
 			Entry(desc, "workspace", "get", "--namespace", "cosmo-user-user1", "--user", "user1"),
 			Entry(desc, "workspace", "get", "--namespace", "xxx"),
 			Entry(desc, "workspace", "get", "-A", "--user", "user1"),
-			Entry(desc, "workspace", "get", "-A", "-o", "xxxx"),
 			Entry(desc, "workspace", "get", "--user", "user1", "xxx"),
 			Entry(desc, "workspace", "get", "--user", "xxxx"),
 		)

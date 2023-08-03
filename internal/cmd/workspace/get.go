@@ -10,8 +10,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/printers"
-	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
-	"sigs.k8s.io/yaml"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -23,8 +21,7 @@ type GetOption struct {
 
 	WorkspaceName string
 
-	outputFormat string
-	showNetwork  bool
+	showNetwork bool
 }
 
 func GetCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
@@ -32,7 +29,6 @@ func GetCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra
 
 	cmd.PersistentPreRunE = o.PreRunE
 	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-	cmd.Flags().StringVarP(&o.outputFormat, "output", "o", "", "output format. available: 'wide', 'yaml'")
 	cmd.Flags().BoolVar(&o.showNetwork, "network", false, "show workspace network")
 	return cmd
 }
@@ -50,12 +46,6 @@ func (o *GetOption) PreRunE(cmd *cobra.Command, args []string) error {
 func (o *GetOption) Validate(cmd *cobra.Command, args []string) error {
 	if err := o.UserNamespacedCliOptions.Validate(cmd, args); err != nil {
 		return err
-	}
-	switch o.outputFormat {
-	case "wide", "yaml":
-	case "":
-	default:
-		return fmt.Errorf("invalid output format: available formats is ['wide', 'yaml']")
 	}
 	return nil
 }
@@ -121,55 +111,27 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 		o.Logr.DebugAll().Info("ListWorkspacesByUserName", "user", o.User, "wsCount", len(wss), "wsList", wss)
 	}
 
-	if o.outputFormat == "yaml" {
-		raw := make([]byte, 0, len(wss))
-		for _, ws := range wss {
-			v := ws.DeepCopy()
-			gvk, err := apiutil.GVKForObject(v, o.Scheme)
-			if err != nil {
-				return err
-			}
-			v.SetGroupVersionKind(gvk)
-			v.SetManagedFields(nil)
-			rawObj, err := yaml.Marshal(v)
-			if err != nil {
-				o.Logr.Error(err, "failed to marshal yaml", "workspace", v.Name)
-				continue
-			}
-			raw = append(raw, rawObj...)
-			raw = append(raw, []byte("---\n")...)
-		}
-		fmt.Fprintln(o.Out, string(raw))
-		return nil
-	}
-
 	w := printers.GetNewTabWriter(o.Out)
 	defer w.Flush()
 
 	if o.showNetwork {
-		columnNames := []string{"USER-NAMESPACE", "WORKSPACE-NAME", "PORT", "URL"}
+		columnNames := []string{"USER", "NAME", "PORT", "URL", "PUBLIC"}
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, ws := range wss {
 			for _, v := range ws.Spec.Network {
 				url := ws.Status.URLs[v.UniqueKey()]
-				rowdata := []string{ws.Namespace, ws.Name, strconv.Itoa(int(v.PortNumber)), url}
+				rowdata := []string{cosmov1alpha1.UserNameByNamespace(ws.Namespace), ws.Name, strconv.Itoa(int(v.PortNumber)), url, strconv.FormatBool(v.Public)}
 				fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 			}
 		}
 
 	} else {
-		columnNames := []string{"USER-NAMESPACE", "NAME", "TEMPLATE", "POD-PHASE"}
-		if o.outputFormat == "wide" {
-			columnNames = append(columnNames, "URLS")
-		}
+		columnNames := []string{"USER", "NAME", "TEMPLATE", "PHASE"}
 		fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
 
 		for _, ws := range wss {
-			rowdata := []string{ws.Namespace, ws.Name, ws.Spec.Template.Name, string(ws.Status.Phase)}
-			if o.outputFormat == "wide" {
-				rowdata = append(rowdata, fmt.Sprintf("%s", ws.Status.URLs))
-			}
+			rowdata := []string{cosmov1alpha1.UserNameByNamespace(ws.Namespace), ws.Name, ws.Spec.Template.Name, string(ws.Status.Phase)}
 			fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
 		}
 	}

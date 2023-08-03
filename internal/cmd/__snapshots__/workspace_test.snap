@@ -605,234 +605,64 @@ SnapShot = 'validation error: --all-namespaces is not supported in this command'
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --namespace cosmo-user-user1 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
+USER    NAME   TEMPLATE    PHASE
+user1   ws1    template1   Pending
+user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --namespace cosmo-user-user1 ws2 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws2    template1   Pending
+USER    NAME   TEMPLATE    PHASE
+user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --user user1 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
+USER    NAME   TEMPLATE    PHASE
+user1   ws1    template1   Pending
+user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get --user user1 ws2 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws2    template1   Pending
-"""
-
-['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o wide 1']
-SnapShot = """
-USER-NAMESPACE     WORKSPACE-NAME   PORT    URL
-cosmo-user-user1   ws1              18080   
-cosmo-user-user1   ws2              18080   
-cosmo-user-user1   ws2              1111    
-cosmo-user-user1   ws2              2222    
-"""
-
-['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network -o yaml 1']
-SnapShot = """
-apiVersion: cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 1
-  name: ws1
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  uid: xxxxxxxx
-spec:
-  network:
-  - customHostPrefix: main
-    httpPath: /
-    portNumber: 18080
-    protocol: http
-    public: false
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    serviceName: workspace
-  instance: {}
-  phase: Pending
----
-apiVersion: cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 3
-  name: ws2
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  uid: xxxxxxxx
-spec:
-  network:
-  - customHostPrefix: main
-    httpPath: /
-    portNumber: 18080
-    protocol: http
-    public: false
-  - customHostPrefix: nw1
-    httpPath: /
-    portNumber: 1111
-    protocol: http
-    public: false
-  - customHostPrefix: nw3
-    httpPath: /
-    portNumber: 2222
-    protocol: http
-    public: false
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    serviceName: workspace
-  instance: {}
-  phase: Pending
----
-
+USER    NAME   TEMPLATE    PHASE
+user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A --network 1']
 SnapShot = """
-USER-NAMESPACE     WORKSPACE-NAME   PORT    URL
-cosmo-user-user1   ws1              18080   
-cosmo-user-user1   ws2              18080   
-cosmo-user-user1   ws2              1111    
-cosmo-user-user1   ws2              2222    
-"""
-
-['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o wide 1']
-SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE   URLS
-cosmo-user-user1   ws1    template1   Pending     map[]
-cosmo-user-user1   ws2    template1   Pending     map[]
-"""
-
-['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A -o yaml 1']
-SnapShot = """
-apiVersion: cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 1
-  name: ws1
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  uid: xxxxxxxx
-spec:
-  network:
-  - customHostPrefix: main
-    httpPath: /
-    portNumber: 18080
-    protocol: http
-    public: false
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    serviceName: workspace
-  instance: {}
-  phase: Pending
----
-apiVersion: cosmo-workspace.github.io/v1alpha1
-kind: Workspace
-metadata:
-  creationTimestamp: xxxxxxxx
-  generation: 3
-  name: ws2
-  namespace: cosmo-user-user1
-  resourceVersion: xxxxxxxx
-  uid: xxxxxxxx
-spec:
-  network:
-  - customHostPrefix: main
-    httpPath: /
-    portNumber: 18080
-    protocol: http
-    public: false
-  - customHostPrefix: nw1
-    httpPath: /
-    portNumber: 1111
-    protocol: http
-    public: false
-  - customHostPrefix: nw3
-    httpPath: /
-    portNumber: 2222
-    protocol: http
-    public: false
-  replicas: 1
-  template:
-    name: template1
-status:
-  config:
-    mainServicePortName: main
-    serviceName: workspace
-  instance: {}
-  phase: Pending
----
-
+USER    NAME   PORT    URL   PUBLIC
+user1   ws1    18080         false
+user1   ws2    18080         false
+user1   ws2    1111          false
+user1   ws2    2222          false
 """
 
 ['cosmoctl [workspace] [get] ✅ success in normal context: workspace get -A 1']
 SnapShot = """
-USER-NAMESPACE     NAME   TEMPLATE    POD-PHASE
-cosmo-user-user1   ws1    template1   Pending
-cosmo-user-user1   ws2    template1   Pending
+USER    NAME   TEMPLATE    PHASE
+user1   ws1    template1   Pending
+user1   ws2    template1   Pending
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --all-namespaces 1']
 SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
+USER   NAME   TEMPLATE   PHASE
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --namespace cosmo-user-user1 1']
 SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
+USER   NAME   TEMPLATE   PHASE
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get --user user1 1']
 SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE
-"""
-
-['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network -o wide 1']
-SnapShot = """
-USER-NAMESPACE   WORKSPACE-NAME   PORT   URL
-"""
-
-['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network -o yaml 1']
-SnapShot = """
-
+USER   NAME   TEMPLATE   PHASE
 """
 
 ['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A --network 1']
 SnapShot = """
-USER-NAMESPACE   WORKSPACE-NAME   PORT   URL
-"""
-
-['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A -o wide 1']
-SnapShot = """
-USER-NAMESPACE   NAME   TEMPLATE   POD-PHASE   URLS
-"""
-
-['cosmoctl [workspace] [get] ✅ success when workspace is empty: workspace get -A -o yaml 1']
-SnapShot = """
-
+USER   NAME   PORT   URL   PUBLIC
 """
 
 ['cosmoctl [workspace] [get] ❌ fail with an unexpected error at list users: workspace get -A 1']
@@ -842,9 +672,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -863,9 +692,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -884,9 +712,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -905,9 +732,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -926,9 +752,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -947,9 +772,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -968,9 +792,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -989,30 +812,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
-
-Global Flags:
-  -A, --all-namespaces      all namespaces
-      --context string      kube-context (default: current context)
-      --kubeconfig string   kubeconfig file path (default: $HOME/.kube/config)
-  -n, --namespace string    namespace
-  -u, --user string         user name
-  -v, --verbose int         log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL (default -1)
-
-"""
-
-['cosmoctl [workspace] [get] ❌ fail with invalid args: workspace get -A -o xxxx 1']
-SnapShot = """
-Error: validation error: invalid output format: available formats is ['wide', 'yaml']
-Usage:
-  cosmoctl workspace get [WORKSPACE_NAME] [flags]
-
-Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
@@ -1031,9 +832,8 @@ Usage:
   cosmoctl workspace get [WORKSPACE_NAME] [flags]
 
 Flags:
-  -h, --help            help for get
-      --network         show workspace network
-  -o, --output string   output format. available: 'wide', 'yaml'
+  -h, --help      help for get
+      --network   show workspace network
 
 Global Flags:
   -A, --all-namespaces      all namespaces
