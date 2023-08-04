@@ -13,9 +13,6 @@ const (
 
 	// TemplateAnnKeyDisableNamePrefix is an annotation key on Template to notify controller not to add name prefix
 	TemplateAnnKeyDisableNamePrefix = "cosmo-workspace.github.io/disable-nameprefix"
-	// TemplateAnnKeySkipValidation is an annotation key on Template to notify webhook not to validate
-	TemplateAnnKeySkipValidation = "cosmo-workspace.github.io/skip-validation"
-
 	// TemplateAnnKeyUserRoles is an annotation key on Template for specific UserRoles
 	TemplateAnnKeyUserRoles = "cosmo-workspace.github.io/userroles"
 	// TemplateAnnKeyRequiredAddons is a annotation key for Template which requires useraddons

@@ -193,11 +193,18 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 				return admission.Denied(fmt.Sprintf("failed to create addon %s: template is not labeled as useraddon", tmpl.GetName()))
 			}
 
-			// check user has role for the addon
-			if ok := kosmo.IsAllowedToUseTemplate(ctx, user, tmpl); !ok {
-				requiredRoles := kubeutil.GetAnnotation(tmpl, cosmov1alpha1.TemplateAnnKeyUserRoles)
-				log.Info("user has no valid roles for template", "user", user.Name, "addon", tmpl.GetName(), "requiredRoles", requiredRoles)
-				return admission.Denied(fmt.Sprintf("addon '%s' is only for roles '%s'", tmpl.GetName(), requiredRoles))
+			isDefault, err := strconv.ParseBool(kubeutil.GetAnnotation(tmpl, cosmov1alpha1.UserAddonTemplateAnnKeyDefaultUserAddon))
+			if err != nil {
+				isDefault = false
+			}
+
+			// check user has role for the addon if addon is not default
+			if !isDefault {
+				if ok := kosmo.IsAllowedToUseTemplate(ctx, user, tmpl); !ok {
+					requiredRoles := kubeutil.GetAnnotation(tmpl, cosmov1alpha1.TemplateAnnKeyUserRoles)
+					log.Info("user has no valid roles for template", "user", user.Name, "addon", tmpl.GetName(), "requiredRoles", requiredRoles)
+					return admission.Denied(fmt.Sprintf("addon '%s' is only for roles '%s'", tmpl.GetName(), requiredRoles))
+				}
 			}
 
 			// check user has required addon
