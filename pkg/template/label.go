@@ -42,16 +42,3 @@ func IsDisableNamePrefix(tmpl cosmov1alpha1.TemplateObject) bool {
 	}
 	return disable
 }
-
-func IsSkipValidation(tmpl cosmov1alpha1.TemplateObject) bool {
-	ann := tmpl.GetAnnotations()
-	if ann == nil {
-		return false
-	}
-	val := ann[cosmov1alpha1.TemplateAnnKeySkipValidation]
-	skip, err := strconv.ParseBool(val)
-	if err != nil {
-		return false
-	}
-	return skip
-}
