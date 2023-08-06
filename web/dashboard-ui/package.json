@@ -13,6 +13,7 @@
     "coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@ahooksjs/use-url-state": "3.5.1",
     "@bufbuild/connect-web": "0.9.1",
     "@bufbuild/protobuf": "1.2.1",
     "@emotion/react": "11.11.1",

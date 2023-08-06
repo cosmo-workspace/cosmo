@@ -30,7 +30,7 @@
 | typescript                   | Apache License 2.0 | https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt                       |
 | vite                         | MIT                | https://github.com/vitejs/vite/blob/main/LICENSE                                    |
 | web-vitals                   | Apache License 2.0 | https://github.com/GoogleChrome/web-vitals/blob/main/LICENSE                        |
-
+| @ahooksjs/use-url-state      | MIT                | https://github.com/alibaba/hooks/blob/master/LICENSE                        |
 
 ## Go Library (used in go.mod)
 
