@@ -1,3 +1,4 @@
+import useUrlState from '@ahooksjs/use-url-state';
 import { AddTwoTone, CheckCircleOutlined, Clear, ContentCopy, DeleteTwoTone, DoubleArrow, EditTwoTone, ErrorOutline, ExpandLessTwoTone, ExpandMoreTwoTone, LockOutlined, MoreVertTwoTone, OpenInNewTwoTone, PlayCircleFilledWhiteTwoTone, PublicOutlined, RefreshTwoTone, SearchTwoTone, StopCircleOutlined, StopCircleTwoTone, WebTwoTone } from '@mui/icons-material';
 import { Alert, Avatar, Box, Card, CardContent, CardHeader, Chip, CircularProgress, Collapse, Divider, Fab, Grid, IconButton, InputAdornment, Link, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import copy from 'copy-to-clipboard';
@@ -243,7 +244,7 @@ const WorkspaceList: React.VFC = () => {
   const { user } = useWorkspaceUsersModule();
   const { loginUser } = useLogin();
   const isPriv = hasPrivilegedRole(loginUser?.roles || []);
-  const [searchStr, setSearchStr] = useState('');
+  const [urlParam, setUrlParam] = useUrlState({ "search": "" }, { stringifyOptions: { skipEmptyString: true } });
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [openTutorialTooltip, setOpenTutorialTooltip] = useState<boolean | undefined>(undefined);
   const createDialogDisptch = WorkspaceCreateDialogContext.useDispatch();
@@ -270,10 +271,10 @@ const WorkspaceList: React.VFC = () => {
     <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, px: 2, py: 1 }}>
       <Stack direction='row' alignItems='center' spacing={2}>
         <TextField
-          InputProps={searchStr !== "" ? {
+          InputProps={urlParam.search !== "" ? {
             startAdornment: (<InputAdornment position="start"><SearchTwoTone /></InputAdornment>),
             endAdornment: (<InputAdornment position="end">
-              <IconButton size="small" tabIndex={-1} onClick={() => { setSearchStr("") }} >
+              <IconButton size="small" tabIndex={-1} onClick={() => { setUrlParam({ search: "" }) }} >
                 <Clear />
               </IconButton>
             </InputAdornment>)
@@ -282,14 +283,14 @@ const WorkspaceList: React.VFC = () => {
           }}
           placeholder="Search"
           size='small'
-          value={searchStr}
-          onChange={e => setSearchStr(e.target.value)}
+          value={urlParam.search}
+          onChange={e => setUrlParam({ search: e.target.value })}
           onFocus={() => setIsSearchFocused(true)}
           onBlur={() => setIsSearchFocused(false)}
           sx={{ flexGrow: 0.5 }}
         />
         <Box sx={{ flexGrow: 1 }} />
-        {isPriv && (isUpSM || (!isSearchFocused && searchStr === "")) && <UserSelect />}
+        {isPriv && (isUpSM || (!isSearchFocused && urlParam.search === "")) && <UserSelect />}
         <Tooltip title="Refresh" placement="top">
           <IconButton
             color="inherit"
@@ -306,13 +307,13 @@ const WorkspaceList: React.VFC = () => {
         </AlertTooltip>
       </Stack>
     </Paper>
-    {!hooks.workspaces.filter((ws) => searchStr === '' || Boolean(ws.name.match(searchStr))).length &&
+    {!hooks.workspaces.filter((ws) => urlParam.search === '' || Boolean(ws.name.match(urlParam.search))).length &&
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
         <Typography variant='subtitle1' sx={{ color: 'text.secondary', textAlign: 'center' }}>No Workspaces found.</Typography>
       </Paper>
     }
     <Grid container spacing={1}>
-      {hooks.workspaces.filter((ws) => searchStr === '' || Boolean(ws.name.match(searchStr))).map(ws =>
+      {hooks.workspaces.filter((ws) => urlParam.search === '' || Boolean(ws.name.match(urlParam.search))).map(ws =>
         <WorkspaceItem workspace={ws} key={ws.name} />
       )}
     </Grid>

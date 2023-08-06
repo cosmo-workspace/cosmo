@@ -1,3 +1,4 @@
+import useUrlState from "@ahooksjs/use-url-state";
 import { AddTwoTone, Badge, Clear, DeleteTwoTone, ExpandLess, ExpandMore, ManageAccountsTwoTone, MoreVert, RefreshTwoTone, SearchTwoTone } from "@mui/icons-material";
 import { Box, Card, CardHeader, Chip, Collapse, Divider, Fab, Grid, IconButton, InputAdornment, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -72,23 +73,31 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
 
 const UserList: React.VFC = () => {
   const hooks = useUserModule();
-  const [searchStr, setSearchStr] = useState('');
+  const { loginUser } = useLogin();
   const userCreateDialogDispatch = UserCreateDialogContext.useDispatch();
   const userInfoDialogDispatch = UserInfoDialogContext.useDispatch();
 
   const [showFilter, setShowFilter] = useState<boolean>(false);
+  const [urlParam, setUrlParam] = useUrlState({
+    "search": "",
+    "filterRoles": [],
+  }, { parseOptions: { arrayFormat: 'comma' }, stringifyOptions: { arrayFormat: 'comma', skipEmptyString: true } });
 
-  const { loginUser } = useLogin();
-  const [filterRoles, setFilterRoles] = useState<string[]>(
-    // without privileged users, default filters are admin roles filters
-    !loginUser ? [] : hasPrivilegedRole(loginUser.roles) ? [] : hooks.existingRoles.filter((v) => hasAdminForRole(loginUser.roles, v)));
-
+  const filterRoles: string[] = typeof urlParam.filterRoles === 'string' ? [urlParam.filterRoles] : urlParam.filterRoles;
   const pushFilterRoles = (role: string) => {
-    filterRoles && setFilterRoles([...new Set([...filterRoles, role])].sort((a, b) => a < b ? -1 : 1));
+    const f = [...new Set([...filterRoles, role])].sort((a, b) => a < b ? -1 : 1)
+    filterRoles && setUrlParam({ filterRoles: f });
   }
   const popFilterRoles = (role: string) => {
-    filterRoles && setFilterRoles(filterRoles.filter(v => v !== role));
+    const f = filterRoles.filter((v: string) => v !== role)
+    filterRoles && setUrlParam({ filterRoles: f });
   }
+
+  useEffect(() => {
+    if (loginUser && !hasPrivilegedRole(loginUser.roles) && filterRoles.length === 0) {
+      setUrlParam({ filterRoles: hooks.existingRoles.filter((v) => hasAdminForRole(loginUser.roles, v)) })
+    }
+  }, [loginUser, hooks.existingRoles.length]);
 
   const isUserMatchedToFilterRoles = (user: User) => {
     for (const v of user.roles) {
@@ -107,10 +116,10 @@ const UserList: React.VFC = () => {
     <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 1 }}>
       <Stack direction='row' alignItems='center' spacing={2}>
         <TextField
-          InputProps={searchStr !== "" ? {
+          InputProps={urlParam.search !== "" ? {
             startAdornment: (<InputAdornment position="start"><SearchTwoTone /></InputAdornment>),
             endAdornment: (<InputAdornment position="end">
-              <IconButton size="small" tabIndex={-1} onClick={() => { setSearchStr("") }} >
+              <IconButton size="small" tabIndex={-1} onClick={() => { setUrlParam({ search: "" }) }} >
                 <Clear />
               </IconButton>
             </InputAdornment>)
@@ -119,8 +128,8 @@ const UserList: React.VFC = () => {
           }}
           placeholder="Search"
           size='small'
-          value={searchStr}
-          onChange={e => setSearchStr(e.target.value)}
+          value={urlParam.search}
+          onChange={e => setUrlParam({ search: e.target.value })}
           sx={{ flexGrow: 0.5 }}
         />
         <Box sx={{ flexGrow: 1 }} />
@@ -163,14 +172,14 @@ const UserList: React.VFC = () => {
 
     </Paper>
     {
-      !hooks.users.filter((us) => searchStr === '' || Boolean(us.name.match(searchStr))).length &&
+      !hooks.users.filter((us) => urlParam.search === '' || Boolean(us.name.match(urlParam.search))).length &&
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
         <Typography variant='subtitle1' sx={{ color: 'text.secondary', textAlign: 'center' }}>No Users found.</Typography>
       </Paper>
     }
     <Grid container spacing={0.5}>
       {hooks.users
-        .filter((us) => searchStr === '' || Boolean(us.name.match(searchStr)))
+        .filter((us) => urlParam.search === '' || Boolean(us.name.match(urlParam.search)))
         .filter((us) => us.status === 'Active')
         .filter((us) => (filterRoles.length == 0 || isUserMatchedToFilterRoles(us)))
         .map((us) =>
