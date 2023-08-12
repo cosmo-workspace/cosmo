@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -92,13 +91,10 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		log.Info("status phase updated", "before", current.Status.Phase, "now", ws.Status.Phase)
 	}
 
-	log.Debug().Info("finish reconcile")
-	if requeue {
-		// TODO backoff
-		log.Info("requeue after 5 sec")
-		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
-	}
-	return ctrl.Result{}, nil
+	// Requeue: true makes exponential backoff by default
+	// https://github.com/kubernetes-sigs/controller-runtime/issues/808
+	log.Debug().Info("finish reconcile", "requeue", requeue)
+	return ctrl.Result{Requeue: requeue}, nil
 }
 
 func (r *WorkspaceStatusReconciler) SetupWithManager(mgr ctrl.Manager) error {
