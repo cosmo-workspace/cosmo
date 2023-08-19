@@ -344,8 +344,11 @@ exports[`UserNameChangeDialog > UserNameChangeDialogContext > open/close > 2.ope
   flex-direction: column;
 }
 
-.emotion-10>:not(style)+:not(style) {
+.emotion-10>:not(style):not(style) {
   margin: 0;
+}
+
+.emotion-10>:not(style)~:not(style) {
   margin-top: 24px;
 }
 
@@ -1065,7 +1068,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-22:focus::-ms-input-
     </button>
   </div>
   <div
-    class="MuiDialog-root MuiModal-root emotion-4"
+    class="MuiModal-root MuiDialog-root emotion-4"
     role="presentation"
   >
     <div
@@ -1513,8 +1516,11 @@ exports[`UserNameChangeDialog > render > render 1`] = `
   flex-direction: column;
 }
 
-.emotion-6>:not(style)+:not(style) {
+.emotion-6>:not(style):not(style) {
   margin: 0;
+}
+
+.emotion-6>:not(style)~:not(style) {
   margin-top: 24px;
 }
 
@@ -2304,7 +2310,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
     aria-hidden="true"
   />
   <div
-    class="MuiDialog-root MuiModal-root emotion-0"
+    class="MuiModal-root MuiDialog-root emotion-0"
     role="presentation"
   >
     <div
