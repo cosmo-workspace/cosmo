@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -253,6 +254,16 @@ func objectRefMapToSlice(m map[types.UID]cosmov1alpha1.ObjectRef) []cosmov1alpha
 		s[i] = v
 		i++
 	}
+	sort.SliceStable(s, func(i, j int) bool {
+		x, y := s[i], s[j]
+		if x.APIVersion != y.APIVersion {
+			return x.APIVersion < y.APIVersion
+		} else if x.Kind != y.Kind {
+			return x.Kind < y.Kind
+		} else {
+			return x.Name < y.Name
+		}
+	})
 	return s
 }
 

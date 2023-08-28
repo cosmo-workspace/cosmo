@@ -34,14 +34,14 @@ SnapShot = """
     },
     \"addons\": [
       {
-        \"kind\": \"Instance\",
-        \"namespace\": \"cosmo-user-ua\",
-        \"name\": \"useraddon-namespaced-addon\",
+        \"kind\": \"ClusterInstance\",
+        \"name\": \"useraddon-ua-cluster-addon\",
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
       },
       {
-        \"kind\": \"ClusterInstance\",
-        \"name\": \"useraddon-ua-cluster-addon\",
+        \"kind\": \"Instance\",
+        \"namespace\": \"cosmo-user-ua\",
+        \"name\": \"useraddon-namespaced-addon\",
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
       }
     ]
@@ -84,14 +84,14 @@ SnapShot = """
     },
     \"addons\": [
       {
-        \"kind\": \"Instance\",
-        \"namespace\": \"cosmo-user-ua\",
-        \"name\": \"useraddon-namespaced-addon\",
+        \"kind\": \"ClusterInstance\",
+        \"name\": \"useraddon-ua-cluster-addon\",
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
       },
       {
-        \"kind\": \"ClusterInstance\",
-        \"name\": \"useraddon-ua-cluster-addon\",
+        \"kind\": \"Instance\",
+        \"namespace\": \"cosmo-user-ua\",
+        \"name\": \"useraddon-namespaced-addon\",
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\"
       }
     ]
