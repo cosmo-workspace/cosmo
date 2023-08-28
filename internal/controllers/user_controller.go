@@ -145,6 +145,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 			log.Error(e, "failed to create or update user addon")
 		}
 		user.Status.Phase = "AddonFailed"
+		err = addonErrs[0]
 	}
 
 	// update user status
