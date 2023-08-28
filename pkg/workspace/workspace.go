@@ -33,7 +33,7 @@ func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws cosmov1alp
 
 	inst.Spec = cosmov1alpha1.InstanceSpec{
 		Template: ws.Spec.Template,
-		Vars:     addWorkspaceDefaultVars(ws.Spec.Vars, ws),
+		Vars:     varsWithWorkspaceDefault(ws),
 		Override: cosmov1alpha1.OverrideSpec{
 			PatchesJson6902: []cosmov1alpha1.Json6902{
 				{
@@ -85,11 +85,14 @@ func svcPorts(netRules []cosmov1alpha1.NetworkRule) []corev1.ServicePort {
 	return ports
 }
 
-func addWorkspaceDefaultVars(vars map[string]string, ws cosmov1alpha1.Workspace) map[string]string {
+func varsWithWorkspaceDefault(ws cosmov1alpha1.Workspace) map[string]string {
 	user := cosmov1alpha1.UserNameByNamespace(ws.GetNamespace())
 
-	if vars == nil {
+	var vars map[string]string
+	if ws.Spec.Vars == nil {
 		vars = make(map[string]string)
+	} else {
+		vars = copyMap(ws.Spec.Vars)
 	}
 	// urlvar
 	vars[cosmov1alpha1.URLVarWorkspaceName] = ws.GetName()
@@ -100,4 +103,14 @@ func addWorkspaceDefaultVars(vars map[string]string, ws cosmov1alpha1.Workspace)
 	vars[cosmov1alpha1.WorkspaceTemplateVarServiceName] = ws.Status.Config.ServiceName
 
 	return vars
+}
+
+// TODO use maps in Go 1.21 instead
+func copyMap(m map[string]string) map[string]string {
+	m2 := make(map[string]string)
+
+	for key, value := range m {
+		m2[key] = value
+	}
+	return m2
 }

@@ -70,13 +70,16 @@ func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon co
 	inst.GetSpec().Template = cosmov1alpha1.TemplateRef{Name: EmptyTemplateObject(addon).GetName()}
 
 	// add default vars
+	var vars map[string]string
 	if addon.Vars == nil {
-		addon.Vars = make(map[string]string)
+		vars = make(map[string]string)
+	} else {
+		vars = copyMap(addon.Vars)
 	}
-	addon.Vars[template.DefaultVarsNamespace] = cosmov1alpha1.UserNamespace(user.Name)
-	addon.Vars[cosmov1alpha1.TemplateVarUser] = user.Name
-	addon.Vars[cosmov1alpha1.TemplateVarUserName] = user.Name
-	inst.GetSpec().Vars = addon.Vars
+	vars[template.DefaultVarsNamespace] = cosmov1alpha1.UserNamespace(user.Name)
+	vars[cosmov1alpha1.TemplateVarUser] = user.Name
+	vars[cosmov1alpha1.TemplateVarUserName] = user.Name
+	inst.GetSpec().Vars = vars
 
 	// set owner reference if scheme is not nil
 	if scheme != nil {
@@ -87,4 +90,14 @@ func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon co
 	}
 
 	return nil
+}
+
+// TODO use maps in Go 1.21 instead
+func copyMap(m map[string]string) map[string]string {
+	m2 := make(map[string]string)
+
+	for key, value := range m {
+		m2[key] = value
+	}
+	return m2
 }
