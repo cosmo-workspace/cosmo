@@ -68,11 +68,10 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	user.Status.Namespace = cosmov1alpha1.ObjectRef{
 		ObjectReference: corev1.ObjectReference{
-			APIVersion:      gvk.GroupVersion().String(),
-			Kind:            gvk.Kind,
-			Name:            ns.GetName(),
-			UID:             ns.GetUID(),
-			ResourceVersion: ns.GetResourceVersion(),
+			APIVersion: gvk.GroupVersion().String(),
+			Kind:       gvk.Kind,
+			Name:       ns.GetName(),
+			UID:        ns.GetUID(),
 		},
 		CreationTimestamp: &ns.CreationTimestamp,
 	}
@@ -138,12 +137,11 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		}
 		currAddonsMap[inst.GetUID()] = cosmov1alpha1.ObjectRef{
 			ObjectReference: corev1.ObjectReference{
-				APIVersion:      gvk.GroupVersion().String(),
-				Kind:            gvk.Kind,
-				Name:            inst.GetName(),
-				Namespace:       inst.GetNamespace(),
-				UID:             inst.GetUID(),
-				ResourceVersion: inst.GetResourceVersion(),
+				APIVersion: gvk.GroupVersion().String(),
+				Kind:       gvk.Kind,
+				Name:       inst.GetName(),
+				Namespace:  inst.GetNamespace(),
+				UID:        inst.GetUID(),
 			},
 			CreationTimestamp: &ct,
 		}

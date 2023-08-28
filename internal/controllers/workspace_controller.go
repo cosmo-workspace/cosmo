@@ -90,12 +90,11 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	gvk, _ := apiutil.GVKForObject(inst, r.Scheme)
 	ws.Status.Instance = cosmov1alpha1.ObjectRef{
 		ObjectReference: corev1.ObjectReference{
-			APIVersion:      gvk.GroupVersion().String(),
-			Kind:            gvk.Kind,
-			Name:            inst.GetName(),
-			Namespace:       inst.GetNamespace(),
-			ResourceVersion: inst.GetResourceVersion(),
-			UID:             inst.GetUID(),
+			APIVersion: gvk.GroupVersion().String(),
+			Kind:       gvk.Kind,
+			Name:       inst.GetName(),
+			Namespace:  inst.GetNamespace(),
+			UID:        inst.GetUID(),
 		},
 		CreationTimestamp: &inst.CreationTimestamp,
 	}

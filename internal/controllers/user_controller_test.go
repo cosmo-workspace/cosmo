@@ -208,7 +208,6 @@ spec:
 
 			Expect(user.Status.Namespace.Name).Should(BeEquivalentTo(createdNs.GetName()))
 			Expect(user.Status.Namespace.UID).Should(BeEquivalentTo(createdNs.GetUID()))
-			Expect(user.Status.Namespace.ResourceVersion).Should(BeEquivalentTo(createdNs.GetResourceVersion()))
 
 			By("check password secret is created")
 
@@ -323,7 +322,6 @@ spec:
 
 			Expect(user.Status.Namespace.Name).Should(BeEquivalentTo(createdNs.GetName()))
 			Expect(user.Status.Namespace.UID).Should(BeEquivalentTo(createdNs.GetUID()))
-			Expect(user.Status.Namespace.ResourceVersion).Should(BeEquivalentTo(createdNs.GetResourceVersion()))
 
 			By("check password secret is not created")
 
