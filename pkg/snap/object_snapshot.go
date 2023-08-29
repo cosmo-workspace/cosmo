@@ -26,10 +26,12 @@ func UserSnapshot(in *cosmov1alpha1.User) *cosmov1alpha1.User {
 		obj.Status.Addons[i] = v
 	}
 	sort.Slice(obj.Status.Addons, func(i, j int) bool {
-		return obj.Status.Addons[i].Kind < obj.Status.Addons[j].Kind
-	})
-	sort.Slice(obj.Status.Addons, func(i, j int) bool {
-		return obj.Status.Addons[i].Name < obj.Status.Addons[j].Name
+		x, y := obj.Status.Addons[i], obj.Status.Addons[j]
+		if x.Kind != y.Kind {
+			return x.Kind < y.Kind
+		} else {
+			return x.Name < y.Name
+		}
 	})
 
 	return obj
@@ -47,10 +49,12 @@ func InstanceSnapshot(in cosmov1alpha1.InstanceObject) cosmov1alpha1.InstanceObj
 		obj.GetStatus().LastApplied[i] = v
 	}
 	sort.Slice(obj.GetStatus().LastApplied, func(i, j int) bool {
-		return obj.GetStatus().LastApplied[i].Kind < obj.GetStatus().LastApplied[j].Kind
-	})
-	sort.Slice(obj.GetStatus().LastApplied, func(i, j int) bool {
-		return obj.GetStatus().LastApplied[i].Name < obj.GetStatus().LastApplied[j].Name
+		x, y := obj.GetStatus().LastApplied[i], obj.GetStatus().LastApplied[j]
+		if x.Kind != y.Kind {
+			return x.Kind < y.Kind
+		} else {
+			return x.Name < y.Name
+		}
 	})
 	obj.GetStatus().TemplateResourceVersion = ""
 

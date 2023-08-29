@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
@@ -144,6 +145,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			testUtil.CreateWorkspace("admin-user", "ws1", "template1", nil)
 			testUtil.CreateWorkspace("normal-user", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
 			testUtil.UpsertNetworkRule("normal-user", "ws1", "add", 18080, "/", false, -1)
+			time.Sleep(100)
 			By("---------------test start----------------")
 			ctx := context.Background()
 			res, err := client.GetWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
@@ -348,6 +350,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			testUtil.UpsertNetworkRule("normal-user", "ws1", "nw1", 9999, "/", false, -1)
 			testUtil.CreateWorkspace("admin-user", "ws1", "template1", map[string]string{})
 			testUtil.UpsertNetworkRule("admin-user", "ws1", "nw1", 9999, "/", false, -1)
+			time.Sleep(100)
 			By("---------------test start----------------")
 			ctx := context.Background()
 			res, err := client.DeleteNetworkRule(ctx, NewRequestWithSession(req, getSession(loginUser)))
