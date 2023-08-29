@@ -66,6 +66,9 @@ const (
 	WorkspaceTemplateAnnKeyDeploymentName  = "workspace.cosmo-workspace.github.io/deployment"
 	WorkspaceTemplateAnnKeyServiceName     = "workspace.cosmo-workspace.github.io/service"
 	WorkspaceTemplateAnnKeyServiceMainPort = "workspace.cosmo-workspace.github.io/service-main-port"
+
+	WorkspaceAnnKeyLastStoppedAt = "workspace.cosmo-workspace.github.io/last-stopped-at"
+	WorkspaceAnnKeyLastStartedAt = "workspace.cosmo-workspace.github.io/last-started-at"
 )
 
 const (

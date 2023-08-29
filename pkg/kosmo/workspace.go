@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"time"
 
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
@@ -13,6 +14,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
@@ -135,6 +137,14 @@ func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opt
 
 	if equality.Semantic.DeepEqual(before, ws) {
 		return nil, apierrs.NewBadRequest("no change")
+	}
+
+	if opts.Replicas != nil {
+		if *opts.Replicas == 0 {
+			kubeutil.SetAnnotation(ws, cosmov1alpha1.WorkspaceAnnKeyLastStoppedAt, time.Now().Format(time.RFC3339))
+		} else {
+			kubeutil.SetAnnotation(ws, cosmov1alpha1.WorkspaceAnnKeyLastStartedAt, time.Now().Format(time.RFC3339))
+		}
 	}
 
 	if err := c.Update(ctx, ws); err != nil {

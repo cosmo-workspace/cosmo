@@ -584,7 +584,10 @@ SnapShot = """
   \"metadata\": {
     \"name\": \"ws1\",
     \"namespace\": \"cosmo-user-admin-user\",
-    \"creationTimestamp\": null
+    \"creationTimestamp\": null,
+    \"annotations\": {
+      \"workspace.cosmo-workspace.github.io/last-stopped-at\": \"MASKED\"
+    }
   },
   \"spec\": {
     \"template\": {
@@ -643,7 +646,10 @@ SnapShot = """
   \"metadata\": {
     \"name\": \"ws1\",
     \"namespace\": \"cosmo-user-normal-user\",
-    \"creationTimestamp\": null
+    \"creationTimestamp\": null,
+    \"annotations\": {
+      \"workspace.cosmo-workspace.github.io/last-started-at\": \"MASKED\"
+    }
   },
   \"spec\": {
     \"template\": {
