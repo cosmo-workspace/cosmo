@@ -163,11 +163,11 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
 		}
-		log.Debug().Info("status updated")
+		log.Info("status updated")
 	}
 
 	if user.Status.Phase != "AddonFailed" && !cosmov1alpha1.IsPruneDisabled(&user) {
-		log.Info("start garbage collection")
+		log.Debug().Info("checking garbage collection")
 		shouldDeletes := objectRefNotExistsInMap(lastAddons, currAddonsMap)
 		for _, d := range shouldDeletes {
 			if skip, err := prune(ctx, r.Client, d); err != nil {

@@ -91,7 +91,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			log.Error(err, "failed to update InstanceStatus")
 			return ctrl.Result{}, err
 		}
-		log.Debug().Info("status updated")
+		log.Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")
@@ -198,7 +198,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 	// garbage collection
 	if len(errs) == 0 && !cosmov1alpha1.IsPruneDisabled(inst) {
-		log.Info("start garbage collection")
+		log.Debug().Info("checking garbage collection")
 		shouldDeletes := objectRefNotExistsInMap(lastApplied, currAppliedMap)
 		for _, d := range shouldDeletes {
 			if skip, err := prune(ctx, r.Client, d); err != nil {
