@@ -248,6 +248,9 @@ func sliceToObjectMap(s []cosmov1alpha1.ObjectRef) map[types.UID]cosmov1alpha1.O
 }
 
 func objectRefMapToSlice(m map[types.UID]cosmov1alpha1.ObjectRef) []cosmov1alpha1.ObjectRef {
+	if len(m) == 0 {
+		return nil
+	}
 	s := make([]cosmov1alpha1.ObjectRef, len(m))
 	var i int
 	for _, v := range m {

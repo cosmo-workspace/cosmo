@@ -160,7 +160,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	}
 
 	// update user status
-	if !equality.Semantic.DeepEqual(currentUser, user) {
+	if !equality.Semantic.DeepEqual(currentUser, &user) {
 		log.Debug().PrintObjectDiff(currentUser, &user)
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
