@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -217,7 +218,7 @@ spec:
 
 				for _, v := range createdInst.Spec.Override.PatchesJson6902 {
 					if kubeutil.DeploymentGVK == v.Target.GroupVersionKind() &&
-						v.Target.Name == wsConfig.DeploymentName {
+						v.Target.Name == instance.InstanceResourceName(wsName, wsConfig.DeploymentName) {
 						return v.Patch
 					}
 				}

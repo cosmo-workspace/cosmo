@@ -5,6 +5,9 @@ SnapShot = """
     \"name\": \"ws-test\",
     \"namespace\": \"cosmo-user-wsctltest\",
     \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo-workspace.github.io/type\": \"workspace\"
+    },
     \"ownerReferences\": [
       {
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
@@ -33,7 +36,7 @@ SnapShot = """
         {
           \"target\": {
             \"kind\": \"Service\",
-            \"name\": \"ws-svc\",
+            \"name\": \"ws-test-ws-svc\",
             \"apiVersion\": \"v1\"
           },
           \"patch\": \"[{\\\"op\\\": \\\"replace\\\",\\\"path\\\": \\\"/spec/ports\\\",\\\"value\\\": []}]\"
@@ -41,7 +44,7 @@ SnapShot = """
         {
           \"target\": {
             \"kind\": \"Deployment\",
-            \"name\": \"ws-dep\",
+            \"name\": \"ws-test-ws-dep\",
             \"apiVersion\": \"apps/v1\"
           },
           \"patch\": \"[{\\\"op\\\": \\\"replace\\\",\\\"path\\\": \\\"/spec/replicas\\\",\\\"value\\\": 1}]\"
@@ -91,6 +94,9 @@ SnapShot = """
     \"name\": \"ws-test\",
     \"namespace\": \"cosmo-user-wsctltest\",
     \"creationTimestamp\": null,
+    \"labels\": {
+      \"cosmo-workspace.github.io/type\": \"workspace\"
+    },
     \"ownerReferences\": [
       {
         \"apiVersion\": \"cosmo-workspace.github.io/v1alpha1\",
@@ -119,7 +125,7 @@ SnapShot = """
         {
           \"target\": {
             \"kind\": \"Service\",
-            \"name\": \"ws-svc\",
+            \"name\": \"ws-test-ws-svc\",
             \"apiVersion\": \"v1\"
           },
           \"patch\": \"[{\\\"op\\\": \\\"replace\\\",\\\"path\\\": \\\"/spec/ports\\\",\\\"value\\\": [{\\\"name\\\":\\\"port3000\\\",\\\"protocol\\\":\\\"TCP\\\",\\\"port\\\":3000,\\\"targetPort\\\":30000}]}]\"
@@ -127,7 +133,7 @@ SnapShot = """
         {
           \"target\": {
             \"kind\": \"Deployment\",
-            \"name\": \"ws-dep\",
+            \"name\": \"ws-test-ws-dep\",
             \"apiVersion\": \"apps/v1\"
           },
           \"patch\": \"[{\\\"op\\\": \\\"replace\\\",\\\"path\\\": \\\"/spec/replicas\\\",\\\"value\\\": 0}]\"

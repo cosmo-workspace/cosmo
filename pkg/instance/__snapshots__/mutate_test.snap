@@ -1,5 +1,5 @@
 
-[Test_mutateInstanceObject/mutate_workspace_instance - 1]
+[TestMutate/mutate_workspace_instance - 1]
 {
  "metadata": {
   "creationTimestamp": null,
@@ -38,7 +38,7 @@
 }
 ---
 
-[Test_mutateInstanceObject/mutate_useraddon_clusterinstance - 1]
+[TestMutate/mutate_useraddon_clusterinstance - 1]
 {
  "metadata": {
   "creationTimestamp": null,
