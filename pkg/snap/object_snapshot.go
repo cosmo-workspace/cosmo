@@ -97,4 +97,13 @@ func RemoveDynamicFields(o client.Object) {
 		ownerRefs[i] = v
 	}
 	o.SetOwnerReferences(ownerRefs)
+
+	if ann := o.GetAnnotations(); ann != nil {
+		if _, ok := ann[cosmov1alpha1.WorkspaceAnnKeyLastStartedAt]; ok {
+			ann[cosmov1alpha1.WorkspaceAnnKeyLastStartedAt] = "MASKED"
+		}
+		if _, ok := ann[cosmov1alpha1.WorkspaceAnnKeyLastStoppedAt]; ok {
+			ann[cosmov1alpha1.WorkspaceAnnKeyLastStoppedAt] = "MASKED"
+		}
+	}
 }

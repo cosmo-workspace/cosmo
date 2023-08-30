@@ -315,11 +315,11 @@ apply-template: kubectl cosmoctl ## Apply template.
 add-user: kubectl cosmoctl ## add user
 	@echo ====== $@ ======
 	-cosmoctl user create tom --admin 2> /dev/null
-	-cosmoctl user create gryffindor-dev --role "gryffindor" 2> /dev/null
-	-cosmoctl user create gryffindor-admin --role "gryffindor-admin" 2> /dev/null
+	-cosmoctl user create gryffindor-dev --role "gryffindor" --addon resource-limitter --addon gryffindor-serviceaccount 2> /dev/null
+	-cosmoctl user create gryffindor-admin --role "gryffindor-admin" --addon resource-limitter --addon gryffindor-serviceaccount 2> /dev/null
 	-cosmoctl user create slytherin-dev --role "slytherin" 2> /dev/null
 	-cosmoctl user create slytherin-admin --role "slytherin-admin" 2> /dev/null
-	-cosmoctl user create grytherin --role "gryffindor,slytherin" 2> /dev/null
+	-cosmoctl user create grytherin --role "gryffindor,slytherin" --addon resource-limitter --addon gryffindor-serviceaccount 2> /dev/null
 	-cosmoctl user create ldapuser1 --admin --auth-type ldap 2> /dev/null
 	-cosmoctl user reset-password tom --password vvv
 	-cosmoctl user reset-password gryffindor-dev   --password xxxxxxxx
