@@ -18,7 +18,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
@@ -60,12 +60,22 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 	ws.Status.Config = cfg
 
-	// sync instance
 	inst := &cosmov1alpha1.Instance{}
 	inst.SetName(ws.Name)
 	inst.SetNamespace(ws.Namespace)
-	op, err := kubeutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
-		return workspace.PatchWorkspaceInstanceAsDesired(inst, ws, r.Scheme)
+
+	tmpl := &cosmov1alpha1.Template{}
+	if err := r.Get(ctx, types.NamespacedName{Name: ws.Spec.Template.Name}, tmpl); err != nil {
+		return ctrl.Result{}, fmt.Errorf("failed to fetch template %s: %w", ws.Spec.Template.Name, err)
+	}
+
+	// sync
+	op, err := controllerutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
+		if err := workspace.PatchWorkspaceInstanceAsDesired(inst, ws, r.Scheme); err != nil {
+			return err
+		}
+		instance.Mutate(inst, tmpl)
+		return nil
 	})
 	if err != nil {
 		return ctrl.Result{}, err
@@ -73,7 +83,10 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if op != controllerutil.OperationResultNone {
 		log.Info("instance synced", "instance", inst.Name)
 		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, string(op), "successfully reconciled. instance synced")
+	} else {
+		log.Debug().Info("the result of update workspace instance operation is None", "instance", inst.Name)
 	}
+
 	gvk, _ := apiutil.GVKForObject(inst, r.Scheme)
 	ws.Status.Instance = cosmov1alpha1.ObjectRef{
 		ObjectReference: corev1.ObjectReference{
@@ -91,7 +104,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	ir := traefikv1.IngressRoute{}
 	ir.SetName(ws.Name)
 	ir.SetNamespace(ws.Namespace)
-	op, err = kubeutil.CreateOrUpdate(ctx, r.Client, &ir, func() error {
+	op, err = controllerutil.CreateOrUpdate(ctx, r.Client, &ir, func() error {
 		return r.TraefikIngressRouteCfg.PatchTraefikIngressRouteAsDesired(&ir, ws, r.Scheme)
 	})
 	if err != nil {
