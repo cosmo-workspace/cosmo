@@ -19,7 +19,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/password"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
+	"github.com/cosmo-workspace/cosmo/pkg/instance"
 	"github.com/cosmo-workspace/cosmo/pkg/useraddon"
 )
 
@@ -68,11 +68,10 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	user.Status.Namespace = cosmov1alpha1.ObjectRef{
 		ObjectReference: corev1.ObjectReference{
-			APIVersion:      gvk.GroupVersion().String(),
-			Kind:            gvk.Kind,
-			Name:            ns.GetName(),
-			UID:             ns.GetUID(),
-			ResourceVersion: ns.GetResourceVersion(),
+			APIVersion: gvk.GroupVersion().String(),
+			Kind:       gvk.Kind,
+			Name:       ns.GetName(),
+			UID:        ns.GetUID(),
 		},
 		CreationTimestamp: &ns.CreationTimestamp,
 	}
@@ -105,9 +104,18 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 			log.Error(errors.New("instance is nil"), "addon has no Template or ClusterTemplate", "addon", addon)
 			continue
 		}
+		tmpl := useraddon.EmptyTemplateObject(addon)
+		if err := r.Get(ctx, types.NamespacedName{Name: tmpl.GetName()}, tmpl); err != nil {
+			addonErrs = append(addonErrs, fmt.Errorf("failed to create or update addon %s: failed to fetch template: %w", tmpl.GetName(), err))
+			continue
+		}
 
-		op, err := kubeutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
-			return useraddon.PatchUserAddonInstanceAsDesired(inst, addon, user, r.Scheme)
+		op, err := controllerutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
+			if err := useraddon.PatchUserAddonInstanceAsDesired(inst, addon, user, r.Scheme); err != nil {
+				return err
+			}
+			instance.Mutate(inst, tmpl)
+			return nil
 		})
 		if err != nil {
 			addonErrs = append(addonErrs, fmt.Errorf("failed to create or update addon %s :%w", inst.GetSpec().Template.Name, err))
@@ -117,6 +125,8 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		if op != controllerutil.OperationResultNone {
 			log.Info("addon synced", "addon", addon)
 			r.Recorder.Eventf(&user, corev1.EventTypeNormal, "Addon Synced", fmt.Sprintf("addon %s is %s", addon.Template.Name, op))
+		} else {
+			log.Debug().Info("the result of update addon instance operation is None", "addon", addon)
 		}
 
 		ct := inst.GetCreationTimestamp()
@@ -127,12 +137,11 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		}
 		currAddonsMap[inst.GetUID()] = cosmov1alpha1.ObjectRef{
 			ObjectReference: corev1.ObjectReference{
-				APIVersion:      gvk.GroupVersion().String(),
-				Kind:            gvk.Kind,
-				Name:            inst.GetName(),
-				Namespace:       inst.GetNamespace(),
-				UID:             inst.GetUID(),
-				ResourceVersion: inst.GetResourceVersion(),
+				APIVersion: gvk.GroupVersion().String(),
+				Kind:       gvk.Kind,
+				Name:       inst.GetName(),
+				Namespace:  inst.GetNamespace(),
+				UID:        inst.GetUID(),
 			},
 			CreationTimestamp: &ct,
 		}
@@ -145,19 +154,20 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 			log.Error(e, "failed to create or update user addon")
 		}
 		user.Status.Phase = "AddonFailed"
+		err = addonErrs[0]
 	}
 
 	// update user status
-	if !equality.Semantic.DeepEqual(currentUser, user) {
+	if !equality.Semantic.DeepEqual(currentUser, &user) {
 		log.Debug().PrintObjectDiff(currentUser, &user)
 		if err := r.Status().Update(ctx, &user); err != nil {
 			return ctrl.Result{}, err
 		}
-		log.Debug().Info("status updated")
+		log.Info("status updated")
 	}
 
 	if user.Status.Phase != "AddonFailed" && !cosmov1alpha1.IsPruneDisabled(&user) {
-		log.Info("start garbage collection")
+		log.Debug().Info("checking garbage collection")
 		shouldDeletes := objectRefNotExistsInMap(lastAddons, currAddonsMap)
 		for _, d := range shouldDeletes {
 			if skip, err := prune(ctx, r.Client, d); err != nil {

@@ -81,7 +81,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			log.Error(err, "failed to update InstanceStatus")
 			return ctrl.Result{}, err
 		}
-		log.Debug().Info("status updated")
+		log.Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")

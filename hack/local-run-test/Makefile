@@ -363,7 +363,7 @@ run-manager-local: go
 		--metrics-bind-address :8085 \
 		--cert-dir . \
 		--zap-log-level=$(LOGLEVEL) \
-		--zap-devel=false \
+		--zap-devel=true \
 		--workspace-urlbase-protocol=https \
 		--workspace-urlbase-host=$(DEFAULT_URLBASE_HOST) \
 		--workspace-urlbase-domain=$(DOMAIN)

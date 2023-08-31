@@ -1,4 +1,4 @@
-package webhooks
+package instance
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
 
-func Test_mutateInstanceObject(t *testing.T) {
+func TestMutate(t *testing.T) {
 	type args struct {
 		inst cosmov1alpha1.InstanceObject
 		tmpl cosmov1alpha1.TemplateObject
@@ -106,7 +106,7 @@ func Test_mutateInstanceObject(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mutateInstanceObject(tt.args.inst, tt.args.tmpl)
+			Mutate(tt.args.inst, tt.args.tmpl)
 			snaps.MatchJSON(t, tt.args.inst)
 		})
 	}

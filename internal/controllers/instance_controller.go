@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -90,7 +91,7 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			log.Error(err, "failed to update InstanceStatus")
 			return ctrl.Result{}, err
 		}
-		log.Debug().Info("status updated")
+		log.Info("status updated")
 	}
 
 	log.Debug().Info("finish reconcile")
@@ -197,7 +198,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 
 	// garbage collection
 	if len(errs) == 0 && !cosmov1alpha1.IsPruneDisabled(inst) {
-		log.Info("start garbage collection")
+		log.Debug().Info("checking garbage collection")
 		shouldDeletes := objectRefNotExistsInMap(lastApplied, currAppliedMap)
 		for _, d := range shouldDeletes {
 			if skip, err := prune(ctx, r.Client, d); err != nil {
@@ -247,12 +248,25 @@ func sliceToObjectMap(s []cosmov1alpha1.ObjectRef) map[types.UID]cosmov1alpha1.O
 }
 
 func objectRefMapToSlice(m map[types.UID]cosmov1alpha1.ObjectRef) []cosmov1alpha1.ObjectRef {
+	if len(m) == 0 {
+		return nil
+	}
 	s := make([]cosmov1alpha1.ObjectRef, len(m))
 	var i int
 	for _, v := range m {
 		s[i] = v
 		i++
 	}
+	sort.SliceStable(s, func(i, j int) bool {
+		x, y := s[i], s[j]
+		if x.APIVersion != y.APIVersion {
+			return x.APIVersion < y.APIVersion
+		} else if x.Kind != y.Kind {
+			return x.Kind < y.Kind
+		} else {
+			return x.Name < y.Name
+		}
+	})
 	return s
 }
 

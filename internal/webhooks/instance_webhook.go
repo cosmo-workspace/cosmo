@@ -87,7 +87,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 
 	before := inst.DeepCopyObject().(cosmov1alpha1.InstanceObject)
 
-	mutateInstanceObject(inst, tmpl)
+	instance.Mutate(inst, tmpl)
 
 	log.Debug().PrintObjectDiff(before, inst)
 
@@ -97,41 +97,6 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 		return admission.Errored(http.StatusInternalServerError, err)
 	}
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
-}
-
-func mutateInstanceObject(inst cosmov1alpha1.InstanceObject, tmpl cosmov1alpha1.TemplateObject) {
-	instSpec := inst.GetSpec()
-	tmplSpec := tmpl.GetSpec()
-
-	// mutate the fields in instance
-	// propagate template type annotation to instance annotation
-	if tmplType, ok := template.GetTemplateType(tmpl); ok {
-		template.SetTemplateType(inst, tmplType)
-	}
-
-	// defaulting required vars
-	for _, v := range tmplSpec.RequiredVars {
-		found := false
-		for key := range instSpec.Vars {
-			if template.FixupTemplateVarKey(key) == template.FixupTemplateVarKey(v.Var) {
-				found = true
-			}
-		}
-		if !found && v.Default != "" {
-			if instSpec.Vars == nil {
-				instSpec.Vars = make(map[string]string)
-			}
-			instSpec.Vars[v.Var] = v.Default
-		}
-	}
-
-	// update name to instance fixed resource name
-	patchSpec := instSpec.Override.PatchesJson6902
-	for i, p := range patchSpec {
-		if p.Target.Name != "" && !template.IsDisableNamePrefix(tmpl) {
-			patchSpec[i].Target.Name = instance.InstanceResourceName(inst.GetName(), p.Target.Name)
-		}
-	}
 }
 
 func (h *InstanceMutationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
