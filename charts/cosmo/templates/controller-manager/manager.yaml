@@ -87,6 +87,7 @@ spec:
   replicas: {{ .Values.controllerManager.replicaCount }}
   selector:
     matchLabels:
+      cosmo-workspace.github.io: controller-manager
       {{- include "cosmo.selectorLabels" . | nindent 6 }}
   template:
     metadata:

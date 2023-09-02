@@ -61,6 +61,7 @@ spec:
   replicas: {{ .Values.dashboard.replicaCount }}
   selector:
     matchLabels:
+      cosmo-workspace.github.io: dashboard
       {{- include "cosmo.selectorLabels" . | nindent 6 }}
   template:
     metadata:
