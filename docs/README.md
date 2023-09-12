@@ -1,4 +1,4 @@
-# COSMO - Opensource WebIDE & DevEnvironment Platform on Kubernetes
+# COSMO - Open source WebIDE & DevEnvironment Platform on Kubernetes
 
 <img src="https://raw.githubusercontent.com/cosmo-workspace/cosmo/main/logo/logo-with-name-small.png">
 
@@ -32,6 +32,7 @@ The easiest way is to use a pre-built WebIDE container image provided by great o
 - https://hub.docker.com/r/codercom/code-server
 - https://hub.docker.com/r/gitpod/openvscode-server
 - https://hub.docker.com/r/linuxserver/openvscode-server
+- https://jupyter-docker-stacks.readthedocs.io/en/latest/
 
 We recommend to build your own container image base on the above image with the programming languages, extensions, development tools, etc. which required for your project, in order to start developing your project ASAP by just launching Workspace.
 
@@ -48,9 +49,7 @@ Integrating with the great ecosystem of Kubernetes, you can run a robust, scalab
 - CodeRepository: Self-hosted Git server / AWS CodeCommit / Cloud Source Repositories
 
 ## Authentication
-COSMO bundles traefik authentication plugins by default and you can protect Workspace URLs by authentication.
-
-
+COSMO bundles a traefik authentication plugin and you can protect Workspace URLs by default.
 
 ## Dynamic dev-server ports
 You can expose dynamic dev-server ports in WebIDE container.
@@ -63,7 +62,7 @@ Automatically configure routing and secure URL with User authentication.
 
 - Dashboard: User Interface for managing COSMO resources.
 - Controller: Sync Instances of Template continually by applying Kubernetes manifests in the Template.
-- AuthPlugin: [Traefik](https://traefik.io/) plugin for User authentication to protect Workspaces.
+- Traefik & AuthPlugin: [Traefik](https://traefik.io/) is router of Workspaces and [Traefik](https://traefik.io/) plugin does User authentication to protect Workspaces.
 
 COSMO has 3 main concepts, which is implemented as Kubernetes CRD.
 
@@ -87,8 +86,10 @@ See [GETTING-STARTED.md](https://github.com/cosmo-workspace/cosmo/blob/main/docs
 | **COSMO** | - | **No database required** | ✅ | ✅ | ✅ | ✅ |
 | [`Eclipse Che local install`](https://www.eclipse.org/che/) | - | Yes (Postgres) -> No [from 7.62.0](https://che.eclipseprojects.io/2023/03/20/@ilya.buziuk-decommissioning-postgresql-database.html) | - | [✅](https://www.eclipse.org/che/docs/che-7/administration-guide/authenticating-users/) | - | [✅ devfile](https://eclipse.dev/che/docs/stable/end-user-guide/devfile-introduction/) | 
 | [`Coder self-hosted`](https://coder.com/) | [Yes](https://coder.com/pricing) | [Yes (Postgres)](https://coder.com/docs/v2/latest/about/architecture)| [✅](https://coder.com/docs/v2/latest/about/architecture#coderd) | [✅](https://coder.com/docs/v2/latest/admin/auth) | ✅ |
-| [`Gitpod Self-Hosted`](https://www.gitpod.io/self-hosted) | [No longer suppoerted](https://www.gitpod.io/blog/introducing-gitpod-dedicated) | Yes (MySQL) | [✅](https://www.gitpod.io/docs/config-ports) | [✅](https://www.gitpod.io/docs/configure/authentication#authentication) | [✅](https://www.gitpod.io/docs/config-ports) | ✅ |
+| [`Gitpod Self-Hosted`](https://www.gitpod.io/self-hosted) | [No longer suppoerted](https://www.gitpod.io/docs/configure/self-hosted/latest) | Yes (MySQL) | [✅](https://www.gitpod.io/docs/config-ports) | [✅](https://www.gitpod.io/docs/configure/authentication#authentication) | [✅](https://www.gitpod.io/docs/config-ports) | ✅ |
 
-Existing products are great but too rich for developers and administrators that require too much knowledge.
+Existing products are so great and rich features but they requires learning about the products.
+[Gitpod choosed that no longer support self-hosted. they says:](https://www.gitpod.io/blog/introducing-gitpod-dedicated)
+> Despite all that effort, self-hosted Gitpod has been increasingly difficult for us to support and it has shown to be a burden for our clients to manage and operate their own Gitpod instances. 
 
-While COSMO does not have much that can be done with the UI, it can be easily operated with only knowledge of Kubernetes, as it only requires a set of native Kubernetes manifests (known as YAML) to be defined as a Template.
+While COSMO does not have much features, it is designed to be minimumn and remove feature that can be use Kubernetes ecosystem. And that is easy for standard Kubernetes administrators to operate with only knowledge of Kubernetes, as it only requires a set of native Kubernetes manifests (known as YAML) to be defined as a Template.
