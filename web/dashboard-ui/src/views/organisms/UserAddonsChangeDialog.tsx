@@ -10,6 +10,7 @@ import {
 import React, { useEffect } from "react";
 import { UseFormRegisterReturn, useFieldArray, useForm } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
+import { useLogin } from "../../components/LoginProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
@@ -32,6 +33,7 @@ interface Inputs {
 export const UserAddonChangeDialog: React.FC<{ onClose: () => void, user: User }> = ({ onClose, user }) => {
     console.log('UserAddonChangeDialog');
     const hooks = useUserModule();
+    const { refreshUserInfo } = useLogin();
 
     const { register, handleSubmit, watch, control, formState: { errors } } = useForm<Inputs>({
         defaultValues: {}
@@ -55,7 +57,7 @@ export const UserAddonChangeDialog: React.FC<{ onClose: () => void, user: User }
         <Dialog open={true}
             fullWidth maxWidth={'xs'}>
             <DialogTitle>Change UserAddons</DialogTitle>
-            <form onSubmit={handleSubmit((inp: Inputs) => {
+            <form onSubmit={handleSubmit(async (inp: Inputs) => {
                 console.log(inp)
                 const userAddons = inp.addons.filter(v => v.enable)
                     .map((inpAddon) => {
@@ -69,8 +71,9 @@ export const UserAddonChangeDialog: React.FC<{ onClose: () => void, user: User }
                 console.log("protoUserAddons", protoUserAddons)
 
                 // call API
-                hooks.updateAddons(user.name, protoUserAddons)
-                    .then(() => onClose());
+                await hooks.updateAddons(user.name, protoUserAddons);
+                await refreshUserInfo();
+                onClose();
             })}
                 autoComplete="new-password">
                 <DialogContent>

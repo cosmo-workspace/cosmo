@@ -3,8 +3,9 @@ import {
   Button, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, Grid, IconButton, Stack, TextField, Typography
 } from "@mui/material";
 import React from "react";
-import { useFieldArray, useForm, UseFormRegisterReturn } from "react-hook-form";
+import { UseFormRegisterReturn, useFieldArray, useForm } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
+import { useLogin } from "../../components/LoginProvider";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { FormSelectableChip } from "../atoms/SelectableChips";
 import { TextFieldLabel } from "../atoms/TextFieldLabel";
@@ -25,6 +26,7 @@ interface Inputs {
 export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = ({ onClose, user }) => {
   console.log('RoleChangeDialog');
   const hooks = useUserModule();
+  const { refreshUserInfo } = useLogin();
 
   const { register, handleSubmit, control, formState: { errors, defaultValues } } = useForm<Inputs>({
     defaultValues: {
@@ -50,7 +52,7 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
     <Dialog open={true}
       fullWidth maxWidth={'xs'}>
       <DialogTitle>Change Role</DialogTitle>
-      <form onSubmit={handleSubmit((inp: Inputs) => {
+      <form onSubmit={handleSubmit(async (inp: Inputs) => {
         console.log(inp)
         let protoRoles = inp.roles.filter((v) => { return v.name !== "" }).map((v) => { return v.name })
         console.log(protoRoles)
@@ -61,8 +63,9 @@ export const RoleChangeDialog: React.VFC<{ onClose: () => void, user: User }> = 
         })
         protoRoles = [...new Set(protoRoles)]; // remove duplicates
         console.log("protoRoles", protoRoles)
-        hooks.updateRole(user.name, protoRoles)
-          .then(() => onClose());
+        await hooks.updateRole(user.name, protoRoles);
+        await refreshUserInfo();
+        onClose();
       })}
         autoComplete="new-password">
         <DialogContent>
