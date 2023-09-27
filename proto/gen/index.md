@@ -46,6 +46,25 @@
   
     - [UserService](#dashboard-v1alpha1-UserService)
   
+- [dashboard/v1alpha1/webauthn.proto](#dashboard_v1alpha1_webauthn-proto)
+    - [BeginLoginRequest](#dashboard-v1alpha1-BeginLoginRequest)
+    - [BeginLoginResponse](#dashboard-v1alpha1-BeginLoginResponse)
+    - [BeginRegistrationRequest](#dashboard-v1alpha1-BeginRegistrationRequest)
+    - [BeginRegistrationResponse](#dashboard-v1alpha1-BeginRegistrationResponse)
+    - [Credential](#dashboard-v1alpha1-Credential)
+    - [DeleteCredentialRequest](#dashboard-v1alpha1-DeleteCredentialRequest)
+    - [DeleteCredentialResponse](#dashboard-v1alpha1-DeleteCredentialResponse)
+    - [FinishLoginRequest](#dashboard-v1alpha1-FinishLoginRequest)
+    - [FinishLoginResponse](#dashboard-v1alpha1-FinishLoginResponse)
+    - [FinishRegistrationRequest](#dashboard-v1alpha1-FinishRegistrationRequest)
+    - [FinishRegistrationResponse](#dashboard-v1alpha1-FinishRegistrationResponse)
+    - [ListCredentialsRequest](#dashboard-v1alpha1-ListCredentialsRequest)
+    - [ListCredentialsResponse](#dashboard-v1alpha1-ListCredentialsResponse)
+    - [UpdateCredentialRequest](#dashboard-v1alpha1-UpdateCredentialRequest)
+    - [UpdateCredentialResponse](#dashboard-v1alpha1-UpdateCredentialResponse)
+  
+    - [WebAuthnService](#dashboard-v1alpha1-WebAuthnService)
+  
 - [dashboard/v1alpha1/workspace.proto](#dashboard_v1alpha1_workspace-proto)
     - [NetworkRule](#dashboard-v1alpha1-NetworkRule)
     - [Workspace](#dashboard-v1alpha1-Workspace)
@@ -633,6 +652,272 @@
 | UpdateUserPassword | [UpdateUserPasswordRequest](#dashboard-v1alpha1-UpdateUserPasswordRequest) | [UpdateUserPasswordResponse](#dashboard-v1alpha1-UpdateUserPasswordResponse) | Update a single User password |
 | UpdateUserRole | [UpdateUserRoleRequest](#dashboard-v1alpha1-UpdateUserRoleRequest) | [UpdateUserRoleResponse](#dashboard-v1alpha1-UpdateUserRoleResponse) | Update a single User role |
 | UpdateUserAddons | [UpdateUserAddonsRequest](#dashboard-v1alpha1-UpdateUserAddonsRequest) | [UpdateUserAddonsResponse](#dashboard-v1alpha1-UpdateUserAddonsResponse) | Update a single User role |
+
+ 
+
+
+
+<a name="dashboard_v1alpha1_webauthn-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## dashboard/v1alpha1/webauthn.proto
+
+
+
+<a name="dashboard-v1alpha1-BeginLoginRequest"></a>
+
+### BeginLoginRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-BeginLoginResponse"></a>
+
+### BeginLoginResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| credential_request_options | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-BeginRegistrationRequest"></a>
+
+### BeginRegistrationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-BeginRegistrationResponse"></a>
+
+### BeginRegistrationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| credential_creation_options | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-Credential"></a>
+
+### Credential
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+| display_name | [string](#string) |  |  |
+| timestamp | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-DeleteCredentialRequest"></a>
+
+### DeleteCredentialRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+| cred_id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-DeleteCredentialResponse"></a>
+
+### DeleteCredentialResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-FinishLoginRequest"></a>
+
+### FinishLoginRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+| credential_request_result | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-FinishLoginResponse"></a>
+
+### FinishLoginResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+| expire_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-FinishRegistrationRequest"></a>
+
+### FinishRegistrationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+| credential_creation_response | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-FinishRegistrationResponse"></a>
+
+### FinishRegistrationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-ListCredentialsRequest"></a>
+
+### ListCredentialsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-ListCredentialsResponse"></a>
+
+### ListCredentialsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+| credentials | [Credential](#dashboard-v1alpha1-Credential) | repeated |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-UpdateCredentialRequest"></a>
+
+### UpdateCredentialRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+| cred_id | [string](#string) |  |  |
+| cred_display_name | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-UpdateCredentialResponse"></a>
+
+### UpdateCredentialResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="dashboard-v1alpha1-WebAuthnService"></a>
+
+### WebAuthnService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| BeginRegistration | [BeginRegistrationRequest](#dashboard-v1alpha1-BeginRegistrationRequest) | [BeginRegistrationResponse](#dashboard-v1alpha1-BeginRegistrationResponse) | BeginRegistration returns CredentialCreateOptions to window.navigator.create() which is serialized as JSON string Also `publicKey.user.id`` and `publicKey.challenge` are base64url encoded |
+| FinishRegistration | [FinishRegistrationRequest](#dashboard-v1alpha1-FinishRegistrationRequest) | [FinishRegistrationResponse](#dashboard-v1alpha1-FinishRegistrationResponse) | FinishRegistration check the result of window.navigator.create() `rawId`, `response.clientDataJSON` and `response.attestationObject` in the result must be base64url encoded and all JSON must be serialized as string |
+| BeginLogin | [BeginLoginRequest](#dashboard-v1alpha1-BeginLoginRequest) | [BeginLoginResponse](#dashboard-v1alpha1-BeginLoginResponse) | BeginLogin returns CredentialRequestOptions to window.navigator.get() which is serialized as JSON string Also `publicKey.allowCredentials[*].id` and `publicKey.challenge` are base64url encoded |
+| FinishLogin | [FinishLoginRequest](#dashboard-v1alpha1-FinishLoginRequest) | [FinishLoginResponse](#dashboard-v1alpha1-FinishLoginResponse) | FinishLogin check the result of window.navigator.get() `rawId`, `response.clientDataJSON`, `response.authenticatorData`, `response.signature`, `response.userHandle` in the result must be base64url encoded and all JSON must be serialized as string |
+| ListCredentials | [ListCredentialsRequest](#dashboard-v1alpha1-ListCredentialsRequest) | [ListCredentialsResponse](#dashboard-v1alpha1-ListCredentialsResponse) | ListCredentials returns registered credential ID list |
+| UpdateCredential | [UpdateCredentialRequest](#dashboard-v1alpha1-UpdateCredentialRequest) | [UpdateCredentialResponse](#dashboard-v1alpha1-UpdateCredentialResponse) | UpdateCredential updates registed credential&#39;s human readable infomations |
+| DeleteCredential | [DeleteCredentialRequest](#dashboard-v1alpha1-DeleteCredentialRequest) | [DeleteCredentialResponse](#dashboard-v1alpha1-DeleteCredentialResponse) | DeleteCredential remove registered credential |
 
  
 

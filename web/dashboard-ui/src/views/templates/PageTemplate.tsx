@@ -1,4 +1,4 @@
-import { AccountCircle, Badge, ExitToApp, LockOutlined, Menu as MenuIcon, ReportProblem, SupervisorAccountTwoTone, VpnKey, WebTwoTone } from "@mui/icons-material";
+import { AccountCircle, Badge, ExitToApp, FingerprintTwoTone, LockOutlined, Menu as MenuIcon, ReportProblem, SupervisorAccountTwoTone, VpnKey, WebTwoTone } from "@mui/icons-material";
 import {
   Alert,
   Box, Button, Chip,
@@ -15,6 +15,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { useLogin } from "../../components/LoginProvider";
 import logo from "../../logo-with-name-small.png";
 import { NameAvatar } from "../atoms/NameAvatar";
+import { AuthenticatorManageDialogContext } from "../organisms/AuthenticatorManageDialog";
 import { PasswordChangeDialogContext } from "../organisms/PasswordChangeDialog";
 import { UserInfoDialogContext } from "../organisms/UserActionDialog";
 import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
@@ -49,6 +50,7 @@ interface PageTemplateProps {
 export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> = ({ children, title, }) => {
 
   const { loginUser, logout } = useLogin();
+  const authenticatorManagerDialogDispatch = AuthenticatorManageDialogContext.useDispatch();
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
   const userNameChangeDialogDispach = UserNameChangeDialogContext.useDispatch();
   const userAddonChangeDialogDispatch = UserAddonChangeDialogContext.useDispatch();
@@ -56,6 +58,12 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
   const isAdmin = isAdminUser(loginUser);
   const isSignIn = Boolean(loginUser);
   const canChangePassword = Boolean(loginUser?.authType === 'password-secret');
+
+  const manageAuthenticators = () => {
+    console.log('manageAuthenticators');
+    authenticatorManagerDialogDispatch(true, { user: loginUser! });
+    setAnchorEl(null);
+  }
 
   const changeUserName = () => {
     console.log('changeUserName');
@@ -159,17 +167,21 @@ export const PageTemplate: React.FC<React.PropsWithChildren<PageTemplateProps>> 
                 </Grid>
               </Stack>
               <Divider sx={{ mb: 1 }} />
-              {isSignIn && <MenuItem onClick={() => changeUserName()}>
-                <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
-                <ListItemText>Change user name...</ListItemText>
+              {isSignIn && <MenuItem onClick={() => manageAuthenticators()}>
+                <ListItemIcon><FingerprintTwoTone fontSize="small" /></ListItemIcon>
+                <ListItemText>Manage WebAuthn Credentials...</ListItemText>
               </MenuItem>}
               {isSignIn && canChangePassword && <MenuItem onClick={() => changePassword()}>
                 <ListItemIcon><VpnKey fontSize="small" /></ListItemIcon>
-                <ListItemText>Change password...</ListItemText>
+                <ListItemText>Change Password...</ListItemText>
+              </MenuItem>}
+              {isSignIn && <MenuItem onClick={() => changeUserName()}>
+                <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
+                <ListItemText>Change Name...</ListItemText>
               </MenuItem>}
               {isSignIn && isAdmin && <MenuItem onClick={() => changeAddons()}>
                 <ListItemIcon><Badge fontSize="small" /></ListItemIcon>
-                <ListItemText>Change addons...</ListItemText>
+                <ListItemText>Change Addons...</ListItemText>
               </MenuItem>}
               <Divider />
               {isSignIn && <MenuItem onClick={() => logout()}>

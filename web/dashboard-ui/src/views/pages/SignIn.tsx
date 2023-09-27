@@ -1,6 +1,7 @@
+import { Fingerprint, Person } from '@mui/icons-material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Avatar, Button, Container, CssBaseline, Stack, TextField, Typography } from '@mui/material';
-import React from 'react';
+import { Avatar, Button, Container, CssBaseline, Divider, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import React, { useEffect } from 'react';
 import { UseFormRegisterReturn, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLogin } from '../../components/LoginProvider';
@@ -47,7 +48,7 @@ export function SignIn() {
 const SignInContent: React.VFC = () => {
   console.log('SignIn');
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
-  const { login, loginUser } = useLogin();
+  const { login, loginUser, loginWithWebAuthn } = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -77,15 +78,37 @@ const SignInContent: React.VFC = () => {
 
   /**
    * submit
-   */
+  */
+  const [usePasswordLogin, setUsePasswordLogin] = React.useState(false);
+
   const onSignIn = async (data: Inputs) => {
     console.log('onSignIn');
-    const { requirePasswordUpdate } = await login(data.username, data.password);
-    if (requirePasswordUpdate) {
-      passwordChangeDialogDispach(true);
+    if (usePasswordLogin) {
+      const { requirePasswordUpdate } = await login(data.username, data.password);
+      if (requirePasswordUpdate) {
+        passwordChangeDialogDispach(true);
+      }
+    } else {
+      await loginWithWebAuthn(data.username);
     }
     redirect();
   }
+
+  const checkWebAuthnAvailable = () => {
+    if (window.PublicKeyCredential) {
+      PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        .then(uvpaa => {
+          if (uvpaa && localStorage.getItem(`credId`)) {
+            setUsePasswordLogin(false);
+          } else {
+            setUsePasswordLogin(true);
+          }
+        });
+    } else {
+      setUsePasswordLogin(true);
+    }
+  }
+  useEffect(() => { checkWebAuthnAvailable() }, []);
 
   return (
     <Stack sx={{ marginTop: 3, alignItems: 'center' }}>
@@ -96,6 +119,7 @@ const SignInContent: React.VFC = () => {
       <Typography color="textPrimary" variant="body1">cosmo-dashboard</Typography>
       <form noValidate onSubmit={handleSubmit(onSignIn)}>
         <TextField label="User ID" margin="normal" fullWidth autoComplete="username" autoFocus defaultValue={loginUser?.name}
+          InputProps={{ startAdornment: (<InputAdornment position="start"><Person /></InputAdornment>) }}
           {...registerMui(register("username", {
             required: { value: true, message: "Required" },
             pattern: {
@@ -107,15 +131,19 @@ const SignInContent: React.VFC = () => {
           error={Boolean(errors.username)}
           helperText={(errors.username && errors.username.message)}
         />
-        <PasswordTextField label="Password" margin="normal" fullWidth autoComplete="current-password" defaultValue={loginUser && "you-are-logined"}
-          {...registerMui(register("password", {
-            required: { value: true, message: "Required" },
-            maxLength: { value: 128, message: "Max 128 characters" },
-          }))}
-          error={Boolean(errors.password)}
-          helperText={(errors.password && errors.password.message)}
-        />
-        <Button type='submit' fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>Sign In</Button>
+        {usePasswordLogin &&
+          <PasswordTextField label="Password" margin="normal" fullWidth autoComplete="current-password" defaultValue={loginUser && "you-are-logined"}
+            {...registerMui(register("password", {
+              required: { value: true, message: "Required" },
+              maxLength: { value: 128, message: "Max 128 characters" },
+            }))}
+            error={Boolean(errors.password)}
+            helperText={(errors.password && errors.password.message)}
+          />}
+        <Button type='submit' fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>{usePasswordLogin ? "Sign In" : <Fingerprint />}</Button>
+        <Divider />
+        {usePasswordLogin ||
+          <Button type='button' fullWidth variant="outlined" sx={{ mt: 3, mb: 2 }} onClick={() => setUsePasswordLogin(true)}>Use password</Button>}
       </form>
     </Stack>
   );

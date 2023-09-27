@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-webauthn/webauthn/webauthn"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -141,6 +142,15 @@ var _ = BeforeSuite(func() {
 		},
 	)
 
+	wconfig := &webauthn.Config{
+		RPDisplayName: "COSMO Dashboard",
+		RPID:          "localhost:8888",
+		RPOrigins:     []string{"http://localhost:8888"},
+		Debug:         true,
+	}
+	wa, err := webauthn.New(wconfig)
+	Expect(err).NotTo(HaveOccurred())
+
 	serv := (&Server{
 		Log:                 clog.NewLogger(ctrl.Log.WithName("dashboard")),
 		Klient:              klient,
@@ -157,6 +167,7 @@ var _ = BeforeSuite(func() {
 		CookieBlockKey:      "----+----1----+----2----+----3--",
 		CookieSessionName:   "test-server",
 		Authorizers:         auths,
+		webauthn:            wa,
 	})
 	err = mgr.Add(serv)
 	Expect(err).NotTo(HaveOccurred())

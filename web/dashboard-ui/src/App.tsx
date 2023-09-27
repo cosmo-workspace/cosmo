@@ -8,6 +8,7 @@ import { LoginProvider } from './components/LoginProvider';
 import { MyThemeProvider } from './components/MyThemeProvider';
 import { PageSettingsProvider } from './components/PageSettingsProvider';
 import { ProgressProvider } from './components/ProgressProvider';
+import { AuthenticatorManageDialogContext } from './views/organisms/AuthenticatorManageDialog';
 import { PasswordChangeDialogContext } from './views/organisms/PasswordChangeDialog';
 import { UserInfoDialogContext } from './views/organisms/UserActionDialog';
 import { UserAddonChangeDialogContext } from './views/organisms/UserAddonsChangeDialog';
@@ -68,13 +69,15 @@ function App() {
                   <LoginProvider>
                     <UserContext.Provider>
                       <UserInfoDialogContext.Provider>
-                        <UserNameChangeDialogContext.Provider>
-                          <UserAddonChangeDialogContext.Provider>
-                            <PasswordChangeDialogContext.Provider>
-                              <SwitchApp />
-                            </PasswordChangeDialogContext.Provider>
-                          </UserAddonChangeDialogContext.Provider>
-                        </UserNameChangeDialogContext.Provider>
+                        <AuthenticatorManageDialogContext.Provider>
+                          <UserNameChangeDialogContext.Provider>
+                            <UserAddonChangeDialogContext.Provider>
+                              <PasswordChangeDialogContext.Provider>
+                                <SwitchApp />
+                              </PasswordChangeDialogContext.Provider>
+                            </UserAddonChangeDialogContext.Provider>
+                          </UserNameChangeDialogContext.Provider>
+                        </AuthenticatorManageDialogContext.Provider>
                       </UserInfoDialogContext.Provider>
                     </UserContext.Provider>
                   </LoginProvider>

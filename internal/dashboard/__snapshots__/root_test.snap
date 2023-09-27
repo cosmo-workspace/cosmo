@@ -33,6 +33,7 @@ Flags:
       --one_output                        If true, only write logs to their native severity level (vs also writing to each lower severity level; no effect when -logtostderr=true)
       --port int                          Port for dashboard server (default 8443)
       --serve-dir string                  Static file dir to serve (default "/app/public")
+      --signin-url string                 Dashboard signin url
       --skip_headers                      If true, avoid header prefixes in the log messages
       --skip_log_headers                  If true, avoid headers when opening log files (no effect when -logtostderr=true)
       --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=false) (default 2)
@@ -85,6 +86,7 @@ Flags:
       --one_output                        If true, only write logs to their native severity level (vs also writing to each lower severity level; no effect when -logtostderr=true)
       --port int                          Port for dashboard server (default 8443)
       --serve-dir string                  Static file dir to serve (default "/app/public")
+      --signin-url string                 Dashboard signin url
       --skip_headers                      If true, avoid header prefixes in the log messages
       --skip_log_headers                  If true, avoid headers when opening log files (no effect when -logtostderr=true)
       --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=false) (default 2)
@@ -137,6 +139,7 @@ Flags:
       --one_output                        If true, only write logs to their native severity level (vs also writing to each lower severity level; no effect when -logtostderr=true)
       --port int                          Port for dashboard server (default 8443)
       --serve-dir string                  Static file dir to serve (default "/app/public")
+      --signin-url string                 Dashboard signin url
       --skip_headers                      If true, avoid header prefixes in the log messages
       --skip_log_headers                  If true, avoid headers when opening log files (no effect when -logtostderr=true)
       --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=false) (default 2)
@@ -189,6 +192,7 @@ Flags:
       --one_output                        If true, only write logs to their native severity level (vs also writing to each lower severity level; no effect when -logtostderr=true)
       --port int                          Port for dashboard server (default 8443)
       --serve-dir string                  Static file dir to serve (default "/app/public")
+      --signin-url string                 Dashboard signin url
       --skip_headers                      If true, avoid header prefixes in the log messages
       --skip_log_headers                  If true, avoid headers when opening log files (no effect when -logtostderr=true)
       --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=false) (default 2)

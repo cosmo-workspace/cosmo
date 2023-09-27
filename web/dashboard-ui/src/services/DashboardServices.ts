@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { AuthService } from "../proto/gen/dashboard/v1alpha1/auth_service_connectweb";
 import { TemplateService } from "../proto/gen/dashboard/v1alpha1/template_service_connectweb";
 import { UserService } from "../proto/gen/dashboard/v1alpha1/user_service_connectweb";
+import { WebAuthnService } from "../proto/gen/dashboard/v1alpha1/webauthn_connectweb";
 import { WorkspaceService } from "../proto/gen/dashboard/v1alpha1/workspace_service_connectweb";
 
 const transportX = createConnectTransport({
@@ -23,7 +24,9 @@ export function useTemplateService() {
 export function useUserService() {
     return useMemo(() => createPromiseClient(UserService, transport), [UserService]);
 }
-
 export function useWorkspaceService() {
     return useMemo(() => createPromiseClient(WorkspaceService, transport), [WorkspaceService]);
+}
+export function useWebAuthnService() {
+    return useMemo(() => createPromiseClient(WebAuthnService, transport), [WebAuthnService]);
 }

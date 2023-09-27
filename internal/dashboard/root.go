@@ -14,6 +14,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
@@ -54,6 +55,7 @@ type options struct {
 	CookieHashKey           string
 	CookieBlockKey          string
 	CookieSessionName       string
+	SigninURL               string
 	ResponseTimeoutSeconds  int64
 	GracefulShutdownSeconds int64
 	TLSPrivateKeyPath       string
@@ -101,6 +103,7 @@ MIT 2023 cosmo-workspace/cosmo
 	rootCmd.PersistentFlags().StringVar(&o.CookieHashKey, "cookie-hashkey", "", "Cookie hashkey")
 	rootCmd.PersistentFlags().StringVar(&o.CookieBlockKey, "cookie-blockkey", "", "Cookie blockkey")
 	rootCmd.PersistentFlags().StringVar(&o.CookieSessionName, "cookie-session-name", "cosmo-auth", "Cookie session name")
+	rootCmd.PersistentFlags().StringVar(&o.SigninURL, "signin-url", "", "Dashboard signin url")
 	rootCmd.PersistentFlags().StringVar(&o.TLSPrivateKeyPath, "tls-key", "tls.key", "TLS key file path")
 	rootCmd.PersistentFlags().StringVar(&o.TLSCertPath, "tls-cert", "tls.crt", "TLS certificate file path")
 	rootCmd.PersistentFlags().BoolVar(&o.Insecure, "insecure", false, "start http server not https server")
@@ -229,6 +232,25 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	u, err := url.Parse(o.SigninURL)
+	if err != nil {
+		panic(fmt.Errorf("failed to parse url: %w", err))
+	}
+
+	wconfig := &webauthn.Config{
+		RPDisplayName: "COSMO Dashboard",
+		RPID:          o.CookieDomain,
+		RPOrigins:     []string{fmt.Sprintf("https://dashboard.%s", o.CookieDomain), fmt.Sprintf("%s://%s", u.Scheme, u.Host)},
+		Debug:         true,
+	}
+
+	wa, err := webauthn.New(wconfig)
+	if err != nil {
+		if err != nil {
+			return fmt.Errorf("failed to create webauthn instance: %w", err)
+		}
+	}
+
 	serv := &Server{
 		Log:                 clog.NewLogger(ctrl.Log.WithName("dashboard")),
 		Klient:              klient,
@@ -247,6 +269,7 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 		Authorizers:         auths,
 		http:                &http.Server{Addr: fmt.Sprintf(":%d", o.ServerPort)},
 		sessionStore:        nil,
+		webauthn:            wa,
 	}
 
 	if err := mgr.Add(serv); err != nil {
