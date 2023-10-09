@@ -6,9 +6,10 @@
 syntax = "proto3";
 
 package dashboard.v1alpha1;
+import "validate/validate.proto";
 
 message NetworkRule {
-  int32 port_number = 1;
+  int32 port_number = 1          [(validate.rules).int32 = { gt: 0, lt: 65536 }];
   string custom_host_prefix = 2;
   string http_path = 3;
   string url = 4;

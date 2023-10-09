@@ -305,6 +305,130 @@ var _ interface {
 	ErrorName() string
 } = CreateWorkspaceResponseValidationError{}
 
+// Validate checks the field values on DeleteWorkspaceRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteWorkspaceRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteWorkspaceRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteWorkspaceRequestMultiError, or nil if none found.
+func (m *DeleteWorkspaceRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteWorkspaceRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := DeleteWorkspaceRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetWsName()) < 1 {
+		err := DeleteWorkspaceRequestValidationError{
+			field:  "WsName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DeleteWorkspaceRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteWorkspaceRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteWorkspaceRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteWorkspaceRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteWorkspaceRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteWorkspaceRequestMultiError) AllErrors() []error { return m }
+
+// DeleteWorkspaceRequestValidationError is the validation error returned by
+// DeleteWorkspaceRequest.Validate if the designated constraints aren't met.
+type DeleteWorkspaceRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteWorkspaceRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteWorkspaceRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteWorkspaceRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteWorkspaceRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteWorkspaceRequestValidationError) ErrorName() string {
+	return "DeleteWorkspaceRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteWorkspaceRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteWorkspaceRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteWorkspaceRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteWorkspaceRequestValidationError{}
+
 // Validate checks the field values on DeleteNetworkRuleResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -438,112 +562,6 @@ var _ interface {
 	ErrorName() string
 } = DeleteNetworkRuleResponseValidationError{}
 
-// Validate checks the field values on DeleteWorkspaceRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteWorkspaceRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DeleteWorkspaceRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DeleteWorkspaceRequestMultiError, or nil if none found.
-func (m *DeleteWorkspaceRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DeleteWorkspaceRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for UserName
-
-	// no validation rules for WsName
-
-	if len(errors) > 0 {
-		return DeleteWorkspaceRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// DeleteWorkspaceRequestMultiError is an error wrapping multiple validation
-// errors returned by DeleteWorkspaceRequest.ValidateAll() if the designated
-// constraints aren't met.
-type DeleteWorkspaceRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DeleteWorkspaceRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DeleteWorkspaceRequestMultiError) AllErrors() []error { return m }
-
-// DeleteWorkspaceRequestValidationError is the validation error returned by
-// DeleteWorkspaceRequest.Validate if the designated constraints aren't met.
-type DeleteWorkspaceRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DeleteWorkspaceRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DeleteWorkspaceRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DeleteWorkspaceRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DeleteWorkspaceRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DeleteWorkspaceRequestValidationError) ErrorName() string {
-	return "DeleteWorkspaceRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e DeleteWorkspaceRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDeleteWorkspaceRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DeleteWorkspaceRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DeleteWorkspaceRequestValidationError{}
-
 // Validate checks the field values on UpdateWorkspaceRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -566,9 +584,27 @@ func (m *UpdateWorkspaceRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := UpdateWorkspaceRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for WsName
+	if utf8.RuneCountInString(m.GetWsName()) < 1 {
+		err := UpdateWorkspaceRequestValidationError{
+			field:  "WsName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.Replicas != nil {
 		// no validation rules for Replicas
@@ -1288,9 +1324,27 @@ func (m *UpsertNetworkRuleRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := UpsertNetworkRuleRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for WsName
+	if utf8.RuneCountInString(m.GetWsName()) < 1 {
+		err := UpsertNetworkRuleRequestValidationError{
+			field:  "WsName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetNetworkRule()).(type) {
@@ -1558,9 +1612,27 @@ func (m *DeleteNetworkRuleRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := DeleteNetworkRuleRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for WsName
+	if utf8.RuneCountInString(m.GetWsName()) < 1 {
+		err := DeleteNetworkRuleRequestValidationError{
+			field:  "WsName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Index
 

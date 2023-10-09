@@ -57,7 +57,16 @@ func (m *DeleteUserRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := DeleteUserRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteUserRequestMultiError(errors)
@@ -661,11 +670,38 @@ func (m *CreateUserRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if l := utf8.RuneCountInString(m.GetUserName()); l < 1 || l > 50 {
+		err := CreateUserRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be between 1 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for DisplayName
+	if utf8.RuneCountInString(m.GetDisplayName()) > 63 {
+		err := CreateUserRequestValidationError{
+			field:  "DisplayName",
+			reason: "value length must be at most 63 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for AuthType
+	if _, ok := _CreateUserRequest_AuthType_InLookup[m.GetAuthType()]; !ok {
+		err := CreateUserRequestValidationError{
+			field:  "AuthType",
+			reason: "value must be in list [ password-secret ldap]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetAddons() {
 		_, _ = idx, item
@@ -780,6 +816,12 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateUserRequestValidationError{}
+
+var _CreateUserRequest_AuthType_InLookup = map[string]struct{}{
+	"":                {},
+	"password-secret": {},
+	"ldap":            {},
+}
 
 // Validate checks the field values on CreateUserResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -936,7 +978,16 @@ func (m *UpdateUserDisplayNameRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := UpdateUserDisplayNameRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for DisplayName
 
@@ -1177,9 +1228,27 @@ func (m *UpdateUserPasswordRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := UpdateUserPasswordRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for CurrentPassword
+	if utf8.RuneCountInString(m.GetCurrentPassword()) < 1 {
+		err := UpdateUserPasswordRequestValidationError{
+			field:  "CurrentPassword",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if utf8.RuneCountInString(m.GetNewPassword()) < 1 {
 		err := UpdateUserPasswordRequestValidationError{
@@ -1398,7 +1467,16 @@ func (m *UpdateUserRoleRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := UpdateUserRoleRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return UpdateUserRoleRequestMultiError(errors)
@@ -1635,7 +1713,16 @@ func (m *UpdateUserAddonsRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserName
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := UpdateUserAddonsRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetAddons() {
 		_, _ = idx, item
