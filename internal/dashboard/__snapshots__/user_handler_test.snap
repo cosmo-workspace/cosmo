@@ -302,11 +302,10 @@ SnapShot = """
 internal: failed to create user: User.cosmo-workspace.github.io \"create-user-INVALID\" is invalid: metadata.name: Invalid value: \"create-user-INVALID\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')"""
 
 ['Dashboard server [User] [CreateUser] ❌ fail with invalid request: invalid auth type 1']
-SnapShot = """
-invalid_argument: auth-type 'INVALID' is not supported"""
+SnapShot = 'invalid_argument: invalid CreateUserRequest.AuthType: value must be in list [ password-secret ldap]'
 
 ['Dashboard server [User] [CreateUser] ❌ fail with invalid request: no name 1']
-SnapShot = 'internal: failed to create user: User.cosmo-workspace.github.io "" is invalid: metadata.name: Required value: name or generateName is required'
+SnapShot = 'invalid_argument: invalid CreateUserRequest.UserName: value length must be between 1 and 50 runes, inclusive'
 
 ['Dashboard server [User] [CreateUser] ❌ fail with invalid request: user already exist 1']
 SnapShot = 'already_exists: failed to create user: users.cosmo-workspace.github.io "create-user-existing" already exists'
@@ -742,7 +741,7 @@ SnapShot = 'invalid_argument: no change'
 SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "XXXXXX" not found'
 
 ['Dashboard server [User] [UpdateUserDisplayName] ❌ fail with invalid request: user not found: empty user name 1']
-SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "" not found'
+SnapShot = 'invalid_argument: invalid UpdateUserDisplayNameRequest.UserName: value length must be at least 1 runes'
 
 ['Dashboard server [User] [UpdateUserPassword] ✅ success with invalid request: Entry: normal-user, user_name:"normal-user" current_password:"password" new_password:"newPassword" 1']
 SnapShot = """
@@ -780,7 +779,7 @@ SnapShot = 'invalid_argument: invalid UpdateUserPasswordRequest.NewPassword: val
 SnapShot = 'permission_denied: forbidden: incorrect user or password'
 
 ['Dashboard server [User] [UpdateUserPassword] ❌ fail with invalid request: Entry: priv-user, user_name:"priv-user" new_password:"newPassword" 1']
-SnapShot = 'permission_denied: forbidden: incorrect user or password'
+SnapShot = 'invalid_argument: invalid UpdateUserPasswordRequest.CurrentPassword: value length must be at least 1 runes'
 
 ['Dashboard server [User] [UpdateUserRole] ✅ success in normal context: admin attach custom-role to normal-user 1']
 SnapShot = """
