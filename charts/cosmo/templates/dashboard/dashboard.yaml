@@ -86,6 +86,7 @@ spec:
         - --cookie-hashkey=$(COOKIE_HASHKEY)
         - --cookie-blockkey=$(COOKIE_BLOCKKEY)
         - --cookie-session-name=$(COOKIE_SESSION_NAME)
+        - --signin-url=$(SIGNIN_URL)
         {{- if ne .Values.dashboard.logging.level "info" }}
         - --zap-devel=true
         {{- end }}

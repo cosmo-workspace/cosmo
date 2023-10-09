@@ -1,0 +1,160 @@
+['Dashboard server [WebAuthn] [ListCredentials] ✅ success in normal context: OK 1']
+SnapShot = """
+{}
+"""
+
+['Dashboard server [WebAuthn] [ListCredentials] ❌ fail with invalid request: empty user name 1']
+SnapShot = 'invalid_argument: invalid ListCredentialsRequest.UserName: value length must be at least 1 runes'
+
+['Dashboard server [WebAuthn] [ListCredentials] ❌ fail with invalid request: user not found 1']
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "notfound" not found'
+
+['Dashboard server [WebAuthn] [Login] ✅ success in begin login but error in finish login: cannot create mock for window.navigator.create() response 1']
+SnapShot = """
+{
+  \"publicKey\": {
+    \"allowCredentials\": [
+      {
+        \"id\": \"RDA5S2M5azR6ZW94RjFCcTFvMGVQdFVwVG5aRE9NRE1Pd1FHblhhaXFUVT0\",
+        \"type\": \"public-key\"
+      }
+    ],
+    \"challenge\": \"CHALLENGE\",
+    \"rpId\": \"localhost:8888\",
+    \"timeout\": 300000,
+    \"userVerification\": \"preferred\"
+  }
+}
+"""
+
+['Dashboard server [WebAuthn] [Login] ✅ success in begin login but error in finish login: cannot create mock for window.navigator.create() response 2']
+SnapShot = 'internal: User does not own the credential returned'
+
+['Dashboard server [WebAuthn] [Login] ❌ fail in begin login: empty user name 1']
+SnapShot = 'invalid_argument: invalid BeginLoginRequest.UserName: value length must be at least 1 runes'
+
+['Dashboard server [WebAuthn] [Login] ❌ fail in begin login: user not found 1']
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "notfound" not found'
+
+['Dashboard server [WebAuthn] [Registration] ✅ success in begin registration but error in finish registration: cannot create mock for window.navigator.create() response 1']
+SnapShot = """
+{
+  \"publicKey\": {
+    \"authenticatorSelection\": {
+      \"requireResidentKey\": false,
+      \"userVerification\": \"preferred\"
+    },
+    \"challenge\": \"CHALLENGE\",
+    \"pubKeyCredParams\": [
+      {
+        \"alg\": -7,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -35,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -36,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -257,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -258,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -259,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -37,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -38,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -39,
+        \"type\": \"public-key\"
+      },
+      {
+        \"alg\": -8,
+        \"type\": \"public-key\"
+      }
+    ],
+    \"rp\": {
+      \"id\": \"localhost:8888\",
+      \"name\": \"COSMO Dashboard\"
+    },
+    \"timeout\": 300000,
+    \"user\": {
+      \"displayName\": \"user\",
+      \"id\": \"YmZiYzI1OWNkN2MxNmYzZTljMTgwOTFjNWI3YjQ3Njg3ZjJlNDIxN2VlYjA1OGIxYjhhYmUwZTA2NDJiZDhmNw\",
+      \"name\": \"user\"
+    }
+  }
+}
+"""
+
+['Dashboard server [WebAuthn] [Registration] ✅ success in begin registration but error in finish registration: cannot create mock for window.navigator.create() response 2']
+SnapShot = 'internal: failed at webauthn create credential: Error validating challenge'
+
+['Dashboard server [WebAuthn] [Registration] ❌ fail in begin registration: empty user name 1']
+SnapShot = 'invalid_argument: invalid BeginRegistrationRequest.UserName: value length must be at least 1 runes'
+
+['Dashboard server [WebAuthn] [Registration] ❌ fail in begin registration: user not found 1']
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "notfound" not found'
+
+['Dashboard server [WebAuthn] [RemoveCredential] ✅ success in normal context: OK 1']
+SnapShot = """
+{
+  \"message\": \"Successfully removed credential\"
+}
+"""
+
+['Dashboard server [WebAuthn] [RemoveCredential] ❌ fail with invalid request: credential not found 1']
+SnapShot = 'internal: credential not found'
+
+['Dashboard server [WebAuthn] [RemoveCredential] ❌ fail with invalid request: empty user name 1']
+SnapShot = 'invalid_argument: invalid DeleteCredentialRequest.UserName: value length must be at least 1 runes'
+
+['Dashboard server [WebAuthn] [RemoveCredential] ❌ fail with invalid request: no credential id 1']
+SnapShot = 'invalid_argument: invalid DeleteCredentialRequest.CredId: value length must be at least 1 runes'
+
+['Dashboard server [WebAuthn] [RemoveCredential] ❌ fail with invalid request: user not found 1']
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "notfound" not found'
+
+['Dashboard server [WebAuthn] [UpdateCredential] ✅ success in normal context: no change 1']
+SnapShot = """
+{
+  \"message\": \"Successfully updated credential\"
+}
+"""
+
+['Dashboard server [WebAuthn] [UpdateCredential] ✅ success in normal context: update display name 1']
+SnapShot = """
+{
+  \"message\": \"Successfully updated credential\"
+}
+"""
+
+['Dashboard server [WebAuthn] [UpdateCredential] ✅ success in normal context: update display name to empty 1']
+SnapShot = """
+{
+  \"message\": \"Successfully updated credential\"
+}
+"""
+
+['Dashboard server [WebAuthn] [UpdateCredential] ❌ fail with invalid request: credential not found 1']
+SnapShot = 'internal: credential not found'
+
+['Dashboard server [WebAuthn] [UpdateCredential] ❌ fail with invalid request: empty user name 1']
+SnapShot = 'invalid_argument: invalid UpdateCredentialRequest.UserName: value length must be at least 1 runes'
+
+['Dashboard server [WebAuthn] [UpdateCredential] ❌ fail with invalid request: user not found 1']
+SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "notfound" not found'

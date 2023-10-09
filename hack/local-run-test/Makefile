@@ -378,6 +378,7 @@ run-dashboard-local:
 		--cookie-session-name="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_SESSION_NAME} | base64 -d)" \
 		--cookie-hashkey="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_HASHKEY} | base64 -d)" \
 		--cookie-blockkey="$(shell kubectl get secret -n cosmo-system cosmo-auth-env -o=jsonpath={.data.COOKIE_BLOCKKEY} | base64 -d)" \
+		--signin-url=$(DASHBOARD_URL) \
 		--ldap-url=ldap://localhost:389 \
 		--ldap-binddn="cn=%s,ou=users,dc=cosmows,dc=dev" \
 		--insecure

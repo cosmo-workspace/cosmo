@@ -1,0 +1,104 @@
+/*
+  WebAuthn protobuf
+*/
+
+syntax = "proto3";
+
+package dashboard.v1alpha1;
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+service WebAuthnService {
+  // BeginRegistration returns CredentialCreateOptions to window.navigator.create() which is serialized as JSON string
+  // Also `publicKey.user.id`` and `publicKey.challenge` are base64url encoded
+  rpc BeginRegistration(BeginRegistrationRequest) returns (BeginRegistrationResponse);
+  // FinishRegistration check the result of window.navigator.create()
+  // `rawId`, `response.clientDataJSON` and `response.attestationObject` in the result must be base64url encoded
+  // and all JSON must be serialized as string
+  rpc FinishRegistration(FinishRegistrationRequest) returns (FinishRegistrationResponse);
+  // BeginLogin returns CredentialRequestOptions to window.navigator.get() which is serialized as JSON string
+  // Also `publicKey.allowCredentials[*].id` and `publicKey.challenge` are base64url encoded
+  rpc BeginLogin(BeginLoginRequest) returns (BeginLoginResponse);
+  // FinishLogin check the result of window.navigator.get()
+  // `rawId`, `response.clientDataJSON`, `response.authenticatorData`, `response.signature`, `response.userHandle`
+  // in the result must be base64url encoded and all JSON must be serialized as string
+  rpc FinishLogin(FinishLoginRequest) returns (FinishLoginResponse);
+
+  // ListCredentials returns registered credential ID list
+  rpc ListCredentials(ListCredentialsRequest) returns (ListCredentialsResponse);
+  // UpdateCredential updates registed credential's human readable infomations
+  rpc UpdateCredential(UpdateCredentialRequest) returns (UpdateCredentialResponse);
+  // DeleteCredential remove registered credential
+  rpc DeleteCredential(DeleteCredentialRequest) returns (DeleteCredentialResponse);
+}
+
+message BeginRegistrationRequest {
+  string user_name = 1 [(validate.rules).string = { min_len: 1 }];
+}
+
+message BeginRegistrationResponse {
+  string credential_creation_options = 1;
+}
+
+message FinishRegistrationRequest {
+  string user_name = 1                    [(validate.rules).string = { min_len: 1 }];
+  string credential_creation_response = 2 [(validate.rules).string = { min_len: 1 }];
+}
+
+message FinishRegistrationResponse {
+  string message = 1;
+}
+
+message BeginLoginRequest {
+  string user_name = 1                    [(validate.rules).string = { min_len: 1 }];
+}
+
+message BeginLoginResponse {
+  string credential_request_options = 1;
+}
+
+message FinishLoginRequest {
+  string user_name = 1                 [(validate.rules).string = { min_len: 1 }];
+  string credential_request_result = 2 [(validate.rules).string = { min_len: 1 }];
+}
+
+message FinishLoginResponse {
+  string message = 1;
+  google.protobuf.Timestamp expire_at = 2;
+}
+
+message ListCredentialsRequest {
+  string user_name = 1 [(validate.rules).string = { min_len: 1 }];;
+}
+
+message ListCredentialsResponse {
+  string message = 1;
+  repeated Credential credentials = 2;
+}
+
+message Credential {
+  string id = 1;
+  string display_name = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+
+message DeleteCredentialRequest {
+  string user_name = 1 [(validate.rules).string = { min_len: 1 }];
+  string cred_id = 2   [(validate.rules).string = { min_len: 1 }];
+}
+
+message DeleteCredentialResponse {
+  string message = 1;
+}
+
+message UpdateCredentialRequest {
+  string user_name = 1          [(validate.rules).string = { min_len: 1 }];
+  string cred_id = 2            [(validate.rules).string = { min_len: 1 }];
+  string cred_display_name = 3;
+}
+
+message UpdateCredentialResponse {
+  string message = 1;
+}

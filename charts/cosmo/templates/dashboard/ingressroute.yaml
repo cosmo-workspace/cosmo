@@ -29,7 +29,7 @@ spec:
           scheme: {{ if not .Values.dashboard.tls.enabled -}}http{{- else -}}https{{ end }}
     {{- end }}
     - kind: Rule
-      match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`) && (Path(`/`) || PathPrefix(`/logo`,`/assets/`,`/dashboard.v1alpha1.AuthService/`))
+      match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`) && (Path(`/`) || PathPrefix(`/logo`,`/assets/`,`/dashboard.v1alpha1.AuthService/`, `/dashboard.v1alpha1.WebAuthnService/`))
       priority: 1001
       services:
         - kind: Service

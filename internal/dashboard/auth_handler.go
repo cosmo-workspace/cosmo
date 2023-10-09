@@ -23,6 +23,27 @@ func (s *Server) AuthServiceHandler(mux *http.ServeMux) {
 	mux.Handle(path, s.contextMiddleware(handler))
 }
 
+func (s *Server) CreateSession(w http.ResponseWriter, r *http.Request, sesInfo session.Info) error {
+	// Create session
+	ses, _ := s.sessionStore.New(r, s.CookieSessionName)
+	ses = session.Set(ses, sesInfo)
+
+	err := s.sessionStore.Save(r, w, ses)
+	if err != nil {
+		return fmt.Errorf("failed to save session: %w", err)
+	}
+	return nil
+}
+
+func (s *Server) SessionInfo(userName string) (session.Info, time.Time) {
+	now := time.Now()
+	expireAt := now.Add(time.Duration(s.MaxAgeSeconds) * time.Second)
+	return session.Info{
+		UserName: userName,
+		Deadline: expireAt.Unix(),
+	}, expireAt
+}
+
 func (s *Server) Verify(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.VerifyResponse], error) {
 
 	log := clog.FromContext(ctx).WithCaller()
@@ -79,19 +100,8 @@ func (s *Server) Login(ctx context.Context, req *connect_go.Request[dashv1alpha1
 	}
 
 	// Create session
-	now := time.Now()
-	expireAt := now.Add(time.Duration(s.MaxAgeSeconds) * time.Second)
-
-	ses, _ := s.sessionStore.New(r, s.CookieSessionName)
-	sesInfo := session.Info{
-		UserName: req.Msg.UserName,
-		Deadline: expireAt.Unix(),
-	}
-	log.DebugAll().Info("save session", "userName", sesInfo.UserName, "deadline", sesInfo.Deadline)
-	ses = session.Set(ses, sesInfo)
-
-	err = s.sessionStore.Save(r, w, ses)
-	if err != nil {
+	sesInfo, expireAt := s.SessionInfo(req.Msg.UserName)
+	if err = s.CreateSession(w, r, sesInfo); err != nil {
 		log.Error(err, "failed to save session")
 		return nil, ErrResponse(log, err)
 	}

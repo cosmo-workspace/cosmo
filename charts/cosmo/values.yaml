@@ -192,7 +192,7 @@ dashboard:
     # but when you are using ArgoCD, these secret keys are changed every sync
     # because it uses 'helm template' command and lookup function does not work.
     secretKeys:
-      immutable: true
+      immutable: false
       COOKIE_HASHKEY:
       COOKIE_BLOCKKEY:
       COOKIE_SESSION_NAME:

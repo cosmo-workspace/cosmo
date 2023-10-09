@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
+	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/gorilla/sessions"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -38,6 +40,9 @@ type Server struct {
 
 	http         *http.Server
 	sessionStore sessions.Store
+
+	webauthn           *webauthn.WebAuthn
+	webauthnSessionMap sync.Map
 }
 
 func (s *Server) setupRouter() {
@@ -46,6 +51,7 @@ func (s *Server) setupRouter() {
 
 	// setup proto api
 	s.AuthServiceHandler(mux)
+	s.WebAuthnServiceHandler(mux)
 	s.UserServiceHandler(mux)
 	s.TemplateServiceHandler(mux)
 	s.WorkspaceServiceHandler(mux)
