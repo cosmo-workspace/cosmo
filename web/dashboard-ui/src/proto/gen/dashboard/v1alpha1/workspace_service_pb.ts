@@ -16,15 +16,11 @@ import { NetworkRule, Workspace } from "./workspace_pb.js";
  */
 export class CreateWorkspaceRequest extends Message<CreateWorkspaceRequest> {
   /**
-   * user name
-   *
    * @generated from field: string user_name = 1;
    */
   userName = "";
 
   /**
-   * workspace name
-   *
    * @generated from field: string ws_name = 2;
    */
   wsName = "";
@@ -114,6 +110,49 @@ export class CreateWorkspaceResponse extends Message<CreateWorkspaceResponse> {
 }
 
 /**
+ * @generated from message dashboard.v1alpha1.DeleteWorkspaceRequest
+ */
+export class DeleteWorkspaceRequest extends Message<DeleteWorkspaceRequest> {
+  /**
+   * @generated from field: string user_name = 1;
+   */
+  userName = "";
+
+  /**
+   * @generated from field: string ws_name = 2;
+   */
+  wsName = "";
+
+  constructor(data?: PartialMessage<DeleteWorkspaceRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.DeleteWorkspaceRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "ws_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteWorkspaceRequest {
+    return new DeleteWorkspaceRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteWorkspaceRequest {
+    return new DeleteWorkspaceRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteWorkspaceRequest {
+    return new DeleteWorkspaceRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeleteWorkspaceRequest | PlainMessage<DeleteWorkspaceRequest> | undefined, b: DeleteWorkspaceRequest | PlainMessage<DeleteWorkspaceRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteWorkspaceRequest, a, b);
+  }
+}
+
+/**
  * @generated from message dashboard.v1alpha1.DeleteNetworkRuleResponse
  */
 export class DeleteNetworkRuleResponse extends Message<DeleteNetworkRuleResponse> {
@@ -157,73 +196,20 @@ export class DeleteNetworkRuleResponse extends Message<DeleteNetworkRuleResponse
 }
 
 /**
- * @generated from message dashboard.v1alpha1.DeleteWorkspaceRequest
- */
-export class DeleteWorkspaceRequest extends Message<DeleteWorkspaceRequest> {
-  /**
-   * user name
-   *
-   * @generated from field: string user_name = 1;
-   */
-  userName = "";
-
-  /**
-   * workspace name
-   *
-   * @generated from field: string ws_name = 2;
-   */
-  wsName = "";
-
-  constructor(data?: PartialMessage<DeleteWorkspaceRequest>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "dashboard.v1alpha1.DeleteWorkspaceRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "ws_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteWorkspaceRequest {
-    return new DeleteWorkspaceRequest().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteWorkspaceRequest {
-    return new DeleteWorkspaceRequest().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteWorkspaceRequest {
-    return new DeleteWorkspaceRequest().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: DeleteWorkspaceRequest | PlainMessage<DeleteWorkspaceRequest> | undefined, b: DeleteWorkspaceRequest | PlainMessage<DeleteWorkspaceRequest> | undefined): boolean {
-    return proto3.util.equals(DeleteWorkspaceRequest, a, b);
-  }
-}
-
-/**
  * @generated from message dashboard.v1alpha1.UpdateWorkspaceRequest
  */
 export class UpdateWorkspaceRequest extends Message<UpdateWorkspaceRequest> {
   /**
-   * user name
-   *
    * @generated from field: string user_name = 1;
    */
   userName = "";
 
   /**
-   * workspace name
-   *
    * @generated from field: string ws_name = 2;
    */
   wsName = "";
 
   /**
-   * workspace to update
-   *
    * @generated from field: optional int64 replicas = 3;
    */
   replicas?: bigint;
@@ -306,15 +292,11 @@ export class UpdateWorkspaceResponse extends Message<UpdateWorkspaceResponse> {
  */
 export class GetWorkspaceRequest extends Message<GetWorkspaceRequest> {
   /**
-   * user name
-   *
    * @generated from field: string user_name = 1;
    */
   userName = "";
 
   /**
-   * workspace name
-   *
    * @generated from field: string ws_name = 2;
    */
   wsName = "";
@@ -390,8 +372,6 @@ export class GetWorkspaceResponse extends Message<GetWorkspaceResponse> {
  */
 export class GetWorkspacesRequest extends Message<GetWorkspacesRequest> {
   /**
-   * user name
-   *
    * @generated from field: string user_name = 1;
    */
   userName = "";
@@ -472,22 +452,16 @@ export class GetWorkspacesResponse extends Message<GetWorkspacesResponse> {
  */
 export class UpsertNetworkRuleRequest extends Message<UpsertNetworkRuleRequest> {
   /**
-   * user name
-   *
    * @generated from field: string user_name = 1;
    */
   userName = "";
 
   /**
-   * workspace name
-   *
    * @generated from field: string ws_name = 2;
    */
   wsName = "";
 
   /**
-   * network rule to upsert
-   *
    * @generated from field: dashboard.v1alpha1.NetworkRule network_rule = 3;
    */
   networkRule?: NetworkRule;
@@ -578,22 +552,16 @@ export class UpsertNetworkRuleResponse extends Message<UpsertNetworkRuleResponse
  */
 export class DeleteNetworkRuleRequest extends Message<DeleteNetworkRuleRequest> {
   /**
-   * user name
-   *
    * @generated from field: string user_name = 1;
    */
   userName = "";
 
   /**
-   * workspace name
-   *
    * @generated from field: string ws_name = 2;
    */
   wsName = "";
 
   /**
-   * network rule index to delete
-   *
    * @generated from field: int32 index = 3;
    */
   index = 0;

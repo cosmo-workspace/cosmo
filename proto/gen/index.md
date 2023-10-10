@@ -1041,8 +1041,8 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  | user name |
-| ws_name | [string](#string) |  | workspace name |
+| user_name | [string](#string) |  |  |
+| ws_name | [string](#string) |  |  |
 | template | [string](#string) |  |  |
 | vars | [CreateWorkspaceRequest.VarsEntry](#dashboard-v1alpha1-CreateWorkspaceRequest-VarsEntry) | repeated |  |
 
@@ -1091,9 +1091,9 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  | user name |
-| ws_name | [string](#string) |  | workspace name |
-| index | [int32](#int32) |  | network rule index to delete |
+| user_name | [string](#string) |  |  |
+| ws_name | [string](#string) |  |  |
+| index | [int32](#int32) |  |  |
 
 
 
@@ -1124,8 +1124,8 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  | user name |
-| ws_name | [string](#string) |  | workspace name |
+| user_name | [string](#string) |  |  |
+| ws_name | [string](#string) |  |  |
 
 
 
@@ -1156,8 +1156,8 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  | user name |
-| ws_name | [string](#string) |  | workspace name |
+| user_name | [string](#string) |  |  |
+| ws_name | [string](#string) |  |  |
 
 
 
@@ -1187,7 +1187,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  | user name |
+| user_name | [string](#string) |  |  |
 
 
 
@@ -1218,9 +1218,9 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  | user name |
-| ws_name | [string](#string) |  | workspace name |
-| replicas | [int64](#int64) | optional | workspace to update |
+| user_name | [string](#string) |  |  |
+| ws_name | [string](#string) |  |  |
+| replicas | [int64](#int64) | optional |  |
 
 
 
@@ -1251,9 +1251,9 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_name | [string](#string) |  | user name |
-| ws_name | [string](#string) |  | workspace name |
-| network_rule | [NetworkRule](#dashboard-v1alpha1-NetworkRule) |  | network rule to upsert |
+| user_name | [string](#string) |  |  |
+| ws_name | [string](#string) |  |  |
+| network_rule | [NetworkRule](#dashboard-v1alpha1-NetworkRule) |  |  |
 | index | [int32](#int32) |  | network rule index to update. insert if index is out of length |
 
 

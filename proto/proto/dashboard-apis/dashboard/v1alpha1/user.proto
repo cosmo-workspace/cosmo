@@ -13,14 +13,14 @@ message User {
   string name = 1;
   string display_name = 2;
   repeated string roles = 3;
-  string auth_type = 4 [(validate.rules).string = {in: ["password-secret", "ldap"]}];
+  string auth_type = 4;
   repeated UserAddon addons = 5;
   string default_password = 6;
   string status = 7;
 }
 
 message UserAddon {
-  string template = 1;
+  string template = 1          [(validate.rules).string = { min_len: 1 }];
   bool cluster_scoped = 2;
   map<string, string> vars = 3;
 }

@@ -57,7 +57,16 @@ func (m *NetworkRule) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for PortNumber
+	if val := m.GetPortNumber(); val <= 0 || val >= 65536 {
+		err := NetworkRuleValidationError{
+			field:  "PortNumber",
+			reason: "value must be inside range (0, 65536)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for CustomHostPrefix
 

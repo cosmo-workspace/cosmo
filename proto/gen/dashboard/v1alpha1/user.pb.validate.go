@@ -60,16 +60,7 @@ func (m *User) validate(all bool) error {
 
 	// no validation rules for DisplayName
 
-	if _, ok := _User_AuthType_InLookup[m.GetAuthType()]; !ok {
-		err := UserValidationError{
-			field:  "AuthType",
-			reason: "value must be in list [password-secret ldap]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for AuthType
 
 	for idx, item := range m.GetAddons() {
 		_, _ = idx, item
@@ -186,11 +177,6 @@ var _ interface {
 	ErrorName() string
 } = UserValidationError{}
 
-var _User_AuthType_InLookup = map[string]struct{}{
-	"password-secret": {},
-	"ldap":            {},
-}
-
 // Validate checks the field values on UserAddon with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -213,7 +199,16 @@ func (m *UserAddon) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Template
+	if utf8.RuneCountInString(m.GetTemplate()) < 1 {
+		err := UserAddonValidationError{
+			field:  "Template",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for ClusterScoped
 

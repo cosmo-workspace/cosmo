@@ -30,11 +30,9 @@ service WorkspaceService {
 }
 
 message CreateWorkspaceRequest {
-  // user name
-  string user_name = 1 [(validate.rules).string = { min_len: 1 }];
-  // workspace name
-  string ws_name = 2 [(validate.rules).string = { min_len: 1 }];
-  string template = 3 [(validate.rules).string = { min_len: 1 }];
+  string user_name = 1          [(validate.rules).string = { min_len: 1 }];
+  string ws_name = 2            [(validate.rules).string = { min_len: 1 }];
+  string template = 3           [(validate.rules).string = { min_len: 1 }];
   map<string, string> vars = 4;
 }
 
@@ -43,24 +41,19 @@ message CreateWorkspaceResponse {
   Workspace workspace = 2;
 }
 
+message DeleteWorkspaceRequest {
+  string user_name = 1 [(validate.rules).string = { min_len: 1 }];
+  string ws_name = 2   [(validate.rules).string = { min_len: 1 }];
+}
+
 message DeleteNetworkRuleResponse {
   string message = 1;
   NetworkRule network_rule = 2;
 }
 
-message DeleteWorkspaceRequest {
-  // user name
-  string user_name = 1;
-  // workspace name
-  string ws_name = 2;
-}
-
 message UpdateWorkspaceRequest {
-  // user name
-  string user_name = 1;
-  // workspace name
-  string ws_name = 2;
-  // workspace to update
+  string user_name = 1         [(validate.rules).string = { min_len: 1 }];
+  string ws_name = 2           [(validate.rules).string = { min_len: 1 }];
   optional int64 replicas = 3;
 }
 
@@ -70,9 +63,7 @@ message UpdateWorkspaceResponse {
 }
 
 message GetWorkspaceRequest {
-  // user name
   string user_name = 1;
-  // workspace name
   string ws_name = 2;
 }
 
@@ -81,7 +72,6 @@ message GetWorkspaceResponse {
 }
 
 message GetWorkspacesRequest {
-  // user name
   string user_name = 1;
 }
 
@@ -91,11 +81,8 @@ message GetWorkspacesResponse {
 }
 
 message UpsertNetworkRuleRequest {
-  // user name
-  string user_name = 1;
-  // workspace name
-  string ws_name = 2;
-  // network rule to upsert
+  string user_name = 1          [(validate.rules).string = { min_len: 1 }];
+  string ws_name = 2            [(validate.rules).string = { min_len: 1 }];
   NetworkRule network_rule = 3;
   // network rule index to update. insert if index is out of length
   int32 index = 4;
@@ -107,11 +94,8 @@ message UpsertNetworkRuleResponse {
 }
 
 message DeleteNetworkRuleRequest {
-  // user name
-  string user_name = 1;
-  // workspace name
-  string ws_name = 2;
-  // network rule index to delete
+  string user_name = 1  [(validate.rules).string = { min_len: 1 }];
+  string ws_name = 2    [(validate.rules).string = { min_len: 1 }];
   int32 index = 3;
 }
 
