@@ -23,7 +23,7 @@ COPY internal/ internal/
 
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dashboard ./cmd/dashboard/main.go
-FROM node:16-alpine as ui-builder
+FROM node:20-alpine as ui-builder
 
 # Create build environment
 ENV PATH web/dashboard-ui/node_modules/.bin:$PATH
