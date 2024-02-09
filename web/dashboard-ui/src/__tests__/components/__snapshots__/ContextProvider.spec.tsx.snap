@@ -572,7 +572,7 @@ exports[`DialogContext > open/close > 2.opend 1`] = `
     </button>
   </div>
   <div
-    class="MuiModal-root MuiDialog-root emotion-4"
+    class="MuiDialog-root MuiModal-root emotion-4"
     role="presentation"
   >
     <div
