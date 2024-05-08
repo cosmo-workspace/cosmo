@@ -26,7 +26,7 @@ import (
 type InstanceMutationWebhookHandler struct {
 	Client  client.Client
 	Log     *clog.Logger
-	decoder *admission.Decoder
+	Decoder admission.Decoder
 }
 
 //+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-instance,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=instances,verbs=create;update,versions=v1alpha1,name=minstance.kb.io,admissionReviewVersions={v1,v1alpha1}
@@ -49,7 +49,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 	switch req.RequestKind.Kind {
 	case "Instance":
 		inst = &cosmov1alpha1.Instance{}
-		err := h.decoder.Decode(req, inst)
+		err := h.Decoder.Decode(req, inst)
 		if err != nil {
 			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
@@ -65,7 +65,7 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 
 	case "ClusterInstance":
 		inst = &cosmov1alpha1.ClusterInstance{}
-		err := h.decoder.Decode(req, inst)
+		err := h.Decoder.Decode(req, inst)
 		if err != nil {
 			log.Error(err, "failed to decode request")
 			return admission.Errored(http.StatusBadRequest, err)
@@ -99,15 +99,10 @@ func (h *InstanceMutationWebhookHandler) Handle(ctx context.Context, req admissi
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
 }
 
-func (h *InstanceMutationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
-	h.decoder = d
-	return nil
-}
-
 type InstanceValidationWebhookHandler struct {
 	Client  client.Client
 	Log     *clog.Logger
-	decoder *admission.Decoder
+	Decoder admission.Decoder
 
 	FieldManager string
 }
@@ -132,7 +127,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 	switch req.RequestKind.Kind {
 	case "Instance":
 		inst = &cosmov1alpha1.Instance{}
-		err := h.decoder.Decode(req, inst)
+		err := h.Decoder.Decode(req, inst)
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
@@ -148,7 +143,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 
 	case "ClusterInstance":
 		inst = &cosmov1alpha1.ClusterInstance{}
-		err := h.decoder.Decode(req, inst)
+		err := h.Decoder.Decode(req, inst)
 		if err != nil {
 			return admission.Errored(http.StatusBadRequest, err)
 		}
@@ -203,11 +198,6 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 	}
 
 	return admission.Allowed("OK")
-}
-
-func (h *InstanceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
-	h.decoder = d
-	return nil
 }
 
 func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, inst cosmov1alpha1.InstanceObject, tmpl cosmov1alpha1.TemplateObject) []error {

@@ -1,5 +1,5 @@
 ### see https://traefik.io/blog/using-private-plugins-in-traefik-proxy-2-5/
-FROM golang:1.20
+FROM golang:1.22
 
 WORKDIR /cosmo
 

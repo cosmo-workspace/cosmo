@@ -1,3 +1,6 @@
+GO_VERSION ?= 1.22.3
+K3S_VERSION ?= v1.30.0-rc2-k3s1
+
 SHELL := /bin/bash
 BIN := $(shell pwd)/bin
 PROJ_BIN := $(abspath $(shell pwd)/../../bin)
@@ -87,7 +90,7 @@ create-k3d-cluster: k3d kubectl  ## Create k3s cluster.
 	@echo ====== $@ ======
 	@k3d cluster list $(CLUSTER_NAME) > /dev/null 2>&1 && echo "This cluster has already been created" || { \
 		k3d cluster create $(CLUSTER_NAME) \
-			-i rancher/k3s:v1.26.3-k3s1 \
+			-i rancher/k3s:$(K3S_VERSION) \
 			--api-port 43000 \
 			-p "389:30389@loadbalancer" \
 			-p "636:30636@loadbalancer" \
@@ -439,7 +442,6 @@ bin/cosmoctl: ../../cmd/cosmoctl/main.go $(GO_SRC)
 bin:
 	mkdir -p $(BIN)
 
-GO_VERSION ?= 1.20.4
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin

@@ -9,12 +9,11 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
-	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -133,7 +132,7 @@ spec:
 			Template: cosmov1alpha1.TemplateRef{
 				Name: tmplName,
 			},
-			Replicas: pointer.Int64(1),
+			Replicas: ptr.To(int64(1)),
 			Vars: map[string]string{
 				"{{DOMAIN}}":    "example.com",
 				"{{IMAGE_TAG}}": "latest",
@@ -196,13 +195,13 @@ spec:
 				}
 
 				// update Workspace spec
-				ws.Spec.Replicas = pointer.Int64(0)
+				ws.Spec.Replicas = ptr.To(int64(0))
 				ws.Spec.Network = []cosmov1alpha1.NetworkRule{
 					{
 						CustomHostPrefix: "port1",
 						PortNumber:       3000,
 						HTTPPath:         "/path",
-						TargetPortNumber: pointer.Int32(30000),
+						TargetPortNumber: ptr.To(int32(30000)),
 						Public:           false,
 					},
 				}

@@ -33,6 +33,10 @@ func init() {
 	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme))
 
 	tmpl1 = &cosmov1alpha1.Template{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "cosmo-workspace.github.io/v1alpha1",
+			Kind:       "Template",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "tmpl1",
 			Labels: map[string]string{

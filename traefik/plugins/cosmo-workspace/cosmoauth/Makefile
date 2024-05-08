@@ -12,7 +12,7 @@ yaegi_test:
 	yaegi test -v .
 
 vendor:
-	go mod vendor
+	go work vendor
 
 clean:
 	rm -rf ./vendor

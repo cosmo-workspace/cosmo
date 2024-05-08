@@ -9,7 +9,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
@@ -59,7 +59,7 @@ func TestTraefikIngressRouteConfig_PatchTraefikIngressRouteAsDesired(t *testing.
 								PortNumber:       8080,
 								HTTPPath:         "/",
 								CustomHostPrefix: "main",
-								TargetPortNumber: pointer.Int32(18080),
+								TargetPortNumber: ptr.To(int32(18080)),
 								Public:           false,
 							},
 							{

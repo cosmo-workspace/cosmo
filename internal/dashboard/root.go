@@ -23,6 +23,8 @@ import (
 	klog "k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
@@ -210,10 +212,10 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 
 	// Setup controller manager
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:             scheme,
-		MetricsBindAddress: "0",
-		Port:               9443,
-		LeaderElection:     false,
+		Scheme:         scheme,
+		Metrics:        server.Options{BindAddress: "0"},
+		WebhookServer:  webhook.NewServer(webhook.Options{Port: 9443}),
+		LeaderElection: false,
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")

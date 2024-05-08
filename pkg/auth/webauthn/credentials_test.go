@@ -18,7 +18,7 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
@@ -242,7 +242,7 @@ var _ = Describe("WebAuthn", func() {
 		Expect(creds).To(MatchSnapShot())
 
 		By("update cred1 name")
-		err = wu.UpdateCredential(ctx, cred1.Base64URLEncodedId, pointer.String("new name"))
+		err = wu.UpdateCredential(ctx, cred1.Base64URLEncodedId, ptr.To("new name"))
 		Expect(err).NotTo(HaveOccurred())
 
 		By("remove cred2")
@@ -402,15 +402,15 @@ var _ = Describe("WebAuthn", func() {
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry("update display name", false, "D09Kc9k4zeoxF1Bq1o0ePtUpTnZDOMDMOwQGnXaiqTU", pointer.String("new display name")),
-			Entry("update display name to empty", false, "D09Kc9k4zeoxF1Bq1o0ePtUpTnZDOMDMOwQGnXaiqTU", pointer.String("")),
+			Entry("update display name", false, "D09Kc9k4zeoxF1Bq1o0ePtUpTnZDOMDMOwQGnXaiqTU", ptr.To("new display name")),
+			Entry("update display name to empty", false, "D09Kc9k4zeoxF1Bq1o0ePtUpTnZDOMDMOwQGnXaiqTU", ptr.To("")),
 			Entry("update display name to empty", false, "D09Kc9k4zeoxF1Bq1o0ePtUpTnZDOMDMOwQGnXaiqTU", nil),
-			Entry("no change", false, "D09Kc9k4zeoxF1Bq1o0ePtUpTnZDOMDMOwQGnXaiqTU", pointer.String("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")),
+			Entry("no change", false, "D09Kc9k4zeoxF1Bq1o0ePtUpTnZDOMDMOwQGnXaiqTU", ptr.To("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry("credential not found", true, "notfound", pointer.String("new display name")),
+			Entry("credential not found", true, "notfound", ptr.To("new display name")),
 		)
 	})
 

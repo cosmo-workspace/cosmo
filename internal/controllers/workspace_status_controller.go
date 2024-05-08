@@ -5,7 +5,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/selection"
@@ -14,7 +13,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
-	"sigs.k8s.io/controller-runtime/pkg/predicate"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -36,10 +35,8 @@ func (r *WorkspaceStatusReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	log.Debug().Info("start reconcile")
 
-	key := r.getWorkspaceNamespacedName(ctx, req.NamespacedName)
-
 	var ws cosmov1alpha1.Workspace
-	if err := r.Get(ctx, key, &ws); err != nil {
+	if err := r.Get(ctx, req.NamespacedName, &ws); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 	log = log.WithValues("UID", ws.UID, "Template", ws.Spec.Template.Name)
@@ -106,41 +103,32 @@ func (r *WorkspaceStatusReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 
-	// watch pods which has "cosmo-workspace.github.io/instance" label
-	predi, _ := predicate.LabelSelectorPredicate(metav1.LabelSelector{
-		MatchExpressions: []metav1.LabelSelectorRequirement{
-			{
-				Key:      cosmov1alpha1.LabelKeyInstanceName,
-				Operator: metav1.LabelSelectorOpExists,
-			},
-		},
-	})
-	err = c.Watch(&source.Kind{Type: &corev1.Pod{}}, &handler.EnqueueRequestForObject{}, predi)
+	err = c.Watch(source.Kind(mgr.GetCache(), &corev1.Pod{}, handler.TypedEnqueueRequestsFromMapFunc[*corev1.Pod](r.findWorkspaceByPod)))
 	if err != nil {
 		return err
 	}
-	err = c.Watch(&source.Kind{Type: &corev1.Service{}}, &handler.EnqueueRequestForObject{}, predi)
+	err = c.Watch(source.Kind(mgr.GetCache(), &corev1.Service{}, handler.TypedEnqueueRequestsFromMapFunc[*corev1.Service](r.findWorkspaceByService)))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *WorkspaceStatusReconciler) getWorkspaceNamespacedName(ctx context.Context, req types.NamespacedName) types.NamespacedName {
-	var pod corev1.Pod
-	if err := r.Get(ctx, req, &pod); err == nil {
+func (r *WorkspaceStatusReconciler) findWorkspaceByPod(ctx context.Context, obj *corev1.Pod) []reconcile.Request {
+	return findWorkspace(ctx, obj, r.Client)
+}
+
+func (r *WorkspaceStatusReconciler) findWorkspaceByService(ctx context.Context, obj *corev1.Service) []reconcile.Request {
+	return findWorkspace(ctx, obj, r.Client)
+}
+
+func findWorkspace[T client.Object](ctx context.Context, obj T, c client.Client) []reconcile.Request {
+	var ws cosmov1alpha1.Workspace
+	if err := c.Get(ctx, types.NamespacedName{Name: obj.GetLabels()[cosmov1alpha1.LabelKeyInstanceName]}, &ws); err == nil {
 		// request is Pod with "cosmo-workspace.github.io/instance" label
-		return types.NamespacedName{Name: pod.Labels[cosmov1alpha1.LabelKeyInstanceName], Namespace: pod.GetNamespace()}
+		return []reconcile.Request{{NamespacedName: types.NamespacedName{Name: ws.Name, Namespace: ws.Namespace}}}
 	}
-
-	var svc corev1.Service
-	if err := r.Get(ctx, req, &svc); err == nil {
-		// request is Service with "cosmo-workspace.github.io/instance" label
-		return types.NamespacedName{Name: svc.Labels[cosmov1alpha1.LabelKeyInstanceName], Namespace: svc.GetNamespace()}
-	}
-
-	// request is Workspace
-	return req
+	return nil
 }
 
 func listWorkspacePods(ctx context.Context, c client.Client, ws cosmov1alpha1.Workspace) ([]corev1.Pod, error) {

@@ -8,7 +8,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
@@ -358,8 +358,8 @@ func TestPatchUserAddonInstanceAsDesired(t *testing.T) {
 						Kind:               "User",
 						Name:               tt.args.user.GetName(),
 						UID:                tt.args.user.GetUID(),
-						BlockOwnerDeletion: pointer.BoolPtr(true),
-						Controller:         pointer.BoolPtr(true),
+						BlockOwnerDeletion: ptr.To(true),
+						Controller:         ptr.To(true),
 					}
 					if !equality.Semantic.DeepEqual(ownerRef[0], expectedRef) {
 						t.Errorf("EmptyInstanceObject() owner ref = %v, want %v", ownerRef[0], expectedRef)

@@ -7,7 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 )
@@ -38,7 +38,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 						Template: cosmov1alpha1.TemplateRef{
 							Name: "tmpl1",
 						},
-						Replicas: pointer.Int64(1),
+						Replicas: ptr.To(int64(1)),
 						Vars: map[string]string{
 							"VAR1": "VAL1",
 						},
@@ -46,12 +46,12 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 							{
 								PortNumber:       8080,
 								HTTPPath:         "/",
-								TargetPortNumber: pointer.Int32(18080),
+								TargetPortNumber: ptr.To(int32(18080)),
 							},
 							{
 								PortNumber:       9999,
 								HTTPPath:         "/",
-								TargetPortNumber: pointer.Int32(19999),
+								TargetPortNumber: ptr.To(int32(19999)),
 							},
 						},
 					},
@@ -84,7 +84,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 						Template: cosmov1alpha1.TemplateRef{
 							Name: "tmpl1",
 						},
-						Replicas: pointer.Int64(0),
+						Replicas: ptr.To(int64(0)),
 					},
 					Status: cosmov1alpha1.WorkspaceStatus{
 						Config: cosmov1alpha1.Config{
@@ -115,7 +115,7 @@ func TestPatchWorkspaceInstanceAsDesired(t *testing.T) {
 						Template: cosmov1alpha1.TemplateRef{
 							Name: "tmpl1",
 						},
-						Replicas: pointer.Int64(0),
+						Replicas: ptr.To(int64(0)),
 					},
 					Status: cosmov1alpha1.WorkspaceStatus{
 						Config: cosmov1alpha1.Config{
@@ -151,7 +151,7 @@ func TestSvcPorts(t *testing.T) {
 	netRule := func(ruleName, host, path string, portNumber, targetPortNumber int32) cosmov1alpha1.NetworkRule {
 		var targetp *int32
 		if targetPortNumber != 0 {
-			targetp = pointer.Int32(int32(targetPortNumber))
+			targetp = ptr.To(int32(int32(targetPortNumber)))
 		}
 		return cosmov1alpha1.NetworkRule{
 			PortNumber:       portNumber,

@@ -8,7 +8,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 )
 
 func TestNetworkRule_Default(t *testing.T) {
@@ -43,7 +43,7 @@ func TestNetworkRule_Default(t *testing.T) {
 				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
-				TargetPortNumber: pointer.Int32(0),
+				TargetPortNumber: ptr.To(int32(0)),
 				Public:           false,
 			},
 			want: NetworkRule{
@@ -51,7 +51,7 @@ func TestNetworkRule_Default(t *testing.T) {
 				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
-				TargetPortNumber: pointer.Int32(0),
+				TargetPortNumber: ptr.To(int32(0)),
 				Public:           false,
 			},
 		},
@@ -62,7 +62,7 @@ func TestNetworkRule_Default(t *testing.T) {
 				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
-				TargetPortNumber: pointer.Int32(2222),
+				TargetPortNumber: ptr.To(int32(2222)),
 				Public:           true,
 			},
 			want: NetworkRule{
@@ -70,7 +70,7 @@ func TestNetworkRule_Default(t *testing.T) {
 				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
-				TargetPortNumber: pointer.Int32(2222),
+				TargetPortNumber: ptr.To(int32(2222)),
 				Public:           true,
 			},
 		},
@@ -81,7 +81,7 @@ func TestNetworkRule_Default(t *testing.T) {
 				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "",
-				TargetPortNumber: pointer.Int32(2222),
+				TargetPortNumber: ptr.To(int32(2222)),
 				Public:           false,
 			},
 			want: NetworkRule{
@@ -89,7 +89,7 @@ func TestNetworkRule_Default(t *testing.T) {
 				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "/",
-				TargetPortNumber: pointer.Int32(2222),
+				TargetPortNumber: ptr.To(int32(2222)),
 				Public:           false,
 			},
 		},
@@ -100,7 +100,7 @@ func TestNetworkRule_Default(t *testing.T) {
 				Protocol:         "",
 				PortNumber:       1111,
 				HTTPPath:         "path",
-				TargetPortNumber: pointer.Int32(2222),
+				TargetPortNumber: ptr.To(int32(2222)),
 				Public:           false,
 			},
 			want: NetworkRule{
@@ -108,7 +108,7 @@ func TestNetworkRule_Default(t *testing.T) {
 				Protocol:         "http",
 				PortNumber:       1111,
 				HTTPPath:         "path",
-				TargetPortNumber: pointer.Int32(2222),
+				TargetPortNumber: ptr.To(int32(2222)),
 				Public:           false,
 			},
 		},
@@ -135,7 +135,7 @@ func TestNetworkRule_portName(t *testing.T) {
 			name: "✅ OK",
 			netRule: &NetworkRule{
 				PortNumber:       1111,
-				TargetPortNumber: pointer.Int32(2222),
+				TargetPortNumber: ptr.To(int32(2222)),
 			},
 			want: "port1111",
 		},
@@ -161,7 +161,7 @@ func TestNetworkRule_ServicePort(t *testing.T) {
 				CustomHostPrefix: "name",
 				PortNumber:       1111,
 				HTTPPath:         "/path",
-				TargetPortNumber: pointer.Int32(2222),
+				TargetPortNumber: ptr.To(int32(2222)),
 			},
 			want: corev1.ServicePort{
 				Name:       "port1111",

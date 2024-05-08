@@ -15,6 +15,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
 	traefikv1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 
@@ -86,13 +89,17 @@ MIT 2023 cosmo-workspace/cosmo
 			printOptions()
 
 			mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-				Scheme:                 scheme,
-				MetricsBindAddress:     o.MetricsAddr,
-				Port:                   o.Port,
+				Scheme: scheme,
+				Metrics: server.Options{
+					BindAddress: o.MetricsAddr,
+				},
 				HealthProbeBindAddress: o.ProbeAddr,
 				LeaderElection:         o.EnableLeaderElection,
 				LeaderElectionID:       "04c57811.cosmo-workspace",
-				CertDir:                o.CertDir,
+				WebhookServer: webhook.NewServer(webhook.Options{
+					Port:    o.Port,
+					CertDir: o.CertDir,
+				}),
 			})
 			if err != nil {
 				setupLog.Error(err, "unable to start manager")
@@ -162,31 +169,37 @@ MIT 2023 cosmo-workspace/cosmo
 
 			// Webhook
 			(&webhooks.InstanceMutationWebhookHandler{
-				Client: mgr.GetClient(),
-				Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhook")),
+				Client:  mgr.GetClient(),
+				Log:     clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhook")),
+				Decoder: admission.NewDecoder(mgr.GetScheme()),
 			}).SetupWebhookWithManager(mgr)
 			(&webhooks.InstanceValidationWebhookHandler{
 				Client:       mgr.GetClient(),
 				Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhook")),
+				Decoder:      admission.NewDecoder(mgr.GetScheme()),
 				FieldManager: controllerFieldManager,
 			}).SetupWebhookWithManager(mgr)
 
 			(&webhooks.WorkspaceMutationWebhookHandler{
-				Client: mgr.GetClient(),
-				Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhook")),
+				Client:  mgr.GetClient(),
+				Log:     clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhook")),
+				Decoder: admission.NewDecoder(mgr.GetScheme()),
 			}).SetupWebhookWithManager(mgr)
 			(&webhooks.WorkspaceValidationWebhookHandler{
-				Client: mgr.GetClient(),
-				Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhook")),
+				Client:  mgr.GetClient(),
+				Log:     clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhook")),
+				Decoder: admission.NewDecoder(mgr.GetScheme()),
 			}).SetupWebhookWithManager(mgr)
 
 			(&webhooks.UserMutationWebhookHandler{
-				Client: mgr.GetClient(),
-				Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhook")),
+				Client:  mgr.GetClient(),
+				Log:     clog.NewLogger(ctrl.Log.WithName("UserMutationWebhook")),
+				Decoder: admission.NewDecoder(mgr.GetScheme()),
 			}).SetupWebhookWithManager(mgr)
 			(&webhooks.UserValidationWebhookHandler{
-				Client: mgr.GetClient(),
-				Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhook")),
+				Client:  mgr.GetClient(),
+				Log:     clog.NewLogger(ctrl.Log.WithName("UserValidationWebhook")),
+				Decoder: admission.NewDecoder(mgr.GetScheme()),
 			}).SetupWebhookWithManager(mgr)
 
 			ctx := ctrl.SetupSignalHandler()

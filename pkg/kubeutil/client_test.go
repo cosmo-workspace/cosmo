@@ -18,7 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 
@@ -182,7 +182,7 @@ spec:
 				By("checking other properties is not modified")
 
 				// fix spec to applied values
-				currentPodApplyCfg.Spec.Containers[0].Image = pointer.String("nginx:next")
+				currentPodApplyCfg.Spec.Containers[0].Image = ptr.To("nginx:next")
 
 				Expect(currentPodApplyCfg).Should(Equal(podApplyCfg))
 			})

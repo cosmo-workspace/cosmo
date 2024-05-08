@@ -147,7 +147,7 @@ spec:
 				}
 				return k8sClient.Get(ctx, key, &pv)
 			}, time.Second*10).Should(Succeed())
-			Ω(ObjectSnapshot(&pv)).To(MatchSnapShot())
+			Ω(PersistentVolumeSnapshot(&pv)).To(MatchSnapShot())
 
 			// StorageClass
 			By("checking StorageClass is as expected")
@@ -229,7 +229,7 @@ spec:
 				return *pv.Spec.Capacity.Storage()
 
 			}, time.Second*30).Should(Equal(expectedQuantity))
-			Ω(ObjectSnapshot(&pv)).To(MatchSnapShot())
+			Ω(PersistentVolumeSnapshot(&pv)).To(MatchSnapShot())
 
 			By("checking if StorageClass not updated")
 			var sc storagev1.StorageClass
