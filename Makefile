@@ -113,9 +113,9 @@ endif
 .PHONY: test-all-k8s-versions
 test-all-k8s-versions: go manifests generate fmt vet envtest ## Run tests on targeting k8s versions.
 ifeq ($(QUICK_BUILD),no)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.26.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.25.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.24.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.30.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.29.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.28.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
 endif
 
 .PHONY: clear-snapshots-ui
