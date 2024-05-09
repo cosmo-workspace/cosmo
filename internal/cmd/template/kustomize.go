@@ -22,8 +22,8 @@ func NewKustomize(disableNamePrefix bool) *types.Kustomization {
 	label[cosmov1alpha1.LabelKeyTemplateName] = template.DefaultVarsTemplate
 
 	kust := &types.Kustomization{
-		CommonLabels: label,
-		Namespace:    template.DefaultVarsNamespace,
+		Labels:    []types.Label{{Pairs: label, IncludeSelectors: true}},
+		Namespace: template.DefaultVarsNamespace,
 		Resources: []string{
 			DefaultPackagedFile,
 		},
