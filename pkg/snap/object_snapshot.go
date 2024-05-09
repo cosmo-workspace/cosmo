@@ -77,6 +77,12 @@ func ServiceSnapshot(in *corev1.Service) *corev1.Service {
 	return obj
 }
 
+func PersistentVolumeSnapshot(obj *corev1.PersistentVolume) client.Object {
+	o := ObjectSnapshot(obj).(*corev1.PersistentVolume)
+	o.Status.LastPhaseTransitionTime = nil
+	return o
+}
+
 func ObjectSnapshot(obj client.Object) client.Object {
 	t := obj.DeepCopyObject()
 	o := t.(client.Object)

@@ -9,8 +9,7 @@ import (
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
@@ -254,21 +253,21 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 
 		DescribeTable("✅ success in normal context:",
 			run_test,
-			Entry("admin user can update own workspace's replica", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: pointer.Int64(0)}),
+			Entry("admin user can update own workspace's replica", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: ptr.To(int64(0))}),
 			Entry("admin user can update own workspace with no change", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1"}),
-			Entry("normal user can update own workspace's replica", "normal-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "normal-user", WsName: "ws1", Replicas: pointer.Int64(5)}),
+			Entry("normal user can update own workspace's replica", "normal-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "normal-user", WsName: "ws1", Replicas: ptr.To(int64(5))}),
 		)
 
 		DescribeTable("❌ fail with invalid request:",
 			run_test,
-			Entry("invalid user name", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "xxxxx", WsName: "ws1", Replicas: pointer.Int64(0)}),
-			Entry("invalid workspace name", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "normal-user", WsName: "xxx", Replicas: pointer.Int64(1)}),
-			Entry("no change", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: pointer.Int64(1)}),
+			Entry("invalid user name", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "xxxxx", WsName: "ws1", Replicas: ptr.To(int64(0))}),
+			Entry("invalid workspace name", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "normal-user", WsName: "xxx", Replicas: ptr.To(int64(1))}),
+			Entry("no change", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: ptr.To(int64(1))}),
 		)
 
 		DescribeTable("❌ fail with authorization by role:",
 			run_test,
-			Entry("normal user cannot update admin's workspace", "normal-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: pointer.Int64(0)}),
+			Entry("normal user cannot update admin's workspace", "normal-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: ptr.To(int64(0))}),
 		)
 
 		DescribeTable("❌ fail with an unexpected error at update:",
@@ -276,7 +275,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 				clientMock.SetUpdateError((*Server).UpdateWorkspace, errors.New("mock update workspace error"))
 				run_test(loginUser, req)
 			},
-			Entry("unexpected err", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: pointer.Int64(0)}),
+			Entry("unexpected err", "admin-user", &dashv1alpha1.UpdateWorkspaceRequest{UserName: "admin-user", WsName: "ws1", Replicas: ptr.To(int64(0))}),
 		)
 	})
 

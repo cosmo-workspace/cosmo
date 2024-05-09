@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -214,7 +214,7 @@ func (c *TestUtil) CreateWorkspace(userName string, name string, template string
 		Template: cosmov1alpha1.TemplateRef{
 			Name: template,
 		},
-		Replicas: pointer.Int64(1),
+		Replicas: ptr.To(int64(1)),
 		Vars:     vars,
 	}
 	err = c.kosmoClient.Create(ctx, ws)
@@ -233,7 +233,7 @@ func (c *TestUtil) StopWorkspace(userName string, name string) {
 	ctx := context.Background()
 	ws, err := c.kosmoClient.GetWorkspaceByUserName(ctx, name, userName)
 	Expect(err).ShouldNot(HaveOccurred())
-	ws.Spec.Replicas = pointer.Int64(0)
+	ws.Spec.Replicas = ptr.To(int64(0))
 	err = c.kosmoClient.Update(ctx, ws)
 	Expect(err).ShouldNot(HaveOccurred())
 }

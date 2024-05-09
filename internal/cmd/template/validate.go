@@ -19,7 +19,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/cli-runtime/pkg/printers"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 
@@ -206,7 +206,7 @@ func (o *validateOption) RunE(cmd *cobra.Command, args []string) error {
 func (o *validateOption) dryrunApplyOnServer(ctx context.Context, obj client.Object) error {
 	options := &client.PatchOptions{
 		FieldManager: "cosmoctl-validate",
-		Force:        pointer.Bool(true),
+		Force:        ptr.To(true),
 		DryRun:       []string{metav1.DryRunAll},
 	}
 

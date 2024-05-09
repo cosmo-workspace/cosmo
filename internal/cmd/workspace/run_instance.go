@@ -7,8 +7,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
@@ -68,7 +67,7 @@ func (o *RunInstanceOption) RunE(cmd *cobra.Command, args []string) error {
 
 	c := o.Client
 
-	if _, err := c.UpdateWorkspace(ctx, o.InstanceName, o.User, kosmo.UpdateWorkspaceOpts{Replicas: pointer.Int64(1)}); err != nil {
+	if _, err := c.UpdateWorkspace(ctx, o.InstanceName, o.User, kosmo.UpdateWorkspaceOpts{Replicas: ptr.To(int64(1))}); err != nil {
 		return err
 	}
 

@@ -8,7 +8,7 @@ import (
 
 	connect_go "github.com/bufbuild/connect-go"
 	"k8s.io/apimachinery/pkg/api/meta"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -77,7 +77,7 @@ func (s *Server) GetUserAddonTemplates(ctx context.Context, req *connect_go.Requ
 		if ann := v.GetAnnotations(); ann != nil {
 			if b, ok := ann[cosmov1alpha1.UserAddonTemplateAnnKeyDefaultUserAddon]; ok {
 				if defaultAddon, err := strconv.ParseBool(b); err == nil && defaultAddon {
-					tmpl.IsDefaultUserAddon = pointer.Bool(true)
+					tmpl.IsDefaultUserAddon = ptr.To(true)
 				}
 			}
 		}

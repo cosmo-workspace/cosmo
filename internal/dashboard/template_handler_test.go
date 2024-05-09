@@ -8,7 +8,7 @@ import (
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	dashboardv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
@@ -69,7 +69,7 @@ var _ = Describe("Dashboard server [Template]", func() {
 			Entry(nil, "admin-user", "not empty", &dashboardv1alpha1.GetWorkspaceTemplatesRequest{}),
 			Entry(nil, "normal-user", "empty", &dashboardv1alpha1.GetWorkspaceTemplatesRequest{}),
 			Entry(nil, "normal-user", "not empty", &dashboardv1alpha1.GetWorkspaceTemplatesRequest{}),
-			Entry(nil, "normal-user", "not empty", &dashboardv1alpha1.GetWorkspaceTemplatesRequest{UseRoleFilter: pointer.Bool(true)}),
+			Entry(nil, "normal-user", "not empty", &dashboardv1alpha1.GetWorkspaceTemplatesRequest{UseRoleFilter: ptr.To(true)}),
 			Entry(nil, "role-user", "not empty", &dashboardv1alpha1.GetWorkspaceTemplatesRequest{}),
 		)
 

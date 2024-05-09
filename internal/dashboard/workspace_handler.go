@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	connect_go "github.com/bufbuild/connect-go"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -134,7 +134,7 @@ func (s *Server) UpdateWorkspace(ctx context.Context, req *connect_go.Request[da
 func convertWorkspaceTodashv1alpha1Workspace(ws cosmov1alpha1.Workspace) *dashv1alpha1.Workspace {
 	replicas := ws.Spec.Replicas
 	if replicas == nil {
-		replicas = pointer.Int64(1)
+		replicas = ptr.To(int64(1))
 	}
 
 	return &dashv1alpha1.Workspace{

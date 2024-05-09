@@ -26,7 +26,7 @@ import (
 type UserMutationWebhookHandler struct {
 	Client  client.Client
 	Log     *clog.Logger
-	decoder *admission.Decoder
+	Decoder admission.Decoder
 }
 
 //+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-user,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=users,verbs=create;update,versions=v1alpha1,name=muser.kb.io,admissionReviewVersions={v1,v1alpha1}
@@ -44,7 +44,7 @@ func (h *UserMutationWebhookHandler) Handle(ctx context.Context, req admission.R
 	ctx = clog.IntoContext(ctx, log)
 
 	user := &cosmov1alpha1.User{}
-	err := h.decoder.Decode(req, user)
+	err := h.Decoder.Decode(req, user)
 	if err != nil {
 		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
@@ -128,15 +128,10 @@ AddonsLoop:
 	return admission.PatchResponseFromRaw(req.Object.Raw, marshaled)
 }
 
-func (h *UserMutationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
-	h.decoder = d
-	return nil
-}
-
 type UserValidationWebhookHandler struct {
 	Client  client.Client
 	Log     *clog.Logger
-	decoder *admission.Decoder
+	Decoder admission.Decoder
 }
 
 //+kubebuilder:webhook:path=/validate-cosmo-workspace-github-io-v1alpha1-user,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=users,verbs=create;update,versions=v1alpha1,name=vuser.kb.io,admissionReviewVersions={v1,v1alpha1}
@@ -154,7 +149,7 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 	ctx = clog.IntoContext(ctx, log)
 
 	user := &cosmov1alpha1.User{}
-	err := h.decoder.Decode(req, user)
+	err := h.Decoder.Decode(req, user)
 	if err != nil {
 		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
@@ -217,11 +212,6 @@ func (h *UserValidationWebhookHandler) Handle(ctx context.Context, req admission
 	}
 
 	return admission.Allowed("Validation OK")
-}
-
-func (h *UserValidationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
-	h.decoder = d
-	return nil
 }
 
 func validName(v string) bool {

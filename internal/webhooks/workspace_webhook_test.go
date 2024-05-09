@@ -15,7 +15,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -236,7 +236,7 @@ spec:
 			err = k8sClient.Create(ctx, &user)
 			Expect(err).ShouldNot(HaveOccurred())
 
-			rep := pointer.Int64(1)
+			rep := ptr.To(int64(1))
 			ws := cosmov1alpha1.Workspace{
 				TypeMeta: metav1.TypeMeta{
 					Kind:       "Workspace",
@@ -580,7 +580,7 @@ func TestNetworkRulesByService(t *testing.T) {
 				{
 					CustomHostPrefix: "main2",
 					PortNumber:       7778,
-					TargetPortNumber: pointer.Int32(32001),
+					TargetPortNumber: ptr.To(int32(32001)),
 				},
 			},
 		},

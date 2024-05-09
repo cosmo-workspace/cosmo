@@ -9,12 +9,12 @@ helm-dependency-update:
 	cd cosmo; ../$(HELM) dependency update
 
 chartsnap:
-	go install github.com/cosmo-workspace/controller-testtools/cmd/chartsnap@latest
+	-helm plugin install https://github.com/jlandowner/helm-chartsnap
 
 TEST_VALUES ?= cosmo/test
 
 test: chartsnap helm helm-dependency-update
-	chartsnap --chart cosmo --values $(TEST_VALUES) --helm-path $(HELM) $(CHARTSNAP_OPT)
+	helm chartsnap -c cosmo --values $(TEST_VALUES) -n cosmo-system $(CHARTSNAP_OPT)
 
 test-list:
 	grep -R '{{[-|] if .*}}' cosmo/templates/* | grep .Values | awk -F':' '{print $$2}' | sed -n 's/.*\(.Values[^ ]*\).*/\1/p' | tr -d ')' | sort | uniq | awk -F'.Values.' '{print $$2}' > cosmo/test/if-values.list

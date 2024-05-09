@@ -12,7 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/validation"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -30,7 +30,7 @@ import (
 type WorkspaceMutationWebhookHandler struct {
 	Client  client.Client
 	Log     *clog.Logger
-	decoder *admission.Decoder
+	Decoder admission.Decoder
 }
 
 //+kubebuilder:webhook:path=/mutate-cosmo-workspace-github-io-v1alpha1-workspace,mutating=true,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=workspaces,verbs=create;update,versions=v1alpha1,name=mworkspace.kb.io,admissionReviewVersions={v1,v1alpha1}
@@ -48,7 +48,7 @@ func (h *WorkspaceMutationWebhookHandler) Handle(ctx context.Context, req admiss
 	ctx = clog.IntoContext(ctx, log)
 
 	ws := &cosmov1alpha1.Workspace{}
-	err := h.decoder.Decode(req, ws)
+	err := h.Decoder.Decode(req, ws)
 	if err != nil {
 		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
@@ -102,11 +102,6 @@ func (h *WorkspaceMutationWebhookHandler) mutateWorkspace(ctx context.Context, w
 	// sort network rules
 	ws.Spec.Network = sortNetworkRule(ws.Spec.Network, ws.Status.Config)
 
-	return nil
-}
-
-func (h *WorkspaceMutationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
-	h.decoder = d
 	return nil
 }
 
@@ -176,7 +171,7 @@ func networkRulesByServicePorts(svcPorts []corev1.ServicePort) []cosmov1alpha1.N
 		netRule.PortNumber = p.Port
 
 		if p.TargetPort.IntValue() != 0 {
-			netRule.TargetPortNumber = pointer.Int32(int32(p.TargetPort.IntValue()))
+			netRule.TargetPortNumber = ptr.To(int32(p.TargetPort.IntValue()))
 		}
 
 		netRules = append(netRules, netRule)
@@ -206,7 +201,7 @@ func sortNetworkRule(netRules []cosmov1alpha1.NetworkRule, cfg cosmov1alpha1.Con
 type WorkspaceValidationWebhookHandler struct {
 	Client  client.Client
 	Log     *clog.Logger
-	decoder *admission.Decoder
+	Decoder admission.Decoder
 }
 
 //+kubebuilder:webhook:path=/validate-cosmo-workspace-github-io-v1alpha1-workspace,mutating=false,failurePolicy=fail,sideEffects=None,groups=cosmo-workspace.github.io,resources=workspaces,verbs=create;update,versions=v1alpha1,name=vworkspace.kb.io,admissionReviewVersions={v1,v1alpha1}
@@ -223,7 +218,7 @@ func (h *WorkspaceValidationWebhookHandler) Handle(ctx context.Context, req admi
 	log := h.Log.WithValues("UID", req.UID, "GroupVersionKind", req.Kind.String(), "Name", req.Name, "Namespace", req.Namespace)
 
 	ws := &cosmov1alpha1.Workspace{}
-	err := h.decoder.Decode(req, ws)
+	err := h.Decoder.Decode(req, ws)
 	if err != nil {
 		log.Error(err, "failed to decode request")
 		return admission.Errored(http.StatusBadRequest, err)
@@ -289,11 +284,6 @@ func (h *WorkspaceValidationWebhookHandler) validateTemplatePermission(ctx conte
 		return fmt.Errorf("template '%s' requires useraddon '%s'", tmpl.GetName(), requiredAddons)
 	}
 
-	return nil
-}
-
-func (h *WorkspaceValidationWebhookHandler) InjectDecoder(d *admission.Decoder) error {
-	h.decoder = d
 	return nil
 }
 

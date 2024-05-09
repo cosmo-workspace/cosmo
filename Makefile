@@ -113,9 +113,9 @@ endif
 .PHONY: test-all-k8s-versions
 test-all-k8s-versions: go manifests generate fmt vet envtest ## Run tests on targeting k8s versions.
 ifeq ($(QUICK_BUILD),no)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.26.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.25.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
-	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.24.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.30.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.29.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
+	-KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use 1.28.x -p path)" $(GO) test ./... -coverprofile $(COVER_PROFILE)
 endif
 
 .PHONY: clear-snapshots-ui
@@ -266,12 +266,12 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 ##---------------------------------------------------------------------
 
 ## Tool Versions
-GO_VERSION ?= 1.20.4
-KUSTOMIZE_VERSION ?= v5.0.1
-CONTROLLER_TOOLS_VERSION ?= v0.12.0
+GO_VERSION ?= 1.22.3
+KUSTOMIZE_VERSION ?= v5.4.1
+CONTROLLER_TOOLS_VERSION ?= v0.15.0
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION ?= 1.26.x
+ENVTEST_K8S_VERSION ?= 1.30.x
 
 ## Location to install dependencies to
 LOCALBIN ?= $(shell pwd)/bin

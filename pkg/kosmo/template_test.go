@@ -71,7 +71,8 @@ func TestClient_GetTemplate(t *testing.T) {
 				})
 			}
 			if !tt.wantErr && !equality.Semantic.DeepEqual(got, tt.want) {
-				t.Errorf("Client.GetTemplate() = %v, want %v", got, tt.want)
+				diff := cmp.Diff(got, tt.want)
+				t.Errorf("Client.GetTemplate() = %v, want %v\ndiff = %s", got, tt.want, diff)
 			}
 		})
 	}

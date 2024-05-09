@@ -36,7 +36,7 @@ Flags:
       --signin-url string                 Dashboard signin url
       --skip_headers                      If true, avoid header prefixes in the log messages
       --skip_log_headers                  If true, avoid headers when opening log files (no effect when -logtostderr=true)
-      --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=false) (default 2)
+      --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=true) (default 2)
       --timeout-seconds int               Timeout seconds for response (default 3)
       --tls-cert string                   TLS certificate file path (default "tls.crt")
       --tls-key string                    TLS key file path (default "tls.key")
@@ -89,7 +89,7 @@ Flags:
       --signin-url string                 Dashboard signin url
       --skip_headers                      If true, avoid header prefixes in the log messages
       --skip_log_headers                  If true, avoid headers when opening log files (no effect when -logtostderr=true)
-      --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=false) (default 2)
+      --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=true) (default 2)
       --timeout-seconds int               Timeout seconds for response (default 3)
       --tls-cert string                   TLS certificate file path (default "tls.crt")
       --tls-key string                    TLS key file path (default "tls.key")
@@ -142,7 +142,7 @@ Flags:
       --signin-url string                 Dashboard signin url
       --skip_headers                      If true, avoid header prefixes in the log messages
       --skip_log_headers                  If true, avoid headers when opening log files (no effect when -logtostderr=true)
-      --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=false) (default 2)
+      --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=true) (default 2)
       --timeout-seconds int               Timeout seconds for response (default 3)
       --tls-cert string                   TLS certificate file path (default "tls.crt")
       --tls-key string                    TLS key file path (default "tls.key")
@@ -195,7 +195,7 @@ Flags:
       --signin-url string                 Dashboard signin url
       --skip_headers                      If true, avoid header prefixes in the log messages
       --skip_log_headers                  If true, avoid headers when opening log files (no effect when -logtostderr=true)
-      --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=false) (default 2)
+      --stderrthreshold severity          logs at or above this threshold go to stderr when writing to files and stderr (no effect when -logtostderr=true or -alsologtostderr=true) (default 2)
       --timeout-seconds int               Timeout seconds for response (default 3)
       --tls-cert string                   TLS certificate file path (default "tls.crt")
       --tls-key string                    TLS key file path (default "tls.key")

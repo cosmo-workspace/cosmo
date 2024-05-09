@@ -20,6 +20,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
 	//+kubebuilder:scaffold:imports
 
@@ -90,43 +93,51 @@ var _ = BeforeSuite(func() {
 	testUtil = test.NewTestUtil(k8sClient)
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
-		Scheme:             clientgoscheme.Scheme,
-		MetricsBindAddress: "0",
-		CertDir:            testEnv.WebhookInstallOptions.LocalServingCertDir,
-		Port:               testEnv.WebhookInstallOptions.LocalServingPort,
+		Scheme:  clientgoscheme.Scheme,
+		Metrics: server.Options{BindAddress: "0"},
+		WebhookServer: webhook.NewServer(webhook.Options{
+			CertDir: testEnv.WebhookInstallOptions.LocalServingCertDir,
+			Port:    testEnv.WebhookInstallOptions.LocalServingPort,
+		}),
 	})
 	Expect(err).NotTo(HaveOccurred())
 
 	// webhook
 	(&webhooks.InstanceMutationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler")),
+		Client:  k8sClient,
+		Log:     clog.NewLogger(ctrl.Log.WithName("InstanceMutationWebhookHandler")),
+		Decoder: admission.NewDecoder(mgr.GetScheme()),
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.InstanceValidationWebhookHandler{
 		Client:       k8sClient,
 		Log:          clog.NewLogger(ctrl.Log.WithName("InstanceValidationWebhookHandler")),
+		Decoder:      admission.NewDecoder(mgr.GetScheme()),
 		FieldManager: "cosmo-instance-controller",
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.WorkspaceMutationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+		Client:  k8sClient,
+		Log:     clog.NewLogger(ctrl.Log.WithName("WorkspaceMutationWebhookHandler")),
+		Decoder: admission.NewDecoder(mgr.GetScheme()),
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.WorkspaceValidationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler")),
+		Client:  k8sClient,
+		Log:     clog.NewLogger(ctrl.Log.WithName("WorkspaceValidationWebhookHandler")),
+		Decoder: admission.NewDecoder(mgr.GetScheme()),
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.UserMutationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
+		Client:  k8sClient,
+		Log:     clog.NewLogger(ctrl.Log.WithName("UserMutationWebhookHandler")),
+		Decoder: admission.NewDecoder(mgr.GetScheme()),
 	}).SetupWebhookWithManager(mgr)
 
 	(&webhooks.UserValidationWebhookHandler{
-		Client: k8sClient,
-		Log:    clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+		Client:  k8sClient,
+		Log:     clog.NewLogger(ctrl.Log.WithName("UserValidationWebhookHandler")),
+		Decoder: admission.NewDecoder(mgr.GetScheme()),
 	}).SetupWebhookWithManager(mgr)
 
 	// Setup server

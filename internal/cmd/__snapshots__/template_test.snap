@@ -619,7 +619,7 @@ rbac.authorization.k8s.io/v1   RoleBinding             cosmoctl-validate-XXXXXXX
 v1                             Service                 cosmoctl-validate-XXXXXXXX-workspace               OK       
 v1                             PersistentVolumeClaim   cosmoctl-validate-XXXXXXXX-workspace               OK       
 apps/v1                        Deployment              cosmoctl-validate-XXXXXXXX-workspace               OK       
-networking.k8s.io/v1           Ingress                 cosmoctl-validate-XXXXXXXX-workspace               NG       dryrun failed: Ingress.extensions \"cosmoctl-validate-XXXXXXXX-workspace\" is invalid: spec.rules[0].host: Invalid value: \"main-cosmoctl-validate-XXXXXXXX-default.{{DOMAIN}}\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
+networking.k8s.io/v1           Ingress                 cosmoctl-validate-XXXXXXXX-workspace               NG       dryrun failed: Ingress.networking.k8s.io \"cosmoctl-validate-XXXXXXXX-workspace\" is invalid: spec.rules[0].host: Invalid value: \"main-cosmoctl-validate-XXXXXXXX-default.{{DOMAIN}}\": a lowercase RFC 1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
 """
 
 ['cosmoctl [template] [validate] ✅ success in normal context: template validate --file - 2']
