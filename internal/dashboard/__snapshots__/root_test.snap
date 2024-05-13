@@ -7,12 +7,14 @@ Usage:
 Flags:
       --add_dir_header                    If true, adds the file directory to the header of the log messages
       --alsologtostderr                   log to standard error as well as files (no effect when -logtostderr=true)
+      --ca-cert string                    CA certificate file path (default "ca.crt")
       --cookie-blockkey string            Cookie blockkey
       --cookie-domain string              Cookie domain name
       --cookie-hashkey string             Cookie hashkey
       --cookie-session-name string        Cookie session name (default "cosmo-auth")
       --graceful-shutdown-seconds int     Graceful shutdown seconds (default 10)
   -h, --help                              help for dashboard
+      --incluster-port int                Port for incluster server (default 8080)
       --insecure                          start http server not https server
       --kubeconfig string                 Paths to a kubeconfig. Only required if out-of-cluster.
       --ldap-binddn string                [bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.
@@ -60,12 +62,14 @@ Usage:
 Flags:
       --add_dir_header                    If true, adds the file directory to the header of the log messages
       --alsologtostderr                   log to standard error as well as files (no effect when -logtostderr=true)
+      --ca-cert string                    CA certificate file path (default "ca.crt")
       --cookie-blockkey string            Cookie blockkey
       --cookie-domain string              Cookie domain name
       --cookie-hashkey string             Cookie hashkey
       --cookie-session-name string        Cookie session name (default "cosmo-auth")
       --graceful-shutdown-seconds int     Graceful shutdown seconds (default 10)
   -h, --help                              help for dashboard
+      --incluster-port int                Port for incluster server (default 8080)
       --insecure                          start http server not https server
       --kubeconfig string                 Paths to a kubeconfig. Only required if out-of-cluster.
       --ldap-binddn string                [bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.
@@ -113,12 +117,14 @@ Usage:
 Flags:
       --add_dir_header                    If true, adds the file directory to the header of the log messages
       --alsologtostderr                   log to standard error as well as files (no effect when -logtostderr=true)
+      --ca-cert string                    CA certificate file path (default "ca.crt")
       --cookie-blockkey string            Cookie blockkey
       --cookie-domain string              Cookie domain name
       --cookie-hashkey string             Cookie hashkey
       --cookie-session-name string        Cookie session name (default "cosmo-auth")
       --graceful-shutdown-seconds int     Graceful shutdown seconds (default 10)
   -h, --help                              help for dashboard
+      --incluster-port int                Port for incluster server (default 8080)
       --insecure                          start http server not https server
       --kubeconfig string                 Paths to a kubeconfig. Only required if out-of-cluster.
       --ldap-binddn string                [bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.
@@ -166,12 +172,14 @@ Usage:
 Flags:
       --add_dir_header                    If true, adds the file directory to the header of the log messages
       --alsologtostderr                   log to standard error as well as files (no effect when -logtostderr=true)
+      --ca-cert string                    CA certificate file path (default "ca.crt")
       --cookie-blockkey string            Cookie blockkey
       --cookie-domain string              Cookie domain name
       --cookie-hashkey string             Cookie hashkey
       --cookie-session-name string        Cookie session name (default "cosmo-auth")
       --graceful-shutdown-seconds int     Graceful shutdown seconds (default 10)
   -h, --help                              help for dashboard
+      --incluster-port int                Port for incluster server (default 8080)
       --insecure                          start http server not https server
       --kubeconfig string                 Paths to a kubeconfig. Only required if out-of-cluster.
       --ldap-binddn string                [bind mode] ex: cn=%s,ou=users,dc=example,dc=com  '%s' is replaced by the userid.
