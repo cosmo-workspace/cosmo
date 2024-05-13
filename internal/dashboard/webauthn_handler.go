@@ -14,6 +14,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"k8s.io/apimachinery/pkg/api/errors"
 
+	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
 	cosmowebauthn "github.com/cosmo-workspace/cosmo/pkg/auth/webauthn"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
@@ -40,18 +41,6 @@ func (s *Server) getWebAuthnSession(id []byte) (webauthn.SessionData, error) {
 		panic("session is not *webauthn.SessionData")
 	}
 	return *session, nil
-}
-
-func convertCredentialsToDashCredentials(creds []cosmowebauthn.Credential) []*dashv1alpha1.Credential {
-	ret := make([]*dashv1alpha1.Credential, len(creds))
-	for i, cred := range creds {
-		ret[i] = &dashv1alpha1.Credential{
-			Id:          cred.Base64URLEncodedId,
-			DisplayName: cred.DisplayName,
-			Timestamp:   timestamppb.New(time.Unix(cred.Timestamp, 0)),
-		}
-	}
-	return ret
 }
 
 func webauthnErr(log *clog.Logger, err error) {
@@ -224,7 +213,7 @@ func (s *Server) ListCredentials(ctx context.Context, req *connect_go.Request[da
 	}
 
 	return connect_go.NewResponse(&dashv1alpha1.ListCredentialsResponse{
-		Credentials: convertCredentialsToDashCredentials(user.CredentialList.Creds),
+		Credentials: apiconv.C2D_Credentials(user.CredentialList.Creds),
 	}), nil
 }
 

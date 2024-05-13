@@ -22,6 +22,7 @@ metadata:
   name: cosmo-dashboard-cert
   namespace: {{ .Release.Namespace }}
 spec:
+  commonName: cosmo-dashboard.{{.Release.Namespace}}.svc.cluster.local
   dnsNames:
     - cosmo-dashboard.{{.Release.Namespace}}.svc
     - cosmo-dashboard.{{.Release.Namespace}}.svc.cluster.local

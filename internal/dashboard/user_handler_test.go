@@ -10,7 +10,6 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"google.golang.org/protobuf/types/known/emptypb"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	ctrl_client "sigs.k8s.io/controller-runtime/pkg/client"
@@ -200,7 +199,7 @@ var _ = Describe("Dashboard server [User]", func() {
 		run_test := func(loginUser string) {
 			By("---------------test start----------------")
 			ctx := context.Background()
-			res, err := client.GetUsers(ctx, NewRequestWithSession(&emptypb.Empty{}, getSession(loginUser)))
+			res, err := client.GetUsers(ctx, NewRequestWithSession(&dashv1alpha1.GetUsersRequest{}, getSession(loginUser)))
 			if err == nil {
 				Ω(res.Msg).To(MatchSnapShot())
 			} else {

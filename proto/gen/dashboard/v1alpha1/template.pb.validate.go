@@ -207,6 +207,10 @@ func (m *Template) validate(all bool) error {
 		// no validation rules for IsDefaultUserAddon
 	}
 
+	if m.Raw != nil {
+		// no validation rules for Raw
+	}
+
 	if len(errors) > 0 {
 		return TemplateMultiError(errors)
 	}

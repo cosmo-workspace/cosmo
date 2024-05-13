@@ -606,6 +606,8 @@ func (m *UpdateWorkspaceRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Vars
+
 	if m.Replicas != nil {
 		// no validation rules for Replicas
 	}
@@ -849,6 +851,10 @@ func (m *GetWorkspaceRequest) validate(all bool) error {
 
 	// no validation rules for WsName
 
+	if m.WithRaw != nil {
+		// no validation rules for WithRaw
+	}
+
 	if len(errors) > 0 {
 		return GetWorkspaceRequestMultiError(errors)
 	}
@@ -1083,6 +1089,10 @@ func (m *GetWorkspacesRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for UserName
+
+	if m.WithRaw != nil {
+		// no validation rules for WithRaw
+	}
 
 	if len(errors) > 0 {
 		return GetWorkspacesRequestMultiError(errors)

@@ -13,7 +13,6 @@ import (
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
 	v1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"
 )
@@ -67,7 +66,7 @@ type UserServiceClient interface {
 	// Returns a single User model
 	GetUser(context.Context, *connect_go.Request[v1alpha1.GetUserRequest]) (*connect_go.Response[v1alpha1.GetUserResponse], error)
 	// Returns an array of User model
-	GetUsers(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetUsersResponse], error)
+	GetUsers(context.Context, *connect_go.Request[v1alpha1.GetUsersRequest]) (*connect_go.Response[v1alpha1.GetUsersResponse], error)
 	// Create a new User
 	CreateUser(context.Context, *connect_go.Request[v1alpha1.CreateUserRequest]) (*connect_go.Response[v1alpha1.CreateUserResponse], error)
 	// Update user display name
@@ -100,7 +99,7 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+UserServiceGetUserProcedure,
 			opts...,
 		),
-		getUsers: connect_go.NewClient[emptypb.Empty, v1alpha1.GetUsersResponse](
+		getUsers: connect_go.NewClient[v1alpha1.GetUsersRequest, v1alpha1.GetUsersResponse](
 			httpClient,
 			baseURL+UserServiceGetUsersProcedure,
 			opts...,
@@ -137,7 +136,7 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 type userServiceClient struct {
 	deleteUser            *connect_go.Client[v1alpha1.DeleteUserRequest, v1alpha1.DeleteUserResponse]
 	getUser               *connect_go.Client[v1alpha1.GetUserRequest, v1alpha1.GetUserResponse]
-	getUsers              *connect_go.Client[emptypb.Empty, v1alpha1.GetUsersResponse]
+	getUsers              *connect_go.Client[v1alpha1.GetUsersRequest, v1alpha1.GetUsersResponse]
 	createUser            *connect_go.Client[v1alpha1.CreateUserRequest, v1alpha1.CreateUserResponse]
 	updateUserDisplayName *connect_go.Client[v1alpha1.UpdateUserDisplayNameRequest, v1alpha1.UpdateUserDisplayNameResponse]
 	updateUserPassword    *connect_go.Client[v1alpha1.UpdateUserPasswordRequest, v1alpha1.UpdateUserPasswordResponse]
@@ -156,7 +155,7 @@ func (c *userServiceClient) GetUser(ctx context.Context, req *connect_go.Request
 }
 
 // GetUsers calls dashboard.v1alpha1.UserService.GetUsers.
-func (c *userServiceClient) GetUsers(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetUsersResponse], error) {
+func (c *userServiceClient) GetUsers(ctx context.Context, req *connect_go.Request[v1alpha1.GetUsersRequest]) (*connect_go.Response[v1alpha1.GetUsersResponse], error) {
 	return c.getUsers.CallUnary(ctx, req)
 }
 
@@ -192,7 +191,7 @@ type UserServiceHandler interface {
 	// Returns a single User model
 	GetUser(context.Context, *connect_go.Request[v1alpha1.GetUserRequest]) (*connect_go.Response[v1alpha1.GetUserResponse], error)
 	// Returns an array of User model
-	GetUsers(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetUsersResponse], error)
+	GetUsers(context.Context, *connect_go.Request[v1alpha1.GetUsersRequest]) (*connect_go.Response[v1alpha1.GetUsersResponse], error)
 	// Create a new User
 	CreateUser(context.Context, *connect_go.Request[v1alpha1.CreateUserRequest]) (*connect_go.Response[v1alpha1.CreateUserResponse], error)
 	// Update user display name
@@ -266,7 +265,7 @@ func (UnimplementedUserServiceHandler) GetUser(context.Context, *connect_go.Requ
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.UserService.GetUser is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) GetUsers(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.GetUsersResponse], error) {
+func (UnimplementedUserServiceHandler) GetUsers(context.Context, *connect_go.Request[v1alpha1.GetUsersRequest]) (*connect_go.Response[v1alpha1.GetUsersResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.UserService.GetUsers is not implemented"))
 }
 

@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	connect_go "github.com/bufbuild/connect-go"
-	"google.golang.org/protobuf/types/known/emptypb"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
@@ -42,12 +42,12 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 
 	// create user
 	user, err := s.Klient.CreateUser(ctx, req.Msg.UserName, req.Msg.DisplayName,
-		req.Msg.Roles, req.Msg.AuthType, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons))
+		req.Msg.Roles, req.Msg.AuthType, apiconv.D2C_UserAddons(req.Msg.Addons))
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
-	resUser := convertUserToDashv1alpha1User(*user)
+	resUser := apiconv.C2D_User(*user)
 
 	if user.Spec.AuthType == cosmov1alpha1.UserAuthTypePasswordSecert {
 		// Wait until user created
@@ -66,7 +66,7 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 	return connect_go.NewResponse(res), nil
 }
 
-func (s *Server) GetUsers(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[dashv1alpha1.GetUsersResponse], error) {
+func (s *Server) GetUsers(ctx context.Context, req *connect_go.Request[dashv1alpha1.GetUsersRequest]) (*connect_go.Response[dashv1alpha1.GetUsersResponse], error) {
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
@@ -80,10 +80,8 @@ func (s *Server) GetUsers(ctx context.Context, req *connect_go.Request[emptypb.E
 		return nil, ErrResponse(log, err)
 	}
 
-	res := &dashv1alpha1.GetUsersResponse{}
-	res.Items = make([]*dashv1alpha1.User, len(users))
-	for i := range users {
-		res.Items[i] = convertUserToDashv1alpha1User(users[i])
+	res := &dashv1alpha1.GetUsersResponse{
+		Items: apiconv.C2D_Users(users, apiconv.WithUserRaw(req.Msg.WithRaw)),
 	}
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
@@ -103,10 +101,16 @@ func (s *Server) GetUser(ctx context.Context, req *connect_go.Request[dashv1alph
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
+	events, err := s.Klient.ListEvents(ctx, cosmov1alpha1.UserNamespace(user.Name))
+	if err != nil {
+		log.Error(err, "failed to list events", "namespace", cosmov1alpha1.UserNamespace(user.Name))
+	}
 
 	res := &dashv1alpha1.GetUserResponse{
-		User: convertUserToDashv1alpha1User(*user),
+		User: apiconv.C2D_User(*user, apiconv.WithUserRaw(req.Msg.WithRaw)),
 	}
+	res.User.Events = apiconv.K2D_Events(events)
+
 	return connect_go.NewResponse(res), nil
 }
 
@@ -120,7 +124,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 	}
 
 	// group-admin user can delete users which have only the their groups
-	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(convertUserRolesToStringSlice(targetUser.Spec.Roles))); err != nil {
+	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(apiconv.C2S_UserRole(targetUser.Spec.Roles))); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -138,59 +142,8 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 
 	res := &dashv1alpha1.DeleteUserResponse{
 		Message: "Successfully deleted",
-		User:    convertUserToDashv1alpha1User(*user),
+		User:    apiconv.C2D_User(*user),
 	}
 	log.Info(res.Message, "username", req.Msg.UserName)
 	return connect_go.NewResponse(res), nil
-}
-
-func convertUserToDashv1alpha1User(user cosmov1alpha1.User) *dashv1alpha1.User {
-	addons := make([]*dashv1alpha1.UserAddon, len(user.Spec.Addons))
-	for i, v := range user.Spec.Addons {
-		addons[i] = &dashv1alpha1.UserAddon{
-			Template:      v.Template.Name,
-			ClusterScoped: v.Template.ClusterScoped,
-			Vars:          v.Vars,
-		}
-	}
-
-	return &dashv1alpha1.User{
-		Name:        user.Name,
-		DisplayName: user.Spec.DisplayName,
-		Roles:       convertUserRolesToStringSlice(user.Spec.Roles),
-		AuthType:    user.Spec.AuthType.String(),
-		Addons:      addons,
-		Status:      string(user.Status.Phase),
-	}
-}
-
-func convertUserRolesToStringSlice(apiRoles []cosmov1alpha1.UserRole) []string {
-	roles := make([]string, 0, len(apiRoles))
-	for _, v := range apiRoles {
-		roles = append(roles, v.Name)
-	}
-	return roles
-}
-
-func convertStringSliceToUserRoles(roles []string) []cosmov1alpha1.UserRole {
-	apiRoles := make([]cosmov1alpha1.UserRole, 0, len(roles))
-	for _, v := range roles {
-		apiRoles = append(apiRoles, cosmov1alpha1.UserRole{Name: v})
-	}
-	return apiRoles
-}
-
-func convertDashv1alpha1UserAddonToUserAddon(addons []*dashv1alpha1.UserAddon) []cosmov1alpha1.UserAddon {
-	a := make([]cosmov1alpha1.UserAddon, len(addons))
-	for i, v := range addons {
-		addon := cosmov1alpha1.UserAddon{
-			Template: cosmov1alpha1.UserAddonTemplateRef{
-				Name:          v.Template,
-				ClusterScoped: v.ClusterScoped,
-			},
-			Vars: v.Vars,
-		}
-		a[i] = addon
-	}
-	return a
 }

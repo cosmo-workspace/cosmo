@@ -24,7 +24,6 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth"
@@ -62,8 +61,10 @@ type options struct {
 	GracefulShutdownSeconds int64
 	TLSPrivateKeyPath       string
 	TLSCertPath             string
+	CACertPath              string
 	Insecure                bool
 	ServerPort              int
+	InClusterServerPort     int
 	MaxAgeMinutes           int
 	LdapURL                 string
 	LdapStartTLS            bool
@@ -108,8 +109,10 @@ MIT 2023 cosmo-workspace/cosmo
 	rootCmd.PersistentFlags().StringVar(&o.SigninURL, "signin-url", "", "Dashboard signin url")
 	rootCmd.PersistentFlags().StringVar(&o.TLSPrivateKeyPath, "tls-key", "tls.key", "TLS key file path")
 	rootCmd.PersistentFlags().StringVar(&o.TLSCertPath, "tls-cert", "tls.crt", "TLS certificate file path")
+	rootCmd.PersistentFlags().StringVar(&o.CACertPath, "ca-cert", "ca.crt", "CA certificate file path")
 	rootCmd.PersistentFlags().BoolVar(&o.Insecure, "insecure", false, "start http server not https server")
 	rootCmd.PersistentFlags().IntVar(&o.ServerPort, "port", 8443, "Port for dashboard server")
+	rootCmd.PersistentFlags().IntVar(&o.InClusterServerPort, "incluster-port", 8080, "Port for incluster server")
 	rootCmd.PersistentFlags().IntVar(&o.MaxAgeMinutes, "maxage-minutes", 720, "session maxage minutes")
 	rootCmd.PersistentFlags().StringVar(&o.LdapURL, "ldap-url", "", "LDAP URL. ldap[s]://hostname.or.ip[:port]")
 	rootCmd.PersistentFlags().BoolVar(&o.LdapStartTLS, "ldap-start-tls", false, "Enables StartTLS functionality")
@@ -179,7 +182,7 @@ func (o *options) newLdapAuthorizer() (*auth.LdapAuthorizer, error) {
 		certPool.AppendCertsFromPEM(caCert)
 		tlsConfig.RootCAs = certPool
 	}
-	autorizer := &auth.LdapAuthorizer{
+	authorizer := &auth.LdapAuthorizer{
 		URL:                o.LdapURL,
 		StartTLS:           o.LdapStartTLS,
 		TlsConfig:          tlsConfig,
@@ -190,7 +193,7 @@ func (o *options) newLdapAuthorizer() (*auth.LdapAuthorizer, error) {
 		SearchFilter:       o.LdapSearchFilter,
 	}
 
-	return autorizer, nil
+	return authorizer, nil
 }
 
 func (o *options) RunE(cmd *cobra.Command, args []string) error {
@@ -205,16 +208,15 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 
 	cmd.SilenceUsage = true
 
-	printVersion(cmd, o)
+	printVersion(cmd)
 	printOptions(o)
 
 	ctx := ctrl.SetupSignalHandler()
 
-	// Setup controller manager
+	// Setup controller manager for cached client
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:         scheme,
 		Metrics:        server.Options{BindAddress: "0"},
-		WebhookServer:  webhook.NewServer(webhook.Options{Port: 9443}),
 		LeaderElection: false,
 	})
 	if err != nil {
@@ -248,9 +250,7 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 
 	wa, err := webauthn.New(wconfig)
 	if err != nil {
-		if err != nil {
-			return fmt.Errorf("failed to create webauthn instance: %w", err)
-		}
+		return fmt.Errorf("failed to create webauthn instance: %w", err)
 	}
 
 	serv := &Server{
@@ -275,7 +275,19 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 	}
 
 	if err := mgr.Add(serv); err != nil {
-		setupLog.Error(err, "failed to add server to controller-manager")
+		setupLog.Error(err, "failed to add dashboard server to controller-manager")
+		return err
+	}
+
+	// setup incluster server
+	inServ, err := NewInClusterServer(clog.NewLogger(ctrl.Log.WithName("incluster")),
+		o.InClusterServerPort, InClusterServeFiles{CAFile: o.CACertPath})
+	if err != nil {
+		setupLog.Error(err, "failed to create incluster server")
+		return err
+	}
+	if err := mgr.Add(inServ); err != nil {
+		setupLog.Error(err, "failed to add incluster server to controller-manager")
 		return err
 	}
 
@@ -312,6 +324,6 @@ func printOptions(o *options) {
 	setupLog.Info("options", options...)
 }
 
-func printVersion(cmd *cobra.Command, o *options) {
+func printVersion(cmd *cobra.Command) {
 	fmt.Fprintf(cmd.OutOrStdout(), "cosmo-dashboard version %s\n", cmd.Version)
 }

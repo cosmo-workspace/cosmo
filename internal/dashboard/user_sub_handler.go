@@ -11,6 +11,7 @@ import (
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -40,7 +41,7 @@ func (s *Server) UpdateUserAddons(ctx context.Context, req *connect_go.Request[d
 	if caller == nil {
 		return nil, apierrs.NewInternalError(fmt.Errorf("unable get caller"))
 	}
-	for _, addon := range diff(currentUser.Spec.Addons, convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons)) {
+	for _, addon := range diff(currentUser.Spec.Addons, apiconv.D2C_UserAddons(req.Msg.Addons)) {
 		tmpl := useraddon.EmptyTemplateObject(addon)
 		err := s.Klient.Get(ctx, types.NamespacedName{Name: tmpl.GetName()}, tmpl)
 		if err != nil {
@@ -52,7 +53,7 @@ func (s *Server) UpdateUserAddons(ctx context.Context, req *connect_go.Request[d
 		}
 	}
 
-	addons := convertDashv1alpha1UserAddonToUserAddon(req.Msg.Addons)
+	addons := apiconv.D2C_UserAddons(req.Msg.Addons)
 	user, err := s.Klient.UpdateUser(ctx, req.Msg.UserName, kosmo.UpdateUserOpts{
 		UserAddons: addons,
 	})
@@ -62,7 +63,7 @@ func (s *Server) UpdateUserAddons(ctx context.Context, req *connect_go.Request[d
 
 	res := &dashv1alpha1.UpdateUserAddonsResponse{
 		Message: "Successfully updated",
-		User:    convertUserToDashv1alpha1User(*user),
+		User:    apiconv.C2D_User(*user),
 	}
 	log.Info(res.Message, "username", req.Msg.UserName)
 	return connect_go.NewResponse(res), nil
@@ -83,7 +84,7 @@ func (s *Server) UpdateUserDisplayName(ctx context.Context, req *connect_go.Requ
 
 	res := &dashv1alpha1.UpdateUserDisplayNameResponse{
 		Message: "Successfully updated",
-		User:    convertUserToDashv1alpha1User(*user),
+		User:    apiconv.C2D_User(*user),
 	}
 	log.Info(res.Message, "username", req.Msg.UserName)
 	return connect_go.NewResponse(res), nil
@@ -123,12 +124,12 @@ func (s *Server) UpdateUserRole(ctx context.Context, req *connect_go.Request[das
 	}
 
 	// group-admin can attach or detach only group-roles
-	changingRoles := diff(convertUserRolesToStringSlice(currentUser.Spec.Roles), req.Msg.Roles)
+	changingRoles := diff(apiconv.C2S_UserRole(currentUser.Spec.Roles), req.Msg.Roles)
 	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(changingRoles)); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
-	roles := convertStringSliceToUserRoles(req.Msg.Roles)
+	roles := apiconv.S2C_UserRoles(req.Msg.Roles)
 	user, err := s.Klient.UpdateUser(ctx, req.Msg.UserName, kosmo.UpdateUserOpts{UserRoles: roles})
 	if err != nil {
 		return nil, ErrResponse(log, err)
@@ -136,7 +137,7 @@ func (s *Server) UpdateUserRole(ctx context.Context, req *connect_go.Request[das
 
 	res := &dashv1alpha1.UpdateUserRoleResponse{
 		Message: "Successfully updated",
-		User:    convertUserToDashv1alpha1User(*user),
+		User:    apiconv.C2D_User(*user),
 	}
 	log.Info(res.Message, "username", req.Msg.UserName)
 	return connect_go.NewResponse(res), nil

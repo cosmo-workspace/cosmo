@@ -33,4 +33,5 @@ message Workspace {
   string owner_name = 2;
   WorkspaceSpec spec = 3;
   WorkspaceStatus status = 4;
+  optional string raw = 5;
 }

@@ -119,6 +119,7 @@ func (c *Client) DeleteWorkspace(ctx context.Context, name, username string, opt
 
 type UpdateWorkspaceOpts struct {
 	Replicas *int64
+	Vars     map[string]string
 }
 
 func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opts UpdateWorkspaceOpts) (*cosmov1alpha1.Workspace, error) {
@@ -133,6 +134,9 @@ func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opt
 
 	if opts.Replicas != nil {
 		ws.Spec.Replicas = opts.Replicas
+	}
+	if opts.Vars != nil {
+		ws.Spec.Vars = opts.Vars
 	}
 
 	if equality.Semantic.DeepEqual(before, ws) {
