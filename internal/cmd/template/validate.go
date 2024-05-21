@@ -24,13 +24,13 @@ import (
 	"sigs.k8s.io/yaml"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
-	cmdutil "github.com/cosmo-workspace/cosmo/pkg/cmdutil"
+	"github.com/cosmo-workspace/cosmo/pkg/cli"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/transformer"
 )
 
 type validateOption struct {
-	*cmdutil.CliOptions
+	*cli.RootOptions
 
 	File               string
 	RawVars            string
@@ -41,10 +41,10 @@ type validateOption struct {
 	vars  map[string]string
 }
 
-func validateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
-	o := &validateOption{CliOptions: cliOpt}
-	cmd.PersistentPreRunE = o.PreRunE
-	cmd.RunE = cmdutil.RunEHandler(o.RunE)
+func validateCmd(cmd *cobra.Command, cliOpt *cli.RootOptions) *cobra.Command {
+	o := &validateOption{RootOptions: cliOpt}
+	cmd.RunE = cli.ConnectErrorHandler(o)
+
 	cmd.Flags().StringVarP(&o.File, "file", "f", "", "input COSMO Template file yaml path. when specified '-', input from Stdin")
 	cmd.Flags().StringVar(&o.RawVars, "vars", "", "template vars. the format is VarName:VarValue. also it can be set multiple vars by conma separated list. (example: VAR1:VAL1,VAR2:VAL2)")
 	cmd.Flags().BoolVar(&o.DryrunOnClientSide, "client", false, "dry-run on client-side. kubectl is required to be executable in PATH")
@@ -52,18 +52,8 @@ func validateCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command 
 	return cmd
 }
 
-func (o *validateOption) PreRunE(cmd *cobra.Command, args []string) error {
-	if err := o.Validate(cmd, args); err != nil {
-		return fmt.Errorf("validation error: %w", err)
-	}
-	if err := o.Complete(cmd, args); err != nil {
-		return fmt.Errorf("invalid options: %w", err)
-	}
-	return nil
-}
-
 func (o *validateOption) Validate(cmd *cobra.Command, args []string) error {
-	if err := o.CliOptions.Validate(cmd, args); err != nil {
+	if err := o.RootOptions.Validate(cmd, args); err != nil {
 		return err
 	}
 	if o.File == "" {
@@ -73,7 +63,7 @@ func (o *validateOption) Validate(cmd *cobra.Command, args []string) error {
 }
 
 func (o *validateOption) Complete(cmd *cobra.Command, args []string) error {
-	if err := o.CliOptions.Complete(cmd, args); err != nil {
+	if err := o.RootOptions.Complete(cmd, args); err != nil {
 		return err
 	}
 
@@ -85,7 +75,7 @@ func (o *validateOption) Complete(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("no input via stdin")
 		}
 		// input data from stdin
-		input, err = io.ReadAll(o.In)
+		input, err = io.ReadAll(cmd.InOrStdin())
 		if err != nil {
 			return fmt.Errorf("failed to read input: %w", err)
 		}
@@ -134,10 +124,19 @@ func (o *validateOption) Complete(cmd *cobra.Command, args []string) error {
 	}
 	o.vars = vars
 
+	cmd.SilenceErrors = true
+	cmd.SilenceUsage = true
 	return nil
 }
 
 func (o *validateOption) RunE(cmd *cobra.Command, args []string) error {
+	if err := o.Validate(cmd, args); err != nil {
+		return fmt.Errorf("validation error: %w", err)
+	}
+	if err := o.Complete(cmd, args); err != nil {
+		return fmt.Errorf("invalid options: %w", err)
+	}
+
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 
@@ -168,20 +167,20 @@ func (o *validateOption) RunE(cmd *cobra.Command, args []string) error {
 	dummyInst.Spec.Vars = o.vars
 
 	o.Logr.Info("smoke test: create dummy instance to apply each resources", "instance", dummyInst.GetName())
-	o.Logr.Debug().DumpObject(o.Scheme, &dummyInst, "test instance")
+	o.Logr.Debug().DumpObject(o.KosmoClient.Scheme(), &dummyInst, "test instance")
 
 	builts, err := template.BuildObjects(o.tmpl.Spec, &dummyInst)
 	if err != nil {
 		return fmt.Errorf("failed to build test instance: %w", err)
 	}
 	// only apply MetadataTransformer
-	ts := []transformer.Transformer{transformer.NewMetadataTransformer(&dummyInst, o.Scheme, template.IsDisableNamePrefix(&o.tmpl))}
+	ts := []transformer.Transformer{transformer.NewMetadataTransformer(&dummyInst, o.KosmoClient.Scheme(), template.IsDisableNamePrefix(&o.tmpl))}
 	builts, err = transformer.ApplyTransformers(ctx, ts, builts)
 	if err != nil {
 		return fmt.Errorf("failed to transform objects: %w", err)
 	}
 
-	w := printers.GetNewTabWriter(o.Out)
+	w := printers.GetNewTabWriter(cmd.OutOrStdout())
 	defer w.Flush()
 	columnNames := []string{"APIVERSION", "KIND", "NAME", "RESULT", "MESSAGE"}
 	fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
@@ -190,7 +189,7 @@ func (o *validateOption) RunE(cmd *cobra.Command, args []string) error {
 		o.Logr.Info("smoke test: dryrun applying dummy resource",
 			"apiVersion", built.GetAPIVersion(), "kind", built.GetKind())
 
-		o.Logr.Debug().DumpObject(o.Scheme, &built, "validating object")
+		o.Logr.Debug().DumpObject(o.KosmoClient.Scheme(), &built, "validating object")
 		if o.DryrunOnClientSide {
 			err = o.kubectlDryrunApplyOnClient(ctx, &built)
 		} else {
@@ -210,7 +209,7 @@ func (o *validateOption) dryrunApplyOnServer(ctx context.Context, obj client.Obj
 		DryRun:       []string{metav1.DryRunAll},
 	}
 
-	if err := o.Client.Patch(ctx, obj, client.Apply, options); err != nil {
+	if err := o.KosmoClient.Patch(ctx, obj, client.Apply, options); err != nil {
 		return fmt.Errorf("dryrun failed: %w", err)
 	}
 	return nil

@@ -4,92 +4,114 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/cli"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 )
 
 type resetPasswordOption struct {
-	*cmdutil.CliOptions
+	*changePasswordOption
 
-	UserName string
-	Password string
+	Force  bool
+	Silent bool
 }
 
-func resetPasswordCmd(cmd *cobra.Command, cliOpt *cmdutil.CliOptions) *cobra.Command {
-	o := &resetPasswordOption{CliOptions: cliOpt}
-	cmd.PersistentPreRunE = o.PreRunE
-	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-	cmd.Flags().StringVar(&o.Password, "password", "", "new password (default: random string)")
+func resetPasswordCmd(cmd *cobra.Command, cliOpt *cli.RootOptions) *cobra.Command {
+	o := &resetPasswordOption{changePasswordOption: &changePasswordOption{RootOptions: cliOpt}}
+	cmd.RunE = cli.ConnectErrorHandler(o)
+	cmd.Flags().BoolVar(&o.Force, "force", false, "not ask confirmation")
+	cmd.Flags().BoolVar(&o.Silent, "silent", false, "only output new password")
 	return cmd
 }
 
-func (o *resetPasswordOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *resetPasswordOption) Validate(cmd *cobra.Command, args []string) error {
+	if err := o.RootOptions.Validate(cmd, args); err != nil {
+		return err
+	}
+	if len(args) < 1 {
+		return errors.New("invalid args")
+	}
+	if !o.UseKubeAPI {
+		return errors.New("force reset is only available with -k")
+	}
+	return nil
+}
+
+func (o *resetPasswordOption) Complete(cmd *cobra.Command, args []string) error {
+	if err := o.RootOptions.Complete(cmd, args); err != nil {
+		return err
+	}
+	o.UserName = args[0]
+
+	cmd.SilenceErrors = true
+	cmd.SilenceUsage = true
+	return nil
+}
+
+func (o *resetPasswordOption) RunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
 	if err := o.Complete(cmd, args); err != nil {
 		return fmt.Errorf("invalid options: %w", err)
 	}
-	return nil
-}
 
-func (o *resetPasswordOption) Validate(cmd *cobra.Command, args []string) error {
-	if err := o.CliOptions.Validate(cmd, args); err != nil {
-		return err
-	}
-	if len(args) < 1 {
-		return errors.New("invalid args")
-	}
-	return nil
-}
-
-func (o *resetPasswordOption) Complete(cmd *cobra.Command, args []string) error {
-	if err := o.CliOptions.Complete(cmd, args); err != nil {
-		return err
-	}
-	o.UserName = args[0]
-	return nil
-}
-
-func (o *resetPasswordOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)
 
-	c := o.Client
+	if err := o.ValidateUser(ctx); err != nil {
+		return err
+	}
 
-	user, err := c.GetUser(ctx, o.UserName)
+	if !o.Force {
+	AskLoop:
+		for {
+			input, err := cli.AskInput("Confirm? [y/n] ", false)
+			if err != nil {
+				return err
+			}
+			switch strings.ToLower(input) {
+			case "y":
+				break AskLoop
+			case "n":
+				fmt.Println("canceled")
+				return nil
+			}
+		}
+	}
+
+	newPassword, err := o.resetPasswordWithKubeClient(ctx)
 	if err != nil {
 		return err
 	}
-	if user.Spec.AuthType != cosmov1alpha1.UserAuthTypePasswordSecert {
-		return fmt.Errorf("password cannot be changed if auth-type is '%s'", user.Spec.AuthType.String())
-	}
 
-	if o.Password == "" {
-		if err := c.ResetPassword(ctx, o.UserName); err != nil {
-			return err
-		}
+	if o.Silent {
+		fmt.Fprintln(cmd.OutOrStdout(), *newPassword)
 	} else {
-		if err := c.RegisterPassword(ctx, o.UserName, []byte(o.Password)); err != nil {
-			return err
-		}
-	}
-
-	cmdutil.PrintfColorInfo(o.Out, "Successfully reset password: user %s\n", o.UserName)
-
-	if o.Password == "" {
-		pass, err := c.GetDefaultPassword(ctx, o.UserName)
-		if err != nil {
-			return err
-		}
-		fmt.Fprintln(o.Out, "New password:", *pass)
+		fmt.Fprintln(cmd.OutOrStdout(), color.GreenString("Successfully reset password: user %s", o.UserName))
+		fmt.Fprintln(cmd.OutOrStdout(), "New password:", *newPassword)
 	}
 
 	return nil
+}
+
+func (o *resetPasswordOption) resetPasswordWithKubeClient(ctx context.Context) (*string, error) {
+	c := o.KosmoClient
+	if err := c.ResetPassword(ctx, o.UserName); err != nil {
+		return nil, err
+	}
+	pass, err := c.GetDefaultPassword(ctx, o.UserName)
+	if err != nil {
+		return nil, err
+	}
+	if pass == nil {
+		return nil, errors.New("password is nil")
+	}
+	return pass, nil
 }

@@ -4,81 +4,127 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
+	"github.com/cosmo-workspace/cosmo/pkg/cli"
+	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 )
 
 type DeleteOption struct {
-	*cmdutil.UserNamespacedCliOptions
+	*cli.RootOptions
 
-	WorkspaceName string
-	DryRun        bool
+	WorkspaceNames []string
+	UserName       string
+	Force          bool
 }
 
-func DeleteCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
-	o := &DeleteOption{UserNamespacedCliOptions: cliOpt}
-
-	cmd.PersistentPreRunE = o.PreRunE
-	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-
-	cmd.Flags().StringVarP(&o.User, "user", "u", "", "user name")
-	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
-
-	cmd.Flags().BoolVar(&o.DryRun, "dry-run", false, "dry run")
+func DeleteCmd(cmd *cobra.Command, cliOpt *cli.RootOptions) *cobra.Command {
+	o := &DeleteOption{RootOptions: cliOpt}
+	cmd.RunE = cli.ConnectErrorHandler(o)
+	cmd.Flags().StringVarP(&o.UserName, "user", "u", "", "user name (defualt: login user)")
+	cmd.Flags().BoolVar(&o.Force, "force", false, "not ask confirmation")
 	return cmd
 }
 
-func (o *DeleteOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *DeleteOption) Validate(cmd *cobra.Command, args []string) error {
+	if err := o.RootOptions.Validate(cmd, args); err != nil {
+		return err
+	}
+	if len(args) < 1 {
+		return errors.New("invalid args")
+	}
+	if o.UseKubeAPI && o.UserName == "" {
+		return fmt.Errorf("user name is required")
+	}
+	return nil
+}
+
+func (o *DeleteOption) Complete(cmd *cobra.Command, args []string) error {
+	if err := o.RootOptions.Complete(cmd, args); err != nil {
+		return err
+	}
+	o.WorkspaceNames = args
+
+	if !o.UseKubeAPI && o.UserName == "" {
+		o.UserName = o.CliConfig.User
+	}
+
+	cmd.SilenceErrors = true
+	cmd.SilenceUsage = true
+	return nil
+}
+
+func (o *DeleteOption) RunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
 	if err := o.Complete(cmd, args); err != nil {
 		return fmt.Errorf("invalid options: %w", err)
 	}
-	return nil
-}
 
-func (o *DeleteOption) Validate(cmd *cobra.Command, args []string) error {
-	if o.AllNamespace {
-		return errors.New("--all-namespaces is not supported in this command")
-	}
-	if err := o.UserNamespacedCliOptions.Validate(cmd, args); err != nil {
-		return err
-	}
-	if len(args) < 1 {
-		return errors.New("invalid args")
-	}
-	return nil
-}
-
-func (o *DeleteOption) Complete(cmd *cobra.Command, args []string) error {
-	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
-		return err
-	}
-	o.WorkspaceName = args[0]
-	return nil
-}
-
-func (o *DeleteOption) RunE(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
 	defer cancel()
+	ctx = clog.IntoContext(ctx, o.Logr)
 
-	if o.DryRun {
-		if _, err := o.Client.DeleteWorkspace(ctx, o.WorkspaceName, o.User, client.DryRunAll); err != nil {
-			return err
-		}
-		cmdutil.PrintfColorInfo(o.ErrOut, "Successfully deleted workspace %s (dry-run)\n", o.WorkspaceName)
+	o.Logr.Info("deleting workspaces", "workspaces", o.WorkspaceNames)
 
-	} else {
-		if _, err := o.Client.DeleteWorkspace(ctx, o.WorkspaceName, o.User); err != nil {
-			return err
+	if !o.Force {
+	AskLoop:
+		for {
+			input, err := cli.AskInput("Confirm? [y/n] ", false)
+			if err != nil {
+				return err
+			}
+			switch strings.ToLower(input) {
+			case "y":
+				break AskLoop
+			case "n":
+				fmt.Println("canceled")
+				return nil
+			}
 		}
-		cmdutil.PrintfColorInfo(o.ErrOut, "Successfully deleted workspace %s\n", o.WorkspaceName)
 	}
 
+	for _, v := range o.WorkspaceNames {
+		if o.UseKubeAPI {
+			if err := o.DeleteWorkspaceWithKubeClient(ctx, v); err != nil {
+				return err
+			}
+		} else {
+			if err := o.DeleteWorkspaceWithDashClient(ctx, v); err != nil {
+				return err
+			}
+		}
+		fmt.Fprintln(cmd.OutOrStdout(), color.GreenString("Successfully deleted workspace %s", v))
+	}
+
+	return nil
+}
+
+func (o *DeleteOption) DeleteWorkspaceWithDashClient(ctx context.Context, workspaceName string) error {
+	req := &dashv1alpha1.DeleteWorkspaceRequest{
+		UserName: o.UserName,
+		WsName:   workspaceName,
+	}
+	c := o.CosmoDashClient
+	res, err := c.WorkspaceServiceClient.DeleteWorkspace(ctx, cli.NewRequestWithToken(req, o.CliConfig))
+	if err != nil {
+		return fmt.Errorf("failed to connect dashboard server: %w", err)
+	}
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.DeleteWorkspace", "res", res)
+
+	return nil
+}
+
+func (o *DeleteOption) DeleteWorkspaceWithKubeClient(ctx context.Context, workspaceName string) error {
+	c := o.KosmoClient
+	if _, err := c.DeleteWorkspace(ctx, workspaceName, o.UserName); err != nil {
+		return err
+	}
 	return nil
 }

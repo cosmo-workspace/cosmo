@@ -3,161 +3,262 @@ package workspace
 import (
 	"context"
 	"fmt"
-	"strconv"
+	"io"
 	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
-	"k8s.io/cli-runtime/pkg/printers"
+	"k8s.io/utils/ptr"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
+	"github.com/cosmo-workspace/cosmo/pkg/cli"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
-	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
+	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 )
 
 type GetOption struct {
-	*cmdutil.UserNamespacedCliOptions
+	*cli.RootOptions
 
-	WorkspaceName string
+	WorkspaceNames []string
+	Filter         []string
+	UserName       string
+	AllUsers       bool
+	OutputFormat   string
 
-	showNetwork bool
+	filters []cli.Filter
 }
 
-func GetCmd(cmd *cobra.Command, cliOpt *cmdutil.UserNamespacedCliOptions) *cobra.Command {
-	o := &GetOption{UserNamespacedCliOptions: cliOpt}
-
-	cmd.PersistentPreRunE = o.PreRunE
-	cmd.RunE = cmdutil.RunEHandler(o.RunE)
-
-	cmd.Flags().StringVarP(&o.User, "user", "u", "", "user name")
-	cmd.Flags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
-	cmd.Flags().BoolVarP(&o.AllNamespace, "all-namespaces", "A", false, "all namespaces")
-
-	cmd.Flags().BoolVar(&o.showNetwork, "network", false, "show workspace network")
+func GetCmd(cmd *cobra.Command, opt *cli.RootOptions) *cobra.Command {
+	o := &GetOption{RootOptions: opt}
+	cmd.RunE = cli.ConnectErrorHandler(o)
+	cmd.Flags().StringVarP(&o.UserName, "user", "u", "", "user name (defualt: login user)")
+	cmd.Flags().StringSliceVar(&o.Filter, "filter", nil, "filter option. available columns are ['NAME', 'TEMPLATE', 'PHASE']. available operators are ['==', '!=']. value format is filepath. e.g. '--filter TEMPLATE==dev-*'")
+	cmd.Flags().StringVarP(&o.OutputFormat, "output", "o", "table", "output format. available values are ['table', 'yaml', 'wide']")
+	cmd.Flags().BoolVarP(&o.AllUsers, "all-users", "A", false, "get all users workspace")
 	return cmd
 }
 
-func (o *GetOption) PreRunE(cmd *cobra.Command, args []string) error {
+func (o *GetOption) Validate(cmd *cobra.Command, args []string) error {
+	if err := o.RootOptions.Validate(cmd, args); err != nil {
+		return err
+	}
+	if !o.AllUsers && (o.UseKubeAPI && o.UserName == "") {
+		return fmt.Errorf("user name is required")
+	}
+	switch o.OutputFormat {
+	case "table", "yaml", "wide":
+	default:
+		return fmt.Errorf("invalid output format: %s", o.OutputFormat)
+	}
+	return nil
+}
+
+func (o *GetOption) Complete(cmd *cobra.Command, args []string) error {
+	if err := o.RootOptions.Complete(cmd, args); err != nil {
+		return err
+	}
+	if len(args) > 0 {
+		o.WorkspaceNames = args
+	}
+	if !o.UseKubeAPI && o.UserName == "" {
+		o.UserName = o.CliConfig.User
+	}
+	if len(o.Filter) > 0 {
+		f, err := cli.ParseFilters(o.Filter)
+		if err != nil {
+			return err
+		}
+		o.filters = f
+	}
+	for _, f := range o.filters {
+		o.Logr.Debug().Info("filter", "key", f.Key, "value", f.Value, "op", f.Operator)
+	}
+
+	cmd.SilenceErrors = true
+	cmd.SilenceUsage = true
+	return nil
+}
+
+func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 	if err := o.Validate(cmd, args); err != nil {
 		return fmt.Errorf("validation error: %w", err)
 	}
 	if err := o.Complete(cmd, args); err != nil {
 		return fmt.Errorf("invalid options: %w", err)
 	}
-	return nil
-}
 
-func (o *GetOption) Validate(cmd *cobra.Command, args []string) error {
-	if err := o.UserNamespacedCliOptions.Validate(cmd, args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (o *GetOption) Complete(cmd *cobra.Command, args []string) error {
-	if err := o.UserNamespacedCliOptions.Complete(cmd, args); err != nil {
-		return err
-	}
-	if len(args) > 0 {
-		o.WorkspaceName = args[0]
-	}
-	return nil
-}
-
-func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
-	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)
+	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*30)
 	defer cancel()
 	ctx = clog.IntoContext(ctx, o.Logr)
 
-	c := o.Client
-
-	var wss []cosmov1alpha1.Workspace
-
-	o.Logr.Debug().Info("options", "namespace", o.Namespace, "all-namespaces", o.AllNamespace, "workspaceName", o.WorkspaceName)
-
-	if o.AllNamespace {
-		users, err := c.ListUsers(ctx)
+	workspaces := []*dashv1alpha1.Workspace{}
+	users := []*dashv1alpha1.User{
+		{
+			Name: o.UserName,
+		},
+	}
+	if o.AllUsers {
+		u, err := o.ListUsers(ctx)
 		if err != nil {
 			return err
 		}
-		o.Logr.DebugAll().Info("ListUsers", "users", users)
-
-		for _, user := range users {
-			ws, err := c.ListWorkspacesByUserName(ctx, user.Name)
-			if err != nil {
-				return err
-			}
-			o.Logr.DebugAll().Info("ListWorkspacesByUserName", "user", o.User, "wsCount", len(ws), "wsList", ws)
-			wss = append(wss, ws...)
-		}
-
-	} else if o.WorkspaceName != "" {
-		ws, err := c.GetWorkspaceByUserName(ctx, o.WorkspaceName, o.User)
+		users = u
+	}
+	for _, user := range users {
+		wss, err := o.ListWorkspaces(ctx, user.Name)
 		if err != nil {
 			return err
 		}
-		wss = []cosmov1alpha1.Workspace{*ws}
-		o.Logr.DebugAll().Info("GetWorkspaceByUserName", "user", o.User, "ws", ws)
-
-	} else {
-		_, err := c.GetUser(ctx, o.User)
-		if err != nil {
-			return err
-		}
-
-		wss, err = c.ListWorkspacesByUserName(ctx, o.User)
-		if err != nil {
-			return err
-		}
-		o.Logr.DebugAll().Info("ListWorkspacesByUserName", "user", o.User, "wsCount", len(wss), "wsList", wss)
+		workspaces = append(workspaces, wss...)
 	}
 
-	w := printers.GetNewTabWriter(o.Out)
-	defer w.Flush()
+	o.Logr.Debug().Info("Workspaces", "workspaces", workspaces)
 
-	if o.showNetwork {
-		if o.AllNamespace {
-			columnNames := []string{"USER", "NAME", "PORT", "URL", "PUBLIC"}
-			fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
+	workspaces = o.ApplyFilters(workspaces)
 
-			for _, ws := range wss {
-				for _, v := range ws.Spec.Network {
-					url := ws.Status.URLs[v.UniqueKey()]
-					rowdata := []string{cosmov1alpha1.UserNameByNamespace(ws.Namespace), ws.Name, strconv.Itoa(int(v.PortNumber)), url, strconv.FormatBool(v.Public)}
-					fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
-				}
-			}
-		} else {
-			columnNames := []string{"INDEX", "NAME", "PORT", "URL", "PUBLIC"}
-			fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
-
-			for _, ws := range wss {
-				for i, v := range ws.Spec.Network {
-					url := ws.Status.URLs[v.UniqueKey()]
-					rowdata := []string{fmt.Sprint(i), ws.Name, strconv.Itoa(int(v.PortNumber)), url, strconv.FormatBool(v.Public)}
-					fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
-				}
-			}
-		}
-
+	if o.OutputFormat == "yaml" {
+		o.OutputYAML(cmd.OutOrStdout(), workspaces)
+		return nil
+	} else if o.OutputFormat == "wide" {
+		OutputWideTable(cmd.OutOrStdout(), workspaces)
+		return nil
 	} else {
-		if o.AllNamespace {
-			columnNames := []string{"USER", "NAME", "TEMPLATE", "PHASE"}
-			fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
+		OutputTable(cmd.OutOrStdout(), workspaces)
+		return nil
+	}
+}
 
-			for _, ws := range wss {
-				rowdata := []string{cosmov1alpha1.UserNameByNamespace(ws.Namespace), ws.Name, ws.Spec.Template.Name, string(ws.Status.Phase)}
-				fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
-			}
-		} else {
-			columnNames := []string{"NAME", "TEMPLATE", "PHASE"}
-			fmt.Fprintf(w, "%s\n", strings.Join(columnNames, "\t"))
+func (o *GetOption) ListUsers(ctx context.Context) ([]*dashv1alpha1.User, error) {
+	if o.UseKubeAPI {
+		return o.listUsersByKubeClient(ctx)
+	} else {
+		return o.listUsersWithDashClient(ctx)
+	}
+}
 
-			for _, ws := range wss {
-				rowdata := []string{ws.Name, ws.Spec.Template.Name, string(ws.Status.Phase)}
-				fmt.Fprintf(w, "%s\n", strings.Join(rowdata, "\t"))
-			}
+func (o *GetOption) ListWorkspaces(ctx context.Context, userName string) ([]*dashv1alpha1.Workspace, error) {
+	if o.UseKubeAPI {
+		return o.listWorkspacesByKubeClient(ctx, userName)
+	} else {
+		return o.listWorkspacesWithDashClient(ctx, userName)
+	}
+}
+
+func (o *GetOption) listUsersWithDashClient(ctx context.Context) ([]*dashv1alpha1.User, error) {
+	c := o.CosmoDashClient
+	res, err := c.UserServiceClient.GetUsers(ctx, cli.NewRequestWithToken(&dashv1alpha1.GetUsersRequest{
+		WithRaw: ptr.To(o.OutputFormat == "yaml"),
+	}, o.CliConfig))
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
+	}
+	o.Logr.DebugAll().Info("UserServiceClient.GetUsers", "res", res)
+	return res.Msg.Items, nil
+}
+
+func (o *GetOption) listWorkspacesWithDashClient(ctx context.Context, userName string) ([]*dashv1alpha1.Workspace, error) {
+	req := &dashv1alpha1.GetWorkspacesRequest{
+		UserName: userName,
+		WithRaw:  ptr.To(o.OutputFormat == "yaml"),
+	}
+	c := o.CosmoDashClient
+	res, err := c.WorkspaceServiceClient.GetWorkspaces(ctx, cli.NewRequestWithToken(req, o.CliConfig))
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
+	}
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.GetWorkspaces", "res", res)
+	return res.Msg.Items, nil
+}
+
+func (o *GetOption) ApplyFilters(workspaces []*dashv1alpha1.Workspace) []*dashv1alpha1.Workspace {
+	for _, f := range o.filters {
+		o.Logr.Debug().Info("applying filter", "key", f.Key, "value", f.Value, "op", f.Operator)
+
+		switch strings.ToUpper(f.Key) {
+		case "NAME":
+			workspaces = cli.DoFilter(workspaces, func(u *dashv1alpha1.Workspace) []string {
+				return []string{u.Name}
+			}, f)
+		case "TEMPLATE":
+			workspaces = cli.DoFilter(workspaces, func(u *dashv1alpha1.Workspace) []string {
+				return []string{u.Spec.Template}
+			}, f)
+		case "PHASE":
+			workspaces = cli.DoFilter(workspaces, func(u *dashv1alpha1.Workspace) []string {
+				return []string{u.Status.Phase}
+			}, f)
+		default:
+			o.Logr.Info("WARNING: unknown filter key", "key", f.Key)
 		}
 	}
-	return nil
+
+	if len(o.WorkspaceNames) > 0 {
+		ts := make([]*dashv1alpha1.Workspace, 0, len(o.WorkspaceNames))
+	WorkspaceLoop:
+		// Or loop
+		for _, t := range workspaces {
+			for _, selected := range o.WorkspaceNames {
+				if selected == t.GetName() {
+					ts = append(ts, t)
+					continue WorkspaceLoop
+				}
+			}
+		}
+		workspaces = ts
+	}
+	return workspaces
+}
+
+func (o *GetOption) OutputYAML(w io.Writer, objs []*dashv1alpha1.Workspace) {
+	docs := make([]string, len(objs))
+	for i, t := range objs {
+		docs[i] = *t.Raw
+	}
+	fmt.Fprintln(w, strings.Join(docs, "---\n"))
+}
+
+func OutputTable(out io.Writer, workspaces []*dashv1alpha1.Workspace) {
+	data := [][]string{}
+
+	for _, v := range workspaces {
+		data = append(data, []string{v.OwnerName, v.Name, v.Spec.Template, v.Status.Phase, v.Status.MainUrl})
+	}
+
+	cli.OutputTable(out,
+		[]string{"USER", "NAME", "TEMPLATE", "PHASE", "MAINURL"},
+		data)
+}
+
+func OutputWideTable(out io.Writer, workspaces []*dashv1alpha1.Workspace) {
+	data := [][]string{}
+
+	for _, v := range workspaces {
+		vars := make([]string, 0, len(v.Spec.Vars))
+		for k, vv := range v.Spec.Vars {
+			vars = append(vars, fmt.Sprintf("%s=%s", k, vv))
+		}
+		data = append(data, []string{v.OwnerName, v.Name, v.Spec.Template, strings.Join(vars, ","), v.Status.Phase, v.Status.MainUrl})
+	}
+
+	cli.OutputTable(out,
+		[]string{"USER", "NAME", "TEMPLATE", "VARS", "PHASE", "MAINURL"},
+		data)
+}
+
+func (o *GetOption) listWorkspacesByKubeClient(ctx context.Context, userName string) ([]*dashv1alpha1.Workspace, error) {
+	c := o.KosmoClient
+	workspaces, err := c.ListWorkspacesByUserName(ctx, userName)
+	if err != nil {
+		return nil, err
+	}
+	return apiconv.C2D_Workspaces(workspaces, apiconv.WithWorkspaceRaw(ptr.To(o.OutputFormat == "yaml"))), nil
+}
+
+func (o *GetOption) listUsersByKubeClient(ctx context.Context) ([]*dashv1alpha1.User, error) {
+	c := o.KosmoClient
+	users, err := c.ListUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return apiconv.C2D_Users(users, apiconv.WithUserRaw(ptr.To(o.OutputFormat == "yaml"))), nil
 }
