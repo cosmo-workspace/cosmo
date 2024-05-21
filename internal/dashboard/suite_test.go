@@ -140,6 +140,12 @@ var _ = BeforeSuite(func() {
 		Decoder: admission.NewDecoder(mgr.GetScheme()),
 	}).SetupWebhookWithManager(mgr)
 
+	(&webhooks.TemplateValidationWebhookHandler{
+		Client:  mgr.GetClient(),
+		Log:     clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhook")),
+		Decoder: admission.NewDecoder(mgr.GetScheme()),
+	}).SetupWebhookWithManager(mgr)
+
 	// Setup server
 	By("bootstrapping server")
 	clientMock = kubeutil.NewClientMock(mgr.GetClient())

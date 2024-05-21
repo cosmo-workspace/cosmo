@@ -53,6 +53,7 @@ all: manager cosmoctl dashboard
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 ifeq ($(QUICK_BUILD),no)
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./api/..." output:crd:artifacts:config=config/crd/bases
+	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./internal/webhooks" output:crd:artifacts:config=config/crd/bases
 endif
 
 .PHONY: generate

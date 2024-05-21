@@ -202,6 +202,12 @@ MIT 2023 cosmo-workspace/cosmo
 				Decoder: admission.NewDecoder(mgr.GetScheme()),
 			}).SetupWebhookWithManager(mgr)
 
+			(&webhooks.TemplateValidationWebhookHandler{
+				Client:  mgr.GetClient(),
+				Log:     clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhook")),
+				Decoder: admission.NewDecoder(mgr.GetScheme()),
+			}).SetupWebhookWithManager(mgr)
+
 			ctx := ctrl.SetupSignalHandler()
 
 			if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
