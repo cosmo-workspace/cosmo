@@ -113,7 +113,7 @@ Download binary from [latest release](https://github.com/cosmo-workspace/cosmo/r
 Use cosmoctl to create first User.
 
 ```sh
-cosmoctl user create admin --admin
+cosmoctl user create admin --privileged
 ```
 
 Output:

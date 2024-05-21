@@ -69,7 +69,7 @@ show-url: ## show-url
 create-all: create-cluster docker-build-all install-all apply-template add-user add-workspace ## Create all
 delete-all: delete-cluster ## Delete all
 
-docker-build-all: docker-build-manager docker-build-dashboard ## Docker build all
+docker-build-all: docker-build-manager docker-build-dashboard docker-build-traefik-plugins ## Docker build all
 
 install-all: install-cosmo ## Install cosmo resources.
 uninstall-all: uninstall-cosmo ## Uninstall cosmo resources.
@@ -213,7 +213,7 @@ docker-build-dashboard: ## build & push cosmo dashboard image.
 	docker push localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG)
 	docker rmi cosmo-dashboard:$(DASHBOARD_IMAGE_TAG)
 	k3d image import localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) -c $(CLUSTER_NAME)
-	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard 
+	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard
 
 docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
 	@echo ====== $@ ======
@@ -240,9 +240,9 @@ docker-cache-clear: ## docker cache clear.
 
 LOGLEVEL ?= info
 
-install-cosmo: helm kubectl docker-build-manager docker-build-dashboard docker-build-traefik-plugins ## Install cosmo resources.
+install-cosmo: #helm kubectl docker-build-manager docker-build-dashboard docker-build-traefik-plugins ## Install cosmo resources.
 	@echo ====== $@ ======
-	helm dependency update ../../charts/cosmo 
+	helm dependency update ../../charts/cosmo
 	helm upgrade --install cosmo ../../charts/cosmo \
 		-n cosmo-system --create-namespace \
 		--wait \
@@ -317,41 +317,43 @@ apply-template: kubectl cosmoctl ## Apply template.
 
 add-user: kubectl cosmoctl ## add user
 	@echo ====== $@ ======
-	-cosmoctl user create tom --admin 2> /dev/null
-	-cosmoctl user create gryffindor-dev --role "gryffindor" --addon resource-limitter --addon gryffindor-serviceaccount 2> /dev/null
-	-cosmoctl user create gryffindor-admin --role "gryffindor-admin" --addon resource-limitter --addon gryffindor-serviceaccount 2> /dev/null
-	-cosmoctl user create slytherin-dev --role "slytherin" 2> /dev/null
-	-cosmoctl user create slytherin-admin --role "slytherin-admin" 2> /dev/null
-	-cosmoctl user create grytherin --role "gryffindor,slytherin" --addon resource-limitter --addon gryffindor-serviceaccount 2> /dev/null
-	-cosmoctl user create ldapuser1 --admin --auth-type ldap 2> /dev/null
-	-cosmoctl user reset-password tom --password vvv
-	-cosmoctl user reset-password gryffindor-dev   --password xxxxxxxx
-	-cosmoctl user reset-password gryffindor-admin --password xxxxxxxx
-	-cosmoctl user reset-password slytherin-dev    --password xxxxxxxx
-	-cosmoctl user reset-password slytherin-admin  --password xxxxxxxx
-	-cosmoctl user reset-password grytherin        --password xxxxxxxx
-
+	-cosmoctl -k user create tom --privileged --force 2> /dev/null
+	-cosmoctl -k user create gryffindor-dev --role "gryffindor" --addon resource-limitter --addon gryffindor-serviceaccount --force 2> /dev/null
+	-cosmoctl -k user create gryffindor-admin --role "gryffindor-admin" --addon resource-limitter --addon gryffindor-serviceaccount --force 2> /dev/null
+	-cosmoctl -k user create slytherin-dev --role "slytherin" --force 2> /dev/null
+	-cosmoctl -k user create slytherin-admin --role "slytherin-admin" --force 2> /dev/null
+	-cosmoctl -k user create grytherin --role "gryffindor,slytherin" --addon resource-limitter --addon gryffindor-serviceaccount --force 2> /dev/null
+	-cosmoctl -k user create ldapuser1 --privileged --auth-type ldap --force 2> /dev/null
+	-echo vvv      | cosmoctl -k user change-password --password-stdin tom
+	-echo xxxxxxxx | cosmoctl -k user change-password --password-stdin gryffindor-dev
+	-echo xxxxxxxx | cosmoctl -k user change-password --password-stdin gryffindor-admin
+	-echo xxxxxxxx | cosmoctl -k user change-password --password-stdin slytherin-dev
+	-echo xxxxxxxx | cosmoctl -k user change-password --password-stdin slytherin-admin
+	-echo xxxxxxxx | cosmoctl -k user change-password --password-stdin grytherin
+	-echo vvv      | cosmoctl login tom --password-stdin --dashboard-url $(DASHBOARD_URL)
 
 add-workspace: kubectl cosmoctl ## add workspace
 	@echo ====== $@ ======
-	-cosmoctl workspace create --user=tom --template=dev-code-server ws1
-	-cosmoctl workspace create --user=ldapuser1 --template=dev-code-server ldapws1
+	-cosmoctl workspace create --force --template=dev-code-server ws1
+	-cosmoctl -k workspace create --force --user=ldapuser1 --template=dev-code-server ldapws1
 	sleep 5
-	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --host-prefix proxy1 --path /
+	-cosmoctl ws upsert-network ws1 --port=7701 --host-prefix proxy1 --path /
 	sleep 1
-	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --host-prefix proxy1 --path /aaa
+	-cosmoctl ws upsert-network ws1 --port=7701 --host-prefix proxy1 --path /aaa
 	sleep 1
-	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --host-prefix proxy1 --path /bbb --public
+	-cosmoctl ws upsert-network ws1 --port=7701 --host-prefix proxy1 --path /bbb --public
 	sleep 1
-	-cosmoctl networkrule add --user=tom --workspace=ws1 --port=7701 --path /
+	-cosmoctl ws upsert-network ws1 --port=7701 --path /
 
 delete-cosmo-crd:  ## Delete cosmo crd.
-	-kubectl get crd | grep cosmo-workspace.github.io | awk '{print $$1}' | xargs kubectl delete crd 
+	-kubectl get crd | grep cosmo-workspace.github.io | awk '{print $$1}' | xargs kubectl delete crd
 
 delete-cosmo-resources:
 	-kubectl delete user --all
 	-kubectl delete tmpl --all
 	-kubectl delete ctmpl --all
+
+create-cosmo-resources: apply-template add-user add-workspace cg
 
 ##---------------------------------------------------------------------
 ##@ Execute test
@@ -487,13 +489,13 @@ bin/argocd:
 ##---------------------------------------------------------------------
 ##@ Utility
 ##---------------------------------------------------------------------
-console: ## Activate kubeconfig for local k8s. 
+console: ## Activate kubeconfig for local k8s.
 	@bash -rcfile <(echo ". ~/.bashrc;PS1='\[\033[01;32m\]\u@test-env\[\033[00m\]:\[\033[01;35m\]\W\[\033[00m\]$$ '")
 
 helm-ls: ## helm list
 	-@helm list -a -A
 
-kg: ## Get k0s resources.
+kg: ## Get k8s resources.
 	-@kubectl get node --show-kind
 	-@kubectl get po -A --show-kind
 	-@kubectl get ing -A --show-kind
@@ -502,3 +504,9 @@ kg: ## Get k0s resources.
 	-@kubectl get svc -A --show-kind
 	-@kubectl get ep -A --show-kind
 	-@kubectl get application -A --show-kind
+
+cg: ## Get cosmo resources.
+	-@cosmoctl get user -k
+	-@cosmoctl get ws -A -k
+	-@cosmoctl get tmpl -k
+	-@cosmoctl get addon -k

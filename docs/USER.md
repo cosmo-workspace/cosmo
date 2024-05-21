@@ -90,7 +90,7 @@ spec:
 
 </details><br>
 
-UserAddon can be generated via `cosmoctl template gen` command, same as WorkspaceTemplate.
+UserAddon can be generated via `cosmoctl tmpl gen` command, same as WorkspaceTemplate.
 
 ### Create UserAddon
 
@@ -185,7 +185,7 @@ UserAddon can be generated via `cosmoctl template gen` command, same as Workspac
 
 2.  Generate WorkspaceTemplate
 
-    Pass kustomize-generated manifest to `cosmoctl template gen` command by stdin.
+    Pass kustomize-generated manifest to `cosmoctl tmpl gen` command by stdin.
 
     ```sh
     kustomize build . | cosmoctl tmpl gen --cluster-scope --useraddon -o addon.yaml
@@ -205,7 +205,7 @@ UserAddons with the following annotations have special behavior.
 
 | Annotatio keys | Avairable values(default) | Description | cosmoctl option |
 |:--|:--|:--|:--|
-| `useraddon.cosmo-workspace.github.io/default` | `["true", "false"]`("false") | UserAddon with this annotation is applied to all Users automatically | `--set-default-user-addon` |
+| `useraddon.cosmo-workspace.github.io/default` | `["true", "false"]`("false") | UserAddon with this annotation is applied to all Users automatically | `--useraddon-set-default` |
 | `cosmo-workspace.github.io/disable-nameprefix` | `["true", "false"]`("false") | UserAddon with this annotation is applied to all Users automatically | `--disable-nameprefix` |
 | `cosmo-workspace.github.io/userroles` | comma-separated UserRoles(None) | User who use this Template must have all of the UserRoles specified in this annotation | `--userroles` |
 | `cosmo-workspace.github.io/required-useraddons` | comma-separated UserAddon names(None)  | User who use this Template must be attached all of the UserAddons specified in this annotation | `--required-useraddons` |

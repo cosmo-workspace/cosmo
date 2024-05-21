@@ -5,8 +5,8 @@ FROM_TAG=4.9.1
 .PHONY: template
 template:
 	cd kubernetes/ && kustomize edit set image codercom/code-server=cosmo.io:5000/my-code-server:latest
-	kustomize build kubernetes/ | cosmoctl tmpl generate -o cosmo-template.yaml --workspace \
-		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
+	kustomize build kubernetes/ | cosmoctl tmpl gen ws -o cosmo-template.yaml --no-header \
+		--var CODE-SERVER_STORAGE_GB:20 --var DOCKER_STORAGE:20
 
 .PHONY: apply
 apply: template ## Apply template

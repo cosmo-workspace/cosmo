@@ -6,14 +6,12 @@ IMAGE_TAG=v0.0.2-4.13.0
 .PHONY: template
 template: ## Create template
 	cd kubernetes/ && kustomize edit set image $(IMAGE_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
-	kustomize build kubernetes/ | cosmoctl tmpl generate -o cosmo-template.yaml --workspace \
-		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
-	kustomize build gryffindor | cosmoctl tmpl generate -o gryffindor-template.yaml --workspace \
-		--name gryffindor-codeserver \
-		--desc 'only for gryffindor' \
-		--userroles 'gryffindor' \
-		--required-useraddons gryffindor-serviceaccount \
-		--required-vars CODE-SERVER_STORAGE_GB:20,DOCKER_STORAGE:20
+	kustomize build kubernetes/ | cosmoctl tmpl gen ws -o cosmo-template.yaml --no-header \
+		--var CODE-SERVER_STORAGE_GB:20 --var DOCKER_STORAGE:20
+	kustomize build gryffindor | cosmoctl tmpl gen ws -o gryffindor-template.yaml --no-header \
+		--name gryffindor-codeserver --desc 'only for gryffindor' \
+		--userroles 'gryffindor' --required-useraddons gryffindor-serviceaccount \
+		--var CODE-SERVER_STORAGE_GB:20 --var DOCKER_STORAGE:20
 
 .PHONY: apply
 apply: template ## Apply template
