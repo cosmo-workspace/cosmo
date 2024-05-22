@@ -103,7 +103,7 @@ func (s *Server) GetUser(ctx context.Context, req *connect_go.Request[dashv1alph
 	}
 	events, err := s.Klient.ListEvents(ctx, cosmov1alpha1.UserNamespace(user.Name))
 	if err != nil {
-		log.Error(err, "failed to list events", "namespace", cosmov1alpha1.UserNamespace(user.Name))
+		log.Error(err, "failed to list events", "user", user.Name)
 	}
 
 	res := &dashv1alpha1.GetUserResponse{

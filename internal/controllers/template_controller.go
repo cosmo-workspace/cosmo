@@ -15,6 +15,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 // TemplateReconciler reconciles a Template object
@@ -93,7 +94,8 @@ func notifyUpdateToInstances(ctx context.Context, c client.Client, rec record.Ev
 		if err := c.Status().Update(ctx, inst); err != nil {
 			errs = append(errs, fmt.Errorf("failed to update instance status: %s: %w", inst.GetName(), err))
 		}
-		rec.Eventf(inst, corev1.EventTypeNormal, "TemplateUpdated", "Detected Template %s is updated", tmpl.GetName())
+
+		kosmo.InstanceEventf(rec, inst, corev1.EventTypeNormal, "TemplateUpdated", "Detected Template %s is updated", tmpl.GetName())
 	}
 	return errs
 }

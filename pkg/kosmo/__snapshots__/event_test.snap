@@ -1,0 +1,41 @@
+['event Eventf emit events 1']
+SnapShot = 'Normal TEST1 Instance: key1=value1 map[cosmo-workspace.github.io/instance:inst1 cosmo-workspace.github.io/user:tom]'
+
+['event Eventf emit events 2']
+SnapShot = 'Normal TEST2 ClusterInstance: key1=value1 map[cosmo-workspace.github.io/instance:cinst1]'
+
+['event Eventf emit events 3']
+SnapShot = 'Warning TEST3 Addon: key1=value1 map[cosmo-workspace.github.io/instance:cinst2 cosmo-workspace.github.io/user:user1]'
+
+['event Eventf emit events 4']
+SnapShot = 'Warning TEST4 User: key1=value1 map[cosmo-workspace.github.io/user:user2]'
+
+['event when list user events should return a array of the events in user namespace and the user annotated events in default namespace 1']
+SnapShot = """
+Event Time                                                Type      Reason                Regarding                                                 Reporting Controller                Note
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    Synced                User/xxx                                                  cosmo-user-controller               Successfully reconciled. Namespace cosmo-user-xxx is created
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    PasswordInitialized   User/xxx                                                  cosmo-user-controller               Successfully reset password secret
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    AddonSynced           User/xxx                                                  cosmo-user-controller               Addon cosmo-username-headers is created
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    AddonSynced           User/xxx                                                  cosmo-user-controller               Addon resource-limitter is created
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Warning   AddonFailed           User/xxx                                                  cosmo-user-controller               Failed to sync addon: failed to create or update addon gryffindor-serviceaccount :failed to set controller reference: cluster-scoped resource must not have a namespace-scoped owner, owner's namespace cosmo-user-xxx
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    AddonSynced           User/xxx                                                  cosmo-user-controller               Addon gryffindor-serviceaccount is created
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    Synced                Instance/useraddon-cosmo-username-headers                 cosmo-instance-controller           Middleware cosmo-username-headers is created
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    Synced                Instance/useraddon-resource-limitter                      cosmo-instance-controller           ResourceQuota quota is created
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    Synced                ClusterInstance/useraddon-xxx-gryffindor-serviceaccount   cosmo-cluster-instance-controller   ServiceAccount iamserviceaccount is created
+time.Date(2024, time.May, 27, 0, 41, 54, 0, time.Local)   Normal    Synced                ClusterInstance/useraddon-xxx-gryffindor-serviceaccount   cosmo-cluster-instance-controller   ClusterRoleBinding xxx-view is created
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Normal    Synced                Workspace/ws2                                             cosmo-workspace-controller          Successfully reconciled. Instance ws2 is created
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Normal    Synced                Workspace/ws2                                             cosmo-workspace-controller          Successfully reconciled. Traefik ingress route ws2 is created
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Normal    Synced                Instance/ws2                                              cosmo-instance-controller           Service ws2-workspace is created
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Normal    Synced                Instance/ws2                                              cosmo-instance-controller           Deployment ws2-workspace is created
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Normal    ScalingReplicaSet     Deployment/ws2-workspace                                  deployment-controller               Scaled up replica set ws2-workspace-75dc7c5469 to 1
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-sf424\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-z42z2\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-xr8sx\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 43, 13, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-vpqhz\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 43, 14, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-wmj97\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 43, 14, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-qb54v\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 43, 14, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-87k4l\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 43, 14, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-mdmg6\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 43, 15, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                       replicaset-controller               Error creating: pods \"ws2-workspace-75dc7c5469-cxh42\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+time.Date(2024, time.May, 27, 0, 44, 35, 0, time.Local)   Warning   FailedCreate          ReplicaSet/ws2-workspace-75dc7c5469                                                           (combined from similar events): Error creating: pods \"ws2-workspace-75dc7c5469-5trff\" is forbidden: failed quota: quota: must specify limits.cpu for: code-server
+"""

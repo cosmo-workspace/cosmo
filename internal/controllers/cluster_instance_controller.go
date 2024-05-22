@@ -14,6 +14,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/transformer"
 )
@@ -54,21 +55,21 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	// 1. Build Unstructured objects
 	objects, err := template.BuildObjects(tmpl.Spec, &inst)
 	if err != nil {
-		r.Recorder.Eventf(&inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build manifests from Template: %v", err)
+		kosmo.InstanceEventf(r.Recorder, &inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build manifests from Template: %v", err)
 		return ctrl.Result{}, err
 	}
 
 	// 2. Transform the objects
 	objects, err = transformer.ApplyTransformers(ctx, transformer.AllTransformers(&inst, r.Scheme, tmpl), objects)
 	if err != nil {
-		r.Recorder.Eventf(&inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build resources: %v", err)
+		kosmo.InstanceEventf(r.Recorder, &inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build resources: %v", err)
 		return ctrl.Result{}, err
 	}
 
 	// 3. Reconcile objects
 	if errs := r.impl.reconcileObjects(ctx, &inst, objects); len(errs) != 0 {
 		for _, err := range errs {
-			r.Recorder.Eventf(&inst, corev1.EventTypeWarning, "SyncFailed", "Failed to sync objects: %v", err)
+			kosmo.InstanceEventf(r.Recorder, &inst, corev1.EventTypeWarning, "SyncFailed", "Failed to sync objects: %v", err)
 		}
 		// requeue
 		return ctrl.Result{}, fmt.Errorf("apply child objects failed: %w", errs[0])

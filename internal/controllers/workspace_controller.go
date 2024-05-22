@@ -19,6 +19,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/workspace"
 )
 
@@ -78,12 +79,12 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return nil
 	})
 	if err != nil {
-		r.Recorder.Eventf(&ws, corev1.EventTypeWarning, "SyncFailed", "Failed to sync instance %s: %v", inst.Name, err)
+		kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeWarning, "SyncFailed", "Failed to sync instance %s: %v", inst.Name, err)
 		return ctrl.Result{}, fmt.Errorf("failed to sync instance: %w", err)
 	}
 	if op != controllerutil.OperationResultNone {
 		log.Info("instance synced", "instance", inst.Name)
-		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Synced", "Successfully reconciled. Instance %s is %s", inst.Name, op)
+		kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeNormal, "Synced", "Successfully reconciled. Instance %s is %s", inst.Name, op)
 	} else {
 		log.Debug().Info("the result of update workspace instance operation is None", "instance", inst.Name)
 	}
@@ -108,12 +109,12 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return r.TraefikIngressRouteCfg.PatchTraefikIngressRouteAsDesired(&ir, ws, r.Scheme)
 	})
 	if err != nil {
-		r.Recorder.Eventf(&ws, corev1.EventTypeWarning, "SyncFailed", "Failed to sync traefik ingress route %s: %v", ir.Name, err)
+		kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeWarning, "SyncFailed", "Failed to sync traefik ingress route %s: %v", ir.Name, err)
 		return ctrl.Result{}, fmt.Errorf("failed to sync traefik ingress route: %w", err)
 	}
 	if op != controllerutil.OperationResultNone {
 		log.Info("traefik ingress route synced", "ingressroute", ir.Name)
-		r.Recorder.Eventf(&ws, corev1.EventTypeNormal, "Synced", "Successfully reconciled. Traefik ingress route %s is %s", ir.Name, op)
+		kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeNormal, "Synced", "Successfully reconciled. Traefik ingress route %s is %s", ir.Name, op)
 	}
 
 	// generate URL and set to status
