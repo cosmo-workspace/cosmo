@@ -1,0 +1,17 @@
+['help should match snapshot 1']
+SnapShot = """
+Create cosmo resources
+
+Usage:
+   create [command]
+
+Available Commands:
+  network     Upsert workspace network. Alias of 'cosmoctl workspace upsert-network'
+  user        Create user. Alias of 'cosmoctl user create'
+  workspace   Create workspace. Alias of 'cosmoctl workspace create'
+
+Flags:
+  -h, --help   help for create
+
+Use \" create [command] --help\" for more information about a command.
+"""

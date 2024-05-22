@@ -1,0 +1,87 @@
+['help should match snapshot 1']
+SnapShot = """
+
+Manipulate COSMO Workspace Template resource.
+
+\"Template\" is a set of Kubernetes resources for Workspace.
+
+Usage:
+   template [command]
+
+Aliases:
+  template, tmpl
+
+Available Commands:
+  generate    Generate Template
+  get         Get Templates
+  validate    Validate Template by dry-run
+
+Flags:
+  -h, --help   help for template
+
+Use \" template [command] --help\" for more information about a command.
+"""
+
+['help template generate should match snapshot 1']
+SnapShot = """
+Generate Template
+
+Usage:
+   template generate [command]
+
+Aliases:
+  generate, gen
+
+Available Commands:
+  useraddon   Generate UserAddon
+  workspace   Generate WorkspaceTemplate
+
+Flags:
+  -h, --help   help for generate
+
+Use \" template generate [command] --help\" for more information about a command.
+"""
+
+['help template get should match snapshot 1']
+SnapShot = """
+Get Templates
+
+Usage:
+   template get [command]
+
+Aliases:
+  get, list
+
+Available Commands:
+  useraddons  Get addons
+  workspace   Get workspace templates in cluster
+
+Flags:
+  -h, --help   help for get
+
+Use \" template get [command] --help\" for more information about a command.
+"""
+
+['help template should match snapshot 1']
+SnapShot = """
+
+Manipulate COSMO Workspace Template resource.
+
+\"Template\" is a set of Kubernetes resources for Workspace.
+
+Usage:
+   template [command]
+
+Aliases:
+  template, tmpl
+
+Available Commands:
+  generate    Generate Template
+  get         Get Templates
+  validate    Validate Template by dry-run
+
+Flags:
+  -h, --help   help for template
+
+Use \" template [command] --help\" for more information about a command.
+"""

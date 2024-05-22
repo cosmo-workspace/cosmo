@@ -1,0 +1,27 @@
+['help should match snapshot 1']
+SnapShot = """
+
+Manipulate COSMO User resource.
+
+\"User\" is a cluster-scoped Kubernetes CRD which represents a developer or user who use Workspace.
+
+Once you create User, Kubernetes Namespace is created and bound to the User.
+
+Usage:
+   user [command]
+
+Available Commands:
+  change-password Change password
+  create          Create user
+  delete          Delete users
+  get             Get users
+  get-addons      Get addons
+  get-events      Get events for user
+  reset-password  Reset password
+  update          Update user
+
+Flags:
+  -h, --help   help for user
+
+Use \" user [command] --help\" for more information about a command.
+"""

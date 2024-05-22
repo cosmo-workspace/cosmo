@@ -1,0 +1,21 @@
+['help should match snapshot 1']
+SnapShot = """
+Login to COSMO Dashboard Server
+
+Usage:
+   login USER_NAME [flags]
+
+Examples:
+
+  # interactive mode
+  cosmoctl login
+
+  # non interactive mode
+  echo $PASSWORD | cosmoctl login USER_NAME --dashboard-url https://DASHBOARD_URL --password-stdin
+
+
+Flags:
+      --again            login again
+  -h, --help             help for login
+      --password-stdin   input new password from stdin pipe
+"""

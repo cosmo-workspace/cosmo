@@ -1,42 +1,47 @@
 package get
 
 import (
-	"github.com/cosmo-workspace/cosmo/internal/cmd/template"
 	"github.com/cosmo-workspace/cosmo/internal/cmd/user"
 	"github.com/cosmo-workspace/cosmo/internal/cmd/workspace"
-	"github.com/cosmo-workspace/cosmo/pkg/cmdutil"
+	"github.com/cosmo-workspace/cosmo/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
-func AddCommand(cmd *cobra.Command, co *cmdutil.CliOptions) {
+func AddCommand(cmd *cobra.Command, o *cli.RootOptions) {
 	getCmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get cosmo resources",
-		Long: `
-Get cosmo resources
-`,
 	}
 
-	o := cmdutil.NewUserNamespacedCliOptions(co)
-
-	getCmd.PersistentFlags().StringVarP(&o.User, "user", "u", "", "user name")
-	getCmd.PersistentFlags().StringVarP(&o.Namespace, "namespace", "n", "", "namespace")
-	getCmd.PersistentFlags().BoolVarP(&o.AllNamespace, "all-namespaces", "A", false, "all namespaces")
-
-	getCmd.AddCommand(workspace.GetCmd(&cobra.Command{
-		Use:     "workspace WORKSPACE_NAME",
-		Aliases: []string{"ws"},
-		Short:   "Get workspace",
-	}, o))
 	getCmd.AddCommand(user.GetCmd(&cobra.Command{
-		Use:   "user USER_NAME",
-		Short: "Get user",
-	}, o.CliOptions))
-	getCmd.AddCommand(template.GetCmd(&cobra.Command{
-		Use:     "template TEMPLATE_NAME",
-		Aliases: []string{"tmpl"},
-		Short:   "Get template",
-	}, o.CliOptions))
-
+		Use:     "user [USER_NAME...]",
+		Short:   "Get users. Alias of 'cosmoctl user get'",
+		Aliases: []string{"users"},
+	}, o))
+	getCmd.AddCommand(workspace.GetCmd(&cobra.Command{
+		Use:     "workspace [WORKSPACE_NAME...]",
+		Short:   "Get workspaces. Alias of 'cosmoctl workspace get'",
+		Aliases: []string{"workspaces", "ws"},
+	}, o))
+	getCmd.AddCommand(workspace.GetTemplatesCmd(&cobra.Command{
+		Use:     "template [TEMPLATE_NAME...]",
+		Short:   "Get workspace templates",
+		Aliases: []string{"templates", "tmpl", "tmpls", "ws-tmpl", "ws-tmpls", "wstmpl", "wstmpls"},
+	}, o))
+	getCmd.AddCommand(user.GetAddonsCmd(&cobra.Command{
+		Use:     "useraddon [ADDON_NAME...]",
+		Short:   "Get user addons. Alias of 'cosmoctl user get-addons'",
+		Aliases: []string{"useraddon", "useraddons", "addon", "addons", "user-addon", "user-addons"},
+	}, o))
+	getCmd.AddCommand(workspace.GetNetworkCmd(&cobra.Command{
+		Use:     "network WORKSPACE_NAME",
+		Short:   "Get workspace networks",
+		Aliases: []string{"net", "workspace-networks", "workspace-network", "ws-net", "wsnet"},
+	}, o))
+	getCmd.AddCommand(user.GetEventsCmd(&cobra.Command{
+		Use:     "events [USER_NAME]",
+		Short:   "Get events for user",
+		Aliases: []string{"event", "events"},
+	}, o))
 	cmd.AddCommand(getCmd)
 }

@@ -1,0 +1,30 @@
+['help should match snapshot 1']
+SnapShot = """
+
+Manipulate COSMO Workspace resource.
+
+\"Workspace\" is a namespaced Kubernetes CRD which represents a instance of workspace.
+
+Usage:
+   workspace [command]
+
+Aliases:
+  workspace, ws
+
+Available Commands:
+  create         Create workspace
+  delete         Delete workspaces
+  get            Get workspaces
+  network        Get workspace network
+  remove-network Remove workspace network
+  resume         Resume stopped workspace pod
+  suspend        Suspend workspace pod
+  templates      Get workspace templates in cluster
+  update         Update workspace
+  upsert-network Upsert workspace network
+
+Flags:
+  -h, --help   help for workspace
+
+Use \" workspace [command] --help\" for more information about a command.
+"""

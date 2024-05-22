@@ -1,55 +1,71 @@
 package template
 
 import (
-	cmdutil "github.com/cosmo-workspace/cosmo/pkg/cmdutil"
 	"github.com/spf13/cobra"
+
+	"github.com/cosmo-workspace/cosmo/internal/cmd/user"
+	"github.com/cosmo-workspace/cosmo/internal/cmd/workspace"
+	"github.com/cosmo-workspace/cosmo/pkg/cli"
 )
 
-func AddCommand(cmd *cobra.Command, o *cmdutil.CliOptions) {
-	tmplCmd := &cobra.Command{
-		Use:   "template",
-		Short: "Manipulate Template resource",
-		Long: `
-Template utility command.
-`,
+func AddCommand(cmd *cobra.Command, o *cli.RootOptions) {
+	templateCmd := &cobra.Command{
+		Use:     "template",
+		Short:   "Manipulate Template resource",
 		Aliases: []string{"tmpl"},
+		Long: `
+Manipulate COSMO Workspace Template resource.
+
+"Template" is a set of Kubernetes resources for Workspace.
+`,
 	}
-
-	tmplCmd.AddCommand(generateCmd(&cobra.Command{
-		Use:     "generate --name TEMPLATE_NAME [< Input via Stdin or pipe]",
-		Aliases: []string{"gen"},
+	generateCmd := &cobra.Command{
+		Use:     "generate [< Input via Stdin or pipe]",
 		Short:   "Generate Template",
-		Long: `Generate Template
+		Aliases: []string{"gen"},
+	}
+	generateCmd.AddCommand(generateWorkspaceCmd(&cobra.Command{
+		Use:   "workspace [< Input via Stdin or pipe]",
+		Short: "Generate WorkspaceTemplate",
+		Long: `Generate WorkspaceTemplate
 
-For create generated template, just do "kubectl create -f cosmo-template.yaml"
-
-Example:
+For create generated Workspace Template, just do kubectl apply
+`,
+		Example: `
   * Pipe from kustomize build and apply to your cluster in a single line 
 	
-      kustomize build ./kubernetes/ | cosmoctl template generate --name TEMPLATE_NAME | kubectl apply -f -
+      kustomize build ./kubernetes/ | cosmoctl gen tmpl --name TEMPLATE_NAME | kubectl apply -f -
 
   * Input merged config file (kustomize build ... or helm template ... etc.) and save it to file
 
-      cosmoctl template generate --name TEMPLATE_NAME -o cosmo-template.yaml < merged.yaml
+      cosmoctl gen tmpl --name TEMPLATE_NAME -o cosmo-template.yaml < merged.yaml
 `,
+		Aliases: []string{"workspace", "ws", "workspace-template"},
 	}, o))
-	tmplCmd.AddCommand(GetCmd(&cobra.Command{
-		Use:   "get",
-		Short: "Get templates",
-		Long: `Get Templates
+	generateCmd.AddCommand(generateUserAddonCmd(&cobra.Command{
+		Use:   "useraddon [< Input via Stdin or pipe]",
+		Short: "Generate UserAddon",
+		Long: `Generate UserAddon
 
-Basically it is similar to "kubectl get template"
-
-For type workspace template, use with --workspace flag to see more information. 
+For create generated UserAddon Template, just do kubectl apply
 `,
+		Example: `
+  * Pipe from kustomize build and apply to your cluster in a single line 
+	
+      kustomize build ./kubernetes/ | cosmoctl gen addon --name TEMPLATE_NAME | kubectl apply -f -
+
+  * Input merged config file (kustomize build ... or helm template ... etc.) and save it to file
+
+      cosmoctl gen addon --name TEMPLATE_NAME -o cosmo-template.yaml < merged.yaml
+`,
+		Aliases: []string{"addon", "useraddon", "user-addon"},
 	}, o))
-	tmplCmd.AddCommand(validateCmd(&cobra.Command{
+
+	templateCmd.AddCommand(validateCmd(&cobra.Command{
 		Use:     "validate --file FILE",
 		Aliases: []string{"valid", "check"},
-		Short:   "Validate Template",
-		Long: `Validate Template by dry-run
-
-Usage:
+		Short:   "Validate Template by dry-run",
+		Example: `
   * Dry-run on server-side
 	
       cosmoctl template validate -f cosmo-template.yaml
@@ -64,5 +80,23 @@ Usage:
 `,
 	}, o))
 
-	cmd.AddCommand(tmplCmd)
+	getCmd := &cobra.Command{
+		Use:     "get",
+		Short:   "Get Templates",
+		Aliases: []string{"list"},
+	}
+	getCmd.AddCommand(workspace.GetTemplatesCmd(&cobra.Command{
+		Use:     "workspace [TEMPLATE_NAME...]",
+		Short:   "Get workspace templates in cluster",
+		Aliases: []string{"workspaces", "workspace", "ws"},
+	}, o))
+	getCmd.AddCommand(user.GetAddonsCmd(&cobra.Command{
+		Use:     "useraddons [ADDON_NAME...]",
+		Short:   "Get addons",
+		Aliases: []string{"useraddon", "addons", "addon", "user-addon"},
+	}, o))
+
+	templateCmd.AddCommand(getCmd)
+	templateCmd.AddCommand(generateCmd)
+	cmd.AddCommand(templateCmd)
 }

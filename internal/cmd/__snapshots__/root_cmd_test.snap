@@ -1,0 +1,36 @@
+['help should match snapshot 1']
+SnapShot = """
+
+Command line tool for cosmo API
+Complete documentation is available at http://github.com/cosmo-workspace/cosmo
+
+MIT 2024 cosmo-workspace/cosmo
+
+Usage:
+  cosmoctl [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  create      Create cosmo resources
+  delete      Delete cosmo resources
+  get         Get cosmo resources
+  help        Help about any command
+  login       Login to COSMO Dashboard Server
+  resume      Start stopped workspaces
+  suspend     Suspend workspaces
+  template    Manipulate Template resource
+  user        Manipulate User resource
+  version     Print the version number
+  workspace   Manipulate Workspace resource
+
+Flags:
+      --config string          cosmoctl config file path. env:COSMOCTL_CONFIG (default: $HOME/.config/cosmocfg)
+      --context string         kube-context (default: current context)
+      --dashboard-url string   COSMO Dashboard server endpoint URL. env:COSMOCTL_DASHBOARD_URL
+  -h, --help                   help for cosmoctl
+  -k, --kube                   use kubernetes API client instead of cosmo dashboard API client
+      --kubeconfig string      kubeconfig file path. env:KUBECONFIG (default: $HOME/.kube/config)
+  -v, --verbose int            log level. -1:DISABLED, 0:INFO, 1:DEBUG, 2:ALL
+
+Use \"cosmoctl [command] --help\" for more information about a command.
+"""

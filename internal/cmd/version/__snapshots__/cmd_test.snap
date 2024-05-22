@@ -1,0 +1,15 @@
+['help should match snapshot 1']
+SnapShot = """
+Print the version number
+
+Usage:
+   version [flags]
+
+Flags:
+  -h, --help   help for version
+"""
+
+['version should match snapshot 1']
+SnapShot = """
+cosmoctl - cosmo-workspace v1.2.3 commit=commitid build=2022-01-01
+"""

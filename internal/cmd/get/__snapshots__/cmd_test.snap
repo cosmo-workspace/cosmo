@@ -1,0 +1,20 @@
+['help should match snapshot 1']
+SnapShot = """
+Get cosmo resources
+
+Usage:
+   get [command]
+
+Available Commands:
+  events      Get events for user
+  network     Get workspace networks
+  template    Get workspace templates
+  user        Get users. Alias of 'cosmoctl user get'
+  useraddon   Get user addons. Alias of 'cosmoctl user get-addons'
+  workspace   Get workspaces. Alias of 'cosmoctl workspace get'
+
+Flags:
+  -h, --help   help for get
+
+Use \" get [command] --help\" for more information about a command.
+"""

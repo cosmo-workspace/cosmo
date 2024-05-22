@@ -99,6 +99,16 @@ func (r *NetworkRule) UniqueKey() string {
 	return r.HostPrefix()
 }
 
+func GetNetworkRuleIndex(rules []NetworkRule, target NetworkRule) int {
+	index := -1
+	for i, v := range rules {
+		if v.UniqueKey() == target.UniqueKey() {
+			index = i
+		}
+	}
+	return index
+}
+
 func MainRuleKey(cfg Config) string {
 	return HTTPUniqueKey(cfg.ServiceMainPortName, "/")
 }
