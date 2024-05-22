@@ -219,6 +219,23 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - events.k8s.io
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+  - get
+  - list
+  - watch
 ---
 # Source: cosmo/templates/controller-manager/roles.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -410,6 +427,10 @@ spec:
     port: 8443
     protocol: TCP
     targetPort: 8443
+  - name: incluster-insecure-server
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
   selector:
     cosmo-workspace.github.io: dashboard
     app.kubernetes.io/instance: chartsnap
@@ -565,6 +586,8 @@ spec:
         - --timeout-seconds=5
         - --tls-key=/app/cert/tls.key
         - --tls-cert=/app/cert/tls.crt
+        - --ca-cert=/app/cert/ca.crt
+        - --incluster-port=8080
         command:
         - /app/dashboard
         image: "ghcr.io/cosmo-workspace/cosmo-dashboard:v1.0.0-rc5"
@@ -639,6 +662,7 @@ metadata:
   name: cosmo-dashboard-cert
   namespace: cosmo-system
 spec:
+  commonName: cosmo-dashboard.cosmo-system.svc.cluster.local
   dnsNames:
   - cosmo-dashboard.cosmo-system.svc
   - cosmo-dashboard.cosmo-system.svc.cluster.local
@@ -740,28 +764,6 @@ webhooks:
       namespace: cosmo-system
       path: /mutate-cosmo-workspace-github-io-v1alpha1-instance
   failurePolicy: Fail
-  name: minstance.kb.io
-  rules:
-  - apiGroups:
-    - cosmo-workspace.github.io
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - instances
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  - v1alpha1
-  clientConfig:
-    caBundle: Cg==
-    service:
-      name: cosmo-webhook-service
-      namespace: cosmo-system
-      path: /mutate-cosmo-workspace-github-io-v1alpha1-instance
-  failurePolicy: Fail
   name: mclusterinstance.kb.io
   rules:
   - apiGroups:
@@ -773,6 +775,28 @@ webhooks:
     - UPDATE
     resources:
     - clusterinstances
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1alpha1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: cosmo-webhook-service
+      namespace: cosmo-system
+      path: /mutate-cosmo-workspace-github-io-v1alpha1-instance
+  failurePolicy: Fail
+  name: minstance.kb.io
+  rules:
+  - apiGroups:
+    - cosmo-workspace.github.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - instances
   sideEffects: None
 - admissionReviewVersions:
   - v1
@@ -892,6 +916,28 @@ webhooks:
     service:
       name: cosmo-webhook-service
       namespace: cosmo-system
+      path: /validate-cosmo-workspace-github-io-v1alpha1-template
+  failurePolicy: Fail
+  name: vclustertemplate.kb.io
+  rules:
+  - apiGroups:
+    - cosmo-workspace.github.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clustertemplates
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1alpha1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: cosmo-webhook-service
+      namespace: cosmo-system
       path: /validate-cosmo-workspace-github-io-v1alpha1-instance
   failurePolicy: Fail
   name: vinstance.kb.io
@@ -905,6 +951,28 @@ webhooks:
     - UPDATE
     resources:
     - instances
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1alpha1
+  clientConfig:
+    caBundle: Cg==
+    service:
+      name: cosmo-webhook-service
+      namespace: cosmo-system
+      path: /validate-cosmo-workspace-github-io-v1alpha1-template
+  failurePolicy: Fail
+  name: vtemplate.kb.io
+  rules:
+  - apiGroups:
+    - cosmo-workspace.github.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - templates
   sideEffects: None
 - admissionReviewVersions:
   - v1

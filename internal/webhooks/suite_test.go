@@ -128,6 +128,12 @@ var _ = BeforeSuite(func() {
 		Decoder: admission.NewDecoder(mgr.GetScheme()),
 	}).SetupWebhookWithManager(mgr)
 
+	(&TemplateValidationWebhookHandler{
+		Client:  mgr.GetClient(),
+		Log:     clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhook")),
+		Decoder: admission.NewDecoder(mgr.GetScheme()),
+	}).SetupWebhookWithManager(mgr)
+
 	go func() {
 		defer GinkgoRecover()
 		err := mgr.Start(ctx)
