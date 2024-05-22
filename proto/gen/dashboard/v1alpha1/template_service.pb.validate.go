@@ -61,6 +61,10 @@ func (m *GetUserAddonTemplatesRequest) validate(all bool) error {
 		// no validation rules for UseRoleFilter
 	}
 
+	if m.WithRaw != nil {
+		// no validation rules for WithRaw
+	}
+
 	if len(errors) > 0 {
 		return GetUserAddonTemplatesRequestMultiError(errors)
 	}
@@ -305,6 +309,10 @@ func (m *GetWorkspaceTemplatesRequest) validate(all bool) error {
 
 	if m.UseRoleFilter != nil {
 		// no validation rules for UseRoleFilter
+	}
+
+	if m.WithRaw != nil {
+		// no validation rules for WithRaw
 	}
 
 	if len(errors) > 0 {

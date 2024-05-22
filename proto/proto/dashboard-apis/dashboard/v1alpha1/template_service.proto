@@ -21,6 +21,7 @@ service TemplateService {
 
 message GetUserAddonTemplatesRequest {
   optional bool use_role_filter = 1;
+  optional bool with_raw = 2;
 }
 
 message GetUserAddonTemplatesResponse {
@@ -30,6 +31,7 @@ message GetUserAddonTemplatesResponse {
 
 message GetWorkspaceTemplatesRequest {
   optional bool use_role_filter = 1;
+  optional bool with_raw = 2;
 }
 
 message GetWorkspaceTemplatesResponse {

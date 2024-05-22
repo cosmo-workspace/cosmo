@@ -5,9 +5,8 @@ import (
 	"net/http"
 
 	connect_go "github.com/bufbuild/connect-go"
-	"k8s.io/utils/ptr"
 
-	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
@@ -38,7 +37,7 @@ func (s *Server) CreateWorkspace(ctx context.Context, req *connect_go.Request[da
 
 	res := &dashv1alpha1.CreateWorkspaceResponse{
 		Message:   "Successfully created",
-		Workspace: convertWorkspaceTodashv1alpha1Workspace(*ws),
+		Workspace: apiconv.C2D_Workspace(*ws),
 	}
 	log.Info(res.Message, "username", m.UserName, "workspace", m.WsName, "template", m.Template)
 	return connect_go.NewResponse(res), nil
@@ -57,12 +56,8 @@ func (s *Server) GetWorkspaces(ctx context.Context, req *connect_go.Request[dash
 		return nil, ErrResponse(log, err)
 	}
 
-	apiwss := make([]*dashv1alpha1.Workspace, len(wss))
-	for i, v := range wss {
-		apiwss[i] = convertWorkspaceTodashv1alpha1Workspace(v)
-	}
 	res := &dashv1alpha1.GetWorkspacesResponse{
-		Items: apiwss,
+		Items: apiconv.C2D_Workspaces(wss, apiconv.WithWorkspaceRaw(req.Msg.WithRaw)),
 	}
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
@@ -84,8 +79,9 @@ func (s *Server) GetWorkspace(ctx context.Context, req *connect_go.Request[dashv
 	}
 
 	res := &dashv1alpha1.GetWorkspaceResponse{
-		Workspace: convertWorkspaceTodashv1alpha1Workspace(*ws),
+		Workspace: apiconv.C2D_Workspace(*ws, apiconv.WithWorkspaceRaw(req.Msg.WithRaw)),
 	}
+
 	return connect_go.NewResponse(res), nil
 }
 
@@ -104,7 +100,7 @@ func (s *Server) DeleteWorkspace(ctx context.Context, req *connect_go.Request[da
 
 	res := &dashv1alpha1.DeleteWorkspaceResponse{
 		Message:   "Successfully deleted",
-		Workspace: convertWorkspaceTodashv1alpha1Workspace(*ws),
+		Workspace: apiconv.C2D_Workspace(*ws),
 	}
 	log.Info(res.Message, "username", req.Msg.UserName, "workspaceName", req.Msg.WsName)
 	return connect_go.NewResponse(res), nil
@@ -118,37 +114,18 @@ func (s *Server) UpdateWorkspace(ctx context.Context, req *connect_go.Request[da
 		return nil, ErrResponse(log, err)
 	}
 
-	ws, err := s.Klient.UpdateWorkspace(ctx, req.Msg.WsName, req.Msg.UserName, kosmo.UpdateWorkspaceOpts{Replicas: req.Msg.Replicas})
+	ws, err := s.Klient.UpdateWorkspace(ctx, req.Msg.WsName, req.Msg.UserName, kosmo.UpdateWorkspaceOpts{
+		Replicas: req.Msg.Replicas,
+		Vars:     req.Msg.Vars,
+	})
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
 	res := &dashv1alpha1.UpdateWorkspaceResponse{
 		Message:   "Successfully updated",
-		Workspace: convertWorkspaceTodashv1alpha1Workspace(*ws),
+		Workspace: apiconv.C2D_Workspace(*ws),
 	}
 	log.Info(res.Message, "username", req.Msg.UserName, "workspaceName", req.Msg.WsName)
 	return connect_go.NewResponse(res), nil
-}
-
-func convertWorkspaceTodashv1alpha1Workspace(ws cosmov1alpha1.Workspace) *dashv1alpha1.Workspace {
-	replicas := ws.Spec.Replicas
-	if replicas == nil {
-		replicas = ptr.To(int64(1))
-	}
-
-	return &dashv1alpha1.Workspace{
-		Name:      ws.Name,
-		OwnerName: cosmov1alpha1.UserNameByNamespace(ws.Namespace),
-		Spec: &dashv1alpha1.WorkspaceSpec{
-			Template: ws.Spec.Template.Name,
-			Replicas: *replicas,
-			Vars:     ws.Spec.Vars,
-			Network:  convertNetRulesTodashv1alpha1NetRules(ws.Spec.Network, ws.Status.URLs),
-		},
-		Status: &dashv1alpha1.WorkspaceStatus{
-			Phase:   string(ws.Status.Phase),
-			MainUrl: ws.Status.URLs[cosmov1alpha1.MainRuleKey(ws.Status.Config)],
-		},
-	}
 }

@@ -6,9 +6,15 @@
 - [dashboard/v1alpha1/auth_service.proto](#dashboard_v1alpha1_auth_service-proto)
     - [LoginRequest](#dashboard-v1alpha1-LoginRequest)
     - [LoginResponse](#dashboard-v1alpha1-LoginResponse)
+    - [ServiceAccountLoginRequest](#dashboard-v1alpha1-ServiceAccountLoginRequest)
     - [VerifyResponse](#dashboard-v1alpha1-VerifyResponse)
   
     - [AuthService](#dashboard-v1alpha1-AuthService)
+  
+- [dashboard/v1alpha1/event.proto](#dashboard_v1alpha1_event-proto)
+    - [Event](#dashboard-v1alpha1-Event)
+    - [EventSeries](#dashboard-v1alpha1-EventSeries)
+    - [ObjectReference](#dashboard-v1alpha1-ObjectReference)
   
 - [dashboard/v1alpha1/template.proto](#dashboard_v1alpha1_template-proto)
     - [Template](#dashboard-v1alpha1-Template)
@@ -34,6 +40,7 @@
     - [DeleteUserResponse](#dashboard-v1alpha1-DeleteUserResponse)
     - [GetUserRequest](#dashboard-v1alpha1-GetUserRequest)
     - [GetUserResponse](#dashboard-v1alpha1-GetUserResponse)
+    - [GetUsersRequest](#dashboard-v1alpha1-GetUsersRequest)
     - [GetUsersResponse](#dashboard-v1alpha1-GetUsersResponse)
     - [UpdateUserAddonsRequest](#dashboard-v1alpha1-UpdateUserAddonsRequest)
     - [UpdateUserAddonsResponse](#dashboard-v1alpha1-UpdateUserAddonsResponse)
@@ -85,6 +92,7 @@
     - [GetWorkspacesRequest](#dashboard-v1alpha1-GetWorkspacesRequest)
     - [GetWorkspacesResponse](#dashboard-v1alpha1-GetWorkspacesResponse)
     - [UpdateWorkspaceRequest](#dashboard-v1alpha1-UpdateWorkspaceRequest)
+    - [UpdateWorkspaceRequest.VarsEntry](#dashboard-v1alpha1-UpdateWorkspaceRequest-VarsEntry)
     - [UpdateWorkspaceResponse](#dashboard-v1alpha1-UpdateWorkspaceResponse)
     - [UpsertNetworkRuleRequest](#dashboard-v1alpha1-UpsertNetworkRuleRequest)
     - [UpsertNetworkRuleResponse](#dashboard-v1alpha1-UpsertNetworkRuleResponse)
@@ -135,6 +143,21 @@
 
 
 
+<a name="dashboard-v1alpha1-ServiceAccountLoginRequest"></a>
+
+### ServiceAccountLoginRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| token | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="dashboard-v1alpha1-VerifyResponse"></a>
 
 ### VerifyResponse
@@ -168,6 +191,78 @@
 | Login | [LoginRequest](#dashboard-v1alpha1-LoginRequest) | [LoginResponse](#dashboard-v1alpha1-LoginResponse) | ID and password to login |
 | Logout | [.google.protobuf.Empty](#google-protobuf-Empty) | [.google.protobuf.Empty](#google-protobuf-Empty) | Delete session to logout |
 | Verify | [.google.protobuf.Empty](#google-protobuf-Empty) | [VerifyResponse](#dashboard-v1alpha1-VerifyResponse) | Verify authorization |
+| ServiceAccountLogin | [ServiceAccountLoginRequest](#dashboard-v1alpha1-ServiceAccountLoginRequest) | [LoginResponse](#dashboard-v1alpha1-LoginResponse) | Kubernetes ServiceAccount to login |
+
+ 
+
+
+
+<a name="dashboard_v1alpha1_event-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## dashboard/v1alpha1/event.proto
+
+
+
+<a name="dashboard-v1alpha1-Event"></a>
+
+### Event
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| eventTime | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+| type | [string](#string) |  |  |
+| note | [string](#string) |  |  |
+| reason | [string](#string) |  |  |
+| regarding | [ObjectReference](#dashboard-v1alpha1-ObjectReference) |  |  |
+| reportingController | [string](#string) |  |  |
+| series | [EventSeries](#dashboard-v1alpha1-EventSeries) | optional |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-EventSeries"></a>
+
+### EventSeries
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| count | [int32](#int32) |  |  |
+| lastObservedTime | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-ObjectReference"></a>
+
+### ObjectReference
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| apiVersion | [string](#string) |  |  |
+| kind | [string](#string) |  |  |
+| name | [string](#string) |  |  |
+| namespace | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
 
  
 
@@ -194,6 +289,8 @@
 | is_default_user_addon | [bool](#bool) | optional |  |
 | is_cluster_scope | [bool](#bool) |  |  |
 | required_useraddons | [string](#string) | repeated |  |
+| userroles | [string](#string) | repeated |  |
+| raw | [string](#string) | optional |  |
 
 
 
@@ -241,6 +338,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | use_role_filter | [bool](#bool) | optional |  |
+| with_raw | [bool](#bool) | optional |  |
 
 
 
@@ -272,6 +370,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | use_role_filter | [bool](#bool) | optional |  |
+| with_raw | [bool](#bool) | optional |  |
 
 
 
@@ -336,6 +435,8 @@
 | addons | [UserAddon](#dashboard-v1alpha1-UserAddon) | repeated |  |
 | default_password | [string](#string) |  |  |
 | status | [string](#string) |  |  |
+| raw | [string](#string) | optional |  |
+| events | [Event](#dashboard-v1alpha1-Event) | repeated |  |
 
 
 
@@ -466,6 +567,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_name | [string](#string) |  |  |
+| with_raw | [bool](#bool) | optional |  |
 
 
 
@@ -481,6 +583,21 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user | [User](#dashboard-v1alpha1-User) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-GetUsersRequest"></a>
+
+### GetUsersRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| with_raw | [bool](#bool) | optional |  |
 
 
 
@@ -646,7 +763,7 @@
 | ----------- | ------------ | ------------- | ------------|
 | DeleteUser | [DeleteUserRequest](#dashboard-v1alpha1-DeleteUserRequest) | [DeleteUserResponse](#dashboard-v1alpha1-DeleteUserResponse) | Delete user by ID |
 | GetUser | [GetUserRequest](#dashboard-v1alpha1-GetUserRequest) | [GetUserResponse](#dashboard-v1alpha1-GetUserResponse) | Returns a single User model |
-| GetUsers | [.google.protobuf.Empty](#google-protobuf-Empty) | [GetUsersResponse](#dashboard-v1alpha1-GetUsersResponse) | Returns an array of User model |
+| GetUsers | [GetUsersRequest](#dashboard-v1alpha1-GetUsersRequest) | [GetUsersResponse](#dashboard-v1alpha1-GetUsersResponse) | Returns an array of User model |
 | CreateUser | [CreateUserRequest](#dashboard-v1alpha1-CreateUserRequest) | [CreateUserResponse](#dashboard-v1alpha1-CreateUserResponse) | Create a new User |
 | UpdateUserDisplayName | [UpdateUserDisplayNameRequest](#dashboard-v1alpha1-UpdateUserDisplayNameRequest) | [UpdateUserDisplayNameResponse](#dashboard-v1alpha1-UpdateUserDisplayNameResponse) | Update user display name |
 | UpdateUserPassword | [UpdateUserPasswordRequest](#dashboard-v1alpha1-UpdateUserPasswordRequest) | [UpdateUserPasswordResponse](#dashboard-v1alpha1-UpdateUserPasswordResponse) | Update a single User password |
@@ -961,6 +1078,7 @@
 | owner_name | [string](#string) |  |  |
 | spec | [WorkspaceSpec](#dashboard-v1alpha1-WorkspaceSpec) |  |  |
 | status | [WorkspaceStatus](#dashboard-v1alpha1-WorkspaceStatus) |  |  |
+| raw | [string](#string) | optional |  |
 
 
 
@@ -1158,6 +1276,7 @@
 | ----- | ---- | ----- | ----------- |
 | user_name | [string](#string) |  |  |
 | ws_name | [string](#string) |  |  |
+| with_raw | [bool](#bool) | optional |  |
 
 
 
@@ -1188,6 +1307,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_name | [string](#string) |  |  |
+| with_raw | [bool](#bool) | optional |  |
 
 
 
@@ -1221,6 +1341,23 @@
 | user_name | [string](#string) |  |  |
 | ws_name | [string](#string) |  |  |
 | replicas | [int64](#int64) | optional |  |
+| vars | [UpdateWorkspaceRequest.VarsEntry](#dashboard-v1alpha1-UpdateWorkspaceRequest-VarsEntry) | repeated |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-UpdateWorkspaceRequest-VarsEntry"></a>
+
+### UpdateWorkspaceRequest.VarsEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 

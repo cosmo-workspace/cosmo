@@ -1,0 +1,32 @@
+/*
+  Cosmo Dashboard API
+  Manipulate cosmo dashboard resource API
+*/
+
+syntax = "proto3";
+
+package dashboard.v1alpha1;
+
+import "google/protobuf/timestamp.proto";
+
+message Event {
+    google.protobuf.Timestamp eventTime = 1;
+    string type = 2;
+    string note = 3;
+    string reason = 4;
+    ObjectReference regarding = 5;
+    string reportingController = 6;
+    optional EventSeries series = 7;
+}
+
+message EventSeries {
+    int32 count = 1;
+    google.protobuf.Timestamp lastObservedTime = 2;
+}
+
+message ObjectReference {
+    string apiVersion = 1;
+    string kind = 2;
+    string name = 3;
+    string namespace = 4;
+}

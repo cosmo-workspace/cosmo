@@ -111,7 +111,14 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	if sesInfo.Deadline > 0 {
 		deadline := time.Unix(sesInfo.Deadline, 0)
-		LoggerDEBUG.Print("set deadline at ", deadline)
+		LoggerDEBUG.Print("session deadline is ", deadline)
+
+		now := time.Now()
+		if deadline.Before(now) {
+			LoggerINFO.Print("session expired", " now=", now, " deadline=", deadline)
+			p.redirectToLoginPage(w, r)
+			return
+		}
 
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithDeadline(ctx, deadline)

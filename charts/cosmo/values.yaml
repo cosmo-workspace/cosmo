@@ -163,6 +163,9 @@ dashboard:
   tls:
     enabled: true
 
+  inclusterServer:
+    port: 8080
+
   resources:
     limits:
       cpu: 100m

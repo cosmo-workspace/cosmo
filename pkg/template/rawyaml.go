@@ -2,6 +2,7 @@ package template
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -41,7 +42,7 @@ func (t *RawYAMLBuilder) Build() ([]unstructured.Unstructured, error) {
 		}
 		_, obj, err := StringToUnstructured(v)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to parse yaml: %w: \n--- YAML ---\n%v", err, v)
 		}
 		resources = append(resources, *obj)
 	}

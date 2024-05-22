@@ -24,4 +24,8 @@ message Template {
   bool is_cluster_scope = 5;
 
   repeated string required_useraddons = 6;
+
+  repeated string userroles = 7;
+  
+  optional string raw = 8;
 }

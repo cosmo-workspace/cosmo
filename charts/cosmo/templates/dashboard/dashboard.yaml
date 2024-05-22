@@ -18,6 +18,12 @@ spec:
     port: {{ .Values.dashboard.service.port }}
     protocol: TCP
     targetPort: {{ .Values.dashboard.service.port }}
+  {{- if ne (toString .Values.dashboard.inclusterServer.port) "0" }}
+  - name: incluster-insecure-server
+    port: {{ .Values.dashboard.inclusterServer.port }}
+    protocol: TCP
+    targetPort: {{ .Values.dashboard.inclusterServer.port }}
+  {{- end }}
   {{- if .Values.dashboard.localRunTest.enabled }}
   - name: cosmo-dashboard-ui-server
     port: {{ .Values.dashboard.localRunTest.dashboardEndpoint.uiServerPort }}
@@ -101,6 +107,10 @@ spec:
         {{- else }}
         - --tls-key=/app/cert/tls.key
         - --tls-cert=/app/cert/tls.crt
+        - --ca-cert=/app/cert/ca.crt
+        {{- end }}
+        {{- if ne (toString .Values.dashboard.inclusterServer.port) "0" }}
+        - --incluster-port={{ .Values.dashboard.inclusterServer.port }}
         {{- end }}
         {{- if .Values.dashboard.auth.ldap.enabled }}
         - --ldap-url={{ .Values.dashboard.auth.ldap.url }}

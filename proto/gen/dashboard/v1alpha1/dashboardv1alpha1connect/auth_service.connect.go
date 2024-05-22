@@ -44,6 +44,9 @@ const (
 	AuthServiceLogoutProcedure = "/dashboard.v1alpha1.AuthService/Logout"
 	// AuthServiceVerifyProcedure is the fully-qualified name of the AuthService's Verify RPC.
 	AuthServiceVerifyProcedure = "/dashboard.v1alpha1.AuthService/Verify"
+	// AuthServiceServiceAccountLoginProcedure is the fully-qualified name of the AuthService's
+	// ServiceAccountLogin RPC.
+	AuthServiceServiceAccountLoginProcedure = "/dashboard.v1alpha1.AuthService/ServiceAccountLogin"
 )
 
 // AuthServiceClient is a client for the dashboard.v1alpha1.AuthService service.
@@ -54,6 +57,8 @@ type AuthServiceClient interface {
 	Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error)
 	// Verify authorization
 	Verify(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.VerifyResponse], error)
+	// Kubernetes ServiceAccount to login
+	ServiceAccountLogin(context.Context, *connect_go.Request[v1alpha1.ServiceAccountLoginRequest]) (*connect_go.Response[v1alpha1.LoginResponse], error)
 }
 
 // NewAuthServiceClient constructs a client for the dashboard.v1alpha1.AuthService service. By
@@ -81,14 +86,20 @@ func NewAuthServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+AuthServiceVerifyProcedure,
 			opts...,
 		),
+		serviceAccountLogin: connect_go.NewClient[v1alpha1.ServiceAccountLoginRequest, v1alpha1.LoginResponse](
+			httpClient,
+			baseURL+AuthServiceServiceAccountLoginProcedure,
+			opts...,
+		),
 	}
 }
 
 // authServiceClient implements AuthServiceClient.
 type authServiceClient struct {
-	login  *connect_go.Client[v1alpha1.LoginRequest, v1alpha1.LoginResponse]
-	logout *connect_go.Client[emptypb.Empty, emptypb.Empty]
-	verify *connect_go.Client[emptypb.Empty, v1alpha1.VerifyResponse]
+	login               *connect_go.Client[v1alpha1.LoginRequest, v1alpha1.LoginResponse]
+	logout              *connect_go.Client[emptypb.Empty, emptypb.Empty]
+	verify              *connect_go.Client[emptypb.Empty, v1alpha1.VerifyResponse]
+	serviceAccountLogin *connect_go.Client[v1alpha1.ServiceAccountLoginRequest, v1alpha1.LoginResponse]
 }
 
 // Login calls dashboard.v1alpha1.AuthService.Login.
@@ -106,6 +117,11 @@ func (c *authServiceClient) Verify(ctx context.Context, req *connect_go.Request[
 	return c.verify.CallUnary(ctx, req)
 }
 
+// ServiceAccountLogin calls dashboard.v1alpha1.AuthService.ServiceAccountLogin.
+func (c *authServiceClient) ServiceAccountLogin(ctx context.Context, req *connect_go.Request[v1alpha1.ServiceAccountLoginRequest]) (*connect_go.Response[v1alpha1.LoginResponse], error) {
+	return c.serviceAccountLogin.CallUnary(ctx, req)
+}
+
 // AuthServiceHandler is an implementation of the dashboard.v1alpha1.AuthService service.
 type AuthServiceHandler interface {
 	// ID and password to login
@@ -114,6 +130,8 @@ type AuthServiceHandler interface {
 	Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error)
 	// Verify authorization
 	Verify(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.VerifyResponse], error)
+	// Kubernetes ServiceAccount to login
+	ServiceAccountLogin(context.Context, *connect_go.Request[v1alpha1.ServiceAccountLoginRequest]) (*connect_go.Response[v1alpha1.LoginResponse], error)
 }
 
 // NewAuthServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -138,6 +156,11 @@ func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect_go.HandlerOpt
 		svc.Verify,
 		opts...,
 	))
+	mux.Handle(AuthServiceServiceAccountLoginProcedure, connect_go.NewUnaryHandler(
+		AuthServiceServiceAccountLoginProcedure,
+		svc.ServiceAccountLogin,
+		opts...,
+	))
 	return "/dashboard.v1alpha1.AuthService/", mux
 }
 
@@ -154,4 +177,8 @@ func (UnimplementedAuthServiceHandler) Logout(context.Context, *connect_go.Reque
 
 func (UnimplementedAuthServiceHandler) Verify(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1alpha1.VerifyResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.AuthService.Verify is not implemented"))
+}
+
+func (UnimplementedAuthServiceHandler) ServiceAccountLogin(context.Context, *connect_go.Request[v1alpha1.ServiceAccountLoginRequest]) (*connect_go.Response[v1alpha1.LoginResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.AuthService.ServiceAccountLogin is not implemented"))
 }

@@ -243,7 +243,7 @@ func (c *TestUtil) DeleteWorkspaceAllByUserName(userName string) {
 	err := c.kosmoClient.DeleteAllOf(ctx, &cosmov1alpha1.Workspace{}, client.InNamespace(cosmov1alpha1.UserNamespace(userName)))
 	Expect(err).ShouldNot(HaveOccurred())
 	Eventually(func() ([]cosmov1alpha1.Workspace, error) {
-		return c.kosmoClient.ListWorkspaces(ctx, cosmov1alpha1.UserNamespace(userName))
+		return c.kosmoClient.ListWorkspacesByUserName(ctx, userName)
 	}, time.Second*5, time.Millisecond*100).Should(BeEmpty())
 }
 

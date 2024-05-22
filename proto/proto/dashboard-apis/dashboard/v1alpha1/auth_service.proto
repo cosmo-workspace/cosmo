@@ -18,6 +18,8 @@ service AuthService {
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
   // Verify authorization
   rpc Verify(google.protobuf.Empty) returns (VerifyResponse);
+  // Kubernetes ServiceAccount to login
+  rpc ServiceAccountLogin(ServiceAccountLoginRequest) returns (LoginResponse);
 }
 
 message LoginRequest {
@@ -35,4 +37,8 @@ message VerifyResponse {
   string user_name = 1;
   google.protobuf.Timestamp expire_at = 2;
   bool require_password_update = 3;
+}
+
+message ServiceAccountLoginRequest {
+  string token = 1 [(validate.rules).string = { min_len: 1 }];
 }

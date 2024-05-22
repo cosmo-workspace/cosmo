@@ -8,7 +8,6 @@ syntax = "proto3";
 package dashboard.v1alpha1;
 
 import "dashboard/v1alpha1/user.proto";
-import "google/protobuf/empty.proto";
 import "validate/validate.proto";
 
 service UserService {
@@ -17,7 +16,7 @@ service UserService {
   // Returns a single User model
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // Returns an array of User model
-  rpc GetUsers(google.protobuf.Empty) returns (GetUsersResponse);
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse);
   // Create a new User
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   // Update user display name
@@ -41,6 +40,10 @@ message DeleteUserResponse {
   User user = 2;
 }
 
+message GetUsersRequest {
+  optional bool with_raw = 1;
+}
+
 message GetUsersResponse {
   string message = 1;
   repeated User items = 2;
@@ -48,6 +51,7 @@ message GetUsersResponse {
 
 message GetUserRequest {
   string user_name = 1;
+  optional bool with_raw = 2;
 }
 
 message GetUserResponse {

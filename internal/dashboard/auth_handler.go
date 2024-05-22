@@ -14,6 +14,7 @@ import (
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/auth/session"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1/dashboardv1alpha1connect"
 )
@@ -131,4 +132,30 @@ func (s *Server) Logout(ctx context.Context, req *connect_go.Request[emptypb.Emp
 	resp := connect_go.NewResponse(&emptypb.Empty{})
 
 	return resp, nil
+}
+
+func (s *Server) ServiceAccountLogin(ctx context.Context, req *connect_go.Request[dashv1alpha1.ServiceAccountLoginRequest]) (*connect_go.Response[dashv1alpha1.LoginResponse], error) {
+	log := clog.FromContext(ctx).WithCaller()
+
+	w := responseWriterFromContext(ctx)
+	r := requestFromContext(ctx)
+
+	res, err := kubeutil.TokenReview(ctx, s.Klient, req.Msg.Token)
+	if err != nil {
+		return nil, ErrResponse(log, fmt.Errorf("failed to verify service account token: %w", err))
+	}
+	log.Debug().Info("token review result", "result", res)
+	userName := cosmov1alpha1.UserNameByNamespace(res.Namespace)
+
+	// Create session
+	sesInfo, expireAt := s.SessionInfo(userName)
+	if err = s.CreateSession(w, r, sesInfo); err != nil {
+		log.Error(err, "failed to save session")
+		return nil, ErrResponse(log, err)
+	}
+
+	return connect_go.NewResponse(&dashv1alpha1.LoginResponse{
+		UserName: userName,
+		ExpireAt: timestamppb.New(expireAt),
+	}), nil
 }

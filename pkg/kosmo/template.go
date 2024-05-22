@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/types"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
@@ -90,17 +89,4 @@ func (c *Client) ListUserAddonTemplates(ctx context.Context) ([]cosmov1alpha1.Te
 	} else {
 		return tmpls, nil
 	}
-}
-
-func (c *Client) GetTemplate(ctx context.Context, tmplName string) (*cosmov1alpha1.Template, error) {
-	tmpl := cosmov1alpha1.Template{}
-
-	key := types.NamespacedName{
-		Name: tmplName,
-	}
-
-	if err := c.Get(ctx, key, &tmpl); err != nil {
-		return nil, err
-	}
-	return &tmpl, nil
 }
