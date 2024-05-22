@@ -166,7 +166,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		log.Info("status updated")
 	}
 
-	if user.Status.Phase != "AddonFailed" && !cosmov1alpha1.IsPruneDisabled(&user) {
+	if user.Status.Phase != "AddonFailed" && !cosmov1alpha1.KeepResourceDeletePolicy(&user) {
 		log.Debug().Info("checking garbage collection")
 		shouldDeletes := objectRefNotExistsInMap(lastAddons, currAddonsMap)
 		for _, d := range shouldDeletes {

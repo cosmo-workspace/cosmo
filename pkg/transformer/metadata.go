@@ -45,7 +45,7 @@ func (t *MetadataTransformer) Transform(src *unstructured.Unstructured) (*unstru
 	labels[cosmov1alpha1.LabelKeyTemplateName] = t.tmplName
 	obj.SetLabels(labels)
 
-	if !cosmov1alpha1.IsPruneDisabled(t.inst) && !cosmov1alpha1.IsPruneDisabled(obj) {
+	if !cosmov1alpha1.KeepResourceDeletePolicy(t.inst) && !cosmov1alpha1.KeepResourceDeletePolicy(obj) {
 		// Set owner reference
 		err := ctrl.SetControllerReference(t.inst, obj, t.scheme)
 		if err != nil {

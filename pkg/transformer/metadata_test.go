@@ -271,14 +271,14 @@ metadata:
 			wantErr: true,
 		},
 		{
-			name: "not put owner ref when prune-disabled annotated",
+			name: "not put owner ref when delete-policy: keep annotated",
 			fields: fields{
 				inst: &cosmov1alpha1.Instance{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "cs1",
 						Namespace: "cosmo-user-tom",
 						Annotations: map[string]string{
-							cosmov1alpha1.AnnotationPruneDisabled: "1",
+							cosmov1alpha1.ResourceAnnKeyDeletePolicy: cosmov1alpha1.ResourceAnnEnumDeletePolicyKeep,
 						},
 					},
 					Spec: cosmov1alpha1.InstanceSpec{
