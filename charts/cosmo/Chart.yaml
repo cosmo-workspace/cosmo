@@ -2,8 +2,8 @@ apiVersion: v2
 name: cosmo
 description: COSMO Helm chart for Kubernetes
 type: application
-version: 1.0.0-rc5
-appVersion: v1.0.0-rc5
+version: 1.0.0-rc6
+appVersion: v1.0.0-rc6
 kubeVersion: ">= 1.19.0-0"
 home: https://github.com/cosmo-workspace/cosmo
 icon: https://raw.githubusercontent.com/cosmo-workspace/cosmo/main/logo/logo-square-small.png
