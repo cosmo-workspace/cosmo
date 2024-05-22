@@ -17,6 +17,8 @@ spec:
     apiVersion: v1
     kind: Service
     metadata:
+      annotations:
+        cosmo-workspace.github.io/delete-policy: keep
       labels:
         cosmo-workspace.github.io/instance: '{{INSTANCE}}'
         cosmo-workspace.github.io/template: '{{TEMPLATE}}'
