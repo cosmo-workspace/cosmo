@@ -1,7 +1,5 @@
 package v1alpha1
 
-import "strconv"
-
 // LabelControllerManaged is a label on all resources managed by the controllers
 const LabelControllerManaged = "cosmo-workspace.github.io/controller-managed"
 
@@ -26,22 +24,15 @@ type AnnotationHolder interface {
 	SetAnnotations(map[string]string)
 }
 
-// AnnotationPruneDisabled is a bool annotation for each child resources not to be deleted in GC
-const AnnotationPruneDisabled = "cosmo-workspace.github.io/prune-disabled"
-
-func IsPruneDisabled(obj AnnotationHolder) bool {
+// KeepResourceDeletePolicy returns true if the resource has annotation delete-policy=keep
+func KeepResourceDeletePolicy(obj AnnotationHolder) bool {
 	ann := obj.GetAnnotations()
 	if ann == nil {
 		return false
 	}
-	v, ok := ann[AnnotationPruneDisabled]
+	v, ok := ann[ResourceAnnKeyDeletePolicy]
 	if !ok {
 		return false
 	}
-	isDisabled, err := strconv.ParseBool(v)
-	if err != nil {
-		// invalid bool value might be accidentally set while trying to be true
-		return true
-	}
-	return isDisabled
+	return v == ResourceAnnEnumDeletePolicyKeep
 }

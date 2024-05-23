@@ -197,7 +197,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 	}
 
 	// garbage collection
-	if len(errs) == 0 && !cosmov1alpha1.IsPruneDisabled(inst) {
+	if len(errs) == 0 && !cosmov1alpha1.KeepResourceDeletePolicy(inst) {
 		log.Debug().Info("checking garbage collection")
 		shouldDeletes := objectRefNotExistsInMap(lastApplied, currAppliedMap)
 		for _, d := range shouldDeletes {
@@ -297,7 +297,7 @@ func prune(ctx context.Context, r client.Client, d cosmov1alpha1.ObjectRef) (ski
 		log.Error(err, "target object UID is changed. skip pruning", "desiredUID", d.UID, "currentUID", obj.GetUID())
 		return true, nil
 	}
-	if cosmov1alpha1.IsPruneDisabled(&obj) {
+	if cosmov1alpha1.KeepResourceDeletePolicy(&obj) {
 		log.Debug().Info("skip pruning by annotation", "apiVersion")
 		return true, nil
 	}

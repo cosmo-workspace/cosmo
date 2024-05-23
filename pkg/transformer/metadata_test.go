@@ -271,14 +271,14 @@ metadata:
 			wantErr: true,
 		},
 		{
-			name: "not put owner ref when prune-disabled annotated",
+			name: "not put owner ref when delete-policy: keep annotated",
 			fields: fields{
 				inst: &cosmov1alpha1.Instance{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      "cs1",
 						Namespace: "cosmo-user-tom",
 						Annotations: map[string]string{
-							cosmov1alpha1.AnnotationPruneDisabled: "1",
+							cosmov1alpha1.ResourceAnnKeyDeletePolicy: cosmov1alpha1.ResourceAnnEnumDeletePolicyKeep,
 						},
 					},
 					Spec: cosmov1alpha1.InstanceSpec{
@@ -317,6 +317,140 @@ metadata:
   name: cs1-test
   namespace: cosmo-user-tom
 spec:
+  host: example.com
+`,
+			wantErr: false,
+		},
+		{
+			name: "Remove owner ref when delete-policy: keep annotated on Template resource",
+			fields: fields{
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+						UID:       "xxxxxxxxx",
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"{{TEST}}": "OK"},
+					},
+				},
+				disableNamePrefix: false,
+				scheme:            scheme,
+			},
+			args: args{
+				src: `apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cosmo/ingress-patch-enable: "true"
+    kubernetes.io/ingress.class: alb
+    cosmo-workspace.github.io/delete-policy: keep
+  labels:
+    cosmo-workspace.github.io/instance: cs1
+    cosmo-workspace.github.io/template: code-server
+  name: cs1-test
+  namespace: cosmo-user-tom
+  ownerReferences:
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Instance
+    name: cs1
+    uid: "xxxxxxxxx"
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Instance
+    name: cs1
+    uid: "yyyyyyyyy"
+spec:
+  host: example.com
+`,
+			},
+			want: `apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cosmo/ingress-patch-enable: "true"
+    kubernetes.io/ingress.class: alb
+    cosmo-workspace.github.io/delete-policy: keep
+  labels:
+    cosmo-workspace.github.io/instance: cs1
+    cosmo-workspace.github.io/template: code-server
+  name: cs1-test
+  namespace: cosmo-user-tom
+  ownerReferences:
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Instance
+    name: cs1
+    uid: "yyyyyyyyy"
+spec:
+  host: example.com
+`,
+			wantErr: false,
+		},
+
+		{
+			name: "Remove owner ref when delete-policy: keep annotated on Instance",
+			fields: fields{
+				inst: &cosmov1alpha1.Instance{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "cs1",
+						Namespace: "cosmo-user-tom",
+						UID:       "xxxxxxxxx",
+						Annotations: map[string]string{
+							cosmov1alpha1.ResourceAnnKeyDeletePolicy: cosmov1alpha1.ResourceAnnEnumDeletePolicyKeep,
+						},
+					},
+					Spec: cosmov1alpha1.InstanceSpec{
+						Template: cosmov1alpha1.TemplateRef{
+							Name: "code-server",
+						},
+						Override: cosmov1alpha1.OverrideSpec{},
+						Vars:     map[string]string{"{{TEST}}": "OK"},
+					},
+				},
+				disableNamePrefix: false,
+				scheme:            scheme,
+			},
+			args: args{
+				src: `apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    cosmo-workspace.github.io/instance: cs1
+    cosmo-workspace.github.io/template: code-server
+  name: cs1-test
+  namespace: cosmo-user-tom
+  ownerReferences:
+  - apiVersion: cosmo-workspace.github.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Instance
+    name: cs1
+    uid: "xxxxxxxxx"
+spec:
+  ingressClassName: alb
+  host: example.com
+`,
+			},
+			want: `apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    cosmo-workspace.github.io/instance: cs1
+    cosmo-workspace.github.io/template: code-server
+  name: cs1-test
+  namespace: cosmo-user-tom
+  ownerReferences: []
+spec:
+  ingressClassName: alb
   host: example.com
 `,
 			wantErr: false,

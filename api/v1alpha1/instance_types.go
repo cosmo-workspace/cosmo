@@ -12,6 +12,13 @@ const (
 	LabelKeyInstanceName = "cosmo-workspace.github.io/instance"
 	// LabelKeyTemplateName is a template name label on the resources created by instance
 	LabelKeyTemplateName = "cosmo-workspace.github.io/template"
+
+	// ResourceAnnKeyDeletePolicy is a annotation key on the resources created by instance controller to specify delete policy
+	ResourceAnnKeyDeletePolicy = "cosmo-workspace.github.io/delete-policy"
+	// ResourceAnnEnumDeletePolicyDelete is delete policy, which controller do garbage collenction and attach owner references (default)
+	ResourceAnnEnumDeletePolicyDelete = "delete"
+	// ResourceAnnEnumDeletePolicyKeep is keep policy, which controller do not do garbage collenction and do not attach owner references
+	ResourceAnnEnumDeletePolicyKeep = "keep"
 )
 
 func init() {
