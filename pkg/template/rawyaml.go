@@ -23,13 +23,11 @@ var (
 
 type RawYAMLBuilder struct {
 	rawYaml string
-	inst    cosmov1alpha1.InstanceObject
 }
 
-func NewRawYAMLBuilder(rawYaml string, inst cosmov1alpha1.InstanceObject) *RawYAMLBuilder {
+func NewRawYAMLBuilder(rawYaml string) *RawYAMLBuilder {
 	return &RawYAMLBuilder{
 		rawYaml: rawYaml,
-		inst:    inst,
 	}
 }
 
@@ -49,19 +47,19 @@ func (t *RawYAMLBuilder) Build() ([]unstructured.Unstructured, error) {
 	return resources, nil
 }
 
-func (t *RawYAMLBuilder) ReplaceDefaultVars() *RawYAMLBuilder {
-	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsInstance, t.inst.GetName())
-	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsTemplate, t.inst.GetSpec().Template.Name)
+func (t *RawYAMLBuilder) ReplaceDefaultVars(inst cosmov1alpha1.InstanceObject) *RawYAMLBuilder {
+	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsInstance, inst.GetName())
+	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsTemplate, inst.GetSpec().Template.Name)
 
-	if t.inst.GetScope() == meta.RESTScopeNamespace {
-		t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsNamespace, t.inst.GetNamespace())
+	if inst.GetScope() == meta.RESTScopeNamespace {
+		t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsNamespace, inst.GetNamespace())
 	}
 	return t
 }
 
-func (t *RawYAMLBuilder) ReplaceCustomVars() *RawYAMLBuilder {
-	if t.inst.GetSpec().Vars != nil {
-		for key, val := range t.inst.GetSpec().Vars {
+func (t *RawYAMLBuilder) ReplaceCustomVars(inst cosmov1alpha1.InstanceObject) *RawYAMLBuilder {
+	if inst.GetSpec().Vars != nil {
+		for key, val := range inst.GetSpec().Vars {
 			key = FixupTemplateVarKey(key)
 			t.rawYaml = strings.ReplaceAll(t.rawYaml, key, val)
 		}

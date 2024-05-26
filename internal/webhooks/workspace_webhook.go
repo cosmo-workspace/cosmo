@@ -106,7 +106,7 @@ func (h *WorkspaceMutationWebhookHandler) mutateWorkspace(ctx context.Context, w
 }
 
 func (h *WorkspaceMutationWebhookHandler) migrateTmplServiceToNetworkRule(ctx context.Context, ws *cosmov1alpha1.Workspace, rawTmpl string, cfg cosmov1alpha1.Config) error {
-	unst, err := preTemplateBuild(*ws, rawTmpl)
+	unst, err := preTemplateBuild(rawTmpl)
 	if err != nil {
 		return err
 	}
@@ -134,12 +134,8 @@ func appendNetworkRuleIfNotExist(ws *cosmov1alpha1.Workspace, netRule cosmov1alp
 	ws.Spec.Network = append(ws.Spec.Network, netRule)
 }
 
-func preTemplateBuild(ws cosmov1alpha1.Workspace, rawTmpl string) ([]unstructured.Unstructured, error) {
-	var inst cosmov1alpha1.Instance
-	inst.SetName(ws.GetName())
-	inst.SetNamespace(ws.GetNamespace())
-
-	builder := template.NewRawYAMLBuilder(rawTmpl, &inst)
+func preTemplateBuild(rawTmpl string) ([]unstructured.Unstructured, error) {
+	builder := template.NewRawYAMLBuilder(rawTmpl)
 	return builder.Build()
 }
 
