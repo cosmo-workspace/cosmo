@@ -116,6 +116,7 @@ MIT 2023 cosmo-workspace/cosmo
 			}
 			if err = (&controllers.TemplateReconciler{
 				Client:       mgr.GetClient(),
+				Recorder:     mgr.GetEventRecorderFor(tmplController),
 				Scheme:       mgr.GetScheme(),
 				FieldManager: controllerFieldManager,
 			}).SetupWithManager(mgr); err != nil {
@@ -132,6 +133,7 @@ MIT 2023 cosmo-workspace/cosmo
 			}
 			if err = (&controllers.ClusterTemplateReconciler{
 				Client:       mgr.GetClient(),
+				Recorder:     mgr.GetEventRecorderFor(clusterTmplController),
 				Scheme:       mgr.GetScheme(),
 				FieldManager: controllerFieldManager,
 			}).SetupWithManager(mgr); err != nil {

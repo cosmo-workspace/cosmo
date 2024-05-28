@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/event"
@@ -17,6 +18,7 @@ import (
 // ClusterTemplateReconciler reconciles a ClusterTemplate object
 type ClusterTemplateReconciler struct {
 	client.Client
+	Recorder     record.EventRecorder
 	Scheme       *runtime.Scheme
 	FieldManager string
 }
@@ -50,7 +52,7 @@ func (r *ClusterTemplateReconciler) reconcile(ctx context.Context, tmpl *cosmov1
 		return fmt.Errorf("failed to list clusterinstances for clustertemplate %s: %w", tmpl.Name, err)
 	}
 
-	if errs := notifyUpdateToInstances(ctx, r.Client, tmpl, insts.InstanceObjects()); len(errs) > 0 {
+	if errs := notifyUpdateToInstances(ctx, r.Client, r.Recorder, tmpl, insts.InstanceObjects()); len(errs) > 0 {
 		for _, e := range errs {
 			log.Error(e, "failed to notify the update of template")
 		}

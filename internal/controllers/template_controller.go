@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/event"
@@ -13,11 +15,13 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 )
 
 // TemplateReconciler reconciles a Template object
 type TemplateReconciler struct {
 	client.Client
+	Recorder     record.EventRecorder
 	Scheme       *runtime.Scheme
 	FieldManager string
 }
@@ -51,7 +55,7 @@ func (r *TemplateReconciler) reconcile(ctx context.Context, tmpl *cosmov1alpha1.
 		return fmt.Errorf("failed to list instances for template %s: %w", tmpl.Name, err)
 	}
 
-	if errs := notifyUpdateToInstances(ctx, r.Client, tmpl, insts.InstanceObjects()); len(errs) > 0 {
+	if errs := notifyUpdateToInstances(ctx, r.Client, r.Recorder, tmpl, insts.InstanceObjects()); len(errs) > 0 {
 		for _, e := range errs {
 			log.Error(e, "failed to notify the update of template")
 		}
@@ -70,7 +74,7 @@ func (r *TemplateReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func notifyUpdateToInstances(ctx context.Context, c client.Client, tmpl cosmov1alpha1.TemplateObject, insts []cosmov1alpha1.InstanceObject) []error {
+func notifyUpdateToInstances(ctx context.Context, c client.Client, rec record.EventRecorder, tmpl cosmov1alpha1.TemplateObject, insts []cosmov1alpha1.InstanceObject) []error {
 	log := clog.FromContext(ctx)
 	errs := make([]error, 0)
 	for _, inst := range insts {
@@ -90,6 +94,8 @@ func notifyUpdateToInstances(ctx context.Context, c client.Client, tmpl cosmov1a
 		if err := c.Status().Update(ctx, inst); err != nil {
 			errs = append(errs, fmt.Errorf("failed to update instance status: %s: %w", inst.GetName(), err))
 		}
+
+		kosmo.InstanceEventf(rec, inst, corev1.EventTypeNormal, "TemplateUpdated", "Detected Template %s is updated", tmpl.GetName())
 	}
 	return errs
 }

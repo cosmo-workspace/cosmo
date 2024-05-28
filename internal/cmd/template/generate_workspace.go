@@ -91,7 +91,7 @@ func (o *generateWorkspaceOption) RunE(cmd *cobra.Command, args []string) error 
 	}
 	o.Logr.Debug().Info(input)
 
-	unsts, err := template.NewRawYAMLBuilder(input, nil).Build()
+	unsts, err := template.NewRawYAMLBuilder(input).Build()
 	if err != nil {
 		return fmt.Errorf("failed to build template: %w", err)
 	}

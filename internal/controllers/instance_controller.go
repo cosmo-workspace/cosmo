@@ -18,6 +18,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 	"github.com/cosmo-workspace/cosmo/pkg/transformer"
@@ -64,21 +65,21 @@ func (r *InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	// 1. Build Unstructured objects
 	objects, err := template.BuildObjects(tmpl.Spec, &inst)
 	if err != nil {
-		r.Recorder.Eventf(&inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build manifests from Template: %v", err)
+		kosmo.InstanceEventf(r.Recorder, &inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build manifests from Template: %v", err)
 		return ctrl.Result{}, err
 	}
 
 	// 2. Transform the objects
 	objects, err = transformer.ApplyTransformers(ctx, transformer.AllTransformers(&inst, r.Scheme, tmpl), objects)
 	if err != nil {
-		r.Recorder.Eventf(&inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build resources: %v", err)
+		kosmo.InstanceEventf(r.Recorder, &inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build resources: %v", err)
 		return ctrl.Result{}, err
 	}
 
 	// 3. Reconcile objects
 	if errs := r.impl.reconcileObjects(ctx, &inst, objects); len(errs) != 0 {
 		for _, err := range errs {
-			r.Recorder.Eventf(&inst, corev1.EventTypeWarning, "SyncFailed", "Failed to sync objects: %v", err)
+			kosmo.InstanceEventf(r.Recorder, &inst, corev1.EventTypeWarning, "SyncFailed", "Failed to sync objects: %v", err)
 		}
 		// requeue
 		return ctrl.Result{}, fmt.Errorf("apply child objects failed: %w", errs[0])
@@ -162,7 +163,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 				if err != nil {
 					errs = append(errs, fmt.Errorf("failed to create resource: kind = %s name = %s: %w", built.GetKind(), built.GetName(), err))
 				} else {
-					r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s is created", built.GetKind(), built.GetName())
+					kosmo.InstanceEventf(r.Recorder, inst, corev1.EventTypeNormal, "Synced", "%s %s is created", built.GetKind(), built.GetName())
 				}
 				currAppliedMap[created.GetUID()] = unstToObjectRef(created)
 
@@ -190,7 +191,7 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 				if _, err := r.apply(ctx, &built, r.FieldManager); err != nil {
 					errs = append(errs, fmt.Errorf("failed to apply resource %s %s: %w", built.GetKind(), built.GetName(), err))
 				} else {
-					r.Recorder.Eventf(inst, corev1.EventTypeNormal, "Synced", "%s %s is not desired state, synced", built.GetKind(), built.GetName())
+					kosmo.InstanceEventf(r.Recorder, inst, corev1.EventTypeNormal, "Synced", "%s %s is not desired state, synced", built.GetKind(), built.GetName())
 				}
 			}
 		}
@@ -203,10 +204,10 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 		for _, d := range shouldDeletes {
 			if skip, err := prune(ctx, r.Client, d); err != nil {
 				log.Error(err, "failed to delete unused obj", "pruneAPIVersion", d.APIVersion, "pruneKind", d.Kind, "pruneName", d.Name, "pruneNamespace", d.Namespace)
-				r.Recorder.Eventf(inst, corev1.EventTypeWarning, "GCFailed", "Failed to delete unused obj: kind=%s name=%s namespace=%s", d.Kind, d.Name, d.Namespace)
+				kosmo.InstanceEventf(r.Recorder, inst, corev1.EventTypeWarning, "GCFailed", "Failed to delete unused obj: kind=%s name=%s namespace=%s", d.Kind, d.Name, d.Namespace)
 			} else if !skip {
 				log.Info("deleted unmanaged object", "apiVersion", d.APIVersion, "kind", d.Kind, "name", d.Name, "namespace", d.Namespace)
-				r.Recorder.Eventf(inst, corev1.EventTypeNormal, "GC", "Deleted unmanaged object: kind=%s name=%s namespace=%s", d.Kind, d.Name, d.Namespace)
+				kosmo.InstanceEventf(r.Recorder, inst, corev1.EventTypeNormal, "GC", "Deleted unmanaged object: kind=%s name=%s namespace=%s", d.Kind, d.Name, d.Namespace)
 			}
 		}
 	}

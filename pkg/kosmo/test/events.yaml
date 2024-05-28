@@ -1,0 +1,696 @@
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189920"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-sf424" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2-workspace-75dc7c5469.17d3144aae62f374
+  namespace: cosmo-user-xxx
+  resourceVersion: "189926"
+  uid: 057ec7f8-4510-420c-a3e8-ee73343750ca
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: User
+  name: xxx
+  namespace: cosmo-user-xxx
+  resourceVersion: "189785"
+  uid: cfc76b91-c858-4275-a989-e08b54def6a2
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: Successfully reconciled. Namespace cosmo-user-xxx is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: xxx.17d3143819c696e3
+  namespace: cosmo-user-xxx
+  resourceVersion: "189788"
+  uid: 4618a51f-58e9-47b9-a2e4-c026e46608e2
+reason: Synced
+reportingComponent: cosmo-user-controller
+reportingInstance: ""
+source:
+  component: cosmo-user-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: Instance
+  name: useraddon-resource-limitter
+  namespace: cosmo-user-xxx
+  resourceVersion: "189794"
+  uid: ebff6e11-b3d5-4f29-946e-6574338a9e02
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: ResourceQuota quota is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: cosmo-user-cosmo-user-xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: useraddon-resource-limitter.17d314381fcd3825
+  namespace: cosmo-user-xxx
+  resourceVersion: "189803"
+  uid: b1a1db1d-5c03-45e5-981e-b3924d814415
+reason: Synced
+reportingComponent: cosmo-instance-controller
+reportingInstance: ""
+source:
+  component: cosmo-instance-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: ClusterInstance
+  name: useraddon-xxx-gryffindor-serviceaccount
+  namespace: cosmo-user-xxx
+  resourceVersion: "189805"
+  uid: d1c69792-5675-4f0f-97bc-0f2eebfed8d1
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: ServiceAccount iamserviceaccount is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: cosmo-user-cosmo-user-xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: useraddon-xxx-gryffindor-serviceaccount.17d31438231fe35d
+  namespace: cosmo-user-xxx
+  resourceVersion: "189810"
+  uid: c4a61122-26a7-4af8-a94e-def052132372
+reason: Synced
+reportingComponent: cosmo-cluster-instance-controller
+reportingInstance: ""
+source:
+  component: cosmo-cluster-instance-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: ClusterInstance
+  name: useraddon-xxx-gryffindor-serviceaccount
+  namespace: cosmo-user-xxx
+  resourceVersion: "189805"
+  uid: d1c69792-5675-4f0f-97bc-0f2eebfed8d1
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: ClusterRoleBinding xxx-view is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: cosmo-user-cosmo-user-xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: useraddon-xxx-gryffindor-serviceaccount.17d3143824634a3b
+  namespace: cosmo-user-xxx
+  resourceVersion: "189812"
+  uid: 201b273a-3f67-46c2-bf68-a78f9fa4abf4
+reason: Synced
+reportingComponent: cosmo-cluster-instance-controller
+reportingInstance: ""
+source:
+  component: cosmo-cluster-instance-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: User
+  name: xxx
+  namespace: cosmo-user-xxx
+  resourceVersion: "189785"
+  uid: cfc76b91-c858-4275-a989-e08b54def6a2
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: Successfully reset password secret
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: xxx.17d314381a4c8664
+  namespace: cosmo-user-xxx
+  resourceVersion: "189790"
+  uid: 688a5239-8c26-45ba-89c0-341a5725d4be
+reason: PasswordInitialized
+reportingComponent: cosmo-user-controller
+reportingInstance: ""
+source:
+  component: cosmo-user-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: User
+  name: xxx
+  namespace: cosmo-user-xxx
+  resourceVersion: "189785"
+  uid: cfc76b91-c858-4275-a989-e08b54def6a2
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: Addon cosmo-username-headers is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: xxx.17d314381c571517
+  namespace: cosmo-user-xxx
+  resourceVersion: "189793"
+  uid: cf1a6ebe-3acc-471a-aa3e-29082d29054d
+reason: AddonSynced
+reportingComponent: cosmo-user-controller
+reportingInstance: ""
+source:
+  component: cosmo-user-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: User
+  name: xxx
+  namespace: cosmo-user-xxx
+  resourceVersion: "189785"
+  uid: cfc76b91-c858-4275-a989-e08b54def6a2
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: Addon resource-limitter is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: xxx.17d314381dc1fd81
+  namespace: cosmo-user-xxx
+  resourceVersion: "189796"
+  uid: 1a39b7e4-02f2-4ec9-aaed-f4ebd5a9a4ac
+reason: AddonSynced
+reportingComponent: cosmo-user-controller
+reportingInstance: ""
+source:
+  component: cosmo-user-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: User
+  name: xxx
+  namespace: cosmo-user-xxx
+  resourceVersion: "189785"
+  uid: cfc76b91-c858-4275-a989-e08b54def6a2
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message:
+  "Failed to sync addon: failed to create or update addon gryffindor-serviceaccount
+  :failed to set controller reference: cluster-scoped resource must not have a namespace-scoped
+  owner, owner's namespace cosmo-user-xxx"
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: xxx.17d314381dc2dbc7
+  namespace: cosmo-user-xxx
+  resourceVersion: "189798"
+  uid: 3fd56209-51aa-493c-9146-e76add8e420c
+reason: AddonFailed
+reportingComponent: cosmo-user-controller
+reportingInstance: ""
+source:
+  component: cosmo-user-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: Instance
+  name: useraddon-cosmo-username-headers
+  namespace: cosmo-user-xxx
+  resourceVersion: "189792"
+  uid: 3e9bbe31-4c79-4b99-a2dc-753d496c40df
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: Middleware cosmo-username-headers is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: cosmo-user-cosmo-user-xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: useraddon-cosmo-username-headers.17d314381e543d76
+  namespace: cosmo-user-xxx
+  resourceVersion: "189800"
+  uid: 48f7e66e-6795-4993-bace-f5b103ea3b0d
+reason: Synced
+reportingComponent: cosmo-instance-controller
+reportingInstance: ""
+source:
+  component: cosmo-instance-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:41:54Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: User
+  name: xxx
+  namespace: cosmo-user-xxx
+  resourceVersion: "189785"
+  uid: cfc76b91-c858-4275-a989-e08b54def6a2
+kind: Event
+lastTimestamp: "2024-05-26T15:41:54Z"
+message: Addon gryffindor-serviceaccount is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: xxx
+  creationTimestamp: "2024-05-26T15:41:54Z"
+  name: xxx.17d31438211507b5
+  namespace: cosmo-user-xxx
+  resourceVersion: "189806"
+  uid: 35237f7d-2b85-4ea4-8ddc-cd6a0bf72ecd
+reason: AddonSynced
+reportingComponent: cosmo-user-controller
+reportingInstance: ""
+source:
+  component: cosmo-user-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: Workspace
+  name: ws2
+  namespace: cosmo-user-xxx
+  resourceVersion: "189905"
+  uid: 9ac502d6-891c-4f13-ab63-79eab4b4e608
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message: Successfully reconciled. Instance ws2 is created
+metadata:
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2.17d3144aa8a50d4d
+  namespace: cosmo-user-xxx
+  resourceVersion: "189908"
+  uid: aa8a9c0d-8bce-45ee-b939-b12b23ca54dd
+reason: Synced
+reportingComponent: cosmo-workspace-controller
+reportingInstance: ""
+source:
+  component: cosmo-workspace-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: Workspace
+  name: ws2
+  namespace: cosmo-user-xxx
+  resourceVersion: "189905"
+  uid: 9ac502d6-891c-4f13-ab63-79eab4b4e608
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message: Successfully reconciled. Traefik ingress route ws2 is created
+metadata:
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2.17d3144aa8fc7c7c
+  namespace: cosmo-user-xxx
+  resourceVersion: "189910"
+  uid: ee3967a1-1724-4fa8-9cb6-19e57d8dbca9
+reason: Synced
+reportingComponent: cosmo-workspace-controller
+reportingInstance: ""
+source:
+  component: cosmo-workspace-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: Instance
+  name: ws2
+  namespace: cosmo-user-xxx
+  resourceVersion: "189907"
+  uid: 2dfb654d-cc72-4c44-8ac5-e6efe7b36422
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message: Service ws2-workspace is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: cosmo-user-cosmo-user-xxx
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2.17d3144aaa6eaab4
+  namespace: cosmo-user-xxx
+  resourceVersion: "189915"
+  uid: f53e361e-bda0-440b-8b4a-dc7792b5b79e
+reason: Synced
+reportingComponent: cosmo-instance-controller
+reportingInstance: ""
+source:
+  component: cosmo-instance-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: cosmo-workspace.github.io/v1alpha1
+  kind: Instance
+  name: ws2
+  namespace: cosmo-user-xxx
+  resourceVersion: "189907"
+  uid: 2dfb654d-cc72-4c44-8ac5-e6efe7b36422
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message: Deployment ws2-workspace is created
+metadata:
+  annotations:
+    cosmo-workspace.github.io/user: cosmo-user-cosmo-user-xxx
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2.17d3144aab6d1ba4
+  namespace: cosmo-user-xxx
+  resourceVersion: "189919"
+  uid: 71af0aaf-2c19-4325-8406-a052b56b86cc
+reason: Synced
+reportingComponent: cosmo-instance-controller
+reportingInstance: ""
+source:
+  component: cosmo-instance-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: Deployment
+  name: ws2-workspace
+  namespace: cosmo-user-xxx
+  resourceVersion: "189914"
+  uid: 76958bf0-c140-4024-a252-bcc539764fb5
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message: Scaled up replica set ws2-workspace-75dc7c5469 to 1
+metadata:
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2-workspace.17d3144aad08a4ce
+  namespace: cosmo-user-xxx
+  resourceVersion: "189921"
+  uid: 266405f1-d700-4492-9264-183439c4fbc3
+reason: ScalingReplicaSet
+reportingComponent: deployment-controller
+reportingInstance: ""
+source:
+  component: deployment-controller
+type: Normal
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-z42z2" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2-workspace-75dc7c5469.17d3144aaefceb38
+  namespace: cosmo-user-xxx
+  resourceVersion: "189928"
+  uid: d1e5bd03-678a-46ec-9e78-7d32faec84a9
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-xr8sx" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2-workspace-75dc7c5469.17d3144aaf3d96c1
+  namespace: cosmo-user-xxx
+  resourceVersion: "189929"
+  uid: b1a41c26-5b2d-4afa-b886-a5de367f3895
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:13Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:13Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-vpqhz" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:13Z"
+  name: ws2-workspace-75dc7c5469.17d3144ab0ad2707
+  namespace: cosmo-user-xxx
+  resourceVersion: "189931"
+  uid: 792d75b1-449e-4031-9f14-3f84dce7ea8e
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:14Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:14Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-wmj97" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:14Z"
+  name: ws2-workspace-75dc7c5469.17d3144ab34a8b24
+  namespace: cosmo-user-xxx
+  resourceVersion: "189933"
+  uid: 1e1f3ada-ecff-4674-9b4e-eb76b8226870
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:14Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:14Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-qb54v" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:14Z"
+  name: ws2-workspace-75dc7c5469.17d3144ab84893ab
+  namespace: cosmo-user-xxx
+  resourceVersion: "189934"
+  uid: 36b523fd-a682-46b8-84a3-6891d1ca5ac9
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:14Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:14Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-87k4l" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:14Z"
+  name: ws2-workspace-75dc7c5469.17d3144ac203a389
+  namespace: cosmo-user-xxx
+  resourceVersion: "189936"
+  uid: 080ecee2-00e3-4912-a698-b2ff8aaabcd4
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:14Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:14Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-mdmg6" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:14Z"
+  name: ws2-workspace-75dc7c5469.17d3144ad545d4fb
+  namespace: cosmo-user-xxx
+  resourceVersion: "189937"
+  uid: 10e27f01-46dc-45b2-bfaf-ed99ffad3ed4
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 1
+firstTimestamp: "2024-05-26T15:43:15Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:43:15Z"
+message:
+  'Error creating: pods "ws2-workspace-75dc7c5469-cxh42" is forbidden: failed
+  quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:15Z"
+  name: ws2-workspace-75dc7c5469.17d3144afba482e2
+  namespace: cosmo-user-xxx
+  resourceVersion: "189938"
+  uid: 5f5f6a8e-1191-434f-996a-87850cdd91d5
+reason: FailedCreate
+reportingComponent: replicaset-controller
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning
+---
+apiVersion: v1
+count: 6
+firstTimestamp: "2024-05-26T15:43:16Z"
+involvedObject:
+  apiVersion: apps/v1
+  kind: ReplicaSet
+  name: ws2-workspace-75dc7c5469
+  namespace: cosmo-user-xxx
+  resourceVersion: "189925"
+  uid: 1f88b8ac-fec3-4267-868f-ffaba2f9b3c6
+kind: Event
+lastTimestamp: "2024-05-26T15:44:35Z"
+message:
+  '(combined from similar events): Error creating: pods "ws2-workspace-75dc7c5469-5trff"
+  is forbidden: failed quota: quota: must specify limits.cpu for: code-server'
+metadata:
+  creationTimestamp: "2024-05-26T15:43:16Z"
+  name: ws2-workspace-75dc7c5469.17d3144b482c16aa
+  namespace: cosmo-user-xxx
+  resourceVersion: "190034"
+  uid: 83aa8fcc-82a8-4a7a-a28c-f3af6a254857
+reason: FailedCreate
+reportingComponent: ""
+reportingInstance: ""
+source:
+  component: replicaset-controller
+type: Warning

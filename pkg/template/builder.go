@@ -17,9 +17,9 @@ type Builder interface {
 
 func BuildObjects(tmplSpec cosmov1alpha1.TemplateSpec, inst cosmov1alpha1.InstanceObject) (objects []unstructured.Unstructured, err error) {
 	if tmplSpec.RawYaml != "" {
-		objects, err = NewRawYAMLBuilder(tmplSpec.RawYaml, inst).
-			ReplaceDefaultVars().
-			ReplaceCustomVars().
+		objects, err = NewRawYAMLBuilder(tmplSpec.RawYaml).
+			ReplaceDefaultVars(inst).
+			ReplaceCustomVars(inst).
 			Build()
 		if err != nil {
 			return nil, err

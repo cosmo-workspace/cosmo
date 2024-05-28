@@ -602,7 +602,7 @@ spec:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u, err := template.NewRawYAMLBuilder(tt.args.tmpl, nil).Build()
+			u, err := template.NewRawYAMLBuilder(tt.args.tmpl).Build()
 			if err != nil {
 				t.Errorf("dummyTemplateBuild() error = %v", err)
 			}

@@ -36,3 +36,8 @@ func KeepResourceDeletePolicy(obj AnnotationHolder) bool {
 	}
 	return v == ResourceAnnEnumDeletePolicyKeep
 }
+
+const (
+	EventAnnKeyUserName     = "cosmo-workspace.github.io/user"
+	EventAnnKeyInstanceName = LabelKeyInstanceName
+)
