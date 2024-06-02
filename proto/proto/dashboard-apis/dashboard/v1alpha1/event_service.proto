@@ -1,0 +1,16 @@
+/*
+  Cosmo Dashboard API
+  Manipulate cosmo dashboard resource API
+*/
+
+syntax = "proto3";
+
+package dashboard.v1alpha1;
+
+import "dashboard/v1alpha1/event.proto";
+import "dashboard/v1alpha1/user_service.proto";
+
+service StreamService {
+  // Streaming new events for user
+  rpc StreamingEvents(GetEventsRequest) returns (stream GetEventsResponse);
+}

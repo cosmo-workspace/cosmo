@@ -16,18 +16,6 @@
     - [EventSeries](#dashboard-v1alpha1-EventSeries)
     - [ObjectReference](#dashboard-v1alpha1-ObjectReference)
   
-- [dashboard/v1alpha1/template.proto](#dashboard_v1alpha1_template-proto)
-    - [Template](#dashboard-v1alpha1-Template)
-    - [TemplateRequiredVars](#dashboard-v1alpha1-TemplateRequiredVars)
-  
-- [dashboard/v1alpha1/template_service.proto](#dashboard_v1alpha1_template_service-proto)
-    - [GetUserAddonTemplatesRequest](#dashboard-v1alpha1-GetUserAddonTemplatesRequest)
-    - [GetUserAddonTemplatesResponse](#dashboard-v1alpha1-GetUserAddonTemplatesResponse)
-    - [GetWorkspaceTemplatesRequest](#dashboard-v1alpha1-GetWorkspaceTemplatesRequest)
-    - [GetWorkspaceTemplatesResponse](#dashboard-v1alpha1-GetWorkspaceTemplatesResponse)
-  
-    - [TemplateService](#dashboard-v1alpha1-TemplateService)
-  
 - [dashboard/v1alpha1/user.proto](#dashboard_v1alpha1_user-proto)
     - [User](#dashboard-v1alpha1-User)
     - [UserAddon](#dashboard-v1alpha1-UserAddon)
@@ -38,6 +26,8 @@
     - [CreateUserResponse](#dashboard-v1alpha1-CreateUserResponse)
     - [DeleteUserRequest](#dashboard-v1alpha1-DeleteUserRequest)
     - [DeleteUserResponse](#dashboard-v1alpha1-DeleteUserResponse)
+    - [GetEventsRequest](#dashboard-v1alpha1-GetEventsRequest)
+    - [GetEventsResponse](#dashboard-v1alpha1-GetEventsResponse)
     - [GetUserRequest](#dashboard-v1alpha1-GetUserRequest)
     - [GetUserResponse](#dashboard-v1alpha1-GetUserResponse)
     - [GetUsersRequest](#dashboard-v1alpha1-GetUsersRequest)
@@ -52,6 +42,21 @@
     - [UpdateUserRoleResponse](#dashboard-v1alpha1-UpdateUserRoleResponse)
   
     - [UserService](#dashboard-v1alpha1-UserService)
+  
+- [dashboard/v1alpha1/event_service.proto](#dashboard_v1alpha1_event_service-proto)
+    - [StreamService](#dashboard-v1alpha1-StreamService)
+  
+- [dashboard/v1alpha1/template.proto](#dashboard_v1alpha1_template-proto)
+    - [Template](#dashboard-v1alpha1-Template)
+    - [TemplateRequiredVars](#dashboard-v1alpha1-TemplateRequiredVars)
+  
+- [dashboard/v1alpha1/template_service.proto](#dashboard_v1alpha1_template_service-proto)
+    - [GetUserAddonTemplatesRequest](#dashboard-v1alpha1-GetUserAddonTemplatesRequest)
+    - [GetUserAddonTemplatesResponse](#dashboard-v1alpha1-GetUserAddonTemplatesResponse)
+    - [GetWorkspaceTemplatesRequest](#dashboard-v1alpha1-GetWorkspaceTemplatesRequest)
+    - [GetWorkspaceTemplatesResponse](#dashboard-v1alpha1-GetWorkspaceTemplatesResponse)
+  
+    - [TemplateService](#dashboard-v1alpha1-TemplateService)
   
 - [dashboard/v1alpha1/webauthn.proto](#dashboard_v1alpha1_webauthn-proto)
     - [BeginLoginRequest](#dashboard-v1alpha1-BeginLoginRequest)
@@ -212,13 +217,16 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+| user | [string](#string) |  |  |
 | eventTime | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
 | type | [string](#string) |  |  |
 | note | [string](#string) |  |  |
 | reason | [string](#string) |  |  |
 | regarding | [ObjectReference](#dashboard-v1alpha1-ObjectReference) |  |  |
 | reportingController | [string](#string) |  |  |
-| series | [EventSeries](#dashboard-v1alpha1-EventSeries) | optional |  |
+| series | [EventSeries](#dashboard-v1alpha1-EventSeries) |  |  |
+| regardingWorkspace | [string](#string) | optional |  |
 
 
 
@@ -268,151 +276,6 @@
 
 
 
-<a name="dashboard_v1alpha1_template-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## dashboard/v1alpha1/template.proto
-
-
-
-<a name="dashboard-v1alpha1-Template"></a>
-
-### Template
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| description | [string](#string) |  |  |
-| required_vars | [TemplateRequiredVars](#dashboard-v1alpha1-TemplateRequiredVars) | repeated |  |
-| is_default_user_addon | [bool](#bool) | optional |  |
-| is_cluster_scope | [bool](#bool) |  |  |
-| required_useraddons | [string](#string) | repeated |  |
-| userroles | [string](#string) | repeated |  |
-| raw | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="dashboard-v1alpha1-TemplateRequiredVars"></a>
-
-### TemplateRequiredVars
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| var_name | [string](#string) |  |  |
-| default_value | [string](#string) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="dashboard_v1alpha1_template_service-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## dashboard/v1alpha1/template_service.proto
-
-
-
-<a name="dashboard-v1alpha1-GetUserAddonTemplatesRequest"></a>
-
-### GetUserAddonTemplatesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| use_role_filter | [bool](#bool) | optional |  |
-| with_raw | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="dashboard-v1alpha1-GetUserAddonTemplatesResponse"></a>
-
-### GetUserAddonTemplatesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| message | [string](#string) |  |  |
-| items | [Template](#dashboard-v1alpha1-Template) | repeated |  |
-
-
-
-
-
-
-<a name="dashboard-v1alpha1-GetWorkspaceTemplatesRequest"></a>
-
-### GetWorkspaceTemplatesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| use_role_filter | [bool](#bool) | optional |  |
-| with_raw | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="dashboard-v1alpha1-GetWorkspaceTemplatesResponse"></a>
-
-### GetWorkspaceTemplatesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| message | [string](#string) |  |  |
-| items | [Template](#dashboard-v1alpha1-Template) | repeated |  |
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="dashboard-v1alpha1-TemplateService"></a>
-
-### TemplateService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| GetUserAddonTemplates | [GetUserAddonTemplatesRequest](#dashboard-v1alpha1-GetUserAddonTemplatesRequest) | [GetUserAddonTemplatesResponse](#dashboard-v1alpha1-GetUserAddonTemplatesResponse) | List templates typed useraddon |
-| GetWorkspaceTemplates | [GetWorkspaceTemplatesRequest](#dashboard-v1alpha1-GetWorkspaceTemplatesRequest) | [GetWorkspaceTemplatesResponse](#dashboard-v1alpha1-GetWorkspaceTemplatesResponse) | List templates typed workspace |
-
- 
-
-
-
 <a name="dashboard_v1alpha1_user-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -436,7 +299,6 @@
 | default_password | [string](#string) |  |  |
 | status | [string](#string) |  |  |
 | raw | [string](#string) | optional |  |
-| events | [Event](#dashboard-v1alpha1-Event) | repeated |  |
 
 
 
@@ -552,6 +414,38 @@
 | ----- | ---- | ----- | ----------- |
 | message | [string](#string) |  |  |
 | user | [User](#dashboard-v1alpha1-User) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-GetEventsRequest"></a>
+
+### GetEventsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+| from | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-GetEventsResponse"></a>
+
+### GetEventsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+| items | [Event](#dashboard-v1alpha1-Event) | repeated |  |
 
 
 
@@ -764,11 +658,183 @@
 | DeleteUser | [DeleteUserRequest](#dashboard-v1alpha1-DeleteUserRequest) | [DeleteUserResponse](#dashboard-v1alpha1-DeleteUserResponse) | Delete user by ID |
 | GetUser | [GetUserRequest](#dashboard-v1alpha1-GetUserRequest) | [GetUserResponse](#dashboard-v1alpha1-GetUserResponse) | Returns a single User model |
 | GetUsers | [GetUsersRequest](#dashboard-v1alpha1-GetUsersRequest) | [GetUsersResponse](#dashboard-v1alpha1-GetUsersResponse) | Returns an array of User model |
+| GetEvents | [GetEventsRequest](#dashboard-v1alpha1-GetEventsRequest) | [GetEventsResponse](#dashboard-v1alpha1-GetEventsResponse) | Returns events for User |
 | CreateUser | [CreateUserRequest](#dashboard-v1alpha1-CreateUserRequest) | [CreateUserResponse](#dashboard-v1alpha1-CreateUserResponse) | Create a new User |
 | UpdateUserDisplayName | [UpdateUserDisplayNameRequest](#dashboard-v1alpha1-UpdateUserDisplayNameRequest) | [UpdateUserDisplayNameResponse](#dashboard-v1alpha1-UpdateUserDisplayNameResponse) | Update user display name |
 | UpdateUserPassword | [UpdateUserPasswordRequest](#dashboard-v1alpha1-UpdateUserPasswordRequest) | [UpdateUserPasswordResponse](#dashboard-v1alpha1-UpdateUserPasswordResponse) | Update a single User password |
 | UpdateUserRole | [UpdateUserRoleRequest](#dashboard-v1alpha1-UpdateUserRoleRequest) | [UpdateUserRoleResponse](#dashboard-v1alpha1-UpdateUserRoleResponse) | Update a single User role |
 | UpdateUserAddons | [UpdateUserAddonsRequest](#dashboard-v1alpha1-UpdateUserAddonsRequest) | [UpdateUserAddonsResponse](#dashboard-v1alpha1-UpdateUserAddonsResponse) | Update a single User role |
+
+ 
+
+
+
+<a name="dashboard_v1alpha1_event_service-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## dashboard/v1alpha1/event_service.proto
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="dashboard-v1alpha1-StreamService"></a>
+
+### StreamService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| StreamingEvents | [GetEventsRequest](#dashboard-v1alpha1-GetEventsRequest) | [GetEventsResponse](#dashboard-v1alpha1-GetEventsResponse) stream | Streaming new events for user |
+
+ 
+
+
+
+<a name="dashboard_v1alpha1_template-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## dashboard/v1alpha1/template.proto
+
+
+
+<a name="dashboard-v1alpha1-Template"></a>
+
+### Template
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| description | [string](#string) |  |  |
+| required_vars | [TemplateRequiredVars](#dashboard-v1alpha1-TemplateRequiredVars) | repeated |  |
+| is_default_user_addon | [bool](#bool) | optional |  |
+| is_cluster_scope | [bool](#bool) |  |  |
+| required_useraddons | [string](#string) | repeated |  |
+| userroles | [string](#string) | repeated |  |
+| raw | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-TemplateRequiredVars"></a>
+
+### TemplateRequiredVars
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| var_name | [string](#string) |  |  |
+| default_value | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="dashboard_v1alpha1_template_service-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## dashboard/v1alpha1/template_service.proto
+
+
+
+<a name="dashboard-v1alpha1-GetUserAddonTemplatesRequest"></a>
+
+### GetUserAddonTemplatesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| use_role_filter | [bool](#bool) | optional |  |
+| with_raw | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-GetUserAddonTemplatesResponse"></a>
+
+### GetUserAddonTemplatesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+| items | [Template](#dashboard-v1alpha1-Template) | repeated |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-GetWorkspaceTemplatesRequest"></a>
+
+### GetWorkspaceTemplatesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| use_role_filter | [bool](#bool) | optional |  |
+| with_raw | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-GetWorkspaceTemplatesResponse"></a>
+
+### GetWorkspaceTemplatesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+| items | [Template](#dashboard-v1alpha1-Template) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="dashboard-v1alpha1-TemplateService"></a>
+
+### TemplateService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetUserAddonTemplates | [GetUserAddonTemplatesRequest](#dashboard-v1alpha1-GetUserAddonTemplatesRequest) | [GetUserAddonTemplatesResponse](#dashboard-v1alpha1-GetUserAddonTemplatesResponse) | List templates typed useraddon |
+| GetWorkspaceTemplates | [GetWorkspaceTemplatesRequest](#dashboard-v1alpha1-GetWorkspaceTemplatesRequest) | [GetWorkspaceTemplatesResponse](#dashboard-v1alpha1-GetWorkspaceTemplatesResponse) | List templates typed workspace |
 
  
 
@@ -1129,6 +1195,7 @@
 | ----- | ---- | ----- | ----------- |
 | phase | [string](#string) |  |  |
 | main_url | [string](#string) |  |  |
+| lastStartedAt | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
 
 
 

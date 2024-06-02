@@ -10,13 +10,16 @@ package dashboard.v1alpha1;
 import "google/protobuf/timestamp.proto";
 
 message Event {
-    google.protobuf.Timestamp eventTime = 1;
-    string type = 2;
-    string note = 3;
-    string reason = 4;
-    ObjectReference regarding = 5;
-    string reportingController = 6;
-    optional EventSeries series = 7;
+    string id = 1;
+    string user = 2;
+    google.protobuf.Timestamp eventTime = 3;
+    string type = 4;
+    string note = 5;
+    string reason = 6;
+    ObjectReference regarding = 7;
+    string reportingController = 8;
+    EventSeries series = 9;
+    optional string regardingWorkspace = 10;
 }
 
 message EventSeries {

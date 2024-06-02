@@ -8,7 +8,6 @@ syntax = "proto3";
 package dashboard.v1alpha1;
 
 import "validate/validate.proto";
-import "dashboard/v1alpha1/event.proto";
 
 message User {
   string name = 1;
@@ -19,7 +18,6 @@ message User {
   string default_password = 6;
   string status = 7;
   optional string raw = 8;
-  repeated Event events = 9;
 }
 
 message UserAddon {

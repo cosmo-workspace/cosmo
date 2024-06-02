@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"k8s.io/utils/ptr"
 
 	"github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
@@ -88,35 +86,34 @@ func (o *GetEventsOption) RunE(cmd *cobra.Command, args []string) error {
 }
 
 func (o *GetEventsOption) GetEventsWithDashClient(ctx context.Context) ([]*dashv1alpha1.Event, error) {
-	req := &dashv1alpha1.GetUserRequest{
+	req := &dashv1alpha1.GetEventsRequest{
 		UserName: o.UserName,
-		WithRaw:  ptr.To(true),
 	}
 	c := o.CosmoDashClient
-	res, err := c.UserServiceClient.GetUser(ctx, cli.NewRequestWithToken(req, o.CliConfig))
+	res, err := c.UserServiceClient.GetEvents(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user: %w", err)
+		return nil, fmt.Errorf("failed to get events: %w", err)
 	}
 	o.Logr.DebugAll().Info("UserServiceClient.GetUser", "res", res)
-	return res.Msg.User.Events, nil
+	return res.Msg.Items, nil
 }
 
 func (o *GetEventsOption) OutputTable(w io.Writer, events []*dashv1alpha1.Event) {
 	data := [][]string{}
 
 	for _, v := range events {
-		data = append(data, []string{lastSeen(v.EventTime, v.Series), v.Type, v.Reason, regarding(v.Regarding), v.ReportingController, v.Note})
+		data = append(data, []string{lastSeen(v.Series), v.Type, v.Reason, regarding(v.Regarding), v.ReportingController, v.Note})
 	}
 	cli.OutputTable(w,
 		[]string{"LAST SEEN", "TYPE", "REASON", "OBJECT", "REPORTER", "MESSAGE"},
 		data)
 }
 
-func lastSeen(t *timestamppb.Timestamp, series *dashv1alpha1.EventSeries) string {
-	if series != nil {
-		return fmt.Sprintf("%s (%vx)", time.Since(t.AsTime()).Round(time.Second), series.Count)
+func lastSeen(series *dashv1alpha1.EventSeries) string {
+	if series.Count > 0 {
+		return fmt.Sprintf("%s (%vx)", time.Since(series.LastObservedTime.AsTime()).Round(time.Second), series.Count)
 	}
-	return time.Since(t.AsTime()).Round(time.Second).String()
+	return time.Since(series.LastObservedTime.AsTime()).Round(time.Second).String()
 }
 
 func regarding(v *dashv1alpha1.ObjectReference) string {

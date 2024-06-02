@@ -43,6 +43,8 @@ const (
 	UserServiceGetUserProcedure = "/dashboard.v1alpha1.UserService/GetUser"
 	// UserServiceGetUsersProcedure is the fully-qualified name of the UserService's GetUsers RPC.
 	UserServiceGetUsersProcedure = "/dashboard.v1alpha1.UserService/GetUsers"
+	// UserServiceGetEventsProcedure is the fully-qualified name of the UserService's GetEvents RPC.
+	UserServiceGetEventsProcedure = "/dashboard.v1alpha1.UserService/GetEvents"
 	// UserServiceCreateUserProcedure is the fully-qualified name of the UserService's CreateUser RPC.
 	UserServiceCreateUserProcedure = "/dashboard.v1alpha1.UserService/CreateUser"
 	// UserServiceUpdateUserDisplayNameProcedure is the fully-qualified name of the UserService's
@@ -67,6 +69,8 @@ type UserServiceClient interface {
 	GetUser(context.Context, *connect_go.Request[v1alpha1.GetUserRequest]) (*connect_go.Response[v1alpha1.GetUserResponse], error)
 	// Returns an array of User model
 	GetUsers(context.Context, *connect_go.Request[v1alpha1.GetUsersRequest]) (*connect_go.Response[v1alpha1.GetUsersResponse], error)
+	// Returns events for User
+	GetEvents(context.Context, *connect_go.Request[v1alpha1.GetEventsRequest]) (*connect_go.Response[v1alpha1.GetEventsResponse], error)
 	// Create a new User
 	CreateUser(context.Context, *connect_go.Request[v1alpha1.CreateUserRequest]) (*connect_go.Response[v1alpha1.CreateUserResponse], error)
 	// Update user display name
@@ -104,6 +108,11 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+UserServiceGetUsersProcedure,
 			opts...,
 		),
+		getEvents: connect_go.NewClient[v1alpha1.GetEventsRequest, v1alpha1.GetEventsResponse](
+			httpClient,
+			baseURL+UserServiceGetEventsProcedure,
+			opts...,
+		),
 		createUser: connect_go.NewClient[v1alpha1.CreateUserRequest, v1alpha1.CreateUserResponse](
 			httpClient,
 			baseURL+UserServiceCreateUserProcedure,
@@ -137,6 +146,7 @@ type userServiceClient struct {
 	deleteUser            *connect_go.Client[v1alpha1.DeleteUserRequest, v1alpha1.DeleteUserResponse]
 	getUser               *connect_go.Client[v1alpha1.GetUserRequest, v1alpha1.GetUserResponse]
 	getUsers              *connect_go.Client[v1alpha1.GetUsersRequest, v1alpha1.GetUsersResponse]
+	getEvents             *connect_go.Client[v1alpha1.GetEventsRequest, v1alpha1.GetEventsResponse]
 	createUser            *connect_go.Client[v1alpha1.CreateUserRequest, v1alpha1.CreateUserResponse]
 	updateUserDisplayName *connect_go.Client[v1alpha1.UpdateUserDisplayNameRequest, v1alpha1.UpdateUserDisplayNameResponse]
 	updateUserPassword    *connect_go.Client[v1alpha1.UpdateUserPasswordRequest, v1alpha1.UpdateUserPasswordResponse]
@@ -157,6 +167,11 @@ func (c *userServiceClient) GetUser(ctx context.Context, req *connect_go.Request
 // GetUsers calls dashboard.v1alpha1.UserService.GetUsers.
 func (c *userServiceClient) GetUsers(ctx context.Context, req *connect_go.Request[v1alpha1.GetUsersRequest]) (*connect_go.Response[v1alpha1.GetUsersResponse], error) {
 	return c.getUsers.CallUnary(ctx, req)
+}
+
+// GetEvents calls dashboard.v1alpha1.UserService.GetEvents.
+func (c *userServiceClient) GetEvents(ctx context.Context, req *connect_go.Request[v1alpha1.GetEventsRequest]) (*connect_go.Response[v1alpha1.GetEventsResponse], error) {
+	return c.getEvents.CallUnary(ctx, req)
 }
 
 // CreateUser calls dashboard.v1alpha1.UserService.CreateUser.
@@ -192,6 +207,8 @@ type UserServiceHandler interface {
 	GetUser(context.Context, *connect_go.Request[v1alpha1.GetUserRequest]) (*connect_go.Response[v1alpha1.GetUserResponse], error)
 	// Returns an array of User model
 	GetUsers(context.Context, *connect_go.Request[v1alpha1.GetUsersRequest]) (*connect_go.Response[v1alpha1.GetUsersResponse], error)
+	// Returns events for User
+	GetEvents(context.Context, *connect_go.Request[v1alpha1.GetEventsRequest]) (*connect_go.Response[v1alpha1.GetEventsResponse], error)
 	// Create a new User
 	CreateUser(context.Context, *connect_go.Request[v1alpha1.CreateUserRequest]) (*connect_go.Response[v1alpha1.CreateUserResponse], error)
 	// Update user display name
@@ -224,6 +241,11 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 	mux.Handle(UserServiceGetUsersProcedure, connect_go.NewUnaryHandler(
 		UserServiceGetUsersProcedure,
 		svc.GetUsers,
+		opts...,
+	))
+	mux.Handle(UserServiceGetEventsProcedure, connect_go.NewUnaryHandler(
+		UserServiceGetEventsProcedure,
+		svc.GetEvents,
 		opts...,
 	))
 	mux.Handle(UserServiceCreateUserProcedure, connect_go.NewUnaryHandler(
@@ -267,6 +289,10 @@ func (UnimplementedUserServiceHandler) GetUser(context.Context, *connect_go.Requ
 
 func (UnimplementedUserServiceHandler) GetUsers(context.Context, *connect_go.Request[v1alpha1.GetUsersRequest]) (*connect_go.Response[v1alpha1.GetUsersResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.UserService.GetUsers is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) GetEvents(context.Context, *connect_go.Request[v1alpha1.GetEventsRequest]) (*connect_go.Response[v1alpha1.GetEventsResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.UserService.GetEvents is not implemented"))
 }
 
 func (UnimplementedUserServiceHandler) CreateUser(context.Context, *connect_go.Request[v1alpha1.CreateUserRequest]) (*connect_go.Response[v1alpha1.CreateUserResponse], error) {

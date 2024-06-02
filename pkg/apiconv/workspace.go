@@ -1,9 +1,13 @@
 package apiconv
 
 import (
+	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 )
 
@@ -45,6 +49,12 @@ func C2D_Workspace(ws cosmov1alpha1.Workspace, opts ...WorkspaceConvertOptions) 
 			MainUrl: ws.Status.URLs[cosmov1alpha1.MainRuleKey(ws.Status.Config)],
 		},
 	}
+
+	t, err := time.Parse(time.RFC3339, kubeutil.GetAnnotation(&ws, cosmov1alpha1.WorkspaceAnnKeyLastStartedAt))
+	if err == nil {
+		d.Status.LastStartedAt = timestamppb.New(t)
+	}
+
 	for _, opt := range opts {
 		opt(&ws, d)
 	}

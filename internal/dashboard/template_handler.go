@@ -15,10 +15,10 @@ import (
 
 func (s *Server) TemplateServiceHandler(mux *http.ServeMux) {
 	path, handler := dashboardv1alpha1connect.NewTemplateServiceHandler(s,
-		connect_go.WithInterceptors(s.authorizationInterceptor()),
+		connect_go.WithInterceptors(authorizationInterceptorFunc(s.verifyAndGetLoginUser)),
 		connect_go.WithInterceptors(s.validatorInterceptor()),
 	)
-	mux.Handle(path, s.contextMiddleware(handler))
+	mux.Handle(path, s.timeoutHandler(s.contextMiddleware(handler)))
 }
 
 func (s *Server) GetWorkspaceTemplates(ctx context.Context, req *connect_go.Request[dashv1alpha1.GetWorkspaceTemplatesRequest]) (*connect_go.Response[dashv1alpha1.GetWorkspaceTemplatesResponse], error) {

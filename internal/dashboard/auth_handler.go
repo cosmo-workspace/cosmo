@@ -21,7 +21,7 @@ import (
 
 func (s *Server) AuthServiceHandler(mux *http.ServeMux) {
 	path, handler := dashboardv1alpha1connect.NewAuthServiceHandler(s)
-	mux.Handle(path, s.contextMiddleware(handler))
+	mux.Handle(path, s.timeoutHandler(s.contextMiddleware(handler)))
 }
 
 func (s *Server) CreateSession(w http.ResponseWriter, r *http.Request, sesInfo session.Info) error {

@@ -8,7 +8,10 @@ syntax = "proto3";
 package dashboard.v1alpha1;
 
 import "dashboard/v1alpha1/user.proto";
+import "dashboard/v1alpha1/event.proto";
 import "validate/validate.proto";
+
+import "google/protobuf/timestamp.proto";
 
 service UserService {
   // Delete user by ID
@@ -17,6 +20,8 @@ service UserService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // Returns an array of User model
   rpc GetUsers(GetUsersRequest) returns (GetUsersResponse);
+  // Returns events for User
+  rpc GetEvents(GetEventsRequest) returns (GetEventsResponse);
   // Create a new User
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   // Update user display name
@@ -109,4 +114,14 @@ message UpdateUserAddonsRequest {
 message UpdateUserAddonsResponse {
   string message = 1;
   User user = 2;
+}
+
+message GetEventsRequest {
+  string user_name = 1;
+  optional google.protobuf.Timestamp from = 2;
+}
+
+message GetEventsResponse {
+  string message = 1;
+  repeated Event items = 2;
 }
