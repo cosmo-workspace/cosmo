@@ -8,7 +8,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
+import { Message, proto3, protoInt64, Timestamp } from "@bufbuild/protobuf";
 
 /**
  * @generated from message dashboard.v1alpha1.NetworkRule
@@ -140,6 +140,11 @@ export class WorkspaceStatus extends Message<WorkspaceStatus> {
    */
   mainUrl = "";
 
+  /**
+   * @generated from field: google.protobuf.Timestamp lastStartedAt = 3;
+   */
+  lastStartedAt?: Timestamp;
+
   constructor(data?: PartialMessage<WorkspaceStatus>) {
     super();
     proto3.util.initPartial(data, this);
@@ -150,6 +155,7 @@ export class WorkspaceStatus extends Message<WorkspaceStatus> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "phase", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "main_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "lastStartedAt", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): WorkspaceStatus {

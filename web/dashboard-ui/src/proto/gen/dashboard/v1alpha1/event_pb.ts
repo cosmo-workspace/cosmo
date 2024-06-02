@@ -15,39 +15,54 @@ import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
  */
 export class Event extends Message<Event> {
   /**
-   * @generated from field: google.protobuf.Timestamp eventTime = 1;
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string user = 2;
+   */
+  user = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp eventTime = 3;
    */
   eventTime?: Timestamp;
 
   /**
-   * @generated from field: string type = 2;
+   * @generated from field: string type = 4;
    */
   type = "";
 
   /**
-   * @generated from field: string note = 3;
+   * @generated from field: string note = 5;
    */
   note = "";
 
   /**
-   * @generated from field: string reason = 4;
+   * @generated from field: string reason = 6;
    */
   reason = "";
 
   /**
-   * @generated from field: dashboard.v1alpha1.ObjectReference regarding = 5;
+   * @generated from field: dashboard.v1alpha1.ObjectReference regarding = 7;
    */
   regarding?: ObjectReference;
 
   /**
-   * @generated from field: string reportingController = 6;
+   * @generated from field: string reportingController = 8;
    */
   reportingController = "";
 
   /**
-   * @generated from field: optional dashboard.v1alpha1.EventSeries series = 7;
+   * @generated from field: dashboard.v1alpha1.EventSeries series = 9;
    */
   series?: EventSeries;
+
+  /**
+   * @generated from field: optional string regardingWorkspace = 10;
+   */
+  regardingWorkspace?: string;
 
   constructor(data?: PartialMessage<Event>) {
     super();
@@ -57,13 +72,16 @@ export class Event extends Message<Event> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "dashboard.v1alpha1.Event";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "eventTime", kind: "message", T: Timestamp },
-    { no: 2, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "reason", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "regarding", kind: "message", T: ObjectReference },
-    { no: 6, name: "reportingController", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "series", kind: "message", T: EventSeries, opt: true },
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "user", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "eventTime", kind: "message", T: Timestamp },
+    { no: 4, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "reason", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "regarding", kind: "message", T: ObjectReference },
+    { no: 8, name: "reportingController", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "series", kind: "message", T: EventSeries },
+    { no: 10, name: "regardingWorkspace", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Event {

@@ -2,6 +2,7 @@ import { createPromiseClient } from "@bufbuild/connect";
 import { createConnectTransport, createGrpcWebTransport } from "@bufbuild/connect-web";
 import { useMemo } from "react";
 import { AuthService } from "../proto/gen/dashboard/v1alpha1/auth_service_connectweb";
+import { StreamService } from "../proto/gen/dashboard/v1alpha1/event_service_connectweb";
 import { TemplateService } from "../proto/gen/dashboard/v1alpha1/template_service_connectweb";
 import { UserService } from "../proto/gen/dashboard/v1alpha1/user_service_connectweb";
 import { WebAuthnService } from "../proto/gen/dashboard/v1alpha1/webauthn_connectweb";
@@ -29,4 +30,7 @@ export function useWorkspaceService() {
 }
 export function useWebAuthnService() {
     return useMemo(() => createPromiseClient(WebAuthnService, transport), [WebAuthnService]);
+}
+export function useStreamService() {
+    return useMemo(() => createPromiseClient(StreamService, transport), [StreamService]);
 }

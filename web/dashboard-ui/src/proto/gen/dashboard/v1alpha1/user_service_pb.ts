@@ -8,8 +8,9 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3 } from "@bufbuild/protobuf";
+import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
 import { User, UserAddon } from "./user_pb.js";
+import { Event } from "./event_pb.js";
 
 /**
  * @generated from message dashboard.v1alpha1.DeleteUserRequest
@@ -696,6 +697,92 @@ export class UpdateUserAddonsResponse extends Message<UpdateUserAddonsResponse> 
 
   static equals(a: UpdateUserAddonsResponse | PlainMessage<UpdateUserAddonsResponse> | undefined, b: UpdateUserAddonsResponse | PlainMessage<UpdateUserAddonsResponse> | undefined): boolean {
     return proto3.util.equals(UpdateUserAddonsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message dashboard.v1alpha1.GetEventsRequest
+ */
+export class GetEventsRequest extends Message<GetEventsRequest> {
+  /**
+   * @generated from field: string user_name = 1;
+   */
+  userName = "";
+
+  /**
+   * @generated from field: optional google.protobuf.Timestamp from = 2;
+   */
+  from?: Timestamp;
+
+  constructor(data?: PartialMessage<GetEventsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.GetEventsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "from", kind: "message", T: Timestamp, opt: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEventsRequest {
+    return new GetEventsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetEventsRequest {
+    return new GetEventsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetEventsRequest {
+    return new GetEventsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetEventsRequest | PlainMessage<GetEventsRequest> | undefined, b: GetEventsRequest | PlainMessage<GetEventsRequest> | undefined): boolean {
+    return proto3.util.equals(GetEventsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message dashboard.v1alpha1.GetEventsResponse
+ */
+export class GetEventsResponse extends Message<GetEventsResponse> {
+  /**
+   * @generated from field: string message = 1;
+   */
+  message = "";
+
+  /**
+   * @generated from field: repeated dashboard.v1alpha1.Event items = 2;
+   */
+  items: Event[] = [];
+
+  constructor(data?: PartialMessage<GetEventsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.GetEventsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "items", kind: "message", T: Event, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEventsResponse {
+    return new GetEventsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetEventsResponse {
+    return new GetEventsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetEventsResponse {
+    return new GetEventsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetEventsResponse | PlainMessage<GetEventsResponse> | undefined, b: GetEventsResponse | PlainMessage<GetEventsResponse> | undefined): boolean {
+    return proto3.util.equals(GetEventsResponse, a, b);
   }
 }
 

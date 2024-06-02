@@ -1,9 +1,7 @@
-import { Code, ConnectError } from "@bufbuild/connect";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { ModuleContext } from "../../components/ContextProvider";
-import { useLogin } from "../../components/LoginProvider";
+import { useHandleError } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
@@ -54,6 +52,26 @@ export const hasAdminForRole = (myRoles: string[], userrole: string) => {
     }
   }
   return false
+}
+
+function filterUsersByRoles(users: User[], myRoles: string[]) {
+  return hasPrivilegedRole(myRoles) ? users : users.filter((u) => {
+    for (const userRole of u.roles) {
+      if (hasAdminForRole(myRoles, userRole)) {
+        return true
+      }
+    }
+    return false
+  })
+}
+
+export function setUserStateFuncFilteredByLoginUserRole(users: User[], loginUser?: User) {
+  const f = (prev: User[]) => {
+    const newUsers = users.sort((a, b) => (a.name < b.name) ? -1 : 1);
+    const roleFilteredNewUsers = filterUsersByRoles(newUsers, (loginUser?.roles || []))
+    return JSON.stringify(prev) === JSON.stringify(roleFilteredNewUsers) ? prev : roleFilteredNewUsers;
+  }
+  return f
 }
 
 /**
@@ -241,29 +259,6 @@ export const useTemplates = () => {
     getUserAddonTemplates,
     getAllUserAddonTemplates,
   });
-}
-
-/**
-* error handler
-*/
-const useHandleError = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
-  const { clearLoginUser } = useLogin();
-
-  const handleError = (error: any) => {
-    console.log('handleError', error);
-
-    if (error instanceof ConnectError &&
-      error.code === Code.Unauthenticated) {
-      clearLoginUser();
-      navigate('/signin');
-    }
-    const msg = error?.message;
-    msg && enqueueSnackbar(msg, { variant: 'error' });
-    throw error;
-  }
-  return { handleError }
 }
 
 /**
