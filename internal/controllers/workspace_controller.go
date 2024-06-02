@@ -6,6 +6,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
@@ -79,8 +80,13 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return nil
 	})
 	if err != nil {
-		kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeWarning, "SyncFailed", "Failed to sync instance %s: %v", inst.Name, err)
-		return ctrl.Result{}, fmt.Errorf("failed to sync instance: %w", err)
+		if apierrs.IsConflict(err) {
+			// if conflict, retry
+			return ctrl.Result{Requeue: true}, nil
+		} else {
+			kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeWarning, "SyncFailed", "Failed to sync instance %s: %v", inst.Name, err)
+			return ctrl.Result{}, fmt.Errorf("failed to sync instance: %w", err)
+		}
 	}
 	if op != controllerutil.OperationResultNone {
 		log.Info("instance synced", "instance", inst.Name)
@@ -109,8 +115,13 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return r.TraefikIngressRouteCfg.PatchTraefikIngressRouteAsDesired(&ir, ws, r.Scheme)
 	})
 	if err != nil {
-		kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeWarning, "SyncFailed", "Failed to sync traefik ingress route %s: %v", ir.Name, err)
-		return ctrl.Result{}, fmt.Errorf("failed to sync traefik ingress route: %w", err)
+		if apierrs.IsConflict(err) {
+			// if conflict, retry
+			return ctrl.Result{Requeue: true}, nil
+		} else {
+			kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeWarning, "SyncFailed", "Failed to sync traefik ingress route %s: %v", ir.Name, err)
+			return ctrl.Result{}, fmt.Errorf("failed to sync traefik ingress route: %w", err)
+		}
 	}
 	if op != controllerutil.OperationResultNone {
 		log.Info("traefik ingress route synced", "ingressroute", ir.Name)

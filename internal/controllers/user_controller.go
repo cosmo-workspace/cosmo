@@ -52,6 +52,9 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return r.patchNamespaceToUserDesired(&ns, user)
 	})
 	if err != nil {
+		if apierrs.IsConflict(err) {
+			return ctrl.Result{Requeue: true}, nil
+		}
 		kosmo.UserEventf(r.Recorder, &user, corev1.EventTypeWarning, "SyncFailed", "Failed to sync namespace %s: %v", ns.Name, err)
 		return ctrl.Result{}, fmt.Errorf("failed to sync namespace: %w", err)
 	}
@@ -81,6 +84,9 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		// generate default password if password secret is not found
 		if _, err := password.GetDefaultPassword(ctx, r.Client, user.Name); err != nil && apierrs.IsNotFound(err) {
 			if err := password.ResetPassword(ctx, r.Client, user.Name); err != nil {
+				if apierrs.IsConflict(err) {
+					return ctrl.Result{Requeue: true}, nil
+				}
 				kosmo.UserEventf(r.Recorder, &user, corev1.EventTypeWarning, "PasswordInitFailed", "Failed to reset password: %v", err)
 				log.Error(err, "failed to reset password")
 				return ctrl.Result{}, err
@@ -119,6 +125,10 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 			return nil
 		})
 		if err != nil {
+			if apierrs.IsConflict(err) {
+				// if conflict, retry
+				return ctrl.Result{Requeue: true}, nil
+			}
 			addonErrs = append(addonErrs, fmt.Errorf("failed to create or update addon %s :%w", inst.GetSpec().Template.Name, err))
 			continue
 		}
