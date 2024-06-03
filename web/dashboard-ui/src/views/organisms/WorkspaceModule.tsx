@@ -1,4 +1,4 @@
-import { protoInt64 } from "@bufbuild/protobuf";
+import { PartialMessage, protoInt64 } from "@bufbuild/protobuf";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { ModuleContext } from "../../components/ContextProvider";
@@ -31,6 +31,34 @@ export function computeStatus(workspace: Workspace) {
   return status;
 }
 
+export class WorkspaceWrapper extends Workspace {
+  constructor(data: PartialMessage<Workspace>) {
+    super({ ...data });
+  }
+  update(data: Workspace) {
+    Object.assign(this, data);
+  }
+  public timer: NodeJS.Timeout | undefined;
+  public progress = 0;
+  public events: Event[] = [];
+  isPolling(): boolean {
+    return this.timer !== undefined;
+  }
+  hasWarningEvents(clock: Date): boolean {
+    const events = this.events;
+    if (events === undefined || events.length === 0) {
+      return false;
+    }
+    if (["Stopped", "Stopping"].includes(this.status?.phase!)) {
+      return false;
+    }
+    return events.filter((e) => e.type === "Warning").filter((e) =>
+      latestTime(e) - getTime(this.status?.lastStartedAt) >= 0
+    ).filter((e) => (clock.getTime() - latestTime(e)) / 1000 / 60 <= 5 // before 5 minutes ago
+    ).length > 0;
+  }
+}
+
 /**
  * useWorkspace
  */
@@ -39,7 +67,11 @@ const useWorkspace = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const { setMask, releaseMask } = useProgress();
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<
+    { [key: string]: WorkspaceWrapper }
+  >({});
+  // order
+  // const wss = result.items.sort((a, b) => (a.name < b.name) ? -1 : 1);
   const { handleError } = useHandleError();
   const workspaceService = useWorkspaceService();
   const userService = useUserService();
@@ -48,31 +80,31 @@ const useWorkspace = () => {
   const [user, setUser] = useState<User>(loginUser || new User());
   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
 
-  const [wsEventMap, setWsEventMap] = useState<{ [key: string]: Event[] }>({});
-
-  const hasWarningEvents = (ws: Workspace): boolean => {
-    const events = wsEventMap[ws.name!];
-    if (events === undefined || events.length === 0) {
-      return false;
-    }
-    if (ws.status?.phase === "Stopped") {
-      return false;
-    }
-    return events.filter((e) => e.type === "Warning").filter((e) =>
-      latestTime(e) - getTime(ws.status?.lastStartedAt) >= 0
+  const checkIsPolling = () => {
+    return Object.keys(workspaces).filter((name) =>
+      workspaces[name].isPolling()
     ).length > 0;
+  };
+
+  const stopAllPolling = () => {
+    Object.keys(workspaces).forEach((name) => {
+      clearTimer(name);
+    });
+    enqueueSnackbar("Stop all polling", { variant: "info" });
   };
 
   useEffect(() => {
     getWorkspaces();
-    getUserEvents();
   }, [user]);
 
-  useEffect(() => {
-    if (user === loginUser) {
-      setUserEvents(myEvents);
-    }
-  }, [myEvents]);
+  const upsertWorkspace = (ws: Workspace, events?: Event[]) => {
+    setWorkspaces((prev) => {
+      const pws = prev[ws.name] || new WorkspaceWrapper(ws);
+      if (prev[ws.name]) pws.update(ws);
+      if (events) pws.events = events;
+      return { ...prev, [ws.name]: pws };
+    });
+  };
 
   /**
    * WorkspaceList: workspace list
@@ -81,75 +113,158 @@ const useWorkspace = () => {
     console.log("getWorkspaces", userName);
     setMask();
     try {
-      const result_1 = await workspaceService.getWorkspaces({
+      const getWorkspacesResult = await workspaceService.getWorkspaces({
         userName: userName || user.name,
       });
-      const datas = result_1.items.sort((a, b) => (a.name < b.name) ? -1 : 1);
-      setWorkspaces(datas);
+      const getEventsResult = await userService.getEvents({
+        userName: userName || user.name,
+      });
+
+      const workspaces = getWorkspacesResult.items;
+      const events = getEventsResult.items;
+
+      const wsEventMap: { [key: string]: Event[] } = {};
+      for (const event of events) {
+        if (event.regardingWorkspace) {
+          wsEventMap[event.regardingWorkspace] = [
+            ...(wsEventMap[event.regardingWorkspace] || []),
+            event,
+          ].sort((a, b) => latestTime(a) - latestTime(b));
+        }
+      }
+
+      setWorkspaces((prev) => {
+        const pwsArr = workspaces.map((ws) => {
+          const pws = prev[ws.name] || new WorkspaceWrapper(ws);
+          if (prev[ws.name]) pws.update(ws);
+          pws.events = wsEventMap[ws.name] || [];
+          return pws;
+        });
+        const wsMap = pwsArr.reduce(
+          (map: { [key: string]: WorkspaceWrapper }, pws) => {
+            map[pws.name] = pws;
+            return map;
+          },
+          {},
+        );
+        console.log(wsMap);
+        return wsMap;
+      });
     } catch (error) {
       handleError(error);
     } finally {
+      updateClock();
       releaseMask();
     }
   };
 
-  /**
-   * WorkspaceList: refresh
-   */
-  const refreshWorkspaces = (username: string) => {
-    console.log("refreshWorkspace");
-    getWorkspaces(username);
-    getUserEvents();
+  const refreshWorkspace = async (workspace: Workspace): Promise<Workspace> => {
+    const getWorkspaceResult = await workspaceService.getWorkspace({
+      userName: workspace.ownerName,
+      wsName: workspace.name,
+    });
+    const ws = getWorkspaceResult.workspace!;
+
+    const getEventsResult = await userService.getEvents({
+      userName: ws.ownerName,
+    });
+    const events = getEventsResult.items.filter((e) =>
+      e.regardingWorkspace === ws.name
+    );
+
+    upsertWorkspace(ws, events);
+    return ws;
+  };
+
+  const setProgress = (wsName: string, progress: number) => {
+    setWorkspaces((prev) => {
+      if (prev[wsName]) {
+        console.log(
+          "### update progress",
+          `${prev[wsName].progress} -> ${progress}`,
+        );
+        const pws = prev[wsName];
+        pws.progress = progress;
+        return { ...prev, [wsName]: pws };
+      }
+      return prev;
+    });
+  };
+
+  const setTimer = (wsName: string, timer: NodeJS.Timeout) => {
+    setWorkspaces((prev) => {
+      if (prev[wsName]) {
+        const pws = prev[wsName];
+        pws.timer = timer;
+        return { ...prev, [wsName]: pws };
+      }
+      return prev;
+    });
+  };
+
+  const clearTimer = (wsName: string) => {
+    setWorkspaces((prev) => {
+      if (prev[wsName]) {
+        const pws = prev[wsName];
+        clearInterval(pws.timer);
+        pws.timer = undefined;
+        pws.progress = 120;
+        return { ...prev, [wsName]: pws };
+      }
+      return prev;
+    });
   };
 
   /**
-   * WorkspaceList: refreshWorkspace
+   * WorkspaceList: pollingWorkspace
    */
-  const refreshWorkspace = async (workspace: Workspace, timeout?: number) => {
-    console.log("refreshWorkspace", computeStatus(workspace), timeout);
-    getUserEvents();
+  const pollingWorkspace = async (
+    ws: Workspace,
+  ) => {
+    ws = await refreshWorkspace(ws);
 
-    if (timeout === undefined) {
-      setTimeout(() => refreshWorkspace(workspace, 120000), 500);
-      return;
-    }
-    const tout = timeout! - 1000; // 1 x 120 seconds
-    if (tout < 0) return;
+    let limit = 120;
+    let progress = 0;
+    setProgress(ws.name, progress);
+    setTimer(
+      ws.name,
+      setInterval(async () => {
+        try {
+          progress = progress >= 100 ? 0 : progress + 20;
+          console.log("polling", "progress", progress);
+          setProgress(ws.name, progress);
+          if (progress === 20) {
+            console.log("polling", "do request");
+            const newWs = await refreshWorkspace(ws);
 
-    let newWorkspace = workspace;
-    try {
-      const result = await workspaceService.getWorkspace({
-        userName: workspace.ownerName,
-        wsName: workspace.name,
-      });
-      newWorkspace = result.workspace!;
-    } catch (e) {
-      if (computeStatus(workspace) !== "Creating") {
-        console.log("handleError", e);
-        return;
-      }
-    }
-    if (
-      (newWorkspace.spec?.network &&
-        newWorkspace.spec.network.filter((v) => (!v.url)).length !== 0) ||
-      (!["Running", "Stopped", "Error", "CrashLoopBackOff"].includes(
-        computeStatus(newWorkspace),
-      ))
-    ) {
-      setTimeout(() => refreshWorkspace(newWorkspace, tout), 1000);
-    }
-
-    const reducer = (wspaces: Workspace[]) => {
-      const index = wspaces.findIndex((ws) =>
-        ws.ownerName === workspace.ownerName && ws.name === workspace.name
-      );
-      if (index >= 0 && !wspaces[index].equals(newWorkspace)) {
-        wspaces[index] = newWorkspace;
-        return [...wspaces];
-      }
-      return wspaces;
-    };
-    setWorkspaces(reducer);
+            const undefinedURLs =
+              (newWs.spec?.network || []).filter((v) => (!v.url)).length;
+            const status = computeStatus(newWs);
+            if (
+              undefinedURLs === 0 &&
+              ["Running", "Stopped", "Error", "CrashLoopBackOff"].includes(
+                status,
+              )
+            ) {
+              console.log("polling", "timer stopped");
+              clearTimer(ws.name);
+            }
+          }
+        } catch (e) {
+          if (computeStatus(ws) !== "Creating") {
+            console.log("polling", "error", e);
+            clearTimer(ws.name);
+          }
+        } finally {
+          limit--;
+          console.log("polling", "limit", limit);
+          if (limit < 0) {
+            console.log("polling", "reached limit");
+            clearTimer(ws.name);
+          }
+        }
+      }, 1000),
+    );
   };
 
   /**
@@ -174,11 +289,10 @@ const useWorkspace = () => {
         ...result_1.workspace!.status,
         phase: "Creating",
       });
-      const newWs = new Workspace({ ...result_1.workspace!, status: stat });
-      workspaces.push(newWs);
-      setWorkspaces([...workspaces.sort((a, b) => (a.name < b.name) ? -1 : 1)]);
+      const ws = new Workspace({ ...result_1.workspace!, status: stat });
+      upsertWorkspace(ws);
       enqueueSnackbar(result_1.message, { variant: "success" });
-      refreshWorkspace(newWs);
+      pollingWorkspace(ws);
     } catch (error) {
       handleError(error);
     } finally {
@@ -193,13 +307,13 @@ const useWorkspace = () => {
     console.log("runWorkspace", workspace.name);
     setMask();
     try {
-      await workspaceService.updateWorkspace({
+      const res = await workspaceService.updateWorkspace({
         userName: workspace.ownerName!,
         wsName: workspace.name,
         replicas: protoInt64.parse(1),
       });
       enqueueSnackbar("Successfully run workspace", { variant: "success" });
-      refreshWorkspace(workspace);
+      pollingWorkspace(res.workspace!);
     } catch (error) {
       handleError(error);
     } finally {
@@ -214,13 +328,13 @@ const useWorkspace = () => {
     console.log("stopWorkspace", workspace.name);
     setMask();
     try {
-      await workspaceService.updateWorkspace({
+      const res = await workspaceService.updateWorkspace({
         userName: workspace.ownerName!,
         wsName: workspace.name,
         replicas: protoInt64.zero,
       });
       enqueueSnackbar("Successfully stopped workspace", { variant: "success" });
-      refreshWorkspace(workspace);
+      pollingWorkspace(res.workspace!);
     } catch (error) {
       handleError(error);
     } finally {
@@ -240,7 +354,7 @@ const useWorkspace = () => {
         wsName: workspace.name,
       });
       enqueueSnackbar(result.message, { variant: "success" });
-      refreshWorkspaces(workspace.ownerName!);
+      getWorkspaces(workspace.ownerName!);
     } catch (error) {
       handleError(error);
     } finally {
@@ -251,30 +365,6 @@ const useWorkspace = () => {
   /**
    * UserModule
    */
-  const setUserEvents = (events: Event[]) => {
-    console.log("setUserEvents");
-    const map = { ...wsEventMap };
-    updateClock();
-
-    let appended = false;
-    for (const event of events) {
-      if (!event.regardingWorkspace) {
-        continue;
-      }
-      let wsEvents = map[event.regardingWorkspace] || [];
-      if (!wsEvents.find((v) => (v.id === event.id))) {
-        wsEvents = [...wsEvents, event];
-        appended = true;
-        wsEvents.sort((a, b) => latestTime(a) - latestTime(b));
-        map[event.regardingWorkspace] = wsEvents;
-      }
-    }
-    if (appended) {
-      console.log("setWsEventMap");
-      setWsEventMap(map);
-    }
-  };
-
   const getUsers = async () => {
     console.log("useWorkspaceUsers:getUsers");
     try {
@@ -287,16 +377,6 @@ const useWorkspace = () => {
     }
   };
 
-  const getUserEvents = async () => {
-    try {
-      const result = await userService.getEvents({ userName: user.name });
-      setUserEvents(result.items.reverse());
-      console.log(wsEventMap);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   return ({
     workspaces,
     getWorkspaces,
@@ -304,15 +384,13 @@ const useWorkspace = () => {
     deleteWorkspace,
     runWorkspace,
     stopWorkspace,
-    refreshWorkspace,
-    refreshWorkspaces,
+    pollingWorkspace,
+    checkIsPolling,
+    stopAllPolling,
     user,
     setUser,
     users,
     getUsers,
-    getUserEvents,
-    wsEventMap,
-    hasWarningEvents,
   });
 };
 
@@ -372,7 +450,7 @@ export const useNetworkRule = () => {
       });
       console.log(result);
       enqueueSnackbar(result.message, { variant: "success" });
-      workspaceModule.refreshWorkspace(workspace);
+      workspaceModule.pollingWorkspace(new WorkspaceWrapper(workspace));
     } catch (error) {
       handleError(error);
     } finally {
@@ -391,7 +469,7 @@ export const useNetworkRule = () => {
       });
       console.log(result_1);
       enqueueSnackbar(result_1.message, { variant: "success" });
-      workspaceModule.refreshWorkspace(workspace);
+      workspaceModule.pollingWorkspace(new WorkspaceWrapper(workspace));
     } catch (error) {
       handleError(error);
     } finally {
@@ -404,77 +482,6 @@ export const useNetworkRule = () => {
     removeNetwork,
   });
 };
-
-/**
- * useWorkspaceUser
- */
-// const useWorkspaceUsers = () => {
-//   console.log("useWorkspaceUser");
-
-//   const { handleError } = useHandleError();
-//   const { loginUser, myEvents } = useLogin();
-//   const [user, setUser] = useState<User>(loginUser || new User());
-//   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
-
-//   const [wsEventMap, setWsEventMap] = useState<{ [key: string]: Event[] }>({});
-//   const [now, setNow] = useState(new Date());
-
-//   const setUserEvents = (events: Event[]) => {
-//     console.log("setUserEvents");
-//     const now = new Date();
-//     setNow(now);
-//     const map = { ...wsEventMap };
-//     for (const e of events) {
-//       if (e.regardingWorkspace) {
-//         if (
-//           !((map[e.regardingWorkspace]) || []).map((v) => v.id).includes(e.id)
-//         ) {
-//           map[e.regardingWorkspace] = [...(map[e.regardingWorkspace] || []), e];
-//         }
-//       }
-//     }
-//     setWsEventMap(map);
-//   };
-
-//   useEffect(() => {
-//     if (user === loginUser) {
-//       setUserEvents(myEvents);
-//     }
-//   }, [user, myEvents]);
-
-//   const userService = useUserService();
-
-//   const getUsers = async () => {
-//     console.log("useWorkspaceUsers:getUsers");
-//     try {
-//       const result = await userService.getUsers({});
-//       setUsers(
-//         setUserStateFuncFilteredByLoginUserRole(result.items, loginUser),
-//       );
-//     } catch (error) {
-//       handleError(error);
-//     }
-//   };
-
-//   const getUserEvents = async () => {
-//     try {
-//       const result = await userService.getEvents({ userName: user.name });
-//       setUserEvents(result.items);
-//     } catch (error) {
-//       handleError(error);
-//     }
-//   };
-
-//   return ({
-//     user,
-//     setUser,
-//     users,
-//     getUsers,
-//     getUserEvents,
-//     wsEventMap,
-//     now,
-//   });
-// };
 
 /**
  * WorkspaceProvider

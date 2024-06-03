@@ -336,7 +336,7 @@ export const PageTemplate: React.FC<
                           variant="body2"
                           color="textSecondary"
                         >
-                          No new events recieved
+                          No events recieved
                         </Typography>
                       </ListItemText>
                     </ListItem>

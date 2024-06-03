@@ -10,6 +10,7 @@ import {
   ErrorOutline,
   ExpandLessTwoTone,
   ExpandMoreTwoTone,
+  InfoOutlined,
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
   LockOutlined,
@@ -24,7 +25,6 @@ import {
   WebTwoTone,
 } from "@mui/icons-material";
 import {
-  Alert,
   Avatar,
   Box,
   Card,
@@ -43,6 +43,7 @@ import {
   MenuItem,
   Paper,
   Stack,
+  styled,
   Table,
   TableBody,
   TableCell,
@@ -57,11 +58,10 @@ import {
 } from "@mui/material";
 import copy from "copy-to-clipboard";
 import { useSnackbar } from "notistack";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
-import { AlertTooltip } from "../atoms/AlertTooltip";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
@@ -80,14 +80,25 @@ import {
   computeStatus,
   useWorkspaceModule,
   WorkspaceContext,
+  WorkspaceWrapper,
 } from "../organisms/WorkspaceModule";
 import { PageTemplate } from "../templates/PageTemplate";
 
 /**
  * view
  */
+const RotatingRefreshTwoTone = styled(RefreshTwoTone)({
+  animation: "rotatingRefresh 2s linear infinite",
+  "@keyframes rotatingRefresh": {
+    "to": {
+      transform: "rotate(2turn)",
+    },
+  },
+});
 
-const StatusChip: React.VFC<{ statusLabel: string }> = ({ statusLabel }) => {
+const StatusChip: React.VFC<{ ws: WorkspaceWrapper }> = ({ ws }) => {
+  const statusLabel = computeStatus(ws);
+
   switch (statusLabel) {
     case "Running":
       return (
@@ -125,7 +136,16 @@ const StatusChip: React.VFC<{ statusLabel: string }> = ({ statusLabel }) => {
         <Chip
           variant="outlined"
           size="small"
-          icon={<CircularProgress color="info" size={13} />}
+          icon={ws.progress > 0
+            ? ws.progress > 100 ? <InfoOutlined /> : (
+              <CircularProgress
+                color="info"
+                size={13}
+                variant="determinate"
+                value={ws.progress}
+              />
+            )
+            : <CircularProgress color="info" size={13} />}
           color="info"
           label={statusLabel}
         />
@@ -255,17 +275,20 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = (
     copy(text);
     enqueueSnackbar("Copied!", { variant: "success" });
   };
+  const theme = useTheme();
 
   return (
     <TableContainer
       sx={{
         border: "1px solid",
         borderRadius: "4px",
-        borderColor: "rgba(224, 224, 224, 1)",
+        borderColor: theme.palette.mode === "light"
+          ? "rgba(224,224,224,1)"
+          : "rgba(81,81,81,1)",
       }}
     >
       <Table size="small">
-        <TableHead>
+        <TableHead sx={{ backgroundColor: theme.palette.background.default }}>
           <TableRow>
             <TableCell align="center">Mode</TableCell>
             <TableCell align="left">URL</TableCell>
@@ -367,15 +390,15 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = (
   );
 };
 
-const WorkspaceItem: React.VFC<{ workspace: Workspace; events: Event[] }> = (
+const WorkspaceItem: React.VFC<
+  { workspace: WorkspaceWrapper; events: Event[] }
+> = (
   { workspace: ws, events },
 ) => {
   console.log("WorkspaceItem", ws.status?.phase, ws.spec?.replicas);
   const [networkRuleExpanded, setNetworkRuleExpanded] = useState(false);
   const [eventExpanded, setEventExpanded] = useState(false);
   const { clock } = useLogin();
-  const { hasWarningEvents } = useWorkspaceModule();
-  const statusLabel = computeStatus(ws);
 
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
@@ -386,8 +409,9 @@ const WorkspaceItem: React.VFC<{ workspace: Workspace; events: Event[] }> = (
         <CardHeader
           sx={{
             borderBottom: "1px solid",
-            borderColor: "rgba(224, 224, 224, 1)",
-            borderBottomStyle: "dotted",
+            borderColor: theme.palette.mode === "light"
+              ? theme.palette.grey[300]
+              : theme.palette.grey["A700"],
           }}
           avatar={
             <Avatar>
@@ -413,7 +437,7 @@ const WorkspaceItem: React.VFC<{ workspace: Workspace; events: Event[] }> = (
           subheader={ws.spec && ws.spec.template}
           action={
             <Stack direction="row" spacing={2} alignItems="center">
-              {hasWarningEvents(ws) && (
+              {ws.hasWarningEvents(clock) && (
                 <IconButton
                   color="inherit"
                   onClick={() => setEventExpanded(true)}
@@ -421,7 +445,7 @@ const WorkspaceItem: React.VFC<{ workspace: Workspace; events: Event[] }> = (
                   <Error color="error" />
                 </IconButton>
               )}
-              <StatusChip statusLabel={statusLabel} />
+              <StatusChip ws={ws} />
               <Box onClick={(e) => e.stopPropagation()}>
                 <WorkspaceMenu workspace={ws} />
               </Box>
@@ -496,36 +520,27 @@ const WorkspaceItem: React.VFC<{ workspace: Workspace; events: Event[] }> = (
 
 const WorkspaceList: React.VFC = () => {
   console.log("WorkspaceList");
-  const hooks = useWorkspaceModule();
+  const {
+    workspaces,
+    getWorkspaces,
+    user,
+    checkIsPolling,
+    stopAllPolling,
+  } = useWorkspaceModule();
   const { loginUser } = useLogin();
   const isPriv = hasPrivilegedRole(loginUser?.roles || []);
   const [urlParam, setUrlParam] = useUrlState({ "search": "" }, {
     stringifyOptions: { skipEmptyString: true },
   });
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [openTutorialTooltip, setOpenTutorialTooltip] = useState<
-    boolean | undefined
-  >(undefined);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isHoverRefreshIcon, setIsHoverRefreshIcon] = useState(false);
   const createDialogDisptch = WorkspaceCreateDialogContext.useDispatch();
-
-  useEffect(() => {
-    if (hooks.workspaces.length === 0 && loginUser!.name === hooks.user.name) {
-      // When it has never been opened
-      if (openTutorialTooltip === undefined) {
-        const t = setTimeout(
-          () => setOpenTutorialTooltip((prev) => prev === undefined),
-          5000,
-        );
-        //Clean up when the watched value changes or is unmounted
-        return () => clearTimeout(t);
-      }
-    } else if (openTutorialTooltip === true) {
-      setOpenTutorialTooltip(false);
-    }
-  }, [hooks.workspaces.length, hooks.user.name]); // eslint-disable-line
 
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
+
+  const isPolling = checkIsPolling();
 
   return (
     <>
@@ -571,48 +586,59 @@ const WorkspaceList: React.VFC = () => {
           <Box sx={{ flexGrow: 1 }} />
           {isPriv && (isUpSM || (!isSearchFocused && urlParam.search === "")) &&
             <UserSelect />}
-          <Tooltip title="Refresh" placement="top">
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                hooks.getUserEvents();
-                hooks.refreshWorkspaces(hooks.user.name);
-              }}
-            >
-              <RefreshTwoTone />
-            </IconButton>
-          </Tooltip>
-          <AlertTooltip
-            arrow
+          <Tooltip
+            title={isPolling ? "Cancel polling" : "Refresh"}
             placement="top"
-            open={openTutorialTooltip || false}
-            title={
-              <Alert
-                severity="info"
-                onClick={() => {
-                  setOpenTutorialTooltip(false);
-                }}
-              >
-                Create your first workspace!
-              </Alert>
-            }
           >
+            {(isHoverRefreshIcon && isPolling)
+              ? (
+                <IconButton
+                  color="inherit"
+                  onClick={() => {
+                    stopAllPolling();
+                  }}
+                  onMouseLeave={() => setIsHoverRefreshIcon(false)}
+                >
+                  <Clear />
+                </IconButton>
+              )
+              : (
+                <IconButton
+                  color="inherit"
+                  onClick={() => {
+                    setIsLoading(true);
+                    setTimeout(() => {
+                      setIsLoading(false);
+                    }, 2000);
+                    if (!isLoading) getWorkspaces(user.name);
+                  }}
+                  onMouseEnter={() =>
+                    setIsHoverRefreshIcon((prev) => prev ? prev : true)}
+                  onMouseLeave={() =>
+                    setIsHoverRefreshIcon((prev) => prev ? false : prev)}
+                >
+                  {isPolling || isLoading
+                    ? <RotatingRefreshTwoTone />
+                    : <RefreshTwoTone />}
+                </IconButton>
+              )}
+          </Tooltip>
+          <Tooltip title="Create Workspace" placement="top">
             <Fab
               size="small"
               color="primary"
               onClick={() => {
-                setOpenTutorialTooltip(false);
                 createDialogDisptch(true);
               }}
               sx={{ flexShrink: 0 }}
             >
               <AddTwoTone />
             </Fab>
-          </AlertTooltip>
+          </Tooltip>
         </Stack>
       </Paper>
-      {!hooks.workspaces.filter((ws) =>
-        urlParam.search === "" || Boolean(ws.name.match(urlParam.search))
+      {!Object.keys(workspaces).filter((wsName) =>
+        urlParam.search === "" || Boolean(wsName.match(urlParam.search))
       ).length &&
         (
           <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
@@ -625,13 +651,15 @@ const WorkspaceList: React.VFC = () => {
           </Paper>
         )}
       <Grid container spacing={1}>
-        {hooks.workspaces.filter((ws) =>
-          urlParam.search === "" || Boolean(ws.name.match(urlParam.search))
+        {Object.keys(workspaces).filter((wsName) =>
+          urlParam.search === "" || Boolean(wsName.match(urlParam.search))
+        ).map((wsName) => workspaces[wsName]).sort((a, b) =>
+          (a.name < b.name) ? -1 : 1
         ).map((ws) => (
           <WorkspaceItem
             workspace={ws}
             key={ws.name}
-            events={hooks.wsEventMap[ws.name] || []}
+            events={ws.events}
           />
         ))}
       </Grid>
