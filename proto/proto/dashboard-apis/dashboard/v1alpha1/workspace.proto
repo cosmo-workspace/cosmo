@@ -7,6 +7,7 @@ syntax = "proto3";
 
 package dashboard.v1alpha1;
 import "validate/validate.proto";
+import "google/protobuf/timestamp.proto";
 
 message NetworkRule {
   int32 port_number = 1          [(validate.rules).int32 = { gt: 0, lt: 65536 }];
@@ -26,6 +27,7 @@ message WorkspaceSpec {
 message WorkspaceStatus {
   string phase = 1;
   string main_url = 2;
+  google.protobuf.Timestamp lastStartedAt = 3;
 }
 
 message Workspace {

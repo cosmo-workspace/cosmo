@@ -23,6 +23,10 @@ func (w *StoreStatusResponseWriter) StatusCode() int {
 	return w.statusCode
 }
 
+func (w *StoreStatusResponseWriter) Flush() {
+	w.ResponseWriter.(http.Flusher).Flush()
+}
+
 func (w *StoreStatusResponseWriter) WriteHeader(statusCode int) {
 	w.statusCode = statusCode
 	w.ResponseWriter.WriteHeader(statusCode)

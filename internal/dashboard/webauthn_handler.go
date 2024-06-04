@@ -24,7 +24,7 @@ import (
 func (s *Server) WebAuthnServiceHandler(mux *http.ServeMux) {
 	path, handler := dashboardv1alpha1connect.NewWebAuthnServiceHandler(s,
 		connect_go.WithInterceptors(s.validatorInterceptor()))
-	mux.Handle(path, s.contextMiddleware(handler))
+	mux.Handle(path, s.timeoutHandler(s.contextMiddleware(handler)))
 }
 
 func (s *Server) storeWebAuthnSession(sess *webauthn.SessionData) {

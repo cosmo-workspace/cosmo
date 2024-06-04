@@ -15,10 +15,10 @@ import (
 
 func (s *Server) WorkspaceServiceHandler(mux *http.ServeMux) {
 	path, handler := dashboardv1alpha1connect.NewWorkspaceServiceHandler(s,
-		connect_go.WithInterceptors(s.authorizationInterceptor()),
+		connect_go.WithInterceptors(authorizationInterceptorFunc(s.verifyAndGetLoginUser)),
 		connect_go.WithInterceptors(s.validatorInterceptor()),
 	)
-	mux.Handle(path, s.contextMiddleware(handler))
+	mux.Handle(path, s.timeoutHandler(s.contextMiddleware(handler)))
 }
 
 func (s *Server) CreateWorkspace(ctx context.Context, req *connect_go.Request[dashv1alpha1.CreateWorkspaceRequest]) (*connect_go.Response[dashv1alpha1.CreateWorkspaceResponse], error) {

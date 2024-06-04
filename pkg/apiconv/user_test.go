@@ -734,6 +734,10 @@ func TestK2D_Events(t *testing.T) {
 							Namespace:         "cosmo-user-tom",
 							ResourceVersion:   "1043545",
 							UID:               "d2f21050-ae78-4894-b6b1-19fe3918b7c2",
+							Annotations: map[string]string{
+								cosmov1alpha1.EventAnnKeyInstanceName: "aaa",
+								cosmov1alpha1.EventAnnKeyUserName:     "bbb",
+							},
 						},
 						Note:   "Stopping container code-server",
 						Reason: "Killing",
@@ -754,6 +758,8 @@ func TestK2D_Events(t *testing.T) {
 			},
 			want: []*dashv1alpha1.Event{
 				{
+					Id:        "ws1.17d13738ea85aac8",
+					User:      "tom",
 					EventTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
 					Type:      "Normal",
 					Note:      "successfully reconciled. instance synced",
@@ -765,8 +771,14 @@ func TestK2D_Events(t *testing.T) {
 						Namespace:  "cosmo-user-tom",
 					},
 					ReportingController: "cosmo-workspace-controller",
+					Series: &dashv1alpha1.EventSeries{
+						Count:            1,
+						LastObservedTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
+					},
 				},
 				{
+					Id:        "ws1.17d13738ecc558d0",
+					User:      "tom",
 					EventTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
 					Type:      "Normal",
 					Note:      "Deployment ws1-workspace is not desired state, synced",
@@ -777,9 +789,15 @@ func TestK2D_Events(t *testing.T) {
 						Name:       "ws1",
 						Namespace:  "cosmo-user-tom",
 					},
+					Series: &dashv1alpha1.EventSeries{
+						Count:            1,
+						LastObservedTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
+					},
 					ReportingController: "cosmo-instance-controller",
 				},
 				{
+					Id:        "ws1-workspace.17d13738edffd9f0",
+					User:      "tom",
 					EventTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
 					Type:      "Normal",
 					Note:      "Scaled down replica set ws1-workspace-66b8cd6764 to 0 from 1",
@@ -790,9 +808,16 @@ func TestK2D_Events(t *testing.T) {
 						Name:       "ws1-workspace",
 						Namespace:  "cosmo-user-tom",
 					},
+					Series: &dashv1alpha1.EventSeries{
+						Count:            1,
+						LastObservedTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
+					},
+
 					ReportingController: "deployment-controller",
 				},
 				{
+					Id:        "ws1-workspace-66b8cd6764.17d13738ef8a33c4",
+					User:      "tom",
 					EventTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
 					Type:      "Normal",
 					Note:      "Deleted pod: ws1-workspace-66b8cd6764-fz2k7",
@@ -803,9 +828,14 @@ func TestK2D_Events(t *testing.T) {
 						Name:       "ws1-workspace-66b8cd6764",
 						Namespace:  "cosmo-user-tom",
 					},
+					Series: &dashv1alpha1.EventSeries{
+						Count:            1,
+						LastObservedTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
+					},
 					ReportingController: "replicaset-controller",
 				},
 				{
+					Id:        "ws1-workspace-66b8cd6764-fz2k7.17d13738efcc7a13",
 					EventTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
 					Type:      "Normal",
 					Note:      "Stopping container code-server",
@@ -816,7 +846,13 @@ func TestK2D_Events(t *testing.T) {
 						Name:       "ws1-workspace-66b8cd6764-fz2k7",
 						Namespace:  "cosmo-user-tom",
 					},
+					Series: &dashv1alpha1.EventSeries{
+						Count:            1,
+						LastObservedTime: timestamppb.New(timeParse("2024-05-20T14:00:50Z").Time),
+					},
 					ReportingController: "kubelet",
+					RegardingWorkspace:  ptr.To("aaa"),
+					User:                "bbb",
 				},
 			},
 		},
@@ -838,7 +874,7 @@ func TestK2D_Events(t *testing.T) {
 						ReportingController: "cosmo-workspace-controller",
 						Series: &eventsv1.EventSeries{
 							Count:            3,
-							LastObservedTime: metav1.MicroTime(timeParse("2024-05-20T13:59:50Z")),
+							LastObservedTime: metav1.MicroTime(timeParse("2024-05-20T14:30:50Z")),
 						},
 					},
 				},
@@ -858,7 +894,7 @@ func TestK2D_Events(t *testing.T) {
 					ReportingController: "cosmo-workspace-controller",
 					Series: &dashv1alpha1.EventSeries{
 						Count:            3,
-						LastObservedTime: timestamppb.New(timeParse("2024-05-20T13:59:50Z").Time),
+						LastObservedTime: timestamppb.New(timeParse("2024-05-20T14:30:50Z").Time),
 					},
 				},
 			},

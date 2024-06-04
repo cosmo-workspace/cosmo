@@ -16,6 +16,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 func (c *Client) ListEvents(ctx context.Context, namespace string) ([]eventsv1.Event, error) {
@@ -26,7 +27,7 @@ func (c *Client) ListEvents(ctx context.Context, namespace string) ([]eventsv1.E
 		return nil, apierrs.NewInternalError(fmt.Errorf("failed to list Event: %w", err))
 	}
 	for _, v := range events.Items {
-		err := c.SetRegardingInstanceOnAnnotation(ctx, v.DeepCopy())
+		err := c.UpdateEventAnnotations(ctx, v.DeepCopy())
 		if err != nil {
 			log.Debug().Info("failed to cache instance name on event annotation", "error", err, "namespace", namespace, "event", v.Name)
 		}
@@ -36,14 +37,15 @@ func (c *Client) ListEvents(ctx context.Context, namespace string) ([]eventsv1.E
 	return events.Items, nil
 }
 
-func (c *Client) SetRegardingInstanceOnAnnotation(ctx context.Context, event *eventsv1.Event) error {
+func (c *Client) UpdateEventAnnotations(ctx context.Context, event *eventsv1.Event) error {
 	log := clog.FromContext(ctx).WithCaller()
 
 	ann := event.GetAnnotations()
 	if ann != nil {
-		v := ann[cosmov1alpha1.EventAnnKeyInstanceName]
-		if v != "" {
-			// found instane name cached on event annotation
+		instName := ann[cosmov1alpha1.EventAnnKeyInstanceName]
+		userName := ann[cosmov1alpha1.EventAnnKeyUserName]
+		if instName != "" && userName != "" {
+			// annotation is expected
 			return nil
 		}
 	} else {
@@ -62,23 +64,14 @@ func (c *Client) SetRegardingInstanceOnAnnotation(ctx context.Context, event *ev
 		return fmt.Errorf("failed to fetch regarding object: %w", err)
 	}
 
-	label := obj.GetLabels()
-	if label == nil {
-		return nil // regarding object has no label
-	}
-	v := label[cosmov1alpha1.LabelKeyInstanceName]
-	if v == "" {
-		return nil // label has no instance name
-	}
-
-	// found instance name on label. so we cache it on event annotation
-	ann[cosmov1alpha1.EventAnnKeyInstanceName] = v
+	ann[cosmov1alpha1.EventAnnKeyInstanceName] = kubeutil.GetLabel(&obj, cosmov1alpha1.LabelKeyInstanceName)
+	ann[cosmov1alpha1.EventAnnKeyUserName] = cosmov1alpha1.UserNameByNamespace(event.Namespace)
 	event.SetAnnotations(ann)
 	if err := c.Update(ctx, event); err != nil {
-		return fmt.Errorf("failed to cache instance name on event annotation: %w", err)
+		return fmt.Errorf("failed to cache on event annotation: %w", err)
 	}
 
-	log.Info("cached instance name on event annotation", "event", event)
+	log.Info("cached on event annotation", "event", event)
 	return nil
 }
 

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bufbuild/connect-go"
+	connect_go "github.com/bufbuild/connect-go"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -52,25 +52,47 @@ func (s *Server) contextMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (s *Server) authorizationInterceptor() connect.UnaryInterceptorFunc {
-	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
-		return connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+type authorizationInterceptorFunc func(ctx context.Context) (loginUser *cosmov1alpha1.User, deadline time.Time, err error)
 
-			log := clog.FromContext(ctx).WithName("authorization")
+// WrapUnary implements [Interceptor] with an authorization.
+func (f authorizationInterceptorFunc) WrapUnary(next connect_go.UnaryFunc) connect_go.UnaryFunc {
+	return connect_go.UnaryFunc(func(ctx context.Context, req connect_go.AnyRequest) (connect_go.AnyResponse, error) {
+		log := clog.FromContext(ctx).WithName("unary authorization")
 
-			loginUser, deadline, err := s.verifyAndGetLoginUser(ctx)
-			if err != nil {
-				return nil, ErrResponse(log, err)
-			}
+		loginUser, deadline, err := f(ctx)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
 
-			ctx = newContextWithCaller(ctx, loginUser)
-			ctx, cancel := context.WithDeadline(ctx, deadline)
-			defer cancel()
+		ctx = newContextWithCaller(ctx, loginUser)
+		ctx, cancel := context.WithDeadline(ctx, deadline)
+		defer cancel()
 
-			return next(ctx, req)
-		})
-	}
-	return connect.UnaryInterceptorFunc(interceptor)
+		return next(ctx, req)
+	})
+}
+
+// WrapStreamingClient implements [Interceptor] with a no-op.
+func (f authorizationInterceptorFunc) WrapStreamingClient(next connect_go.StreamingClientFunc) connect_go.StreamingClientFunc {
+	return next
+}
+
+// WrapStreamingHandler implements [Interceptor] with an authorization.
+func (f authorizationInterceptorFunc) WrapStreamingHandler(next connect_go.StreamingHandlerFunc) connect_go.StreamingHandlerFunc {
+	return connect_go.StreamingHandlerFunc(func(ctx context.Context, conn connect_go.StreamingHandlerConn) error {
+		log := clog.FromContext(ctx).WithName("streaming handler authorization")
+
+		loginUser, deadline, err := f(ctx)
+		if err != nil {
+			return ErrResponse(log, err)
+		}
+
+		ctx = newContextWithCaller(ctx, loginUser)
+		ctx, cancel := context.WithDeadline(ctx, deadline)
+		defer cancel()
+
+		return next(ctx, conn)
+	})
 }
 
 func (s *Server) verifyAndGetLoginUser(ctx context.Context) (loginUser *cosmov1alpha1.User, deadline time.Time, err error) {

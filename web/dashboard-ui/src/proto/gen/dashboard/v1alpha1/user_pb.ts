@@ -9,7 +9,6 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3 } from "@bufbuild/protobuf";
-import { Event } from "./event_pb.js";
 
 /**
  * @generated from message dashboard.v1alpha1.User
@@ -55,11 +54,6 @@ export class User extends Message<User> {
    */
   raw?: string;
 
-  /**
-   * @generated from field: repeated dashboard.v1alpha1.Event events = 9;
-   */
-  events: Event[] = [];
-
   constructor(data?: PartialMessage<User>) {
     super();
     proto3.util.initPartial(data, this);
@@ -76,7 +70,6 @@ export class User extends Message<User> {
     { no: 6, name: "default_password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "raw", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 9, name: "events", kind: "message", T: Event, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): User {

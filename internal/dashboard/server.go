@@ -43,6 +43,8 @@ type Server struct {
 
 	webauthn           *webauthn.WebAuthn
 	webauthnSessionMap sync.Map
+
+	watcher *watcher
 }
 
 func (s *Server) setupRouter() {
@@ -55,6 +57,7 @@ func (s *Server) setupRouter() {
 	s.UserServiceHandler(mux)
 	s.TemplateServiceHandler(mux)
 	s.WorkspaceServiceHandler(mux)
+	s.StreamServiceHandler(mux)
 
 	// setup serving static files
 	mux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir(s.StaticFileDir))))
@@ -62,7 +65,7 @@ func (s *Server) setupRouter() {
 	// setup middlewares for all routers to use HTTPRequestLogger and TimeoutHandler.
 	// deadline of the Timeout handler takes precedence over any subsequent deadlines
 	reqLogr := NewHTTPRequestLogger(s.Log)
-	s.http.Handler = reqLogr.Middleware(s.timeoutHandler(mux))
+	s.http.Handler = reqLogr.Middleware(mux)
 }
 
 func (s *Server) setupSessionStore() {
@@ -86,7 +89,7 @@ func (s *Server) timeoutHandler(next http.Handler) http.Handler {
 	return http.TimeoutHandler(next, s.ResponseTimeout, "")
 }
 
-// Start run server
+// Start implements manager.Runnable
 func (s *Server) Start(ctx context.Context) error {
 	s.http = &http.Server{
 		Addr: fmt.Sprintf(":%d", s.Port),

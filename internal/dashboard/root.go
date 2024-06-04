@@ -253,6 +253,15 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to create webauthn instance: %w", err)
 	}
 
+	eventWatcher := &watcher{
+		Log:    clog.NewLogger(ctrl.Log.WithName("eventwatcher")),
+		Klient: kosmo.NewClient(mgr.GetClient()),
+	}
+	if err := eventWatcher.SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to event watcher")
+		os.Exit(1)
+	}
+
 	serv := &Server{
 		Log:                 clog.NewLogger(ctrl.Log.WithName("dashboard")),
 		Klient:              klient,
@@ -272,6 +281,7 @@ func (o *options) RunE(cmd *cobra.Command, args []string) error {
 		http:                &http.Server{Addr: fmt.Sprintf(":%d", o.ServerPort)},
 		sessionStore:        nil,
 		webauthn:            wa,
+		watcher:             eventWatcher,
 	}
 
 	if err := mgr.Add(serv); err != nil {

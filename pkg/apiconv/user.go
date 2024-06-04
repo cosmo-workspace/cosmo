@@ -5,11 +5,13 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 	eventsv1 "k8s.io/api/events/v1"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 )
 
@@ -153,29 +155,22 @@ func D2S_UserAddons(addons []*dashv1alpha1.UserAddon) []string {
 func K2D_Events(events []eventsv1.Event) []*dashv1alpha1.Event {
 	es := make([]*dashv1alpha1.Event, len(events))
 	for i, v := range events {
-		var eventTime *timestamppb.Timestamp
-		if v.EventTime.Year() != 1 {
-			eventTime = timestamppb.New(v.EventTime.Time)
-		} else {
-			eventTime = timestamppb.New(v.DeprecatedLastTimestamp.Time)
+		first, last := EventObservedTime(v)
+
+		userName := kubeutil.GetAnnotation(&v, cosmov1alpha1.EventAnnKeyUserName)
+		if userName == "" {
+			userName = cosmov1alpha1.UserNameByNamespace(v.Namespace)
 		}
 
-		var count int32
-		if v.Series != nil {
-			count = v.Series.Count
-		} else {
-			count = v.DeprecatedCount
-		}
-
-		var lastTime *timestamppb.Timestamp
-		if v.Series != nil {
-			lastTime = timestamppb.New(v.Series.LastObservedTime.Time)
-		} else {
-			lastTime = timestamppb.New(v.DeprecatedLastTimestamp.Time)
+		var wsName *string
+		if instName := kubeutil.GetAnnotation(&v, cosmov1alpha1.EventAnnKeyInstanceName); instName != "" {
+			wsName = &instName
 		}
 
 		e := &dashv1alpha1.Event{
-			EventTime: eventTime,
+			Id:        v.Name,
+			User:      userName,
+			EventTime: timestamppb.New(first),
 			Reason:    v.Reason,
 			Note:      v.Note,
 			Type:      v.Type,
@@ -186,14 +181,38 @@ func K2D_Events(events []eventsv1.Event) []*dashv1alpha1.Event {
 				Namespace:  v.Regarding.Namespace,
 			},
 			ReportingController: v.ReportingController,
-		}
-		if count > 1 {
-			e.Series = &dashv1alpha1.EventSeries{
-				Count:            count,
-				LastObservedTime: lastTime,
-			}
+			RegardingWorkspace:  wsName,
+			Series: &dashv1alpha1.EventSeries{
+				Count:            EventCount(v),
+				LastObservedTime: timestamppb.New(last),
+			},
 		}
 		es[i] = e
 	}
 	return es
+}
+
+func EventCount(v eventsv1.Event) int32 {
+	if v.Series != nil {
+		return v.Series.Count
+	} else {
+		return v.DeprecatedCount
+	}
+}
+
+func EventObservedTime(v eventsv1.Event) (first time.Time, last time.Time) {
+	if v.EventTime.Year() != 1 {
+		first = v.EventTime.Time
+	} else {
+		first = v.DeprecatedFirstTimestamp.Time
+	}
+	if v.Series != nil {
+		last = v.Series.LastObservedTime.Time
+	} else {
+		last = v.DeprecatedLastTimestamp.Time
+	}
+	if last.Before(first) {
+		return first, first
+	}
+	return first, last
 }

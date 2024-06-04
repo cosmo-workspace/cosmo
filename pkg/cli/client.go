@@ -70,7 +70,7 @@ func ConnectErrorHandler(rcmd RunCommand) func(*cobra.Command, []string) error {
 			rcmd.Logger().Debug().Info("connectErr", "code", connectErr.Code(), "message", connectErr.Message())
 			if connectErr.Code() == connect.CodeUnknown {
 				if strings.Index(connectErr.Message(), fmt.Sprintf("%d", http.StatusFound)) > 0 {
-					return fmt.Errorf("session has been expired: please login again")
+					return fmt.Errorf("session has been expired: please login again by \"cosmoctl login --again\"")
 				}
 				return fmt.Errorf("%w: session might have been expired", err)
 			}

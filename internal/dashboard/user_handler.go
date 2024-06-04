@@ -17,10 +17,10 @@ import (
 
 func (s *Server) UserServiceHandler(mux *http.ServeMux) {
 	path, handler := dashboardv1alpha1connect.NewUserServiceHandler(s,
-		connect_go.WithInterceptors(s.authorizationInterceptor()),
+		connect_go.WithInterceptors(authorizationInterceptorFunc(s.verifyAndGetLoginUser)),
 		connect_go.WithInterceptors(s.validatorInterceptor()),
 	)
-	mux.Handle(path, s.contextMiddleware(handler))
+	mux.Handle(path, s.timeoutHandler(s.contextMiddleware(handler)))
 }
 
 func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1alpha1.CreateUserRequest]) (*connect_go.Response[dashv1alpha1.CreateUserResponse], error) {
@@ -101,16 +101,33 @@ func (s *Server) GetUser(ctx context.Context, req *connect_go.Request[dashv1alph
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
-	events, err := s.Klient.ListEvents(ctx, cosmov1alpha1.UserNamespace(user.Name))
-	if err != nil {
-		log.Error(err, "failed to list events", "user", user.Name)
-	}
 
 	res := &dashv1alpha1.GetUserResponse{
 		User: apiconv.C2D_User(*user, apiconv.WithUserRaw(req.Msg.WithRaw)),
 	}
-	res.User.Events = apiconv.K2D_Events(events)
 
+	return connect_go.NewResponse(res), nil
+}
+
+func (s *Server) GetEvents(ctx context.Context, req *connect_go.Request[dashv1alpha1.GetEventsRequest]) (*connect_go.Response[dashv1alpha1.GetEventsResponse], error) {
+	log := clog.FromContext(ctx).WithCaller()
+	log.Debug().Info("request", "req", req)
+
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+		return nil, ErrResponse(log, err)
+	}
+
+	events, err := s.Klient.ListEvents(ctx, cosmov1alpha1.UserNamespace(req.Msg.UserName))
+	if err != nil {
+		return nil, ErrResponse(log, err)
+	}
+
+	res := &dashv1alpha1.GetEventsResponse{
+		Items: apiconv.K2D_Events(events),
+	}
+	if len(res.Items) == 0 {
+		res.Message = "No items found"
+	}
 	return connect_go.NewResponse(res), nil
 }
 
