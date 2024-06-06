@@ -69,7 +69,7 @@ show-url: ## show-url
 create-all: create-cluster docker-build-all install-all apply-template add-user add-workspace ## Create all
 delete-all: delete-cluster ## Delete all
 
-docker-build-all: docker-build-manager docker-build-dashboard docker-build-traefik-plugins ## Docker build all
+docker-build-all: docker-build-manager docker-build-dashboard ## Docker build all
 
 install-all: install-cosmo ## Install cosmo resources.
 uninstall-all: uninstall-cosmo ## Uninstall cosmo resources.
@@ -195,7 +195,7 @@ MANAGER_IMAGE_TAG   ?= $(IMAGE_TAG)
 DASHBOARD_IMAGE_TAG ?= $(IMAGE_TAG)
 TRAEFIK_PLUGINS_IMAGE_TAG ?= $(IMAGE_TAG)
 
-.PHONY: docker-build-manager docker-build-dashboard docker-build-traefik-plugins docker-cache-clear
+.PHONY: docker-build-manager docker-build-dashboard docker-cache-clear
 
 docker-build-manager: ## build & push cosmo contoller-manager image.
 	@echo ====== $@ ======
@@ -215,16 +215,6 @@ docker-build-dashboard: ## build & push cosmo dashboard image.
 	k3d image import localhost:5000/cosmo-dashboard:$(DASHBOARD_IMAGE_TAG) -c $(CLUSTER_NAME)
 	-kubectl rollout restart deploy -n cosmo-system cosmo-dashboard
 
-docker-build-traefik-plugins: ## build & push cosmo traefik-plugins image.
-	@echo ====== $@ ======
-	cd ../.. && make docker-build-traefik-plugins VERSION=$(TRAEFIK_PLUGINS_IMAGE_TAG) QUICK_BUILD=yes
-	docker tag cosmo-traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
-	docker push localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
-	docker rmi cosmo-traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG)
-	k3d image import localhost:5000/traefik-plugins:$(TRAEFIK_PLUGINS_IMAGE_TAG) -c $(CLUSTER_NAME)
-	-kubectl rollout restart deploy -n cosmo-system traefik
-
-
 docker-cache-clear: ## docker cache clear.
 	-docker system df
 	-docker images
@@ -240,7 +230,7 @@ docker-cache-clear: ## docker cache clear.
 
 LOGLEVEL ?= info
 
-install-cosmo: #helm kubectl docker-build-manager docker-build-dashboard docker-build-traefik-plugins ## Install cosmo resources.
+install-cosmo: #helm kubectl docker-build-manager docker-build-dashboard ## Install cosmo resources.
 	@echo ====== $@ ======
 	helm dependency update ../../charts/cosmo
 	helm upgrade --install cosmo ../../charts/cosmo \

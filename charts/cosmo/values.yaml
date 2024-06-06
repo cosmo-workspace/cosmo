@@ -253,20 +253,24 @@ traefik:
   # Set the same namespace with controller and dashboard
   namespaceOverride: cosmo-system
 
+  # ---------- DO NOT EDIT BELOW EXCEPT UNUSUAL USECASE ----------
   # Enable plugins
   # local plugin is not supported by this options on 28.0.0
   # so add configs manually via additionalVolumes, additionalVolumeMounts and additionalArguments
   # experimental:
   #   plugins:
   #     enabled: true
-
   deployment:
-    # Installing local plugins by init containers
     initContainers:
       - name: copy-plugins
-        image: ghcr.io/cosmo-workspace/cosmo-traefik-plugins:latest
+        image: alpine
         imagePullPolicy: IfNotPresent
-        command: ["sh", "-c", "cp -r /plugins-local/* /local-plugins/"]
+        command: ["sh", "-c"]
+        args:
+          - |
+            cd /tmp && \
+            wget --no-check-certificate https://cosmo-webhook-service/traefik-plugins.tar.gz && \
+            tar -xvC /local-plugins -f traefik-plugins.tar.gz
         volumeMounts:
           - name: local-plugins
             mountPath: /local-plugins

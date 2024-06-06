@@ -1,8 +1,10 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"reflect"
 
@@ -48,6 +50,9 @@ var (
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
 	o        = &option{}
+
+	//go:embed traefik-plugins.tar.gz
+	traefikPluginFileContent []byte
 )
 
 type option struct {
@@ -209,6 +214,14 @@ MIT 2023 cosmo-workspace/cosmo
 				Log:     clog.NewLogger(ctrl.Log.WithName("TemplateValidationWebhook")),
 				Decoder: admission.NewDecoder(mgr.GetScheme()),
 			}).SetupWebhookWithManager(mgr)
+
+			// Serving traefik plugin
+			mgr.GetWebhookServer().Register(
+				"/traefik-plugins.tar.gz",
+				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					w.Write(traefikPluginFileContent)
+				}),
+			)
 
 			ctx := ctrl.SetupSignalHandler()
 
