@@ -70,13 +70,11 @@ const useWorkspace = () => {
   const [workspaces, setWorkspaces] = useState<
     { [key: string]: WorkspaceWrapper }
   >({});
-  // order
-  // const wss = result.items.sort((a, b) => (a.name < b.name) ? -1 : 1);
   const { handleError } = useHandleError();
   const workspaceService = useWorkspaceService();
   const userService = useUserService();
 
-  const { loginUser, myEvents, updateClock } = useLogin();
+  const { loginUser, updateClock } = useLogin();
   const [user, setUser] = useState<User>(loginUser || new User());
   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
 
@@ -90,11 +88,11 @@ const useWorkspace = () => {
     Object.keys(workspaces).forEach((name) => {
       clearTimer(name);
     });
-    enqueueSnackbar("Stop all polling", { variant: "info" });
   };
 
   useEffect(() => {
-    getWorkspaces();
+    stopAllPolling();
+    getWorkspaces(user.name);
   }, [user]);
 
   const upsertWorkspace = (ws: Workspace, events?: Event[]) => {
@@ -104,20 +102,21 @@ const useWorkspace = () => {
       if (events) pws.events = events;
       return { ...prev, [ws.name]: pws };
     });
+    updateClock();
   };
 
   /**
    * WorkspaceList: workspace list
    */
-  const getWorkspaces = async (userName?: string) => {
+  const getWorkspaces = async (userName: string) => {
     console.log("getWorkspaces", userName);
     setMask();
     try {
       const getWorkspacesResult = await workspaceService.getWorkspaces({
-        userName: userName || user.name,
+        userName: userName,
       });
       const getEventsResult = await userService.getEvents({
-        userName: userName || user.name,
+        userName: userName,
       });
 
       const workspaces = getWorkspacesResult.items;
@@ -153,7 +152,6 @@ const useWorkspace = () => {
     } catch (error) {
       handleError(error);
     } finally {
-      updateClock();
       releaseMask();
     }
   };

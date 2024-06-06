@@ -528,6 +528,7 @@ const WorkspaceList: React.VFC = () => {
     stopAllPolling,
   } = useWorkspaceModule();
   const { loginUser } = useLogin();
+  const { enqueueSnackbar } = useSnackbar();
   const isPriv = hasPrivilegedRole(loginUser?.roles || []);
   const [urlParam, setUrlParam] = useUrlState({ "search": "" }, {
     stringifyOptions: { skipEmptyString: true },
@@ -596,6 +597,7 @@ const WorkspaceList: React.VFC = () => {
                   color="inherit"
                   onClick={() => {
                     stopAllPolling();
+                    enqueueSnackbar("Stop all polling", { variant: "info" });
                   }}
                   onMouseLeave={() => setIsHoverRefreshIcon(false)}
                 >
