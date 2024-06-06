@@ -29,7 +29,7 @@ const ClipboardTextField = (props: TextFieldProps) => {
   const [focused, setFocused] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const onCopy = (text) => { // eslint-disable-line
+  const onCopy = (text: string) => {
     copy(text);
     enqueueSnackbar("Copied!", { variant: "success" });
   };
@@ -45,7 +45,7 @@ const ClipboardTextField = (props: TextFieldProps) => {
             <InputAdornment position="end">
               <IconButton
                 onClick={() => {
-                  onCopy(props.value);
+                  onCopy(String(props.value));
                 }}
               >
                 <ContentCopy fontSize="small" />
