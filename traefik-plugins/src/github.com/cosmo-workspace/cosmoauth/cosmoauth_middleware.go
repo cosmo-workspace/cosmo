@@ -2,6 +2,7 @@ package cosmoauth
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -16,10 +17,19 @@ import (
 
 // nolint
 var (
-	LoggerDEBUG = log.New(io.Discard, "DEBUG: cosmo-auth: ", log.Ldate|log.Ltime|log.Lshortfile)
-	LoggerINFO  = log.New(io.Discard, "INFO: cosmo-auth: ", log.Ldate|log.Ltime|log.Lshortfile)
-	LoggerERROR = log.New(io.Discard, "ERROR: cosmo-auth: ", log.Ldate|log.Ltime|log.Lshortfile)
+	LoggerDEBUG = log.New(io.Discard, "cosmo-auth: (DEBUG)", log.Ldate|log.Ltime|log.Lshortfile)
+	LoggerINFO  = log.New(io.Discard, "cosmo-auth: (INFO) ", log.Ldate|log.Ltime|log.Lshortfile)
+	LoggerERROR = log.New(io.Discard, "cosmo-auth: (ERROR)", log.Ldate|log.Ltime|log.Lshortfile)
 )
+
+func accessLog(r *http.Request, statusCode int, ses session.Info, msg string) {
+	deadline, _ := time.Parse(time.UnixDate, fmt.Sprint(ses.Deadline))
+	userName := r.Header.Get("X-Cosmo-UserName")
+	if userName == "" {
+		userName = "-"
+	}
+	LoggerINFO.Printf("%s %s %s %d %s %s: %s", r.RemoteAddr, r.Method, r.URL, statusCode, ses.UserName, deadline.Format(time.RFC3339), msg)
+}
 
 // Config the plugin configuration.
 type Config struct {
@@ -77,7 +87,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	LoggerINFO.Printf("headers: %v", r.Header)
+	LoggerDEBUG.Printf("%s %s %s: headers=%v", r.RemoteAddr, r.Method, r.URL, r.Header)
 
 	// Bypass manifest.json not to check session. By default, manifest.json is requested without cookie.
 	// https://developer.mozilla.org/en-US/docs/Web/Manifest
@@ -86,19 +96,18 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ses, err := p.SessionStore.Get(r, p.config.CookieSessionName)
-	if ses == nil || err != nil {
-		LoggerERROR.Printf("failed to get session from store. err=%s", err)
+	if err != nil {
+		accessLog(r, http.StatusFound, session.Info{}, fmt.Sprintf("failed to get session from store. err: %s", err))
 		p.redirectToLoginPage(w, r)
 		return
 	}
-	if ses.IsNew {
-		LoggerDEBUG.Println("not authorized")
+	if ses == nil || ses.IsNew {
+		accessLog(r, http.StatusFound, session.Info{}, "no session")
 		p.redirectToLoginPage(w, r)
 		return
 	}
 
 	sesInfo := session.Get(ses)
-	LoggerDEBUG.Print("get session.", " userName=", sesInfo.UserName, " deadline=", sesInfo.Deadline)
 
 	// check user name is owner's
 	userName := r.Header.Get("X-Cosmo-UserName")
@@ -108,18 +117,17 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		allowed := false
 		for header := range r.Header {
 			shareUser, found := strings.CutPrefix(strings.ToLower(header), strings.ToLower("X-Cosmo-UserName-"))
-			if found {
-				LoggerDEBUG.Println("X-Cosmo-UserName-header", " ownerName=", userName, " shareUser=", shareUser)
+			if found && userName != shareUser {
+				LoggerDEBUG.Printf("%s %s %s %s: shareUser=%s", r.RemoteAddr, r.Method, r.URL, sesInfo.UserName, shareUser)
 
 				if sesInfo.UserName == shareUser {
-					LoggerINFO.Println("shared workspace", " ownerName=", userName, " shareUser=", shareUser)
 					allowed = true
 					break
 				}
 			}
 		}
 		if !allowed {
-			LoggerINFO.Print("forbidden", " storedUserName=", sesInfo.UserName, " ownerName=", userName)
+			accessLog(r, http.StatusForbidden, sesInfo, "access is denied")
 			p.forbidden(w, r)
 			return
 		}
@@ -129,11 +137,10 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	if sesInfo.Deadline > 0 {
 		deadline := time.Unix(sesInfo.Deadline, 0)
-		LoggerDEBUG.Print("session deadline is ", deadline)
 
 		now := time.Now()
 		if deadline.Before(now) {
-			LoggerINFO.Print("session expired", " now=", now, " deadline=", deadline)
+			accessLog(r, http.StatusFound, sesInfo, "session expired")
 			p.redirectToLoginPage(w, r)
 			return
 		}
@@ -143,7 +150,7 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		defer cancel()
 	}
 
-	LoggerDEBUG.Print("authorized.", " path=", r.URL.Path)
+	accessLog(r, http.StatusOK, sesInfo, "access is allowed")
 	p.next.ServeHTTP(w, r.WithContext(ctx))
 	w.Header().Set("X-Cosmo-UserName", sesInfo.UserName)
 }
