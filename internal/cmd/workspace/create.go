@@ -135,6 +135,7 @@ func (o *CreateOption) CreateWorkspaceWithDashClient(ctx context.Context) (*dash
 		Vars:     o.vars,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.CreateWorkspace", "req", req)
 	res, err := c.WorkspaceServiceClient.CreateWorkspace(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)

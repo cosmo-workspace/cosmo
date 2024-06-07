@@ -113,6 +113,7 @@ func (o *GetAddonsOption) ListUserAddonsWithDashClient(ctx context.Context, with
 		WithRaw:       ptr.To(withRaw),
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("TemplateServiceClient.GetUserAddonTemplates", "req", req)
 	res, err := c.TemplateServiceClient.GetUserAddonTemplates(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)

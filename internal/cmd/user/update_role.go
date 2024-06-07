@@ -129,6 +129,7 @@ func (o *UpdateRoleOption) UpdateUserRoleWithDashClient(ctx context.Context) (*d
 		UserName: o.UserName,
 		Roles:    o.Roles,
 	}
+	o.Logr.DebugAll().Info("UserServiceClient.UpdateUserRole", "req", req)
 	c := o.CosmoDashClient
 	res, err := c.UserServiceClient.UpdateUserRole(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
@@ -144,6 +145,7 @@ func (o *UpdateRoleOption) UpdateUserRoleWithKubeClient(ctx context.Context) (*d
 	opts := kosmo.UpdateUserOpts{
 		UserRoles: apiconv.S2C_UserRoles(o.Roles),
 	}
+	o.Logr.DebugAll().Info("UpdateUser", "opts", opts)
 	user, err := c.UpdateUser(ctx, o.UserName, opts)
 	if err != nil {
 		return nil, err
@@ -158,6 +160,7 @@ func (o *UpdateRoleOption) GetUserWithDashClient(ctx context.Context) (*dashv1al
 		UserName: o.UserName,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("UserServiceClient.GetUser", "req", req)
 	res, err := c.UserServiceClient.GetUser(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)

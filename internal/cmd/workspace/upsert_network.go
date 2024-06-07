@@ -132,6 +132,7 @@ func (o *UpsertNetworkOption) UpsertNetworkRuleWithDashClient(ctx context.Contex
 		NetworkRule: apiconv.C2D_NetworkRule(o.rule),
 		Index:       int32(index),
 	}
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.UpsertNetworkRule", "req", req)
 	res, err := c.WorkspaceServiceClient.UpsertNetworkRule(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
@@ -149,6 +150,7 @@ func (o *UpsertNetworkOption) UpsertNetworkRuleByKubeClient(ctx context.Context)
 	}
 	index := cosmov1alpha1.GetNetworkRuleIndex(ws.Spec.Network, o.rule)
 
+	o.Logr.DebugAll().Info("AddNetworkRule", "workspaceName", o.WorkspaceName, "userName", o.UserName, "rule", o.rule, "index", index)
 	cr, err := c.AddNetworkRule(ctx, o.WorkspaceName, o.UserName, o.rule, index)
 	if err != nil {
 		return nil, err

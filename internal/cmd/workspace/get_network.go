@@ -96,6 +96,7 @@ func (o *GetNetworkOption) GetWorkspaceWithDashClient(ctx context.Context) (*das
 		UserName: o.UserName,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.GetWorkspace", "req", req)
 	res, err := c.WorkspaceServiceClient.GetWorkspace(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
@@ -118,6 +119,7 @@ func (o *GetNetworkOption) OutputTable(w io.Writer, workspace *dashv1alpha1.Work
 
 func (o *GetNetworkOption) GetWorkspaceByKubeClient(ctx context.Context) (*dashv1alpha1.Workspace, error) {
 	c := o.KosmoClient
+	o.Logr.DebugAll().Info("GetWorkspaceByUserName", "workspaceName", o.WorkspaceName, "userName", o.UserName)
 	workspace, err := c.GetWorkspaceByUserName(ctx, o.WorkspaceName, o.UserName)
 	if err != nil {
 		return nil, err

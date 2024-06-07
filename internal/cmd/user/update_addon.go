@@ -133,6 +133,7 @@ func (o *UpdateAddonOption) UpdateUserWithDashClient(ctx context.Context) (*dash
 		UserName: o.UserName,
 		Addons:   o.userAddons,
 	}
+	o.Logr.DebugAll().Info("UserServiceClient.UpdateUserAddons", "req", req)
 	res, err := c.UserServiceClient.UpdateUserAddons(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
@@ -148,6 +149,7 @@ func (o *UpdateAddonOption) UpdateUserWithKubeClient(ctx context.Context) (*dash
 		UserAddons: apiconv.D2C_UserAddons(o.userAddons),
 	}
 
+	o.Logr.DebugAll().Info("UpdateUser", "opts", opts)
 	user, err := c.UpdateUser(ctx, o.UserName, opts)
 	if err != nil {
 		return nil, err

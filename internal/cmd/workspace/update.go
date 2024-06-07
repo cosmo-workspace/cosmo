@@ -142,6 +142,7 @@ func (o *UpdateOption) UpdateWorkspaceWithDashClient(ctx context.Context) (*dash
 		Vars:     o.vars,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.UpdateWorkspace", "req", req)
 	res, err := c.WorkspaceServiceClient.UpdateWorkspace(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
@@ -152,10 +153,12 @@ func (o *UpdateOption) UpdateWorkspaceWithDashClient(ctx context.Context) (*dash
 }
 
 func (o *UpdateOption) UpdateWorkspaceWithKubeClient(ctx context.Context) (*dashv1alpha1.Workspace, error) {
-	c := o.KosmoClient
-	ws, err := c.UpdateWorkspace(ctx, o.UserName, o.WorkspaceName, kosmo.UpdateWorkspaceOpts{
+	opts := kosmo.UpdateWorkspaceOpts{
 		Vars: o.vars,
-	})
+	}
+	c := o.KosmoClient
+	o.Logr.DebugAll().Info("UpdateWorkspace", "userName", o.UserName, "workspaceName", o.WorkspaceName, "opts", opts)
+	ws, err := c.UpdateWorkspace(ctx, o.UserName, o.WorkspaceName, opts)
 	if err != nil {
 		return nil, err
 	}

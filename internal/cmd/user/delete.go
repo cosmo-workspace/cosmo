@@ -102,6 +102,7 @@ func (o *DeleteOption) DeleteUserWithDashClient(ctx context.Context, userName st
 		UserName: userName,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("UserServiceClient.DeleteUser", "req", req)
 	res, err := c.UserServiceClient.DeleteUser(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return fmt.Errorf("failed to connect dashboard server: %w", err)

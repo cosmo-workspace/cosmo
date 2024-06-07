@@ -129,6 +129,7 @@ func (o *RemoveNetworkOption) DeleteNetworkRuleWithDashClient(ctx context.Contex
 		UserName: o.UserName,
 		Index:    int32(index),
 	}
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.DeleteNetworkRule", "req", req)
 	res, err := c.WorkspaceServiceClient.DeleteNetworkRule(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return fmt.Errorf("failed to connect dashboard server: %w", err)

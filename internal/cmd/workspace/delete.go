@@ -112,6 +112,7 @@ func (o *DeleteOption) DeleteWorkspaceWithDashClient(ctx context.Context, worksp
 		WsName:   workspaceName,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.DeleteWorkspace", "req", req)
 	res, err := c.WorkspaceServiceClient.DeleteWorkspace(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return fmt.Errorf("failed to connect dashboard server: %w", err)

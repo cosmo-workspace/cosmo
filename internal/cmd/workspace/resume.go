@@ -96,6 +96,7 @@ func (o *ResumeOption) ResumeWorkspaceWithDashClient(ctx context.Context, worksp
 		Replicas: ptr.To(int64(1)),
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.UpdateWorkspace", "req", req)
 	res, err := c.WorkspaceServiceClient.UpdateWorkspace(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return fmt.Errorf("failed to connect dashboard server: %w", err)
