@@ -79,7 +79,7 @@ endif
 ##---------------------------------------------------------------------
 ##@ Test
 ##---------------------------------------------------------------------
-TEST_FILES ?= ./... ./traefik/plugins/cosmo-workspace/cosmoauth/
+TEST_FILES ?= ./... ./traefik-plugins/src/github.com/cosmo-workspace/cosmoauth/
 COVER_PROFILE ?= cover.out
 #TEST_OPTS ?= --ginkgo.focus 'Dashboard server \[User\]' -ginkgo.v -ginkgo.progress -test.v > test.out 2>&1
 
