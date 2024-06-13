@@ -162,9 +162,9 @@ func (r *instanceReconciler) reconcileObjects(ctx context.Context, inst cosmov1a
 				created, err := r.apply(ctx, &built, r.FieldManager)
 				if err != nil {
 					errs = append(errs, fmt.Errorf("failed to create resource: kind = %s name = %s: %w", built.GetKind(), built.GetName(), err))
-				} else {
-					kosmo.InstanceEventf(r.Recorder, inst, corev1.EventTypeNormal, "Synced", "%s %s is created", built.GetKind(), built.GetName())
+					continue
 				}
+				kosmo.InstanceEventf(r.Recorder, inst, corev1.EventTypeNormal, "Synced", "%s %s is created", built.GetKind(), built.GetName())
 				currAppliedMap[created.GetUID()] = unstToObjectRef(created)
 
 			} else {
