@@ -19,7 +19,7 @@ spec:
   routes:
     {{- if .Values.dashboard.localRunTest.enabled }}
     - kind: Rule
-      match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`) && (Path(`/`) || PathPrefix(`/@`) || PathPrefix(`/src`) || PathPrefix(`/manifest.json`) || PathPrefix(`/node_modules`) || PathPrefix(`/logo`))
+      match: Host(`{{ .Values.dashboard.ingressRoute.host }}.{{ .Values.domain }}`) && (Path(`/`) || PathPrefix(`/@`) || PathPrefix(`/src`) || PathPrefix(`/manifest.json`) || PathPrefix(`/node_modules`) || PathPrefix(`/logo`)) || PathPrefix(`/favicon.ico`))
       priority: 1002
       services:
         - kind: Service

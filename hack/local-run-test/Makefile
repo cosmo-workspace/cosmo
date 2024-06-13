@@ -264,7 +264,6 @@ install-cosmo-local: helm kubectl ## Install cosmo resources.
 	@echo ====== $@ ======
 	helm upgrade --install cosmo ../../charts/cosmo \
 		-n cosmo-system --create-namespace \
-		--wait \
 		--set domain="\$(DOMAIN)" \
 		--set urlbase.host="\$(DEFAULT_URLBASE_HOST)" \
 		--set controllerManager.image.repository=cosmo.io:5000/cosmo-controller-manager \
@@ -353,6 +352,8 @@ create-cosmo-resources: apply-template add-user add-workspace cg
 run-manager-local: go
 	@echo ====== $@ ======
 	@#(cd ../.. && bash hack/download-certs.sh webhook-server-cert && make run QUICK_BUILD=yes)
+	cd ../.. && rm -f ./cmd/controller-manager/*.tar.gz && make embed-traefik-plugins
+	(sleep 8 && kubectl rollout restart deploy/traefik -n cosmo-system) &
 	cd ../.. && bash hack/download-certs.sh webhook-server-cert && \
 		$(GO) run ./cmd/controller-manager/main.go \
 		--metrics-bind-address :8085 \
