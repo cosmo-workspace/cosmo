@@ -164,7 +164,7 @@ const useWorkspace = () => {
     const ws = getWorkspaceResult.workspace!;
 
     const getEventsResult = await userService.getEvents({
-      userName: ws.ownerName,
+      userName: user.name,
     });
     const events = getEventsResult.items.filter((e) =>
       e.regardingWorkspace === ws.name
