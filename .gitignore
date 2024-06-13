@@ -30,3 +30,4 @@ bin
 *.cert
 
 config/crd/traefik
+cmd/controller-manager/traefik-plugins.tar.gz

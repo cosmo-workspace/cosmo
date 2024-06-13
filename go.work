@@ -4,5 +4,5 @@ toolchain go1.22.3
 
 use (
 	.
-	./traefik/plugins/cosmo-workspace/cosmoauth
+	./traefik-plugins/src/github.com/cosmo-workspace/cosmoauth
 )

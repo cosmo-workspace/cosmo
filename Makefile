@@ -7,13 +7,11 @@ QUICK_BUILD ?= no
 MANAGER_VERSION   ?= $(VERSION)
 DASHBOARD_VERSION ?= $(VERSION)
 COSMOCTL_VERSION  ?= $(VERSION)
-TRAEFIK_PLUGINS_VERSION ?= $(VERSION)
 
 CHART_VERSION   ?= $(VERSION)
 
 IMG_MANAGER ?= cosmo-controller-manager:$(MANAGER_VERSION)
 IMG_DASHBOARD ?= cosmo-dashboard:$(DASHBOARD_VERSION)
-IMG_TRAEFIK_PLUGINS ?= cosmo-traefik-plugins:$(TRAEFIK_PLUGINS_VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:generateEmbeddedObjectMeta=true"
 
@@ -73,7 +71,7 @@ ifeq ($(QUICK_BUILD),no)
 endif
 
 .PHONY: vet
-vet: go ## Run go vet against code.
+vet: go embed-traefik-plugins ## Run go vet against code.
 ifeq ($(QUICK_BUILD),no)
 	$(GO) vet ./...
 endif
@@ -204,11 +202,17 @@ run: go generate fmt vet manifests ## Run controller-manager against the configu
 		--metrics-bind-address :8085 \
 		--cert-dir .
 
+embed-traefik-plugins: cmd/controller-manager/traefik-plugins.tar.gz
+cmd/controller-manager/traefik-plugins.tar.gz:
+	make -C traefik-plugins/src/github.com/cosmo-workspace/cosmoauth vendor
+	cd traefik-plugins && tar zcvf traefik-plugins.tar.gz src/
+	mv traefik-plugins/traefik-plugins.tar.gz cmd/controller-manager/
+
 ##---------------------------------------------------------------------
 ##@ Docker build
 ##---------------------------------------------------------------------
 .PHONY: docker-build
-docker-build: docker-build-manager docker-build-dashboard docker-build-traefik-plugins ## Build the docker image.
+docker-build: docker-build-manager docker-build-dashboard ## Build the docker image.
 
 .PHONY: docker-build-manager
 docker-build-manager: test ## Build the docker image for controller-manager.
@@ -218,12 +222,8 @@ docker-build-manager: test ## Build the docker image for controller-manager.
 docker-build-dashboard: test ## Build the docker image for dashboard.
 	DOCKER_BUILDKIT=1 docker build . -t ${IMG_DASHBOARD} -f dockerfile/dashboard.Dockerfile
 
-.PHONY: docker-build-traefik-plugins
-docker-build-traefik-plugins: test ## Build the docker image for traefik-plugins.
-	DOCKER_BUILDKIT=1 docker build . -t ${IMG_TRAEFIK_PLUGINS} -f dockerfile/traefik-plugins.Dockerfile
-
-.PHONY: docker-push docker-push-manager docker-push-dashboard docker-push-traefik-plugins
-docker-push: docker-push-manager docker-push-dashboard docker-push-traefik-plugins ## Build the docker image.
+.PHONY: docker-push docker-push-manager docker-push-dashboard
+docker-push: docker-push-manager docker-push-dashboard ## Build the docker image.
 
 REGISTORY ?= ghcr.io/cosmo-workspace
 
@@ -234,10 +234,6 @@ docker-push-manager: docker-build-manager ## push cosmo contoller-manager image.
 docker-push-dashboard: docker-build-dashboard ## push cosmo dashboard image.
 	docker tag ${IMG_DASHBOARD} ${REGISTORY}/${IMG_DASHBOARD}
 	docker push ${REGISTORY}/${IMG_DASHBOARD}
-
-docker-push-traefik-plugins: docker-build-traefik-plugins ## push cosmo traefik-plugins image.
-	docker tag ${IMG_TRAEFIK_PLUGINS} ${REGISTORY}/${IMG_TRAEFIK_PLUGINS}
-	docker push ${REGISTORY}/${IMG_TRAEFIK_PLUGINS}
 
 ##---------------------------------------------------------------------
 ##@ Deployment
