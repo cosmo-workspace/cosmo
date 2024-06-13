@@ -2,10 +2,14 @@ package dashboard
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"slices"
 
 	connect_go "github.com/bufbuild/connect-go"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
+	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
 	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
@@ -51,7 +55,9 @@ func (s *Server) GetWorkspaces(ctx context.Context, req *connect_go.Request[dash
 		return nil, ErrResponse(log, err)
 	}
 
-	wss, err := s.Klient.ListWorkspacesByUserName(ctx, req.Msg.UserName)
+	wss, err := s.Klient.ListWorkspacesByUserName(ctx, req.Msg.UserName, func(opt *kosmo.ListWorkspacesOptions) {
+		opt.IncludeShared = req.Msg.IncludeShared != nil && *req.Msg.IncludeShared
+	})
 	if err != nil {
 		return nil, ErrResponse(log, err)
 	}
@@ -69,7 +75,7 @@ func (s *Server) GetWorkspace(ctx context.Context, req *connect_go.Request[dashv
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := s.sharedWorkspaceAuthorization(ctx, req.Msg.WsName, req.Msg.UserName, false); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -110,7 +116,7 @@ func (s *Server) UpdateWorkspace(ctx context.Context, req *connect_go.Request[da
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := s.sharedWorkspaceAuthorization(ctx, req.Msg.WsName, req.Msg.UserName, true); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -128,4 +134,48 @@ func (s *Server) UpdateWorkspace(ctx context.Context, req *connect_go.Request[da
 	}
 	log.Info(res.Message, "username", req.Msg.UserName, "workspaceName", req.Msg.WsName)
 	return connect_go.NewResponse(res), nil
+}
+
+func (s *Server) sharedWorkspaceAuthorization(ctx context.Context, wsName, wsOwnerName string, update bool) error {
+	log := clog.FromContext(ctx).WithCaller()
+
+	if err := userAuthentication(ctx, wsOwnerName); err == nil {
+		// pass if caller is the owner of the workspace
+		return nil
+	}
+
+	caller := callerFromContext(ctx)
+	if !slices.ContainsFunc(caller.Status.SharedWorkspaces, func(sharedRef cosmov1alpha1.ObjectRef) bool {
+		return cosmov1alpha1.UserNameByNamespace(sharedRef.Namespace) == wsOwnerName
+	}) {
+		return NewForbidden(fmt.Errorf("invalid user authentication"))
+	}
+
+	// only users who are allowed to access main rule can update workspace
+	ws, err := s.Klient.GetWorkspaceByUserName(ctx, wsName, wsOwnerName)
+	if err != nil {
+		return ErrResponse(log, err)
+	}
+
+	if !slices.ContainsFunc(ws.Spec.Network, func(r cosmov1alpha1.NetworkRule) bool {
+		return slices.Contains(r.AllowedUsers, caller.Name)
+	}) {
+		return NewForbidden(fmt.Errorf("invalid user authentication"))
+	}
+
+	if update {
+		mainRuleIndex := slices.IndexFunc(ws.Spec.Network, func(n cosmov1alpha1.NetworkRule) bool {
+			return n.CustomHostPrefix == ws.Status.Config.ServiceMainPortName
+		})
+		if mainRuleIndex < 0 {
+			return ErrResponse(log, ErrResponse(log, apierrs.NewInternalError(fmt.Errorf("main rule not found"))))
+		}
+
+		// check caller is allowed to access main rule
+		if !slices.Contains(ws.Spec.Network[mainRuleIndex].AllowedUsers, caller.Name) {
+			return NewForbidden(fmt.Errorf("invalid user authentication"))
+		}
+	}
+
+	return nil
 }

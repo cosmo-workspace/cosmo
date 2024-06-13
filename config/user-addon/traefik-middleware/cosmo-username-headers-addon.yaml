@@ -23,5 +23,6 @@ spec:
       headers:
         customRequestHeaders:
           X-Cosmo-UserName: '{{USER_NAME}}'
+          X-Cosmo-UserName-{{USER_NAME}}: '1'
         customResponseHeaders:
           X-Cosmo-UserName: '{{USER_NAME}}'

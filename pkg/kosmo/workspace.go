@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"sort"
 	"time"
 
@@ -46,25 +47,50 @@ func (c *Client) GetWorkspace(ctx context.Context, name, namespace string) (*cos
 	return &ws, nil
 }
 
-func (c *Client) ListWorkspacesByUserName(ctx context.Context, username string) ([]cosmov1alpha1.Workspace, error) {
-	return c.ListWorkspaces(ctx, cosmov1alpha1.UserNamespace(username))
+type ListWorkspacesOptions struct {
+	IncludeShared bool
 }
 
-func (c *Client) ListWorkspaces(ctx context.Context, namespace string) ([]cosmov1alpha1.Workspace, error) {
+func (c *Client) ListWorkspacesByUserName(ctx context.Context, username string, optFunc ...func(*ListWorkspacesOptions)) ([]cosmov1alpha1.Workspace, error) {
 	log := clog.FromContext(ctx).WithCaller()
 
-	if _, err := c.GetUser(ctx, cosmov1alpha1.UserNameByNamespace(namespace)); err != nil {
+	var o ListWorkspacesOptions
+	for _, f := range optFunc {
+		f(&o)
+	}
+
+	user, err := c.GetUser(ctx, username)
+	if err != nil {
 		return nil, err
 	}
 
+	// list owned workspaces
 	wsList := cosmov1alpha1.WorkspaceList{}
-	opts := &client.ListOptions{Namespace: namespace}
+	opts := &client.ListOptions{Namespace: cosmov1alpha1.UserNamespace(username)}
 
 	if err := c.List(ctx, &wsList, opts); err != nil {
-		log.Error(err, "failed to list workspaces", "namespace", namespace)
+		log.Error(err, "failed to list workspaces", "namespace", cosmov1alpha1.UserNamespace(username))
 		return nil, fmt.Errorf("failed to list workspaces: %w", err)
 	}
 	sort.Slice(wsList.Items, func(i, j int) bool { return wsList.Items[i].Name < wsList.Items[j].Name })
+
+	// list shared workspaces
+	if o.IncludeShared {
+		for _, sharedRef := range user.Status.SharedWorkspaces {
+			ws := cosmov1alpha1.Workspace{}
+
+			err := c.Get(ctx, client.ObjectKey{Name: sharedRef.Name, Namespace: sharedRef.Namespace}, &ws)
+			if err != nil {
+				log.Error(err, "failed to get shared workspace", "name", sharedRef.Name, "namespace", sharedRef.Namespace)
+			} else {
+				if slices.ContainsFunc(ws.Spec.Network, func(r cosmov1alpha1.NetworkRule) bool {
+					return slices.Contains(r.AllowedUsers, user.Name)
+				}) {
+					wsList.Items = append(wsList.Items, ws)
+				}
+			}
+		}
+	}
 
 	return wsList.Items, nil
 }

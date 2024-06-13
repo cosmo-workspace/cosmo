@@ -1094,6 +1094,10 @@ func (m *GetWorkspacesRequest) validate(all bool) error {
 		// no validation rules for WithRaw
 	}
 
+	if m.IncludeShared != nil {
+		// no validation rules for IncludeShared
+	}
+
 	if len(errors) > 0 {
 		return GetWorkspacesRequestMultiError(errors)
 	}

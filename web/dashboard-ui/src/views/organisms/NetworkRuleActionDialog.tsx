@@ -1,23 +1,32 @@
-import { Close, ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Add, Close, ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Alert,
   Box,
   Button,
-  Checkbox,
+  Chip,
   Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
+  FormControl,
+  Grid,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { Controller, UseFormRegisterReturn, useForm } from "react-hook-form";
+import {
+  Controller,
+  UseFormRegisterReturn,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import {
   NetworkRule,
@@ -49,16 +58,46 @@ export const NetworkRuleUpsertDialog: React.VFC<{
   defaultOpenHttpOptions,
   isMain,
 }) => {
-  console.log("NetworkRuleUpsertDialog", networkRule);
+  console.log("NetworkRuleUpsertDialog", {
+    ...networkRule,
+    inputAccessMode: networkRule?.public ? "public" : "private",
+    inputAllowedUsers:
+      networkRule?.allowedUsers?.map((v) => ({ name: v })) || [],
+  });
   const networkRuleModule = useNetworkRule();
+
+  type NetworkRuleFormData = NetworkRule & {
+    inputAllowedUsers: { name: string }[];
+    inputAllowedUser: string;
+    inputAccessMode: string;
+  };
+
   const {
     register,
     handleSubmit,
-    setValue,
+    getValues,
     control,
+    setValue,
     formState: { errors },
-  } = useForm<NetworkRule>({
-    defaultValues: networkRule || { portNumber: 8080, httpPath: "/" },
+  } = useForm<NetworkRuleFormData>({
+    defaultValues: networkRule
+      ? {
+          ...networkRule,
+          inputAccessMode: networkRule?.public ? "public" : "private",
+          inputAllowedUsers:
+            networkRule?.allowedUsers?.map((v) => ({ name: v })) || [],
+        }
+      : {
+          portNumber: 8080,
+          httpPath: "/",
+          inputAccessMode: "private",
+          inputAllowedUsers: [],
+          inputAllowedUser: "",
+        },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "inputAllowedUsers",
   });
 
   const [openHttpOptions, setOpenHttpOptions] = useState<boolean>(
@@ -69,14 +108,24 @@ export const NetworkRuleUpsertDialog: React.VFC<{
     setOpenHttpOptions(!openHttpOptions);
   };
 
-  const upsertRule = (newRule: NetworkRule) => {
+  const upsertRule = (newRule: NetworkRuleFormData) => {
     if (!(newRule.httpPath || "").startsWith("/")) {
       newRule.httpPath = "/" + newRule.httpPath;
     }
+    newRule.public = newRule.inputAccessMode == "public" ? true : false;
+    newRule.allowedUsers = !newRule.public
+      ? newRule.inputAllowedUsers.map((v) => v.name)
+      : [];
+
     networkRuleModule
       .upsertNetwork(workspace, newRule, index)
       .then(() => onClose());
   };
+
+  const [openAllowedUsers, setOpenAllowedUsers] = useState(
+    networkRule?.public ? false : true
+  );
+  const [openInputAllowedUser, setOpenInputAllowedUser] = useState(false);
 
   return (
     <Dialog open={true} fullWidth maxWidth={"xs"}>
@@ -182,29 +231,136 @@ export const NetworkRuleUpsertDialog: React.VFC<{
               </Alert>
             )}
             <Divider />
-            <FormControlLabel
-              sx={{ my: 2 }}
-              control={
-                <Controller
-                  name="public"
-                  control={control}
-                  defaultValue={false}
-                  render={({ field }) => (
-                    <Checkbox checked={field.value} {...field} />
-                  )}
-                />
-              }
-              label={
-                <>
+            <FormControl variant="filled">
+              <InputLabel>Access Mode</InputLabel>
+              <Controller
+                name="inputAccessMode"
+                control={control}
+                defaultValue={getValues("inputAccessMode")}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    onChange={(e) => {
+                      setValue("inputAccessMode", e.target.value);
+                      setOpenAllowedUsers(e.target.value === "private");
+                    }}
+                  >
+                    <MenuItem value="private">
+                      <Stack spacing={2}>
+                        Private
+                        <Typography color="text.secondary" variant="caption">
+                          Authorize user to access this URL.
+                        </Typography>
+                      </Stack>
+                    </MenuItem>
+                    <MenuItem value="public">
+                      <Stack spacing={2}>
+                        Public
+                        <Typography color="text.secondary" variant="caption">
+                          No authentication is required for this URL.
+                        </Typography>
+                      </Stack>
+                    </MenuItem>
+                  </Select>
+                )}
+              />
+              {/* <Select
+                defaultValue={getValues("inputAccessMode")}
+                {...registerMui(
+                  register("inputAccessMode", {
+                    pattern: {
+                      value: /^(private|public)$/i,
+                      message: "Invalid",
+                    },
+                  })
+                )}
+                onChange={(e) => {
+                  setValue("inputAccessMode", e.target.value);
+                  setOpenAllowedUsers(e.target.value === "private");
+                }}
+              >
+                <MenuItem value="private">
                   <Stack spacing={2}>
-                    public
+                    Private
+                    <Typography color="text.secondary" variant="caption">
+                      Authorize user to access this URL.
+                    </Typography>
+                  </Stack>
+                </MenuItem>
+                <MenuItem value="public">
+                  <Stack spacing={2}>
+                    Public
                     <Typography color="text.secondary" variant="caption">
                       No authentication is required for this URL.
                     </Typography>
                   </Stack>
-                </>
-              }
-            />
+                </MenuItem>
+              </Select> */}
+            </FormControl>
+            {openAllowedUsers && (
+              <Stack>
+                <Box display="flex" alignItems="center">
+                  <Typography color="text.secondary" variant="caption">
+                    Allowed users
+                  </Typography>
+                  <IconButton
+                    size="small"
+                    onClick={() =>
+                      setOpenInputAllowedUser(!openInputAllowedUser)
+                    }
+                  >
+                    {openInputAllowedUser ? <ExpandLess /> : <Add />}
+                  </IconButton>
+                </Box>
+                {openInputAllowedUser && (
+                  <TextField
+                    size="small"
+                    label="User name"
+                    {...register(`inputAllowedUser`)}
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton
+                          size="small"
+                          onClick={() => {
+                            if (!getValues(`inputAllowedUser`)) return;
+                            if (
+                              fields
+                                .map((v) => v.name)
+                                .includes(getValues(`inputAllowedUser`))
+                            )
+                              return;
+                            append({ name: getValues(`inputAllowedUser`) });
+                            setValue(`inputAllowedUser`, "");
+                          }}
+                        >
+                          <Add />
+                        </IconButton>
+                      ),
+                    }}
+                  />
+                )}
+                <Stack alignItems="center" mt={1}>
+                  <Grid container justifyContent="center" sx={{ width: 300 }}>
+                    {fields.map((v, i) => (
+                      <Grid item key={i}>
+                        <Chip
+                          color="secondary"
+                          key={i}
+                          label={v.name}
+                          sx={{ m: 0.05 }}
+                          onDelete={() => remove(i)}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Stack>
+              </Stack>
+            )}
+            {isMain && (
+              <Alert severity="info">
+                Users who can access a main URL can update this workspace
+              </Alert>
+            )}
           </Stack>
           <DialogActions>
             <Button type="submit" variant="contained" color="primary">

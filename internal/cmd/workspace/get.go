@@ -13,6 +13,7 @@ import (
 	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
 	"github.com/cosmo-workspace/cosmo/pkg/cli"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kosmo"
 	dashv1alpha1 "github.com/cosmo-workspace/cosmo/proto/gen/dashboard/v1alpha1"
 )
 
@@ -105,7 +106,7 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 		users = u
 	}
 	for _, user := range users {
-		wss, err := o.ListWorkspaces(ctx, user.Name)
+		wss, err := o.ListWorkspaces(ctx, user.Name, !o.AllUsers)
 		if err != nil {
 			return err
 		}
@@ -116,14 +117,18 @@ func (o *GetOption) RunE(cmd *cobra.Command, args []string) error {
 
 	workspaces = o.ApplyFilters(workspaces)
 
+	username := o.UserName
+	if o.AllUsers {
+		username = ""
+	}
 	if o.OutputFormat == "yaml" {
 		o.OutputYAML(cmd.OutOrStdout(), workspaces)
 		return nil
 	} else if o.OutputFormat == "wide" {
-		OutputWideTable(cmd.OutOrStdout(), workspaces)
+		OutputWideTable(cmd.OutOrStdout(), username, workspaces)
 		return nil
 	} else {
-		OutputTable(cmd.OutOrStdout(), workspaces)
+		OutputTable(cmd.OutOrStdout(), username, workspaces)
 		return nil
 	}
 }
@@ -136,11 +141,11 @@ func (o *GetOption) ListUsers(ctx context.Context) ([]*dashv1alpha1.User, error)
 	}
 }
 
-func (o *GetOption) ListWorkspaces(ctx context.Context, userName string) ([]*dashv1alpha1.Workspace, error) {
+func (o *GetOption) ListWorkspaces(ctx context.Context, userName string, includeShared bool) ([]*dashv1alpha1.Workspace, error) {
 	if o.UseKubeAPI {
-		return o.listWorkspacesByKubeClient(ctx, userName)
+		return o.listWorkspacesByKubeClient(ctx, userName, includeShared)
 	} else {
-		return o.listWorkspacesWithDashClient(ctx, userName)
+		return o.listWorkspacesWithDashClient(ctx, userName, includeShared)
 	}
 }
 
@@ -156,12 +161,14 @@ func (o *GetOption) listUsersWithDashClient(ctx context.Context) ([]*dashv1alpha
 	return res.Msg.Items, nil
 }
 
-func (o *GetOption) listWorkspacesWithDashClient(ctx context.Context, userName string) ([]*dashv1alpha1.Workspace, error) {
+func (o *GetOption) listWorkspacesWithDashClient(ctx context.Context, userName string, includeShared bool) ([]*dashv1alpha1.Workspace, error) {
 	req := &dashv1alpha1.GetWorkspacesRequest{
-		UserName: userName,
-		WithRaw:  ptr.To(o.OutputFormat == "yaml"),
+		UserName:      userName,
+		WithRaw:       ptr.To(o.OutputFormat == "yaml"),
+		IncludeShared: ptr.To(includeShared),
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.GetWorkspaces", "req", req)
 	res, err := c.WorkspaceServiceClient.GetWorkspaces(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
@@ -210,11 +217,15 @@ func (o *GetOption) OutputYAML(w io.Writer, objs []*dashv1alpha1.Workspace) {
 	fmt.Fprintln(w, strings.Join(docs, "---\n"))
 }
 
-func OutputTable(out io.Writer, workspaces []*dashv1alpha1.Workspace) {
+func OutputTable(out io.Writer, username string, workspaces []*dashv1alpha1.Workspace) {
 	data := [][]string{}
 
 	for _, v := range workspaces {
-		data = append(data, []string{v.OwnerName, v.Name, v.Spec.Template, v.Status.Phase, v.Status.MainUrl})
+		mainURL := v.Status.MainUrl
+		if username != "" && v.OwnerName != username {
+			mainURL = "[shared workspace. see shared URLs by `cosmoctl ws get-network`]"
+		}
+		data = append(data, []string{v.OwnerName, v.Name, v.Spec.Template, v.Status.Phase, mainURL})
 	}
 
 	cli.OutputTable(out,
@@ -222,15 +233,19 @@ func OutputTable(out io.Writer, workspaces []*dashv1alpha1.Workspace) {
 		data)
 }
 
-func OutputWideTable(out io.Writer, workspaces []*dashv1alpha1.Workspace) {
+func OutputWideTable(out io.Writer, username string, workspaces []*dashv1alpha1.Workspace) {
 	data := [][]string{}
 
 	for _, v := range workspaces {
+		mainURL := v.Status.MainUrl
+		if v.OwnerName != username {
+			mainURL = `[shared workspace. see shared URLs by "cosmoctl ws get-network"]`
+		}
 		vars := make([]string, 0, len(v.Spec.Vars))
 		for k, vv := range v.Spec.Vars {
 			vars = append(vars, fmt.Sprintf("%s=%s", k, vv))
 		}
-		data = append(data, []string{v.OwnerName, v.Name, v.Spec.Template, strings.Join(vars, ","), v.Status.Phase, v.Status.MainUrl})
+		data = append(data, []string{v.OwnerName, v.Name, v.Spec.Template, strings.Join(vars, ","), v.Status.Phase, mainURL})
 	}
 
 	cli.OutputTable(out,
@@ -238,9 +253,11 @@ func OutputWideTable(out io.Writer, workspaces []*dashv1alpha1.Workspace) {
 		data)
 }
 
-func (o *GetOption) listWorkspacesByKubeClient(ctx context.Context, userName string) ([]*dashv1alpha1.Workspace, error) {
+func (o *GetOption) listWorkspacesByKubeClient(ctx context.Context, userName string, includeShared bool) ([]*dashv1alpha1.Workspace, error) {
 	c := o.KosmoClient
-	workspaces, err := c.ListWorkspacesByUserName(ctx, userName)
+	workspaces, err := c.ListWorkspacesByUserName(ctx, userName, func(o *kosmo.ListWorkspacesOptions) {
+		o.IncludeShared = includeShared
+	})
 	if err != nil {
 		return nil, err
 	}

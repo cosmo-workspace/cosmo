@@ -393,6 +393,11 @@ export class GetWorkspacesRequest extends Message<GetWorkspacesRequest> {
    */
   withRaw?: boolean;
 
+  /**
+   * @generated from field: optional bool includeShared = 3;
+   */
+  includeShared?: boolean;
+
   constructor(data?: PartialMessage<GetWorkspacesRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -403,6 +408,7 @@ export class GetWorkspacesRequest extends Message<GetWorkspacesRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "with_raw", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
+    { no: 3, name: "includeShared", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetWorkspacesRequest {

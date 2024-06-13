@@ -130,7 +130,7 @@ func (o *UpdateOption) RunE(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Fprintln(cmd.OutOrStdout(), color.GreenString("Successfully updated workspace %s", o.WorkspaceName))
-	OutputTable(cmd.OutOrStdout(), []*dashv1alpha1.Workspace{ws})
+	OutputTable(cmd.OutOrStdout(), o.UserName, []*dashv1alpha1.Workspace{ws})
 
 	return nil
 }
@@ -171,6 +171,7 @@ func (o *UpdateOption) GetWorkspaceWithDashClient(ctx context.Context) (*dashv1a
 		UserName: o.UserName,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("WorkspaceServiceClient.GetWorkspace", "req", req)
 	res, err := c.WorkspaceServiceClient.GetWorkspace(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)

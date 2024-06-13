@@ -77,6 +77,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	LoggerINFO.Printf("headers: %v", r.Header)
 
 	// Bypass manifest.json not to check session. By default, manifest.json is requested without cookie.
 	// https://developer.mozilla.org/en-US/docs/Web/Manifest
@@ -91,7 +92,7 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if ses.IsNew {
-		LoggerINFO.Println("not authorized")
+		LoggerDEBUG.Println("not authorized")
 		p.redirectToLoginPage(w, r)
 		return
 	}
@@ -102,9 +103,26 @@ func (p *CosmoAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// check user name is owner's
 	userName := r.Header.Get("X-Cosmo-UserName")
 	if userName != "" && sesInfo.UserName != userName {
-		LoggerINFO.Print("forbidden", " storedUserName=", sesInfo.UserName, " ownerName=", userName)
-		p.forbidden(w, r)
-		return
+
+		// check workspace is shared
+		allowed := false
+		for header := range r.Header {
+			shareUser, found := strings.CutPrefix(strings.ToLower(header), strings.ToLower("X-Cosmo-UserName-"))
+			if found {
+				LoggerDEBUG.Println("X-Cosmo-UserName-header", " ownerName=", userName, " shareUser=", shareUser)
+
+				if sesInfo.UserName == shareUser {
+					LoggerINFO.Println("shared workspace", " ownerName=", userName, " shareUser=", shareUser)
+					allowed = true
+					break
+				}
+			}
+		}
+		if !allowed {
+			LoggerINFO.Print("forbidden", " storedUserName=", sesInfo.UserName, " ownerName=", userName)
+			p.forbidden(w, r)
+			return
+		}
 	}
 
 	// set deadline on request if enabled

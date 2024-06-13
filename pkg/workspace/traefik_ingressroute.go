@@ -68,11 +68,18 @@ func (c *TraefikIngressRouteConfig) TraefikRoute(r cosmov1alpha1.NetworkRule, ws
 	}
 	match := strings.Join(matches[:], " && ")
 
-	var middlewares []traefikv1.MiddlewareRef
-	if r.Public {
-		middlewares = []traefikv1.MiddlewareRef{}
-	} else {
-		middlewares = []traefikv1.MiddlewareRef{c.UserNameHeaderMiddleware, c.AuthenMiddleware}
+	middlewares := make([]traefikv1.MiddlewareRef, 0)
+	if !r.Public {
+		// at first apply allowed user's middlewares to set the header X-Cosmo-UserName-${User}
+		for _, allowedUser := range r.AllowedUsers {
+			ref := traefikv1.MiddlewareRef{
+				Name:      c.UserNameHeaderMiddleware.Name,
+				Namespace: cosmov1alpha1.UserNamespace(allowedUser),
+			}
+			middlewares = append(middlewares, ref)
+		}
+		// at last apply owner's middleware to override the header X-Cosmo-UserName.
+		middlewares = append(middlewares, c.UserNameHeaderMiddleware, c.AuthenMiddleware)
 	}
 
 	backendSvcName := instance.InstanceResourceName(ws.Name, ws.Status.Config.ServiceName)

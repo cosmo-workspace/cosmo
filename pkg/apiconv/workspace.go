@@ -77,6 +77,7 @@ func C2D_NetworkRule(v cosmov1alpha1.NetworkRule) *dashv1alpha1.NetworkRule {
 		CustomHostPrefix: v.CustomHostPrefix,
 		HttpPath:         v.HTTPPath,
 		Public:           v.Public,
+		AllowedUsers:     v.AllowedUsers,
 	}
 }
 
@@ -95,6 +96,7 @@ func D2C_NetworkRule(v *dashv1alpha1.NetworkRule) cosmov1alpha1.NetworkRule {
 		CustomHostPrefix: v.CustomHostPrefix,
 		HTTPPath:         v.HttpPath,
 		Public:           v.Public,
+		AllowedUsers:     v.AllowedUsers,
 	}
 	r.Default()
 	return r

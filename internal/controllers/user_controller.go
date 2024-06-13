@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -168,6 +169,31 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		err = addonErrs[0]
 	}
 
+	log.Debug().Info("checking shared workspace garbage collection", "sharedWorkspaces", user.Status.SharedWorkspaces)
+	shouldRemoveSharedRef := make([]cosmov1alpha1.ObjectRef, 0)
+	for _, sharedRef := range user.Status.SharedWorkspaces {
+		var ws cosmov1alpha1.Workspace
+		err := r.Get(ctx, client.ObjectKey{Name: sharedRef.Name, Namespace: sharedRef.Namespace}, &ws)
+		if err != nil {
+			log.Debug().Info("remove shared workspace in user status", "workspace", sharedRef, "error", err)
+			shouldRemoveSharedRef = append(shouldRemoveSharedRef, sharedRef)
+			continue
+		}
+		if !slices.ContainsFunc(ws.Spec.Network, func(r cosmov1alpha1.NetworkRule) bool {
+			return slices.Contains(r.AllowedUsers, user.Name)
+		}) {
+			log.Debug().Info("remove shared workspace in user status", "workspace", sharedRef, "error", "not contained in allowed users")
+			shouldRemoveSharedRef = append(shouldRemoveSharedRef, sharedRef)
+			continue
+		}
+	}
+	if len(shouldRemoveSharedRef) > 0 {
+		log.Info("shared workspace removed from user status", "removed", shouldRemoveSharedRef)
+		user.Status.SharedWorkspaces = slices.DeleteFunc(user.Status.SharedWorkspaces, func(r cosmov1alpha1.ObjectRef) bool {
+			return slices.Contains(shouldRemoveSharedRef, r)
+		})
+	}
+
 	// update user status
 	if !equality.Semantic.DeepEqual(currentUser, &user) {
 		log.Debug().PrintObjectDiff(currentUser, &user)
@@ -178,7 +204,7 @@ func (r *UserReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	}
 
 	if user.Status.Phase != "AddonFailed" && !cosmov1alpha1.KeepResourceDeletePolicy(&user) {
-		log.Debug().Info("checking garbage collection")
+		log.Debug().Info("checking useraddon garbage collection")
 		shouldDeletes := objectRefNotExistsInMap(lastAddons, currAddonsMap)
 		for _, d := range shouldDeletes {
 			if skip, err := prune(ctx, r.Client, d); err != nil {

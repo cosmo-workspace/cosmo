@@ -15,7 +15,7 @@ func (s *Server) UpsertNetworkRule(ctx context.Context, req *connect_go.Request[
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := s.sharedWorkspaceAuthorization(ctx, req.Msg.WsName, req.Msg.UserName, true); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -26,6 +26,7 @@ func (s *Server) UpsertNetworkRule(ctx context.Context, req *connect_go.Request[
 		CustomHostPrefix: m.NetworkRule.CustomHostPrefix,
 		HTTPPath:         m.NetworkRule.HttpPath,
 		Public:           m.NetworkRule.Public,
+		AllowedUsers:     m.NetworkRule.AllowedUsers,
 	}
 
 	netRule, err := s.Klient.AddNetworkRule(ctx, m.WsName, m.UserName, r, int(m.Index))
@@ -44,7 +45,7 @@ func (s *Server) DeleteNetworkRule(ctx context.Context, req *connect_go.Request[
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := s.sharedWorkspaceAuthorization(ctx, req.Msg.WsName, req.Msg.UserName, true); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
