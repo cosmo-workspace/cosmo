@@ -634,7 +634,10 @@ SnapShot = """
       ]
     },
     \"status\": {
-      \"phase\": \"Pending\"
+      \"phase\": \"Pending\",
+      \"last_started_at\": {
+        \"seconds\": 1234567890
+      }
     }
   }
 }
