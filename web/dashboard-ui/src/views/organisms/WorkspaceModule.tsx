@@ -52,10 +52,14 @@ export class WorkspaceWrapper extends Workspace {
     if (["Stopped", "Stopping"].includes(this.status?.phase!)) {
       return false;
     }
-    return events.filter((e) => e.type === "Warning").filter((e) =>
-      latestTime(e) - getTime(this.status?.lastStartedAt) >= 0
-    ).filter((e) => (clock.getTime() - latestTime(e)) / 1000 / 60 <= 5 // before 5 minutes ago
-    ).length > 0;
+    return (
+      events
+        .filter((e) => e.type === "Warning")
+        .filter((e) => latestTime(e) - getTime(this.status?.lastStartedAt) >= 0)
+        .filter(
+          (e) => (clock.getTime() - latestTime(e)) / 1000 / 60 <= 5 // before 5 minutes ago
+        ).length > 0
+    );
   }
 }
 
@@ -67,9 +71,9 @@ const useWorkspace = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const { setMask, releaseMask } = useProgress();
-  const [workspaces, setWorkspaces] = useState<
-    { [key: string]: WorkspaceWrapper }
-  >({});
+  const [workspaces, setWorkspaces] = useState<{
+    [key: string]: WorkspaceWrapper;
+  }>({});
   const { handleError } = useHandleError();
   const workspaceService = useWorkspaceService();
   const userService = useUserService();
@@ -79,9 +83,10 @@ const useWorkspace = () => {
   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
 
   const checkIsPolling = () => {
-    return Object.keys(workspaces).filter((name) =>
-      workspaces[name].isPolling()
-    ).length > 0;
+    return (
+      Object.keys(workspaces).filter((name) => workspaces[name].isPolling())
+        .length > 0
+    );
   };
 
   const stopAllPolling = () => {
@@ -144,7 +149,7 @@ const useWorkspace = () => {
             map[pws.name] = pws;
             return map;
           },
-          {},
+          {}
         );
         console.log(wsMap);
         return wsMap;
@@ -166,8 +171,8 @@ const useWorkspace = () => {
     const getEventsResult = await userService.getEvents({
       userName: user.name,
     });
-    const events = getEventsResult.items.filter((e) =>
-      e.regardingWorkspace === ws.name
+    const events = getEventsResult.items.filter(
+      (e) => e.regardingWorkspace === ws.name
     );
 
     upsertWorkspace(ws, events);
@@ -179,7 +184,7 @@ const useWorkspace = () => {
       if (prev[wsName]) {
         console.log(
           "### update progress",
-          `${prev[wsName].progress} -> ${progress}`,
+          `${prev[wsName].progress} -> ${progress}`
         );
         const pws = prev[wsName];
         pws.progress = progress;
@@ -216,9 +221,7 @@ const useWorkspace = () => {
   /**
    * WorkspaceList: pollingWorkspace
    */
-  const pollingWorkspace = async (
-    ws: Workspace,
-  ) => {
+  const pollingWorkspace = async (ws: Workspace) => {
     ws = await refreshWorkspace(ws);
 
     let limit = 120;
@@ -235,13 +238,14 @@ const useWorkspace = () => {
             console.log("polling", "do request");
             const newWs = await refreshWorkspace(ws);
 
-            const undefinedURLs =
-              (newWs.spec?.network || []).filter((v) => (!v.url)).length;
+            const undefinedURLs = (newWs.spec?.network || []).filter(
+              (v) => !v.url
+            ).length;
             const status = computeStatus(newWs);
             if (
               undefinedURLs === 0 &&
               ["Running", "Stopped", "Error", "CrashLoopBackOff"].includes(
-                status,
+                status
               )
             ) {
               console.log("polling", "timer stopped");
@@ -261,7 +265,7 @@ const useWorkspace = () => {
             clearTimer(ws.name);
           }
         }
-      }, 1000),
+      }, 1000)
     );
   };
 
@@ -272,7 +276,7 @@ const useWorkspace = () => {
     userName: string,
     wsName: string,
     templateName: string,
-    vars: { [key: string]: string },
+    vars: { [key: string]: string }
   ) => {
     console.log("createWorkspace", wsName, templateName, vars);
     setMask();
@@ -368,14 +372,14 @@ const useWorkspace = () => {
     try {
       const result = await userService.getUsers({});
       setUsers(
-        setUserStateFuncFilteredByLoginUserRole(result.items, loginUser),
+        setUserStateFuncFilteredByLoginUserRole(result.items, loginUser)
       );
     } catch (error) {
       handleError(error);
     }
   };
 
-  return ({
+  return {
     workspaces,
     getWorkspaces,
     createWorkspace,
@@ -389,7 +393,7 @@ const useWorkspace = () => {
     setUser,
     users,
     getUsers,
-  });
+  };
 };
 
 /**
@@ -408,16 +412,16 @@ export const useTemplates = () => {
       const result = await templateService.getWorkspaceTemplates({
         useRoleFilter: true,
       });
-      setTemplates(result.items.sort((a, b) => (a.name < b.name) ? -1 : 1));
+      setTemplates(result.items.sort((a, b) => (a.name < b.name ? -1 : 1)));
     } catch (error) {
       handleError(error);
     }
   };
 
-  return ({
+  return {
     templates,
     getTemplates,
-  });
+  };
 };
 
 /**
@@ -435,7 +439,7 @@ export const useNetworkRule = () => {
   const upsertNetwork = async (
     workspace: Workspace,
     networkRule: NetworkRule,
-    index: number,
+    index: number
   ) => {
     console.log("upsertNetwork", workspace, networkRule);
     setMask();
@@ -475,10 +479,10 @@ export const useNetworkRule = () => {
     }
   };
 
-  return ({
+  return {
     upsertNetwork,
     removeNetwork,
-  });
+  };
 };
 
 /**

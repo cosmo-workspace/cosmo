@@ -1,35 +1,30 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { cleanup, render } from '@testing-library/react';
-import React from 'react';
+import { cleanup, render } from "@testing-library/react";
+import React from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { NameAvatar } from '../../../views/atoms/NameAvatar';
+import { NameAvatar } from "../../../views/atoms/NameAvatar";
 
 afterEach(cleanup);
 
-describe('NameAvatar', () => {
-
-  it('NameAvatar', () => {
-    const { asFragment } = render(
-      <NameAvatar />,
-    );
+describe("NameAvatar", () => {
+  it("NameAvatar", () => {
+    const { asFragment } = render(<NameAvatar />);
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('NameAvatar name', () => {
-    const { asFragment } = render(
-      <NameAvatar name='cosmo' />,
-    );
+  it("NameAvatar name", () => {
+    const { asFragment } = render(<NameAvatar name="cosmo" />);
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('NameAvatar name dark', () => {
+  it("NameAvatar name dark", () => {
     const myTheme = createTheme({
-      palette: { mode: 'dark' },
+      palette: { mode: "dark" },
     });
 
     const { asFragment } = render(
       <ThemeProvider theme={myTheme}>
-        <NameAvatar name='cosmo' />,
+        <NameAvatar name="cosmo" />,
       </ThemeProvider>
     );
     expect(asFragment()).toMatchSnapshot();

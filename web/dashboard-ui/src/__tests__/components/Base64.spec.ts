@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { base64url } from '../../components/Base64';
+import { base64url } from "../../components/Base64";
 
 //-----------------------------------------------
 // test
@@ -23,13 +23,14 @@ function toBuffer(arrayBuffer) {
   return buffer;
 }
 
-describe('base64url', () => {
-  describe('encode', () => {
-    it('✅ ok', async () => {
+describe("base64url", () => {
+  describe("encode", () => {
+    it("✅ ok", async () => {
       const tests = [
         {
           name: "1",
-          input: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+          input:
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
         },
         {
           name: "1",
@@ -53,31 +54,33 @@ describe('base64url', () => {
         },
       ];
       for (const t of tests) {
-        const raw = Buffer.from(t.input, 'utf8');
+        const raw = Buffer.from(t.input, "utf8");
         const got = base64url.encode(raw);
 
-        const want = raw.toString('base64url');
+        const want = raw.toString("base64url");
         expect(got).toEqual(want);
       }
     });
   });
 
-  describe('decode', () => {
-    it('✅ ok', async () => {
-      const base64str = 'QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLw==';
+  describe("decode", () => {
+    it("✅ ok", async () => {
+      const base64str =
+        "QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLw==";
       const got = base64url.decode(base64str);
-      const want = Buffer.from(base64str, 'base64url');
+      const want = Buffer.from(base64str, "base64url");
       expect(got).toEqual(toArrayBuffer(want));
     });
 
-    it('✅ ok: no padding', async () => {
-      const base64strWithPadding = 'QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLw==';
-      const want = Buffer.from(base64strWithPadding, 'base64url');
+    it("✅ ok: no padding", async () => {
+      const base64strWithPadding =
+        "QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLw==";
+      const want = Buffer.from(base64strWithPadding, "base64url");
 
-      const base64strNoPadding = 'QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLw';
+      const base64strNoPadding =
+        "QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLw";
       const got = base64url.decode(base64strNoPadding);
       expect(got).toEqual(toArrayBuffer(want));
     });
   });
-
 });

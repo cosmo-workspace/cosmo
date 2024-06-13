@@ -29,7 +29,7 @@ import { PageTemplate } from "../templates/PageTemplate";
 const RotatingRefreshTwoTone = styled(RefreshTwoTone)({
   animation: "rotatingRefresh 1s linear infinite",
   "@keyframes rotatingRefresh": {
-    "to": {
+    to: {
       transform: "rotate(2turn)",
     },
   },

@@ -1,18 +1,15 @@
-import { Box, createTheme, ThemeProvider } from '@mui/material';
-import { cleanup, render } from '@testing-library/react';
-import React from 'react';
+import { Box, createTheme, ThemeProvider } from "@mui/material";
+import { cleanup, render } from "@testing-library/react";
+import React from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { AlertTooltip } from '../../../views/atoms/AlertTooltip';
+import { AlertTooltip } from "../../../views/atoms/AlertTooltip";
 
 afterEach(cleanup);
 
-
-describe('AlertTooltip', () => {
-
-  it('AlertTooltip', () => {
+describe("AlertTooltip", () => {
+  it("AlertTooltip", () => {
     const target = render(
-      <AlertTooltip arrow placement="top"
-        title='title1' >
+      <AlertTooltip arrow placement="top" title="title1">
         <Box />
       </AlertTooltip>
     );
@@ -21,11 +18,9 @@ describe('AlertTooltip', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-
-  it('AlertTooltip open', () => {
+  it("AlertTooltip open", () => {
     const target = render(
-      <AlertTooltip arrow placement="top" open={true}
-        title='title2' >
+      <AlertTooltip arrow placement="top" open={true} title="title2">
         <Box />
       </AlertTooltip>
     );
@@ -34,15 +29,14 @@ describe('AlertTooltip', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-
-  it('AlertTooltip open dark', () => {
+  it("AlertTooltip open dark", () => {
     const myTheme = createTheme({
-      palette: { mode: 'dark' },
+      palette: { mode: "dark" },
     });
 
     const target = render(
       <ThemeProvider theme={myTheme}>
-        <AlertTooltip arrow placement="top" open={true} title='title3' >
+        <AlertTooltip arrow placement="top" open={true} title="title3">
           <Box />
         </AlertTooltip>
       </ThemeProvider>

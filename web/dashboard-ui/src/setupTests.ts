@@ -2,8 +2,8 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
-import { createSerializer } from '@emotion/jest';
+import { createSerializer } from "@emotion/jest";
+import "@testing-library/jest-dom";
 
 // https://github.com/mui-org/material-ui/issues/21701
 // expect.addSnapshotSerializer({
@@ -17,6 +17,6 @@ import { createSerializer } from '@emotion/jest';
 // 	}
 // });
 
-expect.addSnapshotSerializer(createSerializer())
+expect.addSnapshotSerializer(createSerializer());
 
 //globalThis.IS_REACT_ACT_ENVIRONMENT = true;

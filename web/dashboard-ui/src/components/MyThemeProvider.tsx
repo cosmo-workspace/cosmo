@@ -1,13 +1,14 @@
 import { colors, useMediaQuery } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import React, { useMemo } from "react";
 
 const MyTheme = () => {
-  console.log('MyTheme');
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)', { noSsr: true });
+  console.log("MyTheme");
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)", {
+    noSsr: true,
+  });
 
   return useMemo(() => {
-
     return createTheme({
       components: {
         MuiOutlinedInput: {
@@ -22,21 +23,18 @@ const MyTheme = () => {
         },
       },
       palette: {
-        mode: prefersDarkMode ? 'dark' : undefined,
+        mode: prefersDarkMode ? "dark" : undefined,
         primary: colors.deepPurple,
         secondary: colors.pink,
       },
     });
   }, [prefersDarkMode]);
-}
+};
 
-export const MyThemeProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
-
+export const MyThemeProvider: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const myTheme = MyTheme();
 
-  return (
-    <ThemeProvider theme={myTheme}>
-      {children}
-    </ThemeProvider>
-  );
+  return <ThemeProvider theme={myTheme}>{children}</ThemeProvider>;
 };
