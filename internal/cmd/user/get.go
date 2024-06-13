@@ -192,20 +192,13 @@ func (o *GetOption) ApplyFilters(users []*dashv1alpha1.User) []*dashv1alpha1.Use
 		}
 	}
 
-	if len(o.UserNames) > 0 {
-		ts := make([]*dashv1alpha1.User, 0, len(o.UserNames))
-	UserLoop:
-		// Or loop
-		for _, t := range users {
-			for _, selected := range o.UserNames {
-				if selected == t.GetName() {
-					ts = append(ts, t)
-					continue UserLoop
-				}
-			}
-		}
-		users = ts
+	// name filter
+	for _, userName := range o.UserNames {
+		users = cli.DoFilter(users, func(u *dashv1alpha1.User) []string {
+			return []string{u.Name}
+		}, cli.Filter{Operator: cli.OperatorEqual, Value: userName})
 	}
+
 	return users
 }
 

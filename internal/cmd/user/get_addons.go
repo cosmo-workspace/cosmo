@@ -148,20 +148,13 @@ func (o *GetAddonsOption) ApplyFilters(tmpls []*dashv1alpha1.Template) []*dashv1
 		}
 	}
 
-	if len(o.AddonNames) > 0 {
-		ts := make([]*dashv1alpha1.Template, 0, len(o.AddonNames))
-	UserLoop:
-		// Or loop
-		for _, t := range tmpls {
-			for _, selected := range o.AddonNames {
-				if selected == t.GetName() {
-					ts = append(ts, t)
-					continue UserLoop
-				}
-			}
-		}
-		tmpls = ts
+	// name filter
+	for _, addonName := range o.AddonNames {
+		tmpls = cli.DoFilter(tmpls, func(u *dashv1alpha1.Template) []string {
+			return []string{u.Name}
+		}, cli.Filter{Operator: cli.OperatorEqual, Value: addonName})
 	}
+
 	return tmpls
 }
 

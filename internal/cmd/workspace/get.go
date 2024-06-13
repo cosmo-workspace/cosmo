@@ -192,20 +192,13 @@ func (o *GetOption) ApplyFilters(workspaces []*dashv1alpha1.Workspace) []*dashv1
 		}
 	}
 
-	if len(o.WorkspaceNames) > 0 {
-		ts := make([]*dashv1alpha1.Workspace, 0, len(o.WorkspaceNames))
-	WorkspaceLoop:
-		// Or loop
-		for _, t := range workspaces {
-			for _, selected := range o.WorkspaceNames {
-				if selected == t.GetName() {
-					ts = append(ts, t)
-					continue WorkspaceLoop
-				}
-			}
-		}
-		workspaces = ts
+	// name filter
+	for _, wsName := range o.WorkspaceNames {
+		workspaces = cli.DoFilter(workspaces, func(u *dashv1alpha1.Workspace) []string {
+			return []string{u.Name}
+		}, cli.Filter{Operator: cli.OperatorEqual, Value: wsName})
 	}
+
 	return workspaces
 }
 
