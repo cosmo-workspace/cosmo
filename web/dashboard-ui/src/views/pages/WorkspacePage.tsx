@@ -43,7 +43,6 @@ import {
   MenuItem,
   Paper,
   Stack,
-  styled,
   Table,
   TableBody,
   TableCell,
@@ -53,6 +52,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -77,10 +77,10 @@ import {
   WorkspaceStopDialogContext,
 } from "../organisms/WorkspaceActionDialog";
 import {
-  computeStatus,
-  useWorkspaceModule,
   WorkspaceContext,
   WorkspaceWrapper,
+  computeStatus,
+  useWorkspaceModule,
 } from "../organisms/WorkspaceModule";
 import { PageTemplate } from "../templates/PageTemplate";
 
@@ -656,7 +656,7 @@ const WorkspaceList: React.VFC = () => {
         {Object.keys(workspaces).filter((wsName) =>
           urlParam.search === "" || Boolean(wsName.match(urlParam.search))
         ).map((wsName) => workspaces[wsName]).sort((a, b) =>
-          (a.name < b.name) ? -1 : 1
+          a.ownerName !== b.ownerName ? 1 : a.name < b.name ? -1 : 1
         ).map((ws) => (
           <WorkspaceItem
             workspace={ws}

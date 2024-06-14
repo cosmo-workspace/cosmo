@@ -9,6 +9,7 @@ import (
 	. "github.com/cosmo-workspace/cosmo/pkg/snap"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
@@ -232,6 +233,12 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 
 	//==================================================================================
 	Describe("[UpdateWorkspace]", func() {
+		updateWorkspaceResponseSnap := func(r *dashv1alpha1.UpdateWorkspaceResponse) *dashv1alpha1.UpdateWorkspaceResponse {
+			if r.Workspace.Status.LastStartedAt != nil {
+				r.Workspace.Status.LastStartedAt = timestamppb.New(time.Unix(1234567890, 0))
+			}
+			return r
+		}
 
 		run_test := func(loginUser string, req *dashv1alpha1.UpdateWorkspaceRequest) {
 			testUtil.CreateWorkspace("admin-user", "ws1", "template1", map[string]string{})
@@ -240,7 +247,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			ctx := context.Background()
 			res, err := client.UpdateWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
 			if err == nil {
-				Ω(res.Msg).To(MatchSnapShot())
+				Ω(updateWorkspaceResponseSnap(res.Msg)).To(MatchSnapShot())
 				wsv1Workspace, err := k8sClient.GetWorkspaceByUserName(context.Background(), req.WsName, req.UserName)
 				Expect(err).NotTo(HaveOccurred())
 				Ω(ObjectSnapshot(wsv1Workspace)).To(MatchSnapShot())

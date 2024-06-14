@@ -141,20 +141,13 @@ func (o *GetTemplatesOption) ApplyFilters(tmpls []*dashv1alpha1.Template) []*das
 		}
 	}
 
-	if len(o.TemplateNames) > 0 {
-		ts := make([]*dashv1alpha1.Template, 0, len(o.TemplateNames))
-	WorkspaceLoop:
-		// Or loop
-		for _, t := range tmpls {
-			for _, selected := range o.TemplateNames {
-				if selected == t.GetName() {
-					ts = append(ts, t)
-					continue WorkspaceLoop
-				}
-			}
-		}
-		tmpls = ts
+	// name filter
+	for _, tmplName := range o.TemplateNames {
+		tmpls = cli.DoFilter(tmpls, func(u *dashv1alpha1.Template) []string {
+			return []string{u.Name}
+		}, cli.Filter{Operator: cli.OperatorEqual, Value: tmplName})
 	}
+
 	return tmpls
 }
 

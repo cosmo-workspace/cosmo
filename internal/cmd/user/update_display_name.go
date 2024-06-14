@@ -122,6 +122,7 @@ func (o *UpdateDisplayNameOption) UpdateUserDisplayNameWithDashClient(ctx contex
 		DisplayName: o.DisplayName,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("UserServiceClient.UpdateUserDisplayName", "req", req)
 	res, err := c.UserServiceClient.UpdateUserDisplayName(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
@@ -138,6 +139,7 @@ func (o *UpdateDisplayNameOption) UpdateUserDisplayNameWithKubeClient(ctx contex
 		DisplayName: ptr.To(o.UserName),
 	}
 
+	o.Logr.DebugAll().Info("UpdateUser", "opts", opts)
 	user, err := c.UpdateUser(ctx, o.UserName, opts)
 	if err != nil {
 		return nil, err
@@ -151,6 +153,7 @@ func (o *UpdateDisplayNameOption) GetUserWithDashClient(ctx context.Context) (*d
 	req := &dashv1alpha1.GetUserRequest{
 		UserName: o.UserName,
 	}
+	o.Logr.DebugAll().Info("UserServiceClient.GetUser", "req", req)
 	c := o.CosmoDashClient
 	res, err := c.UserServiceClient.GetUser(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {

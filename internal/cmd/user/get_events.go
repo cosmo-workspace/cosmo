@@ -90,6 +90,7 @@ func (o *GetEventsOption) GetEventsWithDashClient(ctx context.Context) ([]*dashv
 		UserName: o.UserName,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("UserServiceClient.GetUser", "req", req)
 	res, err := c.UserServiceClient.GetEvents(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get events: %w", err)

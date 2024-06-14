@@ -142,6 +142,7 @@ func (o *CreateOption) CreateUserWithDashClient(ctx context.Context) (*dashv1alp
 		Addons:      o.userAddons,
 	}
 	c := o.CosmoDashClient
+	o.Logr.DebugAll().Info("UserServiceClient.CreateUser", "req", req)
 	res, err := c.UserServiceClient.CreateUser(ctx, cli.NewRequestWithToken(req, o.CliConfig))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect dashboard server: %w", err)
@@ -153,6 +154,8 @@ func (o *CreateOption) CreateUserWithDashClient(ctx context.Context) (*dashv1alp
 
 func (o *CreateOption) CreateUserWithKubeClient(ctx context.Context) (*dashv1alpha1.User, error) {
 	c := o.KosmoClient
+
+	o.Logr.DebugAll().Info("CreateUser", "userName", o.UserName, "displayName", o.DisplayName, "role", o.Roles, "authType", o.AuthType, "addons", apiconv.D2C_UserAddons(o.userAddons))
 	user, err := c.CreateUser(ctx, o.UserName, o.DisplayName, o.Roles, o.AuthType, apiconv.D2C_UserAddons(o.userAddons))
 	if err != nil {
 		return nil, err
