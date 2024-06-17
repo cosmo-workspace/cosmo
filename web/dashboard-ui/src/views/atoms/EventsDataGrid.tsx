@@ -3,8 +3,8 @@ import { Chip, SxProps } from "@mui/material";
 import {
   DataGrid,
   DataGridProps,
-  gridClasses,
   GridColDef,
+  gridClasses,
 } from "@mui/x-data-grid";
 import React from "react";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
@@ -18,9 +18,13 @@ export type EventsDataGridProp = {
   clock: Date;
 };
 
-export const EventsDataGrid: React.FC<EventsDataGridProp> = (
-  { events, maxHeight, sx, dataGridProps, clock },
-) => {
+export const EventsDataGrid: React.FC<EventsDataGridProp> = ({
+  events,
+  maxHeight,
+  sx,
+  dataGridProps,
+  clock,
+}) => {
   const eventDetailDialogDispatch = EventDetailDialogContext.useDispatch();
 
   const columns: GridColDef[] = [
@@ -41,9 +45,13 @@ export const EventsDataGrid: React.FC<EventsDataGridProp> = (
       flex: 0.25,
       renderCell: (params) => (
         <Chip
-          icon={params.api.getRow(params.id).type == "Normal"
-            ? <Info color="success" />
-            : <Warning color="warning" />}
+          icon={
+            params.api.getRow(params.id).type == "Normal" ? (
+              <Info color="success" />
+            ) : (
+              <Warning color="warning" />
+            )
+          }
           label={params.value}
         />
       ),

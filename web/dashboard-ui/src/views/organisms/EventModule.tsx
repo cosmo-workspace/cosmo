@@ -25,7 +25,7 @@ const useEvent = () => {
     try {
       const result = await userService.getUsers({});
       setUsers(
-        setUserStateFuncFilteredByLoginUserRole(result.items, loginUser),
+        setUserStateFuncFilteredByLoginUserRole(result.items, loginUser)
       );
     } catch (error) {
       handleError(error);
@@ -43,7 +43,7 @@ const useEvent = () => {
     }
   };
 
-  return ({
+  return {
     user,
     setUser,
     users,
@@ -52,7 +52,7 @@ const useEvent = () => {
     setEvents,
     getEvents,
     getUsers,
-  });
+  };
 };
 
 export function getTime(timestamp?: Timestamp): number {

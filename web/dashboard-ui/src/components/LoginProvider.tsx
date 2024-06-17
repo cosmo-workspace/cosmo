@@ -26,7 +26,7 @@ import { useProgress } from "./ProgressProvider";
  * ref: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/24509#issuecomment-774430643
  */
 const Context = createContext<ReturnType<typeof useLoginModule>>(
-  undefined as any,
+  undefined as any
 );
 
 /**
@@ -58,7 +58,7 @@ const useLoginModule = () => {
 
   const handleMyEvents = (events: Event[]) => {
     for (const event of events) {
-      const index = myEvents.findIndex((e) => (e.id === event.id));
+      const index = myEvents.findIndex((e) => e.id === event.id);
       if (index >= 0) {
         // replace event
         console.log("!!! replace", event.id, index);
@@ -80,9 +80,12 @@ const useLoginModule = () => {
       const watchEvents = async (retryCount: number) => {
         console.log("Start watching events...", loginUser?.name, retryCount);
         try {
-          const result = await streamService.streamingEvents({
-            userName: loginUser?.name,
-          }, {});
+          const result = await streamService.streamingEvents(
+            {
+              userName: loginUser?.name,
+            },
+            {}
+          );
           for await (const event of result) {
             updateClock();
             setNewEventsCount((v) => v + 1);
@@ -129,7 +132,7 @@ const useLoginModule = () => {
 
       if (options.publicKey?.challenge) {
         opt.publicKey!.challenge = base64url.decode(
-          options.publicKey?.challenge,
+          options.publicKey?.challenge
         );
       }
 
@@ -144,7 +147,7 @@ const useLoginModule = () => {
         }
         if (options.publicKey?.allowCredentials) {
           opt.publicKey!.allowCredentials![index].id = base64url.decode(
-            options.publicKey?.allowCredentials[index].id,
+            options.publicKey?.allowCredentials[index].id
           );
         }
       }
@@ -279,7 +282,7 @@ const useLoginModule = () => {
    */
   const updataPassword = async (
     currentPassword: string,
-    newPassword: string,
+    newPassword: string
   ) => {
     console.log("updataPassword", loginUser?.name);
     setMask();
@@ -353,21 +356,22 @@ const useLoginModule = () => {
 /**
  * Provider
  */
-export const LoginProvider: React.FC<React.PropsWithChildren<unknown>> = (
-  { children },
-) => {
+export const LoginProvider: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   console.log("LoginProvider");
   const loginModule = useLoginModule();
   const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
-    loginModule.verifyLogin()
-      .then(() => setIsVerified(true));
+    loginModule.verifyLogin().then(() => setIsVerified(true));
   }, []); // eslint-disable-line
 
   return (
     <Context.Provider value={loginModule}>
-      {isVerified ? children : (
+      {isVerified ? (
+        children
+      ) : (
         <div>
           <CssBaseline />
           <Stack sx={{ m: 10 }} alignItems="center" spacing={2}>

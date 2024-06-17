@@ -90,7 +90,7 @@ import { PageTemplate } from "../templates/PageTemplate";
 const RotatingRefreshTwoTone = styled(RefreshTwoTone)({
   animation: "rotatingRefresh 2s linear infinite",
   "@keyframes rotatingRefresh": {
-    "to": {
+    to: {
       transform: "rotate(2turn)",
     },
   },
@@ -136,16 +136,22 @@ const StatusChip: React.VFC<{ ws: WorkspaceWrapper }> = ({ ws }) => {
         <Chip
           variant="outlined"
           size="small"
-          icon={ws.progress > 0
-            ? ws.progress > 100 ? <InfoOutlined /> : (
-              <CircularProgress
-                color="info"
-                size={13}
-                variant="determinate"
-                value={ws.progress}
-              />
+          icon={
+            ws.progress > 0 ? (
+              ws.progress > 100 ? (
+                <InfoOutlined />
+              ) : (
+                <CircularProgress
+                  color="info"
+                  size={13}
+                  variant="determinate"
+                  value={ws.progress}
+                />
+              )
+            ) : (
+              <CircularProgress color="info" size={13} />
             )
-            : <CircularProgress color="info" size={13} />}
+          }
           color="info"
           label={statusLabel}
         />
@@ -265,9 +271,7 @@ const UserSelect: React.VFC = () => {
   );
 };
 
-const NetworkRuleList: React.FC<{ workspace: Workspace }> = (
-  { workspace },
-) => {
+const NetworkRuleList: React.FC<{ workspace: Workspace }> = ({ workspace }) => {
   const upsertDialogDispatch = NetworkRuleUpsertDialogContext.useDispatch();
   const deleteDialogDispatch = NetworkRuleDeleteDialogContext.useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -282,9 +286,10 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = (
       sx={{
         border: "1px solid",
         borderRadius: "4px",
-        borderColor: theme.palette.mode === "light"
-          ? "rgba(224,224,224,1)"
-          : "rgba(81,81,81,1)",
+        borderColor:
+          theme.palette.mode === "light"
+            ? "rgba(224,224,224,1)"
+            : "rgba(81,81,81,1)",
       }}
     >
       <Table size="small">
@@ -314,17 +319,15 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = (
             return (
               <TableRow key={index}>
                 <TableCell align="center">
-                  {networkRule.public &&
-                      (
-                        <Tooltip title="No authentication is required for this URL">
-                          <PublicOutlined />
-                        </Tooltip>
-                      ) ||
-                    (
-                      <Tooltip title="Private URL">
-                        <LockOutlined />
-                      </Tooltip>
-                    )}
+                  {(networkRule.public && (
+                    <Tooltip title="No authentication is required for this URL">
+                      <PublicOutlined />
+                    </Tooltip>
+                  )) || (
+                    <Tooltip title="Private URL">
+                      <LockOutlined />
+                    </Tooltip>
+                  )}
                 </TableCell>
                 <TableCell align="left">
                   {
@@ -390,11 +393,10 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = (
   );
 };
 
-const WorkspaceItem: React.VFC<
-  { workspace: WorkspaceWrapper; events: Event[] }
-> = (
-  { workspace: ws, events },
-) => {
+const WorkspaceItem: React.VFC<{
+  workspace: WorkspaceWrapper;
+  events: Event[];
+}> = ({ workspace: ws, events }) => {
   console.log("WorkspaceItem", ws.status?.phase, ws.spec?.replicas);
   const [networkRuleExpanded, setNetworkRuleExpanded] = useState(false);
   const [eventExpanded, setEventExpanded] = useState(false);
@@ -409,17 +411,18 @@ const WorkspaceItem: React.VFC<
         <CardHeader
           sx={{
             borderBottom: "1px solid",
-            borderColor: theme.palette.mode === "light"
-              ? theme.palette.grey[300]
-              : theme.palette.grey["A700"],
+            borderColor:
+              theme.palette.mode === "light"
+                ? theme.palette.grey[300]
+                : theme.palette.grey["A700"],
           }}
           avatar={
             <Avatar>
               <WebTwoTone />
             </Avatar>
           }
-          title={ws.status && ws.status.mainUrl
-            ? (
+          title={
+            ws.status && ws.status.mainUrl ? (
               <Link
                 variant="h6"
                 target="_blank"
@@ -432,8 +435,10 @@ const WorkspaceItem: React.VFC<
                   sx={{ position: "relative", top: "0.2em" }}
                 />
               </Link>
+            ) : (
+              <Typography variant="h6">{ws.name}</Typography>
             )
-            : <Typography variant="h6">{ws.name}</Typography>}
+          }
           subheader={ws.spec && ws.spec.template}
           action={
             <Stack direction="row" spacing={2} alignItems="center">
@@ -464,30 +469,31 @@ const WorkspaceItem: React.VFC<
                   <IconButton
                     onClick={() => setNetworkRuleExpanded(!networkRuleExpanded)}
                   >
-                    {networkRuleExpanded
-                      ? <KeyboardArrowUpTwoTone />
-                      : <KeyboardArrowDownTwoTone />}
+                    {networkRuleExpanded ? (
+                      <KeyboardArrowUpTwoTone />
+                    ) : (
+                      <KeyboardArrowDownTwoTone />
+                    )}
                   </IconButton>
                   <Typography variant="body2">Network Rules</Typography>
                 </Box>
                 <Box display="flex" alignItems="center">
-                  <IconButton
-                    onClick={() => setEventExpanded(!eventExpanded)}
-                  >
-                    {eventExpanded
-                      ? <KeyboardArrowUpTwoTone />
-                      : <KeyboardArrowDownTwoTone />}
+                  <IconButton onClick={() => setEventExpanded(!eventExpanded)}>
+                    {eventExpanded ? (
+                      <KeyboardArrowUpTwoTone />
+                    ) : (
+                      <KeyboardArrowDownTwoTone />
+                    )}
                   </IconButton>
                   <Typography variant="body2">Events</Typography>
                 </Box>
               </Stack>
             </Grid>
-            {networkRuleExpanded &&
-              (
-                <Grid item xs={12} mb={2}>
-                  <NetworkRuleList workspace={ws} />
-                </Grid>
-              )}
+            {networkRuleExpanded && (
+              <Grid item xs={12} mb={2}>
+                <NetworkRuleList workspace={ws} />
+              </Grid>
+            )}
             {eventExpanded && (
               <EventsDataGrid
                 events={events}
@@ -520,19 +526,17 @@ const WorkspaceItem: React.VFC<
 
 const WorkspaceList: React.VFC = () => {
   console.log("WorkspaceList");
-  const {
-    workspaces,
-    getWorkspaces,
-    user,
-    checkIsPolling,
-    stopAllPolling,
-  } = useWorkspaceModule();
+  const { workspaces, getWorkspaces, user, checkIsPolling, stopAllPolling } =
+    useWorkspaceModule();
   const { loginUser } = useLogin();
   const { enqueueSnackbar } = useSnackbar();
   const isPriv = hasPrivilegedRole(loginUser?.roles || []);
-  const [urlParam, setUrlParam] = useUrlState({ "search": "" }, {
-    stringifyOptions: { skipEmptyString: true },
-  });
+  const [urlParam, setUrlParam] = useUrlState(
+    { search: "" },
+    {
+      stringifyOptions: { skipEmptyString: true },
+    }
+  );
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isHoverRefreshIcon, setIsHoverRefreshIcon] = useState(false);
@@ -548,34 +552,36 @@ const WorkspaceList: React.VFC = () => {
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, px: 2, py: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
           <TextField
-            InputProps={urlParam.search !== ""
-              ? {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchTwoTone />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      size="small"
-                      tabIndex={-1}
-                      onClick={() => {
-                        setUrlParam({ search: "" });
-                      }}
-                    >
-                      <Clear />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }
-              : {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchTwoTone />
-                  </InputAdornment>
-                ),
-              }}
+            InputProps={
+              urlParam.search !== ""
+                ? {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchTwoTone />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          size="small"
+                          tabIndex={-1}
+                          onClick={() => {
+                            setUrlParam({ search: "" });
+                          }}
+                        >
+                          <Clear />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }
+                : {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchTwoTone />
+                      </InputAdornment>
+                    ),
+                  }
+            }
             placeholder="Search"
             size="small"
             value={urlParam.search}
@@ -585,45 +591,49 @@ const WorkspaceList: React.VFC = () => {
             sx={{ flexGrow: 0.5 }}
           />
           <Box sx={{ flexGrow: 1 }} />
-          {isPriv && (isUpSM || (!isSearchFocused && urlParam.search === "")) &&
-            <UserSelect />}
+          {isPriv &&
+            (isUpSM || (!isSearchFocused && urlParam.search === "")) && (
+              <UserSelect />
+            )}
           <Tooltip
             title={isPolling ? "Cancel polling" : "Refresh"}
             placement="top"
           >
-            {(isHoverRefreshIcon && isPolling)
-              ? (
-                <IconButton
-                  color="inherit"
-                  onClick={() => {
-                    stopAllPolling();
-                    enqueueSnackbar("Stop all polling", { variant: "info" });
-                  }}
-                  onMouseLeave={() => setIsHoverRefreshIcon(false)}
-                >
-                  <Clear />
-                </IconButton>
-              )
-              : (
-                <IconButton
-                  color="inherit"
-                  onClick={() => {
-                    setIsLoading(true);
-                    setTimeout(() => {
-                      setIsLoading(false);
-                    }, 2000);
-                    if (!isLoading) getWorkspaces(user.name);
-                  }}
-                  onMouseEnter={() =>
-                    setIsHoverRefreshIcon((prev) => prev ? prev : true)}
-                  onMouseLeave={() =>
-                    setIsHoverRefreshIcon((prev) => prev ? false : prev)}
-                >
-                  {isPolling || isLoading
-                    ? <RotatingRefreshTwoTone />
-                    : <RefreshTwoTone />}
-                </IconButton>
-              )}
+            {isHoverRefreshIcon && isPolling ? (
+              <IconButton
+                color="inherit"
+                onClick={() => {
+                  stopAllPolling();
+                  enqueueSnackbar("Stop all polling", { variant: "info" });
+                }}
+                onMouseLeave={() => setIsHoverRefreshIcon(false)}
+              >
+                <Clear />
+              </IconButton>
+            ) : (
+              <IconButton
+                color="inherit"
+                onClick={() => {
+                  setIsLoading(true);
+                  setTimeout(() => {
+                    setIsLoading(false);
+                  }, 2000);
+                  if (!isLoading) getWorkspaces(user.name);
+                }}
+                onMouseEnter={() =>
+                  setIsHoverRefreshIcon((prev) => (prev ? prev : true))
+                }
+                onMouseLeave={() =>
+                  setIsHoverRefreshIcon((prev) => (prev ? false : prev))
+                }
+              >
+                {isPolling || isLoading ? (
+                  <RotatingRefreshTwoTone />
+                ) : (
+                  <RefreshTwoTone />
+                )}
+              </IconButton>
+            )}
           </Tooltip>
           <Tooltip title="Create Workspace" placement="top">
             <Fab
@@ -639,31 +649,32 @@ const WorkspaceList: React.VFC = () => {
           </Tooltip>
         </Stack>
       </Paper>
-      {!Object.keys(workspaces).filter((wsName) =>
-        urlParam.search === "" || Boolean(wsName.match(urlParam.search))
-      ).length &&
-        (
-          <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
-            <Typography
-              variant="subtitle1"
-              sx={{ color: "text.secondary", textAlign: "center" }}
-            >
-              No Workspaces found.
-            </Typography>
-          </Paper>
-        )}
-      <Grid container spacing={1}>
-        {Object.keys(workspaces).filter((wsName) =>
+      {!Object.keys(workspaces).filter(
+        (wsName) =>
           urlParam.search === "" || Boolean(wsName.match(urlParam.search))
-        ).map((wsName) => workspaces[wsName]).sort((a, b) =>
-          a.ownerName !== b.ownerName ? 1 : a.name < b.name ? -1 : 1
-        ).map((ws) => (
-          <WorkspaceItem
-            workspace={ws}
-            key={ws.name}
-            events={ws.events}
-          />
-        ))}
+      ).length && (
+        <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
+          <Typography
+            variant="subtitle1"
+            sx={{ color: "text.secondary", textAlign: "center" }}
+          >
+            No Workspaces found.
+          </Typography>
+        </Paper>
+      )}
+      <Grid container spacing={1}>
+        {Object.keys(workspaces)
+          .filter(
+            (wsName) =>
+              urlParam.search === "" || Boolean(wsName.match(urlParam.search))
+          )
+          .map((wsName) => workspaces[wsName])
+          .sort((a, b) =>
+            a.ownerName !== b.ownerName ? 1 : a.name < b.name ? -1 : 1
+          )
+          .map((ws) => (
+            <WorkspaceItem workspace={ws} key={ws.name} events={ws.events} />
+          ))}
       </Grid>
     </>
   );

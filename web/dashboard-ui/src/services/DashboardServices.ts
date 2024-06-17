@@ -1,5 +1,8 @@
 import { createPromiseClient } from "@bufbuild/connect";
-import { createConnectTransport, createGrpcWebTransport } from "@bufbuild/connect-web";
+import {
+  createConnectTransport,
+  createGrpcWebTransport,
+} from "@bufbuild/connect-web";
 import { useMemo } from "react";
 import { AuthService } from "../proto/gen/dashboard/v1alpha1/auth_service_connectweb";
 import { StreamService } from "../proto/gen/dashboard/v1alpha1/event_service_connectweb";
@@ -9,28 +12,46 @@ import { WebAuthnService } from "../proto/gen/dashboard/v1alpha1/webauthn_connec
 import { WorkspaceService } from "../proto/gen/dashboard/v1alpha1/workspace_service_connectweb";
 
 const transportX = createConnectTransport({
-    baseUrl: import.meta.env.BASE_URL,
+  baseUrl: import.meta.env.BASE_URL,
 });
 
 const transport = createGrpcWebTransport({
-    baseUrl: import.meta.env.BASE_URL,
+  baseUrl: import.meta.env.BASE_URL,
 });
 
 export function useAuthService() {
-    return useMemo(() => createPromiseClient(AuthService, transport), [AuthService]);
+  return useMemo(
+    () => createPromiseClient(AuthService, transport),
+    [AuthService]
+  );
 }
 export function useTemplateService() {
-    return useMemo(() => createPromiseClient(TemplateService, transport), [TemplateService]);
+  return useMemo(
+    () => createPromiseClient(TemplateService, transport),
+    [TemplateService]
+  );
 }
 export function useUserService() {
-    return useMemo(() => createPromiseClient(UserService, transport), [UserService]);
+  return useMemo(
+    () => createPromiseClient(UserService, transport),
+    [UserService]
+  );
 }
 export function useWorkspaceService() {
-    return useMemo(() => createPromiseClient(WorkspaceService, transport), [WorkspaceService]);
+  return useMemo(
+    () => createPromiseClient(WorkspaceService, transport),
+    [WorkspaceService]
+  );
 }
 export function useWebAuthnService() {
-    return useMemo(() => createPromiseClient(WebAuthnService, transport), [WebAuthnService]);
+  return useMemo(
+    () => createPromiseClient(WebAuthnService, transport),
+    [WebAuthnService]
+  );
 }
 export function useStreamService() {
-    return useMemo(() => createPromiseClient(StreamService, transport), [StreamService]);
+  return useMemo(
+    () => createPromiseClient(StreamService, transport),
+    [StreamService]
+  );
 }

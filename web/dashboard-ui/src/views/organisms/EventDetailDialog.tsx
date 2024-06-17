@@ -39,37 +39,42 @@ const ClipboardTextField = (props: TextFieldProps) => {
       {...props}
       onMouseOver={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
-      InputProps={focused
-        ? {
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => {
-                  onCopy(String(props.value));
-                }}
-              >
-                <ContentCopy fontSize="small" />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }
-        : undefined}
+      InputProps={
+        focused
+          ? {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => {
+                      onCopy(String(props.value));
+                    }}
+                  >
+                    <ContentCopy fontSize="small" />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
+          : undefined
+      }
     />
   );
 };
 
-export const EventDetailDialog: React.FC<
-  { onClose: () => void; event: Event }
-> = ({ onClose, event }) => {
+export const EventDetailDialog: React.FC<{
+  onClose: () => void;
+  event: Event;
+}> = ({ onClose, event }) => {
   console.log("EventDetailDialog");
 
   return (
     <Dialog open={true} onClose={() => onClose()} fullWidth>
       <DialogTitle>
         <Box display="flex" alignItems="center">
-          {event.type == "Normal"
-            ? <Info sx={{ marginRight: 1 }} color="success" />
-            : <Warning sx={{ marginRight: 1 }} color="warning" />}
+          {event.type == "Normal" ? (
+            <Info sx={{ marginRight: 1 }} color="success" />
+          ) : (
+            <Warning sx={{ marginRight: 1 }} color="warning" />
+          )}
           {event.reason}
         </Box>
       </DialogTitle>
@@ -171,5 +176,5 @@ export const EventDetailDialog: React.FC<
  * Context
  */
 export const EventDetailDialogContext = DialogContext<{ event: Event }>(
-  (props) => <EventDetailDialog {...props} />,
+  (props) => <EventDetailDialog {...props} />
 );

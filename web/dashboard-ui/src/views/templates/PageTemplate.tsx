@@ -19,7 +19,6 @@ import {
   Box,
   Button,
   Chip,
-  colors,
   Container,
   CssBaseline,
   Divider,
@@ -35,6 +34,7 @@ import {
   Stack,
   Toolbar,
   Typography,
+  colors,
 } from "@mui/material";
 import MuiAppBar, { AppBarProps } from "@mui/material/AppBar";
 import { experimentalStyled as styled } from "@mui/material/styles";
@@ -95,12 +95,12 @@ export const PageTemplate: React.FC<
     clock,
     updateClock,
   } = useLogin();
-  const authenticatorManagerDialogDispatch = AuthenticatorManageDialogContext
-    .useDispatch();
+  const authenticatorManagerDialogDispatch =
+    AuthenticatorManageDialogContext.useDispatch();
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
   const userNameChangeDialogDispach = UserNameChangeDialogContext.useDispatch();
-  const userAddonChangeDialogDispatch = UserAddonChangeDialogContext
-    .useDispatch();
+  const userAddonChangeDialogDispatch =
+    UserAddonChangeDialogContext.useDispatch();
   const userInfoDialogDispatch = UserInfoDialogContext.useDispatch();
   const isAdmin = isAdminUser(loginUser);
   const isSignIn = Boolean(loginUser);
@@ -146,11 +146,11 @@ export const PageTemplate: React.FC<
   };
 
   const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(
-    null,
+    null
   );
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [eventAnchorEl, setEventAnchorEl] = React.useState<null | HTMLElement>(
-    null,
+    null
   );
 
   return (
@@ -265,82 +265,83 @@ export const PageTemplate: React.FC<
               }}
             >
               <List>
-                {myEvents.length > 0
-                  ? (
-                    myEvents.slice(0, 10).map((event, index) => (
-                      <React.Fragment key={event.id}>
-                        <MenuItem
-                          onClick={() =>
-                            eventDetailDialogDispatch(true, { event: event })}
-                        >
-                          <ListItemIcon>
-                            {event.type == "Normal"
-                              ? <Info color="success" />
-                              : <Warning color="warning" />}
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              <Stack>
-                                <Stack direction="row" alignContent="center">
-                                  <Box display="flex" alignItems="center">
-                                    <Chip
-                                      variant="outlined"
-                                      color="primary"
-                                      size="small"
-                                      label={event.regarding?.kind}
-                                      sx={{ mr: 1 }}
-                                    />
-                                    <Typography variant="body1">
-                                      {event.reason}
-                                    </Typography>
-                                  </Box>
-                                  <Box sx={{ flex: "1 1 auto" }} />
-                                  <Typography variant="body2">
-                                    {formatTime(
-                                      clock.getTime() - latestTime(event),
-                                    )}
+                {myEvents.length > 0 ? (
+                  myEvents.slice(0, 10).map((event, index) => (
+                    <React.Fragment key={event.id}>
+                      <MenuItem
+                        onClick={() =>
+                          eventDetailDialogDispatch(true, { event: event })
+                        }
+                      >
+                        <ListItemIcon>
+                          {event.type == "Normal" ? (
+                            <Info color="success" />
+                          ) : (
+                            <Warning color="warning" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Stack>
+                              <Stack direction="row" alignContent="center">
+                                <Box display="flex" alignItems="center">
+                                  <Chip
+                                    variant="outlined"
+                                    color="primary"
+                                    size="small"
+                                    label={event.regarding?.kind}
+                                    sx={{ mr: 1 }}
+                                  />
+                                  <Typography variant="body1">
+                                    {event.reason}
                                   </Typography>
-                                </Stack>
-                                <Stack direction="row" alignContent="center">
-                                  <Typography variant="body2">
-                                    {event.regarding?.name}
-                                  </Typography>
-                                </Stack>
+                                </Box>
+                                <Box sx={{ flex: "1 1 auto" }} />
+                                <Typography variant="body2">
+                                  {formatTime(
+                                    clock.getTime() - latestTime(event)
+                                  )}
+                                </Typography>
                               </Stack>
-                            }
-                            secondary={
-                              <Typography
-                                variant="body2"
-                                color="textSecondary"
-                                style={{
-                                  wordWrap: "break-word",
-                                  whiteSpace: "normal",
-                                }}
-                              >
-                                {event.note}
-                              </Typography>
-                            }
-                          />
-                        </MenuItem>
-                        {index < myEvents.length - 1
-                          ? <Divider component="li" />
-                          : null}
-                      </React.Fragment>
-                    ))
-                  )
-                  : (
-                    <ListItem>
-                      <ListItemText>
-                        <Typography
-                          align="center"
-                          variant="body2"
-                          color="textSecondary"
-                        >
-                          No events recieved
-                        </Typography>
-                      </ListItemText>
-                    </ListItem>
-                  )}
+                              <Stack direction="row" alignContent="center">
+                                <Typography variant="body2">
+                                  {event.regarding?.name}
+                                </Typography>
+                              </Stack>
+                            </Stack>
+                          }
+                          secondary={
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              style={{
+                                wordWrap: "break-word",
+                                whiteSpace: "normal",
+                              }}
+                            >
+                              {event.note}
+                            </Typography>
+                          }
+                        />
+                      </MenuItem>
+                      {index < myEvents.length - 1 ? (
+                        <Divider component="li" />
+                      ) : null}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  <ListItem>
+                    <ListItemText>
+                      <Typography
+                        align="center"
+                        variant="body2"
+                        color="textSecondary"
+                      >
+                        No events recieved
+                      </Typography>
+                    </ListItemText>
+                  </ListItem>
+                )}
               </List>
               <Divider />
               <Stack direction="row" sx={{ mt: 1, mr: 2 }}>
@@ -383,11 +384,13 @@ export const PageTemplate: React.FC<
                       return (
                         <Grid item key={i}>
                           <Chip
-                            color={isPrivilegedRole(v)
-                              ? "error"
-                              : isAdminRole(v)
-                              ? "warning"
-                              : "default"}
+                            color={
+                              isPrivilegedRole(v)
+                                ? "error"
+                                : isAdminRole(v)
+                                ? "warning"
+                                : "default"
+                            }
                             variant="outlined"
                             size="small"
                             key={i}
