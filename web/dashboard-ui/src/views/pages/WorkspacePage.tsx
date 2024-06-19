@@ -22,6 +22,8 @@ import {
   SearchTwoTone,
   StopCircleOutlined,
   StopCircleTwoTone,
+  UnfoldLessOutlined,
+  UnfoldMoreOutlined,
   WebTwoTone,
 } from "@mui/icons-material";
 import {
@@ -360,7 +362,10 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = ({ workspace }) => {
                           upsertDialogDispatch(true, {
                             workspace: workspace,
                             networkRule: networkRule,
-                            defaultOpenHttpOptions: true,
+                            defaultOpenHttpOptions:
+                              (networkRule.customHostPrefix !== "" &&
+                                networkRule.customHostPrefix !== "main") ||
+                              networkRule.httpPath !== "/",
                             index: index,
                             isMain:
                               networkRule.url == workspace.status?.mainUrl,
@@ -396,10 +401,32 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = ({ workspace }) => {
 const WorkspaceItem: React.VFC<{
   workspace: WorkspaceWrapper;
   events: Event[];
-}> = ({ workspace: ws, events }) => {
+  defaultExpandState?: {
+    networkRule?: boolean;
+    event?: boolean;
+  };
+  expandState?: {
+    networkRule?: boolean;
+    event?: boolean;
+  };
+}> = ({ workspace: ws, events, defaultExpandState, expandState }) => {
   console.log("WorkspaceItem", ws.status?.phase, ws.spec?.replicas);
-  const [networkRuleExpanded, setNetworkRuleExpanded] = useState(false);
-  const [eventExpanded, setEventExpanded] = useState(false);
+  const [networkRuleExpanded, setNetworkRuleExpanded] = useState(
+    defaultExpandState?.networkRule || false
+  );
+  const [eventExpanded, setEventExpanded] = useState(
+    defaultExpandState?.event || false
+  );
+  if (
+    expandState?.networkRule !== undefined &&
+    networkRuleExpanded !== expandState.networkRule
+  ) {
+    setNetworkRuleExpanded(expandState.networkRule);
+  }
+  if (expandState?.event !== undefined && eventExpanded !== expandState.event) {
+    setEventExpanded(expandState.event);
+  }
+
   const { clock } = useLogin();
 
   const theme = useTheme();
@@ -540,6 +567,24 @@ const WorkspaceList: React.VFC = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isHoverRefreshIcon, setIsHoverRefreshIcon] = useState(false);
+
+  const [expandState, setExpandState] = useState<{
+    currentState: boolean | undefined;
+    beforeState: boolean | undefined;
+  }>({ currentState: undefined, beforeState: true });
+  const changeExpandState = (state: boolean) => {
+    setExpandState((prev) => {
+      return { currentState: state, beforeState: prev.currentState };
+    });
+    setTimeout(
+      () =>
+        setExpandState((prev) => {
+          return { currentState: undefined, beforeState: prev.currentState };
+        }),
+      500
+    );
+  };
+
   const createDialogDisptch = WorkspaceCreateDialogContext.useDispatch();
 
   const theme = useTheme();
@@ -595,6 +640,30 @@ const WorkspaceList: React.VFC = () => {
             (isUpSM || (!isSearchFocused && urlParam.search === "")) && (
               <UserSelect />
             )}
+          {isUpSM &&
+            (expandState.beforeState === true ? (
+              <Tooltip title="Collapse all" placement="top">
+                <span>
+                  <IconButton
+                    onClick={() => changeExpandState(false)}
+                    disabled={expandState.beforeState === undefined}
+                  >
+                    <UnfoldLessOutlined />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Expand all" placement="top">
+                <span>
+                  <IconButton
+                    onClick={() => changeExpandState(true)}
+                    disabled={expandState.beforeState === undefined}
+                  >
+                    <UnfoldMoreOutlined />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            ))}
           <Tooltip
             title={isPolling ? "Cancel polling" : "Refresh"}
             placement="top"
@@ -673,7 +742,23 @@ const WorkspaceList: React.VFC = () => {
             a.ownerName !== b.ownerName ? 1 : a.name < b.name ? -1 : 1
           )
           .map((ws) => (
-            <WorkspaceItem workspace={ws} key={ws.name} events={ws.events} />
+            <WorkspaceItem
+              workspace={ws}
+              key={ws.name}
+              events={ws.events}
+              defaultExpandState={
+                isUpSM
+                  ? { networkRule: true }
+                  : { networkRule: false, event: false }
+              }
+              expandState={
+                expandState.currentState === undefined
+                  ? undefined
+                  : expandState.currentState
+                  ? { networkRule: true, event: false }
+                  : { networkRule: false, event: false }
+              }
+            />
           ))}
       </Grid>
     </>
