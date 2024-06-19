@@ -1,25 +1,20 @@
 import useUrlState from "@ahooksjs/use-url-state";
 import {
   AddTwoTone,
+  AdminPanelSettingsTwoTone,
   Badge,
   Clear,
-  DeleteTwoTone,
-  ExpandLess,
-  ExpandMore,
-  ManageAccountsTwoTone,
+  DeleteOutlined,
+  Edit,
   MoreVert,
   RefreshTwoTone,
   SearchTwoTone,
+  Settings,
 } from "@mui/icons-material";
 import {
   Box,
-  Card,
-  CardHeader,
   Chip,
-  Collapse,
-  Divider,
   Fab,
-  Grid,
   IconButton,
   InputAdornment,
   ListItemIcon,
@@ -31,12 +26,19 @@ import {
   TextField,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  gridClasses,
+} from "@mui/x-data-grid";
+import React, { useEffect } from "react";
 import { useLogin } from "../../components/LoginProvider";
-import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
-import { NameAvatar } from "../atoms/NameAvatar";
-import { SelectableChip } from "../atoms/SelectableChips";
+import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import { EllipsisTypography } from "../atoms/EllipsisTypography";
 import { PasswordDialogContext } from "../organisms/PasswordDialog";
 import { RoleChangeDialogContext } from "../organisms/RoleChangeDialog";
 import {
@@ -91,7 +93,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
             <ListItemIcon>
               <Badge fontSize="small" />
             </ListItemIcon>
-            <ListItemText>Change Name...</ListItemText>
+            <ListItemText>Change DisplayName...</ListItemText>
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -100,7 +102,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
             }}
           >
             <ListItemIcon>
-              <ManageAccountsTwoTone fontSize="small" />
+              <AdminPanelSettingsTwoTone fontSize="small" />
             </ListItemIcon>
             <ListItemText>Change Role...</ListItemText>
           </MenuItem>
@@ -111,7 +113,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
             }}
           >
             <ListItemIcon>
-              <Badge fontSize="small" />
+              <Settings fontSize="small" />
             </ListItemIcon>
             <ListItemText>Change Addons...</ListItemText>
           </MenuItem>
@@ -122,12 +124,193 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
             }}
           >
             <ListItemIcon>
-              <DeleteTwoTone fontSize="small" />
+              <DeleteOutlined fontSize="small" />
             </ListItemIcon>
             <ListItemText>Remove User...</ListItemText>
           </MenuItem>
         </Menu>
       </Box>
+    </>
+  );
+};
+
+export type UserDataGridProp = {
+  users: User[];
+};
+
+export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
+  const userNameChangeDispatch = UserNameChangeDialogContext.useDispatch();
+  const roleChangeDialogDispatch = RoleChangeDialogContext.useDispatch();
+  const userAddonChangeDispatch = UserAddonChangeDialogContext.useDispatch();
+
+  const theme = useTheme();
+  const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
+
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 0.8,
+      renderCell: (params: GridRenderCellParams<any, string>) => (
+        <EllipsisTypography variant="body2">{params.value}</EllipsisTypography>
+      ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 0.6,
+      minWidth: 80,
+      renderCell: (params: GridRenderCellParams<any, string>) => (
+        <Chip
+          color={params.value === "Active" ? "success" : "error"}
+          variant="outlined"
+          size="small"
+          label={params.value}
+        />
+      ),
+    },
+    { field: "authType", headerName: "Auth Type", flex: 0.8 },
+    {
+      field: "displayName",
+      headerName: "Display Name",
+      flex: 0.8,
+      renderCell: (params: GridRenderCellParams<any, string>) => (
+        <>
+          {params.hasFocus ? (
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Box
+                component="div"
+                sx={{
+                  justifyContent: "flex-end",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                }}
+              >
+                <Typography variant="body2">{params.value}</Typography>
+              </Box>
+              <IconButton
+                size="small"
+                onClick={() =>
+                  userNameChangeDispatch(true, { user: params.row })
+                }
+              >
+                <Edit />
+              </IconButton>
+            </Stack>
+          ) : (
+            <EllipsisTypography variant="body2">
+              {params.value}
+            </EllipsisTypography>
+          )}
+        </>
+      ),
+    },
+    {
+      field: "roles",
+      headerName: "Roles",
+      flex: 0.8,
+      renderCell: (params: GridRenderCellParams<any, string[]>) => (
+        <Box
+          component="div"
+          sx={{
+            justifyContent: "flex-end",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+          }}
+        >
+          {params.value?.map((v, i) => (
+            <Chip
+              color={
+                isPrivilegedRole(v)
+                  ? "error"
+                  : isAdminRole(v)
+                  ? "warning"
+                  : "default"
+              }
+              variant="outlined"
+              size="small"
+              key={i}
+              label={v}
+            />
+          ))}
+          {params.hasFocus && (
+            <IconButton
+              size="small"
+              onClick={() =>
+                roleChangeDialogDispatch(true, { user: params.row })
+              }
+            >
+              <Edit />
+            </IconButton>
+          )}
+        </Box>
+      ),
+    },
+    {
+      field: "addons",
+      headerName: "Addons",
+      valueGetter: (addons: UserAddon[]) => addons.map((v) => v.template),
+      renderCell: (params: GridRenderCellParams<any, string[]>) => (
+        <Stack>
+          {params.value?.map((v, i) => (
+            <Typography key={i} variant="body2">
+              {v}
+            </Typography>
+          ))}
+          {params.hasFocus && (
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <IconButton
+                size="small"
+                onClick={() =>
+                  userAddonChangeDispatch(true, { user: params.row })
+                }
+              >
+                <Edit />
+              </IconButton>
+              <Box flex={1} />
+            </Stack>
+          )}
+        </Stack>
+      ),
+      flex: 1,
+    },
+    {
+      field: "actions",
+      type: "actions",
+      getActions: () => [],
+      flex: 0.2,
+      renderCell: (params: GridRenderCellParams<any, string[]>) => (
+        <UserMenu user={params.row} />
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <div style={{ width: "100%", minHeight: 100 }}>
+        <DataGrid
+          autoHeight={true}
+          rows={users.map((v) => ({ ...v, id: v.name }))}
+          columns={columns}
+          getRowHeight={() => "auto"}
+          sx={{
+            [`& .${gridClasses.cell}`]: {
+              py: 1,
+            },
+          }}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                addons: isUpSM,
+                displayName: isUpSM,
+                authType: isUpSM,
+              },
+            },
+            pagination: { paginationModel: { pageSize: 10 } },
+          }}
+          pageSizeOptions={[10, 50, 100]}
+        />
+      </div>
     </>
   );
 };
@@ -138,7 +321,6 @@ const UserList: React.VFC = () => {
   const userCreateDialogDispatch = UserCreateDialogContext.useDispatch();
   const userInfoDialogDispatch = UserInfoDialogContext.useDispatch();
 
-  const [showFilter, setShowFilter] = useState<boolean>(false);
   const [urlParam, setUrlParam] = useUrlState(
     {
       search: "",
@@ -154,16 +336,6 @@ const UserList: React.VFC = () => {
     typeof urlParam.filterRoles === "string"
       ? [urlParam.filterRoles]
       : urlParam.filterRoles;
-  const pushFilterRoles = (role: string) => {
-    const f = [...new Set([...filterRoles, role])].sort((a, b) =>
-      a < b ? -1 : 1
-    );
-    filterRoles && setUrlParam({ filterRoles: f });
-  };
-  const popFilterRoles = (role: string) => {
-    const f = filterRoles.filter((v: string) => v !== role);
-    filterRoles && setUrlParam({ filterRoles: f });
-  };
 
   useEffect(() => {
     if (
@@ -177,7 +349,7 @@ const UserList: React.VFC = () => {
         ),
       });
     }
-  }, [loginUser, hooks.existingRoles.length]);
+  }, []);
 
   const isUserMatchedToFilterRoles = (user: User) => {
     for (const v of user.roles) {
@@ -257,158 +429,28 @@ const UserList: React.VFC = () => {
             </Fab>
           </Tooltip>
         </Stack>
-        <Box
-          component="div"
-          sx={{
-            justifyContent: "flex-end",
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-          }}
-        >
-          <IconButton
-            size="small"
-            color="inherit"
-            onClick={() => {
-              setShowFilter(!showFilter);
-            }}
-          >
-            {showFilter ? <ExpandLess /> : <ExpandMore />}
-          </IconButton>
-          <Typography color="text.secondary" variant="caption">
-            Filter by Roles
-          </Typography>
-          {filterRoles.length > 0 && (
-            <Grid container sx={{ pt: 1 }}>
-              {filterRoles.map((v, i) => (
-                <SelectableChip
-                  key={v}
-                  label={v}
-                  sx={{ m: 0.1 }}
-                  color={
-                    isPrivilegedRole(v)
-                      ? "error"
-                      : isAdminRole(v)
-                      ? "warning"
-                      : "default"
-                  }
-                  defaultChecked={true}
-                  onChecked={() => {
-                    popFilterRoles(v);
-                  }}
-                />
-              ))}
-            </Grid>
-          )}
-          <Collapse in={showFilter} timeout="auto" unmountOnExit sx={{ pt: 1 }}>
-            <Divider />
-            <Typography color="text.secondary" variant="caption">
-              Existing Roles
-            </Typography>
-            <Grid container sx={{ pt: 1 }}>
-              {hooks.existingRoles.map((v, i) => (
-                <SelectableChip
-                  key={v}
-                  label={v}
-                  sx={{ m: 0.1 }}
-                  color={
-                    isPrivilegedRole(v)
-                      ? "error"
-                      : isAdminRole(v)
-                      ? "warning"
-                      : "default"
-                  }
-                  checked={filterRoles?.includes(v)}
-                  onChecked={(checked) => {
-                    checked ? pushFilterRoles(v) : popFilterRoles(v);
-                  }}
-                />
-              ))}
-            </Grid>
-          </Collapse>
-        </Box>
       </Paper>
-      {!hooks.users.filter(
-        (us) =>
-          urlParam.search === "" || Boolean(us.name.match(urlParam.search))
-      ).length && (
-        <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
-          <Typography
-            variant="subtitle1"
-            sx={{ color: "text.secondary", textAlign: "center" }}
-          >
-            No Users found.
-          </Typography>
-        </Paper>
-      )}
-      <Grid container spacing={0.5}>
-        {hooks.users
+      <UserDataGrid
+        users={hooks.users
           .filter(
             (us) =>
-              urlParam.search === "" || Boolean(us.name.match(urlParam.search))
+              urlParam.search === "" ||
+              Boolean(us.name.match(urlParam.search)) ||
+              Boolean(us.status.match(urlParam.search)) ||
+              Boolean(us.authType.match(urlParam.search)) ||
+              Boolean(us.displayName.match(urlParam.search)) ||
+              Boolean(
+                us.roles.filter((v) => v.match(urlParam.search)).length > 0
+              ) ||
+              Boolean(
+                us.addons.filter((v) => v.template.match(urlParam.search))
+                  .length > 0
+              )
           )
-          .filter((us) => us.status === "Active")
           .filter(
             (us) => filterRoles.length == 0 || isUserMatchedToFilterRoles(us)
-          )
-          .map((us) => (
-            <Grid item key={us.name} xs={12} sm={6} md={6} lg={4}>
-              <Card>
-                <CardHeader
-                  avatar={
-                    <NameAvatar
-                      name={us.displayName}
-                      onClick={() => {
-                        userInfoDialogDispatch(true, { user: us });
-                      }}
-                    />
-                  }
-                  title={
-                    <Stack
-                      direction="row"
-                      sx={{ mr: 2, maxWidth: 350 }}
-                      onClick={() => {
-                        userInfoDialogDispatch(true, { user: us });
-                      }}
-                    >
-                      <Typography variant="subtitle1">{us.name}</Typography>
-                      <Box sx={{ flex: "1 1 auto" }} />
-                      <div style={{ maxWidth: 150, whiteSpace: "nowrap" }}>
-                        <Box
-                          component="div"
-                          sx={{
-                            justifyContent: "flex-end",
-                            textOverflow: "ellipsis",
-                            overflow: "hidden",
-                          }}
-                        >
-                          {us.roles &&
-                            us.roles.map((v, i) => {
-                              return (
-                                <Chip
-                                  color={
-                                    isPrivilegedRole(v)
-                                      ? "error"
-                                      : isAdminRole(v)
-                                      ? "warning"
-                                      : "default"
-                                  }
-                                  size="small"
-                                  key={i}
-                                  label={v}
-                                />
-                              );
-                            })}
-                        </Box>
-                      </div>
-                    </Stack>
-                  }
-                  subheader={us.displayName}
-                  action={<UserMenu user={us} />}
-                />
-              </Card>
-            </Grid>
-          ))}
-      </Grid>
+          )}
+      />
     </>
   );
 };
