@@ -124,16 +124,18 @@ const EventList: React.VFC = () => {
         events={events}
         clock={clock}
         dataGridProps={{
-          columnVisibilityModel: {
-            type: false,
-            reportingController: false,
-            series: false,
-            regardingWorkspace: isUpSM,
-            note: isUpSM,
-          },
           initialState: {
             sorting: {
               sortModel: [{ field: "eventTime", sort: "desc" }],
+            },
+            columns: {
+              columnVisibilityModel: {
+                type: false,
+                reportingController: false,
+                series: false,
+                regardingWorkspace: isUpSM,
+                note: isUpSM,
+              },
             },
           },
         }}
