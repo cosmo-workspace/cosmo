@@ -1126,6 +1126,7 @@
 | http_path | [string](#string) |  |  |
 | url | [string](#string) |  |  |
 | public | [bool](#bool) |  |  |
+| allowed_users | [string](#string) | repeated |  |
 
 
 
@@ -1195,7 +1196,7 @@
 | ----- | ---- | ----- | ----------- |
 | phase | [string](#string) |  |  |
 | main_url | [string](#string) |  |  |
-| lastStartedAt | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+| last_started_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
 
 
 
@@ -1375,6 +1376,7 @@
 | ----- | ---- | ----- | ----------- |
 | user_name | [string](#string) |  |  |
 | with_raw | [bool](#bool) | optional |  |
+| includeShared | [bool](#bool) | optional |  |
 
 
 

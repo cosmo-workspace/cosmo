@@ -53,6 +53,10 @@ spec:
                   description: NetworkRule is an abstract network configuration rule
                     for workspace
                   properties:
+                    allowedUsers:
+                      items:
+                        type: string
+                      type: array
                     customHostPrefix:
                       type: string
                     httpPath:

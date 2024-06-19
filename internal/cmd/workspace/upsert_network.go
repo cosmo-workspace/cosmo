@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -26,6 +27,7 @@ type UpsertNetworkOption struct {
 	PortNumber       int32
 	HTTPPath         string
 	Public           bool
+	AllowedUsers     []string
 
 	rule cosmov1alpha1.NetworkRule
 }
@@ -40,6 +42,7 @@ func UpsertNetworkCmd(cmd *cobra.Command, cliOpt *cli.RootOptions) *cobra.Comman
 	cmd.Flags().StringVar(&o.CustomHostPrefix, "host-prefix", "", "custom host prefix")
 	cmd.Flags().StringVar(&o.HTTPPath, "path", "/", "path for Ingress path when using ingress")
 	cmd.Flags().BoolVar(&o.Public, "public", false, "disable authentication for this port")
+	cmd.Flags().StringSliceVarP(&o.AllowedUsers, "share-with", "s", []string{}, "allow user to access this network rule")
 
 	return cmd
 }
@@ -73,6 +76,7 @@ func (o *UpsertNetworkOption) Complete(cmd *cobra.Command, args []string) error 
 		PortNumber:       o.PortNumber,
 		HTTPPath:         o.HTTPPath,
 		Public:           o.Public,
+		AllowedUsers:     o.AllowedUsers,
 	}
 	o.rule.Default()
 
@@ -160,9 +164,9 @@ func (o *UpsertNetworkOption) UpsertNetworkRuleByKubeClient(ctx context.Context)
 
 func (o *UpsertNetworkOption) OutputTable(w io.Writer, v *dashv1alpha1.NetworkRule) {
 	data := [][]string{
-		{fmt.Sprintf("%d", v.PortNumber), v.CustomHostPrefix, v.HttpPath, strconv.FormatBool(v.Public), v.Url},
+		{fmt.Sprintf("%d", v.PortNumber), v.CustomHostPrefix, v.HttpPath, strconv.FormatBool(v.Public), strings.Join(v.AllowedUsers, ","), v.Url},
 	}
 	cli.OutputTable(w,
-		[]string{"PORT", "CUSTOM_HOST_PREFIX", "HTTP_PATH", "PUBLIC", "URL"},
+		[]string{"PORT", "CUSTOM_HOST_PREFIX", "HTTP_PATH", "PUBLIC", "SHARE", "URL"},
 		data)
 }

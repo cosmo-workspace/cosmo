@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -140,6 +141,40 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 			return ctrl.Result{}, err
 		}
 		log.Info("status updated")
+	}
+
+	// update shared workspace user status
+	for _, netRule := range ws.Spec.Network {
+		for _, AllowedUsers := range netRule.AllowedUsers {
+			var user cosmov1alpha1.User
+			err := r.Get(ctx, client.ObjectKey{Name: AllowedUsers}, &user)
+			if err != nil {
+				kosmo.WorkspaceEventf(r.Recorder, &ws, corev1.EventTypeWarning, "UpdateAllowedUserStatusFailed", "Failed to update share user status: %v", err)
+				continue
+			}
+
+			wsRef := cosmov1alpha1.ObjectRef{
+				ObjectReference: corev1.ObjectReference{
+					Name:      ws.Name,
+					Namespace: ws.Namespace,
+				},
+			}
+			if len(user.Status.SharedWorkspaces) > 0 {
+				if !slices.ContainsFunc(user.Status.SharedWorkspaces, func(v cosmov1alpha1.ObjectRef) bool { return v == wsRef }) {
+					user.Status.SharedWorkspaces = append(user.Status.SharedWorkspaces, wsRef)
+				}
+			} else {
+				user.Status.SharedWorkspaces = []cosmov1alpha1.ObjectRef{wsRef}
+			}
+
+			if err := r.Status().Update(ctx, &user); err != nil {
+				if !apierrs.IsConflict(err) {
+					kosmo.UserEventf(r.Recorder, &user, corev1.EventTypeWarning, "UpdateUserStatusFailed", "Failed to update user status: %v", err)
+				}
+				return ctrl.Result{}, err
+			}
+			log.Info("user status updated", "user", user.Name, "add", wsRef, "result", user.Status.SharedWorkspaces)
+		}
 	}
 
 	log.Debug().Info("finish reconcile")

@@ -80,12 +80,13 @@ const (
 
 // NetworkRule is an abstract network configuration rule for workspace
 type NetworkRule struct {
-	Protocol         string `json:"protocol"`
-	PortNumber       int32  `json:"portNumber"`
-	CustomHostPrefix string `json:"customHostPrefix,omitempty"`
-	HTTPPath         string `json:"httpPath,omitempty"`
-	TargetPortNumber *int32 `json:"targetPortNumber,omitempty"`
-	Public           bool   `json:"public"`
+	Protocol         string   `json:"protocol"`
+	PortNumber       int32    `json:"portNumber"`
+	CustomHostPrefix string   `json:"customHostPrefix,omitempty"`
+	HTTPPath         string   `json:"httpPath,omitempty"`
+	TargetPortNumber *int32   `json:"targetPortNumber,omitempty"`
+	Public           bool     `json:"public"`
+	AllowedUsers     []string `json:"allowedUsers,omitempty"`
 }
 
 func HTTPUniqueKey(host, httpPath string) string {

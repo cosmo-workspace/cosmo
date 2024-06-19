@@ -122,7 +122,7 @@ func (o *CreateOption) RunE(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Fprintln(cmd.OutOrStdout(), color.GreenString("Successfully created workspace %s", o.WorkspaceName))
-	OutputTable(cmd.OutOrStdout(), []*dashv1alpha1.Workspace{ws})
+	OutputTable(cmd.OutOrStdout(), o.UserName, []*dashv1alpha1.Workspace{ws})
 
 	return nil
 }

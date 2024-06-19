@@ -81,9 +81,10 @@ type UserSpec struct {
 }
 
 type UserStatus struct {
-	Phase     corev1.NamespacePhase `json:"phase,omitempty"`
-	Namespace ObjectRef             `json:"namespace,omitempty"`
-	Addons    []ObjectRef           `json:"addons,omitempty"`
+	Phase            corev1.NamespacePhase `json:"phase,omitempty"`
+	Namespace        ObjectRef             `json:"namespace,omitempty"`
+	Addons           []ObjectRef           `json:"addons,omitempty"`
+	SharedWorkspaces []ObjectRef           `json:"sharedWorkspaces,omitempty"`
 }
 
 type UserAddon struct {

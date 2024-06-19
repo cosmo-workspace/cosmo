@@ -24,6 +24,7 @@ spec:
       headers:
         customRequestHeaders:
           X-Cosmo-UserName: '{{ print "{{USER_NAME}}" }}'
+          X-Cosmo-UserName-{{ print "{{USER_NAME}}" }}: '1'
         customResponseHeaders:
           X-Cosmo-UserName: '{{ print "{{USER_NAME}}" }}'
 {{- end }}

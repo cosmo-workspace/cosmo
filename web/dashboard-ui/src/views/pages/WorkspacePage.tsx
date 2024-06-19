@@ -3,6 +3,7 @@ import {
   AddTwoTone,
   CheckCircleOutlined,
   Clear,
+  CoPresentTwoTone,
   ContentCopy,
   DeleteTwoTone,
   EditTwoTone,
@@ -16,6 +17,7 @@ import {
   LockOutlined,
   MoreVertTwoTone,
   OpenInNewTwoTone,
+  Person,
   PlayCircleFilledWhiteTwoTone,
   PublicOutlined,
   RefreshTwoTone,
@@ -24,6 +26,7 @@ import {
   StopCircleTwoTone,
   UnfoldLessOutlined,
   UnfoldMoreOutlined,
+  VerifiedUserOutlined,
   WebTwoTone,
 } from "@mui/icons-material";
 import {
@@ -63,7 +66,7 @@ import { useSnackbar } from "notistack";
 import React, { useRef, useState } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
-import { Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
+import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
@@ -161,7 +164,10 @@ const StatusChip: React.VFC<{ ws: WorkspaceWrapper }> = ({ ws }) => {
   }
 };
 
-const WorkspaceMenu: React.VFC<{ workspace: Workspace }> = ({ workspace }) => {
+const WorkspaceMenu: React.VFC<{ workspace: WorkspaceWrapper; user: User }> = ({
+  workspace,
+  user,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const startDialogDispatch = WorkspaceStartDialogContext.useDispatch();
   const stopDialogDispatch = WorkspaceStopDialogContext.useDispatch();
@@ -175,6 +181,7 @@ const WorkspaceMenu: React.VFC<{ workspace: Workspace }> = ({ workspace }) => {
           setAnchorEl(e.currentTarget);
           e.stopPropagation();
         }}
+        disabled={workspace.readonlyFor(user)}
       >
         <MoreVertTwoTone />
       </IconButton>
@@ -212,7 +219,7 @@ const WorkspaceMenu: React.VFC<{ workspace: Workspace }> = ({ workspace }) => {
             setAnchorEl(null);
             deleteDialogDispatch(true, { workspace: workspace });
           }}
-          disabled={!Boolean(workspace.name)}
+          disabled={!Boolean(workspace.name) || workspace.isSharedFor(user)}
         >
           <ListItemIcon>
             <DeleteTwoTone fontSize="small" />
@@ -273,7 +280,10 @@ const UserSelect: React.VFC = () => {
   );
 };
 
-const NetworkRuleList: React.FC<{ workspace: Workspace }> = ({ workspace }) => {
+const NetworkRuleList: React.FC<{
+  workspace: WorkspaceWrapper;
+  user: User;
+}> = ({ workspace, user }) => {
   const upsertDialogDispatch = NetworkRuleUpsertDialogContext.useDispatch();
   const deleteDialogDispatch = NetworkRuleDeleteDialogContext.useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -282,6 +292,9 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = ({ workspace }) => {
     enqueueSnackbar("Copied!", { variant: "success" });
   };
   const theme = useTheme();
+  const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
+
+  const readonly = workspace.readonlyFor(user);
 
   return (
     <TableContainer
@@ -299,10 +312,12 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = ({ workspace }) => {
           <TableRow>
             <TableCell align="center">Mode</TableCell>
             <TableCell align="left">URL</TableCell>
+            {isUpSM && <TableCell align="right"></TableCell>}
             <TableCell align="center">Port #</TableCell>
             <TableCell align="center">
               {
                 <IconButton
+                  disabled={readonly}
                   onClick={() => {
                     upsertDialogDispatch(true, {
                       workspace: workspace,
@@ -317,81 +332,109 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = ({ workspace }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {workspace.spec?.network.map((networkRule, index) => {
-            return (
-              <TableRow key={index}>
-                <TableCell align="center">
-                  {(networkRule.public && (
-                    <Tooltip title="No authentication is required for this URL">
-                      <PublicOutlined />
-                    </Tooltip>
-                  )) || (
-                    <Tooltip title="Private URL">
-                      <LockOutlined />
-                    </Tooltip>
+          {workspace.spec?.network
+            .filter((v) => (readonly ? v.allowedUsers.includes(user.name) : v))
+            .map((networkRule, index) => {
+              return (
+                <TableRow key={index}>
+                  <TableCell align="center">
+                    {networkRule.public ? (
+                      <Tooltip title="No authentication is required for this URL">
+                        <PublicOutlined />
+                      </Tooltip>
+                    ) : networkRule.allowedUsers.length == 0 ? (
+                      <Tooltip title="Private URL">
+                        <LockOutlined />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Limited Access">
+                        <VerifiedUserOutlined />
+                      </Tooltip>
+                    )}
+                  </TableCell>
+                  <TableCell align="left">
+                    {
+                      <>
+                        <Link href={networkRule.url || ""} target="_blank">
+                          {networkRule.url}
+                          <OpenInNewTwoTone
+                            fontSize="inherit"
+                            sx={{ position: "relative", top: "0.2em" }}
+                          />
+                        </Link>
+                        <IconButton
+                          size="small"
+                          sx={{ ml: 1 }}
+                          onClick={() => {
+                            onCopy(networkRule.url);
+                          }}
+                        >
+                          <ContentCopy fontSize="inherit" />
+                        </IconButton>
+                      </>
+                    }
+                  </TableCell>
+                  {isUpSM && (
+                    <TableCell align="right">
+                      {!readonly && (
+                        <Box sx={{ maxWidth: 150, wordWrap: "break-word" }}>
+                          {networkRule.allowedUsers.map((allowedUser) => (
+                            <Chip
+                              sx={{ ml: 0.5 }}
+                              key={allowedUser}
+                              color="secondary"
+                              size="small"
+                              label={allowedUser}
+                              icon={<Person />}
+                            />
+                          ))}
+                        </Box>
+                      )}
+                    </TableCell>
                   )}
-                </TableCell>
-                <TableCell align="left">
-                  {
-                    <>
-                      <Link href={networkRule.url || ""} target="_blank">
-                        {networkRule.url}
-                        <OpenInNewTwoTone
-                          fontSize="inherit"
-                          sx={{ position: "relative", top: "0.2em" }}
-                        />
-                      </Link>
-                      <IconButton
-                        size="small"
-                        sx={{ ml: 1 }}
-                        onClick={() => {
-                          onCopy(networkRule.url);
-                        }}
-                      >
-                        <ContentCopy fontSize="inherit" />
-                      </IconButton>
-                    </>
-                  }
-                </TableCell>
-                <TableCell align="center">{networkRule.portNumber}</TableCell>
-                <TableCell align="center">
-                  {
-                    <>
-                      <IconButton
-                        onClick={() => {
-                          upsertDialogDispatch(true, {
-                            workspace: workspace,
-                            networkRule: networkRule,
-                            defaultOpenHttpOptions:
-                              (networkRule.customHostPrefix !== "" &&
-                                networkRule.customHostPrefix !== "main") ||
-                              networkRule.httpPath !== "/",
-                            index: index,
-                            isMain:
-                              networkRule.url == workspace.status?.mainUrl,
-                          });
-                        }}
-                      >
-                        <EditTwoTone />
-                      </IconButton>
-                      <IconButton
-                        disabled={networkRule.url == workspace.status?.mainUrl}
-                        onClick={() => {
-                          deleteDialogDispatch(true, {
-                            workspace: workspace,
-                            networkRule: networkRule,
-                            index: index,
-                          });
-                        }}
-                      >
-                        <DeleteTwoTone />
-                      </IconButton>
-                    </>
-                  }
-                </TableCell>
-              </TableRow>
-            );
-          })}
+                  <TableCell align="center">{networkRule.portNumber}</TableCell>
+                  <TableCell align="center">
+                    {
+                      <>
+                        <IconButton
+                          disabled={readonly}
+                          onClick={() => {
+                            upsertDialogDispatch(true, {
+                              workspace: workspace,
+                              networkRule: networkRule,
+                              defaultOpenHttpOptions:
+                                (networkRule.customHostPrefix !== "" &&
+                                  networkRule.customHostPrefix !== "main") ||
+                                networkRule.httpPath !== "/",
+                              index: index,
+                              isMain:
+                                networkRule.url == workspace.status?.mainUrl,
+                            });
+                          }}
+                        >
+                          <EditTwoTone />
+                        </IconButton>
+                        <IconButton
+                          disabled={
+                            readonly ||
+                            networkRule.url == workspace.status?.mainUrl
+                          }
+                          onClick={() => {
+                            deleteDialogDispatch(true, {
+                              workspace: workspace,
+                              networkRule: networkRule,
+                              index: index,
+                            });
+                          }}
+                        >
+                          <DeleteTwoTone />
+                        </IconButton>
+                      </>
+                    }
+                  </TableCell>
+                </TableRow>
+              );
+            })}
         </TableBody>
       </Table>
     </TableContainer>
@@ -401,6 +444,7 @@ const NetworkRuleList: React.FC<{ workspace: Workspace }> = ({ workspace }) => {
 const WorkspaceItem: React.VFC<{
   workspace: WorkspaceWrapper;
   events: Event[];
+  user: User;
   defaultExpandState?: {
     networkRule?: boolean;
     event?: boolean;
@@ -409,7 +453,7 @@ const WorkspaceItem: React.VFC<{
     networkRule?: boolean;
     event?: boolean;
   };
-}> = ({ workspace: ws, events, defaultExpandState, expandState }) => {
+}> = ({ workspace: ws, events, user, defaultExpandState, expandState }) => {
   console.log("WorkspaceItem", ws.status?.phase, ws.spec?.replicas);
   const [networkRuleExpanded, setNetworkRuleExpanded] = useState(
     defaultExpandState?.networkRule || false
@@ -432,6 +476,9 @@ const WorkspaceItem: React.VFC<{
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
 
+  const sharedWorkspace = ws.isSharedFor(user);
+  const readonly = ws.readonlyFor(user);
+
   return (
     <Grid item key={ws.name} xs={12}>
       <Card>
@@ -444,27 +491,44 @@ const WorkspaceItem: React.VFC<{
                 : theme.palette.grey["A700"],
           }}
           avatar={
-            <Avatar>
-              <WebTwoTone />
+            <Avatar sx={{ backgroundColor: theme.palette.primary.main }}>
+              {sharedWorkspace ? <CoPresentTwoTone /> : <WebTwoTone />}
             </Avatar>
           }
           title={
-            ws.status && ws.status.mainUrl ? (
-              <Link
-                variant="h6"
-                target="_blank"
-                href={ws.status.mainUrl}
-                onClick={(e: any) => e.stopPropagation()}
-              >
-                {ws.name}{" "}
-                <OpenInNewTwoTone
-                  fontSize="inherit"
-                  sx={{ position: "relative", top: "0.2em" }}
-                />
-              </Link>
-            ) : (
-              <Typography variant="h6">{ws.name}</Typography>
-            )
+            <Box display="flex" alignItems="center">
+              {ws.status && ws.status.mainUrl && !readonly ? (
+                <Link
+                  variant="h6"
+                  target="_blank"
+                  href={ws.status.mainUrl}
+                  onClick={(e: any) => e.stopPropagation()}
+                  mr={2}
+                >
+                  {ws.name}{" "}
+                  <OpenInNewTwoTone
+                    fontSize="inherit"
+                    sx={{ position: "relative", top: "0.2em" }}
+                  />
+                </Link>
+              ) : (
+                <Typography variant="h6" mr={2}>
+                  {ws.name}
+                </Typography>
+              )}
+              {sharedWorkspace && (
+                <Stack direction="row" spacing={0.5}>
+                  <Chip
+                    color="secondary"
+                    size="small"
+                    label={`shared by ${ws.ownerName}`}
+                  />
+                  {readonly && (
+                    <Chip color="default" size="small" label="readonly" />
+                  )}
+                </Stack>
+              )}
+            </Box>
           }
           subheader={ws.spec && ws.spec.template}
           action={
@@ -479,7 +543,7 @@ const WorkspaceItem: React.VFC<{
               )}
               <StatusChip ws={ws} />
               <Box onClick={(e) => e.stopPropagation()}>
-                <WorkspaceMenu workspace={ws} />
+                <WorkspaceMenu workspace={ws} user={user} />
               </Box>
             </Stack>
           }
@@ -504,21 +568,25 @@ const WorkspaceItem: React.VFC<{
                   </IconButton>
                   <Typography variant="body2">Network Rules</Typography>
                 </Box>
-                <Box display="flex" alignItems="center">
-                  <IconButton onClick={() => setEventExpanded(!eventExpanded)}>
-                    {eventExpanded ? (
-                      <KeyboardArrowUpTwoTone />
-                    ) : (
-                      <KeyboardArrowDownTwoTone />
-                    )}
-                  </IconButton>
-                  <Typography variant="body2">Events</Typography>
-                </Box>
+                {!sharedWorkspace && (
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      onClick={() => setEventExpanded(!eventExpanded)}
+                    >
+                      {eventExpanded ? (
+                        <KeyboardArrowUpTwoTone />
+                      ) : (
+                        <KeyboardArrowDownTwoTone />
+                      )}
+                    </IconButton>
+                    <Typography variant="body2">Events</Typography>
+                  </Box>
+                )}
               </Stack>
             </Grid>
             {networkRuleExpanded && (
               <Grid item xs={12} mb={2}>
-                <NetworkRuleList workspace={ws} />
+                <NetworkRuleList workspace={ws} user={user} />
               </Grid>
             )}
             {eventExpanded && (
@@ -746,6 +814,7 @@ const WorkspaceList: React.VFC = () => {
               workspace={ws}
               key={ws.name}
               events={ws.events}
+              user={user}
               defaultExpandState={
                 isUpSM
                   ? { networkRule: true }

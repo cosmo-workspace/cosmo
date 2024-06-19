@@ -61,6 +61,26 @@ export class WorkspaceWrapper extends Workspace {
         ).length > 0
     );
   }
+  isSharedFor(user: User): boolean {
+    if (this.ownerName == user.name) return false;
+    const allowed =
+      this?.spec?.network?.filter((r) => r.allowedUsers.length > 0) || [];
+    return allowed.length > 0;
+  }
+  readonlyFor(user: User): boolean {
+    if (!this.isSharedFor(user)) return false;
+
+    const main = this.spec?.network?.find((r) => r.url == this.status?.mainUrl);
+    const canUpdate = main?.allowedUsers.includes(user.name);
+    return !canUpdate;
+  }
+  networkRules(user: User): NetworkRule[] {
+    const rules = this.spec?.network || [];
+    if (this.isSharedFor(user)) {
+      rules.filter((r) => r.allowedUsers.includes(user.name));
+    }
+    return rules;
+  }
 }
 
 /**
@@ -119,6 +139,7 @@ const useWorkspace = () => {
     try {
       const getWorkspacesResult = await workspaceService.getWorkspaces({
         userName: userName,
+        includeShared: true,
       });
       const getEventsResult = await userService.getEvents({
         userName: userName,

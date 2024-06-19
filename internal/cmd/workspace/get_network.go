@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -109,11 +110,11 @@ func (o *GetNetworkOption) OutputTable(w io.Writer, workspace *dashv1alpha1.Work
 	data := [][]string{}
 
 	for _, v := range workspace.Spec.Network {
-		data = append(data, []string{fmt.Sprintf("%d", v.PortNumber), v.CustomHostPrefix, v.HttpPath, strconv.FormatBool(v.Public), v.Url})
+		data = append(data, []string{fmt.Sprintf("%d", v.PortNumber), v.CustomHostPrefix, v.HttpPath, strconv.FormatBool(v.Public), strings.Join(v.AllowedUsers, ","), v.Url})
 	}
 
 	cli.OutputTable(w,
-		[]string{"PORT", "CUSTOM_HOST_PREFIX", "HTTP_PATH", "PUBLIC", "URL"},
+		[]string{"PORT", "CUSTOM_HOST_PREFIX", "HTTP_PATH", "PUBLIC", "ALLOWED_USERS", "URL"},
 		data)
 }
 

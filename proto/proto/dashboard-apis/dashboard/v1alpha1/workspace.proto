@@ -15,6 +15,7 @@ message NetworkRule {
   string http_path = 3;
   string url = 4;
   bool public = 5;
+  repeated string allowed_users = 6;
 }
 
 message WorkspaceSpec {
@@ -27,7 +28,7 @@ message WorkspaceSpec {
 message WorkspaceStatus {
   string phase = 1;
   string main_url = 2;
-  google.protobuf.Timestamp lastStartedAt = 3;
+  google.protobuf.Timestamp last_started_at = 3;
 }
 
 message Workspace {
