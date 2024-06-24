@@ -50,8 +50,8 @@ import { AuthenticatorManageDialogContext } from "../organisms/AuthenticatorMana
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
 import { latestTime } from "../organisms/EventModule";
 import { PasswordChangeDialogContext } from "../organisms/PasswordChangeDialog";
-import { UserInfoDialogContext } from "../organisms/UserActionDialog";
 import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
+import { UserInfoDialogContext } from "../organisms/UserInfoDialog";
 import {
   isAdminRole,
   isAdminUser,
@@ -141,7 +141,6 @@ export const PageTemplate: React.FC<
     console.log("openUserInfoDialog");
     userInfoDialogDispatch(true, {
       user: loginUser!,
-      defaultOpenUserAddon: true,
     });
     setAnchorEl(null);
   };

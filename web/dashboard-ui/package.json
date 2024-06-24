@@ -24,6 +24,7 @@
     "@types/node": "20.11.15",
     "base64url": "^3.0.1",
     "copy-to-clipboard": "3.3.3",
+    "highlight.js": "^11.9.0",
     "notistack": "3.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",

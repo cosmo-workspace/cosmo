@@ -81,6 +81,7 @@ import {
   WorkspaceStartDialogContext,
   WorkspaceStopDialogContext,
 } from "../organisms/WorkspaceActionDialog";
+import { WorkspaceInfoDialogContext } from "../organisms/WorkspaceInfoDialog";
 import {
   WorkspaceContext,
   WorkspaceWrapper,
@@ -479,6 +480,8 @@ const WorkspaceItem: React.VFC<{
   const sharedWorkspace = ws.isSharedFor(user);
   const readonly = ws.readonlyFor(user);
 
+  const wsInfoDialogDispatch = WorkspaceInfoDialogContext.useDispatch();
+
   return (
     <Grid item key={ws.name} xs={12}>
       <Card>
@@ -491,7 +494,12 @@ const WorkspaceItem: React.VFC<{
                 : theme.palette.grey["A700"],
           }}
           avatar={
-            <Avatar sx={{ backgroundColor: theme.palette.primary.main }}>
+            <Avatar
+              sx={{ backgroundColor: theme.palette.primary.main }}
+              onClick={() => {
+                wsInfoDialogDispatch(true, { ws: ws });
+              }}
+            >
               {sharedWorkspace ? <CoPresentTwoTone /> : <WebTwoTone />}
             </Avatar>
           }
@@ -845,13 +853,15 @@ export const WorkspacePage: React.VFC = () => {
             <WorkspaceStartDialogContext.Provider>
               <WorkspaceStopDialogContext.Provider>
                 <WorkspaceDeleteDialogContext.Provider>
-                  <NetworkRuleUpsertDialogContext.Provider>
-                    <NetworkRuleDeleteDialogContext.Provider>
-                      <EventDetailDialogContext.Provider>
-                        <WorkspaceList />
-                      </EventDetailDialogContext.Provider>
-                    </NetworkRuleDeleteDialogContext.Provider>
-                  </NetworkRuleUpsertDialogContext.Provider>
+                  <WorkspaceInfoDialogContext.Provider>
+                    <NetworkRuleUpsertDialogContext.Provider>
+                      <NetworkRuleDeleteDialogContext.Provider>
+                        <EventDetailDialogContext.Provider>
+                          <WorkspaceList />
+                        </EventDetailDialogContext.Provider>
+                      </NetworkRuleDeleteDialogContext.Provider>
+                    </NetworkRuleUpsertDialogContext.Provider>
+                  </WorkspaceInfoDialogContext.Provider>
                 </WorkspaceDeleteDialogContext.Provider>
               </WorkspaceStopDialogContext.Provider>
             </WorkspaceStartDialogContext.Provider>

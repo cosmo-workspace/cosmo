@@ -106,7 +106,7 @@ const useUser = () => {
   const [existingRoles, setExistingRoles] = useState<string[]>([]);
 
   /**
-   * WorkspaceList: workspace list
+   * UserList: user list
    */
   const getUsers = async () => {
     console.log("getUsers");

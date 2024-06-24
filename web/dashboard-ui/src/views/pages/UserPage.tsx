@@ -45,9 +45,9 @@ import {
   UserCreateConfirmDialogContext,
   UserCreateDialogContext,
   UserDeleteDialogContext,
-  UserInfoDialogContext,
 } from "../organisms/UserActionDialog";
 import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
+import { UserInfoDialogContext } from "../organisms/UserInfoDialog";
 import {
   hasAdminForRole,
   hasPrivilegedRole,
