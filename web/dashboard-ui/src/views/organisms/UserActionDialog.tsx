@@ -177,7 +177,7 @@ const UserActionDialog: React.FC<UserActionDialogProps> = ({
                 </IconButton>
               </Typography>
               <Collapse in={openUserAddon} timeout="auto" unmountOnExit>
-                <List component="nav">
+                <List component="nav" dense={true}>
                   {user.addons.map((v, i) => (
                     <ListItem key={i}>
                       <ListItemText
@@ -424,13 +424,13 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
   });
 
   return (
-    <Dialog open={true} fullWidth maxWidth={"xs"}>
+    <Dialog open={true} fullWidth>
       <DialogTitle>Create New User 🎉</DialogTitle>
       <form
         onSubmit={handleSubmit((inp: Inputs) => {
           console.log(inp);
           const userAddons = inp.addons
-            .filter((v) => v.enable)
+            .filter((v) => v.enable || v.template.isDefaultUserAddon)
             .map((inpAddon) => {
               const vars: { [key: string]: string } = {};
               inpAddon.vars.forEach((v, i) => {
@@ -483,9 +483,9 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
                   pattern: {
                     value: /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/,
                     message:
-                      'Only lowercase alphanumeric characters or "-" are allowed',
+                      'Only lowercase alphanumeric characters or "-" are allowed (start and end with an alphanumeric character)',
                   },
-                  maxLength: { value: 128, message: "Max 128 characters" },
+                  maxLength: { value: 50, message: "Max 50 characters" },
                 })
               )}
               error={Boolean(errors.id)}
@@ -503,12 +503,11 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
               }}
             />
             <TextField
-              label="Display Name"
+              label="Display Name (optional)"
               fullWidth
               {...registerMui(
                 register("name", {
-                  required: { value: true, message: "Required" },
-                  maxLength: { value: 32, message: "Max 32 characters" },
+                  maxLength: { value: 50, message: "Max 50 characters" },
                 })
               )}
               error={Boolean(errors.name)}
@@ -526,7 +525,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
               label="Auth Type"
               select
               fullWidth
-              defaultValue=""
+              defaultValue="password-secret"
               {...registerMui(
                 register("authType", {
                   required: { value: true, message: "Required" },
@@ -647,14 +646,9 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
                           defaultChecked={
                             field.template.isDefaultUserAddon || false
                           }
+                          disabled={field.template.isDefaultUserAddon || false}
                           {...registerMui(
-                            register(`addons.${index}.enable` as const, {
-                              required: {
-                                value:
-                                  field.template.isDefaultUserAddon || false,
-                                message: "Required",
-                              },
-                            })
+                            register(`addons.${index}.enable` as const, {})
                           )}
                         />
                       </Tooltip>
@@ -665,28 +659,30 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
                   >
                     {errors.addons?.[index]?.enable?.message}
                   </FormHelperText>
-                  <Collapse in={watch("addons")[index].enable}>
-                    <Stack spacing={2}>
-                      {field.template.requiredVars?.map((required, j) => (
-                        <TextField
-                          key={field.id + j}
-                          size="small"
-                          fullWidth
-                          label={required.varName}
-                          defaultValue={required.defaultValue}
-                          {...registerMui(
-                            register(`addons.${index}.vars.${j}` as const, {
-                              required: watch("addons")[index].enable,
-                            })
-                          )}
-                          error={Boolean(errors.addons?.[index]?.vars?.[j])}
-                          helperText={
-                            errors.addons?.[index]?.vars?.[j] && "Required"
-                          }
-                        />
-                      ))}
-                    </Stack>
-                  </Collapse>
+                  {(watch("addons")[index].template.isDefaultUserAddon ||
+                    watch("addons")[index].enable) &&
+                    field.template.requiredVars.length > 0 && (
+                      <Stack spacing={2}>
+                        {field.template.requiredVars?.map((required, j) => (
+                          <TextField
+                            key={field.id + j}
+                            size="small"
+                            fullWidth
+                            label={required.varName}
+                            defaultValue={required.defaultValue}
+                            {...registerMui(
+                              register(`addons.${index}.vars.${j}` as const, {
+                                required: watch("addons")[index].enable,
+                              })
+                            )}
+                            error={Boolean(errors.addons?.[index]?.vars?.[j])}
+                            helperText={
+                              errors.addons?.[index]?.vars?.[j] && "Required"
+                            }
+                          />
+                        ))}
+                      </Stack>
+                    )}
                 </React.Fragment>
               ))}
             </Stack>

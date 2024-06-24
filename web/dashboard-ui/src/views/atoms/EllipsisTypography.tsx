@@ -7,14 +7,13 @@ import {
 import React from "react";
 
 export type EllipsisTypographyProps = Omit<TypographyProps, "children"> & {
-  children: string;
+  children?: string;
   placement?: TooltipProps["placement"];
 };
 
-export const EllipsisTypography: React.FC<EllipsisTypographyProps> = ({
-  children,
-  placement,
-}) => {
+export const EllipsisTypography: React.FC<EllipsisTypographyProps> = (
+  props
+) => {
   const [isOverflow, setIsOverflow] = React.useState(false);
   const paragraph = React.useRef<HTMLSpanElement>(null);
 
@@ -25,11 +24,11 @@ export const EllipsisTypography: React.FC<EllipsisTypographyProps> = ({
     }
   }, [paragraph]);
 
-  const title = children;
+  const title = props.children || "";
 
   // return isOverflow ? (<Tooltip title={title} placement={placement} > {typoglaphy} </Tooltip >) : typoglaphy
   return isOverflow ? (
-    <Tooltip title={title} placement={placement}>
+    <Tooltip title={title} placement={props.placement}>
       <Typography
         ref={paragraph}
         variant="caption"
@@ -39,8 +38,9 @@ export const EllipsisTypography: React.FC<EllipsisTypographyProps> = ({
           whiteSpace: "nowrap",
           overflow: "hidden",
         }}
+        {...props}
       >
-        {children}
+        {props.children}
       </Typography>
     </Tooltip>
   ) : (
@@ -53,8 +53,9 @@ export const EllipsisTypography: React.FC<EllipsisTypographyProps> = ({
         whiteSpace: "nowrap",
         overflow: "hidden",
       }}
+      {...props}
     >
-      {children}
+      {props.children}
     </Typography>
   );
 };

@@ -219,6 +219,7 @@ const useWorkspace = () => {
     setWorkspaces((prev) => {
       if (prev[wsName]) {
         const pws = prev[wsName];
+        clearInterval(pws.timer);
         pws.timer = timer;
         return { ...prev, [wsName]: pws };
       }

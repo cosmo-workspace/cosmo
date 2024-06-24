@@ -264,38 +264,6 @@ export const NetworkRuleUpsertDialog: React.VFC<{
                   </Select>
                 )}
               />
-              {/* <Select
-                defaultValue={getValues("inputAccessMode")}
-                {...registerMui(
-                  register("inputAccessMode", {
-                    pattern: {
-                      value: /^(private|public)$/i,
-                      message: "Invalid",
-                    },
-                  })
-                )}
-                onChange={(e) => {
-                  setValue("inputAccessMode", e.target.value);
-                  setOpenAllowedUsers(e.target.value === "private");
-                }}
-              >
-                <MenuItem value="private">
-                  <Stack spacing={2}>
-                    Private
-                    <Typography color="text.secondary" variant="caption">
-                      Authorize user to access this URL.
-                    </Typography>
-                  </Stack>
-                </MenuItem>
-                <MenuItem value="public">
-                  <Stack spacing={2}>
-                    Public
-                    <Typography color="text.secondary" variant="caption">
-                      No authentication is required for this URL.
-                    </Typography>
-                  </Stack>
-                </MenuItem>
-              </Select> */}
             </FormControl>
             {openAllowedUsers && (
               <Stack>
@@ -312,9 +280,23 @@ export const NetworkRuleUpsertDialog: React.VFC<{
                     {openInputAllowedUser ? <ExpandLess /> : <Add />}
                   </IconButton>
                 </Box>
+                <Stack alignItems="center" mb={1}>
+                  <Grid container justifyContent="center" sx={{ width: 300 }}>
+                    {fields.map((v, i) => (
+                      <Grid item key={i}>
+                        <Chip
+                          color="secondary"
+                          key={i}
+                          label={v.name}
+                          sx={{ m: 0.05 }}
+                          onDelete={() => remove(i)}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Stack>
                 {openInputAllowedUser && (
                   <TextField
-                    size="small"
                     label="User name"
                     {...register(`inputAllowedUser`)}
                     InputProps={{
@@ -339,21 +321,6 @@ export const NetworkRuleUpsertDialog: React.VFC<{
                     }}
                   />
                 )}
-                <Stack alignItems="center" mt={1}>
-                  <Grid container justifyContent="center" sx={{ width: 300 }}>
-                    {fields.map((v, i) => (
-                      <Grid item key={i}>
-                        <Chip
-                          color="secondary"
-                          key={i}
-                          label={v.name}
-                          sx={{ m: 0.05 }}
-                          onDelete={() => remove(i)}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Stack>
               </Stack>
             )}
             {isMain && (

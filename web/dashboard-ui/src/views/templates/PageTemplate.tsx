@@ -8,6 +8,7 @@ import {
   Menu as MenuIcon,
   Notifications,
   ReportProblem,
+  Settings,
   SupervisorAccountTwoTone,
   VpnKey,
   Warning,
@@ -371,7 +372,7 @@ export const PageTemplate: React.FC<
               <Stack alignItems="center" spacing={1} sx={{ mt: 1, mb: 2 }}>
                 <NameAvatar
                   name={loginUser?.displayName}
-                  sx={{ width: 50, height: 50 }}
+                  sx={{ width: 40, height: 40 }}
                   onClick={() => openUserInfoDialog()}
                 />
                 <Typography>{loginUser?.displayName}</Typography>
@@ -423,13 +424,13 @@ export const PageTemplate: React.FC<
                   <ListItemIcon>
                     <BadgeIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText>Change Name...</ListItemText>
+                  <ListItemText>Change DisplayName...</ListItemText>
                 </MenuItem>
               )}
               {isSignIn && isAdmin && (
                 <MenuItem onClick={() => changeAddons()}>
                   <ListItemIcon>
-                    <BadgeIcon fontSize="small" />
+                    <Settings fontSize="small" />
                   </ListItemIcon>
                   <ListItemText>Change Addons...</ListItemText>
                 </MenuItem>

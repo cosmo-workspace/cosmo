@@ -2,7 +2,6 @@ import { PersonOutlineTwoTone } from "@mui/icons-material";
 import {
   Button,
   Checkbox,
-  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -86,7 +85,7 @@ export const UserAddonChangeDialog: React.FC<{
         onSubmit={handleSubmit(async (inp: Inputs) => {
           console.log(inp);
           const userAddons = inp.addons
-            .filter((v) => v.enable)
+            .filter((v) => v.enable || v.template.isDefaultUserAddon)
             .map((inpAddon) => {
               const vars: { [key: string]: string } = {};
               inpAddon.vars.forEach((v, i) => {
@@ -143,14 +142,9 @@ export const UserAddonChangeDialog: React.FC<{
                             field.template.isDefaultUserAddon ||
                             false
                           }
+                          disabled={field.template.isDefaultUserAddon || false}
                           {...registerMui(
-                            register(`addons.${index}.enable` as const, {
-                              required: {
-                                value:
-                                  field.template.isDefaultUserAddon || false,
-                                message: "Required",
-                              },
-                            })
+                            register(`addons.${index}.enable` as const, {})
                           )}
                         />
                       </Tooltip>
@@ -161,34 +155,36 @@ export const UserAddonChangeDialog: React.FC<{
                   >
                     {errors.addons?.[index]?.enable?.message}
                   </FormHelperText>
-                  <Collapse in={watch("addons")[index].enable}>
-                    <Stack spacing={2}>
-                      {field.template.requiredVars?.map((required, j) => (
-                        <TextField
-                          key={field.id + j}
-                          size="small"
-                          fullWidth
-                          label={required.varName}
-                          defaultValue={
-                            (currentAddons.get(field.template.name) &&
-                              currentAddons.get(field.template.name)!.vars[
-                                required.varName
-                              ]) ||
-                            required.defaultValue
-                          }
-                          {...registerMui(
-                            register(`addons.${index}.vars.${j}` as const, {
-                              required: watch("addons")[index].enable,
-                            })
-                          )}
-                          error={Boolean(errors.addons?.[index]?.vars?.[j])}
-                          helperText={
-                            errors.addons?.[index]?.vars?.[j] && "Required"
-                          }
-                        />
-                      ))}
-                    </Stack>
-                  </Collapse>
+                  {(watch("addons")[index].template.isDefaultUserAddon ||
+                    watch("addons")[index].enable) &&
+                    field.template.requiredVars.length > 0 && (
+                      <Stack spacing={2}>
+                        {field.template.requiredVars?.map((required, j) => (
+                          <TextField
+                            key={field.id + j}
+                            size="small"
+                            fullWidth
+                            label={required.varName}
+                            defaultValue={
+                              (currentAddons.get(field.template.name) &&
+                                currentAddons.get(field.template.name)!.vars[
+                                  required.varName
+                                ]) ||
+                              required.defaultValue
+                            }
+                            {...registerMui(
+                              register(`addons.${index}.vars.${j}` as const, {
+                                required: watch("addons")[index].enable,
+                              })
+                            )}
+                            error={Boolean(errors.addons?.[index]?.vars?.[j])}
+                            helperText={
+                              errors.addons?.[index]?.vars?.[j] && "Required"
+                            }
+                          />
+                        ))}
+                      </Stack>
+                    )}
                 </React.Fragment>
               ))}
             </Stack>

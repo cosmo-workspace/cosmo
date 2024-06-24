@@ -6,13 +6,19 @@ export const NameAvatar: React.VFC<{ name?: string } & AvatarProps> = (
   props
 ) => {
   return props.name ? (
-    <Avatar {...props} sx={{ bgcolor: stringToColor(props.name), ...props.sx }}>
+    <Avatar
+      {...props}
+      sx={{
+        bgcolor: stringToColor(props.name),
+        ...props.sx,
+      }}
+    >
       <Typography
         sx={{
           color: (theme) =>
             theme.palette.mode === "light" ? "white" : "black",
         }}
-        fontSize="inherit"
+        variant="body1"
       >
         {props.name.substring(0, 1).toUpperCase()}
       </Typography>
