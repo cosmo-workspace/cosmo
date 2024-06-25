@@ -87,7 +87,7 @@ export const EventsDataGrid: React.FC<EventsDataGridProp> = ({
             },
             ...sx,
           }}
-          onRowClick={(params) => {
+          onRowDoubleClick={(params) => {
             eventDetailDialogDispatch(true, { event: params.row });
           }}
           hideFooter
