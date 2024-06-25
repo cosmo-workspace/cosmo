@@ -343,6 +343,7 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
           initialState={{
             columns: {
               columnVisibilityModel: {
+                roles: isUpSM,
                 addons: isUpSM,
                 displayName: isUpSM,
                 authType: isUpSM,
