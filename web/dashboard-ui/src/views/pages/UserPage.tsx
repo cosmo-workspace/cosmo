@@ -26,6 +26,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -62,6 +63,15 @@ import { PageTemplate } from "../templates/PageTemplate";
 /**
  * view
  */
+const RotatingRefreshTwoTone = styled(RefreshTwoTone)({
+  animation: "rotatingRefresh 1s linear infinite",
+  "@keyframes rotatingRefresh": {
+    to: {
+      transform: "rotate(2turn)",
+    },
+  },
+});
+
 const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
   const { loginUser } = useLogin();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -158,7 +168,7 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
         <NameAvatar
           name={params.row.id}
           onClick={() => {
-            userInfoDispatch(true, { user: params.row });
+            userInfoDispatch(true, { userName: params.row.id });
           }}
         />
       ),
@@ -341,6 +351,9 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
             pagination: { paginationModel: { pageSize: 10 } },
           }}
           pageSizeOptions={[10, 50, 100]}
+          onRowDoubleClick={(params) => {
+            userInfoDispatch(true, { userName: params.row.id });
+          }}
         />
       </div>
     </>
@@ -351,7 +364,7 @@ const UserList: React.VFC = () => {
   const hooks = useUserModule();
   const { loginUser } = useLogin();
   const userCreateDialogDispatch = UserCreateDialogContext.useDispatch();
-  const userInfoDialogDispatch = UserInfoDialogContext.useDispatch();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const [urlParam, setUrlParam] = useUrlState(
     {
@@ -444,10 +457,14 @@ const UserList: React.VFC = () => {
             <IconButton
               color="inherit"
               onClick={() => {
-                hooks.getUsers();
+                setIsLoading(true);
+                setTimeout(() => {
+                  setIsLoading(false);
+                }, 1000);
+                if (!isLoading) hooks.getUsers();
               }}
             >
-              <RefreshTwoTone />
+              {isLoading ? <RotatingRefreshTwoTone /> : <RefreshTwoTone />}
             </IconButton>
           </Tooltip>
           <Tooltip title="Add new user" placement="top">

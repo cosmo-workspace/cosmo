@@ -140,7 +140,7 @@ export const PageTemplate: React.FC<
   const openUserInfoDialog = () => {
     console.log("openUserInfoDialog");
     userInfoDialogDispatch(true, {
-      user: loginUser!,
+      userName: loginUser!.name,
     });
     setAnchorEl(null);
   };
