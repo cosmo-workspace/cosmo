@@ -1,15 +1,16 @@
 import { AccountCircle } from "@mui/icons-material";
 import { Avatar, AvatarProps, Typography } from "@mui/material";
+import { Variant } from "@mui/material/styles/createTypography";
 import React from "react";
 
-export const NameAvatar: React.VFC<{ name?: string } & AvatarProps> = (
-  props
-) => {
-  return props.name ? (
+export const NameAvatar: React.VFC<
+  { name?: string; typographyVariant?: Variant } & AvatarProps
+> = ({ name, typographyVariant, ...props }) => {
+  return name ? (
     <Avatar
       {...props}
       sx={{
-        bgcolor: stringToColor(props.name),
+        bgcolor: stringToColor(name),
         ...props.sx,
       }}
     >
@@ -18,9 +19,9 @@ export const NameAvatar: React.VFC<{ name?: string } & AvatarProps> = (
           color: (theme) =>
             theme.palette.mode === "light" ? "white" : "black",
         }}
-        variant="body1"
+        variant={typographyVariant || "body1"}
       >
-        {props.name.substring(0, 1).toUpperCase()}
+        {name.substring(0, 1).toUpperCase()}
       </Typography>
     </Avatar>
   ) : (
