@@ -6,7 +6,6 @@ import {
   ContentCopy,
   DeleteTwoTone,
   EditTwoTone,
-  Error,
   ErrorOutline,
   ExpandLessTwoTone,
   ExpandMoreTwoTone,
@@ -30,6 +29,7 @@ import {
 } from "@mui/icons-material";
 import {
   Avatar,
+  Badge,
   Box,
   Card,
   CardContent,
@@ -495,15 +495,13 @@ const WorkspaceItem: React.VFC<{
                 : theme.palette.grey["A700"],
           }}
           avatar={
-            <Avatar
-              sx={{ backgroundColor: theme.palette.primary.main }}
-              onClick={() => {
-                wsInfoDialogDispatch(true, { ws: ws });
-              }}
-            >
+            <Avatar sx={{ backgroundColor: theme.palette.primary.main }}>
               {sharedWorkspace ? <CoPresentTwoTone /> : <WebTwoTone />}
             </Avatar>
           }
+          onClick={() => {
+            wsInfoDialogDispatch(true, { ws: ws });
+          }}
           title={
             <Box display="flex" alignItems="center">
               {ws.status && ws.status.mainUrl && !readonly ? (
@@ -542,15 +540,14 @@ const WorkspaceItem: React.VFC<{
           subheader={ws.spec && ws.spec.template}
           action={
             <Stack direction="row" spacing={2} alignItems="center">
-              {ws.hasWarningEvents(clock) && (
-                <IconButton
-                  color="inherit"
-                  onClick={() => setEventExpanded(true)}
-                >
-                  <Error color="error" />
-                </IconButton>
-              )}
-              <StatusChip ws={ws} />
+              <Badge
+                variant="dot"
+                color="error"
+                invisible={ws.warningEventsCount(clock) === 0}
+                badgeContent={" "}
+              >
+                <StatusChip ws={ws} />
+              </Badge>
               <Box onClick={(e) => e.stopPropagation()}>
                 <WorkspaceMenu workspace={ws} user={user} />
               </Box>

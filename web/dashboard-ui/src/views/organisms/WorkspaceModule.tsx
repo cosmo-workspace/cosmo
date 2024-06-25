@@ -48,22 +48,20 @@ export class WorkspaceWrapper extends Workspace {
   isPolling(): boolean {
     return this.timer !== undefined;
   }
-  hasWarningEvents(clock: Date): boolean {
+  warningEventsCount(clock: Date): number {
     const events = this.events;
     if (events === undefined || events.length === 0) {
-      return false;
+      return 0;
     }
     if (["Stopped", "Stopping"].includes(this.status?.phase!)) {
-      return false;
+      return 0;
     }
-    return (
-      events
-        .filter((e) => e.type === "Warning")
-        .filter((e) => latestTime(e) - getTime(this.status?.lastStartedAt) >= 0)
-        .filter(
-          (e) => (clock.getTime() - latestTime(e)) / 1000 / 60 <= 5 // before 5 minutes ago
-        ).length > 0
-    );
+    return events
+      .filter((e) => e.type === "Warning")
+      .filter((e) => latestTime(e) - getTime(this.status?.lastStartedAt) >= 0)
+      .filter(
+        (e) => (clock.getTime() - latestTime(e)) / 1000 / 60 <= 5 // before 5 minutes ago
+      ).length;
   }
   isSharedFor(user: User): boolean {
     if (this.ownerName == user.name) return false;
