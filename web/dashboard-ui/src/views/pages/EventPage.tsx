@@ -17,7 +17,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
 import { NameAvatar } from "../atoms/NameAvatar";
@@ -45,7 +45,9 @@ const UserSelect: React.VFC = () => {
         <Chip
           ref={chipReff}
           label={user.name}
-          avatar={<NameAvatar name={user.displayName} />}
+          avatar={
+            <NameAvatar name={user.displayName} typographyVariant="body2" />
+          }
           onClick={(e) => {
             e.stopPropagation();
             getUsers().then(() => setAnchorEl(chipReff.current));
@@ -68,7 +70,7 @@ const UserSelect: React.VFC = () => {
             value={user.name}
             onClick={() => {
               setAnchorEl(null);
-              setUser(user);
+              setUser(user.name);
             }}
           >
             <Stack>
@@ -87,16 +89,12 @@ const UserSelect: React.VFC = () => {
 
 const EventList: React.VFC = () => {
   console.log("EventList");
-  const { user, events, getEvents } = useEventModule();
+  const { user, getUsers, events, getEvents } = useEventModule();
   const { loginUser, clock } = useLogin();
   const isPriv = hasPrivilegedRole(loginUser?.roles || []);
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
   const [isLoading, setIsLoading] = React.useState(false);
-
-  useEffect(() => {
-    getEvents();
-  }, [user]); // eslint-disable-line
 
   return (
     <>

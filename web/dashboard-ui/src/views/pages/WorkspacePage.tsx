@@ -1,4 +1,3 @@
-import useUrlState from "@ahooksjs/use-url-state";
 import {
   AddTwoTone,
   CheckCircleOutlined,
@@ -242,7 +241,9 @@ const UserSelect: React.VFC = () => {
         <Chip
           ref={chipReff}
           label={user.name}
-          avatar={<NameAvatar name={user.displayName} />}
+          avatar={
+            <NameAvatar name={user.displayName} typographyVariant="body2" />
+          }
           onClick={(e) => {
             e.stopPropagation();
             getUsers().then(() => setAnchorEl(chipReff.current));
@@ -265,7 +266,7 @@ const UserSelect: React.VFC = () => {
             value={user.name}
             onClick={() => {
               setAnchorEl(null);
-              setUser(user);
+              setUser(user.name);
             }}
           >
             <Stack>
@@ -629,17 +630,19 @@ const WorkspaceItem: React.VFC<{
 
 const WorkspaceList: React.VFC = () => {
   console.log("WorkspaceList");
-  const { workspaces, getWorkspaces, user, checkIsPolling, stopAllPolling } =
-    useWorkspaceModule();
+  const {
+    workspaces,
+    getWorkspaces,
+    user,
+    checkIsPolling,
+    stopAllPolling,
+    search,
+    setSearch,
+  } = useWorkspaceModule();
   const { loginUser } = useLogin();
   const { enqueueSnackbar } = useSnackbar();
   const isPriv = hasPrivilegedRole(loginUser?.roles || []);
-  const [urlParam, setUrlParam] = useUrlState(
-    { search: "" },
-    {
-      stringifyOptions: { skipEmptyString: true },
-    }
-  );
+
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isHoverRefreshIcon, setIsHoverRefreshIcon] = useState(false);
@@ -674,7 +677,7 @@ const WorkspaceList: React.VFC = () => {
         <Stack direction="row" alignItems="center" spacing={2}>
           <TextField
             InputProps={
-              urlParam.search !== ""
+              search !== ""
                 ? {
                     startAdornment: (
                       <InputAdornment position="start">
@@ -687,7 +690,7 @@ const WorkspaceList: React.VFC = () => {
                           size="small"
                           tabIndex={-1}
                           onClick={() => {
-                            setUrlParam({ search: "" });
+                            setSearch("");
                           }}
                         >
                           <Clear />
@@ -705,17 +708,16 @@ const WorkspaceList: React.VFC = () => {
             }
             placeholder="Search"
             size="small"
-            value={urlParam.search}
-            onChange={(e) => setUrlParam({ search: e.target.value })}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setIsSearchFocused(false)}
             sx={{ flexGrow: 0.5 }}
           />
           <Box sx={{ flexGrow: 1 }} />
-          {isPriv &&
-            (isUpSM || (!isSearchFocused && urlParam.search === "")) && (
-              <UserSelect />
-            )}
+          {isPriv && (isUpSM || (!isSearchFocused && search === "")) && (
+            <UserSelect />
+          )}
           {isUpSM &&
             (expandState.beforeState === true ? (
               <Tooltip title="Collapse all" placement="top">
@@ -795,8 +797,7 @@ const WorkspaceList: React.VFC = () => {
         </Stack>
       </Paper>
       {!Object.keys(workspaces).filter(
-        (wsName) =>
-          urlParam.search === "" || Boolean(wsName.match(urlParam.search))
+        (wsName) => search === "" || Boolean(wsName.match(search))
       ).length && (
         <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
           <Typography
@@ -809,10 +810,7 @@ const WorkspaceList: React.VFC = () => {
       )}
       <Grid container spacing={1}>
         {Object.keys(workspaces)
-          .filter(
-            (wsName) =>
-              urlParam.search === "" || Boolean(wsName.match(urlParam.search))
-          )
+          .filter((wsName) => search === "" || Boolean(wsName.match(search)))
           .map((wsName) => workspaces[wsName])
           .sort((a, b) =>
             a.ownerName !== b.ownerName ? 1 : a.name < b.name ? -1 : 1

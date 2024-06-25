@@ -1,3 +1,4 @@
+import useUrlState from "@ahooksjs/use-url-state";
 import { PartialMessage, protoInt64 } from "@bufbuild/protobuf";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
@@ -18,7 +19,10 @@ import {
   useWorkspaceService,
 } from "../../services/DashboardServices";
 import { getTime, latestTime } from "./EventModule";
-import { setUserStateFuncFilteredByLoginUserRole } from "./UserModule";
+import {
+  hasPrivilegedRole,
+  setUserStateFuncFilteredByLoginUserRole,
+} from "./UserModule";
 
 export function computeStatus(workspace: Workspace) {
   const status = workspace.status!.phase;
@@ -99,8 +103,21 @@ const useWorkspace = () => {
   const userService = useUserService();
 
   const { loginUser, updateClock } = useLogin();
-  const [user, setUser] = useState<User>(loginUser || new User());
+  const isPriv = hasPrivilegedRole(loginUser?.roles || []);
   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
+
+  const [urlParam, setUrlParam] = useUrlState(
+    { search: "", user: loginUser?.name || "" },
+    {
+      stringifyOptions: { skipEmptyString: true },
+    }
+  );
+  const search: string = urlParam.search || "";
+  const setSearch = (word: string) => setUrlParam({ search: word });
+
+  const userName: string = urlParam.user || loginUser?.name;
+  const user = users.find((u) => u.name === userName) || new User();
+  const setUser = (name: string) => setUrlParam({ user: name });
 
   const checkIsPolling = () => {
     return (
@@ -117,8 +134,18 @@ const useWorkspace = () => {
 
   useEffect(() => {
     stopAllPolling();
-    getWorkspaces(user.name);
-  }, [user]);
+    getWorkspaces(userName);
+    isPriv && getUsers();
+  }, [userName]);
+
+  useEffect(() => {
+    if (users.length > 1) {
+      users.find((u) => u.name === userName) ||
+        enqueueSnackbar(`User ${userName} is not found`, {
+          variant: "warning",
+        });
+    }
+  }, [users]); // eslint-disable-line
 
   const upsertWorkspace = (ws: Workspace, events?: Event[]) => {
     setWorkspaces((prev) => {
@@ -415,6 +442,8 @@ const useWorkspace = () => {
     setUser,
     users,
     getUsers,
+    search,
+    setSearch,
   };
 };
 
