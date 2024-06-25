@@ -1,5 +1,5 @@
 import { ContentCopy } from "@mui/icons-material";
-import { Fab } from "@mui/material";
+import { Fab, FabProps } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import copy from "copy-to-clipboard";
 import hljs from "highlight.js";
@@ -31,11 +31,19 @@ const StyledPre = styled("pre")({
   "& .hljs-literal": {
     color: "#569CD6",
   },
+  "& .hljs-space": {
+    borderLeft: "1px solid #413F34",
+  },
+});
+
+const StyledDiv = styled("div")({
+  overflow: "auto",
 });
 
 const YAMLTextArea: React.FC<{
   code: string;
-}> = ({ code }) => {
+  fabProps?: FabProps;
+}> = ({ code, fabProps }) => {
   const [hover, setHover] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -51,12 +59,15 @@ const YAMLTextArea: React.FC<{
   const highlightedCodeWithSpaces = highlightedCode.replace(
     /(^|\n)( +)/g,
     function (_, newline, spaces) {
-      return newline + "&nbsp;".repeat(spaces.length);
+      return (
+        newline +
+        '<span class="hljs-space">&nbsp;&nbsp;</span>'.repeat(spaces.length / 2)
+      );
     }
   );
 
   return (
-    <div
+    <StyledDiv
       onMouseOver={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
@@ -73,14 +84,15 @@ const YAMLTextArea: React.FC<{
           size="medium"
           sx={{
             position: "absolute",
-            bottom: 80,
-            right: 64,
+            top: 144,
+            right: 24,
           }}
+          {...fabProps}
         >
           <ContentCopy fontSize="small" />
         </Fab>
       )}
-    </div>
+    </StyledDiv>
   );
 };
 
