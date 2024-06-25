@@ -87,19 +87,19 @@ function App() {
                 <HashRouter>
                   <LoginProvider>
                     <UserContext.Provider>
-                      <UserInfoDialogContext.Provider>
-                        <AuthenticatorManageDialogContext.Provider>
-                          <UserNameChangeDialogContext.Provider>
-                            <UserAddonChangeDialogContext.Provider>
-                              <PasswordChangeDialogContext.Provider>
-                                <EventDetailDialogContext.Provider>
+                      <EventDetailDialogContext.Provider>
+                        <UserInfoDialogContext.Provider>
+                          <AuthenticatorManageDialogContext.Provider>
+                            <UserNameChangeDialogContext.Provider>
+                              <UserAddonChangeDialogContext.Provider>
+                                <PasswordChangeDialogContext.Provider>
                                   <SwitchApp />
-                                </EventDetailDialogContext.Provider>
-                              </PasswordChangeDialogContext.Provider>
-                            </UserAddonChangeDialogContext.Provider>
-                          </UserNameChangeDialogContext.Provider>
-                        </AuthenticatorManageDialogContext.Provider>
-                      </UserInfoDialogContext.Provider>
+                                </PasswordChangeDialogContext.Provider>
+                              </UserAddonChangeDialogContext.Provider>
+                            </UserNameChangeDialogContext.Provider>
+                          </AuthenticatorManageDialogContext.Provider>
+                        </UserInfoDialogContext.Provider>
+                      </EventDetailDialogContext.Provider>
                     </UserContext.Provider>
                   </LoginProvider>
                 </HashRouter>
