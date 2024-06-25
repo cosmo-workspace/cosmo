@@ -371,7 +371,8 @@ export const PageTemplate: React.FC<
               <Stack alignItems="center" spacing={1} sx={{ mt: 1, mb: 2 }}>
                 <NameAvatar
                   name={loginUser?.displayName}
-                  sx={{ width: 40, height: 40 }}
+                  sx={{ width: 50, height: 50 }}
+                  typographyVariant="h5"
                   onClick={() => openUserInfoDialog()}
                 />
                 <Typography>{loginUser?.displayName}</Typography>
