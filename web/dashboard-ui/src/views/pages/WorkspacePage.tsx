@@ -242,7 +242,11 @@ const UserSelect: React.VFC = () => {
           ref={chipReff}
           label={user.name}
           avatar={
-            <NameAvatar name={user.displayName} typographyVariant="body2" />
+            <NameAvatar
+              name={user.displayName}
+              sx={{ width: 24, height: 24 }}
+              typographyProps={{ variant: "body2" }}
+            />
           }
           onClick={(e) => {
             e.stopPropagation();

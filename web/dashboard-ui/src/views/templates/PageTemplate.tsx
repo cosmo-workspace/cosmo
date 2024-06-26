@@ -372,8 +372,10 @@ export const PageTemplate: React.FC<
                 <NameAvatar
                   name={loginUser?.displayName}
                   sx={{ width: 50, height: 50 }}
-                  typographyVariant="h5"
                   onClick={() => openUserInfoDialog()}
+                  typographyProps={{
+                    variant: "h5",
+                  }}
                 />
                 <Typography>{loginUser?.displayName}</Typography>
                 <Typography color={colors.grey[700]} fontSize="small">

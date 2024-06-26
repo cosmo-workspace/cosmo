@@ -167,6 +167,7 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <NameAvatar
           name={params.row.id}
+          sx={{ width: 32, height: 32 }}
           onClick={() => {
             userInfoDispatch(true, { userName: params.row.id });
           }}
