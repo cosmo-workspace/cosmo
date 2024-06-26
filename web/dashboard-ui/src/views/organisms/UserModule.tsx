@@ -1,7 +1,8 @@
+import useUrlState from "@ahooksjs/use-url-state";
 import { useSnackbar } from "notistack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ModuleContext } from "../../components/ContextProvider";
-import { useHandleError } from "../../components/LoginProvider";
+import { useHandleError, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
@@ -47,7 +48,7 @@ export const excludeAdminRolePrefix = (role: string): string => {
     : role;
 };
 
-export const hasAdminForRole = (myRoles: string[], userrole: string) => {
+const hasAdminForRole = (myRoles: string[], userrole: string) => {
   for (const myRole of myRoles) {
     if (myRole == userrole) {
       return true;
@@ -98,6 +99,7 @@ export function setUserStateFuncFilteredByLoginUserRole(
 const useUser = () => {
   console.log("useUserModule");
 
+  const { loginUser } = useLogin();
   const { enqueueSnackbar } = useSnackbar();
   const { setMask, releaseMask } = useProgress();
   const { handleError } = useHandleError();
@@ -105,15 +107,86 @@ const useUser = () => {
   const userService = useUserService();
   const [existingRoles, setExistingRoles] = useState<string[]>([]);
 
+  const [urlParam, setUrlParam] = useUrlState(
+    {
+      search: "",
+      filterRoles: [],
+    },
+    {
+      parseOptions: { arrayFormat: "comma" },
+      stringifyOptions: { arrayFormat: "comma", skipEmptyString: true },
+    }
+  );
+
+  const search: string = urlParam.search || "";
+  const setSearch = (word: string) => setUrlParam({ search: word });
+
+  const filterRoles: string[] =
+    typeof urlParam.filterRoles === "string"
+      ? [urlParam.filterRoles]
+      : urlParam.filterRoles;
+
+  const appendFilterRoles = (role: string) => {
+    setUrlParam((prev) => {
+      if (typeof prev.filterRoles === "string") {
+        return prev.filterRoles === role
+          ? prev
+          : { filterRoles: [prev.filterRoles, role] };
+      }
+      return prev.filterRoles.includes(role)
+        ? prev
+        : {
+            filterRoles: [...filterRoles, role],
+          };
+    });
+  };
+
+  const removeFilterRoles = (role?: string) => {
+    if (role) {
+      setUrlParam((prev) => {
+        if (typeof prev.filterRoles === "string") {
+          return prev.filterRoles === role ? { filterRoles: [] } : prev;
+        }
+        return prev.filterRoles.includes(role)
+          ? {
+              filterRoles: prev.filterRoles.filter((v: string) => v !== role),
+            }
+          : prev;
+      });
+    } else {
+      setUrlParam({ filterRoles: [] });
+      return;
+    }
+  };
+
+  useEffect(() => {
+    // init fetch users
+    getUsers().then((users) => {
+      if (
+        loginUser &&
+        users &&
+        !hasPrivilegedRole(loginUser.roles) &&
+        filterRoles.length === 0
+      ) {
+        setUrlParam({
+          filterRoles: [
+            ...new Set(users.map((user) => user.roles).flat()),
+          ].filter((v) => hasAdminForRole(loginUser.roles, v)),
+        });
+      }
+    });
+  }, []);
+
   /**
    * UserList: user list
    */
-  const getUsers = async () => {
+  const getUsers = async (): Promise<User[] | undefined> => {
     console.log("getUsers");
     try {
       const result = await userService.getUsers({});
       setUsers(result.items?.sort((a, b) => (a.name < b.name ? -1 : 1)));
       updateExistingRoles(result.items);
+      return result.items;
     } catch (error) {
       handleError(error);
     }
@@ -262,6 +335,11 @@ const useUser = () => {
   };
 
   return {
+    search,
+    setSearch,
+    filterRoles,
+    appendFilterRoles,
+    removeFilterRoles,
     existingRoles,
     users,
     getUsers,

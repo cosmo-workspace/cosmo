@@ -21,6 +21,7 @@ import React, { useRef } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
 import { NameAvatar } from "../atoms/NameAvatar";
+import { SearchTextField } from "../atoms/SearchTextField";
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
 import { EventContext, useEventModule } from "../organisms/EventModule";
 import { hasPrivilegedRole } from "../organisms/UserModule";
@@ -92,17 +93,20 @@ const UserSelect: React.VFC = () => {
 
 const EventList: React.VFC = () => {
   console.log("EventList");
-  const { user, getUsers, events, getEvents } = useEventModule();
+  const { search, setSearch, events, getEvents } = useEventModule();
   const { loginUser, clock } = useLogin();
   const isPriv = hasPrivilegedRole(loginUser?.roles || []);
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
   const [isLoading, setIsLoading] = React.useState(false);
 
+  const searchRegExp = new RegExp(search, "i");
+
   return (
     <>
       <Paper sx={{ minWidth: 320, px: 2, py: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
+          <SearchTextField search={search} setSearch={setSearch} />
           <Box sx={{ flexGrow: 1 }} />
           {isPriv && <UserSelect />}
           <Tooltip title="Refresh" placement="top">
@@ -122,7 +126,18 @@ const EventList: React.VFC = () => {
         </Stack>
       </Paper>
       <EventsDataGrid
-        events={events}
+        events={events.filter(
+          (event) =>
+            search === "" ||
+            Boolean(event.id.match(searchRegExp)) ||
+            Boolean(event.note.match(searchRegExp)) ||
+            Boolean(event.reason.match(searchRegExp)) ||
+            Boolean(event.reportingController.match(searchRegExp)) ||
+            (event.regardingWorkspace &&
+              Boolean(event.regardingWorkspace.match(searchRegExp))) ||
+            Boolean(event.regarding?.kind.match(searchRegExp)) ||
+            Boolean(event.regarding?.name.match(searchRegExp))
+        )}
         clock={clock}
         dataGridProps={{
           initialState: {

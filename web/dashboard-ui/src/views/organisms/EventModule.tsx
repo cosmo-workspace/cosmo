@@ -27,11 +27,13 @@ const useEvent = () => {
   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
 
   const [urlParam, setUrlParam] = useUrlState(
-    { user: loginUser?.name || "" },
+    { search: "", user: loginUser?.name || "" },
     {
       stringifyOptions: { skipEmptyString: true },
     }
   );
+  const search: string = urlParam.search || "";
+  const setSearch = (word: string) => setUrlParam({ search: word });
 
   const userName: string = urlParam.user || loginUser?.name;
   const user = users.find((u) => u.name === userName) || new User();
@@ -75,6 +77,8 @@ const useEvent = () => {
   };
 
   return {
+    search,
+    setSearch,
     user,
     setUser,
     users,

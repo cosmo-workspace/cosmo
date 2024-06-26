@@ -19,7 +19,6 @@ import {
   PlayCircleFilledWhiteTwoTone,
   PublicOutlined,
   RefreshTwoTone,
-  SearchTwoTone,
   StopCircleOutlined,
   StopCircleTwoTone,
   UnfoldLessOutlined,
@@ -39,7 +38,6 @@ import {
   Fab,
   Grid,
   IconButton,
-  InputAdornment,
   Link,
   ListItemIcon,
   ListItemText,
@@ -53,7 +51,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Tooltip,
   Typography,
   styled,
@@ -68,6 +65,7 @@ import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
 import { NameAvatar } from "../atoms/NameAvatar";
+import { SearchTextField } from "../atoms/SearchTextField";
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
 import {
   NetworkRuleDeleteDialogContext,
@@ -671,45 +669,15 @@ const WorkspaceList: React.VFC = () => {
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
 
   const isPolling = checkIsPolling();
+  const searchRegExp = new RegExp(search, "i");
 
   return (
     <>
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, px: 2, py: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
-          <TextField
-            InputProps={
-              search !== ""
-                ? {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchTwoTone />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          size="small"
-                          tabIndex={-1}
-                          onClick={() => {
-                            setSearch("");
-                          }}
-                        >
-                          <Clear />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }
-                : {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchTwoTone />
-                      </InputAdornment>
-                    ),
-                  }
-            }
-            placeholder="Search"
-            size="small"
-            value={search}
+          <SearchTextField
+            search={search}
+            setSearch={setSearch}
             onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setIsSearchFocused(false)}
@@ -798,7 +766,7 @@ const WorkspaceList: React.VFC = () => {
         </Stack>
       </Paper>
       {!Object.keys(workspaces).filter(
-        (wsName) => search === "" || Boolean(wsName.match(search))
+        (wsName) => search === "" || Boolean(wsName.match(searchRegExp))
       ).length && (
         <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
           <Typography
@@ -811,7 +779,9 @@ const WorkspaceList: React.VFC = () => {
       )}
       <Grid container spacing={1}>
         {Object.keys(workspaces)
-          .filter((wsName) => search === "" || Boolean(wsName.match(search)))
+          .filter(
+            (wsName) => search === "" || Boolean(wsName.match(searchRegExp))
+          )
           .map((wsName) => workspaces[wsName])
           .sort((a, b) =>
             a.ownerName !== b.ownerName ? 1 : a.name < b.name ? -1 : 1

@@ -1,29 +1,30 @@
-import useUrlState from "@ahooksjs/use-url-state";
 import {
   AddTwoTone,
   AdminPanelSettingsTwoTone,
-  Badge,
-  Clear,
+  Badge as BadgeIcon,
   DeleteOutlined,
   Edit,
+  ExpandLess,
+  ExpandMore,
+  FilterListOff,
   MoreVert,
   RefreshTwoTone,
-  SearchTwoTone,
   Settings,
 } from "@mui/icons-material";
 import {
+  Badge,
   Box,
   Chip,
+  Collapse,
   Fab,
+  Grid,
   IconButton,
-  InputAdornment,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
   Paper,
   Stack,
-  TextField,
   Tooltip,
   Typography,
   styled,
@@ -36,11 +37,13 @@ import {
   GridRenderCellParams,
   gridClasses,
 } from "@mui/x-data-grid";
-import React, { useEffect } from "react";
+import React from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { EllipsisTypography } from "../atoms/EllipsisTypography";
 import { NameAvatar } from "../atoms/NameAvatar";
+import { SearchTextField } from "../atoms/SearchTextField";
+import { SelectableChip } from "../atoms/SelectableChips";
 import { PasswordDialogContext } from "../organisms/PasswordDialog";
 import { RoleChangeDialogContext } from "../organisms/RoleChangeDialog";
 import {
@@ -51,8 +54,6 @@ import {
 import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
 import { UserInfoDialogContext } from "../organisms/UserInfoDialog";
 import {
-  hasAdminForRole,
-  hasPrivilegedRole,
   isAdminRole,
   isPrivilegedRole,
   useUserModule,
@@ -102,7 +103,7 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
             }}
           >
             <ListItemIcon>
-              <Badge fontSize="small" />
+              <BadgeIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText>Change DisplayName...</ListItemText>
           </MenuItem>
@@ -164,6 +165,7 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
       headerName: "Avator",
       type: "singleSelect",
       width: 80,
+      sortable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <NameAvatar
           name={params.row.id}
@@ -236,6 +238,12 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
       field: "roles",
       headerName: "Roles",
       flex: 0.8,
+      sortComparator: (v1: string[], v2: string[]) => {
+        if (v1.length !== v2.length) return v1.length - v2.length;
+        const v1str = v1.sort().join();
+        const v2str = v2.sort().join();
+        return v1str.length - v2str.length;
+      },
       renderCell: (params: GridRenderCellParams<any, string[]>) => (
         <Box
           component="div"
@@ -276,6 +284,18 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
     {
       field: "addons",
       headerName: "Addons",
+      sortComparator: (v1: UserAddon[], v2: UserAddon[]) => {
+        if (v1.length !== v2.length) return v1.length - v2.length;
+        const v1str = v1
+          .map((v) => v.template)
+          .sort()
+          .join();
+        const v2str = v2
+          .map((v) => v.template)
+          .sort()
+          .join();
+        return v1str.length - v2str.length;
+      },
       renderCell: (params: GridRenderCellParams<any, UserAddon[]>) => (
         <Stack>
           {params.value?.map((v, i) => (
@@ -363,97 +383,27 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
 };
 
 const UserList: React.VFC = () => {
-  const hooks = useUserModule();
-  const { loginUser } = useLogin();
+  const {
+    search,
+    setSearch,
+    users,
+    getUsers,
+    filterRoles,
+    appendFilterRoles,
+    removeFilterRoles,
+    existingRoles,
+  } = useUserModule();
   const userCreateDialogDispatch = UserCreateDialogContext.useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showFilter, setShowFilter] = React.useState<boolean>(false);
 
-  const [urlParam, setUrlParam] = useUrlState(
-    {
-      search: "",
-      filterRoles: [],
-    },
-    {
-      parseOptions: { arrayFormat: "comma" },
-      stringifyOptions: { arrayFormat: "comma", skipEmptyString: true },
-    }
-  );
-
-  const filterRoles: string[] =
-    typeof urlParam.filterRoles === "string"
-      ? [urlParam.filterRoles]
-      : urlParam.filterRoles;
-
-  useEffect(() => {
-    if (
-      loginUser &&
-      !hasPrivilegedRole(loginUser.roles) &&
-      filterRoles.length === 0
-    ) {
-      setUrlParam({
-        filterRoles: hooks.existingRoles.filter((v) =>
-          hasAdminForRole(loginUser.roles, v)
-        ),
-      });
-    }
-  }, []);
-
-  const isUserMatchedToFilterRoles = (user: User) => {
-    for (const v of user.roles) {
-      for (const f of filterRoles) {
-        if (v === f) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  useEffect(() => {
-    hooks.getUsers();
-  }, []); // eslint-disable-line
+  const searchRegExp = new RegExp(search, "i");
 
   return (
     <>
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
-          <TextField
-            InputProps={
-              urlParam.search !== ""
-                ? {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchTwoTone />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          size="small"
-                          tabIndex={-1}
-                          onClick={() => {
-                            setUrlParam({ search: "" });
-                          }}
-                        >
-                          <Clear />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }
-                : {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchTwoTone />
-                      </InputAdornment>
-                    ),
-                  }
-            }
-            placeholder="Search"
-            size="small"
-            value={urlParam.search}
-            onChange={(e) => setUrlParam({ search: e.target.value })}
-            sx={{ flexGrow: 0.5 }}
-          />
+          <SearchTextField search={search} setSearch={setSearch} />
           <Box sx={{ flexGrow: 1 }} />
           <Tooltip title="Refresh" placement="top">
             <IconButton
@@ -463,7 +413,7 @@ const UserList: React.VFC = () => {
                 setTimeout(() => {
                   setIsLoading(false);
                 }, 1000);
-                if (!isLoading) hooks.getUsers();
+                if (!isLoading) getUsers();
               }}
             >
               {isLoading ? <RotatingRefreshTwoTone /> : <RefreshTwoTone />}
@@ -480,27 +430,86 @@ const UserList: React.VFC = () => {
             </Fab>
           </Tooltip>
         </Stack>
+        <Box
+          component="div"
+          sx={{
+            justifyContent: "flex-end",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            pt: 1,
+          }}
+        >
+          <IconButton
+            size="small"
+            color="inherit"
+            onClick={() => {
+              setShowFilter(!showFilter);
+            }}
+          >
+            {showFilter ? <ExpandLess /> : <ExpandMore />}
+          </IconButton>
+          <Typography color="text.secondary" variant="caption">
+            Filter by Roles
+          </Typography>
+          {filterRoles.length > 0 && (
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={() => {
+                removeFilterRoles();
+              }}
+            >
+              <Tooltip arrow title="Clear Role Filter" placement="top">
+                <Badge badgeContent={filterRoles.length} color="error">
+                  <FilterListOff />
+                </Badge>
+              </Tooltip>
+            </IconButton>
+          )}
+          <Collapse in={showFilter} timeout="auto" unmountOnExit>
+            <Grid container>
+              {existingRoles.map((v, i) => (
+                <SelectableChip
+                  key={v}
+                  label={v}
+                  sx={{ m: 0.1 }}
+                  color="primary"
+                  checked={filterRoles?.includes(v)}
+                  onChecked={(checked) => {
+                    checked ? appendFilterRoles(v) : removeFilterRoles(v);
+                  }}
+                />
+              ))}
+            </Grid>
+          </Collapse>
+        </Box>
       </Paper>
       <UserDataGrid
-        users={hooks.users
+        users={users
           .filter(
             (us) =>
-              urlParam.search === "" ||
-              Boolean(us.name.match(urlParam.search)) ||
-              Boolean(us.status.match(urlParam.search)) ||
-              Boolean(us.authType.match(urlParam.search)) ||
-              Boolean(us.displayName.match(urlParam.search)) ||
+              search === "" ||
+              Boolean(us.name.match(searchRegExp)) ||
+              Boolean(us.status.match(searchRegExp)) ||
+              Boolean(us.authType.match(searchRegExp)) ||
+              Boolean(us.displayName.match(searchRegExp)) ||
               Boolean(
-                us.roles.filter((v) => v.match(urlParam.search)).length > 0
+                us.roles.filter((v) => v.match(searchRegExp)).length > 0
               ) ||
               Boolean(
-                us.addons.filter((v) => v.template.match(urlParam.search))
-                  .length > 0
+                us.addons.filter((v) => v.template.match(searchRegExp)).length >
+                  0
               )
           )
-          .filter(
-            (us) => filterRoles.length == 0 || isUserMatchedToFilterRoles(us)
-          )}
+          .filter((us) => {
+            if (filterRoles.length === 0) return true;
+            for (const role of us.roles) {
+              if (filterRoles.includes(role)) {
+                return true;
+              }
+            }
+            return false;
+          })}
       />
     </>
   );
