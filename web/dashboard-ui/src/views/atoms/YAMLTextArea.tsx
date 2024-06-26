@@ -37,6 +37,7 @@ const StyledPre = styled("pre")({
 });
 
 const StyledDiv = styled("div")({
+  position: "relative",
   overflow: "auto",
 });
 
@@ -84,7 +85,7 @@ const YAMLTextArea: React.FC<{
           size="medium"
           sx={{
             position: "absolute",
-            top: 144,
+            top: 24,
             right: 24,
           }}
           {...fabProps}
