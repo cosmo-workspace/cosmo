@@ -8,10 +8,8 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Collapse,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
@@ -188,11 +186,7 @@ const UserInfoDialog: React.FC<{
           </Stack>
         </DialogContent>
       )}
-      <DialogActions>
-        <Button onClick={() => onClose()} variant="contained" color="primary">
-          Close
-        </Button>
-      </DialogActions>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }} />
     </Dialog>
   );
 };

@@ -1,9 +1,7 @@
 import { Close, DomainVerification } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Dialog,
-  DialogActions,
   DialogTitle,
   IconButton,
   Stack,
@@ -73,11 +71,7 @@ const WorkspaceInfoDialog: React.FC<{
       </Box>
       {showTab === "yaml" && <YAMLTextArea code={yaml}></YAMLTextArea>}
       {showTab === "instance" && <YAMLTextArea code={instance}></YAMLTextArea>}
-      <DialogActions>
-        <Button onClick={() => onClose()} variant="contained" color="primary">
-          Close
-        </Button>
-      </DialogActions>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }} />
     </Dialog>
   );
 };
