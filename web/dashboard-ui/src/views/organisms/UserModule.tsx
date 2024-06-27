@@ -299,6 +299,9 @@ const useUser = () => {
         );
         setUsers(newUsers);
       }
+      setTimeout(() => {
+        getUsers();
+      }, 1000);
       return newUser;
     } catch (error) {
       handleError(error);
