@@ -97,7 +97,7 @@ func (s *Server) GetUser(ctx context.Context, req *connect_go.Request[dashv1alph
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := adminAuthentication(ctx, passAllAdmin); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -135,7 +135,7 @@ func (s *Server) GetEvents(ctx context.Context, req *connect_go.Request[dashv1al
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := adminAuthentication(ctx, passAllAdmin); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 

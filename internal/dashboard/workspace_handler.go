@@ -52,7 +52,7 @@ func (s *Server) GetWorkspaces(ctx context.Context, req *connect_go.Request[dash
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+	if err := adminAuthentication(ctx, passAllAdmin); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -152,6 +152,11 @@ func (s *Server) sharedWorkspaceAuthorization(ctx context.Context, wsName, wsOwn
 	if err := userAuthentication(ctx, wsOwnerName); err == nil {
 		// pass if caller is the owner of the workspace
 		return nil
+	}
+	if !update {
+		if err := adminAuthentication(ctx, passAllAdmin); err == nil {
+			return nil
+		}
 	}
 
 	caller := callerFromContext(ctx)
