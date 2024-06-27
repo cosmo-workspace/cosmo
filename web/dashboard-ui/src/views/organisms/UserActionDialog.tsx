@@ -231,36 +231,6 @@ const UserActionDialog: React.FC<UserActionDialogProps> = ({
 };
 
 /**
- * Info
- */
-export const UserInfoDialog: React.VFC<{
-  onClose: () => void;
-  user: User;
-  defaultOpenUserAddon?: boolean;
-}> = ({ onClose, user, defaultOpenUserAddon }) => {
-  console.log("UserInfoDialog");
-  return (
-    <UserActionDialog
-      title="User Info"
-      onClose={() => onClose()}
-      user={user}
-      defaultOpenUserAddon={defaultOpenUserAddon}
-      actions={
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            onClose();
-          }}
-        >
-          Close
-        </Button>
-      }
-    />
-  );
-};
-
-/**
  * Delete
  */
 export const UserDeleteDialog: React.VFC<{
@@ -704,10 +674,6 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
 /**
  * Context
  */
-export const UserInfoDialogContext = DialogContext<{
-  user: User;
-  defaultOpenUserAddon?: boolean;
-}>((props) => <UserInfoDialog {...props} />);
 export const UserDeleteDialogContext = DialogContext<{ user: User }>(
   (props) => <UserDeleteDialog {...props} />
 );

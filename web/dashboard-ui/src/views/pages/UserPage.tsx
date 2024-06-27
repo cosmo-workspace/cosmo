@@ -39,15 +39,16 @@ import React, { useEffect } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { EllipsisTypography } from "../atoms/EllipsisTypography";
+import { NameAvatar } from "../atoms/NameAvatar";
 import { PasswordDialogContext } from "../organisms/PasswordDialog";
 import { RoleChangeDialogContext } from "../organisms/RoleChangeDialog";
 import {
   UserCreateConfirmDialogContext,
   UserCreateDialogContext,
   UserDeleteDialogContext,
-  UserInfoDialogContext,
 } from "../organisms/UserActionDialog";
 import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
+import { UserInfoDialogContext } from "../organisms/UserInfoDialog";
 import {
   hasAdminForRole,
   hasPrivilegedRole,
@@ -142,11 +143,26 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
   const userNameChangeDispatch = UserNameChangeDialogContext.useDispatch();
   const roleChangeDialogDispatch = RoleChangeDialogContext.useDispatch();
   const userAddonChangeDispatch = UserAddonChangeDialogContext.useDispatch();
+  const userInfoDispatch = UserInfoDialogContext.useDispatch();
 
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
 
   const columns: GridColDef[] = [
+    {
+      field: "avator",
+      headerName: "Avator",
+      type: "singleSelect",
+      width: 80,
+      renderCell: (params: GridRenderCellParams<any, string>) => (
+        <NameAvatar
+          name={params.row.id}
+          onClick={() => {
+            userInfoDispatch(true, { user: params.row });
+          }}
+        />
+      ),
+    },
     {
       field: "id",
       headerName: "ID",
@@ -249,13 +265,29 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
     {
       field: "addons",
       headerName: "Addons",
-      valueGetter: (addons: UserAddon[]) => addons.map((v) => v.template),
-      renderCell: (params: GridRenderCellParams<any, string[]>) => (
+      renderCell: (params: GridRenderCellParams<any, UserAddon[]>) => (
         <Stack>
           {params.value?.map((v, i) => (
-            <Typography key={i} variant="body2">
-              {v}
-            </Typography>
+            <Tooltip
+              arrow
+              title={
+                Object.keys(v.vars).length > 0 && (
+                  <Stack>
+                    {Object.keys(v.vars).map((k) => (
+                      <Typography
+                        key={i}
+                        variant="body2"
+                      >{`${k} = ${v.vars[k]}`}</Typography>
+                    ))}
+                  </Stack>
+                )
+              }
+              key={i}
+            >
+              <Typography key={i} variant="body2">
+                {v.template}
+              </Typography>
+            </Tooltip>
           ))}
           {params.hasFocus && (
             <Stack direction="row" alignItems="center" spacing={2}>
