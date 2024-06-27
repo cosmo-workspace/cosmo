@@ -216,19 +216,17 @@ const useUser = () => {
     console.log("addUser");
     setMask();
     try {
-      try {
-        const result = await userService.createUser({
-          userName,
-          displayName,
-          authType,
-          roles,
-          addons,
-        });
-        enqueueSnackbar(result.message, { variant: "success" });
-        return result.user;
-      } catch (error) {
-        handleError(error);
-      }
+      const result = await userService.createUser({
+        userName,
+        displayName,
+        authType,
+        roles,
+        addons,
+      });
+      enqueueSnackbar(result.message, { variant: "success" });
+      return result.user;
+    } catch (error) {
+      handleError(error);
     } finally {
       releaseMask();
     }
@@ -241,24 +239,20 @@ const useUser = () => {
     console.log("updateUserName", userName, displayName);
     setMask();
     try {
-      try {
-        const result = await userService.updateUserDisplayName({
-          userName,
-          displayName,
-        });
-        const newUser = result.user;
-        enqueueSnackbar(result.message, { variant: "success" });
-        if (users && newUser) {
-          setUsers((prev) =>
-            prev.map((us) =>
-              us.name === newUser.name ? new User(newUser) : us
-            )
-          );
-        }
-        return newUser;
-      } catch (error) {
-        handleError(error);
+      const result = await userService.updateUserDisplayName({
+        userName,
+        displayName,
+      });
+      const newUser = result.user;
+      enqueueSnackbar(result.message, { variant: "success" });
+      if (users && newUser) {
+        setUsers((prev) =>
+          prev.map((us) => (us.name === newUser.name ? new User(newUser) : us))
+        );
       }
+      return newUser;
+    } catch (error) {
+      handleError(error);
     } finally {
       releaseMask();
     }
@@ -271,21 +265,19 @@ const useUser = () => {
     console.log("updateRole", userName, roles);
     setMask();
     try {
-      try {
-        const result = await userService.updateUserRole({ userName, roles });
-        const newUser = result.user;
-        enqueueSnackbar(result.message, { variant: "success" });
-        if (users && newUser) {
-          const newUsers = users.map((us) =>
-            us.name === newUser.name ? new User(newUser) : us
-          );
-          setUsers(newUsers);
-          updateExistingRoles(newUsers);
-        }
-        return newUser;
-      } catch (error) {
-        handleError(error);
+      const result = await userService.updateUserRole({ userName, roles });
+      const newUser = result.user;
+      enqueueSnackbar(result.message, { variant: "success" });
+      if (users && newUser) {
+        const newUsers = users.map((us) =>
+          us.name === newUser.name ? new User(newUser) : us
+        );
+        setUsers(newUsers);
+        updateExistingRoles(newUsers);
       }
+      return newUser;
+    } catch (error) {
+      handleError(error);
     } finally {
       releaseMask();
     }
@@ -298,20 +290,18 @@ const useUser = () => {
     console.log("updateAddons", userName, addons);
     setMask();
     try {
-      try {
-        const result = await userService.updateUserAddons({ userName, addons });
-        const newUser = result.user;
-        enqueueSnackbar(result.message, { variant: "success" });
-        if (users && newUser) {
-          const newUsers = users.map((us) =>
-            us.name === newUser.name ? new User(newUser) : us
-          );
-          setUsers(newUsers);
-        }
-        return newUser;
-      } catch (error) {
-        handleError(error);
+      const result = await userService.updateUserAddons({ userName, addons });
+      const newUser = result.user;
+      enqueueSnackbar(result.message, { variant: "success" });
+      if (users && newUser) {
+        const newUsers = users.map((us) =>
+          us.name === newUser.name ? new User(newUser) : us
+        );
+        setUsers(newUsers);
       }
+      return newUser;
+    } catch (error) {
+      handleError(error);
     } finally {
       releaseMask();
     }
