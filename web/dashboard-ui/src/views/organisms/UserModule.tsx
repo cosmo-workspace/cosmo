@@ -182,6 +182,7 @@ const useUser = () => {
    */
   const getUsers = async (): Promise<User[] | undefined> => {
     console.log("getUsers");
+    setMask();
     try {
       const result = await userService.getUsers({});
       setUsers(result.items?.sort((a, b) => (a.name < b.name ? -1 : 1)));
@@ -189,6 +190,8 @@ const useUser = () => {
       return result.items;
     } catch (error) {
       handleError(error);
+    } finally {
+      releaseMask();
     }
   };
 
