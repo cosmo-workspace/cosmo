@@ -1,17 +1,15 @@
-import { Close } from "@mui/icons-material";
+import { Close, DomainVerification } from "@mui/icons-material";
 import {
   Box,
   Button,
   Dialog,
   DialogActions,
-  DialogContent,
   DialogTitle,
   IconButton,
   Stack,
   Tab,
   Tabs,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import "highlight.js/styles/default.css";
 import React, { useEffect, useState } from "react";
 import { DialogContext } from "../../components/ContextProvider";
@@ -19,18 +17,15 @@ import { Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
 import { useWorkspaceService } from "../../services/DashboardServices";
 import YAMLTextArea from "../atoms/YAMLTextArea";
 
-const StyledDialogContent = styled(DialogContent)({
-  overflow: "auto",
-});
-
 const WorkspaceInfoDialog: React.FC<{
   onClose: () => void;
   ws: Workspace;
 }> = ({ onClose, ws }) => {
   const wsService = useWorkspaceService();
 
-  const [code, setCode] = useState("");
-  const [showTab, setShowTab] = useState<"objects">("objects");
+  const [yaml, setYAML] = useState("");
+  const [instance, setInstance] = useState("");
+  const [showTab, setShowTab] = useState<"yaml" | "instance">("yaml");
 
   useEffect(() => {
     wsService
@@ -40,7 +35,11 @@ const WorkspaceInfoDialog: React.FC<{
         withRaw: true,
       })
       .then((res) => {
-        setCode(res.workspace?.raw || "no yaml");
+        setYAML(res.workspace?.raw || "No yaml");
+        setInstance(res.workspace?.rawInstance || "no instance yaml");
+      })
+      .catch((err) => {
+        console.error(err);
       });
   }, [ws]);
 
@@ -48,7 +47,8 @@ const WorkspaceInfoDialog: React.FC<{
     <Dialog open={true} scroll="paper" fullWidth maxWidth="md">
       <DialogTitle>
         <Stack direction="row" alignItems="center" spacing={1}>
-          Workspace Object
+          <DomainVerification fontSize="large" />
+          <span>{ws.name}</span>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton
             sx={{
@@ -60,21 +60,19 @@ const WorkspaceInfoDialog: React.FC<{
           </IconButton>
         </Stack>
       </DialogTitle>
-
-      <StyledDialogContent>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={showTab}
-            onChange={(_: React.SyntheticEvent, newValue: "objects") => {
-              setShowTab(newValue);
-            }}
-            aria-label="basic tabs example"
-          >
-            <Tab label="Live Manifest" value="objects" />
-          </Tabs>
-        </Box>
-        {showTab === "objects" && <YAMLTextArea code={code}></YAMLTextArea>}
-      </StyledDialogContent>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={showTab}
+          onChange={(_: React.SyntheticEvent, newValue: "yaml") => {
+            setShowTab(newValue);
+          }}
+        >
+          <Tab label="Live Manifest" value="yaml" />
+          <Tab label="Instance" value="instance" />
+        </Tabs>
+      </Box>
+      {showTab === "yaml" && <YAMLTextArea code={yaml}></YAMLTextArea>}
+      {showTab === "instance" && <YAMLTextArea code={instance}></YAMLTextArea>}
       <DialogActions>
         <Button onClick={() => onClose()} variant="contained" color="primary">
           Close

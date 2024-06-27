@@ -218,6 +218,10 @@ func (m *UserAddon) validate(all bool) error {
 
 	// no validation rules for Vars
 
+	if m.Raw != nil {
+		// no validation rules for Raw
+	}
+
 	if len(errors) > 0 {
 		return UserAddonMultiError(errors)
 	}

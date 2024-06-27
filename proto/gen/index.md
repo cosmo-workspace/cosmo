@@ -316,6 +316,7 @@
 | template | [string](#string) |  |  |
 | cluster_scoped | [bool](#bool) |  |  |
 | vars | [UserAddon.VarsEntry](#dashboard-v1alpha1-UserAddon-VarsEntry) | repeated |  |
+| raw | [string](#string) | optional |  |
 
 
 
@@ -1146,6 +1147,7 @@
 | spec | [WorkspaceSpec](#dashboard-v1alpha1-WorkspaceSpec) |  |  |
 | status | [WorkspaceStatus](#dashboard-v1alpha1-WorkspaceStatus) |  |  |
 | raw | [string](#string) | optional |  |
+| raw_instance | [string](#string) | optional |  |
 
 
 

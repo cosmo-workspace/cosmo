@@ -514,6 +514,10 @@ func (m *Workspace) validate(all bool) error {
 		// no validation rules for Raw
 	}
 
+	if m.RawInstance != nil {
+		// no validation rules for RawInstance
+	}
+
 	if len(errors) > 0 {
 		return WorkspaceMultiError(errors)
 	}

@@ -108,6 +108,11 @@ export class UserAddon extends Message<UserAddon> {
    */
   vars: { [key: string]: string } = {};
 
+  /**
+   * @generated from field: optional string raw = 4;
+   */
+  raw?: string;
+
   constructor(data?: PartialMessage<UserAddon>) {
     super();
     proto3.util.initPartial(data, this);
@@ -119,6 +124,7 @@ export class UserAddon extends Message<UserAddon> {
     { no: 1, name: "template", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "cluster_scoped", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 3, name: "vars", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+    { no: 4, name: "raw", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserAddon {

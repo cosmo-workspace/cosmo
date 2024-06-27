@@ -37,4 +37,5 @@ message Workspace {
   WorkspaceSpec spec = 3;
   WorkspaceStatus status = 4;
   optional string raw = 5;
+  optional string raw_instance = 6;
 }

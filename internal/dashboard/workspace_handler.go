@@ -8,6 +8,7 @@ import (
 
 	connect_go "github.com/bufbuild/connect-go"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/types"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
@@ -62,8 +63,11 @@ func (s *Server) GetWorkspaces(ctx context.Context, req *connect_go.Request[dash
 		return nil, ErrResponse(log, err)
 	}
 
-	res := &dashv1alpha1.GetWorkspacesResponse{
-		Items: apiconv.C2D_Workspaces(wss, apiconv.WithWorkspaceRaw(req.Msg.WithRaw)),
+	res := &dashv1alpha1.GetWorkspacesResponse{}
+	if req.Msg.WithRaw != nil && *req.Msg.WithRaw {
+		res.Items = apiconv.C2D_Workspaces(wss, apiconv.WithWorkspaceRaw())
+	} else {
+		res.Items = apiconv.C2D_Workspaces(wss)
 	}
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
@@ -84,8 +88,14 @@ func (s *Server) GetWorkspace(ctx context.Context, req *connect_go.Request[dashv
 		return nil, ErrResponse(log, err)
 	}
 
-	res := &dashv1alpha1.GetWorkspaceResponse{
-		Workspace: apiconv.C2D_Workspace(*ws, apiconv.WithWorkspaceRaw(req.Msg.WithRaw)),
+	res := &dashv1alpha1.GetWorkspaceResponse{}
+	if req.Msg.WithRaw != nil && *req.Msg.WithRaw {
+		var inst cosmov1alpha1.Instance
+		s.Klient.Get(ctx, types.NamespacedName{Name: ws.Status.Instance.Name, Namespace: ws.Status.Instance.Namespace}, &inst)
+		res.Workspace = apiconv.C2D_Workspace(*ws, apiconv.WithWorkspaceRaw(), apiconv.WithWorkspaceInstanceRaw(&inst))
+
+	} else {
+		res.Workspace = apiconv.C2D_Workspace(*ws)
 	}
 
 	return connect_go.NewResponse(res), nil

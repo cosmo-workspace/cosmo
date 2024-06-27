@@ -261,7 +261,10 @@ func (o *GetOption) listWorkspacesByKubeClient(ctx context.Context, userName str
 	if err != nil {
 		return nil, err
 	}
-	return apiconv.C2D_Workspaces(workspaces, apiconv.WithWorkspaceRaw(ptr.To(o.OutputFormat == "yaml"))), nil
+	if o.OutputFormat == "yaml" {
+		return apiconv.C2D_Workspaces(workspaces, apiconv.WithWorkspaceRaw()), nil
+	}
+	return apiconv.C2D_Workspaces(workspaces), nil
 }
 
 func (o *GetOption) listUsersByKubeClient(ctx context.Context) ([]*dashv1alpha1.User, error) {
@@ -270,5 +273,8 @@ func (o *GetOption) listUsersByKubeClient(ctx context.Context) ([]*dashv1alpha1.
 	if err != nil {
 		return nil, err
 	}
-	return apiconv.C2D_Users(users, apiconv.WithUserRaw(ptr.To(o.OutputFormat == "yaml"))), nil
+	if o.OutputFormat == "yaml" {
+		return apiconv.C2D_Users(users, apiconv.WithUserRaw()), nil
+	}
+	return apiconv.C2D_Users(users), nil
 }
