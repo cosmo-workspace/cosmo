@@ -63,6 +63,7 @@ import {
   useUserModule,
 } from "../organisms/UserModule";
 import { UserNameChangeDialogContext } from "../organisms/UserNameChangeDialog";
+import { WorkspaceInfoDialogContext } from "../organisms/WorkspaceInfoDialog";
 import { PageTemplate } from "../templates/PageTemplate";
 
 /**
@@ -573,9 +574,11 @@ export const UserPage: React.VFC = () => {
             <RoleChangeDialogContext.Provider>
               <UserAddonChangeDialogContext.Provider>
                 <UserDeleteDialogContext.Provider>
-                  <UserInfoDialogContext.Provider>
-                    <UserList />
-                  </UserInfoDialogContext.Provider>
+                  <WorkspaceInfoDialogContext.Provider>
+                    <UserInfoDialogContext.Provider>
+                      <UserList />
+                    </UserInfoDialogContext.Provider>
+                  </WorkspaceInfoDialogContext.Provider>
                 </UserDeleteDialogContext.Provider>
               </UserAddonChangeDialogContext.Provider>
             </RoleChangeDialogContext.Provider>

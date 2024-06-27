@@ -15,6 +15,7 @@ import { UserAddonChangeDialogContext } from "./views/organisms/UserAddonsChange
 import { UserInfoDialogContext } from "./views/organisms/UserInfoDialog";
 import { UserContext } from "./views/organisms/UserModule";
 import { UserNameChangeDialogContext } from "./views/organisms/UserNameChangeDialog";
+import { WorkspaceInfoDialogContext } from "./views/organisms/WorkspaceInfoDialog";
 import { EventPage } from "./views/pages/EventPage";
 import { SignIn } from "./views/pages/SignIn";
 import { UserPage } from "./views/pages/UserPage";
@@ -88,17 +89,19 @@ function App() {
                   <LoginProvider>
                     <UserContext.Provider>
                       <EventDetailDialogContext.Provider>
-                        <UserInfoDialogContext.Provider>
-                          <AuthenticatorManageDialogContext.Provider>
-                            <UserNameChangeDialogContext.Provider>
-                              <UserAddonChangeDialogContext.Provider>
-                                <PasswordChangeDialogContext.Provider>
-                                  <SwitchApp />
-                                </PasswordChangeDialogContext.Provider>
-                              </UserAddonChangeDialogContext.Provider>
-                            </UserNameChangeDialogContext.Provider>
-                          </AuthenticatorManageDialogContext.Provider>
-                        </UserInfoDialogContext.Provider>
+                        <WorkspaceInfoDialogContext.Provider>
+                          <UserInfoDialogContext.Provider>
+                            <AuthenticatorManageDialogContext.Provider>
+                              <UserNameChangeDialogContext.Provider>
+                                <UserAddonChangeDialogContext.Provider>
+                                  <PasswordChangeDialogContext.Provider>
+                                    <SwitchApp />
+                                  </PasswordChangeDialogContext.Provider>
+                                </UserAddonChangeDialogContext.Provider>
+                              </UserNameChangeDialogContext.Provider>
+                            </AuthenticatorManageDialogContext.Provider>
+                          </UserInfoDialogContext.Provider>
+                        </WorkspaceInfoDialogContext.Provider>
                       </EventDetailDialogContext.Provider>
                     </UserContext.Provider>
                   </LoginProvider>

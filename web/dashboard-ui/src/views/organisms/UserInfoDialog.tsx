@@ -30,8 +30,13 @@ import { DialogContext } from "../../components/ContextProvider";
 import { useLogin } from "../../components/LoginProvider";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
-import { useUserService } from "../../services/DashboardServices";
+import { Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
+import {
+  useUserService,
+  useWorkspaceService,
+} from "../../services/DashboardServices";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
+import { WorkspaceDataGrid } from "../atoms/WorkspaceDataGrid";
 import YAMLTextArea from "../atoms/YAMLTextArea";
 
 const UserAddonListItem: React.FC<{
@@ -60,6 +65,7 @@ const UserInfoDialog: React.FC<{
   userName: string;
 }> = ({ onClose, userName }) => {
   const userService = useUserService();
+  const wsService = useWorkspaceService();
   const { clock, updateClock } = useLogin();
 
   const theme = useTheme();
@@ -67,7 +73,10 @@ const UserInfoDialog: React.FC<{
 
   const [user, setUser] = useState<User>();
   const [events, setEvents] = useState<Event[]>([]);
-  const [showTab, setShowTab] = useState<"yaml" | "events" | "addons">("yaml");
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [showTab, setShowTab] = useState<
+    "yaml" | "events" | "addons" | "workspaces"
+  >("yaml");
 
   const [openAddonItemIndex, setOpenAddonItemIndex] = useState(-1);
   const dialogContentRef = useRef<HTMLDivElement>(null);
@@ -90,6 +99,14 @@ const UserInfoDialog: React.FC<{
         setEvents(res.items);
       });
 
+    wsService
+      .getWorkspaces({
+        userName: userName,
+        includeShared: false,
+      })
+      .then((res) => {
+        setWorkspaces(res.items);
+      });
     updateClock();
   }, [userName]);
 
@@ -120,6 +137,7 @@ const UserInfoDialog: React.FC<{
           <Tab label="Live Manifest" value="yaml" />
           <Tab label="Addons" value="addons" />
           <Tab label="Events" value="events" />
+          <Tab label="Workspaces" value="workspaces" />
         </Tabs>
       </Box>
       {showTab === "yaml" && (
@@ -176,6 +194,27 @@ const UserInfoDialog: React.FC<{
               target="_blank"
             >
               View all events...
+              {
+                <OpenInNewTwoTone
+                  fontSize="inherit"
+                  sx={{ position: "relative", top: "0.2em" }}
+                />
+              }
+            </Link>
+          </Stack>
+        </DialogContent>
+      )}
+      {showTab === "workspaces" && (
+        <DialogContent>
+          <WorkspaceDataGrid workspaces={workspaces} />
+          <Stack direction="row" alignItems="right">
+            <Box sx={{ flexGrow: 1 }} />
+            <Link
+              variant="body2"
+              href={`#/workspace?user=${userName}`}
+              target="_blank"
+            >
+              Open workspace page...
               {
                 <OpenInNewTwoTone
                   fontSize="inherit"
