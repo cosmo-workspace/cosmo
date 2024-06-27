@@ -8,14 +8,18 @@ import {
   ExpandMore,
   FilterListOff,
   MoreVert,
+  Notifications,
+  OpenInNewTwoTone,
   RefreshTwoTone,
   Settings,
+  Web,
 } from "@mui/icons-material";
 import {
   Badge,
   Box,
   Chip,
   Collapse,
+  Divider,
   Fab,
   Grid,
   IconButton,
@@ -96,6 +100,43 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
           open={Boolean(anchorEl)}
           onClose={() => setAnchorEl(null)}
         >
+          <MenuItem
+            onClick={() => {
+              window.open(`/#/event?user=${us.name}`);
+            }}
+          >
+            <ListItemIcon>
+              <Notifications fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>
+              Open Events...
+              {
+                <OpenInNewTwoTone
+                  fontSize="inherit"
+                  sx={{ position: "relative", top: "0.2em" }}
+                />
+              }
+            </ListItemText>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              window.open(`/#workspace?user=${us.name}`);
+            }}
+          >
+            <ListItemIcon>
+              <Web fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>
+              Open Workspaces...
+              {
+                <OpenInNewTwoTone
+                  fontSize="inherit"
+                  sx={{ position: "relative", top: "0.2em" }}
+                />
+              }
+            </ListItemText>
+          </MenuItem>
+          <Divider />
           <MenuItem
             onClick={() => {
               userNameChangeDispatch(true, { user: us });
