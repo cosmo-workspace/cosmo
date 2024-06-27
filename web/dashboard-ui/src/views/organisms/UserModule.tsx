@@ -198,7 +198,7 @@ const useUser = () => {
   const updateExistingRoles = (users: User[]) => {
     setExistingRoles(
       [...new Set(users.map((user) => user.roles).flat())].sort((a, b) =>
-        a < b ? -1 : 1
+        a === "cosmo-admin" || a < b ? -1 : 1
       )
     );
   };

@@ -514,7 +514,13 @@ const UserList: React.VFC = () => {
                   key={v}
                   label={v}
                   sx={{ m: 0.1 }}
-                  color="primary"
+                  color={
+                    v === "cosmo-admin"
+                      ? "error"
+                      : v.endsWith("-admin")
+                      ? "warning"
+                      : "primary"
+                  }
                   checked={filterRoles?.includes(v)}
                   onChecked={(checked) => {
                     checked ? appendFilterRoles(v) : removeFilterRoles(v);
