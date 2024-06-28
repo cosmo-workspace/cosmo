@@ -766,7 +766,7 @@ const WorkspaceList: React.VFC = () => {
         </Stack>
       </Paper>
       {!Object.keys(workspaces).filter(
-        (wsName) => search === "" || Boolean(wsName.match(searchRegExp))
+        (key) => search === "" || Boolean(key.match(searchRegExp))
       ).length && (
         <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
           <Typography
@@ -779,17 +779,15 @@ const WorkspaceList: React.VFC = () => {
       )}
       <Grid container spacing={1}>
         {Object.keys(workspaces)
-          .filter(
-            (wsName) => search === "" || Boolean(wsName.match(searchRegExp))
-          )
-          .map((wsName) => workspaces[wsName])
+          .filter((key) => search === "" || Boolean(key.match(searchRegExp)))
+          .map((key) => workspaces[key])
           .sort((a, b) =>
             a.ownerName !== b.ownerName ? 1 : a.name < b.name ? -1 : 1
           )
           .map((ws) => (
             <WorkspaceItem
               workspace={ws}
-              key={ws.name}
+              key={ws.key()}
               events={ws.events}
               user={user}
               defaultExpandState={

@@ -36,6 +36,10 @@ export function computeStatus(workspace: Workspace) {
   return status;
 }
 
+export function wskey(ws: Workspace) {
+  return `${ws.name}-${ws.ownerName}`;
+}
+
 export class WorkspaceWrapper extends Workspace {
   constructor(data: PartialMessage<Workspace>) {
     super({ ...data });
@@ -84,6 +88,9 @@ export class WorkspaceWrapper extends Workspace {
     }
     return rules;
   }
+  key(): string {
+    return wskey(this);
+  }
 }
 
 /**
@@ -120,14 +127,14 @@ const useWorkspace = () => {
 
   const checkIsPolling = () => {
     return (
-      Object.keys(workspaces).filter((name) => workspaces[name].isPolling())
+      Object.keys(workspaces).filter((key) => workspaces[key].isPolling())
         .length > 0
     );
   };
 
   const stopAllPolling = () => {
-    Object.keys(workspaces).forEach((name) => {
-      clearTimer(name);
+    Object.keys(workspaces).forEach((key) => {
+      clearTimer(key);
     });
   };
 
@@ -147,10 +154,10 @@ const useWorkspace = () => {
 
   const upsertWorkspace = (ws: Workspace, events?: Event[]) => {
     setWorkspaces((prev) => {
-      const pws = prev[ws.name] || new WorkspaceWrapper(ws);
-      if (prev[ws.name]) pws.update(ws);
+      const pws = prev[wskey(ws)] || new WorkspaceWrapper(ws);
+      if (prev[wskey(ws)]) pws.update(ws);
       if (events) pws.events = events;
-      return { ...prev, [ws.name]: pws };
+      return { ...prev, [wskey(ws)]: pws };
     });
     updateClock();
   };
@@ -185,14 +192,14 @@ const useWorkspace = () => {
 
       setWorkspaces((prev) => {
         const pwsArr = workspaces.map((ws) => {
-          const pws = prev[ws.name] || new WorkspaceWrapper(ws);
-          if (prev[ws.name]) pws.update(ws);
-          pws.events = wsEventMap[ws.name] || [];
+          const pws = prev[wskey(ws)] || new WorkspaceWrapper(ws);
+          if (prev[wskey(ws)]) pws.update(ws);
+          pws.events = wsEventMap[wskey(ws)] || [];
           return pws;
         });
         const wsMap = pwsArr.reduce(
           (map: { [key: string]: WorkspaceWrapper }, pws) => {
-            map[pws.name] = pws;
+            map[wskey(pws)] = pws;
             return map;
           },
           {}
@@ -225,41 +232,41 @@ const useWorkspace = () => {
     return ws;
   };
 
-  const setProgress = (wsName: string, progress: number) => {
+  const setProgress = (key: string, progress: number) => {
     setWorkspaces((prev) => {
-      if (prev[wsName]) {
+      if (prev[key]) {
         console.log(
           "### update progress",
-          `${prev[wsName].progress} -> ${progress}`
+          `${prev[key].progress} -> ${progress}`
         );
-        const pws = prev[wsName];
+        const pws = prev[key];
         pws.progress = progress;
-        return { ...prev, [wsName]: pws };
+        return { ...prev, [key]: pws };
       }
       return prev;
     });
   };
 
-  const setTimer = (wsName: string, timer: NodeJS.Timeout) => {
+  const setTimer = (key: string, timer: NodeJS.Timeout) => {
     setWorkspaces((prev) => {
-      if (prev[wsName]) {
-        const pws = prev[wsName];
+      if (prev[key]) {
+        const pws = prev[key];
         clearInterval(pws.timer);
         pws.timer = timer;
-        return { ...prev, [wsName]: pws };
+        return { ...prev, [key]: pws };
       }
       return prev;
     });
   };
 
-  const clearTimer = (wsName: string) => {
+  const clearTimer = (key: string) => {
     setWorkspaces((prev) => {
-      if (prev[wsName]) {
-        const pws = prev[wsName];
+      if (prev[key]) {
+        const pws = prev[key];
         clearInterval(pws.timer);
         pws.timer = undefined;
         pws.progress = 120;
-        return { ...prev, [wsName]: pws };
+        return { ...prev, [key]: pws };
       }
       return prev;
     });
@@ -273,14 +280,14 @@ const useWorkspace = () => {
 
     let limit = 120;
     let progress = 0;
-    setProgress(ws.name, progress);
+    setProgress(wskey(ws), progress);
     setTimer(
-      ws.name,
+      wskey(ws),
       setInterval(async () => {
         try {
           progress = progress >= 100 ? 0 : progress + 20;
           console.log("polling", "progress", progress);
-          setProgress(ws.name, progress);
+          setProgress(wskey(ws), progress);
           if (progress === 20) {
             console.log("polling", "do request");
             const newWs = await refreshWorkspace(ws);
@@ -296,20 +303,20 @@ const useWorkspace = () => {
               )
             ) {
               console.log("polling", "timer stopped");
-              clearTimer(ws.name);
+              clearTimer(wskey(ws));
             }
           }
         } catch (e) {
           if (computeStatus(ws) !== "Creating") {
             console.log("polling", "error", e);
-            clearTimer(ws.name);
+            clearTimer(wskey(ws));
           }
         } finally {
           limit--;
           console.log("polling", "limit", limit);
           if (limit < 0) {
             console.log("polling", "reached limit");
-            clearTimer(ws.name);
+            clearTimer(wskey(ws));
           }
         }
       }, 1000)
