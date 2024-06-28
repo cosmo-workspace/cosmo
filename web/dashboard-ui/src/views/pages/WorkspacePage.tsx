@@ -502,7 +502,7 @@ const WorkspaceItem: React.VFC<{
             </Avatar>
           }
           onClick={() => {
-            wsInfoDialogDispatch(true, { ws: ws });
+            !readonly && wsInfoDialogDispatch(true, { ws: ws });
           }}
           title={
             <Box display="flex" alignItems="center">
