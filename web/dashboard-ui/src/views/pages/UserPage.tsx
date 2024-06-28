@@ -446,7 +446,7 @@ const UserList: React.VFC = () => {
 
   return (
     <>
-      <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 1 }}>
+      <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, px: 2, py: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
           <SearchTextField search={search} setSearch={setSearch} />
           <Box sx={{ flexGrow: 1 }} />
