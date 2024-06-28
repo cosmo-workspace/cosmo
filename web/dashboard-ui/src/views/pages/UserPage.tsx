@@ -358,7 +358,7 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
               key={i}
             >
               <Typography key={i} variant="body2">
-                {v.template}
+                - {v.template}
               </Typography>
             </Tooltip>
           ))}
