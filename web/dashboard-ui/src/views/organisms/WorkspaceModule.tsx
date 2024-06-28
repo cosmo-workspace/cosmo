@@ -20,8 +20,9 @@ import {
 } from "../../services/DashboardServices";
 import { getTime, latestTime } from "./EventModule";
 import {
-  hasPrivilegedRole,
-  setUserStateFuncFilteredByLoginUserRole,
+  isAdminUser,
+  setUsersFuncFilteredByAccesibleRoles,
+  usersFilteredByAccesibleRoles,
 } from "./UserModule";
 
 export function computeStatus(workspace: Workspace) {
@@ -101,7 +102,7 @@ const useWorkspace = () => {
   const userService = useUserService();
 
   const { loginUser, updateClock } = useLogin();
-  const isPriv = hasPrivilegedRole(loginUser?.roles || []);
+  const isAdmin = isAdminUser(loginUser);
   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
 
   const [urlParam, setUrlParam] = useUrlState(
@@ -113,7 +114,7 @@ const useWorkspace = () => {
   const search: string = urlParam.search || "";
   const setSearch = (word: string) => setUrlParam({ search: word });
 
-  const userName: string = urlParam.user || loginUser?.name;
+  const userName: string = urlParam.user || "";
   const user = users.find((u) => u.name === userName) || new User();
   const setUser = (name: string) => setUrlParam({ user: name });
 
@@ -133,17 +134,16 @@ const useWorkspace = () => {
   useEffect(() => {
     stopAllPolling();
     getWorkspaces(userName);
-    isPriv && getUsers();
+    isAdmin &&
+      getUsers().then((users) => {
+        usersFilteredByAccesibleRoles(users || [], loginUser).find(
+          (u) => u.name === userName
+        ) ||
+          enqueueSnackbar(`User ${userName} is not found`, {
+            variant: "error",
+          });
+      });
   }, [userName]);
-
-  useEffect(() => {
-    if (users.length > 1) {
-      users.find((u) => u.name === userName) ||
-        enqueueSnackbar(`User ${userName} is not found`, {
-          variant: "warning",
-        });
-    }
-  }, [users]); // eslint-disable-line
 
   const upsertWorkspace = (ws: Workspace, events?: Event[]) => {
     setWorkspaces((prev) => {
@@ -414,13 +414,12 @@ const useWorkspace = () => {
   /**
    * UserModule
    */
-  const getUsers = async () => {
+  const getUsers = async (): Promise<User[] | undefined> => {
     console.log("useWorkspaceUsers:getUsers");
     try {
       const result = await userService.getUsers({});
-      setUsers(
-        setUserStateFuncFilteredByLoginUserRole(result.items, loginUser)
-      );
+      setUsers(setUsersFuncFilteredByAccesibleRoles(result.items, loginUser));
+      return result.items;
     } catch (error) {
       handleError(error);
     }

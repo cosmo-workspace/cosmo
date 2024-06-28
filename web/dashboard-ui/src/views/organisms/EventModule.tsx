@@ -8,8 +8,8 @@ import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { useUserService } from "../../services/DashboardServices";
 import {
-  hasPrivilegedRole,
-  setUserStateFuncFilteredByLoginUserRole,
+  isAdminUser,
+  setUsersFuncFilteredByAccesibleRoles,
 } from "./UserModule";
 /**
  * hooks
@@ -23,7 +23,7 @@ const useEvent = () => {
   const userService = useUserService();
 
   const { loginUser, updateClock } = useLogin();
-  const isPriv = hasPrivilegedRole(loginUser?.roles || []);
+  const isAdmin = isAdminUser(loginUser);
   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
 
   const [urlParam, setUrlParam] = useUrlState(
@@ -40,15 +40,15 @@ const useEvent = () => {
   const setUser = (name: string) => setUrlParam({ user: name });
 
   useEffect(() => {
-    getEvents();
-    isPriv && getUsers();
+    getEvents(userName);
+    isAdmin && getUsers();
   }, [userName]); // eslint-disable-line
 
   useEffect(() => {
     if (users.length > 1) {
       users.find((u) => u.name === userName) ||
         enqueueSnackbar(`User ${userName} is not found`, {
-          variant: "warning",
+          variant: "error",
         });
     }
   }, [users]); // eslint-disable-line
@@ -57,15 +57,13 @@ const useEvent = () => {
     console.log("useEvent:getUsers");
     try {
       const result = await userService.getUsers({});
-      setUsers(
-        setUserStateFuncFilteredByLoginUserRole(result.items, loginUser)
-      );
+      setUsers(setUsersFuncFilteredByAccesibleRoles(result.items, loginUser));
     } catch (error) {
       handleError(error);
     }
   };
 
-  const getEvents = async () => {
+  const getEvents = async (userName: string) => {
     console.log("useEvent:getEvents");
     try {
       const result = await userService.getEvents({ userName: userName });
@@ -87,6 +85,7 @@ const useEvent = () => {
     setEvents,
     getEvents,
     getUsers,
+    userName,
   };
 };
 

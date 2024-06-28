@@ -205,10 +205,10 @@ func validateCallerHasAdmin(callerGroupRoleMap map[string]string) error {
 	return errors.New("not admin")
 }
 
-func validateCallerHasAdminForAllRoles(tryRoleNames []string) func(map[string]string) error {
+func validateCallerHasAdminForAllRoles(tryRoles []cosmov1alpha1.UserRole) func(map[string]string) error {
 	return func(callerGroupRoleMap map[string]string) error {
-		for _, r := range tryRoleNames {
-			tryAccessGroup, _ := (cosmov1alpha1.UserRole{Name: r}).GetGroupAndRole()
+		for _, r := range tryRoles {
+			tryAccessGroup, _ := r.GetGroupAndRole()
 			callerRoleForTriedGroup := callerGroupRoleMap[tryAccessGroup]
 
 			// Deny if caller does not have administrative privilege for tried group.
@@ -220,9 +220,9 @@ func validateCallerHasAdminForAllRoles(tryRoleNames []string) func(map[string]st
 	}
 }
 
-func validateCallerHasAdminForAtLeastOneRole(tryRoleNames []cosmov1alpha1.UserRole) func(map[string]string) error {
+func validateCallerHasAdminForAtLeastOneRole(tryRoles []cosmov1alpha1.UserRole) func(map[string]string) error {
 	return func(callerGroupRoleMap map[string]string) error {
-		for _, r := range tryRoleNames {
+		for _, r := range tryRoles {
 			tryAccessGroup, _ := r.GetGroupAndRole()
 			callerRoleForTriedGroup := callerGroupRoleMap[tryAccessGroup]
 

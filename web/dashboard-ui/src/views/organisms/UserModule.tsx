@@ -1,6 +1,6 @@
 import useUrlState from "@ahooksjs/use-url-state";
 import { useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ModuleContext } from "../../components/ContextProvider";
 import { useHandleError, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
@@ -23,15 +23,15 @@ export const isAdminRole = (role: string) => {
   return role.endsWith(AdminRoleSufix);
 };
 
-export const hasPrivilegedRole = (roles: string[]) => {
-  return roles.includes(PrivilegedRole);
+export const isPrivilegedUser = (user?: User) => {
+  return (user && user.roles?.includes(PrivilegedRole)) || false;
 };
 
 export const isAdminUser = (user?: User) => {
+  if (isPrivilegedUser(user)) {
+    return true;
+  }
   if (user && user.roles) {
-    if (hasPrivilegedRole(user.roles)) {
-      return true;
-    }
     for (const role of user.roles) {
       if (isAdminRole(role)) {
         return true;
@@ -63,8 +63,9 @@ const hasAdminForRole = (myRoles: string[], userrole: string) => {
   return false;
 };
 
-function filterUsersByRoles(users: User[], myRoles: string[]) {
-  return hasPrivilegedRole(myRoles)
+export function usersFilteredByAccesibleRoles(users: User[], loginUser?: User) {
+  const myRoles = loginUser?.roles || [];
+  return myRoles.includes(PrivilegedRole)
     ? users
     : users.filter((u) => {
         for (const userRole of u.roles) {
@@ -76,19 +77,16 @@ function filterUsersByRoles(users: User[], myRoles: string[]) {
       });
 }
 
-export function setUserStateFuncFilteredByLoginUserRole(
+export function setUsersFuncFilteredByAccesibleRoles(
   users: User[],
   loginUser?: User
 ) {
   const f = (prev: User[]) => {
-    const newUsers = users.sort((a, b) => (a.name < b.name ? -1 : 1));
-    const roleFilteredNewUsers = filterUsersByRoles(
-      newUsers,
-      loginUser?.roles || []
+    const newUsers = usersFilteredByAccesibleRoles(
+      users.sort((a, b) => (a.name < b.name ? -1 : 1)),
+      loginUser
     );
-    return JSON.stringify(prev) === JSON.stringify(roleFilteredNewUsers)
-      ? prev
-      : roleFilteredNewUsers;
+    return JSON.stringify(prev) === JSON.stringify(newUsers) ? prev : newUsers;
   };
   return f;
 }
@@ -159,13 +157,12 @@ const useUser = () => {
     }
   };
 
-  useEffect(() => {
-    // init fetch users
+  const applyAdminRoleFilter = () => {
     getUsers().then((users) => {
       if (
         loginUser &&
         users &&
-        !hasPrivilegedRole(loginUser.roles) &&
+        !isPrivilegedUser(loginUser) &&
         filterRoles.length === 0
       ) {
         setUrlParam({
@@ -175,7 +172,7 @@ const useUser = () => {
         });
       }
     });
-  }, []);
+  };
 
   /**
    * UserList: user list
@@ -337,6 +334,7 @@ const useUser = () => {
     appendFilterRoles,
     removeFilterRoles,
     existingRoles,
+    applyAdminRoleFilter,
     users,
     getUsers,
     createUser,

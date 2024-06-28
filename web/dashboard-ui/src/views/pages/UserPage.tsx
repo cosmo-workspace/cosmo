@@ -41,7 +41,7 @@ import {
   GridRenderCellParams,
   gridClasses,
 } from "@mui/x-data-grid";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { EllipsisTypography } from "../atoms/EllipsisTypography";
@@ -434,12 +434,15 @@ const UserList: React.VFC = () => {
     appendFilterRoles,
     removeFilterRoles,
     existingRoles,
+    applyAdminRoleFilter,
   } = useUserModule();
   const userCreateDialogDispatch = UserCreateDialogContext.useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
   const [showFilter, setShowFilter] = React.useState<boolean>(false);
 
   const searchRegExp = new RegExp(search, "i");
+
+  useEffect(applyAdminRoleFilter, []);
 
   return (
     <>
@@ -516,7 +519,7 @@ const UserList: React.VFC = () => {
                   label={v}
                   sx={{ m: 0.1 }}
                   color={
-                    v === "cosmo-admin"
+                    isPrivilegedRole(v)
                       ? "error"
                       : v.endsWith("-admin")
                       ? "warning"

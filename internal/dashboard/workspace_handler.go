@@ -31,7 +31,15 @@ func (s *Server) CreateWorkspace(ctx context.Context, req *connect_go.Request[da
 	log.Debug().Info("request", "req", req)
 
 	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
-		return nil, ErrResponse(log, err)
+		targetUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
+
+		// group-admin user can delete users which have only the their groups
+		if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(targetUser.Spec.Roles)); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	m := req.Msg
@@ -52,8 +60,16 @@ func (s *Server) GetWorkspaces(ctx context.Context, req *connect_go.Request[dash
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := adminAuthentication(ctx, passAllAdmin); err != nil {
-		return nil, ErrResponse(log, err)
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+		targetUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
+
+		// group-admin user can get workspaces of users which have only the their groups
+		if err := adminAuthentication(ctx, validateCallerHasAdminForAtLeastOneRole(targetUser.Spec.Roles)); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	wss, err := s.Klient.ListWorkspacesByUserName(ctx, req.Msg.UserName, func(opt *kosmo.ListWorkspacesOptions) {
@@ -80,7 +96,15 @@ func (s *Server) GetWorkspace(ctx context.Context, req *connect_go.Request[dashv
 	log.Debug().Info("request", "req", req)
 
 	if err := s.sharedWorkspaceAuthorization(ctx, req.Msg.WsName, req.Msg.UserName, false); err != nil {
-		return nil, ErrResponse(log, err)
+		targetUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
+
+		// group-admin user can get workspaces of users which have only the their groups
+		if err := adminAuthentication(ctx, validateCallerHasAdminForAtLeastOneRole(targetUser.Spec.Roles)); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	ws, err := s.Klient.GetWorkspaceByUserName(ctx, req.Msg.WsName, req.Msg.UserName)
@@ -106,7 +130,15 @@ func (s *Server) DeleteWorkspace(ctx context.Context, req *connect_go.Request[da
 	log.Debug().Info("request", "req", req)
 
 	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
-		return nil, ErrResponse(log, err)
+		targetUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
+
+		// group-admin user can delete users which have only the their groups
+		if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(targetUser.Spec.Roles)); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	ws, err := s.Klient.DeleteWorkspace(ctx, req.Msg.WsName, req.Msg.UserName)
@@ -127,7 +159,15 @@ func (s *Server) UpdateWorkspace(ctx context.Context, req *connect_go.Request[da
 	log.Debug().Info("request", "req", req)
 
 	if err := s.sharedWorkspaceAuthorization(ctx, req.Msg.WsName, req.Msg.UserName, true); err != nil {
-		return nil, ErrResponse(log, err)
+		targetUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
+
+		// group-admin user can delete users which have only the their groups
+		if err := adminAuthentication(ctx, validateCallerHasAdminForAtLeastOneRole(targetUser.Spec.Roles)); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	ws, err := s.Klient.UpdateWorkspace(ctx, req.Msg.WsName, req.Msg.UserName, kosmo.UpdateWorkspaceOpts{
@@ -152,11 +192,6 @@ func (s *Server) sharedWorkspaceAuthorization(ctx context.Context, wsName, wsOwn
 	if err := userAuthentication(ctx, wsOwnerName); err == nil {
 		// pass if caller is the owner of the workspace
 		return nil
-	}
-	if !update {
-		if err := adminAuthentication(ctx, passAllAdmin); err == nil {
-			return nil
-		}
 	}
 
 	caller := callerFromContext(ctx)

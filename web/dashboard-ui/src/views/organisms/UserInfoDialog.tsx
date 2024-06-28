@@ -27,7 +27,7 @@ import {
 import "highlight.js/styles/default.css";
 import React, { useEffect, useRef, useState } from "react";
 import { DialogContext } from "../../components/ContextProvider";
-import { useLogin } from "../../components/LoginProvider";
+import { useHandleError, useLogin } from "../../components/LoginProvider";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
@@ -67,6 +67,7 @@ const UserInfoDialog: React.FC<{
   const userService = useUserService();
   const wsService = useWorkspaceService();
   const { clock, updateClock } = useLogin();
+  const { handleError } = useHandleError();
 
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
@@ -82,33 +83,48 @@ const UserInfoDialog: React.FC<{
   const dialogContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    userService
-      .getUser({
-        userName: userName,
-        withRaw: true,
-      })
-      .then((res) => {
-        setUser(res.user);
-      });
-
-    userService
-      .getEvents({
-        userName: userName,
-      })
-      .then((res) => {
-        setEvents(res.items);
-      });
-
-    wsService
-      .getWorkspaces({
-        userName: userName,
-        includeShared: false,
-      })
-      .then((res) => {
-        setWorkspaces(res.items);
-      });
+    switch (showTab) {
+      case "yaml":
+        userService
+          .getUser({
+            userName: userName,
+            withRaw: true,
+          })
+          .then((res) => {
+            setUser(res.user);
+          })
+          .catch((error) => {
+            handleError(error);
+          });
+        break;
+      case "events":
+        userService
+          .getEvents({
+            userName: userName,
+          })
+          .then((res) => {
+            setEvents(res.items);
+          })
+          .catch((error) => {
+            handleError(error);
+          });
+        break;
+      case "workspaces":
+        wsService
+          .getWorkspaces({
+            userName: userName,
+            includeShared: false,
+          })
+          .then((res) => {
+            setWorkspaces(res.items);
+          })
+          .catch((error) => {
+            handleError(error);
+          });
+        break;
+    }
     updateClock();
-  }, [userName]);
+  }, [userName, showTab]);
 
   return (
     <Dialog open={true} scroll="paper" fullWidth maxWidth="md">

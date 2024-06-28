@@ -29,7 +29,7 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 	log.Debug().Info("request", "req", req)
 
 	// group-admin user can create users which have only the their groups
-	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(req.Msg.Roles)); err != nil {
+	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(apiconv.S2C_UserRoles(req.Msg.Roles))); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -97,8 +97,10 @@ func (s *Server) GetUser(ctx context.Context, req *connect_go.Request[dashv1alph
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := adminAuthentication(ctx, passAllAdmin); err != nil {
-		return nil, ErrResponse(log, err)
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+		if err := adminAuthentication(ctx, passAllAdmin); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	user, err := s.Klient.GetUser(ctx, req.Msg.UserName)
@@ -135,8 +137,16 @@ func (s *Server) GetEvents(ctx context.Context, req *connect_go.Request[dashv1al
 	log := clog.FromContext(ctx).WithCaller()
 	log.Debug().Info("request", "req", req)
 
-	if err := adminAuthentication(ctx, passAllAdmin); err != nil {
-		return nil, ErrResponse(log, err)
+	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
+		targetUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
+
+		// group-admin user can get workspaces of users which have only the their groups
+		if err := adminAuthentication(ctx, validateCallerHasAdminForAtLeastOneRole(targetUser.Spec.Roles)); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	events, err := s.Klient.ListEvents(ctx, cosmov1alpha1.UserNamespace(req.Msg.UserName))
@@ -163,7 +173,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 	}
 
 	// group-admin user can delete users which have only the their groups
-	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(apiconv.C2S_UserRole(targetUser.Spec.Roles))); err != nil {
+	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(targetUser.Spec.Roles)); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 

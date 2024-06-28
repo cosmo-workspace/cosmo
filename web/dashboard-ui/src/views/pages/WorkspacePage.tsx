@@ -71,7 +71,7 @@ import {
   NetworkRuleDeleteDialogContext,
   NetworkRuleUpsertDialogContext,
 } from "../organisms/NetworkRuleActionDialog";
-import { hasPrivilegedRole } from "../organisms/UserModule";
+import { isAdminUser } from "../organisms/UserModule";
 import {
   WorkspaceCreateDialogContext,
   WorkspaceDeleteDialogContext,
@@ -640,7 +640,7 @@ const WorkspaceList: React.VFC = () => {
   } = useWorkspaceModule();
   const { loginUser } = useLogin();
   const { enqueueSnackbar } = useSnackbar();
-  const isPriv = hasPrivilegedRole(loginUser?.roles || []);
+  const isAdmin = isAdminUser(loginUser);
 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -684,7 +684,7 @@ const WorkspaceList: React.VFC = () => {
             sx={{ flexGrow: 0.5 }}
           />
           <Box sx={{ flexGrow: 1 }} />
-          {isPriv && (isUpSM || (!isSearchFocused && search === "")) && (
+          {isAdmin && (isUpSM || (!isSearchFocused && search === "")) && (
             <UserSelect />
           )}
           {isUpSM &&

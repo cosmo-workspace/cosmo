@@ -24,7 +24,7 @@ import { NameAvatar } from "../atoms/NameAvatar";
 import { SearchTextField } from "../atoms/SearchTextField";
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
 import { EventContext, useEventModule } from "../organisms/EventModule";
-import { hasPrivilegedRole } from "../organisms/UserModule";
+import { isAdminUser } from "../organisms/UserModule";
 import { PageTemplate } from "../templates/PageTemplate";
 
 const RotatingRefreshTwoTone = styled(RefreshTwoTone)({
@@ -93,9 +93,9 @@ const UserSelect: React.VFC = () => {
 
 const EventList: React.VFC = () => {
   console.log("EventList");
-  const { search, setSearch, events, getEvents } = useEventModule();
+  const { userName, search, setSearch, events, getEvents } = useEventModule();
   const { loginUser, clock } = useLogin();
-  const isPriv = hasPrivilegedRole(loginUser?.roles || []);
+  const isAdmin = isAdminUser(loginUser);
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
   const [isLoading, setIsLoading] = React.useState(false);
@@ -108,7 +108,7 @@ const EventList: React.VFC = () => {
         <Stack direction="row" alignItems="center" spacing={2}>
           <SearchTextField search={search} setSearch={setSearch} />
           <Box sx={{ flexGrow: 1 }} />
-          {isPriv && <UserSelect />}
+          {isAdmin && <UserSelect />}
           <Tooltip title="Refresh" placement="top">
             <IconButton
               color="inherit"
@@ -117,7 +117,7 @@ const EventList: React.VFC = () => {
                 setTimeout(() => {
                   setIsLoading(false);
                 }, 1000);
-                if (!isLoading) getEvents();
+                if (!isLoading) getEvents(userName);
               }}
             >
               {isLoading ? <RotatingRefreshTwoTone /> : <RefreshTwoTone />}

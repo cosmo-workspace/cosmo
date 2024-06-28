@@ -11,6 +11,7 @@ import {
 import "highlight.js/styles/default.css";
 import React, { useEffect, useState } from "react";
 import { DialogContext } from "../../components/ContextProvider";
+import { useHandleError } from "../../components/LoginProvider";
 import { Workspace } from "../../proto/gen/dashboard/v1alpha1/workspace_pb";
 import { useWorkspaceService } from "../../services/DashboardServices";
 import YAMLTextArea from "../atoms/YAMLTextArea";
@@ -20,6 +21,7 @@ const WorkspaceInfoDialog: React.FC<{
   ws: Workspace;
 }> = ({ onClose, ws }) => {
   const wsService = useWorkspaceService();
+  const { handleError } = useHandleError();
 
   const [yaml, setYAML] = useState("");
   const [instance, setInstance] = useState("");
@@ -34,10 +36,10 @@ const WorkspaceInfoDialog: React.FC<{
       })
       .then((res) => {
         setYAML(res.workspace?.raw || "No yaml");
-        setInstance(res.workspace?.rawInstance || "no instance yaml");
+        setInstance(res.workspace?.rawInstance || "No instance yaml");
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        handleError(error);
       });
   }, [ws]);
 
