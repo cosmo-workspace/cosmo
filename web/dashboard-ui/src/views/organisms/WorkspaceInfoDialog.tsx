@@ -44,7 +44,13 @@ const WorkspaceInfoDialog: React.FC<{
   }, [ws]);
 
   return (
-    <Dialog open={true} scroll="paper" fullWidth maxWidth="md">
+    <Dialog
+      open={true}
+      onClose={onClose}
+      scroll="paper"
+      fullWidth
+      maxWidth="md"
+    >
       <DialogTitle>
         <Stack direction="row" alignItems="center" spacing={1}>
           <DomainVerification fontSize="large" />

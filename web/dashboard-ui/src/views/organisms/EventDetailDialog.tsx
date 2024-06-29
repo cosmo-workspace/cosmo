@@ -67,7 +67,7 @@ export const EventDetailDialog: React.FC<{
   console.log("EventDetailDialog");
 
   return (
-    <Dialog open={true} onClose={() => onClose()} fullWidth>
+    <Dialog open={true} onClose={onClose} fullWidth>
       <DialogTitle>
         <Box display="flex" alignItems="center">
           {event.type == "Normal" ? (

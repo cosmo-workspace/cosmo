@@ -66,7 +66,7 @@ interface UserActionDialogProps {
   title: string;
   actions: React.ReactNode;
   user: User;
-  onClose: () => void;
+  onClose?: () => void;
   defaultOpenUserAddon?: boolean;
 }
 
@@ -87,7 +87,7 @@ const UserActionDialog: React.FC<UserActionDialogProps> = ({
   };
 
   return (
-    <Dialog open={true} onClose={() => onClose()} fullWidth maxWidth={"xs"}>
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth={"xs"}>
       <DialogTitle>
         {title}
         <IconButton
@@ -97,7 +97,7 @@ const UserActionDialog: React.FC<UserActionDialogProps> = ({
             top: 8,
             color: (theme) => theme.palette.grey[500],
           }}
-          onClick={() => onClose()}
+          onClick={onClose}
         >
           <Close />
         </IconButton>
@@ -244,7 +244,7 @@ export const UserDeleteDialog: React.VFC<{
   return (
     <UserActionDialog
       title="Delete User 👋"
-      onClose={() => onClose()}
+      onClose={onClose}
       user={user}
       actions={
         <Alert
@@ -287,12 +287,11 @@ export const UserCreateConfirmDialog: React.VFC<{
   return (
     <UserActionDialog
       title="Create?"
-      onClose={() => onClose()}
       user={user}
       defaultOpenUserAddon={true}
       actions={
         <DialogActions>
-          <Button onClick={() => onClose()} color="primary">
+          <Button onClick={onClose} color="primary">
             Back
           </Button>
           <Button

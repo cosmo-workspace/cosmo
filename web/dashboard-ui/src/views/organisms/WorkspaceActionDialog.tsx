@@ -32,12 +32,12 @@ const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
  */
 const WorkspaceActionDialog: React.VFC<{
   workspace: Workspace;
-  onClose: () => void;
   title: string;
   actions: React.ReactNode;
+  onClose?: () => void;
 }> = ({ workspace, onClose, title, actions }) => {
   return (
-    <Dialog open={true} onClose={() => onClose()} fullWidth maxWidth={"xs"}>
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth={"xs"}>
       <DialogTitle>
         {title}
         <IconButton
@@ -47,7 +47,7 @@ const WorkspaceActionDialog: React.VFC<{
             top: 8,
             color: (theme) => theme.palette.grey[500],
           }}
-          onClick={() => onClose()}
+          onClick={onClose}
         >
           <Close />
         </IconButton>
