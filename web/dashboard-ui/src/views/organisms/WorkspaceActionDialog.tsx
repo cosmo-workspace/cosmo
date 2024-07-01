@@ -195,9 +195,9 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
-  const templ = useTemplates();
+  const { templates, getTemplates, hasRequiredAddons } = useTemplates();
   useEffect(() => {
-    templ.getTemplates();
+    getTemplates({ useRoleFilter: true });
   }, []); // eslint-disable-line
 
   const registerTemplate = registerMui(
@@ -206,25 +206,8 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({
     })
   );
 
-  const hasRequiredAddons = (t: Template): boolean => {
-    if (t.requiredUseraddons.length === 0) {
-      return true;
-    }
-    for (const requiredAddon of t.requiredUseraddons) {
-      if (user.addons.map((a) => a.template).includes(requiredAddon)) {
-        return true;
-      }
-    }
-    console.log(
-      'user "%s" does not have required addons "%s" for template "%s"',
-      user.name,
-      t.requiredUseraddons,
-      t.name
-    );
-    return false;
-  };
-
-  const isNoTemplates = templ.templates.filter(hasRequiredAddons).length === 0;
+  const isNoTemplates =
+    templates.filter((v) => hasRequiredAddons(v, user)).length === 0;
 
   return (
     <Dialog open={true} fullWidth maxWidth={"xs"}>
@@ -286,9 +269,7 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({
               {...registerTemplate}
               onChange={(e) => {
                 registerTemplate.onChange(e);
-                const tmpl = templ.templates.find(
-                  (v) => v.name === e.target.value
-                );
+                const tmpl = templates.find((v) => v.name === e.target.value);
                 setTemplate(tmpl!);
               }}
               error={Boolean(errors.templateName?.message || isNoTemplates)}
@@ -298,18 +279,20 @@ export const WorkspaceCreateDialog: React.VFC<{ onClose: () => void }> = ({
                   : errors.templateName?.message
               }
             >
-              {templ.templates.filter(hasRequiredAddons).map((template) => (
-                <MenuItem key={template.name} value={template.name}>
-                  <Tooltip
-                    title={template.description || "No description"}
-                    placement="bottom"
-                    arrow
-                    enterDelay={1000}
-                  >
-                    <div>{template.name}</div>
-                  </Tooltip>
-                </MenuItem>
-              ))}
+              {templates
+                .filter((v) => hasRequiredAddons(v, user))
+                .map((t) => (
+                  <MenuItem key={t.name} value={t.name}>
+                    <Tooltip
+                      title={t.description || "No description"}
+                      placement="bottom"
+                      arrow
+                      enterDelay={1000}
+                    >
+                      <div>{t.name}</div>
+                    </Tooltip>
+                  </MenuItem>
+                ))}
             </TextField>
             {template.requiredVars?.map((rqvar, index) => (
               <TextField

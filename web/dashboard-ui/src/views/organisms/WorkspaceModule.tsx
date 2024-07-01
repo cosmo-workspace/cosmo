@@ -462,6 +462,24 @@ export const useTemplates = () => {
   const templateService = useTemplateService();
   const { handleError } = useHandleError();
 
+  const hasRequiredAddons = (t: Template, user: User): boolean => {
+    if (t.requiredUseraddons.length === 0) {
+      return true;
+    }
+    for (const requiredAddon of t.requiredUseraddons) {
+      if (user.addons.map((a) => a.template).includes(requiredAddon)) {
+        return true;
+      }
+    }
+    console.log(
+      'user "%s" does not have required addons "%s" for template "%s"',
+      user.name,
+      t.requiredUseraddons,
+      t.name
+    );
+    return false;
+  };
+
   const getTemplates = async (
     option?: PartialMessage<GetWorkspaceTemplatesRequest>
   ) => {
@@ -479,6 +497,7 @@ export const useTemplates = () => {
   return {
     templates,
     getTemplates,
+    hasRequiredAddons,
   };
 };
 
