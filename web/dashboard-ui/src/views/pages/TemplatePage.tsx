@@ -33,9 +33,13 @@ import {
   gridClasses,
 } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
+import { useLogin } from "../../components/LoginProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { TemplateDialog } from "../organisms/TemplateDialog";
-import { useTemplates as useUserTemplates } from "../organisms/UserModule";
+import {
+  isAdminUser,
+  useTemplates as useUserTemplates,
+} from "../organisms/UserModule";
 import { useTemplates as useWorkspaceTemplates } from "../organisms/WorkspaceModule";
 import { PageTemplate } from "../templates/PageTemplate";
 
@@ -337,6 +341,8 @@ const UserAddonDataGrid: React.FC<TemplateDataGridProp> = ({ templates }) => {
 
 const TemplateList: React.VFC = () => {
   console.log("TemplateList");
+  const { loginUser } = useLogin();
+  const isAdmin = isAdminUser(loginUser);
   const [isLoading, setIsLoading] = React.useState(false);
   const [urlParam, setUrlParam] = useUrlState(
     { type: "workspace" },
@@ -358,10 +364,11 @@ const TemplateList: React.VFC = () => {
   const refreshTemplates = () => {
     switch (templateType) {
       case "workspace":
-        getTemplates({ withRaw: true });
+        getTemplates({ withRaw: true, useRoleFilter: true });
         break;
       case "useraddon":
-        getUserAddonTemplates({ withRaw: true });
+        isAdmin &&
+          getUserAddonTemplates({ withRaw: true, useRoleFilter: true });
         break;
     }
   };
@@ -384,7 +391,7 @@ const TemplateList: React.VFC = () => {
                 }}
               >
                 <MenuItem value="workspace">WorkspaceTemplate</MenuItem>
-                <MenuItem value="useraddon">UserAddon</MenuItem>
+                {isAdmin && <MenuItem value="useraddon">UserAddon</MenuItem>}
               </Select>
             </Tooltip>
           </FormControl>
