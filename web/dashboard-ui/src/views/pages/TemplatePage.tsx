@@ -4,7 +4,6 @@ import {
   DescriptionOutlined,
   Edit,
   MoreVert,
-  OpenInNewTwoTone,
   RefreshTwoTone,
 } from "@mui/icons-material";
 import {
@@ -32,6 +31,7 @@ import {
   GridRenderCellParams,
   gridClasses,
 } from "@mui/x-data-grid";
+import { enqueueSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
@@ -70,39 +70,13 @@ const TemplateMenu: React.VFC<{ template: Template }> = ({ template }) => {
         >
           <MenuItem
             onClick={() => {
-              // window.open(`/#/event?user=${us.name}`);
-            }}
-          >
-            <ListItemIcon>
-              <DescriptionOutlined fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>
-              Show Live Manifest...
-              {
-                <OpenInNewTwoTone
-                  fontSize="inherit"
-                  sx={{ position: "relative", top: "0.2em" }}
-                />
-              }
-            </ListItemText>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              // window.open(`/#workspace?user=${us.name}`);
+              enqueueSnackbar({ message: "Coming soon!", variant: "info" });
             }}
           >
             <ListItemIcon>
               <Edit fontSize="small" />
             </ListItemIcon>
-            <ListItemText>
-              Edit...
-              {
-                <OpenInNewTwoTone
-                  fontSize="inherit"
-                  sx={{ position: "relative", top: "0.2em" }}
-                />
-              }
-            </ListItemText>
+            <ListItemText>Edit...</ListItemText>
           </MenuItem>
         </Menu>
       </Box>
