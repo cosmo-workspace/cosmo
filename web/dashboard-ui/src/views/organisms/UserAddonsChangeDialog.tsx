@@ -51,6 +51,7 @@ export const UserAddonChangeDialog: React.FC<{
     watch,
     control,
     formState: { errors },
+    setError,
   } = useForm<Inputs>({
     defaultValues: {},
   });
@@ -84,19 +85,43 @@ export const UserAddonChangeDialog: React.FC<{
       <form
         onSubmit={handleSubmit(async (inp: Inputs) => {
           console.log(inp);
-          const userAddons = inp.addons
-            .filter((v) => v.enable || v.template.isDefaultUserAddon)
-            .map((inpAddon) => {
-              const vars: { [key: string]: string } = {};
-              inpAddon.vars.forEach((v, i) => {
-                vars[inpAddon.template.requiredVars?.[i].varName!] = v;
-              });
-              return {
-                template: inpAddon.template.name,
-                vars: vars,
-                clusterScoped: inpAddon.template.isClusterScope,
-              };
+
+          const enabled = inp.addons.filter(
+            (v) => v.enable || v.template.isDefaultUserAddon
+          );
+
+          // check required addons are enabled
+          for (const hasDeps of enabled.filter(
+            (v) => v.template.requiredUseraddons.length > 0
+          )) {
+            for (const req of hasDeps.template.requiredUseraddons) {
+              if (enabled.findIndex((v) => v.template.name === req) < 0) {
+                setError(
+                  `addons.${inp.addons.findIndex(
+                    (v) => v.template.name === hasDeps.template.name
+                  )}.enable`,
+                  {
+                    message: `Required: ${hasDeps.template.requiredUseraddons.join(
+                      ", "
+                    )}`,
+                  }
+                );
+                return;
+              }
+            }
+          }
+
+          const userAddons = enabled.map((inpAddon) => {
+            const vars: { [key: string]: string } = {};
+            inpAddon.vars.forEach((v, i) => {
+              vars[inpAddon.template.requiredVars?.[i].varName!] = v;
             });
+            return {
+              template: inpAddon.template.name,
+              vars: vars,
+              clusterScoped: inpAddon.template.isClusterScope,
+            };
+          });
           const protoUserAddons = userAddons.map((ua) => new UserAddon(ua));
           console.log("protoUserAddons", protoUserAddons);
 
