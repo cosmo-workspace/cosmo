@@ -67,7 +67,7 @@ export const UserAddonChangeDialog: React.FC<{
 
   const templ = useTemplates();
   useEffect(() => {
-    templ.getAllUserAddonTemplates();
+    templ.getUserAddonTemplates();
   }, []); // eslint-disable-line
   useEffect(() => {
     const tt = templ.templates.map((t) => ({

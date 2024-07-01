@@ -31,7 +31,8 @@
     "react-error-boundary": "4.0.12",
     "react-hook-form": "7.50.0",
     "react-router-dom": "6.21.3",
-    "web-vitals": "3.5.2"
+    "web-vitals": "3.5.2",
+    "yaml": "^2.4.5"
   },
   "devDependencies": {
     "@emotion/jest": "11.11.0",

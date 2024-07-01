@@ -18,6 +18,7 @@ import { UserNameChangeDialogContext } from "./views/organisms/UserNameChangeDia
 import { WorkspaceInfoDialogContext } from "./views/organisms/WorkspaceInfoDialog";
 import { EventPage } from "./views/pages/EventPage";
 import { SignIn } from "./views/pages/SignIn";
+import { TemplatePage } from "./views/pages/TemplatePage";
 import { UserPage } from "./views/pages/UserPage";
 import { WorkspacePage } from "./views/pages/WorkspacePage";
 
@@ -65,6 +66,14 @@ function SwitchApp() {
         element={
           <AuthRoute>
             <EventPage />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path="/template"
+        element={
+          <AuthRoute>
+            <TemplatePage />
           </AuthRoute>
         }
       />

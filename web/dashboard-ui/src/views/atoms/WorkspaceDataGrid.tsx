@@ -1,5 +1,5 @@
 import { Timestamp } from "@bufbuild/protobuf";
-import { SxProps } from "@mui/material";
+import { SxProps, useMediaQuery, useTheme } from "@mui/material";
 import {
   DataGrid,
   DataGridProps,
@@ -25,6 +25,8 @@ export const WorkspaceDataGrid: React.FC<WorkspaceDataGridProp> = ({
   sx,
   dataGridProps,
 }) => {
+  const theme = useTheme();
+  const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
   const workspaceInfoDialogDispatch = WorkspaceInfoDialogContext.useDispatch();
 
   const columns: GridColDef[] = [
@@ -66,6 +68,13 @@ export const WorkspaceDataGrid: React.FC<WorkspaceDataGridProp> = ({
               py: 1,
             },
             ...sx,
+          }}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                lastStartedAt: isUpSM,
+              },
+            },
           }}
           onRowDoubleClick={(params) => {
             workspaceInfoDialogDispatch(true, { ws: params.row });

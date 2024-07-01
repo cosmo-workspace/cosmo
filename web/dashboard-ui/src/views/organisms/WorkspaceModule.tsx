@@ -7,6 +7,7 @@ import { useHandleError, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
+import { GetWorkspaceTemplatesRequest } from "../../proto/gen/dashboard/v1alpha1/template_service_pb";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import {
   NetworkRule,
@@ -461,11 +462,13 @@ export const useTemplates = () => {
   const templateService = useTemplateService();
   const { handleError } = useHandleError();
 
-  const getTemplates = async () => {
+  const getTemplates = async (
+    option?: PartialMessage<GetWorkspaceTemplatesRequest>
+  ) => {
     console.log("getTemplates");
     try {
       const result = await templateService.getWorkspaceTemplates({
-        useRoleFilter: true,
+        ...option,
       });
       setTemplates(result.items.sort((a, b) => (a.name < b.name ? -1 : 1)));
     } catch (error) {

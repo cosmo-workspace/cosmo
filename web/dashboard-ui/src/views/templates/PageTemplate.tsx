@@ -1,6 +1,7 @@
 import {
   AccountCircle,
   Badge as BadgeIcon,
+  Description,
   ExitToApp,
   FingerprintTwoTone,
   Info,
@@ -208,6 +209,19 @@ export const PageTemplate: React.FC<
                     <Notifications />
                   </ListItemIcon>
                   <ListItemText primary="Events" />
+                </MenuItem>
+              </RouterLink>
+            )}
+            {loginUser && (
+              <RouterLink
+                to="/template"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <MenuItem>
+                  <ListItemIcon>
+                    <Description />
+                  </ListItemIcon>
+                  <ListItemText primary="Templates" />
                 </MenuItem>
               </RouterLink>
             )}

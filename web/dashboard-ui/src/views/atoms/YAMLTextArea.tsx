@@ -82,7 +82,7 @@ const YAMLTextArea: React.FC<{
           onClick={() => {
             onCopy(code);
           }}
-          size="medium"
+          size="small"
           sx={{
             position: "absolute",
             top: 24,

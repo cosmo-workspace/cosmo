@@ -1,10 +1,12 @@
 import useUrlState from "@ahooksjs/use-url-state";
+import { PartialMessage } from "@bufbuild/protobuf";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { ModuleContext } from "../../components/ContextProvider";
 import { useHandleError, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
+import { GetUserAddonTemplatesRequest } from "../../proto/gen/dashboard/v1alpha1/template_service_pb";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import {
   useTemplateService,
@@ -355,22 +357,12 @@ export const useTemplates = () => {
   const templateService = useTemplateService();
   const { handleError } = useHandleError();
 
-  const getAllUserAddonTemplates = () => {
+  const getUserAddonTemplates = (
+    option?: PartialMessage<GetUserAddonTemplatesRequest>
+  ) => {
     console.log("getUserAddonTemplates");
     return templateService
-      .getUserAddonTemplates({})
-      .then((result) => {
-        setTemplates(result.items.sort((a, b) => (a.name < b.name ? -1 : 1)));
-      })
-      .catch((error) => {
-        handleError(error);
-      });
-  };
-
-  const getUserAddonTemplates = () => {
-    console.log("getUserAddonTemplates");
-    return templateService
-      .getUserAddonTemplates({ useRoleFilter: true })
+      .getUserAddonTemplates({ ...option })
       .then((result) => {
         setTemplates(result.items.sort((a, b) => (a.name < b.name ? -1 : 1)));
       })
@@ -382,7 +374,6 @@ export const useTemplates = () => {
   return {
     templates,
     getUserAddonTemplates,
-    getAllUserAddonTemplates,
   };
 };
 

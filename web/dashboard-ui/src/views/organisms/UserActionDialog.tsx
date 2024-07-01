@@ -364,7 +364,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
 
   const templ = useTemplates();
   useEffect(() => {
-    templ.getUserAddonTemplates();
+    templ.getUserAddonTemplates({ useRoleFilter: true });
   }, []); // eslint-disable-line
   useEffect(() => {
     replaceAddons(
