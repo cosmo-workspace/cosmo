@@ -1,5 +1,6 @@
-import { Add, PersonOutlineTwoTone, Remove } from "@mui/icons-material";
+import { Add, ExpandLess, PersonOutlineTwoTone } from "@mui/icons-material";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -12,7 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { UseFormRegisterReturn, useFieldArray, useForm } from "react-hook-form";
 import { DialogContext } from "../../components/ContextProvider";
 import { useLogin } from "../../components/LoginProvider";
@@ -30,8 +31,8 @@ const registerMui = ({ ref, ...rest }: UseFormRegisterReturn) => ({
  * view
  */
 interface Inputs {
-  existingRoles: { name: string; enabled: boolean }[];
-  roles: { name: string }[];
+  roles: { name: string; enabled: boolean }[];
+  customRole: string;
 }
 
 export const RoleChangeDialog: React.VFC<{
@@ -46,35 +47,36 @@ export const RoleChangeDialog: React.VFC<{
     register,
     handleSubmit,
     control,
-    formState: { errors, defaultValues },
+    formState: { errors },
+    getValues,
+    setValue,
+    setError,
   } = useForm<Inputs>({
     defaultValues: {
-      existingRoles: hooks.existingRoles.map((v) => ({
+      roles: hooks.existingRoles.map((v) => ({
         name: v,
         enabled: user.roles.includes(v),
       })),
+      customRole: "",
     },
   });
 
-  const {
-    fields: rolesFields,
-    append: appendRoles,
-    remove: removeRoles,
-  } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control,
     name: "roles",
     rules: {
       validate: (fieldArrayValues) => {
         // check that no duplicates exist
-        let values = fieldArrayValues
+        const values = fieldArrayValues
           .map((item) => item.name)
           .filter((v) => v !== "");
-        values.push(...hooks.existingRoles);
         const uniqueValues = [...new Set(values)];
         return values.length === uniqueValues.length || "No duplicates allowed";
       },
     },
   });
+
+  const [openCustomInput, setOpenCustomInput] = useState<boolean>(false);
 
   return (
     <Dialog open={true} fullWidth maxWidth={"xs"}>
@@ -83,18 +85,8 @@ export const RoleChangeDialog: React.VFC<{
         onSubmit={handleSubmit(async (inp: Inputs) => {
           console.log(inp);
           let protoRoles = inp.roles
-            .filter((v) => {
-              return v.name !== "";
-            })
-            .map((v) => {
-              return v.name;
-            });
-          console.log(protoRoles);
-          inp.existingRoles.forEach((v, i) => {
-            if (v.enabled) {
-              protoRoles.push(v.name);
-            }
-          });
+            .filter((v) => v.enabled)
+            .map((v) => v.name);
           protoRoles = [...new Set(protoRoles)]; // remove duplicates
           console.log("protoRoles", protoRoles);
           await hooks.updateRole(user.name, protoRoles);
@@ -119,61 +111,73 @@ export const RoleChangeDialog: React.VFC<{
               Roles
             </Typography>
             <Grid container>
-              {hooks.existingRoles.map((v, index) => (
+              {fields.map((v, index) => (
                 <FormSelectableChip
-                  defaultChecked={
-                    defaultValues?.existingRoles &&
-                    defaultValues.existingRoles[index]?.enabled
-                  }
+                  defaultChecked={v.enabled}
                   key={index}
                   control={control}
-                  label={v}
+                  label={v.name}
                   color="primary"
                   sx={{ m: 0.05 }}
-                  {...register(`existingRoles.${index}.enabled` as const)}
+                  {...register(`roles.${index}.enabled` as const)}
                 />
               ))}
             </Grid>
-            {rolesFields.map((field, index) => (
-              <TextField
-                label="Role"
-                key={index}
-                fullWidth
-                {...registerMui(
-                  register(`roles.${index}.name`, {
-                    required: { value: true, message: "Required" },
-                  })
-                )}
-                defaultValue={field.name}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton
-                      onClick={() => {
-                        removeRoles(index);
-                      }}
-                    >
-                      <Remove />
-                    </IconButton>
-                  ),
-                }}
-                error={Boolean(errors.roles?.[index]?.name)}
-                helperText={errors.roles?.[index]?.name?.message}
-              />
-            ))}
             {Boolean(errors.roles?.root?.message) && (
               <FormHelperText error={Boolean(errors.roles?.root?.message)}>
                 {errors.roles?.root?.message}
               </FormHelperText>
             )}
-            <Button
-              variant="outlined"
-              onClick={() => {
-                appendRoles({ name: "" });
-              }}
-              startIcon={<Add />}
-            >
-              Add Custom Role
-            </Button>
+            <Box display="flex" alignItems="center">
+              <Typography color="text.secondary" variant="caption">
+                Add Custom Role
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={() => setOpenCustomInput(!openCustomInput)}
+              >
+                {openCustomInput ? <ExpandLess /> : <Add />}
+              </IconButton>
+            </Box>
+            {openCustomInput && (
+              <TextField
+                label="Custom Role"
+                {...register(`customRole`)}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        if (!getValues(`customRole`)) return;
+                        if (
+                          fields
+                            .map((v) => v.name)
+                            .includes(getValues(`customRole`))
+                        ) {
+                          setError(`customRole`, {
+                            message: "Role already exists",
+                          });
+                          return;
+                        }
+                        append({
+                          name: getValues(`customRole`),
+                          enabled: true,
+                        });
+                        setValue(`customRole`, "");
+                        setError(`customRole`, {});
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  ),
+                }}
+              />
+            )}
+            {Boolean(errors.customRole?.message) && (
+              <FormHelperText error={Boolean(errors.customRole?.message)}>
+                {errors.customRole?.message}
+              </FormHelperText>
+            )}
           </Stack>
         </DialogContent>
         <DialogActions>

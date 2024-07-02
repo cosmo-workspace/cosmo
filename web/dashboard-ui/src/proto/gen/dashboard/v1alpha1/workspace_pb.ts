@@ -210,6 +210,11 @@ export class Workspace extends Message<Workspace> {
    */
   raw?: string;
 
+  /**
+   * @generated from field: optional string raw_instance = 6;
+   */
+  rawInstance?: string;
+
   constructor(data?: PartialMessage<Workspace>) {
     super();
     proto3.util.initPartial(data, this);
@@ -223,6 +228,7 @@ export class Workspace extends Message<Workspace> {
     { no: 3, name: "spec", kind: "message", T: WorkspaceSpec },
     { no: 4, name: "status", kind: "message", T: WorkspaceStatus },
     { no: 5, name: "raw", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 6, name: "raw_instance", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Workspace {

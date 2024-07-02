@@ -13,11 +13,15 @@ import (
 
 type WorkspaceConvertOptions func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace)
 
-func WithWorkspaceRaw(withRaw *bool) func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
+func WithWorkspaceRaw() func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
 	return func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
-		if withRaw != nil && *withRaw {
-			d.Raw = ToYAML(c)
-		}
+		d.Raw = ToYAML(c)
+	}
+}
+
+func WithWorkspaceInstanceRaw(inst *cosmov1alpha1.Instance) func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
+	return func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
+		d.RawInstance = ToYAML(inst)
 	}
 }
 

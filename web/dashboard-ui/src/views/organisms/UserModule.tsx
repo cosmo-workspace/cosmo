@@ -1,9 +1,12 @@
+import useUrlState from "@ahooksjs/use-url-state";
+import { PartialMessage } from "@bufbuild/protobuf";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { ModuleContext } from "../../components/ContextProvider";
-import { useHandleError } from "../../components/LoginProvider";
+import { useHandleError, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
+import { GetUserAddonTemplatesRequest } from "../../proto/gen/dashboard/v1alpha1/template_service_pb";
 import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import {
   useTemplateService,
@@ -22,15 +25,15 @@ export const isAdminRole = (role: string) => {
   return role.endsWith(AdminRoleSufix);
 };
 
-export const hasPrivilegedRole = (roles: string[]) => {
-  return roles.includes(PrivilegedRole);
+export const isPrivilegedUser = (user?: User) => {
+  return (user && user.roles?.includes(PrivilegedRole)) || false;
 };
 
 export const isAdminUser = (user?: User) => {
+  if (isPrivilegedUser(user)) {
+    return true;
+  }
   if (user && user.roles) {
-    if (hasPrivilegedRole(user.roles)) {
-      return true;
-    }
     for (const role of user.roles) {
       if (isAdminRole(role)) {
         return true;
@@ -47,7 +50,7 @@ export const excludeAdminRolePrefix = (role: string): string => {
     : role;
 };
 
-export const hasAdminForRole = (myRoles: string[], userrole: string) => {
+const hasAdminForRole = (myRoles: string[], userrole: string) => {
   for (const myRole of myRoles) {
     if (myRole == userrole) {
       return true;
@@ -62,8 +65,9 @@ export const hasAdminForRole = (myRoles: string[], userrole: string) => {
   return false;
 };
 
-function filterUsersByRoles(users: User[], myRoles: string[]) {
-  return hasPrivilegedRole(myRoles)
+export function usersFilteredByAccesibleRoles(users: User[], loginUser?: User) {
+  const myRoles = loginUser?.roles || [];
+  return myRoles.includes(PrivilegedRole)
     ? users
     : users.filter((u) => {
         for (const userRole of u.roles) {
@@ -75,19 +79,16 @@ function filterUsersByRoles(users: User[], myRoles: string[]) {
       });
 }
 
-export function setUserStateFuncFilteredByLoginUserRole(
+export function setUsersFuncFilteredByAccesibleRoles(
   users: User[],
   loginUser?: User
 ) {
   const f = (prev: User[]) => {
-    const newUsers = users.sort((a, b) => (a.name < b.name ? -1 : 1));
-    const roleFilteredNewUsers = filterUsersByRoles(
-      newUsers,
-      loginUser?.roles || []
+    const newUsers = usersFilteredByAccesibleRoles(
+      users.sort((a, b) => (a.name < b.name ? -1 : 1)),
+      loginUser
     );
-    return JSON.stringify(prev) === JSON.stringify(roleFilteredNewUsers)
-      ? prev
-      : roleFilteredNewUsers;
+    return JSON.stringify(prev) === JSON.stringify(newUsers) ? prev : newUsers;
   };
   return f;
 }
@@ -98,6 +99,7 @@ export function setUserStateFuncFilteredByLoginUserRole(
 const useUser = () => {
   console.log("useUserModule");
 
+  const { loginUser } = useLogin();
   const { enqueueSnackbar } = useSnackbar();
   const { setMask, releaseMask } = useProgress();
   const { handleError } = useHandleError();
@@ -105,24 +107,97 @@ const useUser = () => {
   const userService = useUserService();
   const [existingRoles, setExistingRoles] = useState<string[]>([]);
 
+  const [urlParam, setUrlParam] = useUrlState(
+    {
+      search: "",
+      filterRoles: [],
+    },
+    {
+      parseOptions: { arrayFormat: "comma" },
+      stringifyOptions: { arrayFormat: "comma", skipEmptyString: true },
+    }
+  );
+
+  const search: string = urlParam.search || "";
+  const setSearch = (word: string) => setUrlParam({ search: word });
+
+  const filterRoles: string[] =
+    typeof urlParam.filterRoles === "string"
+      ? [urlParam.filterRoles]
+      : urlParam.filterRoles;
+
+  const appendFilterRoles = (role: string) => {
+    setUrlParam((prev) => {
+      if (typeof prev.filterRoles === "string") {
+        return prev.filterRoles === role
+          ? prev
+          : { filterRoles: [prev.filterRoles, role] };
+      }
+      return prev.filterRoles.includes(role)
+        ? prev
+        : {
+            filterRoles: [...filterRoles, role],
+          };
+    });
+  };
+
+  const removeFilterRoles = (role?: string) => {
+    if (role) {
+      setUrlParam((prev) => {
+        if (typeof prev.filterRoles === "string") {
+          return prev.filterRoles === role ? { filterRoles: [] } : prev;
+        }
+        return prev.filterRoles.includes(role)
+          ? {
+              filterRoles: prev.filterRoles.filter((v: string) => v !== role),
+            }
+          : prev;
+      });
+    } else {
+      setUrlParam({ filterRoles: [] });
+      return;
+    }
+  };
+
+  const applyAdminRoleFilter = () => {
+    getUsers().then((users) => {
+      if (
+        loginUser &&
+        users &&
+        !isPrivilegedUser(loginUser) &&
+        filterRoles.length === 0
+      ) {
+        setUrlParam({
+          filterRoles: [
+            ...new Set(users.map((user) => user.roles).flat()),
+          ].filter((v) => hasAdminForRole(loginUser.roles, v)),
+        });
+      }
+    });
+  };
+
   /**
    * UserList: user list
    */
-  const getUsers = async () => {
+  const getUsers = async (): Promise<User[] | undefined> => {
     console.log("getUsers");
+    setMask();
     try {
       const result = await userService.getUsers({});
       setUsers(result.items?.sort((a, b) => (a.name < b.name ? -1 : 1)));
       updateExistingRoles(result.items);
+      return result.items;
     } catch (error) {
       handleError(error);
+    } finally {
+      releaseMask();
     }
   };
 
   const updateExistingRoles = (users: User[]) => {
     setExistingRoles(
       [...new Set(users.map((user) => user.roles).flat())].sort((a, b) =>
-        a < b ? -1 : 1
+        a === "cosmo-admin" || a < b ? -1 : 1
       )
     );
   };
@@ -140,19 +215,17 @@ const useUser = () => {
     console.log("addUser");
     setMask();
     try {
-      try {
-        const result = await userService.createUser({
-          userName,
-          displayName,
-          authType,
-          roles,
-          addons,
-        });
-        enqueueSnackbar(result.message, { variant: "success" });
-        return result.user;
-      } catch (error) {
-        handleError(error);
-      }
+      const result = await userService.createUser({
+        userName,
+        displayName,
+        authType,
+        roles,
+        addons,
+      });
+      enqueueSnackbar(result.message, { variant: "success" });
+      return result.user;
+    } catch (error) {
+      handleError(error);
     } finally {
       releaseMask();
     }
@@ -165,24 +238,20 @@ const useUser = () => {
     console.log("updateUserName", userName, displayName);
     setMask();
     try {
-      try {
-        const result = await userService.updateUserDisplayName({
-          userName,
-          displayName,
-        });
-        const newUser = result.user;
-        enqueueSnackbar(result.message, { variant: "success" });
-        if (users && newUser) {
-          setUsers((prev) =>
-            prev.map((us) =>
-              us.name === newUser.name ? new User(newUser) : us
-            )
-          );
-        }
-        return newUser;
-      } catch (error) {
-        handleError(error);
+      const result = await userService.updateUserDisplayName({
+        userName,
+        displayName,
+      });
+      const newUser = result.user;
+      enqueueSnackbar(result.message, { variant: "success" });
+      if (users && newUser) {
+        setUsers((prev) =>
+          prev.map((us) => (us.name === newUser.name ? new User(newUser) : us))
+        );
       }
+      return newUser;
+    } catch (error) {
+      handleError(error);
     } finally {
       releaseMask();
     }
@@ -195,21 +264,19 @@ const useUser = () => {
     console.log("updateRole", userName, roles);
     setMask();
     try {
-      try {
-        const result = await userService.updateUserRole({ userName, roles });
-        const newUser = result.user;
-        enqueueSnackbar(result.message, { variant: "success" });
-        if (users && newUser) {
-          const newUsers = users.map((us) =>
-            us.name === newUser.name ? new User(newUser) : us
-          );
-          setUsers(newUsers);
-          updateExistingRoles(newUsers);
-        }
-        return newUser;
-      } catch (error) {
-        handleError(error);
+      const result = await userService.updateUserRole({ userName, roles });
+      const newUser = result.user;
+      enqueueSnackbar(result.message, { variant: "success" });
+      if (users && newUser) {
+        const newUsers = users.map((us) =>
+          us.name === newUser.name ? new User(newUser) : us
+        );
+        setUsers(newUsers);
+        updateExistingRoles(newUsers);
       }
+      return newUser;
+    } catch (error) {
+      handleError(error);
     } finally {
       releaseMask();
     }
@@ -222,20 +289,21 @@ const useUser = () => {
     console.log("updateAddons", userName, addons);
     setMask();
     try {
-      try {
-        const result = await userService.updateUserAddons({ userName, addons });
-        const newUser = result.user;
-        enqueueSnackbar(result.message, { variant: "success" });
-        if (users && newUser) {
-          const newUsers = users.map((us) =>
-            us.name === newUser.name ? new User(newUser) : us
-          );
-          setUsers(newUsers);
-        }
-        return newUser;
-      } catch (error) {
-        handleError(error);
+      const result = await userService.updateUserAddons({ userName, addons });
+      const newUser = result.user;
+      enqueueSnackbar(result.message, { variant: "success" });
+      if (users && newUser) {
+        const newUsers = users.map((us) =>
+          us.name === newUser.name ? new User(newUser) : us
+        );
+        setUsers(newUsers);
       }
+      setTimeout(() => {
+        getUsers();
+      }, 1000);
+      return newUser;
+    } catch (error) {
+      handleError(error);
     } finally {
       releaseMask();
     }
@@ -262,7 +330,13 @@ const useUser = () => {
   };
 
   return {
+    search,
+    setSearch,
+    filterRoles,
+    appendFilterRoles,
+    removeFilterRoles,
     existingRoles,
+    applyAdminRoleFilter,
     users,
     getUsers,
     createUser,
@@ -283,22 +357,12 @@ export const useTemplates = () => {
   const templateService = useTemplateService();
   const { handleError } = useHandleError();
 
-  const getAllUserAddonTemplates = () => {
+  const getUserAddonTemplates = (
+    option?: PartialMessage<GetUserAddonTemplatesRequest>
+  ) => {
     console.log("getUserAddonTemplates");
     return templateService
-      .getUserAddonTemplates({})
-      .then((result) => {
-        setTemplates(result.items.sort((a, b) => (a.name < b.name ? -1 : 1)));
-      })
-      .catch((error) => {
-        handleError(error);
-      });
-  };
-
-  const getUserAddonTemplates = () => {
-    console.log("getUserAddonTemplates");
-    return templateService
-      .getUserAddonTemplates({ useRoleFilter: true })
+      .getUserAddonTemplates({ ...option })
       .then((result) => {
         setTemplates(result.items.sort((a, b) => (a.name < b.name ? -1 : 1)));
       })
@@ -310,7 +374,6 @@ export const useTemplates = () => {
   return {
     templates,
     getUserAddonTemplates,
-    getAllUserAddonTemplates,
   };
 };
 

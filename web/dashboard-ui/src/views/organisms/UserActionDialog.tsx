@@ -4,11 +4,11 @@ import {
   ExpandLess,
   ExpandMore,
   PersonOutlineTwoTone,
-  Remove,
   SecurityOutlined,
 } from "@mui/icons-material";
 import {
   Alert,
+  Box,
   Button,
   Checkbox,
   Chip,
@@ -66,7 +66,7 @@ interface UserActionDialogProps {
   title: string;
   actions: React.ReactNode;
   user: User;
-  onClose: () => void;
+  onClose?: () => void;
   defaultOpenUserAddon?: boolean;
 }
 
@@ -87,7 +87,7 @@ const UserActionDialog: React.FC<UserActionDialogProps> = ({
   };
 
   return (
-    <Dialog open={true} onClose={() => onClose()} fullWidth maxWidth={"xs"}>
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth={"xs"}>
       <DialogTitle>
         {title}
         <IconButton
@@ -97,7 +97,7 @@ const UserActionDialog: React.FC<UserActionDialogProps> = ({
             top: 8,
             color: (theme) => theme.palette.grey[500],
           }}
-          onClick={() => onClose()}
+          onClick={onClose}
         >
           <Close />
         </IconButton>
@@ -244,7 +244,7 @@ export const UserDeleteDialog: React.VFC<{
   return (
     <UserActionDialog
       title="Delete User 👋"
-      onClose={() => onClose()}
+      onClose={onClose}
       user={user}
       actions={
         <Alert
@@ -287,12 +287,12 @@ export const UserCreateConfirmDialog: React.VFC<{
   return (
     <UserActionDialog
       title="Create?"
-      onClose={() => onClose()}
       user={user}
       defaultOpenUserAddon={true}
+      onClose={onClose}
       actions={
         <DialogActions>
-          <Button onClick={() => onClose()} color="primary">
+          <Button onClick={onClose} color="primary">
             Back
           </Button>
           <Button
@@ -332,8 +332,8 @@ type Inputs = {
   id: string;
   name: string;
   authType: string;
-  existingRoles: { enabled: boolean }[];
-  roles: { name: string }[];
+  roles: { name: string; enabled: boolean }[];
+  customRole: string;
   addons: {
     template: Template;
     enable: boolean;
@@ -354,8 +354,17 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
     watch,
     control,
     formState: { errors },
+    getValues,
+    setValue,
+    setError,
   } = useForm<Inputs>({
-    defaultValues: {},
+    defaultValues: {
+      roles: hooks.existingRoles.map((v) => ({
+        name: v,
+        enabled: false,
+      })),
+      customRole: "",
+    },
   });
 
   const { fields: addonsFields, replace: replaceAddons } = useFieldArray({
@@ -365,7 +374,7 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
 
   const templ = useTemplates();
   useEffect(() => {
-    templ.getUserAddonTemplates();
+    templ.getUserAddonTemplates({ useRoleFilter: true });
   }, []); // eslint-disable-line
   useEffect(() => {
     replaceAddons(
@@ -373,25 +382,22 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
     );
   }, [templ.templates]); // eslint-disable-line
 
-  const {
-    fields: rolesFields,
-    append: appendRoles,
-    remove: removeRoles,
-  } = useFieldArray({
+  const { fields: rolesFields, append: appendRoles } = useFieldArray({
     control,
     name: "roles",
     rules: {
       validate: (fieldArrayValues) => {
         // check that no duplicates exist
-        let values = fieldArrayValues
+        const values = fieldArrayValues
           .map((item) => item.name)
           .filter((v) => v !== "");
-        values.push(...hooks.existingRoles);
         const uniqueValues = [...new Set(values)];
         return values.length === uniqueValues.length || "No duplicates allowed";
       },
     },
   });
+
+  const [openCustomInput, setOpenCustomInput] = useState<boolean>(false);
 
   return (
     <Dialog open={true} fullWidth>
@@ -399,30 +405,49 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
       <form
         onSubmit={handleSubmit((inp: Inputs) => {
           console.log(inp);
-          const userAddons = inp.addons
-            .filter((v) => v.enable || v.template.isDefaultUserAddon)
-            .map((inpAddon) => {
-              const vars: { [key: string]: string } = {};
-              inpAddon.vars.forEach((v, i) => {
-                vars[inpAddon.template.requiredVars?.[i].varName!] = v;
-              });
-              return {
-                template: inpAddon.template.name,
-                vars: vars,
-                clusterScoped: inpAddon.template.isClusterScope,
-              };
+
+          const enabled = inp.addons.filter(
+            (v) => v.enable || v.template.isDefaultUserAddon
+          );
+
+          // check required addons are enabled
+          for (const hasDeps of enabled.filter(
+            (v) => v.template.requiredUseraddons.length > 0
+          )) {
+            for (const req of hasDeps.template.requiredUseraddons) {
+              if (enabled.findIndex((v) => v.template.name === req) < 0) {
+                setError(
+                  `addons.${inp.addons.findIndex(
+                    (v) => v.template.name === hasDeps.template.name
+                  )}.enable`,
+                  {
+                    message: `Required: ${hasDeps.template.requiredUseraddons.join(
+                      ", "
+                    )}`,
+                  }
+                );
+                return;
+              }
+            }
+          }
+
+          const userAddons = enabled.map((inpAddon) => {
+            const vars: { [key: string]: string } = {};
+            inpAddon.vars.forEach((v, i) => {
+              vars[inpAddon.template.requiredVars?.[i].varName!] = v;
             });
+            return {
+              template: inpAddon.template.name,
+              vars: vars,
+              clusterScoped: inpAddon.template.isClusterScope,
+            };
+          });
           const protoUserAddons = userAddons.map((ua) => new UserAddon(ua));
           console.log("protoUserAddons", protoUserAddons);
 
-          let protoRoles = inp.roles.map((v) => {
-            return v.name;
-          });
-          inp.existingRoles.forEach((v, i) => {
-            if (v.enabled) {
-              protoRoles.push(hooks.existingRoles[i]);
-            }
-          });
+          let protoRoles = inp.roles
+            .filter((v) => v.enabled)
+            .map((v) => v.name);
           protoRoles = [...new Set(protoRoles)]; // remove duplicates
           console.log("protoRoles", protoRoles);
 
@@ -541,55 +566,71 @@ export const UserCreateDialog: React.VFC<{ onClose: () => void }> = ({
               Roles
             </Typography>
             <Grid container>
-              {hooks.existingRoles.map((label, index) => (
+              {rolesFields.map((v, index) => (
                 <FormSelectableChip
+                  defaultChecked={v.enabled}
                   key={index}
                   control={control}
-                  label={label}
+                  label={v.name}
                   color="primary"
                   sx={{ m: 0.05 }}
-                  {...register(`existingRoles.${index}.enabled` as const)}
+                  {...register(`roles.${index}.enabled` as const)}
                 />
               ))}
             </Grid>
-            {rolesFields.map((field, index) => (
-              <TextField
-                label="Role"
-                key={index}
-                fullWidth
-                {...registerMui(
-                  register(`roles.${index}.name`, {
-                    required: { value: true, message: "Required" },
-                  })
-                )}
-                defaultValue={field.name}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton
-                      onClick={() => {
-                        removeRoles(index);
-                      }}
-                    >
-                      <Remove />
-                    </IconButton>
-                  ),
-                }}
-                error={Boolean(errors.roles?.[index]?.name)}
-                helperText={errors.roles?.[index]?.name?.message}
-              />
-            ))}
             <FormHelperText error={Boolean(errors.roles?.root?.message)}>
               {errors.roles?.root?.message}
             </FormHelperText>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                appendRoles({ name: "" });
-              }}
-              startIcon={<Add />}
-            >
-              Add Custom Role
-            </Button>
+            <Box display="flex" alignItems="center">
+              <Typography color="text.secondary" variant="caption">
+                Add Custom Role
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={() => setOpenCustomInput(!openCustomInput)}
+              >
+                {openCustomInput ? <ExpandLess /> : <Add />}
+              </IconButton>
+            </Box>
+            {openCustomInput && (
+              <TextField
+                label="Custom Role"
+                {...register(`customRole`)}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        if (!getValues(`customRole`)) return;
+                        if (
+                          rolesFields
+                            .map((v) => v.name)
+                            .includes(getValues(`customRole`))
+                        ) {
+                          setError(`customRole`, {
+                            message: "Role already exists",
+                          });
+                          return;
+                        }
+                        appendRoles({
+                          name: getValues(`customRole`),
+                          enabled: true,
+                        });
+                        setValue(`customRole`, "");
+                        setError(`customRole`, {});
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  ),
+                }}
+              />
+            )}
+            {Boolean(errors.customRole?.message) && (
+              <FormHelperText error={Boolean(errors.customRole?.message)}>
+                {errors.customRole?.message}
+              </FormHelperText>
+            )}
             <Divider />
             <Stack spacing={1}>
               {Boolean(templ.templates.length) && (

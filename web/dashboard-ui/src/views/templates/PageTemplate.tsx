@@ -1,6 +1,7 @@
 import {
   AccountCircle,
   Badge as BadgeIcon,
+  Description,
   ExitToApp,
   FingerprintTwoTone,
   Info,
@@ -140,7 +141,7 @@ export const PageTemplate: React.FC<
   const openUserInfoDialog = () => {
     console.log("openUserInfoDialog");
     userInfoDialogDispatch(true, {
-      user: loginUser!,
+      userName: loginUser!.name,
     });
     setAnchorEl(null);
   };
@@ -208,6 +209,19 @@ export const PageTemplate: React.FC<
                     <Notifications />
                   </ListItemIcon>
                   <ListItemText primary="Events" />
+                </MenuItem>
+              </RouterLink>
+            )}
+            {loginUser && (
+              <RouterLink
+                to="/template"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <MenuItem>
+                  <ListItemIcon>
+                    <Description />
+                  </ListItemIcon>
+                  <ListItemText primary="Templates" />
                 </MenuItem>
               </RouterLink>
             )}
@@ -371,8 +385,11 @@ export const PageTemplate: React.FC<
               <Stack alignItems="center" spacing={1} sx={{ mt: 1, mb: 2 }}>
                 <NameAvatar
                   name={loginUser?.displayName}
-                  sx={{ width: 40, height: 40 }}
+                  sx={{ width: 50, height: 50 }}
                   onClick={() => openUserInfoDialog()}
+                  typographyProps={{
+                    variant: "h5",
+                  }}
                 />
                 <Typography>{loginUser?.displayName}</Typography>
                 <Typography color={colors.grey[700]} fontSize="small">

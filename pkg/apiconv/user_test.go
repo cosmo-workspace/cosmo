@@ -119,7 +119,7 @@ func TestC2D_User(t *testing.T) {
 					},
 				},
 				opts: []UserConvertOptions{
-					WithUserRaw(ptr.To(true)),
+					WithUserRaw(),
 				},
 			},
 			want: &dashv1alpha1.User{

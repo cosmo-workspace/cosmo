@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -233,7 +234,7 @@ func Test_validateCallerHasAdminForAllRoles(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := validateCallerHasAdminForAllRoles(tt.args.tryRoleNames)
+			f := validateCallerHasAdminForAllRoles(apiconv.S2C_UserRoles(tt.args.tryRoleNames))
 			if err := f(tt.args.callerGroupRoleMap); (err != nil) != tt.wantErr {
 				t.Errorf("validateCallerHasAdminForAllRoles() error = %v, wantErr %v", err, tt.wantErr)
 			}

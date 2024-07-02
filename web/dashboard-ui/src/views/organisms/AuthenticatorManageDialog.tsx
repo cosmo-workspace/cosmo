@@ -189,7 +189,7 @@ export const AuthenticatorManageDialog: React.VFC<{
   const sm = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
 
   return (
-    <Dialog open={true} fullWidth maxWidth={"sm"}>
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth={"sm"}>
       <DialogTitle>WebAuthn Credentials</DialogTitle>
       <DialogContent>
         <Box alignItems="center">

@@ -353,7 +353,7 @@ export const NetworkRuleDeleteDialog: React.VFC<{
   };
 
   return (
-    <Dialog open={true} fullWidth maxWidth={"xs"}>
+    <Dialog open={true} onClose={onClose} fullWidth maxWidth={"xs"}>
       <DialogTitle>
         Network Rule
         <IconButton

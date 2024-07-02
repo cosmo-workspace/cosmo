@@ -7,6 +7,7 @@ import (
 
 	connect_go "github.com/bufbuild/connect-go"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/types"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
@@ -28,7 +29,7 @@ func (s *Server) CreateUser(ctx context.Context, req *connect_go.Request[dashv1a
 	log.Debug().Info("request", "req", req)
 
 	// group-admin user can create users which have only the their groups
-	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(req.Msg.Roles)); err != nil {
+	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(apiconv.S2C_UserRoles(req.Msg.Roles))); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 
@@ -80,8 +81,11 @@ func (s *Server) GetUsers(ctx context.Context, req *connect_go.Request[dashv1alp
 		return nil, ErrResponse(log, err)
 	}
 
-	res := &dashv1alpha1.GetUsersResponse{
-		Items: apiconv.C2D_Users(users, apiconv.WithUserRaw(req.Msg.WithRaw)),
+	res := &dashv1alpha1.GetUsersResponse{}
+	if req.Msg.WithRaw != nil && *req.Msg.WithRaw {
+		res.Items = apiconv.C2D_Users(users, apiconv.WithUserRaw())
+	} else {
+		res.Items = apiconv.C2D_Users(users)
 	}
 	if len(res.Items) == 0 {
 		res.Message = "No items found"
@@ -94,7 +98,9 @@ func (s *Server) GetUser(ctx context.Context, req *connect_go.Request[dashv1alph
 	log.Debug().Info("request", "req", req)
 
 	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
-		return nil, ErrResponse(log, err)
+		if err := adminAuthentication(ctx, passAllAdmin); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	user, err := s.Klient.GetUser(ctx, req.Msg.UserName)
@@ -102,8 +108,26 @@ func (s *Server) GetUser(ctx context.Context, req *connect_go.Request[dashv1alph
 		return nil, ErrResponse(log, err)
 	}
 
-	res := &dashv1alpha1.GetUserResponse{
-		User: apiconv.C2D_User(*user, apiconv.WithUserRaw(req.Msg.WithRaw)),
+	res := &dashv1alpha1.GetUserResponse{}
+	if req.Msg.WithRaw != nil && *req.Msg.WithRaw {
+		addons := make([]cosmov1alpha1.InstanceObject, len(user.Status.Addons))
+		for i, v := range user.Status.Addons {
+			var inst cosmov1alpha1.InstanceObject
+			if v.Kind == "Instance" {
+				inst = &cosmov1alpha1.Instance{}
+			} else {
+				inst = &cosmov1alpha1.ClusterInstance{}
+			}
+			err := s.Klient.Get(ctx, types.NamespacedName{Name: v.Name, Namespace: v.Namespace}, inst)
+			if err != nil {
+				log.Error(err, "failed to get addon", "name", v.Name, "namespace", v.Namespace)
+				continue
+			}
+			addons[i] = inst
+		}
+		res.User = apiconv.C2D_User(*user, apiconv.WithUserRaw(), apiconv.WithAddonsRaw(addons))
+	} else {
+		res.User = apiconv.C2D_User(*user)
 	}
 
 	return connect_go.NewResponse(res), nil
@@ -114,7 +138,15 @@ func (s *Server) GetEvents(ctx context.Context, req *connect_go.Request[dashv1al
 	log.Debug().Info("request", "req", req)
 
 	if err := userAuthentication(ctx, req.Msg.UserName); err != nil {
-		return nil, ErrResponse(log, err)
+		targetUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+		if err != nil {
+			return nil, ErrResponse(log, err)
+		}
+
+		// group-admin user can get workspaces of users which have only the their groups
+		if err := adminAuthentication(ctx, validateCallerHasAdminForAtLeastOneRole(targetUser.Spec.Roles)); err != nil {
+			return nil, ErrResponse(log, err)
+		}
 	}
 
 	events, err := s.Klient.ListEvents(ctx, cosmov1alpha1.UserNamespace(req.Msg.UserName))
@@ -141,7 +173,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect_go.Request[dashv1a
 	}
 
 	// group-admin user can delete users which have only the their groups
-	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(apiconv.C2S_UserRole(targetUser.Spec.Roles))); err != nil {
+	if err := adminAuthentication(ctx, validateCallerHasAdminForAllRoles(targetUser.Spec.Roles)); err != nil {
 		return nil, ErrResponse(log, err)
 	}
 

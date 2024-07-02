@@ -281,7 +281,7 @@ func TestC2D_Workspace(t *testing.T) {
 					},
 				},
 				opts: []WorkspaceConvertOptions{
-					WithWorkspaceRaw(ptr.To(true)),
+					WithWorkspaceRaw(),
 				},
 			},
 			want: &dashv1alpha1.Workspace{

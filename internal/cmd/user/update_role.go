@@ -25,8 +25,6 @@ type UpdateRoleOption struct {
 	Roles          []string
 	PrivilegedRole bool
 	Force          bool
-
-	userAddons []*dashv1alpha1.UserAddon
 }
 
 func UpdateRoleCmd(cmd *cobra.Command, cliOpt *cli.RootOptions) *cobra.Command {

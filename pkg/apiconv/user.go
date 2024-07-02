@@ -3,6 +3,7 @@ package apiconv
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -17,10 +18,21 @@ import (
 
 type UserConvertOptions func(c *cosmov1alpha1.User, d *dashv1alpha1.User)
 
-func WithUserRaw(withRaw *bool) func(c *cosmov1alpha1.User, d *dashv1alpha1.User) {
+func WithUserRaw() func(c *cosmov1alpha1.User, d *dashv1alpha1.User) {
 	return func(c *cosmov1alpha1.User, d *dashv1alpha1.User) {
-		if withRaw != nil && *withRaw {
-			d.Raw = ToYAML(c)
+		d.Raw = ToYAML(c)
+	}
+}
+
+func WithAddonsRaw(addons []cosmov1alpha1.InstanceObject) func(c *cosmov1alpha1.User, d *dashv1alpha1.User) {
+	return func(c *cosmov1alpha1.User, d *dashv1alpha1.User) {
+		for _, addon := range addons {
+			index := slices.IndexFunc(c.Spec.Addons, func(a cosmov1alpha1.UserAddon) bool {
+				return a.Template.Name == addon.GetSpec().Template.Name
+			})
+			if index > -1 {
+				d.Addons[index].Raw = ToYAML(addon)
+			}
 		}
 	}
 }

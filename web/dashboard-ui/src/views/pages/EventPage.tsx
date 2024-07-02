@@ -17,13 +17,14 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
 import { NameAvatar } from "../atoms/NameAvatar";
+import { SearchTextField } from "../atoms/SearchTextField";
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
 import { EventContext, useEventModule } from "../organisms/EventModule";
-import { hasPrivilegedRole } from "../organisms/UserModule";
+import { isAdminUser } from "../organisms/UserModule";
 import { PageTemplate } from "../templates/PageTemplate";
 
 const RotatingRefreshTwoTone = styled(RefreshTwoTone)({
@@ -45,7 +46,12 @@ const UserSelect: React.VFC = () => {
         <Chip
           ref={chipReff}
           label={user.name}
-          avatar={<NameAvatar name={user.displayName} />}
+          avatar={
+            <NameAvatar
+              name={user.displayName}
+              typographyProps={{ variant: "body2" }}
+            />
+          }
           onClick={(e) => {
             e.stopPropagation();
             getUsers().then(() => setAnchorEl(chipReff.current));
@@ -68,7 +74,7 @@ const UserSelect: React.VFC = () => {
             value={user.name}
             onClick={() => {
               setAnchorEl(null);
-              setUser(user);
+              setUser(user.name);
             }}
           >
             <Stack>
@@ -87,23 +93,22 @@ const UserSelect: React.VFC = () => {
 
 const EventList: React.VFC = () => {
   console.log("EventList");
-  const { user, events, getEvents } = useEventModule();
+  const { userName, search, setSearch, events, getEvents } = useEventModule();
   const { loginUser, clock } = useLogin();
-  const isPriv = hasPrivilegedRole(loginUser?.roles || []);
+  const isAdmin = isAdminUser(loginUser);
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
   const [isLoading, setIsLoading] = React.useState(false);
 
-  useEffect(() => {
-    getEvents();
-  }, [user]); // eslint-disable-line
+  const searchRegExp = new RegExp(search, "i");
 
   return (
     <>
-      <Paper sx={{ minWidth: 320, px: 2, py: 1 }}>
+      <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, px: 2, py: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
+          <SearchTextField search={search} setSearch={setSearch} />
           <Box sx={{ flexGrow: 1 }} />
-          {isPriv && <UserSelect />}
+          {isAdmin && <UserSelect />}
           <Tooltip title="Refresh" placement="top">
             <IconButton
               color="inherit"
@@ -112,7 +117,7 @@ const EventList: React.VFC = () => {
                 setTimeout(() => {
                   setIsLoading(false);
                 }, 1000);
-                if (!isLoading) getEvents();
+                if (!isLoading) getEvents(userName);
               }}
             >
               {isLoading ? <RotatingRefreshTwoTone /> : <RefreshTwoTone />}
@@ -121,7 +126,18 @@ const EventList: React.VFC = () => {
         </Stack>
       </Paper>
       <EventsDataGrid
-        events={events}
+        events={events.filter(
+          (event) =>
+            search === "" ||
+            Boolean(event.id.match(searchRegExp)) ||
+            Boolean(event.note.match(searchRegExp)) ||
+            Boolean(event.reason.match(searchRegExp)) ||
+            Boolean(event.reportingController.match(searchRegExp)) ||
+            (event.regardingWorkspace &&
+              Boolean(event.regardingWorkspace.match(searchRegExp))) ||
+            Boolean(event.regarding?.kind.match(searchRegExp)) ||
+            Boolean(event.regarding?.name.match(searchRegExp))
+        )}
         clock={clock}
         dataGridProps={{
           initialState: {

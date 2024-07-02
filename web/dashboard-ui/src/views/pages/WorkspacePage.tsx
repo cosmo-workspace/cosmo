@@ -1,4 +1,3 @@
-import useUrlState from "@ahooksjs/use-url-state";
 import {
   AddTwoTone,
   CheckCircleOutlined,
@@ -7,7 +6,6 @@ import {
   ContentCopy,
   DeleteTwoTone,
   EditTwoTone,
-  Error,
   ErrorOutline,
   ExpandLessTwoTone,
   ExpandMoreTwoTone,
@@ -21,7 +19,6 @@ import {
   PlayCircleFilledWhiteTwoTone,
   PublicOutlined,
   RefreshTwoTone,
-  SearchTwoTone,
   StopCircleOutlined,
   StopCircleTwoTone,
   UnfoldLessOutlined,
@@ -31,6 +28,7 @@ import {
 } from "@mui/icons-material";
 import {
   Avatar,
+  Badge,
   Box,
   Card,
   CardContent,
@@ -40,7 +38,6 @@ import {
   Fab,
   Grid,
   IconButton,
-  InputAdornment,
   Link,
   ListItemIcon,
   ListItemText,
@@ -54,7 +51,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Tooltip,
   Typography,
   styled,
@@ -69,12 +65,13 @@ import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
 import { NameAvatar } from "../atoms/NameAvatar";
+import { SearchTextField } from "../atoms/SearchTextField";
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
 import {
   NetworkRuleDeleteDialogContext,
   NetworkRuleUpsertDialogContext,
 } from "../organisms/NetworkRuleActionDialog";
-import { hasPrivilegedRole } from "../organisms/UserModule";
+import { isAdminUser } from "../organisms/UserModule";
 import {
   WorkspaceCreateDialogContext,
   WorkspaceDeleteDialogContext,
@@ -242,7 +239,13 @@ const UserSelect: React.VFC = () => {
         <Chip
           ref={chipReff}
           label={user.name}
-          avatar={<NameAvatar name={user.displayName} />}
+          avatar={
+            <NameAvatar
+              name={user.displayName}
+              sx={{ width: 24, height: 24 }}
+              typographyProps={{ variant: "body2" }}
+            />
+          }
           onClick={(e) => {
             e.stopPropagation();
             getUsers().then(() => setAnchorEl(chipReff.current));
@@ -265,7 +268,7 @@ const UserSelect: React.VFC = () => {
             value={user.name}
             onClick={() => {
               setAnchorEl(null);
-              setUser(user);
+              setUser(user.name);
             }}
           >
             <Stack>
@@ -494,15 +497,13 @@ const WorkspaceItem: React.VFC<{
                 : theme.palette.grey["A700"],
           }}
           avatar={
-            <Avatar
-              sx={{ backgroundColor: theme.palette.primary.main }}
-              onClick={() => {
-                wsInfoDialogDispatch(true, { ws: ws });
-              }}
-            >
+            <Avatar sx={{ backgroundColor: theme.palette.primary.main }}>
               {sharedWorkspace ? <CoPresentTwoTone /> : <WebTwoTone />}
             </Avatar>
           }
+          onClick={() => {
+            !readonly && wsInfoDialogDispatch(true, { ws: ws });
+          }}
           title={
             <Box display="flex" alignItems="center">
               {ws.status && ws.status.mainUrl && !readonly ? (
@@ -541,15 +542,14 @@ const WorkspaceItem: React.VFC<{
           subheader={ws.spec && ws.spec.template}
           action={
             <Stack direction="row" spacing={2} alignItems="center">
-              {ws.hasWarningEvents(clock) && (
-                <IconButton
-                  color="inherit"
-                  onClick={() => setEventExpanded(true)}
-                >
-                  <Error color="error" />
-                </IconButton>
-              )}
-              <StatusChip ws={ws} />
+              <Badge
+                variant="dot"
+                color="error"
+                invisible={ws.warningEventsCount(clock) === 0}
+                badgeContent={" "}
+              >
+                <StatusChip ws={ws} />
+              </Badge>
               <Box onClick={(e) => e.stopPropagation()}>
                 <WorkspaceMenu workspace={ws} user={user} />
               </Box>
@@ -629,17 +629,19 @@ const WorkspaceItem: React.VFC<{
 
 const WorkspaceList: React.VFC = () => {
   console.log("WorkspaceList");
-  const { workspaces, getWorkspaces, user, checkIsPolling, stopAllPolling } =
-    useWorkspaceModule();
+  const {
+    workspaces,
+    getWorkspaces,
+    user,
+    checkIsPolling,
+    stopAllPolling,
+    search,
+    setSearch,
+  } = useWorkspaceModule();
   const { loginUser } = useLogin();
   const { enqueueSnackbar } = useSnackbar();
-  const isPriv = hasPrivilegedRole(loginUser?.roles || []);
-  const [urlParam, setUrlParam] = useUrlState(
-    { search: "" },
-    {
-      stringifyOptions: { skipEmptyString: true },
-    }
-  );
+  const isAdmin = isAdminUser(loginUser);
+
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isHoverRefreshIcon, setIsHoverRefreshIcon] = useState(false);
@@ -667,55 +669,24 @@ const WorkspaceList: React.VFC = () => {
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
 
   const isPolling = checkIsPolling();
+  const searchRegExp = new RegExp(search, "i");
 
   return (
     <>
       <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, px: 2, py: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
-          <TextField
-            InputProps={
-              urlParam.search !== ""
-                ? {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchTwoTone />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          size="small"
-                          tabIndex={-1}
-                          onClick={() => {
-                            setUrlParam({ search: "" });
-                          }}
-                        >
-                          <Clear />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }
-                : {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchTwoTone />
-                      </InputAdornment>
-                    ),
-                  }
-            }
-            placeholder="Search"
-            size="small"
-            value={urlParam.search}
-            onChange={(e) => setUrlParam({ search: e.target.value })}
+          <SearchTextField
+            search={search}
+            setSearch={setSearch}
+            onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setIsSearchFocused(false)}
             sx={{ flexGrow: 0.5 }}
           />
           <Box sx={{ flexGrow: 1 }} />
-          {isPriv &&
-            (isUpSM || (!isSearchFocused && urlParam.search === "")) && (
-              <UserSelect />
-            )}
+          {isAdmin && (isUpSM || (!isSearchFocused && search === "")) && (
+            <UserSelect />
+          )}
           {isUpSM &&
             (expandState.beforeState === true ? (
               <Tooltip title="Collapse all" placement="top">
@@ -795,8 +766,7 @@ const WorkspaceList: React.VFC = () => {
         </Stack>
       </Paper>
       {!Object.keys(workspaces).filter(
-        (wsName) =>
-          urlParam.search === "" || Boolean(wsName.match(urlParam.search))
+        (key) => search === "" || Boolean(key.match(searchRegExp))
       ).length && (
         <Paper sx={{ minWidth: 320, maxWidth: 1200, mb: 1, p: 4 }}>
           <Typography
@@ -809,18 +779,15 @@ const WorkspaceList: React.VFC = () => {
       )}
       <Grid container spacing={1}>
         {Object.keys(workspaces)
-          .filter(
-            (wsName) =>
-              urlParam.search === "" || Boolean(wsName.match(urlParam.search))
-          )
-          .map((wsName) => workspaces[wsName])
+          .filter((key) => search === "" || Boolean(key.match(searchRegExp)))
+          .map((key) => workspaces[key])
           .sort((a, b) =>
             a.ownerName !== b.ownerName ? 1 : a.name < b.name ? -1 : 1
           )
           .map((ws) => (
             <WorkspaceItem
               workspace={ws}
-              key={ws.name}
+              key={ws.key()}
               events={ws.events}
               user={user}
               defaultExpandState={

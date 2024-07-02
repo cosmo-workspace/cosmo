@@ -1,3 +1,4 @@
+import useUrlState from "@ahooksjs/use-url-state";
 import { PartialMessage, protoInt64 } from "@bufbuild/protobuf";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
@@ -6,6 +7,7 @@ import { useHandleError, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
+import { GetWorkspaceTemplatesRequest } from "../../proto/gen/dashboard/v1alpha1/template_service_pb";
 import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import {
   NetworkRule,
@@ -18,7 +20,11 @@ import {
   useWorkspaceService,
 } from "../../services/DashboardServices";
 import { getTime, latestTime } from "./EventModule";
-import { setUserStateFuncFilteredByLoginUserRole } from "./UserModule";
+import {
+  isAdminUser,
+  setUsersFuncFilteredByAccesibleRoles,
+  usersFilteredByAccesibleRoles,
+} from "./UserModule";
 
 export function computeStatus(workspace: Workspace) {
   const status = workspace.status!.phase;
@@ -29,6 +35,10 @@ export function computeStatus(workspace: Workspace) {
     return status === "Stopped" ? "Starting" : status;
   }
   return status;
+}
+
+export function wskey(ws: Workspace) {
+  return `${ws.name}-${ws.ownerName}`;
 }
 
 export class WorkspaceWrapper extends Workspace {
@@ -44,22 +54,20 @@ export class WorkspaceWrapper extends Workspace {
   isPolling(): boolean {
     return this.timer !== undefined;
   }
-  hasWarningEvents(clock: Date): boolean {
+  warningEventsCount(clock: Date): number {
     const events = this.events;
     if (events === undefined || events.length === 0) {
-      return false;
+      return 0;
     }
     if (["Stopped", "Stopping"].includes(this.status?.phase!)) {
-      return false;
+      return 0;
     }
-    return (
-      events
-        .filter((e) => e.type === "Warning")
-        .filter((e) => latestTime(e) - getTime(this.status?.lastStartedAt) >= 0)
-        .filter(
-          (e) => (clock.getTime() - latestTime(e)) / 1000 / 60 <= 5 // before 5 minutes ago
-        ).length > 0
-    );
+    return events
+      .filter((e) => e.type === "Warning")
+      .filter((e) => latestTime(e) - getTime(this.status?.lastStartedAt) >= 0)
+      .filter(
+        (e) => (clock.getTime() - latestTime(e)) / 1000 / 60 <= 5 // before 5 minutes ago
+      ).length;
   }
   isSharedFor(user: User): boolean {
     if (this.ownerName == user.name) return false;
@@ -81,6 +89,9 @@ export class WorkspaceWrapper extends Workspace {
     }
     return rules;
   }
+  key(): string {
+    return wskey(this);
+  }
 }
 
 /**
@@ -99,33 +110,55 @@ const useWorkspace = () => {
   const userService = useUserService();
 
   const { loginUser, updateClock } = useLogin();
-  const [user, setUser] = useState<User>(loginUser || new User());
+  const isAdmin = isAdminUser(loginUser);
   const [users, setUsers] = useState<User[]>([loginUser || new User()]);
+
+  const [urlParam, setUrlParam] = useUrlState(
+    { search: "", user: loginUser?.name || "" },
+    {
+      stringifyOptions: { skipEmptyString: true },
+    }
+  );
+  const search: string = urlParam.search || "";
+  const setSearch = (word: string) => setUrlParam({ search: word });
+
+  const userName: string = urlParam.user || "";
+  const user = users.find((u) => u.name === userName) || new User();
+  const setUser = (name: string) => setUrlParam({ user: name });
 
   const checkIsPolling = () => {
     return (
-      Object.keys(workspaces).filter((name) => workspaces[name].isPolling())
+      Object.keys(workspaces).filter((key) => workspaces[key].isPolling())
         .length > 0
     );
   };
 
   const stopAllPolling = () => {
-    Object.keys(workspaces).forEach((name) => {
-      clearTimer(name);
+    Object.keys(workspaces).forEach((key) => {
+      clearTimer(key);
     });
   };
 
   useEffect(() => {
     stopAllPolling();
-    getWorkspaces(user.name);
-  }, [user]);
+    getWorkspaces(userName);
+    isAdmin &&
+      getUsers().then((users) => {
+        usersFilteredByAccesibleRoles(users || [], loginUser).find(
+          (u) => u.name === userName
+        ) ||
+          enqueueSnackbar(`User ${userName} is not found`, {
+            variant: "error",
+          });
+      });
+  }, [userName]);
 
   const upsertWorkspace = (ws: Workspace, events?: Event[]) => {
     setWorkspaces((prev) => {
-      const pws = prev[ws.name] || new WorkspaceWrapper(ws);
-      if (prev[ws.name]) pws.update(ws);
+      const pws = prev[wskey(ws)] || new WorkspaceWrapper(ws);
+      if (prev[wskey(ws)]) pws.update(ws);
       if (events) pws.events = events;
-      return { ...prev, [ws.name]: pws };
+      return { ...prev, [wskey(ws)]: pws };
     });
     updateClock();
   };
@@ -160,14 +193,14 @@ const useWorkspace = () => {
 
       setWorkspaces((prev) => {
         const pwsArr = workspaces.map((ws) => {
-          const pws = prev[ws.name] || new WorkspaceWrapper(ws);
-          if (prev[ws.name]) pws.update(ws);
-          pws.events = wsEventMap[ws.name] || [];
+          const pws = prev[wskey(ws)] || new WorkspaceWrapper(ws);
+          if (prev[wskey(ws)]) pws.update(ws);
+          pws.events = wsEventMap[wskey(ws)] || [];
           return pws;
         });
         const wsMap = pwsArr.reduce(
           (map: { [key: string]: WorkspaceWrapper }, pws) => {
-            map[pws.name] = pws;
+            map[wskey(pws)] = pws;
             return map;
           },
           {}
@@ -200,41 +233,41 @@ const useWorkspace = () => {
     return ws;
   };
 
-  const setProgress = (wsName: string, progress: number) => {
+  const setProgress = (key: string, progress: number) => {
     setWorkspaces((prev) => {
-      if (prev[wsName]) {
+      if (prev[key]) {
         console.log(
           "### update progress",
-          `${prev[wsName].progress} -> ${progress}`
+          `${prev[key].progress} -> ${progress}`
         );
-        const pws = prev[wsName];
+        const pws = prev[key];
         pws.progress = progress;
-        return { ...prev, [wsName]: pws };
+        return { ...prev, [key]: pws };
       }
       return prev;
     });
   };
 
-  const setTimer = (wsName: string, timer: NodeJS.Timeout) => {
+  const setTimer = (key: string, timer: NodeJS.Timeout) => {
     setWorkspaces((prev) => {
-      if (prev[wsName]) {
-        const pws = prev[wsName];
+      if (prev[key]) {
+        const pws = prev[key];
         clearInterval(pws.timer);
         pws.timer = timer;
-        return { ...prev, [wsName]: pws };
+        return { ...prev, [key]: pws };
       }
       return prev;
     });
   };
 
-  const clearTimer = (wsName: string) => {
+  const clearTimer = (key: string) => {
     setWorkspaces((prev) => {
-      if (prev[wsName]) {
-        const pws = prev[wsName];
+      if (prev[key]) {
+        const pws = prev[key];
         clearInterval(pws.timer);
         pws.timer = undefined;
         pws.progress = 120;
-        return { ...prev, [wsName]: pws };
+        return { ...prev, [key]: pws };
       }
       return prev;
     });
@@ -248,14 +281,14 @@ const useWorkspace = () => {
 
     let limit = 120;
     let progress = 0;
-    setProgress(ws.name, progress);
+    setProgress(wskey(ws), progress);
     setTimer(
-      ws.name,
+      wskey(ws),
       setInterval(async () => {
         try {
           progress = progress >= 100 ? 0 : progress + 20;
           console.log("polling", "progress", progress);
-          setProgress(ws.name, progress);
+          setProgress(wskey(ws), progress);
           if (progress === 20) {
             console.log("polling", "do request");
             const newWs = await refreshWorkspace(ws);
@@ -271,20 +304,20 @@ const useWorkspace = () => {
               )
             ) {
               console.log("polling", "timer stopped");
-              clearTimer(ws.name);
+              clearTimer(wskey(ws));
             }
           }
         } catch (e) {
           if (computeStatus(ws) !== "Creating") {
             console.log("polling", "error", e);
-            clearTimer(ws.name);
+            clearTimer(wskey(ws));
           }
         } finally {
           limit--;
           console.log("polling", "limit", limit);
           if (limit < 0) {
             console.log("polling", "reached limit");
-            clearTimer(ws.name);
+            clearTimer(wskey(ws));
           }
         }
       }, 1000)
@@ -389,13 +422,12 @@ const useWorkspace = () => {
   /**
    * UserModule
    */
-  const getUsers = async () => {
+  const getUsers = async (): Promise<User[] | undefined> => {
     console.log("useWorkspaceUsers:getUsers");
     try {
       const result = await userService.getUsers({});
-      setUsers(
-        setUserStateFuncFilteredByLoginUserRole(result.items, loginUser)
-      );
+      setUsers(setUsersFuncFilteredByAccesibleRoles(result.items, loginUser));
+      return result.items;
     } catch (error) {
       handleError(error);
     }
@@ -415,6 +447,8 @@ const useWorkspace = () => {
     setUser,
     users,
     getUsers,
+    search,
+    setSearch,
   };
 };
 
@@ -428,11 +462,31 @@ export const useTemplates = () => {
   const templateService = useTemplateService();
   const { handleError } = useHandleError();
 
-  const getTemplates = async () => {
+  const hasRequiredAddons = (t: Template, user: User): boolean => {
+    if (t.requiredUseraddons.length === 0) {
+      return true;
+    }
+    for (const requiredAddon of t.requiredUseraddons) {
+      if (user.addons.map((a) => a.template).includes(requiredAddon)) {
+        return true;
+      }
+    }
+    console.log(
+      'user "%s" does not have required addons "%s" for template "%s"',
+      user.name,
+      t.requiredUseraddons,
+      t.name
+    );
+    return false;
+  };
+
+  const getTemplates = async (
+    option?: PartialMessage<GetWorkspaceTemplatesRequest>
+  ) => {
     console.log("getTemplates");
     try {
       const result = await templateService.getWorkspaceTemplates({
-        useRoleFilter: true,
+        ...option,
       });
       setTemplates(result.items.sort((a, b) => (a.name < b.name ? -1 : 1)));
     } catch (error) {
@@ -443,6 +497,7 @@ export const useTemplates = () => {
   return {
     templates,
     getTemplates,
+    hasRequiredAddons,
   };
 };
 

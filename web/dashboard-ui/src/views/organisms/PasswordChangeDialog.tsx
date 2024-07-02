@@ -56,7 +56,7 @@ export const PasswordChangeDialog: React.VFC<{ onClose: () => void }> = ({
   };
 
   return (
-    <Dialog open={true} fullWidth maxWidth={"xs"} onClose={() => onClose()}>
+    <Dialog open={true} fullWidth maxWidth={"xs"}>
       <DialogTitle>Change Password 🔒</DialogTitle>
       <form noValidate>
         <DialogContent>
