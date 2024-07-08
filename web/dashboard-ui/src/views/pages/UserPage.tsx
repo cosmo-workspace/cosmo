@@ -102,7 +102,6 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
       <Box>
         <IconButton
           color="inherit"
-          disabled={loginUser?.name === us.name}
           onClick={(e) => setAnchorEl(e.currentTarget)}
         >
           <MoreVert fontSize="small" />
