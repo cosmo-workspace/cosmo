@@ -25,7 +25,10 @@ const WorkspaceInfoDialog: React.FC<{
 
   const [yaml, setYAML] = useState("");
   const [instance, setInstance] = useState("");
-  const [showTab, setShowTab] = useState<"yaml" | "instance">("yaml");
+  const [ingressroute, setIngressRoute] = useState("");
+  const [showTab, setShowTab] = useState<"yaml" | "instance" | "ingressroute">(
+    "yaml"
+  );
 
   useEffect(() => {
     wsService
@@ -37,6 +40,9 @@ const WorkspaceInfoDialog: React.FC<{
       .then((res) => {
         setYAML(res.workspace?.raw || "No yaml");
         setInstance(res.workspace?.rawInstance || "No instance yaml");
+        setIngressRoute(
+          res.workspace?.rawIngressRoute || "No ingress route yaml"
+        );
       })
       .catch((error) => {
         handleError(error);
@@ -75,10 +81,14 @@ const WorkspaceInfoDialog: React.FC<{
         >
           <Tab label="Live Manifest" value="yaml" />
           <Tab label="Instance" value="instance" />
+          <Tab label="IngressRoute" value="ingressroute" />
         </Tabs>
       </Box>
       {showTab === "yaml" && <YAMLTextArea code={yaml}></YAMLTextArea>}
       {showTab === "instance" && <YAMLTextArea code={instance}></YAMLTextArea>}
+      {showTab === "ingressroute" && (
+        <YAMLTextArea code={ingressroute}></YAMLTextArea>
+      )}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }} />
     </Dialog>
   );

@@ -518,6 +518,10 @@ func (m *Workspace) validate(all bool) error {
 		// no validation rules for RawInstance
 	}
 
+	if m.RawIngressRoute != nil {
+		// no validation rules for RawIngressRoute
+	}
+
 	if m.DeletePolicy != nil {
 
 		if _, ok := DeletePolicy_name[int32(m.GetDeletePolicy())]; !ok {

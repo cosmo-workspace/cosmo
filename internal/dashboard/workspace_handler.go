@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	connect_go "github.com/bufbuild/connect-go"
+	traefikv1 "github.com/traefik/traefik/v3/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/utils/ptr"
@@ -116,8 +117,14 @@ func (s *Server) GetWorkspace(ctx context.Context, req *connect_go.Request[dashv
 	res := &dashv1alpha1.GetWorkspaceResponse{}
 	if req.Msg.WithRaw != nil && *req.Msg.WithRaw {
 		var inst cosmov1alpha1.Instance
-		s.Klient.Get(ctx, types.NamespacedName{Name: ws.Status.Instance.Name, Namespace: ws.Status.Instance.Namespace}, &inst)
-		res.Workspace = apiconv.C2D_Workspace(*ws, apiconv.WithWorkspaceRaw(), apiconv.WithWorkspaceInstanceRaw(&inst))
+		if err := s.Klient.Get(ctx, types.NamespacedName{Name: ws.Status.Instance.Name, Namespace: ws.Status.Instance.Namespace}, &inst); err != nil {
+			log.Error(err, "failed to get instance of workspace", "workspace", ws.Name, "namespace", ws.Namespace)
+		}
+		var ir traefikv1.IngressRoute
+		if err := s.Klient.Get(ctx, types.NamespacedName{Name: ws.Status.Instance.Name, Namespace: ws.Status.Instance.Namespace}, &ir); err != nil {
+			log.Error(err, "failed to get ingressroute of workspace", "workspace", ws.Name, "namespace", ws.Namespace)
+		}
+		res.Workspace = apiconv.C2D_Workspace(*ws, apiconv.WithWorkspaceRaw(), apiconv.WithWorkspaceInstanceRaw(&inst), apiconv.WithWorkspaceIngressRouteRaw(&ir))
 
 	} else {
 		res.Workspace = apiconv.C2D_Workspace(*ws)

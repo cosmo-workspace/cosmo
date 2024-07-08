@@ -1198,6 +1198,7 @@
 | status | [WorkspaceStatus](#dashboard-v1alpha1-WorkspaceStatus) |  |  |
 | raw | [string](#string) | optional |  |
 | raw_instance | [string](#string) | optional |  |
+| raw_ingress_route | [string](#string) | optional |  |
 | delete_policy | [DeletePolicy](#dashboard-v1alpha1-DeletePolicy) | optional |  |
 
 

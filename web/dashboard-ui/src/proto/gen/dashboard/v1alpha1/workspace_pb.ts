@@ -217,7 +217,12 @@ export class Workspace extends Message<Workspace> {
   rawInstance?: string;
 
   /**
-   * @generated from field: optional dashboard.v1alpha1.DeletePolicy delete_policy = 7;
+   * @generated from field: optional string raw_ingress_route = 7;
+   */
+  rawIngressRoute?: string;
+
+  /**
+   * @generated from field: optional dashboard.v1alpha1.DeletePolicy delete_policy = 8;
    */
   deletePolicy?: DeletePolicy;
 
@@ -235,7 +240,8 @@ export class Workspace extends Message<Workspace> {
     { no: 4, name: "status", kind: "message", T: WorkspaceStatus },
     { no: 5, name: "raw", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 6, name: "raw_instance", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 7, name: "delete_policy", kind: "enum", T: proto3.getEnumType(DeletePolicy), opt: true },
+    { no: 7, name: "raw_ingress_route", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 8, name: "delete_policy", kind: "enum", T: proto3.getEnumType(DeletePolicy), opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Workspace {

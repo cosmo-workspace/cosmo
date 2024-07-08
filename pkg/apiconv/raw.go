@@ -1,7 +1,9 @@
 package apiconv
 
 import (
+	traefikv1alpha1 "github.com/traefik/traefik/v3/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
@@ -13,7 +15,8 @@ import (
 var scheme = runtime.NewScheme()
 
 func init() {
-	_ = cosmov1alpha1.AddToScheme(scheme)
+	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme))
+	utilruntime.Must(traefikv1alpha1.AddToScheme(scheme))
 }
 
 func ToYAML(obj client.Object) *string {

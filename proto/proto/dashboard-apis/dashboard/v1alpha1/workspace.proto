@@ -39,5 +39,6 @@ message Workspace {
   WorkspaceStatus status = 4;
   optional string raw = 5;
   optional string raw_instance = 6;
-  optional DeletePolicy delete_policy = 7 [(validate.rules).enum.defined_only = true];
+  optional string raw_ingress_route = 7;
+  optional DeletePolicy delete_policy = 8 [(validate.rules).enum.defined_only = true];
 }

@@ -3,6 +3,7 @@ package apiconv
 import (
 	"time"
 
+	traefikv1 "github.com/traefik/traefik/v3/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"k8s.io/utils/ptr"
 
@@ -22,6 +23,12 @@ func WithWorkspaceRaw() func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspa
 func WithWorkspaceInstanceRaw(inst *cosmov1alpha1.Instance) func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
 	return func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
 		d.RawInstance = ToYAML(inst)
+	}
+}
+
+func WithWorkspaceIngressRouteRaw(ir *traefikv1.IngressRoute) func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
+	return func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
+		d.RawIngressRoute = ToYAML(ir)
 	}
 }
 
