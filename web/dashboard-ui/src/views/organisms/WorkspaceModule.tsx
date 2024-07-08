@@ -184,8 +184,8 @@ const useWorkspace = () => {
       const wsEventMap: { [key: string]: Event[] } = {};
       for (const event of events) {
         if (event.regardingWorkspace) {
-          wsEventMap[event.regardingWorkspace] = [
-            ...(wsEventMap[event.regardingWorkspace] || []),
+          wsEventMap[`${event.regardingWorkspace}-${userName}`] = [
+            ...(wsEventMap[`${event.regardingWorkspace}-${userName}`] || []),
             event,
           ].sort((a, b) => latestTime(a) - latestTime(b));
         }
