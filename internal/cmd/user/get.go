@@ -226,6 +226,14 @@ func printAddonWithVars(addons []*dashv1alpha1.UserAddon) string {
 	return strings.Join(arr, " ")
 }
 
+func printDeletePolicy(deletePolicy *dashv1alpha1.DeletePolicy) string {
+	if deletePolicy != nil {
+		return deletePolicy.String()
+	} else {
+		return dashv1alpha1.DeletePolicy_delete.String()
+	}
+}
+
 func OutputTable(out io.Writer, users []*dashv1alpha1.User) {
 	data := [][]string{}
 
@@ -242,11 +250,11 @@ func OutputWideTable(out io.Writer, users []*dashv1alpha1.User) {
 	data := [][]string{}
 
 	for _, v := range users {
-		data = append(data, []string{v.Name, v.DisplayName, strings.Join(v.Roles, ","), v.AuthType, cosmov1alpha1.UserNamespace(v.Name), v.Status, printAddonWithVars(v.Addons)})
+		data = append(data, []string{v.Name, v.DisplayName, strings.Join(v.Roles, ","), v.AuthType, cosmov1alpha1.UserNamespace(v.Name), v.Status, printDeletePolicy(v.DeletePolicy), printAddonWithVars(v.Addons)})
 	}
 
 	cli.OutputTable(out,
-		[]string{"NAME", "DISPLAYNAME", "ROLES", "AUTHTYPE", "NAMESPACE", "PHASE", "ADDONS"},
+		[]string{"NAME", "DISPLAYNAME", "ROLES", "AUTHTYPE", "NAMESPACE", "PHASE", "DELETEPOLOCY", "ADDONS"},
 		data)
 }
 

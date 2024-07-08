@@ -7,7 +7,11 @@ import { useHandleError, useLogin } from "../../components/LoginProvider";
 import { useProgress } from "../../components/ProgressProvider";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { GetUserAddonTemplatesRequest } from "../../proto/gen/dashboard/v1alpha1/template_service_pb";
-import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import {
+  DeletePolicy,
+  User,
+  UserAddon,
+} from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import {
   useTemplateService,
   useUserService,
@@ -310,6 +314,35 @@ const useUser = () => {
   };
 
   /**
+   * updateDeletePolicy: Update delete policy
+   */
+  const updateDeletePolicy = async (
+    userName: string,
+    deletePolicy: DeletePolicy
+  ) => {
+    console.log("updateDeletePolicy", userName, deletePolicy);
+    setMask();
+    try {
+      const result = await userService.updateUserDeletePolicy({
+        userName,
+        deletePolicy,
+      });
+      const newUser = result.user;
+      enqueueSnackbar(result.message, { variant: "success" });
+      if (users && newUser) {
+        setUsers((prev) =>
+          prev.map((us) => (us.name === newUser.name ? new User(newUser) : us))
+        );
+      }
+      return newUser;
+    } catch (error) {
+      handleError(error);
+    } finally {
+      releaseMask();
+    }
+  };
+
+  /**
    * DeleteDialog: Delete user
    */
   const deleteUser = async (userName: string) => {
@@ -343,6 +376,7 @@ const useUser = () => {
     updateName,
     updateRole,
     updateAddons,
+    updateDeletePolicy,
     deleteUser,
   };
 };

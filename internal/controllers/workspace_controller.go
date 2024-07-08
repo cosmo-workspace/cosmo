@@ -74,7 +74,7 @@ func (r *WorkspaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	// sync
 	op, err := controllerutil.CreateOrUpdate(ctx, r.Client, inst, func() error {
-		if err := workspace.PatchWorkspaceInstanceAsDesired(inst, ws, r.Scheme); err != nil {
+		if err := workspace.PatchWorkspaceInstanceAsDesired(inst, &ws, r.Scheme); err != nil {
 			return err
 		}
 		instance.Mutate(inst, tmpl)

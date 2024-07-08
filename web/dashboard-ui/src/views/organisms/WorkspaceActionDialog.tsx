@@ -132,6 +132,35 @@ export const WorkspaceStopDialog: React.VFC<{
 };
 
 /**
+ * WorkspaceChangeDeletePolicy
+ */
+export const WorkspaceChangeDeletePolicyDialog: React.VFC<{
+  workspace: Workspace;
+  onClose: () => void;
+}> = (props) => {
+  console.log("WorkspaceChangeDeletePolicyDialog");
+  const { workspace, onClose } = props;
+  const hooks = useWorkspaceModule();
+  return (
+    <WorkspaceActionDialog
+      {...props}
+      title="Protect workspace"
+      actions={
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            hooks.stopWorkspace(workspace).then(() => onClose());
+          }}
+        >
+          Stop
+        </Button>
+      }
+    />
+  );
+};
+
+/**
  * Delete
  */
 export const WorkspaceDeleteDialog: React.VFC<{

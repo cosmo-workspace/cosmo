@@ -11,6 +11,26 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from enum dashboard.v1alpha1.DeletePolicy
+ */
+export enum DeletePolicy {
+  /**
+   * @generated from enum value: delete = 0;
+   */
+  delete = 0,
+
+  /**
+   * @generated from enum value: keep = 1;
+   */
+  keep = 1,
+}
+// Retrieve enum metadata with: proto3.getEnumType(DeletePolicy)
+proto3.util.setEnumType(DeletePolicy, "dashboard.v1alpha1.DeletePolicy", [
+  { no: 0, name: "delete" },
+  { no: 1, name: "keep" },
+]);
+
+/**
  * @generated from message dashboard.v1alpha1.User
  */
 export class User extends Message<User> {
@@ -54,6 +74,11 @@ export class User extends Message<User> {
    */
   raw?: string;
 
+  /**
+   * @generated from field: optional dashboard.v1alpha1.DeletePolicy delete_policy = 9;
+   */
+  deletePolicy?: DeletePolicy;
+
   constructor(data?: PartialMessage<User>) {
     super();
     proto3.util.initPartial(data, this);
@@ -70,6 +95,7 @@ export class User extends Message<User> {
     { no: 6, name: "default_password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "raw", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 9, name: "delete_policy", kind: "enum", T: proto3.getEnumType(DeletePolicy), opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): User {

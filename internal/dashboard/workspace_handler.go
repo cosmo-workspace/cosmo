@@ -9,6 +9,7 @@ import (
 	connect_go "github.com/bufbuild/connect-go"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/apiconv"
@@ -170,9 +171,15 @@ func (s *Server) UpdateWorkspace(ctx context.Context, req *connect_go.Request[da
 		}
 	}
 
+	var delPolicy *string
+	if req.Msg.DeletePolicy != nil {
+		delPolicy = ptr.To(apiconv.D2C_DeletePolicy(req.Msg.DeletePolicy))
+	}
+
 	ws, err := s.Klient.UpdateWorkspace(ctx, req.Msg.WsName, req.Msg.UserName, kosmo.UpdateWorkspaceOpts{
-		Replicas: req.Msg.Replicas,
-		Vars:     req.Msg.Vars,
+		Replicas:     req.Msg.Replicas,
+		Vars:         req.Msg.Vars,
+		DeletePolicy: delPolicy,
 	})
 	if err != nil {
 		return nil, ErrResponse(log, err)

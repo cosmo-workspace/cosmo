@@ -8,6 +8,7 @@ syntax = "proto3";
 package dashboard.v1alpha1;
 import "validate/validate.proto";
 import "google/protobuf/timestamp.proto";
+import "dashboard/v1alpha1/user.proto";
 
 message NetworkRule {
   int32 port_number = 1          [(validate.rules).int32 = { gt: 0, lt: 65536 }];
@@ -38,4 +39,5 @@ message Workspace {
   WorkspaceStatus status = 4;
   optional string raw = 5;
   optional string raw_instance = 6;
+  optional DeletePolicy delete_policy = 7 [(validate.rules).enum.defined_only = true];
 }

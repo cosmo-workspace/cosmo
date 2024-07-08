@@ -236,8 +236,7 @@ func (r *UserReconciler) patchNamespaceToUserDesired(ns *corev1.Namespace, user 
 	label[cosmov1alpha1.NamespaceLabelKeyUserName] = user.Name
 	ns.SetLabels(label)
 
-	err := ctrl.SetControllerReference(&user, ns, r.Scheme)
-	if err != nil {
+	if err := cosmov1alpha1.SetOwnerReferenceIfNotKeepPolicy(&user, ns, r.Scheme); err != nil {
 		return fmt.Errorf("failed to set owner reference: %w", err)
 	}
 

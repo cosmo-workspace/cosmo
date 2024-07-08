@@ -9,6 +9,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3, protoInt64, Timestamp } from "@bufbuild/protobuf";
+import { DeletePolicy } from "./user_pb.js";
 
 /**
  * @generated from message dashboard.v1alpha1.NetworkRule
@@ -215,6 +216,11 @@ export class Workspace extends Message<Workspace> {
    */
   rawInstance?: string;
 
+  /**
+   * @generated from field: optional dashboard.v1alpha1.DeletePolicy delete_policy = 7;
+   */
+  deletePolicy?: DeletePolicy;
+
   constructor(data?: PartialMessage<Workspace>) {
     super();
     proto3.util.initPartial(data, this);
@@ -229,6 +235,7 @@ export class Workspace extends Message<Workspace> {
     { no: 4, name: "status", kind: "message", T: WorkspaceStatus },
     { no: 5, name: "raw", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 6, name: "raw_instance", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 7, name: "delete_policy", kind: "enum", T: proto3.getEnumType(DeletePolicy), opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Workspace {

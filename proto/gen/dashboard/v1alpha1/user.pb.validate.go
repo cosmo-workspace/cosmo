@@ -104,6 +104,21 @@ func (m *User) validate(all bool) error {
 		// no validation rules for Raw
 	}
 
+	if m.DeletePolicy != nil {
+
+		if _, ok := DeletePolicy_name[int32(m.GetDeletePolicy())]; !ok {
+			err := UserValidationError{
+				field:  "DeletePolicy",
+				reason: "value must be one of the defined enum values",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UserMultiError(errors)
 	}

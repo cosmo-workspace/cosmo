@@ -6,7 +6,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	ctrl "sigs.k8s.io/controller-runtime"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -20,7 +19,7 @@ func JSONPatch(op, path string, value any) (string, error) {
 	return fmt.Sprintf(`[{"op": "%s","path": "%s","value": %s}]`, op, path, string(v)), nil
 }
 
-func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws cosmov1alpha1.Workspace, scheme *runtime.Scheme) error {
+func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws *cosmov1alpha1.Workspace, scheme *runtime.Scheme) error {
 	svcTargetRef := cosmov1alpha1.ObjectRef{}
 	svcTargetRef.SetName(ws.Status.Config.ServiceName)
 	svcTargetRef.SetGroupVersionKind(kubeutil.ServiceGVK)
@@ -60,11 +59,12 @@ func PatchWorkspaceInstanceAsDesired(inst *cosmov1alpha1.Instance, ws cosmov1alp
 		})
 	}
 
-	if scheme != nil {
-		err := ctrl.SetControllerReference(&ws, inst, scheme)
-		if err != nil {
-			return fmt.Errorf("failed to set owner reference: %w", err)
-		}
+	if policy := kubeutil.GetAnnotation(ws, cosmov1alpha1.ResourceAnnKeyDeletePolicy); policy != "" {
+		kubeutil.SetAnnotation(inst, cosmov1alpha1.ResourceAnnKeyDeletePolicy, policy)
+	}
+
+	if err := cosmov1alpha1.SetOwnerReferenceIfNotKeepPolicy(ws, inst, scheme); err != nil {
+		return fmt.Errorf("failed to set owner reference: %w", err)
 	}
 
 	return nil
@@ -85,7 +85,7 @@ func svcPorts(netRules []cosmov1alpha1.NetworkRule) []corev1.ServicePort {
 	return ports
 }
 
-func varsWithWorkspaceDefault(ws cosmov1alpha1.Workspace) map[string]string {
+func varsWithWorkspaceDefault(ws *cosmov1alpha1.Workspace) map[string]string {
 	user := cosmov1alpha1.UserNameByNamespace(ws.GetNamespace())
 
 	var vars map[string]string

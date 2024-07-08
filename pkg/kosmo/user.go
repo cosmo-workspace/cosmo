@@ -12,6 +12,7 @@ import (
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/clog"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 )
 
 func (c *Client) GetUser(ctx context.Context, name string) (*cosmov1alpha1.User, error) {
@@ -114,6 +115,10 @@ func (c *Client) DeleteUser(ctx context.Context, username string) (*cosmov1alpha
 		return nil, err
 	}
 
+	if cosmov1alpha1.KeepResourceDeletePolicy(user) {
+		return nil, fmt.Errorf("protected: keep resource policy is set")
+	}
+
 	if err := c.Delete(ctx, user); err != nil {
 		log.Error(err, "failed to delete user")
 		return nil, fmt.Errorf("failed to delete user: %w", err)
@@ -123,9 +128,10 @@ func (c *Client) DeleteUser(ctx context.Context, username string) (*cosmov1alpha
 }
 
 type UpdateUserOpts struct {
-	DisplayName *string
-	UserRoles   []cosmov1alpha1.UserRole
-	UserAddons  []cosmov1alpha1.UserAddon
+	DisplayName  *string
+	UserRoles    []cosmov1alpha1.UserRole
+	UserAddons   []cosmov1alpha1.UserAddon
+	DeletePolicy *string
 }
 
 func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUserOpts) (*cosmov1alpha1.User, error) {
@@ -149,6 +155,10 @@ func (c *Client) UpdateUser(ctx context.Context, username string, opts UpdateUse
 
 	if opts.UserAddons != nil {
 		user.Spec.Addons = opts.UserAddons
+	}
+
+	if opts.DeletePolicy != nil {
+		kubeutil.SetAnnotation(user, cosmov1alpha1.ResourceAnnKeyDeletePolicy, *opts.DeletePolicy)
 	}
 
 	if equality.Semantic.DeepEqual(before, user) {

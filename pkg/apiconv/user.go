@@ -10,6 +10,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 	eventsv1 "k8s.io/api/events/v1"
+	"k8s.io/utils/ptr"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
@@ -45,15 +46,42 @@ func C2D_Users(users []cosmov1alpha1.User, opts ...UserConvertOptions) []*dashv1
 	return ts
 }
 
+func C2D_DeletePolicy(deletePolicy string) *dashv1alpha1.DeletePolicy {
+	switch deletePolicy {
+	case cosmov1alpha1.ResourceAnnEnumDeletePolicyDelete:
+		return ptr.To(dashv1alpha1.DeletePolicy_delete)
+	case cosmov1alpha1.ResourceAnnEnumDeletePolicyKeep:
+		return ptr.To(dashv1alpha1.DeletePolicy_keep)
+	default:
+		return nil
+	}
+}
+
+func D2C_DeletePolicy(deletePolicy *dashv1alpha1.DeletePolicy) string {
+	if deletePolicy == nil {
+		return ""
+	}
+	switch *deletePolicy {
+	case dashv1alpha1.DeletePolicy_delete:
+		return cosmov1alpha1.ResourceAnnEnumDeletePolicyDelete
+	case dashv1alpha1.DeletePolicy_keep:
+		return cosmov1alpha1.ResourceAnnEnumDeletePolicyKeep
+	default:
+		return ""
+	}
+}
+
 func C2D_User(user cosmov1alpha1.User, opts ...UserConvertOptions) *dashv1alpha1.User {
 	d := &dashv1alpha1.User{
-		Name:        user.Name,
-		DisplayName: user.Spec.DisplayName,
-		Roles:       C2S_UserRole(user.Spec.Roles),
-		AuthType:    user.Spec.AuthType.String(),
-		Addons:      C2D_UserAddons(user.Spec.Addons),
-		Status:      string(user.Status.Phase),
+		Name:         user.Name,
+		DisplayName:  user.Spec.DisplayName,
+		Roles:        C2S_UserRole(user.Spec.Roles),
+		AuthType:     user.Spec.AuthType.String(),
+		Addons:       C2D_UserAddons(user.Spec.Addons),
+		Status:       string(user.Status.Phase),
+		DeletePolicy: C2D_DeletePolicy(kubeutil.GetAnnotation(&user, cosmov1alpha1.ResourceAnnKeyDeletePolicy)),
 	}
+
 	for _, opt := range opts {
 		opt(&user, d)
 	}

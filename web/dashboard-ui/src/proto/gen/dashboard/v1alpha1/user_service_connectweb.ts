@@ -7,7 +7,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateUserRequest, CreateUserResponse, DeleteUserRequest, DeleteUserResponse, GetEventsRequest, GetEventsResponse, GetUserRequest, GetUserResponse, GetUsersRequest, GetUsersResponse, UpdateUserAddonsRequest, UpdateUserAddonsResponse, UpdateUserDisplayNameRequest, UpdateUserDisplayNameResponse, UpdateUserPasswordRequest, UpdateUserPasswordResponse, UpdateUserRoleRequest, UpdateUserRoleResponse } from "./user_service_pb.js";
+import { CreateUserRequest, CreateUserResponse, DeleteUserRequest, DeleteUserResponse, GetEventsRequest, GetEventsResponse, GetUserRequest, GetUserResponse, GetUsersRequest, GetUsersResponse, UpdateUserAddonsRequest, UpdateUserAddonsResponse, UpdateUserDeletePolicyRequest, UpdateUserDeletePolicyResponse, UpdateUserDisplayNameRequest, UpdateUserDisplayNameResponse, UpdateUserPasswordRequest, UpdateUserPasswordResponse, UpdateUserRoleRequest, UpdateUserRoleResponse } from "./user_service_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -113,6 +113,17 @@ export const UserService = {
       name: "UpdateUserAddons",
       I: UpdateUserAddonsRequest,
       O: UpdateUserAddonsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * Update user delete policy
+     *
+     * @generated from rpc dashboard.v1alpha1.UserService.UpdateUserDeletePolicy
+     */
+    updateUserDeletePolicy: {
+      name: "UpdateUserDeletePolicy",
+      I: UpdateUserDeletePolicyRequest,
+      O: UpdateUserDeletePolicyResponse,
       kind: MethodKind.Unary,
     },
   }
