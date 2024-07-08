@@ -375,7 +375,7 @@ func TestRawYAMLBuilder_ReplaceDefaultVars(t *testing.T) {
 			tr := &RawYAMLBuilder{
 				rawYaml: tt.fields.rawYaml,
 			}
-			if got := tr.ReplaceDefaultVars(tt.fields.inst); !reflect.DeepEqual(got, tt.want) {
+			if got := tr.ReplaceDefaultVars(tt.fields.inst, "dummy.example.com"); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("RawYAMLBuilder.ReplaceDefaultVars() = %v, want %v", got, tt.want)
 			}
 		})

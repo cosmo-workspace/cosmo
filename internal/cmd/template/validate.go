@@ -169,7 +169,7 @@ func (o *validateOption) RunE(cmd *cobra.Command, args []string) error {
 	o.Logr.Info("smoke test: create dummy instance to apply each resources", "instance", dummyInst.GetName())
 	o.Logr.Debug().DumpObject(o.KosmoClient.Scheme(), &dummyInst, "test instance")
 
-	builts, err := template.BuildObjects(o.tmpl.Spec, &dummyInst)
+	builts, err := template.BuildObjects(o.tmpl.Spec, &dummyInst, "dummy.example.com")
 	if err != nil {
 		return fmt.Errorf("failed to build test instance: %w", err)
 	}

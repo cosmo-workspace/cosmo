@@ -24,6 +24,7 @@ type ClusterInstanceReconciler struct {
 	client.Client
 	Recorder record.EventRecorder
 	Scheme   *runtime.Scheme
+	Domain   string
 
 	impl instanceReconciler
 }
@@ -53,7 +54,7 @@ func (r *ClusterInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	inst.Status.TemplateResourceVersion = tmpl.ResourceVersion
 
 	// 1. Build Unstructured objects
-	objects, err := template.BuildObjects(tmpl.Spec, &inst)
+	objects, err := template.BuildObjects(tmpl.Spec, &inst, r.Domain)
 	if err != nil {
 		kosmo.InstanceEventf(r.Recorder, &inst, corev1.EventTypeWarning, "BuildFailed", "Failed to build manifests from Template: %v", err)
 		return ctrl.Result{}, err

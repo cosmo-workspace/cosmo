@@ -115,6 +115,7 @@ MIT 2023 cosmo-workspace/cosmo
 				Client:   mgr.GetClient(),
 				Recorder: mgr.GetEventRecorderFor(instController),
 				Scheme:   mgr.GetScheme(),
+				Domain:   o.TraefikIngressRouteCfg.Domain,
 			}).SetupWithManager(mgr, controllerFieldManager); err != nil {
 				setupLog.Error(err, "unable to create controller", "controller", instController)
 				os.Exit(1)
@@ -132,6 +133,7 @@ MIT 2023 cosmo-workspace/cosmo
 				Client:   mgr.GetClient(),
 				Recorder: mgr.GetEventRecorderFor(clusterInstController),
 				Scheme:   mgr.GetScheme(),
+				Domain:   o.TraefikIngressRouteCfg.Domain,
 			}).SetupWithManager(mgr, controllerFieldManager); err != nil {
 				setupLog.Error(err, "unable to create controller", "controller", clusterInstController)
 				os.Exit(1)

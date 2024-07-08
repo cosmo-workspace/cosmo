@@ -122,7 +122,7 @@ spec:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotObjects, err := BuildObjects(tt.args.tmplSpec, tt.args.inst)
+			gotObjects, err := BuildObjects(tt.args.tmplSpec, tt.args.inst, "dummy.example.com")
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BuildObjects() error = %v, wantErr %v", err, tt.wantErr)
 				return
