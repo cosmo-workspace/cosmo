@@ -8,7 +8,7 @@ import { useProgress } from "../../components/ProgressProvider";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
 import { Template } from "../../proto/gen/dashboard/v1alpha1/template_pb";
 import { GetWorkspaceTemplatesRequest } from "../../proto/gen/dashboard/v1alpha1/template_service_pb";
-import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import { DeletePolicy, User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import {
   NetworkRule,
   Workspace,
@@ -184,8 +184,8 @@ const useWorkspace = () => {
       const wsEventMap: { [key: string]: Event[] } = {};
       for (const event of events) {
         if (event.regardingWorkspace) {
-          wsEventMap[event.regardingWorkspace] = [
-            ...(wsEventMap[event.regardingWorkspace] || []),
+          wsEventMap[`${event.regardingWorkspace}-${userName}`] = [
+            ...(wsEventMap[`${event.regardingWorkspace}-${userName}`] || []),
             event,
           ].sort((a, b) => latestTime(a) - latestTime(b));
         }
@@ -400,6 +400,32 @@ const useWorkspace = () => {
   };
 
   /**
+   * Update delete policy
+   */
+  const updateDeletePolicy = async (
+    workspace: Workspace,
+    deletePolicy: DeletePolicy
+  ) => {
+    console.log("updateDeletePolicy", workspace.name, deletePolicy);
+    setMask();
+    try {
+      const result = await workspaceService.updateWorkspace({
+        userName: workspace.ownerName!,
+        wsName: workspace.name,
+        deletePolicy: deletePolicy,
+      });
+      const newWs = result.workspace;
+      enqueueSnackbar(result.message, { variant: "success" });
+      newWs && upsertWorkspace(newWs);
+      return newWs;
+    } catch (error) {
+      handleError(error);
+    } finally {
+      releaseMask();
+    }
+  };
+
+  /**
    * DestroyDialog: Destroy workspace
    */
   const deleteWorkspace = async (workspace: Workspace) => {
@@ -438,6 +464,7 @@ const useWorkspace = () => {
     getWorkspaces,
     createWorkspace,
     deleteWorkspace,
+    updateDeletePolicy,
     runWorkspace,
     stopWorkspace,
     pollingWorkspace,

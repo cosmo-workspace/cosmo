@@ -29,8 +29,6 @@ type UpdateDisplayNameOption struct {
 func UpdateDisplayNameCmd(cmd *cobra.Command, cliOpt *cli.RootOptions) *cobra.Command {
 	o := &UpdateDisplayNameOption{RootOptions: cliOpt}
 	cmd.RunE = cli.ConnectErrorHandler(o)
-	cmd.Flags().StringVar(&o.DisplayName, "display-name", "", "user display name (Required)")
-	cmd.MarkFlagRequired("display-name")
 	cmd.Flags().BoolVar(&o.Force, "force", false, "not ask confirmation")
 	return cmd
 }
@@ -39,7 +37,7 @@ func (o *UpdateDisplayNameOption) Validate(cmd *cobra.Command, args []string) er
 	if err := o.RootOptions.Validate(cmd, args); err != nil {
 		return err
 	}
-	if len(args) < 1 {
+	if len(args) < 2 {
 		return errors.New("invalid args")
 	}
 	return nil
@@ -51,6 +49,7 @@ func (o *UpdateDisplayNameOption) Complete(cmd *cobra.Command, args []string) er
 	}
 
 	o.UserName = args[0]
+	o.DisplayName = args[1]
 
 	cmd.SilenceErrors = true
 	cmd.SilenceUsage = true

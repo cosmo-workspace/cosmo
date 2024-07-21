@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -21,6 +22,7 @@ type SuspendOption struct {
 
 	WorkspaceNames []string
 	UserName       string
+	Force          bool
 }
 
 func SuspendCmd(cmd *cobra.Command, cliOpt *cli.RootOptions) *cobra.Command {
@@ -29,6 +31,7 @@ func SuspendCmd(cmd *cobra.Command, cliOpt *cli.RootOptions) *cobra.Command {
 	cmd.RunE = cli.ConnectErrorHandler(o)
 
 	cmd.Flags().StringVarP(&o.UserName, "user", "u", "", "user name (defualt: login user)")
+	cmd.Flags().BoolVar(&o.Force, "force", false, "not ask confirmation")
 
 	return cmd
 }
@@ -67,6 +70,25 @@ func (o *SuspendOption) RunE(cmd *cobra.Command, args []string) error {
 	}
 	if err := o.Complete(cmd, args); err != nil {
 		return fmt.Errorf("invalid options: %w", err)
+	}
+
+	o.Logr.Info("suspend workspaces", "workspaces", o.WorkspaceNames)
+
+	if !o.Force {
+	AskLoop:
+		for {
+			input, err := cli.AskInput("Confirm? [y/n] ", false)
+			if err != nil {
+				return err
+			}
+			switch strings.ToLower(input) {
+			case "y":
+				break AskLoop
+			case "n":
+				fmt.Println("canceled")
+				return nil
+			}
+		}
 	}
 
 	ctx, cancel := context.WithTimeout(o.Ctx, time.Second*10)

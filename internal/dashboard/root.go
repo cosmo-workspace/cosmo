@@ -16,6 +16,7 @@ import (
 
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/spf13/cobra"
+	traefikv1alpha1 "github.com/traefik/traefik/v3/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -39,6 +40,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 	utilruntime.Must(cosmov1alpha1.AddToScheme(scheme))
+	utilruntime.Must(traefikv1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 

@@ -21,5 +21,10 @@ func UpdateCmd(cmd *cobra.Command, o *cli.RootOptions) *cobra.Command {
 		Aliases: []string{"addon", "useraddon", "user-addon"},
 		Short:   "Update addon",
 	}, o))
+	cmd.AddCommand(UpdateDeletePolicyCmd(&cobra.Command{
+		Use:     "deletepolicy USER_NAME [delete|keep]",
+		Aliases: []string{"delete-policy"},
+		Short:   "Update delete polocy",
+	}, o))
 	return cmd
 }

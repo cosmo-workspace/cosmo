@@ -9,7 +9,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
-import { User, UserAddon } from "./user_pb.js";
+import { DeletePolicy, User, UserAddon } from "./user_pb.js";
 import { Event } from "./event_pb.js";
 
 /**
@@ -697,6 +697,92 @@ export class UpdateUserAddonsResponse extends Message<UpdateUserAddonsResponse> 
 
   static equals(a: UpdateUserAddonsResponse | PlainMessage<UpdateUserAddonsResponse> | undefined, b: UpdateUserAddonsResponse | PlainMessage<UpdateUserAddonsResponse> | undefined): boolean {
     return proto3.util.equals(UpdateUserAddonsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message dashboard.v1alpha1.UpdateUserDeletePolicyRequest
+ */
+export class UpdateUserDeletePolicyRequest extends Message<UpdateUserDeletePolicyRequest> {
+  /**
+   * @generated from field: string user_name = 1;
+   */
+  userName = "";
+
+  /**
+   * @generated from field: dashboard.v1alpha1.DeletePolicy delete_policy = 2;
+   */
+  deletePolicy = DeletePolicy.delete;
+
+  constructor(data?: PartialMessage<UpdateUserDeletePolicyRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.UpdateUserDeletePolicyRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "delete_policy", kind: "enum", T: proto3.getEnumType(DeletePolicy) },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateUserDeletePolicyRequest {
+    return new UpdateUserDeletePolicyRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateUserDeletePolicyRequest {
+    return new UpdateUserDeletePolicyRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateUserDeletePolicyRequest {
+    return new UpdateUserDeletePolicyRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateUserDeletePolicyRequest | PlainMessage<UpdateUserDeletePolicyRequest> | undefined, b: UpdateUserDeletePolicyRequest | PlainMessage<UpdateUserDeletePolicyRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateUserDeletePolicyRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message dashboard.v1alpha1.UpdateUserDeletePolicyResponse
+ */
+export class UpdateUserDeletePolicyResponse extends Message<UpdateUserDeletePolicyResponse> {
+  /**
+   * @generated from field: string message = 1;
+   */
+  message = "";
+
+  /**
+   * @generated from field: dashboard.v1alpha1.User user = 2;
+   */
+  user?: User;
+
+  constructor(data?: PartialMessage<UpdateUserDeletePolicyResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "dashboard.v1alpha1.UpdateUserDeletePolicyResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "user", kind: "message", T: User },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateUserDeletePolicyResponse {
+    return new UpdateUserDeletePolicyResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateUserDeletePolicyResponse {
+    return new UpdateUserDeletePolicyResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateUserDeletePolicyResponse {
+    return new UpdateUserDeletePolicyResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateUserDeletePolicyResponse | PlainMessage<UpdateUserDeletePolicyResponse> | undefined, b: UpdateUserDeletePolicyResponse | PlainMessage<UpdateUserDeletePolicyResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateUserDeletePolicyResponse, a, b);
   }
 }
 

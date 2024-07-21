@@ -18,6 +18,7 @@ message User {
   string default_password = 6;
   string status = 7;
   optional string raw = 8;
+  optional DeletePolicy delete_policy = 9 [(validate.rules).enum.defined_only = true];
 }
 
 message UserAddon {
@@ -25,4 +26,9 @@ message UserAddon {
   bool cluster_scoped = 2;
   map<string, string> vars = 3;
   optional string raw = 4;
+}
+
+enum DeletePolicy {
+  delete = 0;
+  keep = 1;
 }

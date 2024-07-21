@@ -12,6 +12,7 @@ import {
   InfoOutlined,
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
+  LockOpenOutlined,
   LockOutlined,
   MoreVertTwoTone,
   OpenInNewTwoTone,
@@ -35,6 +36,7 @@ import {
   CardHeader,
   Chip,
   CircularProgress,
+  Divider,
   Fab,
   Grid,
   IconButton,
@@ -62,7 +64,7 @@ import { useSnackbar } from "notistack";
 import React, { useRef, useState } from "react";
 import { useLogin } from "../../components/LoginProvider";
 import { Event } from "../../proto/gen/dashboard/v1alpha1/event_pb";
-import { User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import { DeletePolicy, User } from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { EventsDataGrid } from "../atoms/EventsDataGrid";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { SearchTextField } from "../atoms/SearchTextField";
@@ -78,6 +80,7 @@ import {
   WorkspaceStartDialogContext,
   WorkspaceStopDialogContext,
 } from "../organisms/WorkspaceActionDialog";
+import { WorkspaceDeletePolicyChangeDialogContext } from "../organisms/WorkspaceDeletePolicyChangeDialo";
 import { WorkspaceInfoDialogContext } from "../organisms/WorkspaceInfoDialog";
 import {
   WorkspaceContext,
@@ -170,6 +173,8 @@ const WorkspaceMenu: React.VFC<{ workspace: WorkspaceWrapper; user: User }> = ({
   const startDialogDispatch = WorkspaceStartDialogContext.useDispatch();
   const stopDialogDispatch = WorkspaceStopDialogContext.useDispatch();
   const deleteDialogDispatch = WorkspaceDeleteDialogContext.useDispatch();
+  const changeDeletePolicyDispatch =
+    WorkspaceDeletePolicyChangeDialogContext.useDispatch();
 
   return (
     <>
@@ -191,7 +196,7 @@ const WorkspaceMenu: React.VFC<{ workspace: WorkspaceWrapper; user: User }> = ({
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            startDialogDispatch(true, { workspace: workspace });
+            startDialogDispatch(true, { workspace });
           }}
           disabled={!Boolean(workspace.name)}
         >
@@ -203,7 +208,7 @@ const WorkspaceMenu: React.VFC<{ workspace: WorkspaceWrapper; user: User }> = ({
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            stopDialogDispatch(true, { workspace: workspace });
+            stopDialogDispatch(true, { workspace });
           }}
           disabled={!Boolean(workspace.name)}
         >
@@ -212,12 +217,34 @@ const WorkspaceMenu: React.VFC<{ workspace: WorkspaceWrapper; user: User }> = ({
           </ListItemIcon>
           <ListItemText>Stop workspace...</ListItemText>
         </MenuItem>
+        <Divider />
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            deleteDialogDispatch(true, { workspace: workspace });
+            changeDeletePolicyDispatch(true, { workspace });
           }}
           disabled={!Boolean(workspace.name) || workspace.isSharedFor(user)}
+        >
+          <ListItemIcon>
+            {workspace.deletePolicy === DeletePolicy.keep ? (
+              <LockOutlined fontSize="small" />
+            ) : (
+              <LockOpenOutlined fontSize="small" />
+            )}
+          </ListItemIcon>
+          <ListItemText>Manage Delete Policy...</ListItemText>
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            deleteDialogDispatch(true, { workspace });
+          }}
+          disabled={
+            !Boolean(workspace.name) ||
+            workspace.isSharedFor(user) ||
+            workspace.deletePolicy === DeletePolicy.keep
+          }
         >
           <ListItemIcon>
             <DeleteTwoTone fontSize="small" />
@@ -821,13 +848,15 @@ export const WorkspacePage: React.VFC = () => {
               <WorkspaceStopDialogContext.Provider>
                 <WorkspaceDeleteDialogContext.Provider>
                   <WorkspaceInfoDialogContext.Provider>
-                    <NetworkRuleUpsertDialogContext.Provider>
-                      <NetworkRuleDeleteDialogContext.Provider>
-                        <EventDetailDialogContext.Provider>
-                          <WorkspaceList />
-                        </EventDetailDialogContext.Provider>
-                      </NetworkRuleDeleteDialogContext.Provider>
-                    </NetworkRuleUpsertDialogContext.Provider>
+                    <WorkspaceDeletePolicyChangeDialogContext.Provider>
+                      <NetworkRuleUpsertDialogContext.Provider>
+                        <NetworkRuleDeleteDialogContext.Provider>
+                          <EventDetailDialogContext.Provider>
+                            <WorkspaceList />
+                          </EventDetailDialogContext.Provider>
+                        </NetworkRuleDeleteDialogContext.Provider>
+                      </NetworkRuleUpsertDialogContext.Provider>
+                    </WorkspaceDeletePolicyChangeDialogContext.Provider>
                   </WorkspaceInfoDialogContext.Provider>
                 </WorkspaceDeleteDialogContext.Provider>
               </WorkspaceStopDialogContext.Provider>

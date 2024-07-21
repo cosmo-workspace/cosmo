@@ -3,13 +3,17 @@ import {
   AdminPanelSettingsTwoTone,
   Badge as BadgeIcon,
   DeleteOutlined,
+  DeleteSweepOutlined,
   Edit,
   ExpandLess,
   ExpandMore,
   FilterListOff,
+  LockOpenOutlined,
+  LockOutlined,
   MoreVert,
   Notifications,
   OpenInNewTwoTone,
+  PushPinOutlined,
   RefreshTwoTone,
   Settings,
   Web,
@@ -43,7 +47,11 @@ import {
 } from "@mui/x-data-grid";
 import React, { useEffect } from "react";
 import { useLogin } from "../../components/LoginProvider";
-import { User, UserAddon } from "../../proto/gen/dashboard/v1alpha1/user_pb";
+import {
+  DeletePolicy,
+  User,
+  UserAddon,
+} from "../../proto/gen/dashboard/v1alpha1/user_pb";
 import { EllipsisTypography } from "../atoms/EllipsisTypography";
 import { NameAvatar } from "../atoms/NameAvatar";
 import { SearchTextField } from "../atoms/SearchTextField";
@@ -56,6 +64,7 @@ import {
   UserDeleteDialogContext,
 } from "../organisms/UserActionDialog";
 import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
+import { UserDeletePolicyChangeDialogContext } from "../organisms/UserDeletePolicyChangeDialog";
 import { UserInfoDialogContext } from "../organisms/UserInfoDialog";
 import {
   isAdminRole,
@@ -85,6 +94,8 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
   const userDeleteDialogDispatch = UserDeleteDialogContext.useDispatch();
   const userNameChangeDispatch = UserNameChangeDialogContext.useDispatch();
   const userAddonChangeDispatch = UserAddonChangeDialogContext.useDispatch();
+  const userDeletePolicyChangeDispatch =
+    UserDeletePolicyChangeDialogContext.useDispatch();
 
   return (
     <>
@@ -171,11 +182,29 @@ const UserMenu: React.VFC<{ user: User }> = ({ user: us }) => {
             </ListItemIcon>
             <ListItemText>Change Addons...</ListItemText>
           </MenuItem>
+          <Divider />
+          <MenuItem
+            onClick={() => {
+              userDeletePolicyChangeDispatch(true, { user: us });
+              setAnchorEl(null);
+            }}
+          >
+            <ListItemIcon>
+              {us.deletePolicy === DeletePolicy.keep ? (
+                <LockOutlined fontSize="small" />
+              ) : (
+                <LockOpenOutlined fontSize="small" />
+              )}
+            </ListItemIcon>
+            <ListItemText>Manage Delete Policy...</ListItemText>
+          </MenuItem>
+          <Divider />
           <MenuItem
             onClick={() => {
               userDeleteDialogDispatch(true, { user: us });
               setAnchorEl(null);
             }}
+            disabled={us.deletePolicy === DeletePolicy.keep}
           >
             <ListItemIcon>
               <DeleteOutlined fontSize="small" />
@@ -197,6 +226,8 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
   const roleChangeDialogDispatch = RoleChangeDialogContext.useDispatch();
   const userAddonChangeDispatch = UserAddonChangeDialogContext.useDispatch();
   const userInfoDispatch = UserInfoDialogContext.useDispatch();
+  const userDeletePolicyChangeDispatch =
+    UserDeletePolicyChangeDialogContext.useDispatch();
 
   const theme = useTheme();
   const isUpSM = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
@@ -241,6 +272,52 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
       ),
     },
     { field: "authType", headerName: "Auth Type", flex: 0.8 },
+    {
+      field: "deletePolicy",
+      headerName: "Delete Policy",
+      flex: 0.5,
+      renderCell: (params: GridRenderCellParams<any, DeletePolicy>) => (
+        <>
+          {params.hasFocus ? (
+            <Stack alignItems="flex-start" spacing={1}>
+              <Chip
+                size="small"
+                variant="outlined"
+                label={params.value === DeletePolicy.keep ? "keep" : "delete"}
+                avatar={
+                  params.value === DeletePolicy.keep ? (
+                    <PushPinOutlined />
+                  ) : (
+                    <DeleteSweepOutlined />
+                  )
+                }
+              />
+              <IconButton
+                size="small"
+                onClick={() =>
+                  userDeletePolicyChangeDispatch(true, { user: params.row })
+                }
+              >
+                <Edit />
+              </IconButton>
+            </Stack>
+          ) : (
+            <Chip
+              size="small"
+              variant="outlined"
+              label={params.value === DeletePolicy.keep ? "keep" : "delete"}
+              avatar={
+                params.value === DeletePolicy.keep ? (
+                  <PushPinOutlined />
+                ) : (
+                  <DeleteSweepOutlined />
+                )
+              }
+            />
+          )}
+        </>
+      ),
+    },
     {
       field: "displayName",
       headerName: "Display Name",
@@ -409,7 +486,8 @@ export const UserDataGrid: React.FC<UserDataGridProp> = ({ users }) => {
                 roles: isUpSM,
                 addons: isUpSM,
                 displayName: isUpSM,
-                authType: isUpSM,
+                authType: false,
+                deletePolicy: false,
               },
             },
             pagination: { paginationModel: { pageSize: 10 } },
@@ -577,11 +655,13 @@ export const UserPage: React.VFC = () => {
             <RoleChangeDialogContext.Provider>
               <UserAddonChangeDialogContext.Provider>
                 <UserDeleteDialogContext.Provider>
-                  <WorkspaceInfoDialogContext.Provider>
-                    <UserInfoDialogContext.Provider>
-                      <UserList />
-                    </UserInfoDialogContext.Provider>
-                  </WorkspaceInfoDialogContext.Provider>
+                  <UserDeletePolicyChangeDialogContext.Provider>
+                    <WorkspaceInfoDialogContext.Provider>
+                      <UserInfoDialogContext.Provider>
+                        <UserList />
+                      </UserInfoDialogContext.Provider>
+                    </WorkspaceInfoDialogContext.Provider>
+                  </UserDeletePolicyChangeDialogContext.Provider>
                 </UserDeleteDialogContext.Provider>
               </UserAddonChangeDialogContext.Provider>
             </RoleChangeDialogContext.Provider>

@@ -2079,6 +2079,265 @@ var _ interface {
 	ErrorName() string
 } = UpdateUserAddonsResponseValidationError{}
 
+// Validate checks the field values on UpdateUserDeletePolicyRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateUserDeletePolicyRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateUserDeletePolicyRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// UpdateUserDeletePolicyRequestMultiError, or nil if none found.
+func (m *UpdateUserDeletePolicyRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateUserDeletePolicyRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetUserName()) < 1 {
+		err := UpdateUserDeletePolicyRequestValidationError{
+			field:  "UserName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := DeletePolicy_name[int32(m.GetDeletePolicy())]; !ok {
+		err := UpdateUserDeletePolicyRequestValidationError{
+			field:  "DeletePolicy",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UpdateUserDeletePolicyRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateUserDeletePolicyRequestMultiError is an error wrapping multiple
+// validation errors returned by UpdateUserDeletePolicyRequest.ValidateAll()
+// if the designated constraints aren't met.
+type UpdateUserDeletePolicyRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateUserDeletePolicyRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateUserDeletePolicyRequestMultiError) AllErrors() []error { return m }
+
+// UpdateUserDeletePolicyRequestValidationError is the validation error
+// returned by UpdateUserDeletePolicyRequest.Validate if the designated
+// constraints aren't met.
+type UpdateUserDeletePolicyRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUserDeletePolicyRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUserDeletePolicyRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUserDeletePolicyRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUserDeletePolicyRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUserDeletePolicyRequestValidationError) ErrorName() string {
+	return "UpdateUserDeletePolicyRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateUserDeletePolicyRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUserDeletePolicyRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUserDeletePolicyRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUserDeletePolicyRequestValidationError{}
+
+// Validate checks the field values on UpdateUserDeletePolicyResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateUserDeletePolicyResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateUserDeletePolicyResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// UpdateUserDeletePolicyResponseMultiError, or nil if none found.
+func (m *UpdateUserDeletePolicyResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateUserDeletePolicyResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Message
+
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateUserDeletePolicyResponseValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateUserDeletePolicyResponseValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateUserDeletePolicyResponseValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateUserDeletePolicyResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateUserDeletePolicyResponseMultiError is an error wrapping multiple
+// validation errors returned by UpdateUserDeletePolicyResponse.ValidateAll()
+// if the designated constraints aren't met.
+type UpdateUserDeletePolicyResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateUserDeletePolicyResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateUserDeletePolicyResponseMultiError) AllErrors() []error { return m }
+
+// UpdateUserDeletePolicyResponseValidationError is the validation error
+// returned by UpdateUserDeletePolicyResponse.Validate if the designated
+// constraints aren't met.
+type UpdateUserDeletePolicyResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUserDeletePolicyResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUserDeletePolicyResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUserDeletePolicyResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUserDeletePolicyResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUserDeletePolicyResponseValidationError) ErrorName() string {
+	return "UpdateUserDeletePolicyResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateUserDeletePolicyResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUserDeletePolicyResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUserDeletePolicyResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUserDeletePolicyResponseValidationError{}
+
 // Validate checks the field values on GetEventsRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

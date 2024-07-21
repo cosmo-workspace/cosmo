@@ -59,6 +59,9 @@ const (
 	// UserServiceUpdateUserAddonsProcedure is the fully-qualified name of the UserService's
 	// UpdateUserAddons RPC.
 	UserServiceUpdateUserAddonsProcedure = "/dashboard.v1alpha1.UserService/UpdateUserAddons"
+	// UserServiceUpdateUserDeletePolicyProcedure is the fully-qualified name of the UserService's
+	// UpdateUserDeletePolicy RPC.
+	UserServiceUpdateUserDeletePolicyProcedure = "/dashboard.v1alpha1.UserService/UpdateUserDeletePolicy"
 )
 
 // UserServiceClient is a client for the dashboard.v1alpha1.UserService service.
@@ -81,6 +84,8 @@ type UserServiceClient interface {
 	UpdateUserRole(context.Context, *connect_go.Request[v1alpha1.UpdateUserRoleRequest]) (*connect_go.Response[v1alpha1.UpdateUserRoleResponse], error)
 	// Update a single User role
 	UpdateUserAddons(context.Context, *connect_go.Request[v1alpha1.UpdateUserAddonsRequest]) (*connect_go.Response[v1alpha1.UpdateUserAddonsResponse], error)
+	// Update user delete policy
+	UpdateUserDeletePolicy(context.Context, *connect_go.Request[v1alpha1.UpdateUserDeletePolicyRequest]) (*connect_go.Response[v1alpha1.UpdateUserDeletePolicyResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the dashboard.v1alpha1.UserService service. By
@@ -138,20 +143,26 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+UserServiceUpdateUserAddonsProcedure,
 			opts...,
 		),
+		updateUserDeletePolicy: connect_go.NewClient[v1alpha1.UpdateUserDeletePolicyRequest, v1alpha1.UpdateUserDeletePolicyResponse](
+			httpClient,
+			baseURL+UserServiceUpdateUserDeletePolicyProcedure,
+			opts...,
+		),
 	}
 }
 
 // userServiceClient implements UserServiceClient.
 type userServiceClient struct {
-	deleteUser            *connect_go.Client[v1alpha1.DeleteUserRequest, v1alpha1.DeleteUserResponse]
-	getUser               *connect_go.Client[v1alpha1.GetUserRequest, v1alpha1.GetUserResponse]
-	getUsers              *connect_go.Client[v1alpha1.GetUsersRequest, v1alpha1.GetUsersResponse]
-	getEvents             *connect_go.Client[v1alpha1.GetEventsRequest, v1alpha1.GetEventsResponse]
-	createUser            *connect_go.Client[v1alpha1.CreateUserRequest, v1alpha1.CreateUserResponse]
-	updateUserDisplayName *connect_go.Client[v1alpha1.UpdateUserDisplayNameRequest, v1alpha1.UpdateUserDisplayNameResponse]
-	updateUserPassword    *connect_go.Client[v1alpha1.UpdateUserPasswordRequest, v1alpha1.UpdateUserPasswordResponse]
-	updateUserRole        *connect_go.Client[v1alpha1.UpdateUserRoleRequest, v1alpha1.UpdateUserRoleResponse]
-	updateUserAddons      *connect_go.Client[v1alpha1.UpdateUserAddonsRequest, v1alpha1.UpdateUserAddonsResponse]
+	deleteUser             *connect_go.Client[v1alpha1.DeleteUserRequest, v1alpha1.DeleteUserResponse]
+	getUser                *connect_go.Client[v1alpha1.GetUserRequest, v1alpha1.GetUserResponse]
+	getUsers               *connect_go.Client[v1alpha1.GetUsersRequest, v1alpha1.GetUsersResponse]
+	getEvents              *connect_go.Client[v1alpha1.GetEventsRequest, v1alpha1.GetEventsResponse]
+	createUser             *connect_go.Client[v1alpha1.CreateUserRequest, v1alpha1.CreateUserResponse]
+	updateUserDisplayName  *connect_go.Client[v1alpha1.UpdateUserDisplayNameRequest, v1alpha1.UpdateUserDisplayNameResponse]
+	updateUserPassword     *connect_go.Client[v1alpha1.UpdateUserPasswordRequest, v1alpha1.UpdateUserPasswordResponse]
+	updateUserRole         *connect_go.Client[v1alpha1.UpdateUserRoleRequest, v1alpha1.UpdateUserRoleResponse]
+	updateUserAddons       *connect_go.Client[v1alpha1.UpdateUserAddonsRequest, v1alpha1.UpdateUserAddonsResponse]
+	updateUserDeletePolicy *connect_go.Client[v1alpha1.UpdateUserDeletePolicyRequest, v1alpha1.UpdateUserDeletePolicyResponse]
 }
 
 // DeleteUser calls dashboard.v1alpha1.UserService.DeleteUser.
@@ -199,6 +210,11 @@ func (c *userServiceClient) UpdateUserAddons(ctx context.Context, req *connect_g
 	return c.updateUserAddons.CallUnary(ctx, req)
 }
 
+// UpdateUserDeletePolicy calls dashboard.v1alpha1.UserService.UpdateUserDeletePolicy.
+func (c *userServiceClient) UpdateUserDeletePolicy(ctx context.Context, req *connect_go.Request[v1alpha1.UpdateUserDeletePolicyRequest]) (*connect_go.Response[v1alpha1.UpdateUserDeletePolicyResponse], error) {
+	return c.updateUserDeletePolicy.CallUnary(ctx, req)
+}
+
 // UserServiceHandler is an implementation of the dashboard.v1alpha1.UserService service.
 type UserServiceHandler interface {
 	// Delete user by ID
@@ -219,6 +235,8 @@ type UserServiceHandler interface {
 	UpdateUserRole(context.Context, *connect_go.Request[v1alpha1.UpdateUserRoleRequest]) (*connect_go.Response[v1alpha1.UpdateUserRoleResponse], error)
 	// Update a single User role
 	UpdateUserAddons(context.Context, *connect_go.Request[v1alpha1.UpdateUserAddonsRequest]) (*connect_go.Response[v1alpha1.UpdateUserAddonsResponse], error)
+	// Update user delete policy
+	UpdateUserDeletePolicy(context.Context, *connect_go.Request[v1alpha1.UpdateUserDeletePolicyRequest]) (*connect_go.Response[v1alpha1.UpdateUserDeletePolicyResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -273,6 +291,11 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 		svc.UpdateUserAddons,
 		opts...,
 	))
+	mux.Handle(UserServiceUpdateUserDeletePolicyProcedure, connect_go.NewUnaryHandler(
+		UserServiceUpdateUserDeletePolicyProcedure,
+		svc.UpdateUserDeletePolicy,
+		opts...,
+	))
 	return "/dashboard.v1alpha1.UserService/", mux
 }
 
@@ -313,4 +336,8 @@ func (UnimplementedUserServiceHandler) UpdateUserRole(context.Context, *connect_
 
 func (UnimplementedUserServiceHandler) UpdateUserAddons(context.Context, *connect_go.Request[v1alpha1.UpdateUserAddonsRequest]) (*connect_go.Response[v1alpha1.UpdateUserAddonsResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.UserService.UpdateUserAddons is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) UpdateUserDeletePolicy(context.Context, *connect_go.Request[v1alpha1.UpdateUserDeletePolicyRequest]) (*connect_go.Response[v1alpha1.UpdateUserDeletePolicyResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("dashboard.v1alpha1.UserService.UpdateUserDeletePolicy is not implemented"))
 }

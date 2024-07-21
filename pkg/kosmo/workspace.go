@@ -136,6 +136,11 @@ func (c *Client) DeleteWorkspace(ctx context.Context, name, username string, opt
 	if err != nil {
 		return nil, err
 	}
+
+	if cosmov1alpha1.KeepResourceDeletePolicy(ws) {
+		return nil, fmt.Errorf("protected: keep resource policy is set")
+	}
+
 	if err := c.Delete(ctx, ws, opts...); err != nil {
 		log.Error(err, "failed to delete workspace", "username", username, "workspace", name)
 		return nil, fmt.Errorf("failed to delete workspace: %w", err)
@@ -144,8 +149,9 @@ func (c *Client) DeleteWorkspace(ctx context.Context, name, username string, opt
 }
 
 type UpdateWorkspaceOpts struct {
-	Replicas *int64
-	Vars     map[string]string
+	Replicas     *int64
+	Vars         map[string]string
+	DeletePolicy *string
 }
 
 func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opts UpdateWorkspaceOpts) (*cosmov1alpha1.Workspace, error) {
@@ -163,6 +169,9 @@ func (c *Client) UpdateWorkspace(ctx context.Context, name, username string, opt
 	}
 	if opts.Vars != nil {
 		ws.Spec.Vars = opts.Vars
+	}
+	if opts.DeletePolicy != nil {
+		kubeutil.SetAnnotation(ws, cosmov1alpha1.ResourceAnnKeyDeletePolicy, *opts.DeletePolicy)
 	}
 
 	if equality.Semantic.DeepEqual(before, ws) {

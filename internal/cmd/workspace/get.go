@@ -237,20 +237,36 @@ func OutputWideTable(out io.Writer, username string, workspaces []*dashv1alpha1.
 	data := [][]string{}
 
 	for _, v := range workspaces {
-		mainURL := v.Status.MainUrl
-		if v.OwnerName != username {
-			mainURL = `[shared workspace. see shared URLs by "cosmoctl ws get-network"]`
-		}
-		vars := make([]string, 0, len(v.Spec.Vars))
-		for k, vv := range v.Spec.Vars {
-			vars = append(vars, fmt.Sprintf("%s=%s", k, vv))
-		}
-		data = append(data, []string{v.OwnerName, v.Name, v.Spec.Template, strings.Join(vars, ","), v.Status.Phase, mainURL})
+		data = append(data, []string{v.OwnerName, v.Name, v.Spec.Template, printVars(v.Spec.Vars), v.Status.Phase, printDeletePolicy(v.DeletePolicy), printMainURL(v, username)})
 	}
 
 	cli.OutputTable(out,
-		[]string{"USER", "NAME", "TEMPLATE", "VARS", "PHASE", "MAINURL"},
+		[]string{"USER", "NAME", "TEMPLATE", "VARS", "PHASE", "DELETEPOLICY", "MAINURL"},
 		data)
+}
+
+func printMainURL(v *dashv1alpha1.Workspace, username string) string {
+	mainURL := v.Status.MainUrl
+	if v.OwnerName != username {
+		mainURL = `[shared workspace. see shared URLs by "cosmoctl ws get-network"]`
+	}
+	return mainURL
+}
+
+func printVars(vars map[string]string) string {
+	varSlice := make([]string, 0, len(vars))
+	for k, vv := range vars {
+		varSlice = append(varSlice, fmt.Sprintf("%s=%s", k, vv))
+	}
+	return strings.Join(varSlice, ",")
+}
+
+func printDeletePolicy(deletePolicy *dashv1alpha1.DeletePolicy) string {
+	if deletePolicy != nil {
+		return deletePolicy.String()
+	} else {
+		return dashv1alpha1.DeletePolicy_delete.String()
+	}
 }
 
 func (o *GetOption) listWorkspacesByKubeClient(ctx context.Context, userName string, includeShared bool) ([]*dashv1alpha1.Workspace, error) {

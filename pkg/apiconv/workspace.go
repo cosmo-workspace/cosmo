@@ -3,6 +3,7 @@ package apiconv
 import (
 	"time"
 
+	traefikv1 "github.com/traefik/traefik/v3/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"k8s.io/utils/ptr"
 
@@ -22,6 +23,12 @@ func WithWorkspaceRaw() func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspa
 func WithWorkspaceInstanceRaw(inst *cosmov1alpha1.Instance) func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
 	return func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
 		d.RawInstance = ToYAML(inst)
+	}
+}
+
+func WithWorkspaceIngressRouteRaw(ir *traefikv1.IngressRoute) func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
+	return func(c *cosmov1alpha1.Workspace, d *dashv1alpha1.Workspace) {
+		d.RawIngressRoute = ToYAML(ir)
 	}
 }
 
@@ -52,6 +59,7 @@ func C2D_Workspace(ws cosmov1alpha1.Workspace, opts ...WorkspaceConvertOptions) 
 			Phase:   string(ws.Status.Phase),
 			MainUrl: ws.Status.URLs[cosmov1alpha1.MainRuleKey(ws.Status.Config)],
 		},
+		DeletePolicy: C2D_DeletePolicy(kubeutil.GetAnnotation(&ws, cosmov1alpha1.ResourceAnnKeyDeletePolicy)),
 	}
 
 	t, err := time.Parse(time.RFC3339, kubeutil.GetAnnotation(&ws, cosmov1alpha1.WorkspaceAnnKeyLastStartedAt))

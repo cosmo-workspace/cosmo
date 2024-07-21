@@ -6,9 +6,9 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation"
-	ctrl "sigs.k8s.io/controller-runtime"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
+	"github.com/cosmo-workspace/cosmo/pkg/kubeutil"
 	"github.com/cosmo-workspace/cosmo/pkg/template"
 )
 
@@ -81,12 +81,12 @@ func PatchUserAddonInstanceAsDesired(inst cosmov1alpha1.InstanceObject, addon co
 	vars[cosmov1alpha1.TemplateVarUserName] = user.Name
 	inst.GetSpec().Vars = vars
 
-	// set owner reference if scheme is not nil
-	if scheme != nil {
-		err := ctrl.SetControllerReference(&user, inst, scheme)
-		if err != nil {
-			return fmt.Errorf("failed to set controller reference: %w", err)
-		}
+	if err := cosmov1alpha1.SetOwnerReferenceIfNotKeepPolicy(&user, inst, scheme); err != nil {
+		return fmt.Errorf("failed to set owner reference: %w", err)
+	}
+
+	if policy := kubeutil.GetAnnotation(&user, cosmov1alpha1.ResourceAnnKeyDeletePolicy); policy != "" {
+		kubeutil.SetAnnotation(inst, cosmov1alpha1.ResourceAnnKeyDeletePolicy, policy)
 	}
 
 	return nil

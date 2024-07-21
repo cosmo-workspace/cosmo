@@ -34,6 +34,9 @@ service UserService {
   rpc UpdateUserRole(UpdateUserRoleRequest) returns (UpdateUserRoleResponse);
   // Update a single User role
   rpc UpdateUserAddons(UpdateUserAddonsRequest) returns (UpdateUserAddonsResponse);
+  // Update user delete policy
+  rpc UpdateUserDeletePolicy(UpdateUserDeletePolicyRequest)
+      returns (UpdateUserDeletePolicyResponse);
 }
 
 message DeleteUserRequest {
@@ -116,6 +119,15 @@ message UpdateUserAddonsResponse {
   User user = 2;
 }
 
+message UpdateUserDeletePolicyRequest {
+  string user_name = 1           [(validate.rules).string = { min_len: 1 }];
+  DeletePolicy delete_policy = 2 [(validate.rules).enum.defined_only = true];
+}
+
+message UpdateUserDeletePolicyResponse {
+  string message = 1;
+  User user = 2;
+}
 message GetEventsRequest {
   string user_name = 1;
   optional google.protobuf.Timestamp from = 2;

@@ -21,6 +21,8 @@
     - [UserAddon](#dashboard-v1alpha1-UserAddon)
     - [UserAddon.VarsEntry](#dashboard-v1alpha1-UserAddon-VarsEntry)
   
+    - [DeletePolicy](#dashboard-v1alpha1-DeletePolicy)
+  
 - [dashboard/v1alpha1/user_service.proto](#dashboard_v1alpha1_user_service-proto)
     - [CreateUserRequest](#dashboard-v1alpha1-CreateUserRequest)
     - [CreateUserResponse](#dashboard-v1alpha1-CreateUserResponse)
@@ -34,6 +36,8 @@
     - [GetUsersResponse](#dashboard-v1alpha1-GetUsersResponse)
     - [UpdateUserAddonsRequest](#dashboard-v1alpha1-UpdateUserAddonsRequest)
     - [UpdateUserAddonsResponse](#dashboard-v1alpha1-UpdateUserAddonsResponse)
+    - [UpdateUserDeletePolicyRequest](#dashboard-v1alpha1-UpdateUserDeletePolicyRequest)
+    - [UpdateUserDeletePolicyResponse](#dashboard-v1alpha1-UpdateUserDeletePolicyResponse)
     - [UpdateUserDisplayNameRequest](#dashboard-v1alpha1-UpdateUserDisplayNameRequest)
     - [UpdateUserDisplayNameResponse](#dashboard-v1alpha1-UpdateUserDisplayNameResponse)
     - [UpdateUserPasswordRequest](#dashboard-v1alpha1-UpdateUserPasswordRequest)
@@ -299,6 +303,7 @@
 | default_password | [string](#string) |  |  |
 | status | [string](#string) |  |  |
 | raw | [string](#string) | optional |  |
+| delete_policy | [DeletePolicy](#dashboard-v1alpha1-DeletePolicy) | optional |  |
 
 
 
@@ -339,6 +344,18 @@
 
 
  
+
+
+<a name="dashboard-v1alpha1-DeletePolicy"></a>
+
+### DeletePolicy
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| delete | 0 |  |
+| keep | 1 |  |
+
 
  
 
@@ -547,6 +564,38 @@
 
 
 
+<a name="dashboard-v1alpha1-UpdateUserDeletePolicyRequest"></a>
+
+### UpdateUserDeletePolicyRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_name | [string](#string) |  |  |
+| delete_policy | [DeletePolicy](#dashboard-v1alpha1-DeletePolicy) |  |  |
+
+
+
+
+
+
+<a name="dashboard-v1alpha1-UpdateUserDeletePolicyResponse"></a>
+
+### UpdateUserDeletePolicyResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [string](#string) |  |  |
+| user | [User](#dashboard-v1alpha1-User) |  |  |
+
+
+
+
+
+
 <a name="dashboard-v1alpha1-UpdateUserDisplayNameRequest"></a>
 
 ### UpdateUserDisplayNameRequest
@@ -665,6 +714,7 @@
 | UpdateUserPassword | [UpdateUserPasswordRequest](#dashboard-v1alpha1-UpdateUserPasswordRequest) | [UpdateUserPasswordResponse](#dashboard-v1alpha1-UpdateUserPasswordResponse) | Update a single User password |
 | UpdateUserRole | [UpdateUserRoleRequest](#dashboard-v1alpha1-UpdateUserRoleRequest) | [UpdateUserRoleResponse](#dashboard-v1alpha1-UpdateUserRoleResponse) | Update a single User role |
 | UpdateUserAddons | [UpdateUserAddonsRequest](#dashboard-v1alpha1-UpdateUserAddonsRequest) | [UpdateUserAddonsResponse](#dashboard-v1alpha1-UpdateUserAddonsResponse) | Update a single User role |
+| UpdateUserDeletePolicy | [UpdateUserDeletePolicyRequest](#dashboard-v1alpha1-UpdateUserDeletePolicyRequest) | [UpdateUserDeletePolicyResponse](#dashboard-v1alpha1-UpdateUserDeletePolicyResponse) | Update user delete policy |
 
  
 
@@ -1148,6 +1198,8 @@
 | status | [WorkspaceStatus](#dashboard-v1alpha1-WorkspaceStatus) |  |  |
 | raw | [string](#string) | optional |  |
 | raw_instance | [string](#string) | optional |  |
+| raw_ingress_route | [string](#string) | optional |  |
+| delete_policy | [DeletePolicy](#dashboard-v1alpha1-DeletePolicy) | optional |  |
 
 
 
@@ -1413,6 +1465,7 @@
 | ws_name | [string](#string) |  |  |
 | replicas | [int64](#int64) | optional |  |
 | vars | [UpdateWorkspaceRequest.VarsEntry](#dashboard-v1alpha1-UpdateWorkspaceRequest-VarsEntry) | repeated |  |
+| delete_policy | [DeletePolicy](#dashboard-v1alpha1-DeletePolicy) | optional |  |
 
 
 

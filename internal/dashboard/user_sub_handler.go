@@ -7,6 +7,7 @@ import (
 
 	connect_go "github.com/bufbuild/connect-go"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/utils/ptr"
 
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 
@@ -83,6 +84,37 @@ func (s *Server) UpdateUserDisplayName(ctx context.Context, req *connect_go.Requ
 	}
 
 	res := &dashv1alpha1.UpdateUserDisplayNameResponse{
+		Message: "Successfully updated",
+		User:    apiconv.C2D_User(*user),
+	}
+	log.Info(res.Message, "username", req.Msg.UserName)
+	return connect_go.NewResponse(res), nil
+}
+
+func (s *Server) UpdateUserDeletePolicy(ctx context.Context, req *connect_go.Request[dashv1alpha1.UpdateUserDeletePolicyRequest]) (*connect_go.Response[dashv1alpha1.UpdateUserDeletePolicyResponse], error) {
+	log := clog.FromContext(ctx).WithCaller()
+	log.Debug().Info("request", "req", req)
+
+	currentUser, err := s.Klient.GetUser(ctx, req.Msg.UserName)
+	if err != nil {
+		return nil, ErrResponse(log, err)
+	}
+
+	// caller can attach or detach only:
+	//   - User who have group-role which caller is admin for
+	//   - Addons which is allowed for caller to manage
+	err = adminAuthentication(ctx,
+		validateCallerHasAdminForAtLeastOneRole(currentUser.Spec.Roles))
+	if err != nil {
+		return nil, ErrResponse(log, err)
+	}
+
+	user, err := s.Klient.UpdateUser(ctx, req.Msg.UserName, kosmo.UpdateUserOpts{DeletePolicy: ptr.To(apiconv.D2C_DeletePolicy(ptr.To(req.Msg.DeletePolicy)))})
+	if err != nil {
+		return nil, ErrResponse(log, err)
+	}
+
+	res := &dashv1alpha1.UpdateUserDeletePolicyResponse{
 		Message: "Successfully updated",
 		User:    apiconv.C2D_User(*user),
 	}

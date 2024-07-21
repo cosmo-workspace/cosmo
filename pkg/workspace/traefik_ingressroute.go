@@ -7,7 +7,6 @@ import (
 	traefikv1 "github.com/traefik/traefik/v3/pkg/provider/kubernetes/crd/traefikio/v1alpha1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	ctrl "sigs.k8s.io/controller-runtime"
 
 	cosmov1alpha1 "github.com/cosmo-workspace/cosmo/api/v1alpha1"
 	"github.com/cosmo-workspace/cosmo/pkg/instance"
@@ -49,11 +48,8 @@ func (c *TraefikIngressRouteConfig) PatchTraefikIngressRouteAsDesired(ir *traefi
 	}
 	ir.Spec.Routes = routes
 
-	if scheme != nil {
-		err := ctrl.SetControllerReference(&ws, ir, scheme)
-		if err != nil {
-			return fmt.Errorf("failed to set owner reference: %w", err)
-		}
+	if err := cosmov1alpha1.SetOwnerReferenceIfNotKeepPolicy(&ws, ir, scheme); err != nil {
+		return fmt.Errorf("failed to set owner reference: %w", err)
 	}
 	return nil
 }
