@@ -15,6 +15,7 @@ const (
 	DefaultVarsInstance  = "{{INSTANCE}}"
 	DefaultVarsNamespace = "{{NAMESPACE}}"
 	DefaultVarsTemplate  = "{{TEMPLATE}}"
+	DefaultVarsDomain    = "{{DOMAIN}}"
 )
 
 var (
@@ -47,9 +48,10 @@ func (t *RawYAMLBuilder) Build() ([]unstructured.Unstructured, error) {
 	return resources, nil
 }
 
-func (t *RawYAMLBuilder) ReplaceDefaultVars(inst cosmov1alpha1.InstanceObject) *RawYAMLBuilder {
+func (t *RawYAMLBuilder) ReplaceDefaultVars(inst cosmov1alpha1.InstanceObject, domain string) *RawYAMLBuilder {
 	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsInstance, inst.GetName())
 	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsTemplate, inst.GetSpec().Template.Name)
+	t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsDomain, domain)
 
 	if inst.GetScope() == meta.RESTScopeNamespace {
 		t.rawYaml = strings.ReplaceAll(t.rawYaml, DefaultVarsNamespace, inst.GetNamespace())

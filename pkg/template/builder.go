@@ -15,10 +15,10 @@ type Builder interface {
 	Build() ([]unstructured.Unstructured, error)
 }
 
-func BuildObjects(tmplSpec cosmov1alpha1.TemplateSpec, inst cosmov1alpha1.InstanceObject) (objects []unstructured.Unstructured, err error) {
+func BuildObjects(tmplSpec cosmov1alpha1.TemplateSpec, inst cosmov1alpha1.InstanceObject, domain string) (objects []unstructured.Unstructured, err error) {
 	if tmplSpec.RawYaml != "" {
 		objects, err = NewRawYAMLBuilder(tmplSpec.RawYaml).
-			ReplaceDefaultVars(inst).
+			ReplaceDefaultVars(inst, domain).
 			ReplaceCustomVars(inst).
 			Build()
 		if err != nil {

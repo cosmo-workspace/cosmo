@@ -9,7 +9,6 @@ import {
   Menu as MenuIcon,
   Notifications,
   ReportProblem,
-  Settings,
   SupervisorAccountTwoTone,
   VpnKey,
   Warning,
@@ -51,7 +50,6 @@ import { AuthenticatorManageDialogContext } from "../organisms/AuthenticatorMana
 import { EventDetailDialogContext } from "../organisms/EventDetailDialog";
 import { latestTime } from "../organisms/EventModule";
 import { PasswordChangeDialogContext } from "../organisms/PasswordChangeDialog";
-import { UserAddonChangeDialogContext } from "../organisms/UserAddonsChangeDialog";
 import { UserInfoDialogContext } from "../organisms/UserInfoDialog";
 import {
   isAdminRole,
@@ -101,8 +99,6 @@ export const PageTemplate: React.FC<
     AuthenticatorManageDialogContext.useDispatch();
   const passwordChangeDialogDispach = PasswordChangeDialogContext.useDispatch();
   const userNameChangeDialogDispach = UserNameChangeDialogContext.useDispatch();
-  const userAddonChangeDialogDispatch =
-    UserAddonChangeDialogContext.useDispatch();
   const userInfoDialogDispatch = UserInfoDialogContext.useDispatch();
   const isAdmin = isAdminUser(loginUser);
   const isSignIn = Boolean(loginUser);
@@ -129,12 +125,6 @@ export const PageTemplate: React.FC<
   const changePassword = () => {
     console.log("changePassword");
     passwordChangeDialogDispach(true);
-    setAnchorEl(null);
-  };
-
-  const changeAddons = () => {
-    console.log("changeAddons");
-    userAddonChangeDialogDispatch(true, { user: loginUser! });
     setAnchorEl(null);
   };
 
@@ -441,14 +431,6 @@ export const PageTemplate: React.FC<
                     <BadgeIcon fontSize="small" />
                   </ListItemIcon>
                   <ListItemText>Change DisplayName...</ListItemText>
-                </MenuItem>
-              )}
-              {isSignIn && isAdmin && (
-                <MenuItem onClick={() => changeAddons()}>
-                  <ListItemIcon>
-                    <Settings fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Change Addons...</ListItemText>
                 </MenuItem>
               )}
               <Divider />

@@ -11,7 +11,6 @@ import { ProgressProvider } from "./components/ProgressProvider";
 import { AuthenticatorManageDialogContext } from "./views/organisms/AuthenticatorManageDialog";
 import { EventDetailDialogContext } from "./views/organisms/EventDetailDialog";
 import { PasswordChangeDialogContext } from "./views/organisms/PasswordChangeDialog";
-import { UserAddonChangeDialogContext } from "./views/organisms/UserAddonsChangeDialog";
 import { UserInfoDialogContext } from "./views/organisms/UserInfoDialog";
 import { UserContext } from "./views/organisms/UserModule";
 import { UserNameChangeDialogContext } from "./views/organisms/UserNameChangeDialog";
@@ -102,11 +101,9 @@ function App() {
                           <UserInfoDialogContext.Provider>
                             <AuthenticatorManageDialogContext.Provider>
                               <UserNameChangeDialogContext.Provider>
-                                <UserAddonChangeDialogContext.Provider>
-                                  <PasswordChangeDialogContext.Provider>
-                                    <SwitchApp />
-                                  </PasswordChangeDialogContext.Provider>
-                                </UserAddonChangeDialogContext.Provider>
+                                <PasswordChangeDialogContext.Provider>
+                                  <SwitchApp />
+                                </PasswordChangeDialogContext.Provider>
                               </UserNameChangeDialogContext.Provider>
                             </AuthenticatorManageDialogContext.Provider>
                           </UserInfoDialogContext.Provider>

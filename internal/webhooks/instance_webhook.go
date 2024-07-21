@@ -203,7 +203,7 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 func dryrunReconcile(ctx context.Context, c client.Client, fieldManager string, inst cosmov1alpha1.InstanceObject, tmpl cosmov1alpha1.TemplateObject) []error {
 	log := clog.FromContext(ctx).WithCaller()
 
-	objects, err := template.BuildObjects(*tmpl.GetSpec(), inst)
+	objects, err := template.BuildObjects(*tmpl.GetSpec(), inst, "dummy.example.com")
 	if err != nil {
 		return []error{err}
 	}
