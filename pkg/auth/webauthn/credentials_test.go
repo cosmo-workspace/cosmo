@@ -129,7 +129,7 @@ var _ = Describe("WebAuthn", func() {
 
 		cred := cosmowebauthn.Credential{
 			DisplayName: "test-cred",
-			Timestamp:   time.Date(2022, 4, 20, 21, 0, 0, 0, time.Local).Unix(),
+			Timestamp:   1650456000,
 			Cred: webauthn.Credential{
 				ID:              []byte("AZK2rgkmjWkwLXkaKVCFdB7zvGelsgOU/dAN8XErN5E1f0NewA3MOEGfN1XfJhiLWZPs22CFOcfXvzB4LWsU0oY="),
 				PublicKey:       []byte("pQECAyYgASFYIJvq3cxMy4dzWboxdWDs23t0LooTOsgaqCEobWypEfm4IlgguCfJg35XHVhGI2wh3++cbOSMNC2dqNcOL6U+bj+qJCk="),
@@ -182,7 +182,7 @@ var _ = Describe("WebAuthn", func() {
 		cred1 := cosmowebauthn.Credential{
 			Base64URLEncodedId: "test-cred1",
 			DisplayName:        "test-cred1",
-			Timestamp:          time.Date(2022, 4, 20, 21, 0, 0, 0, time.Local).Unix(),
+			Timestamp:          1650456000, // 2022-04-20T12:00:00Z
 			Cred: webauthn.Credential{
 				ID:              []byte("1ZK2rgkmjWkwLXkaKVCFdB7zvGelsgOU/dAN8XErN5E1f0NewA3MOEGfN1XfJhiLWZPs22CFOcfXvzB4LWsU0oY="),
 				PublicKey:       []byte("1QECAyYgASFYIJvq3cxMy4dzWboxdWDs23t0LooTOsgaqCEobWypEfm4IlgguCfJg35XHVhGI2wh3++cbOSMNC2dqNcOL6U+bj+qJCk="),
@@ -205,7 +205,7 @@ var _ = Describe("WebAuthn", func() {
 		cred2 := cosmowebauthn.Credential{
 			Base64URLEncodedId: "test-cred2",
 			DisplayName:        "test-cred2",
-			Timestamp:          time.Date(2022, 4, 21, 21, 0, 0, 0, time.Local).Unix(),
+			Timestamp:          1650542400, // 2022-04-21T12:00:00Z
 			Cred: webauthn.Credential{
 				ID:              []byte("2ZK2rgkmjWkwLXkaKVCFdB7zvGelsgOU/dAN8XErN5E1f0NewA3MOEGfN1XfJhiLWZPs22CFOcfXvzB4LWsU0oY="),
 				PublicKey:       []byte("2QECAyYgASFYIJvq3cxMy4dzWboxdWDs23t0LooTOsgaqCEobWypEfm4IlgguCfJg35XHVhGI2wh3++cbOSMNC2dqNcOL6U+bj+qJCk="),
@@ -267,7 +267,7 @@ var _ = Describe("WebAuthn", func() {
 		cred1 := cosmowebauthn.Credential{
 			Base64URLEncodedId: "test-cred1",
 			DisplayName:        "test-cred1",
-			Timestamp:          time.Date(2022, 4, 20, 21, 0, 0, 0, time.Local).Unix(),
+			Timestamp:          1650456000, // 2022-04-20T12:00:00Z
 			Cred: webauthn.Credential{
 				ID:              []byte("1ZK2rgkmjWkwLXkaKVCFdB7zvGelsgOU/dAN8XErN5E1f0NewA3MOEGfN1XfJhiLWZPs22CFOcfXvzB4LWsU0oY="),
 				PublicKey:       []byte("1QECAyYgASFYIJvq3cxMy4dzWboxdWDs23t0LooTOsgaqCEobWypEfm4IlgguCfJg35XHVhGI2wh3++cbOSMNC2dqNcOL6U+bj+qJCk="),
@@ -290,7 +290,7 @@ var _ = Describe("WebAuthn", func() {
 		cred2 := cosmowebauthn.Credential{
 			Base64URLEncodedId: "test-cred2",
 			DisplayName:        "test-cred2",
-			Timestamp:          time.Date(2022, 4, 21, 21, 0, 0, 0, time.Local).Unix(),
+			Timestamp:          1650542400, // 2022-04-21T12:00:00Z
 			Cred: webauthn.Credential{
 				ID:              []byte("2ZK2rgkmjWkwLXkaKVCFdB7zvGelsgOU/dAN8XErN5E1f0NewA3MOEGfN1XfJhiLWZPs22CFOcfXvzB4LWsU0oY="),
 				PublicKey:       []byte("2QECAyYgASFYIJvq3cxMy4dzWboxdWDs23t0LooTOsgaqCEobWypEfm4IlgguCfJg35XHVhGI2wh3++cbOSMNC2dqNcOL6U+bj+qJCk="),
@@ -511,12 +511,12 @@ func TestCredentials_Default(t *testing.T) {
 				ID: "xxxx",
 			},
 			args: args{
-				now: time.Date(2022, 4, 20, 9, 0, 0, 0, time.Local),
+				now: time.Date(2022, 4, 20, 9, 0, 0, 0, time.UTC),
 			},
 			want: cosmowebauthn.Credential{
 				Base64URLEncodedId: "eHh4eA",
 				DisplayName:        "eHh4eA",
-				Timestamp:          1650412800,
+				Timestamp:          1650445200,
 				Cred: webauthn.Credential{
 					ID: []byte("xxxx"),
 				},
@@ -529,12 +529,12 @@ func TestCredentials_Default(t *testing.T) {
 				ID:          "xxxx",
 			},
 			args: args{
-				now: time.Date(2022, 4, 20, 9, 0, 0, 0, time.Local),
+				now: time.Date(2022, 4, 20, 9, 0, 0, 0, time.UTC),
 			},
 			want: cosmowebauthn.Credential{
 				Base64URLEncodedId: "eHh4eA",
 				DisplayName:        "defined",
-				Timestamp:          1650412800,
+				Timestamp:          1650445200,
 				Cred: webauthn.Credential{
 					ID: []byte("xxxx"),
 				},

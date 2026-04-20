@@ -95,7 +95,7 @@
 ---
 
 [TestPatchWorkspaceInstanceAsDesired/❌_Err_witr_invalid_scheme - 1]
-failed to set owner reference: no kind is registered for the type v1alpha1.Workspace in scheme "pkg/runtime/scheme.go:100"
+failed to set owner reference: failed to set owner reference on /, Kind=: no kind is registered for the type v1alpha1.Workspace in scheme "pkg/runtime/scheme.go:100"
 ---
 
 [TestSvcPorts/✅_OK1 - 1]
