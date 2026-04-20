@@ -177,6 +177,13 @@ func (h *InstanceValidationWebhookHandler) Handle(ctx context.Context, req admis
 		}
 	}
 
+	// validate that var values do not contain template expressions
+	for key, val := range inst.GetSpec().Vars {
+		if strings.HasPrefix(val, "{{") && strings.HasSuffix(val, "}}") {
+			return admission.Denied(fmt.Sprintf("invalid var value: %v=%v: value must not be a template expression", key, val))
+		}
+	}
+
 	// validate patch
 	patchSpecs := inst.GetSpec().Override.PatchesJson6902
 	for _, patchSpec := range patchSpecs {

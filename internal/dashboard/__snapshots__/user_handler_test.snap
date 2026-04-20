@@ -480,7 +480,18 @@ SnapShot = 'internal: failed to get user: mock test error'
 SnapShot = 'permission_denied: forbidden: not admin'
 
 ['Dashboard server [User] [GetUser] ❌ fail with authorization by role: cannot get the other 2']
-SnapShot = 'permission_denied: forbidden: invalid user authentication'
+SnapShot = """
+{
+  "user": {
+    "name": "normal-user",
+    "display_name": "お名前",
+    "roles": [
+      "team-developer"
+    ],
+    "auth_type": "password-secret"
+  }
+}
+"""
 
 ['Dashboard server [User] [GetUser] ❌ fail with invalid request: user not found 1']
 SnapShot = 'not_found: failed to get user: User.cosmo-workspace.github.io "notfound" not found'

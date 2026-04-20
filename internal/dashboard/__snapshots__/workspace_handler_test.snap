@@ -169,6 +169,7 @@ SnapShot = """
 }
 """
 
+["Dashboard server [Workspace] [CreateWorkspace] ❌ fail with authorization by role: normal user cannot create admin user's workspace 1"]
 SnapShot = 'permission_denied: forbidden: not admin'
 
 ['Dashboard server [Workspace] [CreateWorkspace] ❌ fail with invalid request: empty template 1']
