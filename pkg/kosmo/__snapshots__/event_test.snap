@@ -12,7 +12,7 @@ SnapShot = 'Warning TEST4 User: key1=value1 map[cosmo-workspace.github.io/user:u
 
 ['event when list user events should return a array of the events in user namespace and the user annotated events in default namespace 1']
 SnapShot = """
-Event Time                                                Type      Reason                Regarding                                                 Reporting Controller                Note
+Event Time                                                 Type      Reason                Regarding                                                 Reporting Controller                Note
 time.Date(2024, time.May, 26, 15, 41, 54, 0, time.Local)   Normal    Synced                User/xxx                                                  cosmo-user-controller               Successfully reconciled. Namespace cosmo-user-xxx is created
 time.Date(2024, time.May, 26, 15, 41, 54, 0, time.Local)   Normal    PasswordInitialized   User/xxx                                                  cosmo-user-controller               Successfully reset password secret
 time.Date(2024, time.May, 26, 15, 41, 54, 0, time.Local)   Normal    AddonSynced           User/xxx                                                  cosmo-user-controller               Addon cosmo-username-headers is created

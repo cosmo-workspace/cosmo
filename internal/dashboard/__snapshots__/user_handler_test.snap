@@ -477,7 +477,7 @@ SnapShot = """
 SnapShot = 'internal: failed to get user: mock test error'
 
 ['Dashboard server [User] [GetUser] ❌ fail with authorization by role: cannot get the other 1']
-SnapShot = 'permission_denied: forbidden: invalid user authentication'
+SnapShot = 'permission_denied: forbidden: not admin'
 
 ['Dashboard server [User] [GetUser] ❌ fail with authorization by role: cannot get the other 2']
 SnapShot = 'permission_denied: forbidden: invalid user authentication'
