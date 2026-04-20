@@ -50,6 +50,9 @@ func KeepResourceDeletePolicy(obj AnnotationHolder) bool {
 }
 
 func SetOwnerReferenceIfNotKeepPolicy(owner metav1.Object, obj metav1.Object, scheme *runtime.Scheme) error {
+	if scheme == nil {
+		return nil
+	}
 	if !KeepResourceDeletePolicy(owner) && !KeepResourceDeletePolicy(obj) {
 		// Set owner reference
 		err := ctrl.SetControllerReference(owner, obj, scheme)

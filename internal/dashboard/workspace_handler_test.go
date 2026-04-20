@@ -145,7 +145,7 @@ var _ = Describe("Dashboard server [Workspace]", func() {
 			testUtil.CreateWorkspace("admin-user", "ws1", "template1", nil)
 			testUtil.CreateWorkspace("normal-user", "ws1", "template1", map[string]string{"HOGE": "HOGEHOGE"})
 			testUtil.UpsertNetworkRule("normal-user", "ws1", "add", 18080, "/", false, -1)
-			time.Sleep(100)
+			time.Sleep(100 * time.Millisecond)
 			By("---------------test start----------------")
 			ctx := context.Background()
 			res, err := client.GetWorkspace(ctx, NewRequestWithSession(req, getSession(loginUser)))
